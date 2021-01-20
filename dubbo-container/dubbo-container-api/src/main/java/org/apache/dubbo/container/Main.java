@@ -37,7 +37,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.COMMA_SPLIT_PATT
  *
  * This class is entry point loading containers.
  */
-public class Main {
+public class Main { //test
 
     public static final String CONTAINER_KEY = "dubbo.container";
 
