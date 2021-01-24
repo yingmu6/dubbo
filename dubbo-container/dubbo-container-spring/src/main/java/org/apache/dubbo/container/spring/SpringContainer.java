@@ -40,6 +40,11 @@ public class SpringContainer implements Container {
         return context;
     }
 
+    /**
+     * 思路&流程
+     * 1）从系统中获取配置文件的路径，若没有则取默认配置的文件路径
+     * 2）使用spring容器加载指定路径xml内容，并启动容器
+     */
     @Override
     public void start() {
         String configPath = ConfigUtils.getProperty(SPRING_CONFIG);
@@ -51,6 +56,10 @@ public class SpringContainer implements Container {
         context.start();
     }
 
+    /**
+     * 思路&流程
+     * 停止spring容器，并将容器置为空
+     */
     @Override
     public void stop() {
         try {

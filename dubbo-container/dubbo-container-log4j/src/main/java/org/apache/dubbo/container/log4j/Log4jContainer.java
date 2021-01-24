@@ -43,6 +43,11 @@ public class Log4jContainer implements Container {
 
     public static final String DEFAULT_LOG4J_LEVEL = "ERROR";
 
+    /**
+     * 思路整理：
+     * 1）获取log4j的文件路径，组装属性信息，并进程配置configure
+     * 2）判断是否有子目录，若有则对子目录的文件路径进行处理
+     */
     @Override
     @SuppressWarnings("unchecked")
     public void start() {

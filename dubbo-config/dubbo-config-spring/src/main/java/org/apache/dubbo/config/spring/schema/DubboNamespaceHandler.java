@@ -42,16 +42,25 @@ import org.w3c.dom.Element;
 import static org.apache.dubbo.config.spring.util.DubboBeanUtils.registerCommonBeans;
 
 /**
- * DubboNamespaceHandler
+ * DubboNamespaceHandler 命名空间处理类
  *
  * @export
  */
 public class DubboNamespaceHandler extends NamespaceHandlerSupport implements ConfigurableSourceBeanMetadataElement {
+    /**
+     * 数据结构
+     * 1）继承了spring的NamespaceHandlerSupport，可以解析自定义的元素
+     * 2）实现ConfigurableSourceBeanMetadataElement
+     */
 
     static {
         Version.checkDuplicate(DubboNamespaceHandler.class);
     }
 
+    /**
+     * 注册自定义的bean解析器，用来解析自定义元素（在调用自定义元素前初始化）
+     * （元素名是不带命名空间的，如<dubbo:application> 元素为application）
+     */
     @Override
     public void init() {
         registerBeanDefinitionParser("application", new DubboBeanDefinitionParser(ApplicationConfig.class, true));
@@ -71,6 +80,8 @@ public class DubboNamespaceHandler extends NamespaceHandlerSupport implements Co
     }
 
     /**
+     * 解析自定义元素
+     *
      * Override {@link NamespaceHandlerSupport#parse(Element, ParserContext)} method
      *
      * @param element       {@link Element}

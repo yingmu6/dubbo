@@ -409,6 +409,9 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
         }
     }
 
+    /**
+     * 实现spring BeanDefinitionParser的方法，获取到解析的元素和解析的内容，就可以按照自定义的解析方式进行解析
+     */
     @Override
     public BeanDefinition parse(Element element, ParserContext parserContext) {
         return parse(element, parserContext, beanClass, required);
