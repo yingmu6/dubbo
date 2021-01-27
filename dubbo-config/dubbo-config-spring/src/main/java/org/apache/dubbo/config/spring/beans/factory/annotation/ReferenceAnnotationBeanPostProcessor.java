@@ -47,6 +47,7 @@ import static org.apache.dubbo.config.spring.beans.factory.annotation.ServiceBea
 import static org.springframework.util.StringUtils.hasText;
 
 /**
+ * 引用注解处理器
  * {@link org.springframework.beans.factory.config.BeanPostProcessor} implementation
  * that Consumer service {@link Reference} annotated fields
  *

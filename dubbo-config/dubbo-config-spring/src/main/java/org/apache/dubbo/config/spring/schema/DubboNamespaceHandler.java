@@ -104,6 +104,7 @@ public class DubboNamespaceHandler extends NamespaceHandlerSupport implements Co
     }
 
     /**
+     * 注册注解配置
      * Register the processors for the Spring Annotation-Driven features
      *
      * @param registry {@link BeanDefinitionRegistry}
