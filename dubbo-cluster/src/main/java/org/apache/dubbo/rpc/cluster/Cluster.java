@@ -32,7 +32,7 @@ import org.apache.dubbo.rpc.cluster.support.FailoverCluster;
  *
  */
 @SPI(Cluster.DEFAULT)
-public interface Cluster {
+public interface Cluster { //test
     String DEFAULT = FailoverCluster.NAME;
 
     /**
