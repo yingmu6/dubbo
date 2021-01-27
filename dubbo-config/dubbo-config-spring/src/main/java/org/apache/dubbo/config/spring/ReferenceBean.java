@@ -43,7 +43,7 @@ import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncl
  * ReferenceFactoryBean
  */
 public class ReferenceBean<T> extends ReferenceConfig<T> implements FactoryBean,
-        ApplicationContextAware, InitializingBean, DisposableBean {
+        ApplicationContextAware, InitializingBean, DisposableBean { // todo @csy 此处的bean，待了解
 
     private static final long serialVersionUID = 213195494150089726L;
 
@@ -82,7 +82,7 @@ public class ReferenceBean<T> extends ReferenceConfig<T> implements FactoryBean,
     /**
      * Initializes there Dubbo's Config Beans before @Reference bean autowiring
      */
-    private void prepareDubboConfigBeans() {
+    private void prepareDubboConfigBeans() { //todo @csy 此处预处理是怎样的概念？
         beansOfTypeIncludingAncestors(applicationContext, ApplicationConfig.class);
         beansOfTypeIncludingAncestors(applicationContext, ModuleConfig.class);
         beansOfTypeIncludingAncestors(applicationContext, RegistryConfig.class);
