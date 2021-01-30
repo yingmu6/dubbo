@@ -62,7 +62,7 @@ import static org.apache.dubbo.rpc.Constants.ACCESS_LOG_KEY;
  * &lt;/logger&gt;
  * </pre></code>
  */
-@Activate(group = PROVIDER, value = ACCESS_LOG_KEY)
+@Activate(group = PROVIDER, value = ACCESS_LOG_KEY) //todo @csy @Active注解原理了解
 public class AccessLogFilter implements Filter {
 
     private static final Logger logger = LoggerFactory.getLogger(AccessLogFilter.class);
@@ -80,9 +80,11 @@ public class AccessLogFilter implements Filter {
 
     private static final Map<String, Set<AccessLogData>> LOG_ENTRIES = new ConcurrentHashMap<>();
 
+    //todo @csy ScheduledExecutorService使用以及了解？
     private static final ScheduledExecutorService LOG_SCHEDULED = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("Dubbo-Access-Log", true));
 
     /**
+     * todo @csy 什么是守护线程？
      * Default constructor initialize demon thread for writing into access log file with names with access log key
      * defined in url <b>accesslog</b>
      */
@@ -91,6 +93,7 @@ public class AccessLogFilter implements Filter {
     }
 
     /**
+     * 在调用之前组装日志数据，并打印到文件中
      * This method logs the access log for service method invocation call.
      *
      * @param invoker service
@@ -126,6 +129,7 @@ public class AccessLogFilter implements Filter {
         }
     }
 
+    // 把日志到文件中
     private void writeLogSetToFile(String accessLog, Set<AccessLogData> logSet) {
         try {
             if (ConfigUtils.isDefault(accessLog)) {
@@ -179,7 +183,7 @@ public class AccessLogFilter implements Filter {
     }
 
     private void processWithServiceLogger(Set<AccessLogData> logSet) {
-        for (Iterator<AccessLogData> iterator = logSet.iterator();
+        for (Iterator<AccessLogData> iterator = logSet.iterator(); //todo @csy 此处是for循环什么语法？
              iterator.hasNext();
              iterator.remove()) {
             AccessLogData logData = iterator.next();

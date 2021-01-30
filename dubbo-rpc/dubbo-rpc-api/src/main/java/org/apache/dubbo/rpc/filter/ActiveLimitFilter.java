@@ -30,7 +30,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.TIMEOUT_KEY;
 import static org.apache.dubbo.rpc.Constants.ACTIVES_KEY;
 
 /**
- * ActiveLimitFilter restrict the concurrent client invocation for a service or service's method from client side.
+ * ActiveLimitFilter restrict（限制） the concurrent client invocation for a service or service's method from client side.
  * To use active limit filter, configured url with <b>actives</b> and provide valid >0 integer value.
  * <pre>
  *     e.g. <dubbo:reference id="demoService" check="false" interface="org.apache.dubbo.demo.DemoService" "actives"="2"/>
@@ -42,7 +42,7 @@ import static org.apache.dubbo.rpc.Constants.ACTIVES_KEY;
  * @see Filter
  */
 @Activate(group = CONSUMER, value = ACTIVES_KEY)
-public class ActiveLimitFilter implements Filter, Filter.Listener {
+public class ActiveLimitFilter implements Filter, Filter.Listener { //todo @csy 用途是怎样的？限制并发调用数？
 
     private static final String ACTIVELIMIT_FILTER_START_TIME = "activelimit_filter_start_time";
 

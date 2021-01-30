@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * AccessLogData is a container for log event data. In internally uses map and store each filed of log as value. It
+ * AccessLogData is a container for log event data（保存日志事件数据的容器）. In internally（内部的） uses map and store each filed of log as value. It
  * does not generate any dynamic value e.g. time stamp, local jmv machine host address etc. It does not allow any null
  * or empty key.
  *
@@ -53,7 +53,7 @@ public final class AccessLogData {
     private static final String LOCAL_PORT = "local-port";
 
     /**
-     * This is used to store log data in key val format.
+     * This is used to store log data in key val format. （用于存储日志的key、value数据）
      */
     private Map<String, Object> data;
 
@@ -61,7 +61,7 @@ public final class AccessLogData {
      * Default constructor.
      */
     private AccessLogData() {
-        RpcContext context = RpcContext.getContext();
+        RpcContext context = RpcContext.getContext(); //todo @csy RpcContext了解
         data = new HashMap<>();
         setLocalHost(context.getLocalHost());
         setLocalPort(context.getLocalPort());
@@ -74,7 +74,7 @@ public final class AccessLogData {
      *
      * @return instance of AccessLogData
      */
-    public static AccessLogData newLogData() {
+    public static AccessLogData newLogData() { //todo @csy 静态方法是为了单例模式？
         return new AccessLogData();
     }
 
@@ -188,7 +188,7 @@ public final class AccessLogData {
     }
 
 
-    public String getLogMessage() {
+    public String getLogMessage() { //todo @csy 日志消息待调试，看下输出的数据是怎样的形式
         StringBuilder sn = new StringBuilder();
 
         sn.append("[")

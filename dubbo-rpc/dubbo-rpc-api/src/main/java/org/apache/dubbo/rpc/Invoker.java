@@ -25,20 +25,20 @@ import org.apache.dubbo.common.Node;
  * @see org.apache.dubbo.rpc.InvokerListener
  * @see org.apache.dubbo.rpc.protocol.AbstractInvoker
  */
-public interface Invoker<T> extends Node {
+public interface Invoker<T> extends Node { //todo invoker、invocation官网文档如何称呼？
 
     /**
-     * get service interface.
+     * get service interface.（获取服务接口）
      *
      * @return service interface.
      */
     Class<T> getInterface();
 
     /**
-     * invoke.
+     * invoke.（执行调用）
      *
-     * @param invocation
-     * @return result
+     * @param invocation  调用信息
+     * @return result 调用结果
      * @throws RpcException
      */
     Result invoke(Invocation invocation) throws RpcException;
