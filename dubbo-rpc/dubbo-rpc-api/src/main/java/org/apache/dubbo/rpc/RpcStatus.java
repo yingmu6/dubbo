@@ -28,15 +28,14 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  * @see org.apache.dubbo.rpc.filter.ActiveLimitFilter
  * @see org.apache.dubbo.rpc.filter.ExecuteLimitFilter
- * @see org.apache.dubbo.rpc.cluster.loadbalance.LeastActiveLoadBalance
  */
-public class RpcStatus {
+public class RpcStatus { //todo @csy 都记录了哪些状态值？后台管理页面有没有展示
 
     private static final ConcurrentMap<String, RpcStatus> SERVICE_STATISTICS = new ConcurrentHashMap<String, RpcStatus>();
 
     private static final ConcurrentMap<String, ConcurrentMap<String, RpcStatus>> METHOD_STATISTICS = new ConcurrentHashMap<String, ConcurrentMap<String, RpcStatus>>();
     private final ConcurrentMap<String, Object> values = new ConcurrentHashMap<String, Object>();
-    private final AtomicInteger active = new AtomicInteger();
+    private final AtomicInteger active = new AtomicInteger(); //todo @csy 激活数标识什么？
     private final AtomicLong total = new AtomicLong();
     private final AtomicInteger failed = new AtomicInteger();
     private final AtomicLong totalElapsed = new AtomicLong();
@@ -72,7 +71,7 @@ public class RpcStatus {
      */
     public static RpcStatus getStatus(URL url, String methodName) {
         String uri = url.toIdentityString();
-        ConcurrentMap<String, RpcStatus> map = METHOD_STATISTICS.computeIfAbsent(uri, k -> new ConcurrentHashMap<>());
+        ConcurrentMap<String, RpcStatus> map = METHOD_STATISTICS.computeIfAbsent(uri, k -> new ConcurrentHashMap<>()); //todo @csy ConcurrentMap了解
         return map.computeIfAbsent(methodName, k -> new RpcStatus());
     }
 
@@ -92,6 +91,7 @@ public class RpcStatus {
     }
 
     /**
+     * todo @csy 是对应什么数据进行计数？
      * @param url
      */
     public static boolean beginCount(URL url, String methodName, int max) {
@@ -124,6 +124,7 @@ public class RpcStatus {
         endCount(getStatus(url, methodName), elapsed, succeeded);
     }
 
+    // todo @csy 结束统计是怎样的逻辑？
     private static void endCount(RpcStatus status, long elapsed, boolean succeeded) {
         status.active.decrementAndGet();
         status.total.incrementAndGet();

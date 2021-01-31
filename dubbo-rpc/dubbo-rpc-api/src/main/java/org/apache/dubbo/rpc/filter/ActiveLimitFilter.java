@@ -47,7 +47,7 @@ public class ActiveLimitFilter implements Filter, Filter.Listener { //todo @csy 
     private static final String ACTIVELIMIT_FILTER_START_TIME = "activelimit_filter_start_time";
 
     @Override
-    public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
+    public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException { //todo @csy 过滤链是怎么组装的？
         URL url = invoker.getUrl();
         String methodName = invocation.getMethodName();
         int max = invoker.getUrl().getMethodParameter(methodName, ACTIVES_KEY, 0);
@@ -56,7 +56,7 @@ public class ActiveLimitFilter implements Filter, Filter.Listener { //todo @csy 
             long timeout = invoker.getUrl().getMethodParameter(invocation.getMethodName(), TIMEOUT_KEY, 0);
             long start = System.currentTimeMillis();
             long remain = timeout;
-            synchronized (rpcStatus) {
+            synchronized (rpcStatus) { //todo @csy 此处逻辑处理是怎样的？
                 while (!RpcStatus.beginCount(url, methodName, max)) {
                     try {
                         rpcStatus.wait(remain);
@@ -115,7 +115,7 @@ public class ActiveLimitFilter implements Filter, Filter.Listener { //todo @csy 
     private void notifyFinish(final RpcStatus rpcStatus, int max) {
         if (max > 0) {
             synchronized (rpcStatus) {
-                rpcStatus.notifyAll();
+                rpcStatus.notifyAll(); //todo @csy notifyAll的用途？
             }
         }
     }

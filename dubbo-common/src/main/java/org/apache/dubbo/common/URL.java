@@ -127,7 +127,7 @@ class URL implements Serializable {
 
     private volatile transient String full;
 
-    private volatile transient String identity;
+    private volatile transient String identity; //todo @csy 身份标识是指啥？
 
     private volatile transient String parameter;
 
