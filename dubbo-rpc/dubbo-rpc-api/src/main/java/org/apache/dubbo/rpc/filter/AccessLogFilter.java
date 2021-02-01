@@ -63,7 +63,7 @@ import static org.apache.dubbo.rpc.Constants.ACCESS_LOG_KEY;
  * </pre></code>
  */
 @Activate(group = PROVIDER, value = ACCESS_LOG_KEY) //todo @csy @Active注解原理了解
-public class AccessLogFilter implements Filter {
+public class AccessLogFilter implements Filter { //todo @csy 日志过滤器什么时候被调用？过滤器链是怎样的？
 
     private static final Logger logger = LoggerFactory.getLogger(AccessLogFilter.class);
 

@@ -33,7 +33,7 @@ import java.util.Map;
  * does not generate any dynamic value e.g. time stamp, local jmv machine host address etc. It does not allow any null
  * or empty key.
  *
- * Note: since its date formatter is a singleton, make sure to run it in single thread only.
+ * Note: since its date formatter is a singleton, make sure to run it in single thread only（确保单线程使用AccessLogData）.
  */
 public final class AccessLogData {
 
@@ -59,9 +59,10 @@ public final class AccessLogData {
 
     /**
      * Default constructor.
+     * 从rpc调用上下文中获取值，并设置到当前缓存map中
      */
     private AccessLogData() {
-        RpcContext context = RpcContext.getContext(); //todo @csy RpcContext了解
+        RpcContext context = RpcContext.getContext(); //@csy RpcContext了解，解：临时状态记录器
         data = new HashMap<>();
         setLocalHost(context.getLocalHost());
         setLocalPort(context.getLocalPort());
@@ -74,7 +75,7 @@ public final class AccessLogData {
      *
      * @return instance of AccessLogData
      */
-    public static AccessLogData newLogData() { //todo @csy 静态方法是为了单例模式？
+    public static AccessLogData newLogData() { //@csy 静态方法是为了单例模式？ 解：不是，每调用一次都会生成新的对象
         return new AccessLogData();
     }
 
@@ -187,10 +188,13 @@ public final class AccessLogData {
         return get(SERVICE).toString();
     }
 
-
+    /**
+     * 拼接日志输出信息
+     */
     public String getLogMessage() { //todo @csy 日志消息待调试，看下输出的数据是怎样的形式
         StringBuilder sn = new StringBuilder();
 
+        // 取出本地缓存的日志数据，进行拼接
         sn.append("[")
                 .append(MESSAGE_DATE_FORMATTER.format(getInvocationTime()))
                 .append("] ")
@@ -203,6 +207,7 @@ public final class AccessLogData {
                 .append(get(LOCAL_PORT))
                 .append(" - ");
 
+        // 拼接分组GROUP、服务SERVICE、版本VERSION、方法名METHOD_NAME、类型等信息TYPES
         String group = get(GROUP) != null ? get(GROUP).toString() : "";
         if (StringUtils.isNotEmpty(group)) {
             sn.append(group).append("/");
@@ -260,7 +265,7 @@ public final class AccessLogData {
      * @param value Any object including null.
      */
     private void set(String key, Object value) {
-        data.put(key, value);
+        data.put(key, value); //将日志的键值写到本地缓存的日志map中
     }
 
 }

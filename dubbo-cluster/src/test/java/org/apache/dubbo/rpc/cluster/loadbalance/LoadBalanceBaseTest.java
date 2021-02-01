@@ -73,13 +73,13 @@ public class LoadBalanceBaseTest {
      * @throws java.lang.Exception
      */
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() throws Exception { //todo @csy junit 注解了解 @BeforeEach等
 
         invocation = mock(Invocation.class);
         given(invocation.getMethodName()).willReturn("method1");
         given(invocation.getArguments()).willReturn(new Object[] {"arg1","arg2","arg3"});
 
-        invoker1 = mock(Invoker.class);
+        invoker1 = mock(Invoker.class); //todo @csy mock 了解
         invoker2 = mock(Invoker.class);
         invoker3 = mock(Invoker.class);
         invoker4 = mock(Invoker.class);

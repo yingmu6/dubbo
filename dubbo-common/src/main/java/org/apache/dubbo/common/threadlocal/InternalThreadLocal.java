@@ -31,7 +31,7 @@ import java.util.Set;
  * <p></p>
  * This design is learning from {@see io.netty.util.concurrent.FastThreadLocal} which is in Netty.
  */
-public class InternalThreadLocal<V> {
+public class InternalThreadLocal<V> { //todo @csy 内部的本地线程了解，ThreadLocal了解
 
     private static final int VARIABLES_TO_REMOVE_INDEX = InternalThreadLocalMap.nextVariableIndex();
 
