@@ -22,11 +22,11 @@ import org.apache.dubbo.common.URL;
 import java.util.Map;
 
 /**
- * ExpiringCache - With the characteristic of expiration time.
+ * ExpiringCache - With the characteristic of expiration time.(具有过期时间特性)
  */
 
 /**
- * This class store the cache value with the characteristic of expiration time. If a service,method,consumer or provided is configured with key <b>cache</b>
+ * This class store the cache value with the characteristic（特性） of expiration time. If a service,method,consumer or provided is configured with key <b>cache</b>
  * with value <b>expiring</b>, dubbo initialize the instance of this class using {@link ExpiringCacheFactory} to store method's returns value
  * to server from store without making method call.
  * <pre>
@@ -40,7 +40,7 @@ import java.util.Map;
  * @see org.apache.dubbo.cache.support.AbstractCacheFactory
  * @see org.apache.dubbo.cache.filter.CacheFilter
  */
-public class ExpiringCache implements Cache {
+public class ExpiringCache implements Cache { //todo @csy 过期时间缓存是怎么使用的？
     private final Map<Object, Object> store;
 
     public ExpiringCache(URL url) {

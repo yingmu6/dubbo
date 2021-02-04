@@ -40,7 +40,10 @@ import java.util.Map;
  * @see org.apache.dubbo.cache.support.AbstractCacheFactory
  * @see org.apache.dubbo.cache.filter.CacheFilter
  */
-public class LruCache implements Cache {
+public class LruCache implements Cache { //@csy 功能用途
+    /**
+     * https://baike.baidu.com/item/LRU  LRU 最近最少使用
+     */
 
     /**
      * This is used to store cache records

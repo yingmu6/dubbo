@@ -23,7 +23,7 @@ import com.alibaba.dubbo.common.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MyCache implements Cache {
+public class MyCache implements Cache { //todo @csy 这是测试类吗？哪里使用的
 
     private Map<Object, Object> map = new HashMap<Object, Object>();
 

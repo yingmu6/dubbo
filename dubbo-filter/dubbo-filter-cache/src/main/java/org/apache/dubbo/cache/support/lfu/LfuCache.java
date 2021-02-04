@@ -38,7 +38,10 @@ import org.apache.dubbo.common.utils.LFUCache;
  * @see org.apache.dubbo.cache.support.AbstractCacheFactory
  * @see org.apache.dubbo.cache.filter.CacheFilter
  */
-public class LfuCache implements Cache {
+public class LfuCache implements Cache { //todo @csy 用途是啥？lfu是啥意思？
+    /**
+     *
+     */
 
     /**
      * This is used to store cache records

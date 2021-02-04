@@ -41,7 +41,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.METHOD_KEY;
  * @see org.apache.dubbo.cache.support.AbstractCacheFactory
  * @see org.apache.dubbo.cache.filter.CacheFilter
  */
-public class JCache implements org.apache.dubbo.cache.Cache {
+public class JCache implements org.apache.dubbo.cache.Cache { //todo @csy 都缓存了哪些内容？用途是怎样的？
 
     private final Cache<Object, Object> store;
 
@@ -52,13 +52,13 @@ public class JCache implements org.apache.dubbo.cache.Cache {
         String type = url.getParameter("jcache");
 
         CachingProvider provider = StringUtils.isEmpty(type) ? Caching.getCachingProvider() : Caching.getCachingProvider(type);
-        CacheManager cacheManager = provider.getCacheManager();
+        CacheManager cacheManager = provider.getCacheManager(); //todo @csy javax的缓存管理了解以及实践
         Cache<Object, Object> cache = cacheManager.getCache(key);
         if (cache == null) {
             try {
                 //configure the cache
                 MutableConfiguration config =
-                        new MutableConfiguration<>()
+                        new MutableConfiguration<>() //todo @csy 缓存策略是什么？源码查看下
                                 .setTypes(Object.class, Object.class)
                                 .setExpiryPolicyFactory(CreatedExpiryPolicy.factoryOf(new Duration(TimeUnit.MILLISECONDS, url.getMethodParameter(method, "cache.write.expire", 60 * 1000))))
                                 .setStoreByValue(false)

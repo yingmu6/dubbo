@@ -20,7 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class LRUCache<K, V> extends LinkedHashMap<K, V> {
+public class LRUCache<K, V> extends LinkedHashMap<K, V> { //todo @csy 用途以及使用的地方？
 
     private static final long serialVersionUID = -5167631809472116969L;
 
@@ -45,10 +45,10 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V> {
     }
 
     @Override
-    public boolean containsKey(Object key) {
+    public boolean containsKey(Object key) { //加锁处理
         lock.lock();
         try {
-            return super.containsKey(key);
+            return super.containsKey(key); //todo @csy Map、HashMap、LinkedHashMap了解
         } finally {
             lock.unlock();
         }

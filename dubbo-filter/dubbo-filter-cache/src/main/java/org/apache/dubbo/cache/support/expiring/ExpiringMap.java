@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * can be expired map
- * Contains a background thread that periodically checks if the data is out of date
+ * Contains a background thread(后台线程) that periodically checks(定期检查) if the data is out of date
  */
 public class ExpiringMap<K, V> implements Map<K, V> {
 
@@ -37,7 +37,7 @@ public class ExpiringMap<K, V> implements Map<K, V> {
     private static final int DEFAULT_TIME_TO_LIVE = 180;
 
     /**
-     * default expire check interval (second)
+     * default expire check interval（时间间隔） (second)
      */
     private static final int DEFAULT_EXPIRATION_INTERVAL = 1;
 
@@ -194,7 +194,7 @@ public class ExpiringMap<K, V> implements Map<K, V> {
     /**
      * can be expired object
      */
-    private class ExpiryObject {
+    private class ExpiryObject { //过期对象，内部类
         private K key;
         private V value;
         private AtomicLong lastAccessTime;
@@ -247,10 +247,10 @@ public class ExpiringMap<K, V> implements Map<K, V> {
     /**
      * Background thread, periodically checking if the data is out of date
      */
-    public class ExpireThread implements Runnable {
-        private long timeToLiveMillis;
-        private long expirationIntervalMillis;
-        private volatile boolean running = false;
+    public class ExpireThread implements Runnable { //后台线程，定期检查数据是否过期
+        private long timeToLiveMillis; //存活的时间
+        private long expirationIntervalMillis; //过期的时间间隔
+        private volatile boolean running = false; //todo @csy volatile的原理？
         private final Thread expirerThread;
 
         @Override
@@ -265,12 +265,12 @@ public class ExpiringMap<K, V> implements Map<K, V> {
 
         public ExpireThread() {
             expirerThread = new Thread(this, "ExpiryMapExpire-" + expireCount.getAndIncrement());
-            expirerThread.setDaemon(true);
+            expirerThread.setDaemon(true); //守护线程
         }
 
         @Override
         public void run() {
-            while (running) {
+            while (running) { //判断线程运行标识
                 processExpires();
                 try {
                     Thread.sleep(expirationIntervalMillis);
@@ -287,7 +287,7 @@ public class ExpiringMap<K, V> implements Map<K, V> {
                     continue;
                 }
                 long timeIdle = timeNow - o.getLastAccessTime();
-                if (timeIdle >= timeToLiveMillis) {
+                if (timeIdle >= timeToLiveMillis) { //若超过存活时间，则移除相关的键
                     delegateMap.remove(o.getKey());
                 }
             }

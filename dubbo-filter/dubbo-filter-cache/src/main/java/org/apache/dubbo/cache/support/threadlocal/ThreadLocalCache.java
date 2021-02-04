@@ -38,12 +38,12 @@ import java.util.Map;
  * @see org.apache.dubbo.cache.filter.CacheFilter
  * @see Cache
  */
-public class ThreadLocalCache implements Cache {
+public class ThreadLocalCache implements Cache { //todo @csy 线程缓存是指啥？
 
     /**
      * Thread local variable to store cached data.
      */
-    private final ThreadLocal<Map<Object, Object>> store;
+    private final ThreadLocal<Map<Object, Object>> store; //todo @csy ThreadLocal 待了解
 
     /**
      * Taken URL as an argument to create an instance of ThreadLocalCache. In this version of implementation constructor
