@@ -43,7 +43,7 @@ import java.util.Map;
 public class ExpiringCache implements Cache { //todo @csy 过期时间缓存是怎么使用的？
     private final Map<Object, Object> store;
 
-    public ExpiringCache(URL url) {
+    public ExpiringCache(URL url) { //todo @csy 过期了的缓存是怎么处理的？
         // cache time (second)
         final int secondsToLive = url.getParameter("cache.seconds", 180);
         // Cache check interval (second)

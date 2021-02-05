@@ -48,7 +48,7 @@ import static org.apache.dubbo.common.constants.FilterConstants.CACHE_KEY;
  *        3)&lt;dubbo:provider cache="expiring" /&gt;
  *        4)&lt;dubbo:consumer cache="jcache" /&gt;
  *
- *If cache type is defined in method level then method level type will get precedence. According to above provided
+ *If cache type is defined in method level then method level type will get precedence(方法级别优先). According to above provided
  *example, if service has two method, method1 and method2, method2 will have cache type as <b>threadlocal</b> where others will
  *be backed by <b>lru</b>
  *</pre>
@@ -70,7 +70,8 @@ public class CacheFilter implements Filter {
     private CacheFactory cacheFactory;
 
     /**
-     * Dubbo will populate and set the cache factory instance based on service/method/consumer/provider configured
+     * todo @csy 缓存是默认填充的？都会有缓存？
+     * Dubbo will populate（填充） and set the cache factory instance based on service/method/consumer/provider configured
      * cache attribute value. Dubbo will search for the class name implementing configured <b>cache</b> in file org.apache.dubbo.cache.CacheFactory
      * under META-INF sub folders.
      *
@@ -91,6 +92,9 @@ public class CacheFilter implements Filter {
      */
     @Override
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
+        /**
+         * 从缓存中
+         */
         if (cacheFactory != null && ConfigUtils.isNotEmpty(invoker.getUrl().getMethodParameter(invocation.getMethodName(), CACHE_KEY))) {
             Cache cache = cacheFactory.getCache(invoker.getUrl(), invocation);
             if (cache != null) {

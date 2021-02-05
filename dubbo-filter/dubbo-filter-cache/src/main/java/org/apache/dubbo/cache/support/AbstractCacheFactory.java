@@ -51,11 +51,11 @@ public abstract class AbstractCacheFactory implements CacheFactory {
      * @return Instance of cache store used as storage for caching return values.
      */
     @Override
-    public Cache getCache(URL url, Invocation invocation) {
+    public Cache getCache(URL url, Invocation invocation) { // 通过url、invocation组装缓存的key
         url = url.addParameter(METHOD_KEY, invocation.getMethodName());
         String key = url.toFullString();
         Cache cache = caches.get(key);
-        if (cache == null) {
+        if (cache == null) { //缓存为空，则创建缓存
             caches.put(key, createCache(url));
             cache = caches.get(key);
         }

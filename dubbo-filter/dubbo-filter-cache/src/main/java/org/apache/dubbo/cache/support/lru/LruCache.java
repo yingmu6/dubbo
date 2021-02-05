@@ -55,8 +55,8 @@ public class LruCache implements Cache { //@csy 功能用途
      *  If nothing is provided then it will use 1000 as default value.
      * @param url A valid URL instance
      */
-    public LruCache(URL url) {
-        final int max = url.getParameter("cache.size", 1000);
+    public LruCache(URL url) { //初始化缓存
+        final int max = url.getParameter("cache.size", 1000); //todo @csy 怎样处理校验缓存的大小的？
         this.store = new LRUCache<>(max);
     }
 
