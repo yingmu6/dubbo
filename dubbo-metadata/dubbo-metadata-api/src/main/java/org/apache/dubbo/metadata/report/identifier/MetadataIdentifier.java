@@ -24,7 +24,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.SIDE_KEY;
 import static org.apache.dubbo.common.constants.CommonConstants.VERSION_KEY;
 
 /**
- * The MetadataIdentifier is used to store method descriptor.
+ * The MetadataIdentifier is used to store method descriptor（存储方法的描述）.
  * <p>
  * The name of class is reserved because of it has been used in the previous version.
  * <p>

@@ -29,8 +29,9 @@ public class BaseServiceMetadata {
     protected String version;
     protected volatile String group;
 
+    // 构建服务key，group/path:version
     public static String buildServiceKey(String path, String group, String version) {
-        StringBuilder buf = new StringBuilder();
+        StringBuilder buf = new StringBuilder(); //todo @csy StringBuilder与StringBuffer的区别？
         if (group != null && group.length() > 0) {
             buf.append(group).append("/");
         }

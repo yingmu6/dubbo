@@ -33,6 +33,8 @@ import static org.apache.dubbo.rpc.model.ApplicationModel.getName;
  */
 @SPI(DEFAULT_METADATA_STORAGE_TYPE)
 public interface WritableMetadataService extends MetadataService {
+    //todo @csy 元数据的存储方式有哪几种？本地内容和远程存储吗？该接口的用途？
+
     /**
      * Gets the current Dubbo Service name
      *

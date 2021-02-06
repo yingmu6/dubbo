@@ -29,7 +29,7 @@ import static org.apache.dubbo.metadata.MetadataConstants.KEY_SEPARATOR;
  * <p>
  * 2019-08-09
  */
-public class BaseServiceMetadataIdentifier {
+public class BaseServiceMetadataIdentifier {//元数据保存的内容
     String serviceInterface;
     String version;
     String group;

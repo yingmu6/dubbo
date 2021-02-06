@@ -31,7 +31,7 @@ import static org.apache.dubbo.common.utils.StringUtils.replace;
  *
  * @since 2.7.6
  */
-public interface PathUtils {
+public interface PathUtils {//todo @csy 待调试了解
 
     static String buildPath(String rootPath, String... subPaths) {
 

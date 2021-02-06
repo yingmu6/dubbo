@@ -31,7 +31,7 @@ public enum MetadataServiceType {
     /**
      * The default type of {@link MetadataService}
      */
-    DEFAULT(DEFAULT_METADATA_STORAGE_TYPE),
+    DEFAULT(DEFAULT_METADATA_STORAGE_TYPE), //默认本地存储
 
     /**
      * The remote type of {@link MetadataService}
@@ -41,7 +41,7 @@ public enum MetadataServiceType {
     /**
      * The composite type of {@link MetadataService}
      */
-    COMPOSITE(COMPOSITE_METADATA_STORAGE_TYPE);
+    COMPOSITE(COMPOSITE_METADATA_STORAGE_TYPE); //todo @csy 综合类型是怎么使用的？
 
     /**
      * The {@link String} value of type

@@ -32,7 +32,7 @@ import static org.apache.dubbo.common.URL.buildKey;
 
 /**
  * A framework interface of Dubbo Metadata（元数据） Service defines the contract（联系） of Dubbo Services registartion（注册） and subscription（订阅）
- * between Dubbo service providers and its consumers. The implementation will be exported as a normal Dubbo service that
+ * between Dubbo service providers and its consumers. The implementation will be exported as a normal Dubbo service that (会暴露dubbo服务)
  * the clients would subscribe, whose version comes from the {@link #version()} method and group gets from
  * {@link #serviceName()}, that means, The different Dubbo service(application) will export the different
  * {@link MetadataService} that persists all the exported and subscribed metadata, they are present by
@@ -42,7 +42,13 @@ import static org.apache.dubbo.common.URL.buildKey;
  * @see WritableMetadataService
  * @since 2.7.5
  */
-public interface MetadataService { //todo @csy 功能用途是啥？Metadata是指啥？元数据指啥？
+public interface MetadataService {
+    /**
+     * @csy 功能用途是啥？Metadata是指啥？元数据指啥？会暴露dubbo服务？是用来管理注册的数据的吗？
+     * 解：用来管理服务分组、服务版本、服务名、方法列表、方法参数列表、超时时间等数据，以key-value形式持久化存储
+     * https://lexburner.github.io/dubbo-metadata/
+     * https://dubbo.apache.org/zh/docs/v2.7/user/references/metadata/
+     */
 
     //FIXME the value is default, it was used by testing temporarily （临时地）
     static final String DEFAULT_EXTENSION = "default";
@@ -80,7 +86,12 @@ public interface MetadataService { //todo @csy 功能用途是啥？Metadata是�
      * @return non-null
      * @see #VERSION
      */
-    default String version() { //todo @csy 默认接口的用途以及使用方式
+    default String version() {
+        /**
+         * @csy 默认接口的用途以及使用方式？默认接口需要实现吗？实现类能实现吗
+         * 解：默认方法就是接口可以有实现方法，而且不需要实现类去实现其方法。
+         * 实现类可以不实现默认方法，也可以实现覆盖
+         */
         return VERSION;
     }
 
@@ -92,6 +103,10 @@ public interface MetadataService { //todo @csy 功能用途是啥？Metadata是�
      * @see URL#toFullString()
      */
     default SortedSet<String> getSubscribedURLs() {
+        /**
+         * @csy 此处为啥会抛出异常？是只有实现了该接口，才不会不抛异常吗？
+         * 解：本意是需要有实现类直接覆盖，不能直接使用接口中的默认方法
+         */
         throw new UnsupportedOperationException("This operation is not supported for consumer.");
     }
 
@@ -102,7 +117,7 @@ public interface MetadataService { //todo @csy 功能用途是啥？Metadata是�
      * @see #toSortedStrings(Stream)
      * @see URL#toFullString()
      */
-    default SortedSet<String> getExportedURLs() {
+    default SortedSet<String> getExportedURLs() {//@csy SortedSet是排好序的集合吗？ 解：是指排好序的集合
         return getExportedURLs(ALL_SERVICE_INTERFACES);
     }
 
@@ -148,6 +163,7 @@ public interface MetadataService { //todo @csy 功能用途是啥？Metadata是�
     }
 
     /**
+     * todo @csy 获取暴露的url是指什么？从哪里获取到的，注册中心吗？
      * Get the sorted set of String that presents the specified Dubbo exported {@link URL urls} by the
      * <code>serviceInterface</code>, <code>group</code>, <code>version</code> and <code>protocol</code>
      *
@@ -194,7 +210,7 @@ public interface MetadataService { //todo @csy 功能用途是啥？Metadata是�
      * @param urls the strings presents the {@link URL Dubbo URLs}
      * @return non-null
      */
-    static List<URL> toURLs(Iterable<String> urls) {
+    static List<URL> toURLs(Iterable<String> urls) { //todo @csy StreamSupport待了解？
         return stream(urls.spliterator(), false)
                 .map(URL::valueOf)
                 .collect(Collectors.toList());
@@ -208,7 +224,7 @@ public interface MetadataService { //todo @csy 功能用途是啥？Metadata是�
      * @return the non-null read-only {@link SortedSet sorted set} of {@link URL#toFullString() strings} presenting
      * @see URL#toFullString()
      */
-    static SortedSet<String> toSortedStrings(Iterable<URL> iterable) {
+    static SortedSet<String> toSortedStrings(Iterable<URL> iterable) {//todo @csy 是在做什么转换？
         return toSortedStrings(StreamSupport.stream(iterable.spliterator(), false));
     }
 
@@ -220,7 +236,7 @@ public interface MetadataService { //todo @csy 功能用途是啥？Metadata是�
      * @return the non-null read-only {@link SortedSet sorted set} of {@link URL#toFullString() strings} presenting
      * @see URL#toFullString()
      */
-    static SortedSet<String> toSortedStrings(Stream<URL> stream) {
+    static SortedSet<String> toSortedStrings(Stream<URL> stream) { //todo @csy Collections的unmodifiableSortedSet待了解
         return unmodifiableSortedSet(stream.map(URL::toFullString).collect(TreeSet::new, Set::add, Set::addAll));
     }
 }

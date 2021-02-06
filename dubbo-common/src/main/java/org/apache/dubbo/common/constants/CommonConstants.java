@@ -199,7 +199,7 @@ public interface CommonConstants {
      *
      * @since 2.7.8
      */
-    String COMPOSITE_METADATA_STORAGE_TYPE = "composite";
+    String COMPOSITE_METADATA_STORAGE_TYPE = "composite"; //composite综合
 
     /**
      * Consumer side 's proxy class

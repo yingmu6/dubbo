@@ -31,7 +31,7 @@ import static org.apache.dubbo.metadata.MetadataConstants.KEY_REVISON_PREFIX;
  */
 public class ServiceMetadataIdentifier extends BaseServiceMetadataIdentifier implements BaseMetadataIdentifier {
 
-    private String revision;
+    private String revision; //修订版
     private String protocol;
 
     public ServiceMetadataIdentifier() {

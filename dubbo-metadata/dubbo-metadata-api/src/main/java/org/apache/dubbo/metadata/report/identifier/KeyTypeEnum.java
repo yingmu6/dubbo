@@ -27,7 +27,7 @@ import static org.apache.dubbo.metadata.MetadataConstants.KEY_SEPARATOR;
  */
 public enum KeyTypeEnum {
 
-    PATH(PATH_SEPARATOR) {
+    PATH(PATH_SEPARATOR) { //todo @csy  待调试了解
         public String build(String one, String... others) {
             return buildPath(one, others);
         }

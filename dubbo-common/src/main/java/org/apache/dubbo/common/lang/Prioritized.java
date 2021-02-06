@@ -26,7 +26,7 @@ import static java.lang.Integer.compare;
  *
  * @since 2.7.5
  */
-public interface Prioritized extends Comparable<Prioritized> {
+public interface Prioritized extends Comparable<Prioritized> { //todo @csy 比较逻辑是啥？Prioritized优先级是指啥？
 
     /**
      * The {@link Comparator} of {@link Prioritized}

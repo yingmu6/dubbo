@@ -81,12 +81,13 @@ public class InMemoryWritableMetadataService extends AbstractAbstractWritableMet
         return getAllUnmodifiableServiceURLs(subscribedServiceURLs);
     }
 
-    private SortedSet<String> getAllUnmodifiableServiceURLs(Map<String, SortedSet<URL>> serviceURLs) {
+    //todo @csy TreeSet是有怎样的特性？与SorterSet有啥关系？
+    private SortedSet<String> getAllUnmodifiableServiceURLs(Map<String, SortedSet<URL>> serviceURLs) {//Unmodifiable:无法修改的
         SortedSet<URL> bizURLs = new TreeSet<>(InMemoryWritableMetadataService.URLComparator.INSTANCE);
         for (Map.Entry<String, SortedSet<URL>> entry : serviceURLs.entrySet()) {
             SortedSet<URL> urls = entry.getValue();
             if (urls != null) {
-                for (URL url : urls) {
+                for (URL url : urls) { //todo @csy 待调试
                     if (!MetadataService.class.getName().equals(url.getServiceInterface())) {
                         bizURLs.add(url);
                     }
@@ -98,7 +99,7 @@ public class InMemoryWritableMetadataService extends AbstractAbstractWritableMet
 
     @Override
     public SortedSet<String> getExportedURLs(String serviceInterface, String group, String version, String protocol) {
-        if (ALL_SERVICE_INTERFACES.equals(serviceInterface)) {
+        if (ALL_SERVICE_INTERFACES.equals(serviceInterface)) { //所有的服务的实例
             return getAllUnmodifiableServiceURLs(exportedServiceURLs);
         }
         String serviceKey = buildKey(serviceInterface, group, version);

@@ -42,7 +42,7 @@ import static org.apache.dubbo.rpc.model.ApplicationModel.getName;
  *
  * @see AutoCloseable since 2.7.8
  */
-public interface MetadataReport extends AutoCloseable {
+public interface MetadataReport extends AutoCloseable {//todo @csy 元数据值怎么上报的？
 
     void storeProviderMetadata(MetadataIdentifier providerMetadataIdentifier, ServiceDefinition serviceDefinition);
 
