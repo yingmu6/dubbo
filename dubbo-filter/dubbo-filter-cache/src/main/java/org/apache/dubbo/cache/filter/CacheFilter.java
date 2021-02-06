@@ -120,7 +120,7 @@ public class CacheFilter implements Filter {
     /**
      * Cache value wrapper.
      */
-    static class ValueWrapper implements Serializable {
+    static class ValueWrapper implements Serializable { //todo @csy 静态方法有缓存效果？缓存都有哪些方式？
 
         private static final long serialVersionUID = -1777337318019193256L;
 

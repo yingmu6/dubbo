@@ -63,7 +63,7 @@ public class RemoteMetadataServiceProxy implements MetadataService {
 
     @Override
     public SortedSet<String> getExportedURLs(String serviceInterface, String group, String version, String protocol) {
-
+        // todo @csy 该方法的用途？
         SortedSet<String> exportedURLs = getMetadataReport().getExportedURLs(serviceName, revision);
         if (ALL_SERVICE_INTERFACES.equals(serviceInterface)) {
             return exportedURLs;

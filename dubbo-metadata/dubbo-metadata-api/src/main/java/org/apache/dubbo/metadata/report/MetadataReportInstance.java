@@ -28,7 +28,7 @@ import static org.apache.dubbo.metadata.report.support.Constants.METADATA_REPORT
 /**
  * 2019-08-09
  */
-public class MetadataReportInstance {
+public class MetadataReportInstance { //todo @csy 该类的用途是？
 
     private static AtomicBoolean init = new AtomicBoolean(false);
 

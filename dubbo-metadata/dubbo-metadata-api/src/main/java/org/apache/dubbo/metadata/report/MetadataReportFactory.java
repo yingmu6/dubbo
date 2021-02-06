@@ -23,7 +23,7 @@ import org.apache.dubbo.common.extension.SPI;
 /**
  */
 @SPI("redis")
-public interface MetadataReportFactory {
+public interface MetadataReportFactory {// todo @csy 各个事项的差异？
 
     @Adaptive({"protocol"})
     MetadataReport getMetadataReport(URL url);

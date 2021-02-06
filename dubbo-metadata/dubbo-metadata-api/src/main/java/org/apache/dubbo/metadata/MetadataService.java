@@ -31,7 +31,7 @@ import static java.util.stream.StreamSupport.stream;
 import static org.apache.dubbo.common.URL.buildKey;
 
 /**
- * A framework interface of Dubbo Metadata Service defines the contract of Dubbo Services registartion and subscription
+ * A framework interface of Dubbo Metadata（元数据） Service defines the contract（联系） of Dubbo Services registartion（注册） and subscription（订阅）
  * between Dubbo service providers and its consumers. The implementation will be exported as a normal Dubbo service that
  * the clients would subscribe, whose version comes from the {@link #version()} method and group gets from
  * {@link #serviceName()}, that means, The different Dubbo service(application) will export the different
@@ -42,9 +42,9 @@ import static org.apache.dubbo.common.URL.buildKey;
  * @see WritableMetadataService
  * @since 2.7.5
  */
-public interface MetadataService {
+public interface MetadataService { //todo @csy 功能用途是啥？Metadata是指啥？元数据指啥？
 
-    //FIXME the value is default, it was used by testing temporarily
+    //FIXME the value is default, it was used by testing temporarily （临时地）
     static final String DEFAULT_EXTENSION = "default";
 
     /**
@@ -80,7 +80,7 @@ public interface MetadataService {
      * @return non-null
      * @see #VERSION
      */
-    default String version() {
+    default String version() { //todo @csy 默认接口的用途以及使用方式
         return VERSION;
     }
 
