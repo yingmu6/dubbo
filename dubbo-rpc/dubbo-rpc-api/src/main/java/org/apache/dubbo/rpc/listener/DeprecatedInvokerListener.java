@@ -34,7 +34,7 @@ public class DeprecatedInvokerListener extends InvokerListenerAdapter {
 
     @Override
     public void referred(Invoker<?> invoker) throws RpcException {
-        if (invoker.getUrl().getParameter(DEPRECATED_KEY, false)) {
+        if (invoker.getUrl().getParameter(DEPRECATED_KEY, false)) {//检测服务是否已弃用
             LOGGER.error("The service " + invoker.getInterface().getName() + " is DEPRECATED! Declare from " + invoker.getUrl());
         }
     }

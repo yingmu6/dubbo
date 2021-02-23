@@ -30,6 +30,6 @@
 
     <bean id="demoService" class="org.apache.dubbo.demo.provider.DemoServiceImpl"/>
 
-    <dubbo:service interface="org.apache.dubbo.demo.DemoService" ref="demoService"/>
+    <dubbo:service interface="org.apache.dubbo.demo.DemoService" ref="demoService" filter=""/>
 
 </beans>

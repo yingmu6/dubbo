@@ -18,7 +18,7 @@ package org.apache.dubbo.rpc;
 
 import java.util.concurrent.TimeUnit;
 
-public final class TimeoutCountDown implements Comparable<TimeoutCountDown> {
+public final class TimeoutCountDown implements Comparable<TimeoutCountDown> { //todo @csy 时间比较器？用途是啥？具体引用的地方是哪里？
 
   public static TimeoutCountDown newCountDown(long timeout, TimeUnit unit) {
     return new TimeoutCountDown(timeout, unit);
@@ -56,7 +56,7 @@ public final class TimeoutCountDown implements Comparable<TimeoutCountDown> {
     return unit.convert(deadlineInNanos - currentNanos, TimeUnit.NANOSECONDS);
   }
 
-  public long elapsedMillis() {
+  public long elapsedMillis() { //todo @csy 计算方式了解下
     if (isExpired()) {
       return timeoutInMillis + TimeUnit.MILLISECONDS.convert(System.nanoTime() - deadlineInNanos, TimeUnit.NANOSECONDS);
     } else {

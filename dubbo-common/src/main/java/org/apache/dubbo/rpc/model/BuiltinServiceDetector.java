@@ -19,7 +19,7 @@ package org.apache.dubbo.rpc.model;
 import org.apache.dubbo.common.extension.SPI;
 
 @SPI
-public interface BuiltinServiceDetector {
+public interface BuiltinServiceDetector { //todo @csy 该接口的用途是怎样的？ builtin：装入的，内装式
 
     Class<?> getService();
 

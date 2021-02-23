@@ -22,7 +22,7 @@ import org.apache.dubbo.common.extension.SPI;
  * InvokerListener. (SPI, Singleton, ThreadSafe)
  */
 @SPI
-public interface InvokerListener {
+public interface InvokerListener { //todo @csy 功能用途是怎样的？
 
     /**
      * The invoker referred

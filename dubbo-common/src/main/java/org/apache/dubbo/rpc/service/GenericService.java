@@ -37,12 +37,12 @@ public interface GenericService {
      */
     Object $invoke(String method, String[] parameterTypes, Object[] args) throws GenericException;
 
-    default CompletableFuture<Object> $invokeAsync(String method, String[] parameterTypes, Object[] args) throws GenericException {
+    default CompletableFuture<Object> $invokeAsync(String method, String[] parameterTypes, Object[] args) throws GenericException { //异步调用
         Object object = $invoke(method, parameterTypes, args);
         if (object instanceof CompletableFuture) {
             return (CompletableFuture<Object>) object;
         }
-        return CompletableFuture.completedFuture(object);
+        return CompletableFuture.completedFuture(object); //todo @csy CompletableFuture 了解以及使用
     }
 
 }

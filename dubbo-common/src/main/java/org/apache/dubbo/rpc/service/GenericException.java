@@ -23,7 +23,7 @@ import org.apache.dubbo.common.utils.StringUtils;
  *
  * @export
  */
-public class GenericException extends RuntimeException {
+public class GenericException extends RuntimeException { //泛型异常
 
     private static final long serialVersionUID = -1182299763306599962L;
 

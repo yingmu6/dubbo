@@ -36,6 +36,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.TIME_COUNTDOWN_K
 /**
  * ConsumerContextFilter set current RpcContext with invoker,invocation, local host, remote host and port
  * for consumer invoker.It does it to make the requires info available to execution thread's RpcContext.
+ * （消费者执行调用前，根据invoker，invocation等信息设置RpcContext）
  *
  * @see org.apache.dubbo.rpc.Filter
  * @see RpcContext
@@ -46,7 +47,7 @@ public class ConsumerContextFilter implements Filter {
     @Override
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
         RpcContext context = RpcContext.getContext();
-        context.setInvoker(invoker)
+        context.setInvoker(invoker) //调用前设置RpcContext信息
                 .setInvocation(invocation)
                 .setLocalAddress(NetUtils.getLocalHost(), 0)
                 .setRemoteAddress(invoker.getUrl().getHost(), invoker.getUrl().getPort())

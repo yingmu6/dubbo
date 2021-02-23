@@ -56,7 +56,7 @@ import static org.apache.dubbo.rpc.Constants.TOKEN_KEY;
  * @see RpcContext
  */
 @Activate(group = PROVIDER, order = -10000)
-public class ContextFilter implements Filter, Filter.Listener {
+public class ContextFilter implements Filter, Filter.Listener {//todo @csy 提供者的上下文，待调试
 
     private static final String TAG_KEY = "dubbo.tag";
 
@@ -86,7 +86,7 @@ public class ContextFilter implements Filter, Filter.Listener {
             Map<String, Object> newAttach = new HashMap<>(attachments.size());
             for (Map.Entry<String, Object> entry : attachments.entrySet()) {
                 String key = entry.getKey();
-                if (!UNLOADING_KEYS.contains(key)) {
+                if (!UNLOADING_KEYS.contains(key)) { //不在初始化的集合中，就设置到集合中
                     newAttach.put(key, entry.getValue());
                 }
             }

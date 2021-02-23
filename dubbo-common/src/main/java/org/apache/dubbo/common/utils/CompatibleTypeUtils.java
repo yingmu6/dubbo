@@ -48,7 +48,7 @@ public class CompatibleTypeUtils {
      * </ul>
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static Object compatibleTypeConvert(Object value, Class<?> type) {
+    public static Object compatibleTypeConvert(Object value, Class<?> type) { //todo @csy 方法待了解以及调试
         if (value == null || type == null || type.isAssignableFrom(value.getClass())) {
             return value;
         }

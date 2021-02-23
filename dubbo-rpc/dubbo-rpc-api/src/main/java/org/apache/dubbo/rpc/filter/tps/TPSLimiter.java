@@ -27,7 +27,7 @@ import org.apache.dubbo.rpc.Invocation;
  *     should not be allowed <b>isAllowable</b> will return false.
  * </pre>
  */
-public interface TPSLimiter {
+public interface TPSLimiter { //todo @csy tps限制了啥？tps的规则有哪些？怎样配置使用tps
 
     /**
      * judge if the current invocation is allowed by TPS rule

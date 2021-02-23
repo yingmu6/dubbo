@@ -254,10 +254,10 @@ public class ExtensionLoader<T> {
      * @param url    url
      * @param values extension point names
      * @param group  group
-     * @return extension list which are activated
+     * @return extension list which are activated （返回匹配的扩展类列表）
      * @see org.apache.dubbo.common.extension.Activate
      */
-    public List<T> getActivateExtension(URL url, String[] values, String group) {
+    public List<T> getActivateExtension(URL url, String[] values, String group) { //获取Activate对应的扩展类列表
         List<T> activateExtensions = new ArrayList<>();
         List<String> names = values == null ? new ArrayList<>(0) : asList(values);
         if (!names.contains(REMOVE_VALUE_PREFIX + DEFAULT_KEY)) {
@@ -888,6 +888,9 @@ public class ExtensionLoader<T> {
         return false;
     }
 
+    /**
+     * 读取配置文件中的内容，并加载到缓存中
+     */
     private void loadClass(Map<String, Class<?>> extensionClasses, java.net.URL resourceURL, Class<?> clazz, String name,
                            boolean overridden) throws NoSuchMethodException {
         if (!type.isAssignableFrom(clazz)) {
@@ -895,9 +898,9 @@ public class ExtensionLoader<T> {
                     type + ", class line: " + clazz.getName() + "), class "
                     + clazz.getName() + " is not subtype of interface.");
         }
-        if (clazz.isAnnotationPresent(Adaptive.class)) {
+        if (clazz.isAnnotationPresent(Adaptive.class)) { //自适应类型
             cacheAdaptiveClass(clazz, overridden);
-        } else if (isWrapperClass(clazz)) {
+        } else if (isWrapperClass(clazz)) { //封装类型
             cacheWrapperClass(clazz);
         } else {
             clazz.getConstructor();
@@ -910,7 +913,7 @@ public class ExtensionLoader<T> {
 
             String[] names = NAME_SEPARATOR.split(name);
             if (ArrayUtils.isNotEmpty(names)) {
-                cacheActivateClass(clazz, names[0]);
+                cacheActivateClass(clazz, names[0]); // 自动激活类型，todo @csy 此处为啥只取name[0] ？
                 for (String n : names) {
                     cacheName(clazz, n);
                     saveInExtensionClass(extensionClasses, clazz, n, overridden);

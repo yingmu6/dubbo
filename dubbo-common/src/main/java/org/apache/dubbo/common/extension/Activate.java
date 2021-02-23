@@ -25,7 +25,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Activate. This annotation is useful for automatically activate certain extensions with the given criteria,
+ * Activate. This annotation is useful for automatically activate（自动激活） certain（某些） extensions with the given criteria(条件),
  * for examples: <code>@Activate</code> can be used to load certain <code>Filter</code> extension when there are
  * multiple implementations.
  * <ol>

@@ -16,7 +16,7 @@
  */
 package org.apache.dubbo.rpc.service;
 
-public interface Destroyable {
+public interface Destroyable { //todo @csy 在哪里使用？为啥没有实现类
 
     void $destroy();
 
