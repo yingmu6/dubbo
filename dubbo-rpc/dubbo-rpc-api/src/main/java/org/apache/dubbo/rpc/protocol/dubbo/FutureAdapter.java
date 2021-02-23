@@ -28,7 +28,7 @@ import java.util.concurrent.TimeoutException;
 /**
  * This is the type of the Future instance users get in an async call:
  * 1. unwrap AppResponse in appResponseFuture and convert to plain biz result represented by FutureAdapter.
- * 2. customized behaviors meaningful for RPC, for example, {@link #cancel(boolean)}
+ * 2. customized（定制） behaviors meaningful for RPC, for example, {@link #cancel(boolean)}
  */
 public class FutureAdapter<V> extends CompletableFuture<V> {
 
@@ -36,7 +36,7 @@ public class FutureAdapter<V> extends CompletableFuture<V> {
 
     public FutureAdapter(CompletableFuture<AppResponse> future) {
         this.appResponseFuture = future;
-        future.whenComplete((appResponse, t) -> {
+        future.whenComplete((appResponse, t) -> { //todo @csy CompletableFuture 使用了解
             if (t != null) {
                 if (t instanceof CompletionException) {
                     t = t.getCause();
@@ -74,7 +74,7 @@ public class FutureAdapter<V> extends CompletableFuture<V> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public V get() throws InterruptedException, ExecutionException {
+    public V get() throws InterruptedException, ExecutionException { //todo @csy 该方法的用途是啥？
         try {
             return super.get();
         } catch (ExecutionException | InterruptedException e) {

@@ -29,7 +29,7 @@ import java.net.InetSocketAddress;
  * @see org.apache.dubbo.remoting.Transporter#bind(org.apache.dubbo.common.URL, ChannelHandler)
  * @see org.apache.dubbo.remoting.Transporter#connect(org.apache.dubbo.common.URL, ChannelHandler)
  */
-public class RemotingException extends Exception {
+public class RemotingException extends Exception { //todo @csy dubbo的异常处理都有哪些？
 
     private static final long serialVersionUID = -3160452149606778709L;
 

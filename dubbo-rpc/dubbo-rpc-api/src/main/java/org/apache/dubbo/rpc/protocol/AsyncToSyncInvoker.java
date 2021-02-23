@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @param <T>
  */
-public class AsyncToSyncInvoker<T> implements Invoker<T> {
+public class AsyncToSyncInvoker<T> implements Invoker<T> { //todo @csy 异步转同步？是怎么实现的？
 
     private Invoker<T> invoker;
 

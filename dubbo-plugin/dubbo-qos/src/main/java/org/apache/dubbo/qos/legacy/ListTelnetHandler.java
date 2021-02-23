@@ -42,7 +42,7 @@ public class ListTelnetHandler implements TelnetHandler {
     private ServiceRepository serviceRepository = ApplicationModel.getServiceRepository();
 
     @Override
-    public String telnet(Channel channel, String message) {
+    public String telnet(Channel channel, String message) {//todo @csy 显示服务列表的实现逻辑是怎样的？
         StringBuilder buf = new StringBuilder();
         String service = null;
         boolean detail = false;

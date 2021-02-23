@@ -49,7 +49,7 @@ public class ListenerInvokerWrapper<T> implements Invoker<T> {
             for (InvokerListener listener : listeners) {
                 if (listener != null) {
                     try {
-                        listener.referred(invoker);
+                        listener.referred(invoker); //引用服务
                     } catch (Throwable t) {
                         logger.error(t.getMessage(), t);
                     }

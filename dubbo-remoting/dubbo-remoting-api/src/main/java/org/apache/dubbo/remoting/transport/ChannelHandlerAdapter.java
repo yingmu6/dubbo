@@ -23,7 +23,7 @@ import org.apache.dubbo.remoting.RemotingException;
 /**
  * ChannelHandlerAdapter.
  */
-public class ChannelHandlerAdapter implements ChannelHandler {
+public class ChannelHandlerAdapter implements ChannelHandler { //通道处理适配器，给出空实现，子类有选择重写方法
 
     @Override
     public void connected(Channel channel) throws RemotingException {

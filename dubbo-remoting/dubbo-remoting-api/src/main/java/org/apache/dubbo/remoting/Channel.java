@@ -25,7 +25,7 @@ import java.net.InetSocketAddress;
  * @see RemotingServer#getChannels()
  * @see RemotingServer#getChannel(InetSocketAddress)
  */
-public interface Channel extends Endpoint {
+public interface Channel extends Endpoint { //todo @csy 通道的概念是怎样的？
 
     /**
      * get remote address.

@@ -70,10 +70,10 @@ public abstract class AbstractProtocol implements Protocol {
     }
 
     @Override
-    public void destroy() {
+    public void destroy() { //销毁协议
         for (Invoker<?> invoker : invokers) {
             if (invoker != null) {
-                invokers.remove(invoker);
+                invokers.remove(invoker); //从本地缓存中移除invoker并销毁
                 try {
                     if (logger.isInfoEnabled()) {
                         logger.info("Destroy reference: " + invoker.getUrl());
@@ -85,7 +85,7 @@ public abstract class AbstractProtocol implements Protocol {
             }
         }
         for (String key : new ArrayList<String>(exporterMap.keySet())) {
-            Exporter<?> exporter = exporterMap.remove(key);
+            Exporter<?> exporter = exporterMap.remove(key); //从本地缓存中移除exporter，并取消暴露
             if (exporter != null) {
                 try {
                     if (logger.isInfoEnabled()) {
@@ -104,6 +104,7 @@ public abstract class AbstractProtocol implements Protocol {
         return new AsyncToSyncInvoker<>(protocolBindingRefer(type, url));
     }
 
+    // todo @csy 协议绑定引用？用途和含义是啥？子类的具体实现是怎样的？
     protected abstract <T> Invoker<T> protocolBindingRefer(Class<T> type, URL url) throws RpcException;
 
     public Map<String, Exporter<?>> getExporterMap() {

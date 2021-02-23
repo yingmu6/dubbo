@@ -22,7 +22,7 @@ import org.apache.dubbo.common.extension.SPI;
  * ExporterListener. (SPI, Singleton, ThreadSafe)
  */
 @SPI
-public interface ExporterListener {
+public interface ExporterListener { //todo @csy 暴露监听器是怎么被使用的？
 
     /**
      * The exporter exported.
