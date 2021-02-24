@@ -18,7 +18,7 @@ package org.apache.dubbo.common.extension;
 
 import org.apache.dubbo.common.lang.Prioritized;
 
-public interface LoadingStrategy extends Prioritized {
+public interface LoadingStrategy extends Prioritized { //加载策略：加载不同目录的文件，形成不同的策略
 
     String directory();
 
@@ -31,7 +31,7 @@ public interface LoadingStrategy extends Prioritized {
     }
 
     /**
-     * Indicates current {@link LoadingStrategy} supports overriding other lower prioritized instances or not.
+     * Indicates（表示） current {@link LoadingStrategy} supports overriding other lower prioritized instances or not.
      *
      * @return if supports, return <code>true</code>, or <code>false</code>
      * @since 2.7.7

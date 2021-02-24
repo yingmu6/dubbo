@@ -1340,7 +1340,7 @@ class URL implements Serializable {
         return buildString(false, true, parameters); // no show username and password
     }
 
-    public String toIdentityString() {
+    public String toIdentityString() { //构建包含身份信息的url字符串，如username、password
         if (identity != null) {
             return identity;
         }
@@ -1375,19 +1375,19 @@ class URL implements Serializable {
         return buf.toString();
     }
 
-    private void buildParameters(StringBuilder buf, boolean concat, String[] parameters) {
+    private void buildParameters(StringBuilder buf, boolean concat, String[] parameters) { //将参数列表进行拼接
         if (CollectionUtils.isNotEmptyMap(getParameters())) {
             List<String> includes = (ArrayUtils.isEmpty(parameters) ? null : Arrays.asList(parameters));
             boolean first = true;
             for (Map.Entry<String, String> entry : new TreeMap<>(getParameters()).entrySet()) {
                 if (StringUtils.isNotEmpty(entry.getKey())
                         && (includes == null || includes.contains(entry.getKey()))) {
-                    if (first) {
+                    if (first) { //第一个参数
                         if (concat) {
                             buf.append("?");
                         }
                         first = false;
-                    } else {
+                    } else {  //其余参数
                         buf.append("&");
                     }
                     buf.append(entry.getKey());
@@ -1403,7 +1403,8 @@ class URL implements Serializable {
     }
 
     /**
-     * todo @csy 构建的url，待调试
+     * 构建的url字符串
+     * protocol://username:password@ip:port/path?parameter
      */
     private String buildString(boolean appendUser, boolean appendParameter, boolean useIP, boolean useService, String... parameters) {
         StringBuilder buf = new StringBuilder();

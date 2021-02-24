@@ -41,13 +41,14 @@ import static org.apache.dubbo.rpc.Constants.ACTIVES_KEY;
  *
  * @see Filter
  */
-@Activate(group = CONSUMER, value = ACTIVES_KEY)
-public class ActiveLimitFilter implements Filter, Filter.Listener { //todo @csy 用途是怎样的？限制并发调用数？
+@Activate(group = CONSUMER, value = ACTIVES_KEY)  //应用于消费端
+public class ActiveLimitFilter implements Filter, Filter.Listener { // 用途是怎样的？限制并发调用数？解：即从客户端方面限制了服务最多有并发个数
+
 
     private static final String ACTIVELIMIT_FILTER_START_TIME = "activelimit_filter_start_time";
 
     @Override
-    public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException { //todo @csy 过滤链是怎么组装的？
+    public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
         URL url = invoker.getUrl();
         String methodName = invocation.getMethodName();
         int max = invoker.getUrl().getMethodParameter(methodName, ACTIVES_KEY, 0);

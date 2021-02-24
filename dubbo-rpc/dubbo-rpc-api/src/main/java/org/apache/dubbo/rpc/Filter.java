@@ -47,7 +47,11 @@ public interface Filter {
      */
     Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException;
 
-    interface Listener { //todo @csy 什么地方会引用？
+    /**
+     * 什么地方会引用？解：实现类可以选择是否实现，如ActiveLimitFilter实现了Filter.Listener但AccessLogFilter没实现
+     * 相比2.5.6，多了信息响应以及异常处理
+     */
+    interface Listener {
         void onResponse(Result appResponse, Invoker<?> invoker, Invocation invocation);
 
         void onError(Throwable t, Invoker<?> invoker, Invocation invocation);

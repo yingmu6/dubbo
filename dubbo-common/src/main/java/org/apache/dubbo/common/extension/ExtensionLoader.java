@@ -89,7 +89,7 @@ public class ExtensionLoader<T> {
 
     private static final ConcurrentMap<Class<?>, Object> EXTENSION_INSTANCES = new ConcurrentHashMap<>(64);
 
-    private final Class<?> type;
+    private final Class<?> type; //todo @csy type值具体是怎样的？
 
     private final ExtensionFactory objectFactory;
 
@@ -122,7 +122,7 @@ public class ExtensionLoader<T> {
      * @return non-null
      * @since 2.7.7
      */
-    private static LoadingStrategy[] loadLoadingStrategies() {
+    private static LoadingStrategy[] loadLoadingStrategies() { //todo @csy 此处stream、load方法待了解
         return stream(load(LoadingStrategy.class).spliterator(), false)
                 .sorted()
                 .toArray(LoadingStrategy[]::new);
@@ -218,7 +218,7 @@ public class ExtensionLoader<T> {
      * @return extension list which are activated.
      * @see #getActivateExtension(org.apache.dubbo.common.URL, String, String)
      */
-    public List<T> getActivateExtension(URL url, String key) {
+    public List<T> getActivateExtension(URL url, String key) { //与url中的参数进行匹配
         return getActivateExtension(url, key, null);
     }
 
@@ -277,7 +277,7 @@ public class ExtensionLoader<T> {
                 } else {
                     continue;
                 }
-                if (isMatchGroup(group, activateGroup)
+                if (isMatchGroup(group, activateGroup) //比较分组group、值value
                         && !names.contains(name)
                         && !names.contains(REMOVE_VALUE_PREFIX + name)
                         && isActive(activateValue, url)) {
@@ -287,7 +287,7 @@ public class ExtensionLoader<T> {
             activateExtensions.sort(ActivateComparator.COMPARATOR);
         }
         List<T> loadedExtensions = new ArrayList<>();
-        for (int i = 0; i < names.size(); i++) {
+        for (int i = 0; i < names.size(); i++) { //todo @csy 待调试查看数据
             String name = names.get(i);
             if (!name.startsWith(REMOVE_VALUE_PREFIX)
                     && !names.contains(REMOVE_VALUE_PREFIX + name)) {
@@ -307,7 +307,7 @@ public class ExtensionLoader<T> {
         return activateExtensions;
     }
 
-    private boolean isMatchGroup(String group, String[] groups) {
+    private boolean isMatchGroup(String group, String[] groups) {//比较分组是否匹配
         if (StringUtils.isEmpty(group)) {
             return true;
         }
@@ -321,7 +321,7 @@ public class ExtensionLoader<T> {
         return false;
     }
 
-    private boolean isActive(String[] keys, URL url) {
+    private boolean isActive(String[] keys, URL url) { //比较值
         if (keys.length == 0) {
             return true;
         }
@@ -363,7 +363,7 @@ public class ExtensionLoader<T> {
         return (T) holder.get();
     }
 
-    private Holder<Object> getOrCreateHolder(String name) {
+    private Holder<Object> getOrCreateHolder(String name) {//获取或创建Holder
         Holder<Object> holder = cachedInstances.get(name);
         if (holder == null) {
             cachedInstances.putIfAbsent(name, new Holder<>());
@@ -635,10 +635,10 @@ public class ExtensionLoader<T> {
                 EXTENSION_INSTANCES.putIfAbsent(clazz, clazz.newInstance());
                 instance = (T) EXTENSION_INSTANCES.get(clazz);
             }
-            injectExtension(instance);
+            injectExtension(instance); //注入扩展实例
 
 
-            if (wrap) {
+            if (wrap) { //todo @csy 封装类处理方式
 
                 List<Class<?>> wrapperClassesList = new ArrayList<>();
                 if (cachedWrapperClasses != null) {
@@ -753,7 +753,7 @@ public class ExtensionLoader<T> {
 
     private Map<String, Class<?>> getExtensionClasses() {
         Map<String, Class<?>> classes = cachedClasses.get();
-        if (classes == null) {
+        if (classes == null) {//从缓存中获取扩展类，若不存在则从文件中读取，并加载到缓存中
             synchronized (cachedClasses) {
                 classes = cachedClasses.get();
                 if (classes == null) {
@@ -773,7 +773,7 @@ public class ExtensionLoader<T> {
 
         Map<String, Class<?>> extensionClasses = new HashMap<>();
 
-        for (LoadingStrategy strategy : strategies) {
+        for (LoadingStrategy strategy : strategies) {//todo @csy 此处两种加载方式有何不同？
             loadDirectory(extensionClasses, strategy.directory(), type.getName(), strategy.preferExtensionClassLoader(), strategy.overridden(), strategy.excludedPackages());
             loadDirectory(extensionClasses, strategy.directory(), type.getName().replace("org.apache", "com.alibaba"), strategy.preferExtensionClassLoader(), strategy.overridden(), strategy.excludedPackages());
         }
@@ -782,7 +782,7 @@ public class ExtensionLoader<T> {
     }
 
     /**
-     * extract and cache default extension name if exists
+     * extract（提取） and cache default extension name if exists
      */
     private void cacheDefaultExtensionName() {
         final SPI defaultAnnotation = type.getAnnotation(SPI.class);
@@ -791,9 +791,9 @@ public class ExtensionLoader<T> {
         }
 
         String value = defaultAnnotation.value();
-        if ((value = value.trim()).length() > 0) {
+        if ((value = value.trim()).length() > 0) { //提取SPI注解设定的值为默认扩展名
             String[] names = NAME_SEPARATOR.split(value);
-            if (names.length > 1) {
+            if (names.length > 1) {//扩展名不能有分隔符，不然分隔后就有多个扩展名
                 throw new IllegalStateException("More than 1 default extension name on extension " + type.getName()
                         + ": " + Arrays.toString(names));
             }
@@ -844,10 +844,10 @@ public class ExtensionLoader<T> {
 
     private void loadResource(Map<String, Class<?>> extensionClasses, ClassLoader classLoader,
                               java.net.URL resourceURL, boolean overridden, String... excludedPackages) {
-        try {
+        try { //资源放在try里面创建，不使用时会自动被释放
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(resourceURL.openStream(), StandardCharsets.UTF_8))) {
                 String line;
-                while ((line = reader.readLine()) != null) {
+                while ((line = reader.readLine()) != null) {//读取每一行，对每一行进行解析
                     final int ci = line.indexOf('#');
                     if (ci >= 0) {
                         line = line.substring(0, ci);
@@ -856,12 +856,12 @@ public class ExtensionLoader<T> {
                     if (line.length() > 0) {
                         try {
                             String name = null;
-                            int i = line.indexOf('=');
+                            int i = line.indexOf('='); //按等号进行分隔
                             if (i > 0) {
                                 name = line.substring(0, i).trim();
                                 line = line.substring(i + 1).trim();
                             }
-                            if (line.length() > 0 && !isExcluded(line, excludedPackages)) {
+                            if (line.length() > 0 && !isExcluded(line, excludedPackages)) { //todo @csy Class的forName方法了解
                                 loadClass(extensionClasses, resourceURL, Class.forName(line, true, classLoader), name, overridden);
                             }
                         } catch (Throwable t) {
@@ -954,7 +954,7 @@ public class ExtensionLoader<T> {
         Activate activate = clazz.getAnnotation(Activate.class);
         if (activate != null) {
             cachedActivates.put(name, activate);
-        } else {
+        } else {//代码做兼容处理
             // support com.alibaba.dubbo.common.extension.Activate
             com.alibaba.dubbo.common.extension.Activate oldActivate = clazz.getAnnotation(com.alibaba.dubbo.common.extension.Activate.class);
             if (oldActivate != null) {
@@ -993,7 +993,7 @@ public class ExtensionLoader<T> {
      * <p>
      * which has Constructor with given class type as its only argument
      */
-    private boolean isWrapperClass(Class<?> clazz) {
+    private boolean isWrapperClass(Class<?> clazz) { //判断是否是封装类
         try {
             clazz.getConstructor(type);
             return true;

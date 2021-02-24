@@ -62,7 +62,7 @@ import static org.apache.dubbo.rpc.Constants.ACCESS_LOG_KEY;
  * &lt;/logger&gt;
  * </pre></code>
  */
-@Activate(group = PROVIDER, value = ACCESS_LOG_KEY) //@Active注解原理了解：todo @pause
+@Activate(group = PROVIDER, value = ACCESS_LOG_KEY) //@Active注解原理了解
 public class AccessLogFilter implements Filter { //todo @csy 日志过滤器什么时候被调用？过滤器链是怎样的？
 
     private static final Logger logger = LoggerFactory.getLogger(AccessLogFilter.class);
@@ -80,13 +80,30 @@ public class AccessLogFilter implements Filter { //todo @csy 日志过滤器什�
 
     private static final Map<String, Set<AccessLogData>> LOG_ENTRIES = new ConcurrentHashMap<>();
 
-    //todo @csy ScheduledExecutorService使用以及了解？
+    /**
+     * ScheduledExecutorService使用以及了解？（定时调度机制）
+     * 线程池了解？https://www.jianshu.com/p/b8197dd2934c
+     *
+     * ScheduledExecutorService是一个定时执行的线程池，用来在指定延时之后执行或者以固定的频率周期性的执行提交的任务
+     * ScheduledExecutorService的主要作用就是可以将定时任务与线程池功能结合使用
+     *
+     * https://segmentfault.com/a/1190000015190796
+     * https://juconcurrent.com/2019/01/19/java-ScheduledExecutorService/
+     */
     private static final ScheduledExecutorService LOG_SCHEDULED = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("Dubbo-Access-Log", true));
 
     /**
-     * eutodo @csy 什么是守护线程？
      * Default constructor initialize demon thread for writing into access log file with names with access log key
      * defined in url <b>accesslog</b>
+     *
+     * 什么是守护线程？
+     * Java程序入口就是由JVM启动main线程，main线程又可以启动其他线程。当所有线程都运行结束时，JVM退出，进程结束。
+     * 如果有一个线程没有退出，JVM进程就不会退出。所以，必须保证所有线程都能及时结束。（JVM的退出不用管守护线程）
+     * https://www.liaoxuefeng.com/wiki/1252599548343744/1306580788183074
+     *
+     * 守护线程是为其他线程服务的线程；
+     * 所有非守护线程都执行完毕后，虚拟机退出；
+     * 守护线程不能持有需要关闭的资源（如打开文件等）
      */
     public AccessLogFilter() {
         LOG_SCHEDULED.scheduleWithFixedDelay(this::writeLogToFile, LOG_OUTPUT_INTERVAL, LOG_OUTPUT_INTERVAL, TimeUnit.MILLISECONDS);
@@ -183,9 +200,10 @@ public class AccessLogFilter implements Filter { //todo @csy 日志过滤器什�
     }
 
     private void processWithServiceLogger(Set<AccessLogData> logSet) {
-        for (Iterator<AccessLogData> iterator = logSet.iterator(); //todo @csy 此处是for循环什么语法？
-             iterator.hasNext();
-             iterator.remove()) {
+        //此处是for循环什么语法？解：http://c.biancheng.net/view/747.html
+        for (Iterator<AccessLogData> iterator = logSet.iterator(); //赋值语句，循环结构的初始部分，为循环变量赋初值
+             iterator.hasNext();                                   //条件语句，循环结构的循环条件
+             iterator.remove()) {                                  //迭代语句，循环结构的迭代部分，通常用来修改循环变量的值
             AccessLogData logData = iterator.next();
             LoggerFactory.getLogger(LOG_KEY + "." + logData.getServiceName()).info(logData.getLogMessage());
         }

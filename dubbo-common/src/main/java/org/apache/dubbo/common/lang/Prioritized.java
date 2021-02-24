@@ -21,12 +21,12 @@ import java.util.Comparator;
 import static java.lang.Integer.compare;
 
 /**
- * {@code Prioritized} interface can be implemented by objects that
- * should be sorted, for example the tasks in executable queue.
+ * {@code Prioritized（优先）} interface can be implemented by objects that
+ * should be sorted, for example the tasks in executable(可执行的) queue.
  *
  * @since 2.7.5
  */
-public interface Prioritized extends Comparable<Prioritized> { //todo @csy 比较逻辑是啥？Prioritized优先级是指啥？
+public interface Prioritized extends Comparable<Prioritized> { //比较逻辑是啥？Prioritized优先级是指啥？解：按对象的优先级的值进行比较
 
     /**
      * The {@link Comparator} of {@link Prioritized}
@@ -70,7 +70,7 @@ public interface Prioritized extends Comparable<Prioritized> { //todo @csy 比�
     }
 
     @Override
-    default int compareTo(Prioritized that) {
+    default int compareTo(Prioritized that) { //按对象的优先级值进行比较
         return compare(this.getPriority(), that.getPriority());
     }
 }

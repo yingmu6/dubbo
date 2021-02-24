@@ -29,8 +29,16 @@ import java.util.concurrent.atomic.AtomicLong;
  * @see org.apache.dubbo.rpc.filter.ActiveLimitFilter
  * @see org.apache.dubbo.rpc.filter.ExecuteLimitFilter
  */
-public class RpcStatus { //todo @csy-2 都记录了哪些状态值？后台管理页面有没有展示
+public class RpcStatus { //都记录了哪些状态值？后台管理页面有没有展示，解：激活数、总数等
 
+    /**
+     * ConcurrentMap：https://www.jianshu.com/p/8f7b2cd34c47
+     * ConcurrentMap，它是一个接口，是一个能够支持并发访问的java.util.map集合
+     * ConcurrentHashMap是一个线程安全，并且是一个高效的HashMap
+     *
+     * HashTable与HashMap的结构一致，都是哈希表实现。HashTable线程安全的，HashMap不是线程安全的
+     * https://crossoverjie.top/2018/07/23/java-senior/ConcurrentHashMap/
+     */
     private static final ConcurrentMap<String, RpcStatus> SERVICE_STATISTICS = new ConcurrentHashMap<String, RpcStatus>();
 
     private static final ConcurrentMap<String, ConcurrentMap<String, RpcStatus>> METHOD_STATISTICS = new ConcurrentHashMap<String, ConcurrentMap<String, RpcStatus>>();
@@ -53,7 +61,7 @@ public class RpcStatus { //todo @csy-2 都记录了哪些状态值？后台管�
      */
     public static RpcStatus getStatus(URL url) {// 从缓存中获取指定的值
         String uri = url.toIdentityString();
-        return SERVICE_STATISTICS.computeIfAbsent(uri, key -> new RpcStatus());
+        return SERVICE_STATISTICS.computeIfAbsent(uri, key -> new RpcStatus()); //在键key不存在时，设置value
     }
 
     /**
@@ -71,8 +79,8 @@ public class RpcStatus { //todo @csy-2 都记录了哪些状态值？后台管�
      */
     public static RpcStatus getStatus(URL url, String methodName) {
         String uri = url.toIdentityString();
-        ConcurrentMap<String, RpcStatus> map = METHOD_STATISTICS.computeIfAbsent(uri, k -> new ConcurrentHashMap<>()); //todo @csy ConcurrentMap了解，computeIfAbsent方法了解
-        return map.computeIfAbsent(methodName, k -> new RpcStatus()); //todo @csy 此处的含义是什么？
+        ConcurrentMap<String, RpcStatus> map = METHOD_STATISTICS.computeIfAbsent(uri, k -> new ConcurrentHashMap<>()); //ConcurrentMap了解，computeIfAbsent方法了解
+        return map.computeIfAbsent(methodName, k -> new RpcStatus()); //此处的含义是什么？函数式接口，设置方法名与RpcStatus的关系
     }
 
     /**
@@ -91,7 +99,7 @@ public class RpcStatus { //todo @csy-2 都记录了哪些状态值？后台管�
     }
 
     /**
-     * todo @csy 是对应什么数据进行计数？
+     * 是对应什么数据进行计数？
      * @param url
      */
     public static boolean beginCount(URL url, String methodName, int max) {
@@ -124,7 +132,11 @@ public class RpcStatus { //todo @csy-2 都记录了哪些状态值？后台管�
         endCount(getStatus(url, methodName), elapsed, succeeded);
     }
 
-    // todo @csy 结束统计是怎样的逻辑？ elapsed
+    /**
+     * 结束统计是怎样的逻辑？
+     * 解：激活数active减一，总数加一
+     * totalElapsed与elapsed相加
+     */
     private static void endCount(RpcStatus status, long elapsed, boolean succeeded) {
         status.active.decrementAndGet();
         status.total.incrementAndGet();
@@ -132,11 +144,11 @@ public class RpcStatus { //todo @csy-2 都记录了哪些状态值？后台管�
         if (status.maxElapsed.get() < elapsed) {
             status.maxElapsed.set(elapsed);
         }
-        if (succeeded) {
+        if (succeeded) { //成功时，记录成功数
             if (status.succeededMaxElapsed.get() < elapsed) {
                 status.succeededMaxElapsed.set(elapsed);
             }
-        } else {
+        } else {  //失败时，记录失败数
             status.failed.incrementAndGet();
             status.failedElapsed.addAndGet(elapsed);
             if (status.failedMaxElapsed.get() < elapsed) {
