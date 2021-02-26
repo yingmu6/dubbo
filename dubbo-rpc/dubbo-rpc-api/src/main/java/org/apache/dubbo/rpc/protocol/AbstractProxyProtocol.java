@@ -46,9 +46,9 @@ import static org.apache.dubbo.common.constants.CommonConstants.ANYHOST_VALUE;
 /**
  * AbstractProxyProtocol
  */
-public abstract class AbstractProxyProtocol extends AbstractProtocol {
+public abstract class AbstractProxyProtocol extends AbstractProtocol { //todo @pause
 
-    private final List<Class<?>> rpcExceptions = new CopyOnWriteArrayList<Class<?>>();
+    private final List<Class<?>> rpcExceptions = new CopyOnWriteArrayList<Class<?>>(); //todo @csy CopyOnWriteArrayList了解
 
     protected ProxyFactory proxyFactory;
 
@@ -80,7 +80,7 @@ public abstract class AbstractProxyProtocol extends AbstractProtocol {
         Exporter<T> exporter = (Exporter<T>) exporterMap.get(uri);
         if (exporter != null) {
             // When modifying the configuration through override, you need to re-expose the newly modified service.
-            if (Objects.equals(exporter.getInvoker().getUrl(), invoker.getUrl())) {
+            if (Objects.equals(exporter.getInvoker().getUrl(), invoker.getUrl())) { //todo @csy 此处的处理逻辑是怎样的？
                 return exporter;
             }
         }

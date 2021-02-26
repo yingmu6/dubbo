@@ -74,7 +74,7 @@ public abstract class BaseRestProtocolServer implements RestProtocolServer {
         }
     }
 
-    protected abstract ResteasyDeployment getDeployment();
+    protected abstract ResteasyDeployment getDeployment(); //todo @csy ResteasyDeployment待了解
 
     protected abstract void doStart(URL url);
 }

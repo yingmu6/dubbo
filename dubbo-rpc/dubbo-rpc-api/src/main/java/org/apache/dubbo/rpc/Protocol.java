@@ -37,12 +37,13 @@ public interface Protocol {
     int getDefaultPort();
 
     /**
-     * Export service for remote invocation: <br>
+     * Export service for remote invocation: <br> （暴露远程服务）
      * 1. Protocol should record request source address after receive a request:
-     * RpcContext.getContext().setRemoteAddress();<br>
-     * 2. export() must be idempotent, that is, there's no difference between invoking once and invoking twice when
+     * RpcContext.getContext().setRemoteAddress();<br> （在接收请求后，协议需要记录请求源地址）
+     * 2. export() must be idempotent（必须保障幂等）, that is, there's no difference between invoking once and invoking twice when
      * export the same URL<br>
      * 3. Invoker instance is passed in by the framework, protocol needs not to care <br>
+     *  （Invoker实例由框架传入，协议不需要关心）
      *
      * @param <T>     Service type
      * @param invoker Service invoker
@@ -53,11 +54,12 @@ public interface Protocol {
     <T> Exporter<T> export(Invoker<T> invoker) throws RpcException;
 
     /**
-     * Refer a remote service: <br>
+     * Refer a remote service: <br>（引用远程服务）
      * 1. When user calls `invoke()` method of `Invoker` object which's returned from `refer()` call, the protocol
-     * needs to correspondingly execute `invoke()` method of `Invoker` object <br>
+     * needs to correspondingly（相应地） execute `invoke()` method of `Invoker` object
+     * （调用refer返回的Invoker中invoke()方法时，协议需要执行远端export()方法中Invoker的invoke()方法）<br>
      * 2. It's protocol's responsibility to implement `Invoker` which's returned from `refer()`. Generally speaking,
-     * protocol sends remote request in the `Invoker` implementation. <br>
+     * protocol sends remote request in the `Invoker` implementation.（协议会在Invoker中发起远程请求） <br>
      * 3. When there's check=false set in URL, the implementation must not throw exception but try to recover when
      * connection fails.
      *
@@ -79,7 +81,7 @@ public interface Protocol {
     void destroy();
 
     /**
-     * Get all servers serving this protocol
+     * Get all servers serving this protocol（获取协议对应的所有服务）
      *
      * @return
      */

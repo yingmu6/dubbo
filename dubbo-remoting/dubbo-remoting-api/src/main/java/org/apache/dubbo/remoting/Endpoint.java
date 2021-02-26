@@ -28,7 +28,7 @@ import java.net.InetSocketAddress;
  * @see org.apache.dubbo.remoting.Client
  * @see RemotingServer
  */
-public interface Endpoint {
+public interface Endpoint { //节点
 
     /**
      * get url.
@@ -73,7 +73,7 @@ public interface Endpoint {
     void close();
 
     /**
-     * Graceful close the channel.
+     * Graceful close（优雅关闭） the channel.
      */
     void close(int timeout);
 

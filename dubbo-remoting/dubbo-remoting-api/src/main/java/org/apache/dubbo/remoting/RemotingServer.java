@@ -22,13 +22,13 @@ import java.net.InetSocketAddress;
 import java.util.Collection;
 
 /**
- * Remoting Server. (API/SPI, Prototype, ThreadSafe)
+ * Remoting Server. (API/SPI, Prototype, ThreadSafe) 远程服务
  * <p>
  * <a href="http://en.wikipedia.org/wiki/Client%E2%80%93server_model">Client/Server</a>
  *
  * @see org.apache.dubbo.remoting.Transporter#bind(org.apache.dubbo.common.URL, ChannelHandler)
  */
-public interface RemotingServer extends Endpoint, Resetable, IdleSensible {
+public interface RemotingServer extends Endpoint, Resetable, IdleSensible { //对应2.5.6中的Server
 
     /**
      * is bound.

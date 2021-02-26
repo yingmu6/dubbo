@@ -33,12 +33,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 @Priority(Integer.MIN_VALUE + 1)
-public class RpcContextFilter implements ContainerRequestFilter, ClientRequestFilter {
+public class RpcContextFilter implements ContainerRequestFilter, ClientRequestFilter { //todo @csy 该类的用途是什么？ContainerRequestFilter、ClientRequestFilter待了解
 
     private static final String DUBBO_ATTACHMENT_HEADER = "Dubbo-Attachments";
 
     // currently we use a single header to hold the attachments so that the total attachment size limit is about 8k
-    private static final int MAX_HEADER_SIZE = 8 * 1024;
+    private static final int MAX_HEADER_SIZE = 8 * 1024; //todo @csy 此处是限制请求头大小为8M？
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
