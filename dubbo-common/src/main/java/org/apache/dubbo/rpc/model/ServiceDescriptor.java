@@ -31,7 +31,7 @@ import java.util.Set;
  * ServiceModel and ServiceMetadata are to some extend duplicated with each other.
  * We should merge them in the future.
  */
-public class ServiceDescriptor {
+public class ServiceDescriptor {//todo @csy 功能用途是啥？
     private final String serviceName;
     private final Class<?> serviceInterfaceClass;
     // to accelerate search

@@ -29,10 +29,10 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * {@link ExtensionLoader}, {@code DubboBootstrap} and this class are at present designed to be
- * singleton or static (by itself totally static or uses some static fields). So the instances
+ * {@link ExtensionLoader}, {@code DubboBootstrap} （引导程序）and this class are at present designed to be
+ * singleton（单例） or static（静态） (by itself totally static or uses some static fields). So the instances
  * returned from them are of process scope. If you want to support multiple dubbo servers in one
- * single process, you may need to refactor those three classes.
+ * single process, you may need to refactor（重构） those three classes.
  *
  * Represent a application which is using Dubbo and store basic metadata info for using
  * during the processing of RPC invoking.
@@ -43,7 +43,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  */
 
-public class ApplicationModel {
+public class ApplicationModel { //应用模型
     protected static final Logger LOGGER = LoggerFactory.getLogger(ApplicationModel.class);
     public static final String NAME = "application";
 
@@ -54,7 +54,7 @@ public class ApplicationModel {
             ExtensionLoader<ApplicationInitListener> extensionLoader = ExtensionLoader.getExtensionLoader(ApplicationInitListener.class);
             Set<String> listenerNames = extensionLoader.getSupportedExtensions();
             for (String listenerName : listenerNames) {
-                extensionLoader.getExtension(listenerName).init();
+                extensionLoader.getExtension(listenerName).init(); //todo @csy 实例的init方法都会执行什么？
             }
         }
     }

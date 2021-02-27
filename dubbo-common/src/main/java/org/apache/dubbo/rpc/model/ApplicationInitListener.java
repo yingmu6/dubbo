@@ -19,7 +19,7 @@ package org.apache.dubbo.rpc.model;
 import org.apache.dubbo.common.extension.SPI;
 
 @SPI
-public interface ApplicationInitListener {
+public interface ApplicationInitListener { //todo @csy 没看到具体实现类，都有哪些实现的？
     /**
      * init the application
      */

@@ -32,7 +32,7 @@ import java.util.Set;
 /**
  * This model is bound to your reference's configuration, for example, group, version or method level configuration.
  */
-public class ConsumerModel {
+public class ConsumerModel { //todo @csy 消费模型都有哪些用途？
     private String serviceKey;
     private final ServiceDescriptor serviceModel;
     private final ReferenceConfigBase<?> referenceConfig;

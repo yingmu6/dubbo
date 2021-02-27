@@ -30,7 +30,8 @@ import java.lang.reflect.Method;
 /**
  * InvokerHandler
  */
-public class InvokerInvocationHandler implements InvocationHandler {
+public class InvokerInvocationHandler implements InvocationHandler { //todo @csy InvocationHandler待了解
+    // InvocationHandler：每一个代理实例都与一个调用处理类关联，当代理实例上的方法被调用时，会调用InvocationHandler的invoke方法（方法回调）
     private static final Logger logger = LoggerFactory.getLogger(InvokerInvocationHandler.class);
     private final Invoker<?> invoker;
     private ConsumerModel consumerModel;

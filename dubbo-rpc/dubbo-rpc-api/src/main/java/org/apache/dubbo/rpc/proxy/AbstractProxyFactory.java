@@ -51,7 +51,7 @@ public abstract class AbstractProxyFactory implements ProxyFactory {
         Set<Class<?>> interfaces = new HashSet<>();
 
         String config = invoker.getUrl().getParameter(INTERFACES);
-        if (config != null && config.length() > 0) {
+        if (config != null && config.length() > 0) { //从url中获取配置的接口类型，设置到Class集合中
             String[] types = COMMA_SPLIT_PATTERN.split(config);
             for (String type : types) {
                 // TODO can we load successfully for a different classloader?.
@@ -59,7 +59,7 @@ public abstract class AbstractProxyFactory implements ProxyFactory {
             }
         }
 
-        if (generic) {
+        if (generic) { //泛化类型
             if (!GenericService.class.isAssignableFrom(invoker.getInterface())) {
                 interfaces.add(com.alibaba.dubbo.rpc.service.GenericService.class);
             }
