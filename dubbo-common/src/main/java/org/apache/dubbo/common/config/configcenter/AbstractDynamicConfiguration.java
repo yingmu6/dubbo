@@ -232,7 +232,7 @@ public abstract class AbstractDynamicConfiguration implements DynamicConfigurati
         }
     }
 
-    protected ThreadPoolExecutor initWorkersThreadPool(String threadPoolPrefixName,
+    protected ThreadPoolExecutor initWorkersThreadPool(String threadPoolPrefixName, //初始化工作线程池
                                                        int threadPoolSize,
                                                        long keepAliveTime) {
         return new ThreadPoolExecutor(threadPoolSize, threadPoolSize, keepAliveTime,
@@ -240,7 +240,7 @@ public abstract class AbstractDynamicConfiguration implements DynamicConfigurati
     }
 
     protected static String getThreadPoolPrefixName(URL url) {
-        return getParameter(url, THREAD_POOL_PREFIX_PARAM_NAME, DEFAULT_THREAD_POOL_PREFIX);
+        return getParameter(url, THREAD_POOL_PREFIX_PARAM_NAME, DEFAULT_THREAD_POOL_PREFIX); //此处从url中若没获取到值，获取到key？DEFAULT_THREAD_POOL_PREFIX 解：此处获取的是名称
     }
 
     protected static int getThreadPoolSize(URL url) {
@@ -288,7 +288,7 @@ public abstract class AbstractDynamicConfiguration implements DynamicConfigurati
      * @return non-null
      * @since 2.7.8
      */
-    protected static String getGroup(URL url) {
+    protected static String getGroup(URL url) { //从url中获取服务的分组信息
         String group = getParameter(url, GROUP_PARAM_NAME, null);
         return StringUtils.isBlank(group) ? getParameter(url, GROUP_KEY, DEFAULT_GROUP) : group;
     }

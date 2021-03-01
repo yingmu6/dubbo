@@ -20,11 +20,11 @@ import java.util.EventObject;
 import java.util.Objects;
 
 /**
- * An event raised when the config changed, immutable.
+ * An event raised when the config changed, immutable. (当配置改变时引发的事件，不可变)
  *
  * @see ConfigChangeType
  */
-public class ConfigChangedEvent extends EventObject {
+public class ConfigChangedEvent extends EventObject { //配置变更事件对象
 
     private final String key;
 

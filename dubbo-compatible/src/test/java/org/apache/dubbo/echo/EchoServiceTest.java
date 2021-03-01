@@ -39,8 +39,8 @@ public class EchoServiceTest {
         ProxyFactory proxyFactory = ExtensionLoader.getExtensionLoader(ProxyFactory.class).getAdaptiveExtension();
         Protocol protocol = ExtensionLoader.getExtensionLoader(Protocol.class).getAdaptiveExtension();
         URL url = URL.valueOf("dubbo://127.0.0.1:5342/" + DemoService.class.getName() + "?version=1.0.0");
-        Exporter<DemoService> exporter = protocol.export(proxyFactory.getInvoker(server, DemoService.class, url));
-        Invoker<DemoService> invoker = protocol.refer(DemoService.class, url);
+        Exporter<DemoService> exporter = protocol.export(proxyFactory.getInvoker(server, DemoService.class, url)); //服务暴露
+        Invoker<DemoService> invoker = protocol.refer(DemoService.class, url); //服务引用
         EchoService client = (EchoService) proxyFactory.getProxy(invoker);
         Object result = client.$echo("haha");
         Assertions.assertEquals("haha", result);

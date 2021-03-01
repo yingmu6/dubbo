@@ -88,7 +88,7 @@ public interface MetadataService {
      */
     default String version() {
         /**
-         * @csy 默认接口的用途以及使用方式？默认接口需要实现吗？实现类能实现吗
+         * 默认接口的用途以及使用方式？默认接口需要实现吗？实现类能实现吗
          * 解：默认方法就是接口可以有实现方法，而且不需要实现类去实现其方法。
          * 实现类可以不实现默认方法，也可以实现覆盖
          */
@@ -104,7 +104,7 @@ public interface MetadataService {
      */
     default SortedSet<String> getSubscribedURLs() {
         /**
-         * @csy 此处为啥会抛出异常？是只有实现了该接口，才不会不抛异常吗？
+         * 此处为啥会抛出异常？是只有实现了该接口，才不会不抛异常吗？
          * 解：本意是需要有实现类直接覆盖，不能直接使用接口中的默认方法
          */
         throw new UnsupportedOperationException("This operation is not supported for consumer.");

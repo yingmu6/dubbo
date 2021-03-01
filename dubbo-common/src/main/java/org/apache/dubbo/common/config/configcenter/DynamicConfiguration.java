@@ -31,9 +31,9 @@ import static org.apache.dubbo.common.extension.ExtensionLoader.getExtensionLoad
 /**
  * Dynamic Configuration
  * <br/>
- * From the use scenario internally inside framework, there're mainly three kinds of methods:
+ * From the use scenario（使用场景） internally inside framework（框架内部）, there're mainly（主要） three kinds of methods:
  * <ol>
- * <li>{@link #getProperties(String, String, long)}, get configuration file from Config Center at start up.</li>
+ * <li>{@link #getProperties(String, String, long)}, get configuration file from Config Center at start up（配置中心启动时）.</li>
  * <li>{@link #addListener(String, String, ConfigurationListener)}/ {@link #removeListener(String, String, ConfigurationListener)}
  * , add or remove listeners for governance rules or config items that need to watch.</li>
  * <li>{@link #getProperty(String, Object)}, get a single config item.</li>
@@ -42,7 +42,7 @@ import static org.apache.dubbo.common.extension.ExtensionLoader.getExtensionLoad
  *
  * @see AbstractDynamicConfiguration
  */
-public interface DynamicConfiguration extends Configuration, AutoCloseable {
+public interface DynamicConfiguration extends Configuration, AutoCloseable { //动态配置
 
     String DEFAULT_GROUP = "dubbo";
 
@@ -68,7 +68,7 @@ public interface DynamicConfiguration extends Configuration, AutoCloseable {
     }
 
     /**
-     * Register a configuration listener for a specified key
+     * Register a configuration listener for a specified key（注册指定key的监听器）
      * The listener only works for service governance purpose, so the target group would always be the value user
      * specifies at startup or 'dubbo' by default. This method will only register listener, which means it will not
      * trigger a notification that contains the current value.

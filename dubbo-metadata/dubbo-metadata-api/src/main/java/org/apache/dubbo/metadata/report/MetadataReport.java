@@ -38,11 +38,11 @@ import static java.util.Collections.emptySortedSet;
 import static org.apache.dubbo.rpc.model.ApplicationModel.getName;
 
 /**
- * The interface to report the metadata
+ * The interface to report the metadata（报告元数据的接口）
  *
  * @see AutoCloseable since 2.7.8
  */
-public interface MetadataReport extends AutoCloseable {//todo @csy 元数据值怎么上报的？
+public interface MetadataReport extends AutoCloseable {//元数据值怎么上报的？解：接口中没看到上报方法，而是存储store、保存save元数据接口
 
     void storeProviderMetadata(MetadataIdentifier providerMetadataIdentifier, ServiceDefinition serviceDefinition);
 

@@ -18,5 +18,7 @@
 package com.alibaba.dubbo.rpc.service;
 
 @Deprecated
-public interface EchoService extends org.apache.dubbo.rpc.service.EchoService { //todo @csy 为啥EchoService没有具体的apache实现？用什么替代了？实现类是什么？
+public interface EchoService extends org.apache.dubbo.rpc.service.EchoService {
+    //为啥EchoService没有具体的apache实现？解：所有服务自动实现 EchoService 接口，只需将任意服务引用强制转型为 EchoService，即可使用。
+    //是在哪里体现代理类实现EchoService接口的？解：在AbstractProxyFactory中的成员变量Class<?>[] INTERNAL_INTERFACES中
 }

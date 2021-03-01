@@ -21,6 +21,7 @@ import java.util.Map;
 
 /**
  * The model class of an instance of a service, which is used for service registration and discovery.
+ * （服务实例的模型类，用于服务注册和发现）
  * <p>
  *
  * @since 2.7.5

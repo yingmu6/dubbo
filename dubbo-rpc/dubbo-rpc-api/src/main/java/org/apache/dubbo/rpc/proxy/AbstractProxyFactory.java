@@ -37,7 +37,7 @@ import static org.apache.dubbo.rpc.Constants.INTERFACES;
  * AbstractProxyFactory
  */
 public abstract class AbstractProxyFactory implements ProxyFactory {
-    private static final Class<?>[] INTERNAL_INTERFACES = new Class<?>[]{
+    private static final Class<?>[] INTERNAL_INTERFACES = new Class<?>[]{ //所有的代理类都实现了EchoService接口
             EchoService.class, Destroyable.class
     };
 

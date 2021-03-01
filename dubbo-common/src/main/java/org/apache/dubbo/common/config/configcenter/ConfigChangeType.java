@@ -19,7 +19,7 @@ package org.apache.dubbo.common.config.configcenter;
 /**
  * Config change event type
  */
-public enum ConfigChangeType {
+public enum ConfigChangeType { //变更类型
     /**
      * A config is created.
      */

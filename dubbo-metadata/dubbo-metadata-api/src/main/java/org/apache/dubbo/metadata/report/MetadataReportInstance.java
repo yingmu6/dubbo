@@ -28,7 +28,7 @@ import static org.apache.dubbo.metadata.report.support.Constants.METADATA_REPORT
 /**
  * 2019-08-09
  */
-public class MetadataReportInstance { //todo @csy 该类的用途是？
+public class MetadataReportInstance { //该类的用途是？解：用来保存MetadataReport实例
 
     private static AtomicBoolean init = new AtomicBoolean(false);
 
@@ -54,7 +54,7 @@ public class MetadataReportInstance { //todo @csy 该类的用途是？
         return getMetadataReport(false);
     }
 
-    public static MetadataReport getMetadataReport(boolean checked) {
+    public static MetadataReport getMetadataReport(boolean checked) { //获取metadataReport实例对象
         if (checked) {
             checkInit();
         }
@@ -62,7 +62,7 @@ public class MetadataReportInstance { //todo @csy 该类的用途是？
     }
 
     private static void checkInit() {
-        if (!init.get()) {
+        if (!init.get()) { //未初始化
             throw new IllegalStateException("the metadata report was not inited.");
         }
     }

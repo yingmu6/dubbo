@@ -42,7 +42,7 @@ import static org.apache.dubbo.registry.client.metadata.ServiceInstanceMetadataU
  *
  * @since 2.7.5
  */
-public class RemoteMetadataServiceProxy implements MetadataService {
+public class RemoteMetadataServiceProxy implements MetadataService { //MetadataService元数据服务的代理类
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -63,13 +63,16 @@ public class RemoteMetadataServiceProxy implements MetadataService {
 
     @Override
     public SortedSet<String> getExportedURLs(String serviceInterface, String group, String version, String protocol) {
-        // todo @csy 该方法的用途？
+        /**
+         * 该方法的用途？
+         * 解：获取暴露的url列表，并进行筛选
+         */
         SortedSet<String> exportedURLs = getMetadataReport().getExportedURLs(serviceName, revision);
         if (ALL_SERVICE_INTERFACES.equals(serviceInterface)) {
             return exportedURLs;
         }
 
-        return unmodifiableSortedSet(
+        return unmodifiableSortedSet( //按条件筛选
                 exportedURLs
                         .stream()
                         .map(URL::valueOf)

@@ -21,14 +21,14 @@ import java.util.NoSuchElementException;
 /**
  * Configuration interface, to fetch the value for the specified key.
  */
-public interface Configuration {
+public interface Configuration { //配置接口
     /**
      * Get a string associated with the given configuration key.
      *
      * @param key The configuration key.
      * @return The associated string.
      */
-    default String getString(String key) {
+    default String getString(String key) { //是从哪里获取到的值？配置中心吗？解：要看具体的实现，可能是apollo、etcd等
         return convert(String.class, key, null);
     }
 
@@ -119,11 +119,11 @@ public interface Configuration {
      * contains no mapping for this key.
      */
     default Object getProperty(String key, Object defaultValue) {
-        Object value = getInternalProperty(key);
+        Object value = getInternalProperty(key); //默认方式中实现处理逻辑
         return value != null ? value : defaultValue;
     }
 
-    Object getInternalProperty(String key);
+    Object getInternalProperty(String key); //此处的用途是什么？获取key对应的属性值
 
     /**
      * Check if the configuration contains the specified key.
@@ -139,20 +139,20 @@ public interface Configuration {
 
     default <T> T convert(Class<T> cls, String key, T defaultValue) {
         // we only process String properties for now
-        String value = (String) getProperty(key);
+        String value = (String) getProperty(key); //获取key对应的属性值，默认值为null
 
         if (value == null) {
             return defaultValue;
         }
 
         Object obj = value;
-        if (cls.isInstance(value)) {
+        if (cls.isInstance(value)) {//若值是指定的Class类型，则直接映射
             return cls.cast(value);
         }
 
-        if (Boolean.class.equals(cls) || Boolean.TYPE.equals(cls)) {
+        if (Boolean.class.equals(cls) || Boolean.TYPE.equals(cls)) { //boolean类型转换
             obj = Boolean.valueOf(value);
-        } else if (Number.class.isAssignableFrom(cls) || cls.isPrimitive()) {
+        } else if (Number.class.isAssignableFrom(cls) || cls.isPrimitive()) { //数值类型转换
             if (Integer.class.equals(cls) || Integer.TYPE.equals(cls)) {
                 obj = Integer.valueOf(value);
             } else if (Long.class.equals(cls) || Long.TYPE.equals(cls)) {
@@ -166,11 +166,11 @@ public interface Configuration {
             } else if (Double.class.equals(cls) || Double.TYPE.equals(cls)) {
                 obj = Double.valueOf(value);
             }
-        } else if (cls.isEnum()) {
+        } else if (cls.isEnum()) { //枚举类型转换
             obj = Enum.valueOf(cls.asSubclass(Enum.class), value);
         }
 
-        return cls.cast(obj);
+        return cls.cast(obj); //把对象映射为class对象
     }
 
     static Boolean toBooleanObject(boolean bool) {

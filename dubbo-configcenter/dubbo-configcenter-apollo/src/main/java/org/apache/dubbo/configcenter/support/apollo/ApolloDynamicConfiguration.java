@@ -55,7 +55,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.GROUP_KEY;
  *
  * Apollo will be used for management of both governance rules and .properties files, by default, these two different
  * kinds of data share the same namespace 'dubbo'. To gain better performance, we recommend separate them by giving
- * namespace and group different values, for example:
+ * namespace and group different values, for example:（要求使用namespace、group来分隔数据）
  *
  * <dubbo:config-center namespace="governance" group="dubbo" />, 'dubbo=governance' is for governance rules while
  * 'group=dubbo' is for properties files.
@@ -63,6 +63,16 @@ import static org.apache.dubbo.common.constants.CommonConstants.GROUP_KEY;
  * Please see http://dubbo.apache.org/zh-cn/docs/user/configuration/config-center.html for details.
  */
 public class ApolloDynamicConfiguration implements DynamicConfiguration {
+    /**
+     * apollo是怎么使用的？数据存储在哪里？能支持管理台和属性文件？
+     * 解：Apollo（阿波罗）是携程框架部门研发的分布式配置中心，能够集中化管理应用不同环境、不同集群的配置，
+     * 配置修改后能够实时推送到应用端，并且具备规范的权限、流程治理等特性，适用于微服务配置管理场景。
+     *
+     * apollo是配置中心，而apollo维护的数据来自注册中心、数据库等
+     * 配置也有很多种加载方式，常见的有程序内部hard code，配置文件，环境变量，启动参数，基于数据库等
+     * https://github.com/ctripcorp/apollo
+     * https://ctripcorp.github.io/apollo/#/zh/design/apollo-introduction  Apollo使用手册
+     */
     private static final Logger logger = LoggerFactory.getLogger(ApolloDynamicConfiguration.class);
     private static final String APOLLO_ENV_KEY = "env";
     private static final String APOLLO_ADDR_KEY = "apollo.meta";
@@ -199,7 +209,7 @@ public class ApolloDynamicConfiguration implements DynamicConfiguration {
      */
     @Override
     public String getInternalProperty(String key) {
-        return dubboConfig.getProperty(key, null);
+        return dubboConfig.getProperty(key, null); //调用apollo接口获取属性值
     }
 
     /**
@@ -213,7 +223,7 @@ public class ApolloDynamicConfiguration implements DynamicConfiguration {
         return new ApolloListener();
     }
 
-    public class ApolloListener implements ConfigChangeListener {
+    public class ApolloListener implements ConfigChangeListener { //监听apollo配置变更
 
         private Set<ConfigurationListener> listeners = new CopyOnWriteArraySet<>();
 
