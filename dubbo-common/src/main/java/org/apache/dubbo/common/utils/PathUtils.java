@@ -31,9 +31,9 @@ import static org.apache.dubbo.common.utils.StringUtils.replace;
  *
  * @since 2.7.6
  */
-public interface PathUtils {//todo @csy 待调试了解
+public interface PathUtils { //路径处理工具类
 
-    static String buildPath(String rootPath, String... subPaths) {
+    static String buildPath(String rootPath, String... subPaths) { //根路径+子路径
 
         Set<String> paths = new LinkedHashSet<>();
         paths.add(rootPath);
@@ -41,11 +41,11 @@ public interface PathUtils {//todo @csy 待调试了解
 
         return normalize(paths.stream()
                 .filter(StringUtils::isNotEmpty)
-                .collect(Collectors.joining(SLASH)));
+                .collect(Collectors.joining(SLASH))); //加上斜杠进行拼接，todo @csy 此处最终的路径是什么？是否包含双斜线？
     }
 
     /**
-     * Normalize path:
+     * Normalize path: （标准化路径，Normalize：正常化、标准化）
      * <ol>
      * <li>To remove query string if presents</li>
      * <li>To remove duplicated slash("/") if exists</li>
@@ -55,16 +55,16 @@ public interface PathUtils {//todo @csy 待调试了解
      * @return a normalized path if required
      */
     static String normalize(String path) {
-        if (isEmpty(path)) {
+        if (isEmpty(path)) {//路径为空时，返回斜线SLASH
             return SLASH;
         }
         String normalizedPath = path;
         int index = normalizedPath.indexOf(QUESTION_MASK);
-        if (index > -1) {
+        if (index > -1) { //若存在查询参数，则将查询参数进行移除
             normalizedPath = normalizedPath.substring(0, index);
         }
 
-        while (normalizedPath.contains("//")) {
+        while (normalizedPath.contains("//")) { //若存在双斜线，则替换后单斜线
             normalizedPath = replace(normalizedPath, "//", "/");
         }
 

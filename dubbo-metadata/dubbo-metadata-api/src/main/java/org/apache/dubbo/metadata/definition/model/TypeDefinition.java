@@ -28,11 +28,11 @@ import java.util.Objects;
 /**
  * 2015/1/27.
  */
-public class TypeDefinition implements Serializable {
+public class TypeDefinition implements Serializable { //类型定义
 
     private String id;
     private String type;
-    @SerializedName("items")
+    @SerializedName("items") //@SerializedName 序列化和反序列化时字段的名称
     private List<TypeDefinition> items;
     @SerializedName("enum")
     private List<String> enums;
@@ -122,11 +122,11 @@ public class TypeDefinition implements Serializable {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof TypeDefinition)) {
+        if (!(o instanceof TypeDefinition)) { //判断类型
             return false;
         }
         TypeDefinition that = (TypeDefinition) o;
-        return Objects.equals(getId(), that.getId()) &&
+        return Objects.equals(getId(), that.getId()) &&     //比较对象中的字段
                 Objects.equals(getType(), that.getType()) &&
                 Objects.equals(getItems(), that.getItems()) &&
                 Objects.equals(getEnums(), that.getEnums()) &&
@@ -135,7 +135,7 @@ public class TypeDefinition implements Serializable {
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode() { //重写hash方法
         return Objects.hash(getId(), getType(), getItems(), getEnums(), get$ref(), getProperties());
     }
 }

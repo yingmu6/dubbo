@@ -25,7 +25,7 @@ import java.util.Objects;
 /**
  * 2015/1/27.
  */
-public class MethodDefinition implements Serializable {
+public class MethodDefinition implements Serializable { //方法定义
 
     private String name;
     private String[] parameterTypes;

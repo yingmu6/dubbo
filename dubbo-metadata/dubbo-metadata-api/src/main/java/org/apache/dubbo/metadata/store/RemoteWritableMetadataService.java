@@ -36,8 +36,8 @@ import static org.apache.dubbo.common.constants.CommonConstants.PROVIDER_SIDE;
 import static org.apache.dubbo.common.constants.CommonConstants.VERSION_KEY;
 
 /**
- * The {@link WritableMetadataService} implementation stores the metadata of Dubbo services in metadata center when they
- * exported.
+ * The {@link WritableMetadataService} implementation stores the metadata（存储元数据） of Dubbo services
+ * in metadata center（元数据中心） when they exported.
  * It is used by server (provider).
  *
  * @since 2.7.5

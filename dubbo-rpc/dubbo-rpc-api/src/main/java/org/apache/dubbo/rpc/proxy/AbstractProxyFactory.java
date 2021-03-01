@@ -46,6 +46,11 @@ public abstract class AbstractProxyFactory implements ProxyFactory {
         return getProxy(invoker, false);
     }
 
+    /**
+     * 创建代理类
+     * 1）创建代理前，先找出需要代理接口的Class集合
+     * 2）调用代理实现类的方法获取代理（不同的代理方式：JavassistProxyFactory或JdkProxyFactory）
+     */
     @Override
     public <T> T getProxy(Invoker<T> invoker, boolean generic) throws RpcException {
         Set<Class<?>> interfaces = new HashSet<>();
@@ -59,8 +64,8 @@ public abstract class AbstractProxyFactory implements ProxyFactory {
             }
         }
 
-        if (generic) { //泛化类型
-            if (!GenericService.class.isAssignableFrom(invoker.getInterface())) {
+        if (generic) { //泛化类型，处理泛化类型
+            if (!GenericService.class.isAssignableFrom(invoker.getInterface())) { //兼容alibaba的GenericService泛化类型
                 interfaces.add(com.alibaba.dubbo.rpc.service.GenericService.class);
             }
 

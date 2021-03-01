@@ -37,7 +37,7 @@ public interface Invoker<T> extends org.apache.dubbo.rpc.Invoker<T> {
         return null;
     }
 
-    class CompatibleInvoker<T> implements Invoker<T> {
+    class CompatibleInvoker<T> implements Invoker<T> { //Invoker的适配器类：实现alibaba的Invoker
 
         private org.apache.dubbo.rpc.Invoker<T> invoker;
 

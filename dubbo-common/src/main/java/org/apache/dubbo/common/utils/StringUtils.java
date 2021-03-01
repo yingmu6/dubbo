@@ -83,7 +83,7 @@ public final class StringUtils {
 
     public static final String SEMICOLON = valueOf(SEMICOLON_CHAR);
 
-    public static final char QUESTION_MASK_CHAR = '?';
+    public static final char QUESTION_MASK_CHAR = '?'; //url中的查询标志
 
     public static final String QUESTION_MASK = valueOf(QUESTION_MASK_CHAR);
 

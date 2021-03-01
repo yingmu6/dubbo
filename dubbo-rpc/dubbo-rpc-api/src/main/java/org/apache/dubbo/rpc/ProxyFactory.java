@@ -26,10 +26,15 @@ import static org.apache.dubbo.rpc.Constants.PROXY_KEY;
  * ProxyFactory. (API/SPI, Singleton, ThreadSafe)
  */
 @SPI("javassist")
-public interface ProxyFactory { //todo @csy 代理模式待了解
+public interface ProxyFactory {
+    /**
+     * 代理模式了解，解：通过代理对象对目标对象进行访问控制
+     * 代理模式：https://www.runoob.com/design-pattern/proxy-pattern.html
+     * Java三种代理模式：静态代理、动态代理和cglib代理：https://segmentfault.com/a/1190000011291179
+     */
 
     /**
-     * create proxy.
+     * create proxy.（创建代理对象proxy）
      *
      * @param invoker
      * @return proxy
@@ -47,7 +52,7 @@ public interface ProxyFactory { //todo @csy 代理模式待了解
     <T> T getProxy(Invoker<T> invoker, boolean generic) throws RpcException;
 
     /**
-     * create invoker.
+     * create invoker.（创建执行对象invoker）
      *
      * @param <T>
      * @param proxy

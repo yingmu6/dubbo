@@ -27,15 +27,15 @@ import java.util.Map;
  * 2015/1/27.
  */
 @SPI
-public interface TypeBuilder extends Prioritized {
+public interface TypeBuilder extends Prioritized { //类型构造器
 
     /**
-     * Whether the build accept the type or class passed in.
+     * Whether the build accept the type or class passed in.（是否能根据传入的type、class进行构建）
      */
     boolean accept(Type type, Class<?> clazz);
 
     /**
-     * Build type definition with the type or class.
+     * Build type definition with the type or class.（用type、class构建type定义数据）
      */
     TypeDefinition build(Type type, Class<?> clazz, Map<Class<?>, TypeDefinition> typeCache);
 

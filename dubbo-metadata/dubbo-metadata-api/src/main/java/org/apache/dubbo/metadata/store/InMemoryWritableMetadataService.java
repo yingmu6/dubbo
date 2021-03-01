@@ -40,7 +40,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.PROTOCOL_KEY;
 import static org.apache.dubbo.common.utils.CollectionUtils.isEmpty;
 
 /**
- * The {@link WritableMetadataService} implementation stores the metadata of Dubbo services in memory locally when they
+ * The {@link WritableMetadataService} implementation stores the metadata of Dubbo services in memory locally（存储到本地内存） when they
  * exported. It is used by server (provider).
  *
  * @see MetadataService
@@ -128,7 +128,7 @@ public class InMemoryWritableMetadataService extends AbstractAbstractWritableMet
 
     @Override
     protected void publishServiceDefinition(String key, String json) {
-        serviceDefinitions.put(key, json);
+        serviceDefinitions.put(key, json); //将服务key，与服务定义的json字符串存在本地缓存中
     }
 
     @Override

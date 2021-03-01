@@ -24,7 +24,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marker for extension interface
+ * Marker for extension interface（扩展接口的标记）
  * <p/>
  * Changes on extension configuration file <br/>
  * Use <code>Protocol</code> as an example, its configuration file 'META-INF/dubbo/com.xxx.Protocol' is changed from: <br/>
@@ -39,7 +39,7 @@ import java.lang.annotation.Target;
  *     yyy=com.foo.YyyProtocol
  * </pre>
  * <br/>
- * The reason for this change is:
+ * The reason for this change is:（配置文件中改为key-value形式的理由）
  * <p>
  * If there's third party library referenced by static field or by method in extension implementation, its class will
  * fail to initialize if the third party library doesn't exist. In this case, dubbo cannot figure out extension's id
@@ -59,6 +59,6 @@ public @interface SPI {
     /**
      * default extension name
      */
-    String value() default "";
+    String value() default ""; //todo @csy 当扩展名为空时，是怎么查考扩展名的，使用类名吗？
 
 }

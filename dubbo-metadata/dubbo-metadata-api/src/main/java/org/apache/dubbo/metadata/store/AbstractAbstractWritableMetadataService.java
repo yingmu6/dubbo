@@ -48,19 +48,19 @@ public abstract class AbstractAbstractWritableMetadataService implements Writabl
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
-    public void publishServiceDefinition(URL url) {
+    public void publishServiceDefinition(URL url) { //发布服务定义
         if (SERVICE_INTERFACE_NAME.equals(url.getServiceInterface())) { // Ignore the interface "MetadataService"
             return;
         }
 
-        // Remove the useless parameters
+        // Remove the useless parameters（从url中移除元数据未使用的参数）
         url = url.removeParameters(PID_KEY, TIMESTAMP_KEY, BIND_IP_KEY, BIND_PORT_KEY, TIMESTAMP_KEY);
 
         String side = url.getParameter(SIDE_KEY);
-        if (PROVIDER_SIDE.equalsIgnoreCase(side)) {
-            publishProviderServiceDefinition(url);
+        if (PROVIDER_SIDE.equalsIgnoreCase(side)) { //todo @pause 3
+            publishProviderServiceDefinition(url); //处理提供者定义的数据
         } else {
-            publishConsumerParameters(url);
+            publishConsumerParameters(url);        //处理消费者定义的参数
         }
     }
 
@@ -71,11 +71,11 @@ public abstract class AbstractAbstractWritableMetadataService implements Writabl
         }
     }
 
-    protected String getServiceDefinition(URL exportedURL) {
+    protected String getServiceDefinition(URL exportedURL) { //获取服务定义对应的json字符串
         String interfaceName = exportedURL.getParameter(INTERFACE_KEY);
         String json = null;
         try {
-            if (StringUtils.isNotEmpty(interfaceName) && !isGeneric(exportedURL.getParameter(GENERIC_KEY))) {
+            if (StringUtils.isNotEmpty(interfaceName) && !isGeneric(exportedURL.getParameter(GENERIC_KEY))) { //接口名不为空并且不是泛化类型
                 Class interfaceClass = forName(interfaceName);
                 ServiceDefinition serviceDefinition = buildFullDefinition(interfaceClass, exportedURL.getParameters());
                 Gson gson = new Gson();

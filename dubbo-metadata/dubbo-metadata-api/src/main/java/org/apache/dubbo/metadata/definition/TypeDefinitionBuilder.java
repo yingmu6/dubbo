@@ -45,6 +45,7 @@ public class TypeDefinitionBuilder {
         BUILDERS = new ArrayList<>(tbs);
     }
 
+    // 构建类型定义TypeDefinition
     public static TypeDefinition build(Type type, Class<?> clazz, Map<Class<?>, TypeDefinition> typeCache) {
         TypeBuilder builder = getGenericTypeBuilder(type, clazz);
         TypeDefinition td;

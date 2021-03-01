@@ -36,7 +36,7 @@ public final class ClassUtils {
      * @param clazz
      * @return Jar file name or class path.
      */
-    public static String getCodeSource(Class<?> clazz) {
+    public static String getCodeSource(Class<?> clazz) {// 获取类Class对应的类路径
         ProtectionDomain protectionDomain = clazz.getProtectionDomain();
         if (protectionDomain == null || protectionDomain.getCodeSource() == null) {
             return null;
@@ -88,6 +88,7 @@ public final class ClassUtils {
 
     /**
      * Get all public, non-static methods of the Class passed in.
+     * （获取传入类的所有公共、非静态方法）
      * <p>
      *
      * @param clazz Class to parse.
@@ -99,7 +100,7 @@ public final class ClassUtils {
         Method[] methods = clazz.getMethods();
         for (Method method : methods) {
             int mod = method.getModifiers();
-            if (Modifier.isPublic(mod) && !Modifier.isStatic(mod)) {
+            if (Modifier.isPublic(mod) && !Modifier.isStatic(mod)) { //公有的、非静态方法
                 result.add(method);
             }
         }

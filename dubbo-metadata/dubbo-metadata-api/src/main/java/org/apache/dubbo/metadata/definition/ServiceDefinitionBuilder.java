@@ -58,7 +58,7 @@ public final class ServiceDefinitionBuilder {
         return sd;
     }
 
-    public static <T extends ServiceDefinition> void build(T sd, final Class<?> interfaceClass) {
+    public static <T extends ServiceDefinition> void build(T sd, final Class<?> interfaceClass) { //构建服务定义数据ServiceDefinition
         sd.setCanonicalName(interfaceClass.getCanonicalName());
         sd.setCodeSource(ClassUtils.getCodeSource(interfaceClass));
 
@@ -70,7 +70,7 @@ public final class ServiceDefinitionBuilder {
 
             // Process parameter types.
             Class<?>[] paramTypes = method.getParameterTypes();
-            Type[] genericParamTypes = method.getGenericParameterTypes();
+            Type[] genericParamTypes = method.getGenericParameterTypes(); //todo @csy 泛化参数指哪些？
 
             String[] parameterTypes = new String[paramTypes.length];
             for (int i = 0; i < paramTypes.length; i++) {

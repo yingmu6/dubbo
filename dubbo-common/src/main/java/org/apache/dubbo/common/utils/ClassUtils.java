@@ -132,12 +132,12 @@ public class ClassUtils {
     }
 
     /**
-     * get class loader
+     * get class loader（获取类加载器）
      *
      * @param clazz
      * @return class loader
      */
-    public static ClassLoader getClassLoader(Class<?> clazz) { //todo @csy 类加载的概念了解，为啥会有多种创建方式，都有啥不同？
+    public static ClassLoader getClassLoader(Class<?> clazz) {
         ClassLoader cl = null;
         try {
             cl = Thread.currentThread().getContextClassLoader();
@@ -182,7 +182,7 @@ public class ClassUtils {
      * Same as <code>Class.forName()</code>, except that it works for primitive
      * types.
      */
-    public static Class<?> forName(String name) throws ClassNotFoundException {
+    public static Class<?> forName(String name) throws ClassNotFoundException { //获取指定名称对应的Class对象
         return forName(name, getClassLoader());
     }
 
@@ -200,7 +200,7 @@ public class ClassUtils {
      * @see Class#forName(String, boolean, ClassLoader)
      */
     public static Class<?> forName(String name, ClassLoader classLoader)
-            throws ClassNotFoundException, LinkageError {
+            throws ClassNotFoundException, LinkageError { //todo @csy 获取Class对象细节待了解
 
         Class<?> clazz = resolvePrimitiveClassName(name);
         if (clazz != null) {

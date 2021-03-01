@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * Protocol. (API/SPI, Singleton, ThreadSafe)
  */
-@SPI("dubbo")
+@SPI("dubbo") //默认DubboProtocol
 public interface Protocol {
 
     /**
@@ -51,7 +51,7 @@ public interface Protocol {
      * @throws RpcException thrown when error occurs during export the service, for example: port is occupied
      */
     @Adaptive
-    <T> Exporter<T> export(Invoker<T> invoker) throws RpcException;
+    <T> Exporter<T> export(Invoker<T> invoker) throws RpcException; //暴露过程：将invoker转换为Exporter
 
     /**
      * Refer a remote service: <br>（引用远程服务）
@@ -70,7 +70,7 @@ public interface Protocol {
      * @throws RpcException when there's any error while connecting to the service provider
      */
     @Adaptive
-    <T> Invoker<T> refer(Class<T> type, URL url) throws RpcException;
+    <T> Invoker<T> refer(Class<T> type, URL url) throws RpcException; //引用过程：获取invoker
 
     /**
      * Destroy protocol: <br>
@@ -85,8 +85,8 @@ public interface Protocol {
      *
      * @return
      */
-    default List<ProtocolServer> getServers() { //todo @csy 获取协议对应的所有服务？
-        return Collections.emptyList();
+    default List<ProtocolServer> getServers() { //获取协议对应的所有服务？解：从缓存map中获取协议对应的所有ProtocolServer
+        return Collections.emptyList(); //如果直接调用接口中的默认方法，则返回空列表，具体的获取放在AbstractProtocol中
     }
 
 }

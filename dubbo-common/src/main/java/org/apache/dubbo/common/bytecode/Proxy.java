@@ -39,8 +39,8 @@ import static org.apache.dubbo.common.constants.CommonConstants.MAX_PROXY_COUNT;
  * Proxy.
  */
 
-public abstract class Proxy {
-    public static final InvocationHandler RETURN_NULL_INVOKER = (proxy, method, args) -> null;
+public abstract class Proxy { //代理抽象类， todo @csy 数据接口待整理
+    public static final InvocationHandler RETURN_NULL_INVOKER = (proxy, method, args) -> null; //todo @csy InvocationHandler待了解
     public static final InvocationHandler THROW_UNSUPPORTED_INVOKER = new InvocationHandler() {
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) {
@@ -73,7 +73,7 @@ public abstract class Proxy {
      * @param ics interface class array.
      * @return Proxy instance.
      */
-    public static Proxy getProxy(ClassLoader cl, Class<?>... ics) {
+    public static Proxy getProxy(ClassLoader cl, Class<?>... ics) { //todo @csy 创建代理具体实现逻辑待了解
         if (ics.length > MAX_PROXY_COUNT) {
             throw new IllegalArgumentException("interface limit exceeded");
         }
@@ -202,7 +202,7 @@ public abstract class Proxy {
             ccm.addDefaultConstructor();
             ccm.setSuperClass(Proxy.class);
             ccm.addMethod("public Object newInstance(" + InvocationHandler.class.getName() + " h){ return new " + pcn + "($1); }");
-            Class<?> pc = ccm.toClass();
+            Class<?> pc = ccm.toClass(); //todo @csy 此处代理的代码待调试了解，查看具体数据
             proxy = (Proxy) pc.newInstance();
         } catch (RuntimeException e) {
             throw e;

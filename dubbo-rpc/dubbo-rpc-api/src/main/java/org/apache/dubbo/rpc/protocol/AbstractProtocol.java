@@ -65,7 +65,7 @@ public abstract class AbstractProtocol implements Protocol {
         return ProtocolUtils.serviceKey(port, serviceName, serviceVersion, serviceGroup);
     }
 
-    public List<ProtocolServer> getServers() {
+    public List<ProtocolServer> getServers() { //从缓存中serverMap获取所有的ProtocolServer
         return Collections.unmodifiableList(new ArrayList<>(serverMap.values()));
     }
 

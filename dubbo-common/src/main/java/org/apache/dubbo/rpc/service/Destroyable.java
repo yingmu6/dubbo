@@ -16,7 +16,7 @@
  */
 package org.apache.dubbo.rpc.service;
 
-public interface Destroyable { //todo @csy 在哪里使用？为啥没有实现类
+public interface Destroyable { //在哪里使用？为啥没有实现类，解：类似EchoService，所有类都会实现该接口，在AbstractProxyFactory加入的
 
     void $destroy();
 

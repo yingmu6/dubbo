@@ -26,7 +26,8 @@ import static org.apache.dubbo.common.constants.CommonConstants.VERSION_KEY;
 /**
  * The MetadataIdentifier is used to store method descriptor（存储方法的描述）.
  * <p>
- * The name of class is reserved because of it has been used in the previous version.
+ * The name of class is reserved（保留的） because of it has been used in the previous version.
+ * （类名是保留的，因为在以前的版本中使用过它）
  * <p>
  * 2018/10/25
  */
