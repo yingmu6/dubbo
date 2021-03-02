@@ -25,7 +25,7 @@ import java.util.Collection;
 import java.util.Map;
 
 @Deprecated
-public class URL extends org.apache.dubbo.common.URL {
+public class URL extends org.apache.dubbo.common.URL { //继承了apache url，做了兼容处理
 
     protected URL() {
         super();

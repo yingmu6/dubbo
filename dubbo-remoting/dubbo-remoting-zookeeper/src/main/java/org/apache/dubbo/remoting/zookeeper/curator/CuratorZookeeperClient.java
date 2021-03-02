@@ -58,7 +58,7 @@ public class CuratorZookeeperClient extends AbstractZookeeperClient<CuratorZooke
     private final CuratorFramework client;
     private Map<String, TreeCache> treeCacheMap = new ConcurrentHashMap<>();
 
-    public CuratorZookeeperClient(URL url) { //todo @csy zk 客户端待了解？
+    public CuratorZookeeperClient(URL url) {
         super(url);
         try {
             int timeout = url.getParameter(TIMEOUT_KEY, DEFAULT_CONNECTION_TIMEOUT_MS);

@@ -36,7 +36,7 @@ public class FutureAdapter<V> extends CompletableFuture<V> {
 
     public FutureAdapter(CompletableFuture<AppResponse> future) {
         this.appResponseFuture = future;
-        future.whenComplete((appResponse, t) -> { //todo @csy CompletableFuture 使用了解
+        future.whenComplete((appResponse, t) -> {
             if (t != null) {
                 if (t instanceof CompletionException) {
                     t = t.getCause();

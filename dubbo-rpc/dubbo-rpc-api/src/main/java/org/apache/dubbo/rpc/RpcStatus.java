@@ -114,7 +114,7 @@ public class RpcStatus { //都记录了哪些状态值？后台管理页面有�
             if (i + 1 > max) {
                 return false;
             }
-            if (methodStatus.active.compareAndSet(i, i + 1)) { //todo @csy compareAndSet原子比较待了解
+            if (methodStatus.active.compareAndSet(i, i + 1)) {
                 break;
             }
         }

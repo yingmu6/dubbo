@@ -42,7 +42,7 @@ public class LoggerFactory {
     // search common-used logging frameworks
     static {
         String logger = System.getProperty("dubbo.application.logger", "");
-        switch (logger) { //todo @csy 适配器模式待了解？怎么适配各种日志的？
+        switch (logger) { //todo @csy 怎么适配各种日志的？
             case "slf4j":
                 setLoggerAdapter(new Slf4jLoggerAdapter());
                 break;

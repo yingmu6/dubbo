@@ -218,7 +218,7 @@ public interface CommonConstants {
      */
     String RELEASE_KEY = "release";
 
-    int MAX_PROXY_COUNT = 65535;
+    int MAX_PROXY_COUNT = 65535; //最大代理数量
 
     String MONITOR_KEY = "monitor";
     String CLUSTER_KEY = "cluster";

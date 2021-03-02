@@ -33,9 +33,9 @@ import java.util.concurrent.ConcurrentMap;
 import static org.apache.dubbo.common.BaseServiceMetadata.interfaceFromServiceKey;
 import static org.apache.dubbo.common.BaseServiceMetadata.versionFromServiceKey;
 
-public class ServiceRepository extends LifecycleAdapter implements FrameworkExt {
+public class ServiceRepository extends LifecycleAdapter implements FrameworkExt { //服务仓库：维护这服务key与ConsumerModel、ProviderModel模型的关系（将数据与行为封装在一个类型，满足类的封装性）
 
-    public static final String NAME = "repository";
+    public static final String NAME = "repository"; //对应的SPI实例repository=org.apache.dubbo.rpc.model.ServiceRepository
 
     // services
     private ConcurrentMap<String, ServiceDescriptor> services = new ConcurrentHashMap<>();
@@ -170,7 +170,7 @@ public class ServiceRepository extends LifecycleAdapter implements FrameworkExt 
         return Collections.unmodifiableList(new ArrayList<>(consumers.values()));
     }
 
-    public ConsumerModel lookupReferredService(String serviceKey) {
+    public ConsumerModel lookupReferredService(String serviceKey) { //从缓存中根据服务key查找消费者数据模型
         return consumers.get(serviceKey);
     }
 

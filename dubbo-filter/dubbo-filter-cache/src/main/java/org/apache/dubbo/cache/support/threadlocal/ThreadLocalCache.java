@@ -43,7 +43,7 @@ public class ThreadLocalCache implements Cache { //todo @csy 线程缓存是指�
     /**
      * Thread local variable to store cached data.
      */
-    private final ThreadLocal<Map<Object, Object>> store; //todo @csy ThreadLocal 待了解
+    private final ThreadLocal<Map<Object, Object>> store;
 
     /**
      * Taken URL as an argument to create an instance of ThreadLocalCache. In this version of implementation constructor

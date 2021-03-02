@@ -39,9 +39,14 @@ import static org.apache.dubbo.common.constants.CommonConstants.MAX_PROXY_COUNT;
  * Proxy.
  */
 
-public abstract class Proxy { //代理抽象类， todo @csy 数据接口待整理
-    public static final InvocationHandler RETURN_NULL_INVOKER = (proxy, method, args) -> null; //todo @csy InvocationHandler待了解
-    public static final InvocationHandler THROW_UNSUPPORTED_INVOKER = new InvocationHandler() {
+public abstract class Proxy { //代理抽象类
+    /**
+     * InvocationHandler每个代理类都会有与之关联的处理类InvocationHandler，当代理类中的方法被调用时，会回调InvocationHandler中的invoke方法
+     * https://blog.csdn.net/yaomingyang/article/details/80981004
+     * https://www.jianshu.com/p/4df6e4d7eb46  java的proxy与invocationHandler使用
+     */
+    public static final InvocationHandler RETURN_NULL_INVOKER = (proxy, method, args) -> null; //返回null的调用
+    public static final InvocationHandler THROW_UNSUPPORTED_INVOKER = new InvocationHandler() { //抛出不支持的调用
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) {
             throw new UnsupportedOperationException("Method [" + ReflectUtils.getName(method) + "] unimplemented.");
@@ -51,7 +56,7 @@ public abstract class Proxy { //代理抽象类， todo @csy 数据接口待整�
     private static final String PACKAGE_NAME = Proxy.class.getPackage().getName();
     private static final Map<ClassLoader, Map<String, Object>> PROXY_CACHE_MAP = new WeakHashMap<ClassLoader, Map<String, Object>>();
 
-    private static final Object PENDING_GENERATION_MARKER = new Object();
+    private static final Object PENDING_GENERATION_MARKER = new Object(); //"等待生成标记"对象
 
     protected Proxy() {
     }
@@ -67,13 +72,16 @@ public abstract class Proxy { //代理抽象类， todo @csy 数据接口待整�
     }
 
     /**
-     * Get proxy.
+     * Get proxy.（获取代理对象）
+     * 1）通过拼接形式组装Class类的代码，包含构造方法、成员方法、成员变量等
+     * 2）
+     *
      *
      * @param cl  class loader.
      * @param ics interface class array.
      * @return Proxy instance.
      */
-    public static Proxy getProxy(ClassLoader cl, Class<?>... ics) { //todo @csy 创建代理具体实现逻辑待了解
+    public static Proxy getProxy(ClassLoader cl, Class<?>... ics) { //创建代理具体的实现逻辑
         if (ics.length > MAX_PROXY_COUNT) {
             throw new IllegalArgumentException("interface limit exceeded");
         }
@@ -81,7 +89,7 @@ public abstract class Proxy { //代理抽象类， todo @csy 数据接口待整�
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < ics.length; i++) {
             String itf = ics[i].getName();
-            if (!ics[i].isInterface()) {
+            if (!ics[i].isInterface()) { //代理的若不是接口，则抛异常
                 throw new RuntimeException(itf + " is not a interface.");
             }
 
@@ -91,11 +99,11 @@ public abstract class Proxy { //代理抽象类， todo @csy 数据接口待整�
             } catch (ClassNotFoundException e) {
             }
 
-            if (tmp != ics[i]) {
+            if (tmp != ics[i]) { //使用类加载器获取Class对象与传入的Class对象进行比较，看是否相同
                 throw new IllegalArgumentException(ics[i] + " is not visible from class loader");
             }
 
-            sb.append(itf).append(';');
+            sb.append(itf).append(';'); //把满足条件的类名拼接
         }
 
         // use interface class name list as key.
@@ -111,14 +119,14 @@ public abstract class Proxy { //代理抽象类， todo @csy 数据接口待整�
         synchronized (cache) {
             do {
                 Object value = cache.get(key);
-                if (value instanceof Reference<?>) {
+                if (value instanceof Reference<?>) { //若是Reference的实例，则强制转换为Proxy
                     proxy = (Proxy) ((Reference<?>) value).get();
                     if (proxy != null) {
                         return proxy;
                     }
                 }
 
-                if (value == PENDING_GENERATION_MARKER) {
+                if (value == PENDING_GENERATION_MARKER) { //若实例与等待标志相等，则进行等待，否则设置到缓存map中
                     try {
                         cache.wait();
                     } catch (InterruptedException e) {
@@ -146,12 +154,12 @@ public abstract class Proxy { //代理抽象类， todo @csy 数据接口待整�
                     if (pkg == null) {
                         pkg = npkg;
                     } else {
-                        if (!pkg.equals(npkg)) {
+                        if (!pkg.equals(npkg)) { //非公有的接口，在不同包中是不能访问的
                             throw new IllegalArgumentException("non-public interfaces from different packages");
                         }
                     }
                 }
-                ccp.addInterface(ics[i]);
+                ccp.addInterface(ics[i]); //添加满足条件的接口
 
                 for (Method method : ics[i].getMethods()) {
                     String desc = ReflectUtils.getDesc(method);
@@ -161,7 +169,7 @@ public abstract class Proxy { //代理抽象类， todo @csy 数据接口待整�
                     if (ics[i].isInterface() && Modifier.isStatic(method.getModifiers())) {
                         continue;
                     }
-                    worked.add(desc);
+                    worked.add(desc); //将方法描述信息加入集合，用于根据方法描述符判断
 
                     int ix = methods.size();
                     Class<?> rt = method.getReturnType();
@@ -200,16 +208,16 @@ public abstract class Proxy { //代理抽象类， todo @csy 数据接口待整�
             ccm = ClassGenerator.newInstance(cl);
             ccm.setClassName(fcn);
             ccm.addDefaultConstructor();
-            ccm.setSuperClass(Proxy.class);
-            ccm.addMethod("public Object newInstance(" + InvocationHandler.class.getName() + " h){ return new " + pcn + "($1); }");
+            ccm.setSuperClass(Proxy.class); //设置代理类
+            ccm.addMethod("public Object newInstance(" + InvocationHandler.class.getName() + " h){ return new " + pcn + "($1); }"); //将InvocationHandler处理类编织到代码中
             Class<?> pc = ccm.toClass(); //todo @csy 此处代理的代码待调试了解，查看具体数据
-            proxy = (Proxy) pc.newInstance();
+            proxy = (Proxy) pc.newInstance(); //todo @csy 此处为啥创建的实例能直接转换为Proxy
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         } finally {
-            // release ClassGenerator
+            // release ClassGenerator 释放ClassGenerator维护的资源
             if (ccp != null) {
                 ccp.release();
             }

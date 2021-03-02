@@ -36,7 +36,7 @@ import static org.apache.dubbo.rpc.Constants.INTERFACES;
 /**
  * AbstractProxyFactory
  */
-public abstract class AbstractProxyFactory implements ProxyFactory {
+public abstract class AbstractProxyFactory implements ProxyFactory { //AbstractProxyFactory抽象代理工厂类只实现了接口getProxy方法，getInvoker方法交由子类完成
     private static final Class<?>[] INTERNAL_INTERFACES = new Class<?>[]{ //所有的代理类都实现了EchoService接口
             EchoService.class, Destroyable.class
     };
@@ -47,7 +47,7 @@ public abstract class AbstractProxyFactory implements ProxyFactory {
     }
 
     /**
-     * 创建代理类
+     * 获取invoker对应的代理类
      * 1）创建代理前，先找出需要代理接口的Class集合
      * 2）调用代理实现类的方法获取代理（不同的代理方式：JavassistProxyFactory或JdkProxyFactory）
      */

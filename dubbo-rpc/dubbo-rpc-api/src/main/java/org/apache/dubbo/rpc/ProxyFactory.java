@@ -34,7 +34,7 @@ public interface ProxyFactory {
      */
 
     /**
-     * create proxy.（创建代理对象proxy）
+     * create proxy.（根据调用对象invoker获取代理对象proxy）
      *
      * @param invoker
      * @return proxy
@@ -52,7 +52,7 @@ public interface ProxyFactory {
     <T> T getProxy(Invoker<T> invoker, boolean generic) throws RpcException;
 
     /**
-     * create invoker.（创建执行对象invoker）
+     * create invoker.（根据代理对象proxy、代理类型、URl等获取调用对象invoker）
      *
      * @param <T>
      * @param proxy

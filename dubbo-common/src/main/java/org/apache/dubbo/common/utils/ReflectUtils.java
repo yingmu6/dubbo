@@ -359,7 +359,7 @@ public final class ReflectUtils {
     }
 
     /**
-     * get class desc.
+     * get class desc.（获取Class类的描述符）
      * boolean[].class => "[Z"
      * Object.class => "Ljava/lang/Object;"
      *
@@ -370,12 +370,12 @@ public final class ReflectUtils {
     public static String getDesc(Class<?> c) {
         StringBuilder ret = new StringBuilder();
 
-        while (c.isArray()) {
+        while (c.isArray()) { //数组类型
             ret.append('[');
             c = c.getComponentType();
         }
 
-        if (c.isPrimitive()) {
+        if (c.isPrimitive()) { //基本类型
             String t = c.getName();
             if ("void".equals(t)) {
                 ret.append(JVM_VOID);
@@ -396,7 +396,7 @@ public final class ReflectUtils {
             } else if ("short".equals(t)) {
                 ret.append(JVM_SHORT);
             }
-        } else {
+        } else { //对象类型
             ret.append('L');
             ret.append(c.getName().replace('.', '/'));
             ret.append(';');
@@ -425,7 +425,7 @@ public final class ReflectUtils {
     }
 
     /**
-     * get method desc.
+     * get method desc.（获取方法描述信息）
      * int do(int arg1) => "do(I)I"
      * void do(String arg1,boolean arg2) => "do(Ljava/lang/String;Z)V"
      *

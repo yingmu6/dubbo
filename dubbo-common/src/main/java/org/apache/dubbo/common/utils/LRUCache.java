@@ -48,7 +48,7 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V> { //todo @csy 用途以�
     public boolean containsKey(Object key) { //加锁处理
         lock.lock();
         try {
-            return super.containsKey(key); //todo @csy Map、HashMap、LinkedHashMap了解
+            return super.containsKey(key);
         } finally {
             lock.unlock();
         }

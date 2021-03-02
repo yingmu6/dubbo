@@ -81,7 +81,6 @@ public class InMemoryWritableMetadataService extends AbstractAbstractWritableMet
         return getAllUnmodifiableServiceURLs(subscribedServiceURLs);
     }
 
-    //todo @csy TreeSet是有怎样的特性？与SorterSet有啥关系？
     private SortedSet<String> getAllUnmodifiableServiceURLs(Map<String, SortedSet<URL>> serviceURLs) {//Unmodifiable:无法修改的
         SortedSet<URL> bizURLs = new TreeSet<>(InMemoryWritableMetadataService.URLComparator.INSTANCE);
         for (Map.Entry<String, SortedSet<URL>> entry : serviceURLs.entrySet()) {

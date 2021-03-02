@@ -250,7 +250,7 @@ public class ExpiringMap<K, V> implements Map<K, V> {
     public class ExpireThread implements Runnable { //后台线程，定期检查数据是否过期
         private long timeToLiveMillis; //存活的时间
         private long expirationIntervalMillis; //过期的时间间隔
-        private volatile boolean running = false; //todo @csy volatile的原理？
+        private volatile boolean running = false;
         private final Thread expirerThread;
 
         @Override

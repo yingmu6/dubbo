@@ -133,7 +133,7 @@ class URL implements Serializable {
 
     private volatile transient String string;
 
-    private transient String serviceKey;
+    private transient String serviceKey; //相对2.5.6新增的字段，服务对应的键：group/path:version
 
     private transient String address;
 

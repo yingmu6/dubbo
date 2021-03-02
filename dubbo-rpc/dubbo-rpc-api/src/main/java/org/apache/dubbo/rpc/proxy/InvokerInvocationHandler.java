@@ -30,17 +30,17 @@ import java.lang.reflect.Method;
 /**
  * InvokerHandler
  */
-public class InvokerInvocationHandler implements InvocationHandler { //todo @csy InvocationHandler待了解
+public class InvokerInvocationHandler implements InvocationHandler {
     // InvocationHandler：每一个代理实例都与一个调用处理类关联，当代理实例上的方法被调用时，会调用InvocationHandler的invoke方法（方法回调）
     private static final Logger logger = LoggerFactory.getLogger(InvokerInvocationHandler.class);
     private final Invoker<?> invoker;
     private ConsumerModel consumerModel;
 
-    public InvokerInvocationHandler(Invoker<?> handler) {
+    public InvokerInvocationHandler(Invoker<?> handler) { //构造invoker对应的处理类
         this.invoker = handler;
         String serviceKey = invoker.getUrl().getServiceKey();
         if (serviceKey != null) {
-            this.consumerModel = ApplicationModel.getConsumerModel(serviceKey);
+            this.consumerModel = ApplicationModel.getConsumerModel(serviceKey); //根据服务key获取消费者模型数据，并设置到当前成员变量中
         }
     }
 

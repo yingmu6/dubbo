@@ -45,23 +45,23 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * ClassGenerator
+ * ClassGenerator（javassist方式产生代理对象）
  */
-public final class ClassGenerator {
+public final class ClassGenerator { //todo @csy 数据结构以及功能了解
 
     private static final AtomicLong CLASS_NAME_COUNTER = new AtomicLong(0);
     private static final String SIMPLE_NAME_TAG = "<init>";
     private static final Map<ClassLoader, ClassPool> POOL_MAP = new ConcurrentHashMap<ClassLoader, ClassPool>(); //ClassLoader - ClassPool
-    private ClassPool mPool;
-    private CtClass mCtc;
+    private ClassPool mPool; //类池
+    private CtClass mCtc;   //类class
     private String mClassName;
     private String mSuperClass;
     private Set<String> mInterfaces;
-    private List<String> mFields;
-    private List<String> mConstructors;
-    private List<String> mMethods;
-    private Map<String, Method> mCopyMethods; // <method desc,method instance>
-    private Map<String, Constructor<?>> mCopyConstructors; // <constructor desc,constructor instance>
+    private List<String> mFields; //存放字段对应的字符串，如ccp.addField("public static java.lang.reflect.Method[] methods;");
+    private List<String> mConstructors; //存放构造函数对应的字符串
+    private List<String> mMethods; //存放方法对应的字符串
+    private Map<String, Method> mCopyMethods; // <method desc,method instance>  方法描述符与方法实例的映射
+    private Map<String, Constructor<?>> mCopyConstructors; // <constructor desc,constructor instance> 方法描述符与构造实例的映射
     private boolean mDefaultConstructor = false;
 
     private ClassGenerator() {
@@ -185,7 +185,7 @@ public final class ClassGenerator {
     }
 
     public ClassGenerator addMethod(String name, int mod, Class<?> rt, Class<?>[] pts, Class<?>[] ets,
-                                    String body) {
+                                    String body) { //todo @csy 待调试查看数据
         StringBuilder sb = new StringBuilder();
         sb.append(modifier(mod)).append(' ').append(ReflectUtils.getName(rt)).append(' ').append(name);
         sb.append('(');
@@ -286,18 +286,19 @@ public final class ClassGenerator {
                 getClass().getProtectionDomain());
     }
 
-    public Class<?> toClass(ClassLoader loader, ProtectionDomain pd) {
+    public Class<?> toClass(ClassLoader loader, ProtectionDomain pd) { //将当前维护的成员方法、成员变量对应字符串转换为Class对象
         if (mCtc != null) {
-            mCtc.detach();
+            mCtc.detach(); //detach:分离， 从ClassPool中移除CtClass
         }
+        // 基于当前类维护的数据，进行逻辑处理
         long id = CLASS_NAME_COUNTER.getAndIncrement();
         try {
             CtClass ctcs = mSuperClass == null ? null : mPool.get(mSuperClass);
             if (mClassName == null) {
                 mClassName = (mSuperClass == null || javassist.Modifier.isPublic(ctcs.getModifiers())
-                        ? ClassGenerator.class.getName() : mSuperClass + "$sc") + id;
+                        ? ClassGenerator.class.getName() : mSuperClass + "$sc") + id; //构建类名：取ClassGenerator名称或mSuperClass名称
             }
-            mCtc = mPool.makeClass(mClassName);
+            mCtc = mPool.makeClass(mClassName); //创建指定类名的CtClass对象
             if (mSuperClass != null) {
                 mCtc.setSuperclass(ctcs);
             }
@@ -309,12 +310,12 @@ public final class ClassGenerator {
             }
             if (mFields != null) {
                 for (String code : mFields) {
-                    mCtc.addField(CtField.make(code, mCtc));
+                    mCtc.addField(CtField.make(code, mCtc)); // 通过字符对应的字符串构造字段
                 }
             }
             if (mMethods != null) {
                 for (String code : mMethods) {
-                    if (code.charAt(0) == ':') {
+                    if (code.charAt(0) == ':') { //todo @csy 什么情况下会以冒号":"分隔
                         mCtc.addMethod(CtNewMethod.copy(getCtMethod(mCopyMethods.get(code.substring(1))),
                                 code.substring(1, code.indexOf('(')), mCtc, null));
                     } else {
@@ -386,5 +387,5 @@ public final class ClassGenerator {
 
     public static interface DC {
 
-    } // dynamic class tag interface.
+    } // dynamic class tag interface. 动态类标识
 }

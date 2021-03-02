@@ -42,7 +42,7 @@ public interface GenericService {
         if (object instanceof CompletableFuture) {
             return (CompletableFuture<Object>) object;
         }
-        return CompletableFuture.completedFuture(object); //todo @csy CompletableFuture 了解以及使用
+        return CompletableFuture.completedFuture(object);
     }
 
 }

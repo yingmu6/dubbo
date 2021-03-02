@@ -236,7 +236,7 @@ public interface MetadataService {
      * @return the non-null read-only {@link SortedSet sorted set} of {@link URL#toFullString() strings} presenting
      * @see URL#toFullString()
      */
-    static SortedSet<String> toSortedStrings(Stream<URL> stream) { //todo @csy Collections的unmodifiableSortedSet待了解
+    static SortedSet<String> toSortedStrings(Stream<URL> stream) {
         return unmodifiableSortedSet(stream.map(URL::toFullString).collect(TreeSet::new, Set::add, Set::addAll));
     }
 }
