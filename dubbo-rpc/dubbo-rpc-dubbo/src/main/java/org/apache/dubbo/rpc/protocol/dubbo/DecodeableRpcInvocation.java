@@ -49,10 +49,13 @@ import static org.apache.dubbo.common.constants.CommonConstants.PATH_KEY;
 import static org.apache.dubbo.common.constants.CommonConstants.VERSION_KEY;
 import static org.apache.dubbo.rpc.protocol.dubbo.CallbackServiceCodec.decodeInvocationArgument;
 
-public class DecodeableRpcInvocation extends RpcInvocation implements Codec, Decodeable {
+public class DecodeableRpcInvocation extends RpcInvocation implements Codec, Decodeable { //解码调用信息
 
     private static final Logger log = LoggerFactory.getLogger(DecodeableRpcInvocation.class);
 
+    /**
+     * 维护的数据结构：包含通道channel、序列化方式serializationType、输入流inputStream、请求对象request等
+     */
     private Channel channel;
 
     private byte serializationType;

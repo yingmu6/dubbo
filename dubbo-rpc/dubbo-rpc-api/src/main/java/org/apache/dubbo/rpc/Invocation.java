@@ -28,7 +28,7 @@ import java.util.stream.Stream;
  * @see org.apache.dubbo.rpc.Invoker#invoke(Invocation)
  * @see org.apache.dubbo.rpc.RpcInvocation
  */
-public interface Invocation {
+public interface Invocation { //调用方式
 
     String getTargetServiceUniqueName();
 
@@ -63,7 +63,7 @@ public interface Invocation {
     default String[] getCompatibleParamSignatures() {
         return Stream.of(getParameterTypes())
                 .map(Class::getName)
-                .toArray(String[]::new);
+                .toArray(String[]::new); //todo @csy 此处数值待调试
     }
 
     /**
@@ -82,7 +82,7 @@ public interface Invocation {
      */
     Map<String, String> getAttachments();
 
-    @Experimental("Experiment api for supporting Object transmission")
+    @Experimental("Experiment api for supporting Object transmission") //transmission:传输
     Map<String, Object> getObjectAttachments();
 
     void setAttachment(String key, String value);

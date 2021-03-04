@@ -28,7 +28,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.$INVOKE_ASYNC;
 /**
  *
  */
-public class MethodDescriptor {
+public class MethodDescriptor {//方法的描述信息
     private final Method method;
     //    private final boolean isCallBack;
 //    private final boolean isFuture;
@@ -46,11 +46,12 @@ public class MethodDescriptor {
         this.parameterClasses = method.getParameterTypes();
         this.returnClass = method.getReturnType();
         this.returnTypes = ReflectUtils.getReturnTypes(method);
-        this.paramDesc = ReflectUtils.getDesc(parameterClasses);
+        this.paramDesc = ReflectUtils.getDesc(parameterClasses); //参数Class对应的描述符
         this.compatibleParamSignatures = Stream.of(parameterClasses)
                 .map(Class::getName)
-                .toArray(String[]::new);
+                .toArray(String[]::new); //取parameterClasses对应的Class名称，并转换为字符串数组
         this.methodName = method.getName();
+        // 判断是否与GenericService方法匹配，若匹配则是泛化方法
         this.generic = (methodName.equals($INVOKE) || methodName.equals($INVOKE_ASYNC)) && parameterClasses.length == 3;
     }
 

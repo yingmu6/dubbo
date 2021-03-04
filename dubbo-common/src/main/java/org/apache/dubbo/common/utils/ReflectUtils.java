@@ -412,7 +412,7 @@ public final class ReflectUtils {
      * @return desc.
      * @throws NotFoundException
      */
-    public static String getDesc(final Class<?>[] cs) {
+    public static String getDesc(final Class<?>[] cs) { //获取Class数组对应的描述符
         if (cs.length == 0) {
             return "";
         }
@@ -1181,11 +1181,11 @@ public final class ReflectUtils {
         return properties;
     }
 
-    public static Type[] getReturnTypes(Method method) {
+    public static Type[] getReturnTypes(Method method) { //获取方法的返回类型，有返回类型+泛化类型
         Class<?> returnType = method.getReturnType();
         Type genericReturnType = method.getGenericReturnType();
         if (Future.class.isAssignableFrom(returnType)) {
-            if (genericReturnType instanceof ParameterizedType) {
+            if (genericReturnType instanceof ParameterizedType) { //todo @csy 此处的处理逻辑是怎样的？
                 Type actualArgType = ((ParameterizedType) genericReturnType).getActualTypeArguments()[0];
                 if (actualArgType instanceof ParameterizedType) {
                     returnType = (Class<?>) ((ParameterizedType) actualArgType).getRawType();

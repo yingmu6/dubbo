@@ -23,6 +23,7 @@ import java.lang.annotation.Target;
 
 /**
  * Indicating unstable API, may get removed or changed in the next release.
+ * （表明是不稳定的api，也许会有提高和改变在一个正式版本上）
  */
 @Retention(RetentionPolicy.CLASS)
 @Target({
@@ -32,6 +33,6 @@ import java.lang.annotation.Target;
         ElementType.METHOD,
         ElementType.PACKAGE,
         ElementType.TYPE})
-public @interface Experimental {
+public @interface Experimental { //Experimental：试验的
     String value();
 }

@@ -57,7 +57,7 @@ public abstract class AbstractAbstractWritableMetadataService implements Writabl
         url = url.removeParameters(PID_KEY, TIMESTAMP_KEY, BIND_IP_KEY, BIND_PORT_KEY, TIMESTAMP_KEY);
 
         String side = url.getParameter(SIDE_KEY);
-        if (PROVIDER_SIDE.equalsIgnoreCase(side)) { //todo @pause 3
+        if (PROVIDER_SIDE.equalsIgnoreCase(side)) { //todo @pause 元数据待了解实践
             publishProviderServiceDefinition(url); //处理提供者定义的数据
         } else {
             publishConsumerParameters(url);        //处理消费者定义的参数

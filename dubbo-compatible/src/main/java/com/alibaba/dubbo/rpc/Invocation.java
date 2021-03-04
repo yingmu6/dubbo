@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.Map;
 
 @Deprecated
-public interface Invocation extends org.apache.dubbo.rpc.Invocation {
+public interface Invocation extends org.apache.dubbo.rpc.Invocation { //老的Alibaba的接口对外功能不变，只是继承了新的apache接口，改了内部实现
 
     @Override
     Invoker<?> getInvoker();
@@ -104,9 +104,9 @@ public interface Invocation extends org.apache.dubbo.rpc.Invocation {
         return null;
     }
 
-    class CompatibleInvocation implements Invocation {
+    class CompatibleInvocation implements Invocation { //接口中定义内部类，CompatibleInvocation：兼容Invocation
 
-        private org.apache.dubbo.rpc.Invocation delegate;
+        private org.apache.dubbo.rpc.Invocation delegate; //delegate:代表
 
         public CompatibleInvocation(org.apache.dubbo.rpc.Invocation invocation) {
             this.delegate = invocation;
@@ -119,7 +119,7 @@ public interface Invocation extends org.apache.dubbo.rpc.Invocation {
 
         @Override
         public String getMethodName() {
-            return delegate.getMethodName();
+            return delegate.getMethodName(); //实现调用apache的Invocation的接口
         }
 
         @Override
@@ -149,7 +149,7 @@ public interface Invocation extends org.apache.dubbo.rpc.Invocation {
 
         @Override
         public Invoker<?> getInvoker() {
-            return new Invoker.CompatibleInvoker(delegate.getInvoker());
+            return new Invoker.CompatibleInvoker(delegate.getInvoker()); //内部类的调用
         }
 
         @Override

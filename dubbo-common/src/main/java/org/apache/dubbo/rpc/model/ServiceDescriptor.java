@@ -30,12 +30,13 @@ import java.util.Set;
 /**
  * ServiceModel and ServiceMetadata are to some extend duplicated with each other.
  * We should merge them in the future.
+ * （ServiceModel和ServiceMetadata在某种程度上是相互复制的。我们将来应该合并它们）
  */
-public class ServiceDescriptor {//todo @csy 功能用途是啥？
+public class ServiceDescriptor { //服务的描述信息
     private final String serviceName;
     private final Class<?> serviceInterfaceClass;
     // to accelerate search
-    private final Map<String, List<MethodDescriptor>> methods = new HashMap<>();
+    private final Map<String, List<MethodDescriptor>> methods = new HashMap<>(); //todo @csy 维护怎样的数据信息？
     private final Map<String, Map<String, MethodDescriptor>> descToMethods = new HashMap<>();
 
     public ServiceDescriptor(Class<?> interfaceClass) {

@@ -17,7 +17,7 @@
 
 package org.apache.dubbo.common.serialize;
 
-public interface Constants {
+public interface Constants { //序列化方式对应的id值
     byte HESSIAN2_SERIALIZATION_ID = 2;
     byte JAVA_SERIALIZATION_ID = 3;
     byte COMPACTED_JAVA_SERIALIZATION_ID = 4;

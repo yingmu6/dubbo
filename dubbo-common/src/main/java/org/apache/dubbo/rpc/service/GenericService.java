@@ -23,7 +23,7 @@ import java.util.concurrent.CompletableFuture;
  *
  * @export
  */
-public interface GenericService {
+public interface GenericService {//泛化服务接口
 
     /**
      * Generic invocation

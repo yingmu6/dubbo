@@ -25,7 +25,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.HEARTBEAT_EVENT;
 /**
  * Request.
  */
-public class Request {
+public class Request { //todo @pause 请求响应的模型
 
     private static final AtomicLong INVOKE_ID = new AtomicLong(0);
 
@@ -37,7 +37,7 @@ public class Request {
 
     private boolean mEvent = false;
 
-    private boolean mBroken = false;
+    private boolean mBroken = false; //todo @csy 含义是啥？
 
     private Object mData;
 

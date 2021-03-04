@@ -42,18 +42,18 @@ import static org.apache.dubbo.common.constants.CommonConstants.VERSION_KEY;
 import static org.apache.dubbo.rpc.Constants.TOKEN_KEY;
 
 /**
- * RPC Invocation.
+ * RPC Invocation.（RPC 调用信息）
  *
  * @serial Don't change the class name and properties.
  */
-public class RpcInvocation implements Invocation, Serializable {
+public class RpcInvocation implements Invocation, Serializable {//todo @pause 调用信息Invocation了解
 
     private static final long serialVersionUID = -4355285085441097045L;
 
-    private String targetServiceUniqueName;
+    private String targetServiceUniqueName; //todo @csy 此处的值是怎样的？有啥含义？
 
     private String methodName;
-    private String serviceName;
+    private String serviceName; //todo @csy 此处的值是怎样的？
 
     private transient Class<?>[] parameterTypes;
     private String parameterTypesDesc;
@@ -69,7 +69,7 @@ public class RpcInvocation implements Invocation, Serializable {
     /**
      * Only used on the caller side, will not appear on the wire.
      */
-    private Map<Object, Object> attributes = new HashMap<Object, Object>();
+    private Map<Object, Object> attributes = new HashMap<Object, Object>(); //todo @csy 与attachments存储的内容有何不同？
 
     private transient Invoker<?> invoker;
 
@@ -87,9 +87,9 @@ public class RpcInvocation implements Invocation, Serializable {
                 invocation.getArguments(), new HashMap<>(invocation.getObjectAttachments()),
                 invocation.getInvoker(), invocation.getAttributes());
         if (invoker != null) {
-            URL url = invoker.getUrl();
+            URL url = invoker.getUrl(); //将url中的数据信息，设置到调用信息RpcInvocation的参数Map中，内部是用RpcInvocation对象进行数据传递
             setAttachment(PATH_KEY, url.getPath());
-            if (url.hasParameter(INTERFACE_KEY)) {
+            if (url.hasParameter(INTERFACE_KEY)) { //参数包含接口、分组、版本、超时时间等
                 setAttachment(INTERFACE_KEY, url.getParameter(INTERFACE_KEY));
             }
             if (url.hasParameter(GROUP_KEY)) {
@@ -134,6 +134,7 @@ public class RpcInvocation implements Invocation, Serializable {
         this(methodName, serviceName, parameterTypes, arguments, attachments, null, null);
     }
 
+    // 构建调用的基本信息
     public RpcInvocation(String methodName, String serviceName, Class<?>[] parameterTypes, Object[] arguments,
                          Map<String, Object> attachments, Invoker<?> invoker, Map<Object, Object> attributes) {
         this.methodName = methodName;
@@ -146,9 +147,10 @@ public class RpcInvocation implements Invocation, Serializable {
         initParameterDesc();
     }
 
-    private void initParameterDesc() {
+    private void initParameterDesc() { //初始化参数描述信息
         ServiceRepository repository = ApplicationModel.getServiceRepository();
         if (StringUtils.isNotEmpty(serviceName)) {
+            // 先查询服务描述信息ServiceDescriptor，再查找方法描述信息MethodDescriptor，最后从方法信息中找到相关信息并设置到成员变量中
             ServiceDescriptor serviceDescriptor = repository.lookupService(serviceName);
             if (serviceDescriptor != null) {
                 MethodDescriptor methodDescriptor = serviceDescriptor.getMethod(methodName, parameterTypes);
@@ -160,7 +162,7 @@ public class RpcInvocation implements Invocation, Serializable {
             }
         }
 
-        if (parameterTypesDesc == null) {
+        if (parameterTypesDesc == null) { //若serviceName为空或没有找到MethodDescriptor、methodDescriptor信息，则取当前成员变量进行处理
             this.parameterTypesDesc = ReflectUtils.getDesc(this.getParameterTypes());
             this.compatibleParamSignatures = Stream.of(this.parameterTypes).map(Class::getName).toArray(String[]::new);
             this.returnTypes = RpcUtils.getReturnTypes(this);

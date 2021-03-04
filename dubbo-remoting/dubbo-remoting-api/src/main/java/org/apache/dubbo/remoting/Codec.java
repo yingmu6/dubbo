@@ -28,7 +28,7 @@ import java.io.OutputStream;
  */
 @Deprecated
 @SPI
-public interface Codec {
+public interface Codec { //todo @pause 编解码了解
 
     /**
      * Need more input poison.

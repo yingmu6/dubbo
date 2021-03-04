@@ -17,7 +17,7 @@
 
 package org.apache.dubbo.common.utils;
 
-public abstract class Assert {
+public abstract class Assert { //断言处理工具类
 
     protected Assert() {
     }

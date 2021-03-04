@@ -55,7 +55,7 @@ public abstract class AbstractProxyFactory implements ProxyFactory { //AbstractP
     public <T> T getProxy(Invoker<T> invoker, boolean generic) throws RpcException {
         Set<Class<?>> interfaces = new HashSet<>();
 
-        String config = invoker.getUrl().getParameter(INTERFACES);
+        String config = invoker.getUrl().getParameter(INTERFACES); //启动时，Invoker对应的实例为MockClusterInvoker,MockClusterInvoker中的invoker为AbstractCluster$InterceptorInvokerNode（内部类）
         if (config != null && config.length() > 0) { //从url中获取配置的接口类型，设置到Class集合中
             String[] types = COMMA_SPLIT_PATTERN.split(config);
             for (String type : types) {
@@ -78,8 +78,8 @@ public abstract class AbstractProxyFactory implements ProxyFactory { //AbstractP
             }
         }
 
-        interfaces.add(invoker.getInterface());
-        interfaces.addAll(Arrays.asList(INTERNAL_INTERFACES));
+        interfaces.add(invoker.getInterface()); //实际接口对应的Class
+        interfaces.addAll(Arrays.asList(INTERNAL_INTERFACES)); //预定接口对应的Class
 
         return getProxy(invoker, interfaces.toArray(new Class<?>[0])); //调用抽象方法，具体的实现交由子类执行（上帝视角）
     }
