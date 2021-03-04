@@ -74,8 +74,8 @@ public abstract class Proxy { //代理抽象类
     /**
      * Get proxy.（获取代理对象）
      * 1）通过拼接形式组装Class类的代码，包含构造方法、成员方法、成员变量等
-     * 2）
-     *
+     * 2）通过javassist对代码处理并转换为Class对象ccp.toClass()
+     * 3）通过Class对象创建代理实例newInstance
      *
      * @param cl  class loader.
      * @param ics interface class array.
@@ -116,7 +116,7 @@ public abstract class Proxy { //代理抽象类
         }
 
         Proxy proxy = null;
-        synchronized (cache) {
+        synchronized (cache) { //加锁处理
             do {
                 Object value = cache.get(key);
                 if (value instanceof Reference<?>) { //若是Reference的实例，则强制转换为Proxy
@@ -180,7 +180,7 @@ public abstract class Proxy { //代理抽象类
                         code.append(" args[").append(j).append("] = ($w)$").append(j + 1).append(";");
                     }
                     code.append(" Object ret = handler.invoke(this, methods[").append(ix).append("], args);");
-                    if (!Void.TYPE.equals(rt)) {
+                    if (!Void.TYPE.equals(rt)) { //对返回类型进行判断
                         code.append(" return ").append(asArgument(rt, "ret")).append(";");
                     }
 
@@ -196,11 +196,11 @@ public abstract class Proxy { //代理抽象类
             // create ProxyInstance class.
             String pcn = pkg + ".proxy" + id;
             ccp.setClassName(pcn);
-            ccp.addField("public static java.lang.reflect.Method[] methods;");
+            ccp.addField("public static java.lang.reflect.Method[] methods;"); //添加字段对应的字符串
             ccp.addField("private " + InvocationHandler.class.getName() + " handler;");
-            ccp.addConstructor(Modifier.PUBLIC, new Class<?>[]{InvocationHandler.class}, new Class<?>[0], "handler=$1;");
+            ccp.addConstructor(Modifier.PUBLIC, new Class<?>[]{InvocationHandler.class}, new Class<?>[0], "handler=$1;"); //添加构造函数对应的字符串
             ccp.addDefaultConstructor();
-            Class<?> clazz = ccp.toClass();
+            Class<?> clazz = ccp.toClass(); //转换为class对象
             clazz.getField("methods").set(null, methods.toArray(new Method[0]));
 
             // create Proxy class.
@@ -236,8 +236,8 @@ public abstract class Proxy { //代理抽象类
         return proxy;
     }
 
-    private static String asArgument(Class<?> cl, String name) {
-        if (cl.isPrimitive()) {
+    private static String asArgument(Class<?> cl, String name) { //对参数类型进行判断
+        if (cl.isPrimitive()) { //基本类型处理
             if (Boolean.TYPE == cl) {
                 return name + "==null?false:((Boolean)" + name + ").booleanValue()";
             }
@@ -264,7 +264,7 @@ public abstract class Proxy { //代理抽象类
             }
             throw new RuntimeException(name + " is unknown primitive type.");
         }
-        return "(" + ReflectUtils.getName(cl) + ")" + name;
+        return "(" + ReflectUtils.getName(cl) + ")" + name; //类型强制转换
     }
 
     /**

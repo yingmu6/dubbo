@@ -36,7 +36,7 @@ import static org.apache.dubbo.rpc.Constants.INTERFACES;
 /**
  * AbstractProxyFactory
  */
-public abstract class AbstractProxyFactory implements ProxyFactory { //AbstractProxyFactory抽象代理工厂类只实现了接口getProxy方法，getInvoker方法交由子类完成
+public abstract class AbstractProxyFactory implements ProxyFactory { //AbstractProxyFactory抽象代理工厂类只实现了接口getProxy方法并对参数校验，getInvoker方法交由子类完成
     private static final Class<?>[] INTERNAL_INTERFACES = new Class<?>[]{ //所有的代理类都实现了EchoService接口
             EchoService.class, Destroyable.class
     };
@@ -81,7 +81,7 @@ public abstract class AbstractProxyFactory implements ProxyFactory { //AbstractP
         interfaces.add(invoker.getInterface());
         interfaces.addAll(Arrays.asList(INTERNAL_INTERFACES));
 
-        return getProxy(invoker, interfaces.toArray(new Class<?>[0]));
+        return getProxy(invoker, interfaces.toArray(new Class<?>[0])); //调用抽象方法，具体的实现交由子类执行（上帝视角）
     }
 
     public abstract <T> T getProxy(Invoker<T> invoker, Class<?>[] types);

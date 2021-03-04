@@ -35,11 +35,11 @@ import java.util.regex.Matcher;
 /**
  * Wrapper.
  */
-public abstract class Wrapper {
+public abstract class Wrapper { //包装类
     private static final Map<Class<?>, Wrapper> WRAPPER_MAP = new ConcurrentHashMap<Class<?>, Wrapper>(); //class wrapper map
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
     private static final String[] OBJECT_METHODS = new String[]{"getClass", "hashCode", "toString", "equals"};
-    private static final Wrapper OBJECT_WRAPPER = new Wrapper() {
+    private static final Wrapper OBJECT_WRAPPER = new Wrapper() { //类加载时创建Wrapper实例
         @Override
         public String[] getMethodNames() {
             return OBJECT_METHODS;
@@ -98,7 +98,7 @@ public abstract class Wrapper {
     private static AtomicLong WRAPPER_CLASS_COUNTER = new AtomicLong(0);
 
     /**
-     * get wrapper.
+     * get wrapper.（获取指定Class对象的封装类）
      *
      * @param c Class instance.
      * @return Wrapper instance(not null).
@@ -113,17 +113,18 @@ public abstract class Wrapper {
             return OBJECT_WRAPPER;
         }
 
-        return WRAPPER_MAP.computeIfAbsent(c, key -> makeWrapper(key));
+        return WRAPPER_MAP.computeIfAbsent(c, key -> makeWrapper(key)); //构建封装类，并设置到缓存中
     }
 
     private static Wrapper makeWrapper(Class<?> c) {
-        if (c.isPrimitive()) {
+        if (c.isPrimitive()) { //基本类型不能创建封装类
             throw new IllegalArgumentException("Can not create wrapper for primitive type: " + c);
         }
 
-        String name = c.getName();
+        String name = c.getName(); //如：String.class.getName() 返回java.lang.String
         ClassLoader cl = ClassUtils.getClassLoader(c);
 
+        // 拼接类代码对应的字符串
         StringBuilder c1 = new StringBuilder("public void setPropertyValue(Object o, String n, Object v){ ");
         StringBuilder c2 = new StringBuilder("public Object getPropertyValue(Object o, String n){ ");
         StringBuilder c3 = new StringBuilder("public Object invokeMethod(Object o, String n, Class[] p, Object[] v) throws " + InvocationTargetException.class.getName() + "{ ");
@@ -141,19 +142,19 @@ public abstract class Wrapper {
         for (Field f : c.getFields()) {
             String fn = f.getName();
             Class<?> ft = f.getType();
-            if (Modifier.isStatic(f.getModifiers()) || Modifier.isTransient(f.getModifiers())) {
+            if (Modifier.isStatic(f.getModifiers()) || Modifier.isTransient(f.getModifiers())) { //static、transient修饰的字段不处理
                 continue;
             }
 
             c1.append(" if( $2.equals(\"").append(fn).append("\") ){ w.").append(fn).append("=").append(arg(ft, "$3")).append("; return; }");
             c2.append(" if( $2.equals(\"").append(fn).append("\") ){ return ($w)w.").append(fn).append("; }");
-            pts.put(fn, ft);
+            pts.put(fn, ft); //设置属性名与属性类型的关系
         }
 
         Method[] methods = c.getMethods();
         // get all public method.
         boolean hasMethod = hasMethods(methods);
-        if (hasMethod) {
+        if (hasMethod) { //存在方法时处理
             c3.append(" try{");
             for (Method m : methods) {
                 //ignore Object's method.
@@ -162,7 +163,7 @@ public abstract class Wrapper {
                 }
 
                 String mn = m.getName();
-                c3.append(" if( \"").append(mn).append("\".equals( $2 ) ");
+                c3.append(" if( \"").append(mn).append("\".equals( $2 ) "); //todo @csy 此处是怎么比较的？
                 int len = m.getParameterTypes().length;
                 c3.append(" && ").append(" $3.length == ").append(len);
 
@@ -175,7 +176,7 @@ public abstract class Wrapper {
                 }
                 if (override) {
                     if (len > 0) {
-                        for (int l = 0; l < len; l++) {
+                        for (int l = 0; l < len; l++) { //todo @csy 此处的比较逻辑是怎样的？
                             c3.append(" && ").append(" $3[").append(l).append("].getName().equals(\"")
                                     .append(m.getParameterTypes()[l].getName()).append("\")");
                         }
@@ -209,7 +210,7 @@ public abstract class Wrapper {
         Matcher matcher;
         for (Map.Entry<String, Method> entry : ms.entrySet()) {
             String md = entry.getKey();
-            Method method = entry.getValue();
+            Method method = entry.getValue(); //todo @csy 待调试查看数据
             if ((matcher = ReflectUtils.GETTER_METHOD_DESC_PATTERN.matcher(md)).matches()) {
                 String pn = propertyName(matcher.group(1));
                 c2.append(" if( $2.equals(\"").append(pn).append("\") ){ return ($w)w.").append(method.getName()).append("(); }");
@@ -228,7 +229,7 @@ public abstract class Wrapper {
         c1.append(" throw new " + NoSuchPropertyException.class.getName() + "(\"Not found property \\\"\"+$2+\"\\\" field or setter method in class " + c.getName() + ".\"); }");
         c2.append(" throw new " + NoSuchPropertyException.class.getName() + "(\"Not found property \\\"\"+$2+\"\\\" field or setter method in class " + c.getName() + ".\"); }");
 
-        // make class
+        // make class（构建Class对象）
         long id = WRAPPER_CLASS_COUNTER.getAndIncrement();
         ClassGenerator cc = ClassGenerator.newInstance(cl);
         cc.setClassName((Modifier.isPublic(c.getModifiers()) ? Wrapper.class.getName() : c.getName() + "$sw") + id);
@@ -253,7 +254,7 @@ public abstract class Wrapper {
         cc.addMethod(c3.toString());
 
         try {
-            Class<?> wc = cc.toClass();
+            Class<?> wc = cc.toClass(); //将CtClass转换为Class
             // setup static field.
             wc.getField("pts").set(null, pts);
             wc.getField("pns").set(null, pts.keySet().toArray(new String[0]));
@@ -263,7 +264,7 @@ public abstract class Wrapper {
             for (Method m : ms.values()) {
                 wc.getField("mts" + ix++).set(null, m.getParameterTypes());
             }
-            return (Wrapper) wc.newInstance();
+            return (Wrapper) wc.newInstance(); //创建class对应的实例
         } catch (RuntimeException e) {
             throw e;
         } catch (Throwable e) {
@@ -279,7 +280,7 @@ public abstract class Wrapper {
     private static String arg(Class<?> cl, String name) {
         if (cl.isPrimitive()) {
             if (cl == Boolean.TYPE) {
-                return "((Boolean)" + name + ").booleanValue()";
+                return "((Boolean)" + name + ").booleanValue()"; //转换为封装类
             }
             if (cl == Byte.TYPE) {
                 return "((Byte)" + name + ").byteValue()";

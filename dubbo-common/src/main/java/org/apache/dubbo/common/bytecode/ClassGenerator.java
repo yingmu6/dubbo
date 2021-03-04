@@ -51,7 +51,7 @@ public final class ClassGenerator { //todo @csy 数据结构以及功能了解
 
     private static final AtomicLong CLASS_NAME_COUNTER = new AtomicLong(0);
     private static final String SIMPLE_NAME_TAG = "<init>";
-    private static final Map<ClassLoader, ClassPool> POOL_MAP = new ConcurrentHashMap<ClassLoader, ClassPool>(); //ClassLoader - ClassPool
+    private static final Map<ClassLoader, ClassPool> POOL_MAP = new ConcurrentHashMap<ClassLoader, ClassPool>(); //ClassLoader - ClassPool（类加载器与类池的对应缓存）
     private ClassPool mPool; //类池
     private CtClass mCtc;   //类class
     private String mClassName;
@@ -68,7 +68,7 @@ public final class ClassGenerator { //todo @csy 数据结构以及功能了解
     }
 
     private ClassGenerator(ClassPool pool) {
-        mPool = pool;
+        mPool = pool; //设置类池
     }
 
     public static ClassGenerator newInstance() {
@@ -84,14 +84,14 @@ public final class ClassGenerator { //todo @csy 数据结构以及功能了解
     }
 
     public static ClassPool getClassPool(ClassLoader loader) {
-        if (loader == null) {
+        if (loader == null) { //未指定类加载器时，返回默认类池
             return ClassPool.getDefault();
         }
 
         ClassPool pool = POOL_MAP.get(loader);
         if (pool == null) {
             pool = new ClassPool(true);
-            pool.appendClassPath(new LoaderClassPath(loader));
+            pool.appendClassPath(new LoaderClassPath(loader)); //设置类路径
             POOL_MAP.put(loader, pool);
         }
         return pool;
@@ -176,7 +176,7 @@ public final class ClassGenerator { //todo @csy 数据结构以及功能了解
         if (mMethods == null) {
             mMethods = new ArrayList<String>();
         }
-        mMethods.add(code);
+        mMethods.add(code); //加到缓存列表中
         return this;
     }
 
@@ -338,7 +338,7 @@ public final class ClassGenerator { //todo @csy 数据结构以及功能了解
                     }
                 }
             }
-            return mCtc.toClass(loader, pd);
+            return mCtc.toClass(loader, pd); //使用CtClass转换到Class
         } catch (RuntimeException e) {
             throw e;
         } catch (NotFoundException e) {
@@ -385,7 +385,7 @@ public final class ClassGenerator { //todo @csy 数据结构以及功能了解
         return getCtClass(c.getDeclaringClass()).getConstructor(ReflectUtils.getDesc(c));
     }
 
-    public static interface DC {
+    public static interface DC { //todo @csy 是怎么使用的？什么时候打标的？
 
     } // dynamic class tag interface. 动态类标识
 }

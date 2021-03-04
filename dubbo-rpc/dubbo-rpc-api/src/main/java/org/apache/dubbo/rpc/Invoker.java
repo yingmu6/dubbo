@@ -25,7 +25,7 @@ import org.apache.dubbo.common.Node;
  * @see org.apache.dubbo.rpc.InvokerListener
  * @see org.apache.dubbo.rpc.protocol.AbstractInvoker
  */
-public interface Invoker<T> extends Node { //todo invoker、invocation官网文档如何称呼？
+public interface Invoker<T> extends Node {
 
     /**
      * get service interface.（获取服务接口）
