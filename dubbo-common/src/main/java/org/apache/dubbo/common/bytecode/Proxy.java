@@ -68,7 +68,7 @@ public abstract class Proxy { //代理抽象类
      * @return Proxy instance.
      */
     public static Proxy getProxy(Class<?>... ics) {
-        return getProxy(ClassUtils.getClassLoader(Proxy.class), ics);
+        return getProxy(ClassUtils.getClassLoader(Proxy.class), ics);//先获取类加载器，然后再对接口列表进行代理
     }
 
     /**
@@ -88,7 +88,7 @@ public abstract class Proxy { //代理抽象类
 
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < ics.length; i++) {
-            String itf = ics[i].getName();
+            String itf = ics[i].getName(); //获取Class对应的名称，如：org.apache.dubbo.demo.DemoService
             if (!ics[i].isInterface()) { //代理的若不是接口，则抛异常
                 throw new RuntimeException(itf + " is not a interface.");
             }
@@ -106,8 +106,8 @@ public abstract class Proxy { //代理抽象类
             sb.append(itf).append(';'); //把满足条件的类名拼接
         }
 
-        // use interface class name list as key.
-        String key = sb.toString();
+        // use interface class name list as key.(使用接口Class名称列表作为键key)
+        String key = sb.toString();//构建的字符串如：org.apache.dubbo.demo.DemoService;org.apache.dubbo.rpc.service.Destroyable;com.alibaba.dubbo.rpc.service.EchoService;
 
         // get cache by class loader.
         final Map<String, Object> cache;
@@ -139,7 +139,7 @@ public abstract class Proxy { //代理抽象类
             while (true);
         }
 
-        long id = PROXY_CLASS_COUNTER.getAndIncrement();
+        long id = PROXY_CLASS_COUNTER.getAndIncrement(); //todo @csy 初始时，此处为啥是0？不应该是0+1=1吗？id=0，PROXY_CLASS_COUNTER=1
         String pkg = null;
         ClassGenerator ccp = null, ccm = null;
         try {
@@ -161,7 +161,7 @@ public abstract class Proxy { //代理抽象类
                 }
                 ccp.addInterface(ics[i]); //添加满足条件的接口
 
-                for (Method method : ics[i].getMethods()) {
+                for (Method method : ics[i].getMethods()) { //todo @pause 调试到此处
                     String desc = ReflectUtils.getDesc(method);
                     if (worked.contains(desc) || Modifier.isStatic(method.getModifiers())) {
                         continue;

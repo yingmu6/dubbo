@@ -23,9 +23,9 @@ import java.util.concurrent.atomic.AtomicLong;
 import static org.apache.dubbo.common.constants.CommonConstants.HEARTBEAT_EVENT;
 
 /**
- * Request.
+ * Request.（包含请求id、版本version、是否双向通信mTwoWay、请求数据mData等）
  */
-public class Request { //todo @pause 请求响应的模型
+public class Request {
 
     private static final AtomicLong INVOKE_ID = new AtomicLong(0);
 
@@ -61,7 +61,7 @@ public class Request { //todo @pause 请求响应的模型
         String dataStr;
         try {
             dataStr = data.toString();
-        } catch (Throwable e) {
+        } catch (Throwable e) { //转换异常时，拼接异常信息的字符串
             dataStr = "<Fail toString of " + data.getClass() + ", cause: " +
                     StringUtils.toString(e) + ">";
         }

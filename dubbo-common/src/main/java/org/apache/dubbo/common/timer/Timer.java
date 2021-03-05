@@ -21,10 +21,10 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Schedules {@link TimerTask}s for one-time future execution in a background
- * thread.
+ * Schedules {@link TimerTask}s for one-time（一次性） future execution in a background
+ * thread（后台线程）.
  */
-public interface Timer {
+public interface Timer { //定时器
 
     /**
      * Schedules the specified {@link TimerTask} for one-time execution after
@@ -33,7 +33,7 @@ public interface Timer {
      * @return a handle which is associated with the specified task
      * @throws IllegalStateException      if this timer has been {@linkplain #stop() stopped} already
      * @throws RejectedExecutionException if the pending timeouts are too many and creating new timeout
-     *                                    can cause instability in the system.
+     *                                    can cause instability（不稳定） in the system.
      */
     Timeout newTimeout(TimerTask task, long delay, TimeUnit unit);
 

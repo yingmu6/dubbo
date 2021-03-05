@@ -20,7 +20,7 @@ package org.apache.dubbo.common.timer;
  * A handle associated with a {@link TimerTask} that is returned by a
  * {@link Timer}.
  */
-public interface Timeout {
+public interface Timeout { //todo @csy 用途是啥？指超时吗？
 
     /**
      * Returns the {@link Timer} that created this handle.

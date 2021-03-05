@@ -37,7 +37,7 @@ import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * A {@link Timer} optimized for approximated I/O timeout scheduling.
+ * A {@link Timer} optimized（优化） for approximated（近似） I/O timeout scheduling.
  *
  * <h3>Tick Duration</h3>
  * <p>
@@ -77,7 +77,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * timer facility'</a>.  More comprehensive slides are located
  * <a href="http://www.cse.wustl.edu/~cdgill/courses/cs6874/TimingWheels.ppt">here</a>.
  */
-public class HashedWheelTimer implements Timer {
+public class HashedWheelTimer implements Timer { //todo @csy 该类的用途以及处理逻辑待了解
 
     /**
      * may be in spi?
@@ -110,7 +110,7 @@ public class HashedWheelTimer implements Timer {
     private final int mask;
     private final CountDownLatch startTimeInitialized = new CountDownLatch(1);
     private final Queue<HashedWheelTimeout> timeouts = new LinkedBlockingQueue<>();
-    private final Queue<HashedWheelTimeout> cancelledTimeouts = new LinkedBlockingQueue<>();
+    private final Queue<HashedWheelTimeout> cancelledTimeouts = new LinkedBlockingQueue<>(); //队列
     private final AtomicLong pendingTimeouts = new AtomicLong(0);
     private final long maxPendingTimeouts;
 
@@ -421,7 +421,7 @@ public class HashedWheelTimer implements Timer {
                 "so that only a few instances are created.");
     }
 
-    private final class Worker implements Runnable {
+    private final class Worker implements Runnable { //工作线程
         private final Set<Timeout> unprocessedTimeouts = new HashSet<Timeout>();
 
         private long tick;
@@ -467,7 +467,7 @@ public class HashedWheelTimer implements Timer {
             processCancelledTasks();
         }
 
-        private void transferTimeoutsToBuckets() {
+        private void transferTimeoutsToBuckets() {//todo @csy 逻辑待了解
             // transfer only max. 100000 timeouts per tick to prevent a thread to stale the workerThread when it just
             // adds new timeouts in a loop.
             for (int i = 0; i < 100000; i++) {
@@ -531,7 +531,7 @@ public class HashedWheelTimer implements Timer {
                         return currentTime;
                     }
                 }
-                if (isWindows()) {
+                if (isWindows()) { //todo @csy 为啥要检查windows？
                     sleepTimeMs = sleepTimeMs / 10 * 10;
                 }
 
@@ -739,7 +739,7 @@ public class HashedWheelTimer implements Timer {
             }
         }
 
-        public HashedWheelTimeout remove(HashedWheelTimeout timeout) {
+        public HashedWheelTimeout remove(HashedWheelTimeout timeout) { //todo @csy 此处的移除逻辑是怎样的？涉及到链表的处理？
             HashedWheelTimeout next = timeout.next;
             // remove timeout that was either processed or cancelled by updating the linked-list
             if (timeout.prev != null) {
@@ -806,7 +806,7 @@ public class HashedWheelTimer implements Timer {
         }
     }
 
-    private boolean isWindows() {
+    private boolean isWindows() {//检查是否是windows系统
         return System.getProperty("os.name", "").toLowerCase(Locale.US).contains("win");
     }
 }

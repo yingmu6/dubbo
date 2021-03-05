@@ -29,6 +29,7 @@ import java.io.OutputStream;
 @Deprecated
 @SPI
 public interface Codec { //todo @pause 编解码了解
+    //todo @csy Codec被弃用，那应该用什么替换使用？
 
     /**
      * Need more input poison.
@@ -38,7 +39,7 @@ public interface Codec { //todo @pause 编解码了解
     Object NEED_MORE_INPUT = new Object();
 
     /**
-     * Encode message.
+     * Encode message.（将消息对象进行编码）
      *
      * @param channel channel.
      * @param output  output stream.
@@ -48,7 +49,7 @@ public interface Codec { //todo @pause 编解码了解
     void encode(Channel channel, OutputStream output, Object message) throws IOException;
 
     /**
-     * Decode message.
+     * Decode message.（读取数据进行解码，并返回解码后的内容）
      *
      * @param channel channel.
      * @param input   input stream.

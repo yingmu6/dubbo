@@ -71,7 +71,7 @@ public class CodecSupport {
         return SERIALIZATIONNAME_ID_MAP.get(name);
     }
 
-    public static Serialization getSerialization(URL url) {
+    public static Serialization getSerialization(URL url) { //根据url中设置的序列化方式获取到序列化实例
         return ExtensionLoader.getExtensionLoader(Serialization.class).getExtension(
                 url.getParameter(Constants.SERIALIZATION_KEY, Constants.DEFAULT_REMOTING_SERIALIZATION));
     }

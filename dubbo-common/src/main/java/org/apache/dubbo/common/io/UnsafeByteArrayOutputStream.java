@@ -24,7 +24,7 @@ import java.nio.ByteBuffer;
 /**
  * UnsafeByteArrayOutputStream.
  */
-public class UnsafeByteArrayOutputStream extends OutputStream {
+public class UnsafeByteArrayOutputStream extends OutputStream { //不安全的字节数组输出流，todo @csy 怎么会是不安全的？
     protected byte[] mBuffer;
 
     protected int mCount;
@@ -43,7 +43,7 @@ public class UnsafeByteArrayOutputStream extends OutputStream {
     @Override
     public void write(int b) {
         int newcount = mCount + 1;
-        if (newcount > mBuffer.length) {
+        if (newcount > mBuffer.length) { //进行扩容处理
             mBuffer = Bytes.copyOf(mBuffer, Math.max(mBuffer.length << 1, newcount));
         }
         mBuffer[mCount] = (byte) b;

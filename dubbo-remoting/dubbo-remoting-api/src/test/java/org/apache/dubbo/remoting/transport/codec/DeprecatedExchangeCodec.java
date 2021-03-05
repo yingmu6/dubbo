@@ -39,7 +39,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-final class DeprecatedExchangeCodec extends DeprecatedTelnetCodec implements Codec {
+final class DeprecatedExchangeCodec extends DeprecatedTelnetCodec implements Codec { //Deprecated不推荐使用的，那正常要用什么？
 
     // header length.
     protected static final int HEADER_LENGTH = 16;
@@ -59,7 +59,7 @@ final class DeprecatedExchangeCodec extends DeprecatedTelnetCodec implements Cod
     }
 
     public void encode(Channel channel, OutputStream os, Object msg) throws IOException {
-        if (msg instanceof Request) {
+        if (msg instanceof Request) { //判断消息是哪种类型的实例
             encodeRequest(channel, os, (Request) msg);
         } else if (msg instanceof Response) {
             encodeResponse(channel, os, (Response) msg);
@@ -199,6 +199,7 @@ final class DeprecatedExchangeCodec extends DeprecatedTelnetCodec implements Cod
         return req.getData();
     }
 
+    // 对请求对象进行编码
     protected void encodeRequest(Channel channel, OutputStream os, Request req) throws IOException {
         Serialization serialization = CodecSupport.getSerialization(channel.getUrl());
         // header.
@@ -209,7 +210,7 @@ final class DeprecatedExchangeCodec extends DeprecatedTelnetCodec implements Cod
         // set request and serialization flag.
         header[2] = (byte) (FLAG_REQUEST | serialization.getContentTypeId());
 
-        if (req.isTwoWay()) header[2] |= FLAG_TWOWAY;
+        if (req.isTwoWay()) header[2] |= FLAG_TWOWAY; //todo @csy 为啥要与指定的值FLAG_TWOWAY逻辑或？
         if (req.isEvent()) header[2] |= FLAG_EVENT;
 
         // set request id.
@@ -218,7 +219,7 @@ final class DeprecatedExchangeCodec extends DeprecatedTelnetCodec implements Cod
         // encode request data.
         UnsafeByteArrayOutputStream bos = new UnsafeByteArrayOutputStream(1024);
         ObjectOutput out = serialization.serialize(channel.getUrl(), bos);
-        if (req.isEvent()) {
+        if (req.isEvent()) { //todo @csy 此处的事件数据与请求数据有啥不同？
             encodeEventData(channel, out, req.getData());
         } else {
             encodeRequestData(channel, out, req.getData());
@@ -231,11 +232,11 @@ final class DeprecatedExchangeCodec extends DeprecatedTelnetCodec implements Cod
         Bytes.int2bytes(data.length, header, 12);
 
         // write
-        os.write(header); // write header.
-        os.write(data); // write data.
+        os.write(header); // write header.（协议头：组装16字节数组）
+        os.write(data); // write data.    （协议体：将传入对象序列化后写入）
     }
 
-    protected void encodeResponse(Channel channel, OutputStream os, Response res) throws IOException {
+    protected void encodeResponse(Channel channel, OutputStream os, Response res) throws IOException { //todo @pause 编码响应对象待了解
         try {
             Serialization serialization = CodecSupport.getSerialization(channel.getUrl());
             // header.
@@ -249,7 +250,7 @@ final class DeprecatedExchangeCodec extends DeprecatedTelnetCodec implements Cod
             byte status = res.getStatus();
             header[3] = status;
             // set request id.
-            Bytes.long2bytes(res.getId(), header, 4);
+            Bytes.long2bytes(res.getId(), header, 4); //从第4个字节开始处理
 
             UnsafeByteArrayOutputStream bos = new UnsafeByteArrayOutputStream(1024);
             ObjectOutput out = serialization.serialize(channel.getUrl(), bos);
@@ -336,7 +337,7 @@ final class DeprecatedExchangeCodec extends DeprecatedTelnetCodec implements Cod
     }
 
     private void encodeEventData(ObjectOutput out, Object data) throws IOException {
-        out.writeObject(data);
+        out.writeObject(data); //目前和encodeRequestData内部处理逻辑一致，没有单独对事件数据进行处理
     }
 
     @Deprecated

@@ -52,8 +52,8 @@ public abstract class AbstractProxyFactory implements ProxyFactory { //AbstractP
      * 2）调用代理实现类的方法获取代理（不同的代理方式：JavassistProxyFactory或JdkProxyFactory）
      */
     @Override
-    public <T> T getProxy(Invoker<T> invoker, boolean generic) throws RpcException {
-        Set<Class<?>> interfaces = new HashSet<>();
+    public <T> T getProxy(Invoker<T> invoker, boolean generic) throws RpcException { //todo @csy 是在哪里调用代理方法的？
+        Set<Class<?>> interfaces = new HashSet<>(); //需要代理的接口集合
 
         String config = invoker.getUrl().getParameter(INTERFACES); //启动时，Invoker对应的实例为MockClusterInvoker,MockClusterInvoker中的invoker为AbstractCluster$InterceptorInvokerNode（内部类）
         if (config != null && config.length() > 0) { //从url中获取配置的接口类型，设置到Class集合中

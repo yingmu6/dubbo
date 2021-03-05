@@ -32,7 +32,7 @@ public interface Codec2 {
     Object decode(Channel channel, ChannelBuffer buffer) throws IOException;
 
 
-    enum DecodeResult {
+    enum DecodeResult { //解码枚举
         NEED_MORE_INPUT, SKIP_SOME_INPUT
     }
 

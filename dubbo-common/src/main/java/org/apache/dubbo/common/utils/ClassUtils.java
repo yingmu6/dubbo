@@ -144,7 +144,7 @@ public class ClassUtils {
         } catch (Throwable ex) {
             // Cannot access thread context ClassLoader - falling back to system class loader...
         }
-        if (cl == null) {
+        if (cl == null) { //1）先获取当前线程的类加载器，2）若获取不到的话，在获取clazz对应的类加载器，3）若再获取不到，则获取系统的类加载器
             // No thread context class loader -> use class loader of this class.
             cl = clazz.getClassLoader();
             if (cl == null) {

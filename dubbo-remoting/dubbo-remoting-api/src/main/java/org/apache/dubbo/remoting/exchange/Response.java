@@ -19,12 +19,12 @@ package org.apache.dubbo.remoting.exchange;
 import static org.apache.dubbo.common.constants.CommonConstants.HEARTBEAT_EVENT;
 
 /**
- * Response
+ * Response（包含响应状态、响应id、版本version、响应结果request等）
  */
 public class Response {
 
     /**
-     * ok.
+     * ok. 响应状态值
      */
     public static final byte OK = 20;
 
@@ -39,7 +39,7 @@ public class Response {
     public static final byte SERVER_TIMEOUT = 31;
 
     /**
-     * channel inactive, directly return the unfinished requests.
+     * channel inactive（不活跃）, directly return the unfinished requests（直接返回未完成的请求）.
      */
     public static final byte CHANNEL_INACTIVE = 35;
 
@@ -74,7 +74,7 @@ public class Response {
     public static final byte CLIENT_ERROR = 90;
 
     /**
-     * server side threadpool exhausted and quick return.
+     * server side threadpool exhausted (线程池耗尽) and quick return.
      */
     public static final byte SERVER_THREADPOOL_EXHAUSTED_ERROR = 100;
 
