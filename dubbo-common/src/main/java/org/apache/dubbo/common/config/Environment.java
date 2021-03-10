@@ -49,7 +49,7 @@ public class Environment extends LifecycleAdapter implements FrameworkExt {
 
     private DynamicConfiguration dynamicConfiguration;
 
-    public Environment() { //todo @csy 环境都有哪些内容？
+    public Environment() {
         this.propertiesConfiguration = new PropertiesConfiguration();
         this.systemConfiguration = new SystemConfiguration();
         this.environmentConfiguration = new EnvironmentConfiguration();

@@ -54,7 +54,7 @@ public class ApplicationModel { //应用模型
             ExtensionLoader<ApplicationInitListener> extensionLoader = ExtensionLoader.getExtensionLoader(ApplicationInitListener.class);
             Set<String> listenerNames = extensionLoader.getSupportedExtensions();
             for (String listenerName : listenerNames) {
-                extensionLoader.getExtension(listenerName).init(); //todo @csy 实例的init方法都会执行什么？
+                extensionLoader.getExtension(listenerName).init();
             }
         }
     }

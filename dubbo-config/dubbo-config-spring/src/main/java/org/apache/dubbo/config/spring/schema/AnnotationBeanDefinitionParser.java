@@ -34,7 +34,7 @@ import static org.springframework.util.StringUtils.trimArrayElements;
  * @see ReferenceAnnotationBeanPostProcessor
  * @since 2.5.9
  */
-public class AnnotationBeanDefinitionParser extends AbstractSingleBeanDefinitionParser { //todo @csy AbstractSingleBeanDefinitionParser 待了解
+public class AnnotationBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
     /**
      * parse
@@ -49,13 +49,13 @@ public class AnnotationBeanDefinitionParser extends AbstractSingleBeanDefinition
     @Override
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
 
-        String packageToScan = element.getAttribute("package"); //todo @csy 注解中有这个属性名吗?package
+        String packageToScan = element.getAttribute("package");
 
-        String[] packagesToScan = trimArrayElements(commaDelimitedListToStringArray(packageToScan)); // todo @csy 此处方法待了解
+        String[] packagesToScan = trimArrayElements(commaDelimitedListToStringArray(packageToScan));
 
         builder.addConstructorArgValue(packagesToScan);
 
-        builder.setRole(BeanDefinition.ROLE_INFRASTRUCTURE); // todo @csy 角色是怎么处理的？
+        builder.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
 
         /**
          * @since 2.7.6 Register the common beans

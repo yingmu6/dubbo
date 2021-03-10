@@ -41,7 +41,7 @@ public abstract class AbstractCodec implements Codec2 {
 
     private static final String SERVER_SIDE = "server";
 
-    protected static void checkPayload(Channel channel, long size) throws IOException {
+    protected static void checkPayload(Channel channel, long size) throws IOException { //检查负载大小
         int payload = Constants.DEFAULT_PAYLOAD;
         if (channel != null && channel.getUrl() != null) {
             payload = channel.getUrl().getParameter(Constants.PAYLOAD_KEY, Constants.DEFAULT_PAYLOAD);
@@ -54,13 +54,13 @@ public abstract class AbstractCodec implements Codec2 {
         }
     }
 
-    protected Serialization getSerialization(Channel channel) {
+    protected Serialization getSerialization(Channel channel) { //获取序列化方式
         return CodecSupport.getSerialization(channel.getUrl());
     }
 
     protected boolean isClientSide(Channel channel) {
         String side = (String)channel.getAttribute(SIDE_KEY);
-        if (CLIENT_SIDE.equals(side)) {
+        if (CLIENT_SIDE.equals(side)) { //判断通道中属性SIDE_KEY的缓存值
             return true;
         } else if (SERVER_SIDE.equals(side)) {
             return false;

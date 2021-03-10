@@ -116,7 +116,7 @@ public final class ReflectUtils {
 
     public static final String ARRAY_DESC = "(?:\\[+(?:(?:[VZBCDFIJS])|" + CLASS_DESC + "))";
 
-    public static final String DESC_REGEX = "(?:(?:[VZBCDFIJS])|" + CLASS_DESC + "|" + ARRAY_DESC + ")"; //todo @csy 此处是类型对应的简称吗
+    public static final String DESC_REGEX = "(?:(?:[VZBCDFIJS])|" + CLASS_DESC + "|" + ARRAY_DESC + ")";
 
     public static final Pattern DESC_PATTERN = Pattern.compile(DESC_REGEX);
 
@@ -1185,7 +1185,7 @@ public final class ReflectUtils {
         Class<?> returnType = method.getReturnType();
         Type genericReturnType = method.getGenericReturnType();
         if (Future.class.isAssignableFrom(returnType)) {
-            if (genericReturnType instanceof ParameterizedType) { //todo @csy 此处的处理逻辑是怎样的？
+            if (genericReturnType instanceof ParameterizedType) {
                 Type actualArgType = ((ParameterizedType) genericReturnType).getActualTypeArguments()[0];
                 if (actualArgType instanceof ParameterizedType) {
                     returnType = (Class<?>) ((ParameterizedType) actualArgType).getRawType();

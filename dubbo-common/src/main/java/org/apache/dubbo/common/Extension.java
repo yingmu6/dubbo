@@ -57,7 +57,7 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
-public @interface Extension { //todo @csy 该注解是怎么使用的？用途是啥？
+public @interface Extension {
 
     /**
      * @deprecated

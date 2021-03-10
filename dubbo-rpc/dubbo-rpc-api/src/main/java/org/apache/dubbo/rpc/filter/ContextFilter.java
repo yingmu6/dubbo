@@ -56,7 +56,7 @@ import static org.apache.dubbo.rpc.Constants.TOKEN_KEY;
  * @see RpcContext
  */
 @Activate(group = PROVIDER, order = -10000)
-public class ContextFilter implements Filter, Filter.Listener {//todo @csy 提供者的上下文，待调试
+public class ContextFilter implements Filter, Filter.Listener {
 
     private static final String TAG_KEY = "dubbo.tag";
 

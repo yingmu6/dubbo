@@ -104,7 +104,6 @@ public abstract class AbstractProtocol implements Protocol {
         return new AsyncToSyncInvoker<>(protocolBindingRefer(type, url));
     }
 
-    // todo @csy 协议绑定引用？用途和含义是啥？子类的具体实现是怎样的？
     protected abstract <T> Invoker<T> protocolBindingRefer(Class<T> type, URL url) throws RpcException;
 
     public Map<String, Exporter<?>> getExporterMap() {

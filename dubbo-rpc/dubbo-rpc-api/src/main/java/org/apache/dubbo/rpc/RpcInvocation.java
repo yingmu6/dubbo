@@ -46,14 +46,14 @@ import static org.apache.dubbo.rpc.Constants.TOKEN_KEY;
  *
  * @serial Don't change the class name and properties.
  */
-public class RpcInvocation implements Invocation, Serializable {//todo @pause 调用信息Invocation了解
+public class RpcInvocation implements Invocation, Serializable {//@pause 调用信息Invocation了解
 
     private static final long serialVersionUID = -4355285085441097045L;
 
-    private String targetServiceUniqueName; //todo @csy 此处的值是怎样的？有啥含义？
+    private String targetServiceUniqueName;
 
     private String methodName;
-    private String serviceName; //todo @csy 此处的值是怎样的？
+    private String serviceName;
 
     private transient Class<?>[] parameterTypes;
     private String parameterTypesDesc;
@@ -69,7 +69,7 @@ public class RpcInvocation implements Invocation, Serializable {//todo @pause �
     /**
      * Only used on the caller side, will not appear on the wire.
      */
-    private Map<Object, Object> attributes = new HashMap<Object, Object>(); //todo @csy 与attachments存储的内容有何不同？
+    private Map<Object, Object> attributes = new HashMap<Object, Object>();
 
     private transient Invoker<?> invoker;
 

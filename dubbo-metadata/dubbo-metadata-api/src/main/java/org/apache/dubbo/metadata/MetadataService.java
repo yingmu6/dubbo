@@ -163,7 +163,6 @@ public interface MetadataService {
     }
 
     /**
-     * todo @csy 获取暴露的url是指什么？从哪里获取到的，注册中心吗？
      * Get the sorted set of String that presents the specified Dubbo exported {@link URL urls} by the
      * <code>serviceInterface</code>, <code>group</code>, <code>version</code> and <code>protocol</code>
      *
@@ -210,7 +209,7 @@ public interface MetadataService {
      * @param urls the strings presents the {@link URL Dubbo URLs}
      * @return non-null
      */
-    static List<URL> toURLs(Iterable<String> urls) { //todo @csy StreamSupport待了解？
+    static List<URL> toURLs(Iterable<String> urls) {
         return stream(urls.spliterator(), false)
                 .map(URL::valueOf)
                 .collect(Collectors.toList());
@@ -224,7 +223,7 @@ public interface MetadataService {
      * @return the non-null read-only {@link SortedSet sorted set} of {@link URL#toFullString() strings} presenting
      * @see URL#toFullString()
      */
-    static SortedSet<String> toSortedStrings(Iterable<URL> iterable) {//todo @csy 是在做什么转换？
+    static SortedSet<String> toSortedStrings(Iterable<URL> iterable) {
         return toSortedStrings(StreamSupport.stream(iterable.spliterator(), false));
     }
 

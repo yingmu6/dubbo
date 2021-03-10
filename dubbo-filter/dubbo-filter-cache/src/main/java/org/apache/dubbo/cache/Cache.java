@@ -35,9 +35,7 @@ public interface Cache { //@csy 什么场景下会用到缓存？为啥会用到
      *   jcache 与 JSR107 集成，可以桥接各种缓存实现
      */
 
-    // todo @csy 缓存没有有效期吗？剔除策略是怎样的？
-
-/**
+     /**
      * API to store value against a key
      * @param key  Unique identifier（唯一的标识） for the object being store.
      * @param value Value getting store

@@ -55,7 +55,7 @@ public abstract class AbstractCluster implements Cluster {
 
     protected abstract <T> AbstractClusterInvoker<T> doJoin(Directory<T> directory) throws RpcException;
 
-    protected class InterceptorInvokerNode<T> extends AbstractClusterInvoker<T> { //todo @csy 为啥消费者启动后，会实例化这个对象？
+    protected class InterceptorInvokerNode<T> extends AbstractClusterInvoker<T> {
 
         private AbstractClusterInvoker<T> clusterInvoker;
         private ClusterInterceptor interceptor;

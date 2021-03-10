@@ -200,7 +200,7 @@ public class ClassUtils {
      * @see Class#forName(String, boolean, ClassLoader)
      */
     public static Class<?> forName(String name, ClassLoader classLoader)
-            throws ClassNotFoundException, LinkageError { //todo @csy 获取Class对象细节待了解
+            throws ClassNotFoundException, LinkageError {
 
         Class<?> clazz = resolvePrimitiveClassName(name);
         if (clazz != null) {

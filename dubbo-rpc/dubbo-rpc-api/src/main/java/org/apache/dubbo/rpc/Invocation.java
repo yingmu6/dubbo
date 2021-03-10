@@ -63,7 +63,7 @@ public interface Invocation { //调用方式
     default String[] getCompatibleParamSignatures() {
         return Stream.of(getParameterTypes())
                 .map(Class::getName)
-                .toArray(String[]::new); //todo @csy 此处数值待调试
+                .toArray(String[]::new);
     }
 
     /**

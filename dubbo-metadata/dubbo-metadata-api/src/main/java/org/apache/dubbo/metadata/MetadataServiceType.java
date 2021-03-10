@@ -41,7 +41,7 @@ public enum MetadataServiceType {
     /**
      * The composite type of {@link MetadataService}
      */
-    COMPOSITE(COMPOSITE_METADATA_STORAGE_TYPE); //todo @csy 综合类型是怎么使用的？
+    COMPOSITE(COMPOSITE_METADATA_STORAGE_TYPE);
 
     /**
      * The {@link String} value of type

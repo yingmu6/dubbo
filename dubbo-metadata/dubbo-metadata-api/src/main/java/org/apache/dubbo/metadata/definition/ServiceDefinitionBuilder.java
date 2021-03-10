@@ -70,7 +70,7 @@ public final class ServiceDefinitionBuilder {
 
             // Process parameter types.
             Class<?>[] paramTypes = method.getParameterTypes();
-            Type[] genericParamTypes = method.getGenericParameterTypes(); //todo @csy 泛化参数指哪些？
+            Type[] genericParamTypes = method.getGenericParameterTypes();
 
             String[] parameterTypes = new String[paramTypes.length];
             for (int i = 0; i < paramTypes.length; i++) {

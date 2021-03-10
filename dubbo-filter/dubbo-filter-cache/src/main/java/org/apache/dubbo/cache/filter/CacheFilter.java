@@ -70,7 +70,6 @@ public class CacheFilter implements Filter {
     private CacheFactory cacheFactory;
 
     /**
-     * todo @csy 缓存是默认填充的？都会有缓存？
      * Dubbo will populate（填充） and set the cache factory instance based on service/method/consumer/provider configured
      * cache attribute value. Dubbo will search for the class name implementing configured <b>cache</b> in file org.apache.dubbo.cache.CacheFactory
      * under META-INF sub folders.
@@ -120,7 +119,7 @@ public class CacheFilter implements Filter {
     /**
      * Cache value wrapper.
      */
-    static class ValueWrapper implements Serializable { //todo @csy 静态方法有缓存效果？缓存都有哪些方式？
+    static class ValueWrapper implements Serializable {
 
         private static final long serialVersionUID = -1777337318019193256L;
 

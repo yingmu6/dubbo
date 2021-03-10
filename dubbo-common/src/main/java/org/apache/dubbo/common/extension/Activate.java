@@ -42,7 +42,7 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
-public @interface Activate { //todo @csy 激活条件按group、value，是怎么进行匹配的？
+public @interface Activate {
     /**
      * Activate the current extension when one of the groups matches（匹配）. The group passed into
      * {@link ExtensionLoader#getActivateExtension(URL, String, String)} will be used for matching.

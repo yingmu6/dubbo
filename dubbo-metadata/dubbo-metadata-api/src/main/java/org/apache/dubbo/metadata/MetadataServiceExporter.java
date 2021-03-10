@@ -34,7 +34,7 @@ import static org.apache.dubbo.common.extension.ExtensionLoader.getExtensionLoad
  * @since 2.7.5
  */
 @SPI(DEFAULT_METADATA_STORAGE_TYPE)
-public interface MetadataServiceExporter extends Prioritized { //todo @csy 该类的功能用途？
+public interface MetadataServiceExporter extends Prioritized {
 
     /**
      * Exports the {@link MetadataService} as a Dubbo service

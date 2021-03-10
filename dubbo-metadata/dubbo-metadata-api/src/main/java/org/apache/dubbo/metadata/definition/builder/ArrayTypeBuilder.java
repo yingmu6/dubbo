@@ -42,7 +42,7 @@ public class ArrayTypeBuilder implements TypeBuilder {
         TypeDefinitionBuilder.build(componentType, componentType, typeCache);
 
         final String canonicalName = clazz.getCanonicalName();
-        return new TypeDefinition(canonicalName); //todo @csy 此处待调试查看数据
+        return new TypeDefinition(canonicalName);
     }
 
 }

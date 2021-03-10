@@ -36,7 +36,7 @@ import java.util.List;
 import static org.apache.dubbo.rpc.Constants.MOCK_KEY;
 import static org.apache.dubbo.rpc.cluster.Constants.INVOCATION_NEED_MOCK;
 
-public class MockClusterInvoker<T> implements ClusterInvoker<T> { //todo @csy 消费端启动时，什么时候实例化MockClusterInvoker？从哪里进行选择成为invoker的实例的？
+public class MockClusterInvoker<T> implements ClusterInvoker<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(MockClusterInvoker.class);
 

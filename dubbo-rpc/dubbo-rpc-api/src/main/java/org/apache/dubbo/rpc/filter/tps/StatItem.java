@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.LongAdder;
  * Judge whether a particular invocation of service provider method should be allowed within a configured time interval.
  * As a state it contain name of key ( e.g. method), last invocation time, interval and rate count.
  */
-class StatItem { //todo @csy 数据结构的含义
+class StatItem {
 
     private String name;
 
@@ -30,7 +30,7 @@ class StatItem { //todo @csy 数据结构的含义
 
     private long interval;
 
-    private LongAdder token; //todo @csy LongAdder 待了解
+    private LongAdder token;
 
     private int rate;
 
@@ -42,7 +42,7 @@ class StatItem { //todo @csy 数据结构的含义
         this.token = buildLongAdder(rate);
     }
 
-    public boolean isAllowable() {//todo @csy 此处是怎么做限制的？逻辑是怎样的？
+    public boolean isAllowable() {
         long now = System.currentTimeMillis();
         if (now > lastResetTime + interval) {
             token = buildLongAdder(rate);

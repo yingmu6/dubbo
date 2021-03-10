@@ -33,12 +33,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * todo @csy 该配置类的用途是啥
  * Start from 2.7.0+, export and refer will only be executed when Spring is fully initialized, and each Config bean will get refreshed on the start of the export and refer process.
  * So it's ok for this bean not to be the first Dubbo Config bean being initialized.
  * <p>
  */
-public class ConfigCenterBean extends ConfigCenterConfig implements ApplicationContextAware, DisposableBean, EnvironmentAware { //todo @csy 此处的bean待了解
+public class ConfigCenterBean extends ConfigCenterConfig implements ApplicationContextAware, DisposableBean, EnvironmentAware {
 
     private transient ApplicationContext applicationContext;
 
@@ -65,9 +64,6 @@ public class ConfigCenterBean extends ConfigCenterConfig implements ApplicationC
         }
     }
 
-    /**
-     * todo @csy 此处获取配置是怎样的逻辑？待调试
-     */
     private Map<String, String> getConfigurations(String key, Environment environment) {
         Object rawProperties = environment.getProperty(key, Object.class);
         Map<String, String> externalProperties = new HashMap<>();

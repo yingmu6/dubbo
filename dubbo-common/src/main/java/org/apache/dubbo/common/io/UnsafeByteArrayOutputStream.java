@@ -24,7 +24,7 @@ import java.nio.ByteBuffer;
 /**
  * UnsafeByteArrayOutputStream.
  */
-public class UnsafeByteArrayOutputStream extends OutputStream { //不安全的字节数组输出流，todo @csy 怎么会是不安全的？
+public class UnsafeByteArrayOutputStream extends OutputStream {
     protected byte[] mBuffer;
 
     protected int mCount;

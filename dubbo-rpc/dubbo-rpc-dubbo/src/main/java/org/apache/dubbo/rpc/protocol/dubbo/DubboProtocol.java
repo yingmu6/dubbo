@@ -143,7 +143,7 @@ public class DubboProtocol extends AbstractProtocol {
             }
             RpcContext.getContext().setRemoteAddress(channel.getRemoteAddress());
             Result result = invoker.invoke(inv);
-            return result.thenApply(Function.identity()); //todo @csy Function了解
+            return result.thenApply(Function.identity());
         }
 
         @Override
@@ -225,7 +225,7 @@ public class DubboProtocol extends AbstractProtocol {
         return Collections.unmodifiableCollection(exporterMap.values());
     }
 
-    private boolean isClientSide(Channel channel) { //todo @csy 待调试查看数据
+    private boolean isClientSide(Channel channel) {
         InetSocketAddress address = channel.getRemoteAddress();
         URL url = channel.getUrl();
         return url.getPort() == address.getPort() &&
@@ -233,7 +233,7 @@ public class DubboProtocol extends AbstractProtocol {
                         .equals(NetUtils.filterLocalHost(address.getAddress().getHostAddress()));
     }
 
-    Invoker<?> getInvoker(Channel channel, Invocation inv) throws RemotingException {//获取调用信息invoker，todo @csy 内部逻辑了解
+    Invoker<?> getInvoker(Channel channel, Invocation inv) throws RemotingException {//获取调用信息invoker
         boolean isCallBackServiceInvoke = false;
         boolean isStubServiceInvoke = false;
         int port = channel.getLocalAddress().getPort();

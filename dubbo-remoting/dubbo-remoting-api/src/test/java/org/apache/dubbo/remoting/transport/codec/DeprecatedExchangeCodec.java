@@ -210,7 +210,7 @@ final class DeprecatedExchangeCodec extends DeprecatedTelnetCodec implements Cod
         // set request and serialization flag.
         header[2] = (byte) (FLAG_REQUEST | serialization.getContentTypeId());
 
-        if (req.isTwoWay()) header[2] |= FLAG_TWOWAY; //todo @csy 为啥要与指定的值FLAG_TWOWAY逻辑或？
+        if (req.isTwoWay()) header[2] |= FLAG_TWOWAY;
         if (req.isEvent()) header[2] |= FLAG_EVENT;
 
         // set request id.
@@ -219,7 +219,7 @@ final class DeprecatedExchangeCodec extends DeprecatedTelnetCodec implements Cod
         // encode request data.
         UnsafeByteArrayOutputStream bos = new UnsafeByteArrayOutputStream(1024);
         ObjectOutput out = serialization.serialize(channel.getUrl(), bos);
-        if (req.isEvent()) { //todo @csy 此处的事件数据与请求数据有啥不同？
+        if (req.isEvent()) {
             encodeEventData(channel, out, req.getData());
         } else {
             encodeRequestData(channel, out, req.getData());
@@ -236,7 +236,7 @@ final class DeprecatedExchangeCodec extends DeprecatedTelnetCodec implements Cod
         os.write(data); // write data.    （协议体：将传入对象序列化后写入）
     }
 
-    protected void encodeResponse(Channel channel, OutputStream os, Response res) throws IOException { //todo @pause 编码响应对象待了解
+    protected void encodeResponse(Channel channel, OutputStream os, Response res) throws IOException { //@pause 编码响应对象待了解
         try {
             Serialization serialization = CodecSupport.getSerialization(channel.getUrl());
             // header.

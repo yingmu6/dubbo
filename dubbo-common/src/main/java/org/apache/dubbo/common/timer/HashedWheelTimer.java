@@ -77,7 +77,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * timer facility'</a>.  More comprehensive slides are located
  * <a href="http://www.cse.wustl.edu/~cdgill/courses/cs6874/TimingWheels.ppt">here</a>.
  */
-public class HashedWheelTimer implements Timer { //todo @csy 该类的用途以及处理逻辑待了解
+public class HashedWheelTimer implements Timer {
 
     /**
      * may be in spi?
@@ -467,7 +467,7 @@ public class HashedWheelTimer implements Timer { //todo @csy 该类的用途以�
             processCancelledTasks();
         }
 
-        private void transferTimeoutsToBuckets() {//todo @csy 逻辑待了解
+        private void transferTimeoutsToBuckets() {
             // transfer only max. 100000 timeouts per tick to prevent a thread to stale the workerThread when it just
             // adds new timeouts in a loop.
             for (int i = 0; i < 100000; i++) {
@@ -531,7 +531,7 @@ public class HashedWheelTimer implements Timer { //todo @csy 该类的用途以�
                         return currentTime;
                     }
                 }
-                if (isWindows()) { //todo @csy 为啥要检查windows？
+                if (isWindows()) {
                     sleepTimeMs = sleepTimeMs / 10 * 10;
                 }
 
@@ -739,7 +739,7 @@ public class HashedWheelTimer implements Timer { //todo @csy 该类的用途以�
             }
         }
 
-        public HashedWheelTimeout remove(HashedWheelTimeout timeout) { //todo @csy 此处的移除逻辑是怎样的？涉及到链表的处理？
+        public HashedWheelTimeout remove(HashedWheelTimeout timeout) {
             HashedWheelTimeout next = timeout.next;
             // remove timeout that was either processed or cancelled by updating the linked-list
             if (timeout.prev != null) {

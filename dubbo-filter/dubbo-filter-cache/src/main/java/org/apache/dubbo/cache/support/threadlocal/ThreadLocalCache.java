@@ -38,7 +38,7 @@ import java.util.Map;
  * @see org.apache.dubbo.cache.filter.CacheFilter
  * @see Cache
  */
-public class ThreadLocalCache implements Cache { //todo @csy 线程缓存是指啥？
+public class ThreadLocalCache implements Cache {
 
     /**
      * Thread local variable to store cached data.

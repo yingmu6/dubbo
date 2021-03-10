@@ -36,7 +36,7 @@ public class ServiceDescriptor { //服务的描述信息
     private final String serviceName;
     private final Class<?> serviceInterfaceClass;
     // to accelerate search
-    private final Map<String, List<MethodDescriptor>> methods = new HashMap<>(); //todo @csy 维护怎样的数据信息？
+    private final Map<String, List<MethodDescriptor>> methods = new HashMap<>();
     private final Map<String, Map<String, MethodDescriptor>> descToMethods = new HashMap<>();
 
     public ServiceDescriptor(Class<?> interfaceClass) {

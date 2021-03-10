@@ -139,7 +139,7 @@ public abstract class Proxy { //代理抽象类
             while (true);
         }
 
-        long id = PROXY_CLASS_COUNTER.getAndIncrement(); //todo @csy 初始时，此处为啥是0？不应该是0+1=1吗？id=0，PROXY_CLASS_COUNTER=1
+        long id = PROXY_CLASS_COUNTER.getAndIncrement();
         String pkg = null;
         ClassGenerator ccp = null, ccm = null;
         try {
@@ -161,7 +161,7 @@ public abstract class Proxy { //代理抽象类
                 }
                 ccp.addInterface(ics[i]); //添加满足条件的接口
 
-                for (Method method : ics[i].getMethods()) { //todo @pause 调试到此处
+                for (Method method : ics[i].getMethods()) { //@pause 调试到此处
                     String desc = ReflectUtils.getDesc(method);
                     if (worked.contains(desc) || Modifier.isStatic(method.getModifiers())) {
                         continue;
@@ -210,8 +210,8 @@ public abstract class Proxy { //代理抽象类
             ccm.addDefaultConstructor();
             ccm.setSuperClass(Proxy.class); //设置代理类
             ccm.addMethod("public Object newInstance(" + InvocationHandler.class.getName() + " h){ return new " + pcn + "($1); }"); //将InvocationHandler处理类编织到代码中
-            Class<?> pc = ccm.toClass(); //todo @csy 此处代理的代码待调试了解，查看具体数据
-            proxy = (Proxy) pc.newInstance(); //todo @csy 此处为啥创建的实例能直接转换为Proxy
+            Class<?> pc = ccm.toClass();
+            proxy = (Proxy) pc.newInstance();
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {

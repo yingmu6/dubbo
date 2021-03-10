@@ -40,7 +40,7 @@ public class CodecAdapter implements Codec2 {//编码适配器
     public void encode(Channel channel, ChannelBuffer buffer, Object message)
             throws IOException {
         UnsafeByteArrayOutputStream os = new UnsafeByteArrayOutputStream(1024);
-        codec.encode(channel, os, message); //todo @csy 此处codec是选择哪个具体实现类的？
+        codec.encode(channel, os, message);
         buffer.writeBytes(os.toByteArray());
     }
 
@@ -52,7 +52,7 @@ public class CodecAdapter implements Codec2 {//编码适配器
         UnsafeByteArrayInputStream is = new UnsafeByteArrayInputStream(bytes);
         Object result = codec.decode(channel, is);
         buffer.readerIndex(savedReaderIndex + is.position());
-        return result == Codec.NEED_MORE_INPUT ? DecodeResult.NEED_MORE_INPUT : result; //todo @csy 此处的含义？
+        return result == Codec.NEED_MORE_INPUT ? DecodeResult.NEED_MORE_INPUT : result;
     }
 
     public Codec getCodec() {

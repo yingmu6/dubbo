@@ -59,6 +59,6 @@ public @interface SPI {
     /**
      * default extension name
      */
-    String value() default ""; //todo @csy 当扩展名为空时，是怎么查考扩展名的，使用类名吗？
+    String value() default "";
 
 }

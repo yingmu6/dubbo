@@ -57,7 +57,7 @@ public class ActiveLimitFilter implements Filter, Filter.Listener { // 用途是
             long timeout = invoker.getUrl().getMethodParameter(invocation.getMethodName(), TIMEOUT_KEY, 0);
             long start = System.currentTimeMillis();
             long remain = timeout;
-            synchronized (rpcStatus) { //todo @csy 此处逻辑处理是怎样的？
+            synchronized (rpcStatus) {
                 while (!RpcStatus.beginCount(url, methodName, max)) {
                     try {
                         rpcStatus.wait(remain);
@@ -116,7 +116,7 @@ public class ActiveLimitFilter implements Filter, Filter.Listener { // 用途是
     private void notifyFinish(final RpcStatus rpcStatus, int max) {
         if (max > 0) {
             synchronized (rpcStatus) {
-                rpcStatus.notifyAll(); //todo @csy notifyAll的用途？
+                rpcStatus.notifyAll();
             }
         }
     }

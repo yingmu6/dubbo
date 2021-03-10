@@ -28,8 +28,7 @@ import java.io.OutputStream;
  */
 @Deprecated
 @SPI
-public interface Codec { //todo @pause 编解码了解
-    //todo @csy Codec被弃用，那应该用什么替换使用？
+public interface Codec { //@pause 编解码了解
 
     /**
      * Need more input poison.

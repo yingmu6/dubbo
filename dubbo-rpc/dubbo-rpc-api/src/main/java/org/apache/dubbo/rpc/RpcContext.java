@@ -50,7 +50,7 @@ import static org.apache.dubbo.rpc.Constants.RETURN_KEY;
  * @export
  * @see org.apache.dubbo.rpc.filter.ContextFilter
  */
-public class RpcContext { //todo @csy rpc调用的上下文，是在什么时候写入值的？怎么使用
+public class RpcContext {
 
     /**
      * use internal thread local to improve performance

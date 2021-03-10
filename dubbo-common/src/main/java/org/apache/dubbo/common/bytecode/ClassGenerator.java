@@ -47,7 +47,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * ClassGenerator（javassist方式产生代理对象）
  */
-public final class ClassGenerator { //todo @csy 数据结构以及功能了解
+public final class ClassGenerator {
 
     private static final AtomicLong CLASS_NAME_COUNTER = new AtomicLong(0);
     private static final String SIMPLE_NAME_TAG = "<init>";
@@ -185,7 +185,7 @@ public final class ClassGenerator { //todo @csy 数据结构以及功能了解
     }
 
     public ClassGenerator addMethod(String name, int mod, Class<?> rt, Class<?>[] pts, Class<?>[] ets,
-                                    String body) { //todo @csy 待调试查看数据
+                                    String body) {
         StringBuilder sb = new StringBuilder();
         sb.append(modifier(mod)).append(' ').append(ReflectUtils.getName(rt)).append(' ').append(name);
         sb.append('(');
@@ -315,7 +315,7 @@ public final class ClassGenerator { //todo @csy 数据结构以及功能了解
             }
             if (mMethods != null) {
                 for (String code : mMethods) {
-                    if (code.charAt(0) == ':') { //todo @csy 什么情况下会以冒号":"分隔
+                    if (code.charAt(0) == ':') {
                         mCtc.addMethod(CtNewMethod.copy(getCtMethod(mCopyMethods.get(code.substring(1))),
                                 code.substring(1, code.indexOf('(')), mCtc, null));
                     } else {
@@ -385,7 +385,7 @@ public final class ClassGenerator { //todo @csy 数据结构以及功能了解
         return getCtClass(c.getDeclaringClass()).getConstructor(ReflectUtils.getDesc(c));
     }
 
-    public static interface DC { //todo @csy 是怎么使用的？什么时候打标的？
+    public static interface DC {
 
     } // dynamic class tag interface. 动态类标识
 }

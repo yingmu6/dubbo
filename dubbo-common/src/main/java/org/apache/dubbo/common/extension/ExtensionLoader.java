@@ -89,7 +89,7 @@ public class ExtensionLoader<T> {
 
     private static final ConcurrentMap<Class<?>, Object> EXTENSION_INSTANCES = new ConcurrentHashMap<>(64);
 
-    private final Class<?> type; //todo @csy type值具体是怎样的？
+    private final Class<?> type;
 
     private final ExtensionFactory objectFactory;
 
@@ -122,7 +122,7 @@ public class ExtensionLoader<T> {
      * @return non-null
      * @since 2.7.7
      */
-    private static LoadingStrategy[] loadLoadingStrategies() { //todo @csy 此处stream、load方法待了解
+    private static LoadingStrategy[] loadLoadingStrategies() {
         return stream(load(LoadingStrategy.class).spliterator(), false)
                 .sorted()
                 .toArray(LoadingStrategy[]::new);
@@ -287,7 +287,7 @@ public class ExtensionLoader<T> {
             activateExtensions.sort(ActivateComparator.COMPARATOR);
         }
         List<T> loadedExtensions = new ArrayList<>();
-        for (int i = 0; i < names.size(); i++) { //todo @csy 待调试查看数据
+        for (int i = 0; i < names.size(); i++) {
             String name = names.get(i);
             if (!name.startsWith(REMOVE_VALUE_PREFIX)
                     && !names.contains(REMOVE_VALUE_PREFIX + name)) {
@@ -638,7 +638,7 @@ public class ExtensionLoader<T> {
             injectExtension(instance); //注入扩展实例
 
 
-            if (wrap) { //todo @csy 封装类处理方式
+            if (wrap) {
 
                 List<Class<?>> wrapperClassesList = new ArrayList<>();
                 if (cachedWrapperClasses != null) {
@@ -773,7 +773,7 @@ public class ExtensionLoader<T> {
 
         Map<String, Class<?>> extensionClasses = new HashMap<>();
 
-        for (LoadingStrategy strategy : strategies) {//todo @csy 此处两种加载方式有何不同？
+        for (LoadingStrategy strategy : strategies) {
             loadDirectory(extensionClasses, strategy.directory(), type.getName(), strategy.preferExtensionClassLoader(), strategy.overridden(), strategy.excludedPackages());
             loadDirectory(extensionClasses, strategy.directory(), type.getName().replace("org.apache", "com.alibaba"), strategy.preferExtensionClassLoader(), strategy.overridden(), strategy.excludedPackages());
         }
@@ -861,7 +861,7 @@ public class ExtensionLoader<T> {
                                 name = line.substring(0, i).trim();
                                 line = line.substring(i + 1).trim();
                             }
-                            if (line.length() > 0 && !isExcluded(line, excludedPackages)) { //todo @csy Class的forName方法了解
+                            if (line.length() > 0 && !isExcluded(line, excludedPackages)) {
                                 loadClass(extensionClasses, resourceURL, Class.forName(line, true, classLoader), name, overridden);
                             }
                         } catch (Throwable t) {
@@ -913,7 +913,7 @@ public class ExtensionLoader<T> {
 
             String[] names = NAME_SEPARATOR.split(name);
             if (ArrayUtils.isNotEmpty(names)) {
-                cacheActivateClass(clazz, names[0]); // 自动激活类型，todo @csy 此处为啥只取name[0] ？
+                cacheActivateClass(clazz, names[0]);
                 for (String n : names) {
                     cacheName(clazz, n);
                     saveInExtensionClass(extensionClasses, clazz, n, overridden);

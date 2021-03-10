@@ -67,7 +67,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
     private static final Pattern GROUP_AND_VERSION = Pattern.compile("^[\\-.0-9_a-zA-Z]+(\\:[\\-.0-9_a-zA-Z]+)?$");
     private static final String ONRETURN = "onreturn";
     private static final String ONTHROW = "onthrow";
-    private static final String ONINVOKE = "oninvoke"; //todo @csy 该类型是什么时候使用的？
+    private static final String ONINVOKE = "oninvoke";
     private static final String METHOD = "Method";
     private final Class<?> beanClass; // bean的名称
     private final boolean required;   // 是否是必须的
@@ -108,14 +108,14 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
             if (parserContext.getRegistry().containsBeanDefinition(id)) {
                 throw new IllegalStateException("Duplicate spring bean id " + id);
             }
-            parserContext.getRegistry().registerBeanDefinition(id, beanDefinition); //todo @csy 此处为啥要注册bean以及添加属性
+            parserContext.getRegistry().registerBeanDefinition(id, beanDefinition);
             beanDefinition.getPropertyValues().addPropertyValue("id", id);
         }
         /**
          * 对指定的bean进行处理，如ProtocolConfig、ServiceBean、ProviderConfig、ConsumerConfig等
          */
         if (ProtocolConfig.class.equals(beanClass)) {
-            for (String name : parserContext.getRegistry().getBeanDefinitionNames()) { //todo @csy BeanDefinitionRegistry与BeanDefinitionNames的内容都有啥？
+            for (String name : parserContext.getRegistry().getBeanDefinitionNames()) {
                 BeanDefinition definition = parserContext.getRegistry().getBeanDefinition(name);
                 PropertyValue property = definition.getPropertyValues().getPropertyValue("protocol");
                 if (property != null) {
@@ -132,7 +132,6 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
                 classDefinition.setBeanClass(ReflectUtils.forName(className));
                 classDefinition.setLazyInit(false);
                 parseProperties(element.getChildNodes(), classDefinition, parserContext);
-                // todo @csy BeanDefinitionHolder的用途是啥？为啥这里要添加ref属性？实现类后缀加Impl，没按这个约束是否会有错误？
                 beanDefinition.getPropertyValues().addPropertyValue("ref", new BeanDefinitionHolder(classDefinition, id + "Impl"));
             }
         } else if (ProviderConfig.class.equals(beanClass)) {
@@ -141,7 +140,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
             parseNested(element, parserContext, ReferenceBean.class, false, "reference", "consumer", id, beanDefinition);
         }
         Set<String> props = new HashSet<>();
-        ManagedMap parameters = null; //todo @csy ManagedMap的用途是怎样的？
+        ManagedMap parameters = null;
         for (Method setter : beanClass.getMethods()) {
             String name = setter.getName();
             if (name.length() > 3 && name.startsWith("set")
@@ -174,7 +173,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
                     parseMethods(id, element.getChildNodes(), beanDefinition, parserContext);
                 } else if ("arguments".equals(property)) {
                     parseArguments(id, element.getChildNodes(), beanDefinition, parserContext);
-                } else { //todo @csy 此入口什么条件下会进入？
+                } else {
                     String value = resolveAttribute(element, property, parserContext);
                     if (value != null) {
                         value = value.trim();
@@ -185,14 +184,13 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
                                 beanDefinition.getPropertyValues().addPropertyValue(beanProperty, registryConfig);
                             } else if ("provider".equals(property) || "registry".equals(property) || ("protocol".equals(property) && AbstractServiceConfig.class.isAssignableFrom(beanClass))) {
                                 /**
-                                 * todo @csy 此段的描述是要表达怎样的逻辑？
                                  * For 'provider' 'protocol' 'registry', keep literal value (should be id/name) and set the value to 'registryIds' 'providerIds' protocolIds'
                                  * The following process should make sure each id refers to the corresponding instance, here's how to find the instance for different use cases:
                                  * 1. Spring, check existing bean by id, see{@link ServiceBean#afterPropertiesSet()}; then try to use id to find configs defined in remote Config Center
                                  * 2. API, directly use id to find configs defined in remote Config Center; if all config instances are defined locally, please use {@link ServiceConfig#setRegistries(List)}
                                  */
                                 beanDefinition.getPropertyValues().addPropertyValue(beanProperty + "Ids", value);
-                            } else { //todo @csy 待调试，分析值了解该段的逻辑
+                            } else {
                                 Object reference;
                                 if (isPrimitive(type)) { //属性类型为基本类型，并且为指定的值，则将值值为null
                                     if ("async".equals(property) && "false".equals(value)
@@ -209,7 +207,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
                                     int index = value.lastIndexOf(".");
                                     String ref = value.substring(0, index);
                                     String method = value.substring(index + 1);
-                                    reference = new RuntimeBeanReference(ref); //todo @csy RuntimeBeanReference 待了解
+                                    reference = new RuntimeBeanReference(ref);
                                     beanDefinition.getPropertyValues().addPropertyValue(property + METHOD, method);
                                 } else {
                                     if ("ref".equals(property) && parserContext.getRegistry().containsBeanDefinition(value)) {
@@ -227,7 +225,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
                 }
             }
         }
-        NamedNodeMap attributes = element.getAttributes(); //todo @csy NamedNodeMap 待了解
+        NamedNodeMap attributes = element.getAttributes();
         int len = attributes.getLength();
         for (int i = 0; i < len; i++) {
             Node node = attributes.item(i);
@@ -254,7 +252,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
     }
 
     /**
-     * 解析内嵌元素 todo @csy 待调试了解
+     * 解析内嵌元素
      */
     private static void parseNested(Element element, ParserContext parserContext, Class<?> beanClass, boolean required, String tag, String property, String ref, BeanDefinition beanDefinition) {
         NodeList nodeList = element.getChildNodes();
@@ -268,7 +266,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
                 continue;
             }
             if (tag.equals(node.getNodeName())
-                    || tag.equals(node.getLocalName())) { //todo @csy 此处的处理逻辑是什么？
+                    || tag.equals(node.getLocalName())) {
                 if (first) {
                     first = false;
                     String isDefault = resolveAttribute(element, "default", parserContext);
@@ -276,7 +274,6 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
                         beanDefinition.getPropertyValues().addPropertyValue("default", "false");
                     }
                 }
-                // todo @csy 此处为啥还要解析？
                 BeanDefinition subDefinition = parse((Element) node, parserContext, beanClass, required);
                 if (subDefinition != null && StringUtils.isNotEmpty(ref)) {
                     subDefinition.getPropertyValues().addPropertyValue(property, new RuntimeBeanReference(ref));
@@ -286,7 +283,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
     }
 
     /**
-     * 解析属性，todo @csy 是怎样解析属性的？用途是啥？
+     * 解析属性
      */
     private static void parseProperties(NodeList nodeList, RootBeanDefinition beanDefinition, ParserContext parserContext) {
         if (nodeList == null) {
@@ -327,7 +324,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
             }
             Element element = (Element) nodeList.item(i);
             if ("parameter".equals(element.getNodeName())
-                    || "parameter".equals(element.getLocalName())) { //todo @csy 待调试，是怎么解析参数的？hide属性是怎样的？
+                    || "parameter".equals(element.getLocalName())) {
                 if (parameters == null) {
                     parameters = new ManagedMap();
                 }
@@ -350,7 +347,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
             return;
         }
         ManagedList methods = null;
-        for (int i = 0; i < nodeList.getLength(); i++) { //todo @csy 什么时候会解析方法？解析的逻辑是怎样的？
+        for (int i = 0; i < nodeList.getLength(); i++) {
             if (!(nodeList.item(i) instanceof Element)) {
                 continue;
             }
@@ -402,7 +399,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
             return;
         }
         ManagedList arguments = null;
-        for (int i = 0; i < nodeList.getLength(); i++) { //todo @csy argument与parameter有啥不同？
+        for (int i = 0; i < nodeList.getLength(); i++) {
             if (!(nodeList.item(i) instanceof Element)) {
                 continue;
             }
@@ -438,7 +435,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
      */
     private static String resolveAttribute(Element element, String attributeName, ParserContext parserContext) {
         String attributeValue = element.getAttribute(attributeName);
-        Environment environment = parserContext.getReaderContext().getEnvironment(); //todo @csy Environment环境是指啥？都有啥用途，此处还要解析替换符？
+        Environment environment = parserContext.getReaderContext().getEnvironment();
         return environment.resolvePlaceholders(attributeValue);
     }
 }

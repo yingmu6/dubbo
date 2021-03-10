@@ -43,10 +43,10 @@ public class RpcStatus { //都记录了哪些状态值？后台管理页面有�
 
     private static final ConcurrentMap<String, ConcurrentMap<String, RpcStatus>> METHOD_STATISTICS = new ConcurrentHashMap<String, ConcurrentMap<String, RpcStatus>>();
     private final ConcurrentMap<String, Object> values = new ConcurrentHashMap<String, Object>();
-    private final AtomicInteger active = new AtomicInteger(); //todo @csy 激活数标识什么？
+    private final AtomicInteger active = new AtomicInteger();
     private final AtomicLong total = new AtomicLong();
     private final AtomicInteger failed = new AtomicInteger();
-    private final AtomicLong totalElapsed = new AtomicLong(); //todo @csy Elapsed（逃逸）是指啥？用途是啥？
+    private final AtomicLong totalElapsed = new AtomicLong();
     private final AtomicLong failedElapsed = new AtomicLong();
     private final AtomicLong maxElapsed = new AtomicLong();
     private final AtomicLong failedMaxElapsed = new AtomicLong();

@@ -20,7 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class LRUCache<K, V> extends LinkedHashMap<K, V> { //todo @csy 用途以及使用的地方？
+public class LRUCache<K, V> extends LinkedHashMap<K, V> {
 
     private static final long serialVersionUID = -5167631809472116969L;
 

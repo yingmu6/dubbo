@@ -49,7 +49,7 @@ public class ServiceBean<T> extends ServiceConfig<T> implements InitializingBean
 
     private transient String beanName;
 
-    private ApplicationEventPublisher applicationEventPublisher; // todo @csy 还有事务监听器？在什么时候使用的？
+    private ApplicationEventPublisher applicationEventPublisher;
 
     public ServiceBean() {
         super();

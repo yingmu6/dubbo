@@ -41,7 +41,7 @@ public interface PathUtils { //路径处理工具类
 
         return normalize(paths.stream()
                 .filter(StringUtils::isNotEmpty)
-                .collect(Collectors.joining(SLASH))); //加上斜杠进行拼接，todo @csy 此处最终的路径是什么？是否包含双斜线？
+                .collect(Collectors.joining(SLASH)));
     }
 
     /**

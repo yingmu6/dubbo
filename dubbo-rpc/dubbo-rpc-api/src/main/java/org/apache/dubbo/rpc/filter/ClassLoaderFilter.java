@@ -37,7 +37,7 @@ public class ClassLoaderFilter implements Filter {
         try {
             return invoker.invoke(invocation);
         } finally {
-            Thread.currentThread().setContextClassLoader(ocl); //todo @csy 为啥要设置两次类加载器？
+            Thread.currentThread().setContextClassLoader(ocl);
         }
     }
 

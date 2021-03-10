@@ -74,7 +74,7 @@ public class FutureAdapter<V> extends CompletableFuture<V> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public V get() throws InterruptedException, ExecutionException { //todo @csy 该方法的用途是啥？
+    public V get() throws InterruptedException, ExecutionException {
         try {
             return super.get();
         } catch (ExecutionException | InterruptedException e) {

@@ -36,7 +36,7 @@ import static org.apache.dubbo.config.Constants.REGISTRIES_SUFFIX;
  */
 public class RegistryConfig extends AbstractConfig {
 
-    public static final String NO_AVAILABLE = "N/A"; //todo @csy 什么时候会出现这个值？
+    public static final String NO_AVAILABLE = "N/A";
     private static final long serialVersionUID = 5508512956753757169L;
 
     /**

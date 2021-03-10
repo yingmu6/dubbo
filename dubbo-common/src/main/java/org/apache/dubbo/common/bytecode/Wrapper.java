@@ -163,7 +163,7 @@ public abstract class Wrapper { //包装类
                 }
 
                 String mn = m.getName();
-                c3.append(" if( \"").append(mn).append("\".equals( $2 ) "); //todo @csy 此处是怎么比较的？
+                c3.append(" if( \"").append(mn).append("\".equals( $2 ) ");
                 int len = m.getParameterTypes().length;
                 c3.append(" && ").append(" $3.length == ").append(len);
 
@@ -176,7 +176,7 @@ public abstract class Wrapper { //包装类
                 }
                 if (override) {
                     if (len > 0) {
-                        for (int l = 0; l < len; l++) { //todo @csy 此处的比较逻辑是怎样的？
+                        for (int l = 0; l < len; l++) {
                             c3.append(" && ").append(" $3[").append(l).append("].getName().equals(\"")
                                     .append(m.getParameterTypes()[l].getName()).append("\")");
                         }
@@ -210,7 +210,7 @@ public abstract class Wrapper { //包装类
         Matcher matcher;
         for (Map.Entry<String, Method> entry : ms.entrySet()) {
             String md = entry.getKey();
-            Method method = entry.getValue(); //todo @csy 待调试查看数据
+            Method method = entry.getValue();
             if ((matcher = ReflectUtils.GETTER_METHOD_DESC_PATTERN.matcher(md)).matches()) {
                 String pn = propertyName(matcher.group(1));
                 c2.append(" if( $2.equals(\"").append(pn).append("\") ){ return ($w)w.").append(method.getName()).append("(); }");

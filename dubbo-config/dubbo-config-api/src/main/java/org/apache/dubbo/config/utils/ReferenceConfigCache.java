@@ -37,7 +37,7 @@ import java.util.concurrent.ConcurrentMap;
  * <p>
  * You can implement and use your own {@link ReferenceConfigBase} cache if you need use complicate strategy.
  */
-public class ReferenceConfigCache { //todo @csy 与Cache有何不同？
+public class ReferenceConfigCache {
     public static final String DEFAULT_NAME = "_DEFAULT_";
     /**
      * Create the key with the <b>Group</b>, <b>Interface</b> and <b>version</b> attribute of {@link ReferenceConfigBase}.

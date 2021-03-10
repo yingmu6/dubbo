@@ -191,7 +191,7 @@ public final class AccessLogData {
     /**
      * 拼接日志输出信息
      */
-    public String getLogMessage() { //todo @csy 日志消息待调试，看下输出的数据是怎样的形式
+    public String getLogMessage() {
         StringBuilder sn = new StringBuilder();
 
         // 取出本地缓存的日志数据，进行拼接

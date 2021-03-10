@@ -86,7 +86,7 @@ public class InMemoryWritableMetadataService extends AbstractAbstractWritableMet
         for (Map.Entry<String, SortedSet<URL>> entry : serviceURLs.entrySet()) {
             SortedSet<URL> urls = entry.getValue();
             if (urls != null) {
-                for (URL url : urls) { //todo @csy 待调试
+                for (URL url : urls) {
                     if (!MetadataService.class.getName().equals(url.getServiceInterface())) {
                         bizURLs.add(url);
                     }

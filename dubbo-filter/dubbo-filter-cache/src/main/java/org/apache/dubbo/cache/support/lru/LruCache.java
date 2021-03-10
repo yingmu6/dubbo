@@ -56,7 +56,7 @@ public class LruCache implements Cache { //@csy 功能用途
      * @param url A valid URL instance
      */
     public LruCache(URL url) { //初始化缓存
-        final int max = url.getParameter("cache.size", 1000); //todo @csy 怎样处理校验缓存的大小的？
+        final int max = url.getParameter("cache.size", 1000);
         this.store = new LRUCache<>(max);
     }
 

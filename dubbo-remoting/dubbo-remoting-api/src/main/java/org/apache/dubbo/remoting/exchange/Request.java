@@ -37,7 +37,7 @@ public class Request {
 
     private boolean mEvent = false;
 
-    private boolean mBroken = false; //todo @csy 含义是啥？
+    private boolean mBroken = false;
 
     private Object mData;
 

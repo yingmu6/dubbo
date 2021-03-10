@@ -51,7 +51,7 @@ final class NettyChannel extends AbstractChannel {
      */
     private final Channel channel;
 
-    private final Map<String, Object> attributes = new ConcurrentHashMap<String, Object>();
+    private final Map<String, Object> attributes = new ConcurrentHashMap<String, Object>(); //缓存属性的值
 
     private final AtomicBoolean active = new AtomicBoolean(false);
 

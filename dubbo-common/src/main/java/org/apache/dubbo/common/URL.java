@@ -127,7 +127,7 @@ class URL implements Serializable {
 
     private volatile transient String full;
 
-    private volatile transient String identity; //todo @csy 身份标识是指啥？
+    private volatile transient String identity;
 
     private volatile transient String parameter;
 
@@ -850,7 +850,6 @@ class URL implements Serializable {
         return URL.decode(getMethodParameter(method, key, defaultValue));
     }
 
-    // todo @csy 方法参数是啥？
     public String getMethodParameter(String method, String key) {
         Map<String, String> keyMap = methodParameters.get(method);
         String value = null;

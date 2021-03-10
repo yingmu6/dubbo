@@ -301,7 +301,7 @@ public class PojoUtils {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private static Object realize0(Object pojo, Class<?> type, Type genericType, final Map<Object, Object> history) { //todo @csy 此处序列化方式待详细查看
+    private static Object realize0(Object pojo, Class<?> type, Type genericType, final Map<Object, Object> history) {
         if (pojo == null) {
             return null;
         }

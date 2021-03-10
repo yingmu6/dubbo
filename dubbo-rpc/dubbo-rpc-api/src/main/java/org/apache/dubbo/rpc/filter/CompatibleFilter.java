@@ -55,8 +55,8 @@ public class CompatibleFilter implements Filter, Filter.Listener {
     }
 
     @Override
-    public void onResponse(Result appResponse, Invoker<?> invoker, Invocation invocation) { //todo @csy 是对响应的值进行适配吗？待调试？
-        if (!invocation.getMethodName().startsWith("$") && !appResponse.hasException()) {//todo @csy 什么方法会以$开头
+    public void onResponse(Result appResponse, Invoker<?> invoker, Invocation invocation) {
+        if (!invocation.getMethodName().startsWith("$") && !appResponse.hasException()) {
             Object value = appResponse.getValue();
             if (value != null) {
                 try {

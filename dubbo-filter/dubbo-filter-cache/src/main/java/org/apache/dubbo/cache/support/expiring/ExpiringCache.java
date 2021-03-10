@@ -40,10 +40,10 @@ import java.util.Map;
  * @see org.apache.dubbo.cache.support.AbstractCacheFactory
  * @see org.apache.dubbo.cache.filter.CacheFilter
  */
-public class ExpiringCache implements Cache { //todo @csy 过期时间缓存是怎么使用的？
+public class ExpiringCache implements Cache {
     private final Map<Object, Object> store;
 
-    public ExpiringCache(URL url) { //todo @csy 过期了的缓存是怎么处理的？
+    public ExpiringCache(URL url) {
         // cache time (second)
         final int secondsToLive = url.getParameter("cache.seconds", 180);
         // Cache check interval (second)

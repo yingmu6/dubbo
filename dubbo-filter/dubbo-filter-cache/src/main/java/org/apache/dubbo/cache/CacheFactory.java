@@ -38,6 +38,6 @@ public interface CacheFactory {
      * @return Instance of Cache containing cached value against method url and invocation.
      */
     @Adaptive("cache")
-    Cache getCache(URL url, Invocation invocation); //todo @csy 缓存工厂是怎么创建缓存对象的？
+    Cache getCache(URL url, Invocation invocation);
 
 }
