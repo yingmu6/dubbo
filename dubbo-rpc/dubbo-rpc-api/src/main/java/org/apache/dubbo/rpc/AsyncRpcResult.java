@@ -39,10 +39,10 @@ import static org.apache.dubbo.common.utils.ReflectUtils.defaultReturn;
  * <p>
  * TODO if it's reasonable or even right to keep a reference to Invocation?
  * <p>
- * As {@link Result} implements CompletionStage, {@link AsyncRpcResult} allows you to easily build a async filter chain whose status will be
- * driven entirely by the state of the underlying RPC call.
+ * As {@link Result} implements CompletionStage（完成阶段）, {@link AsyncRpcResult} allows you to easily build a async filter chain（异步过滤链） whose status will be
+ * driven entirely（完全） by the state of the underlying RPC call.
  * <p>
- * AsyncRpcResult does not contain any concrete value (except the underlying value bring by CompletableFuture), consider it as a status transfer node.
+ * AsyncRpcResult does not contain any concrete（具体的） value (except the underlying value bring by CompletableFuture), consider it as a status transfer node.
  * {@link #getValue()} and {@link #getException()} are all inherited from {@link Result} interface, implementing them are mainly
  * for compatibility consideration. Because many legacy {@link Filter} implementation are most possibly to call getValue directly.
  */
@@ -326,7 +326,7 @@ public class AsyncRpcResult implements Result {
             result.setValue(value);
         }
         future.complete(result);
-        return new AsyncRpcResult(future, invocation);
+        return new AsyncRpcResult(future, invocation); //构建dubbo的异步响应结果模型
     }
 
     private static Result createDefaultValue(Invocation invocation) {

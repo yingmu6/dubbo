@@ -51,12 +51,12 @@ public class ProtocolFilterWrapper implements Protocol {
         this.protocol = protocol;
     }
 
-    private static <T> Invoker<T> buildInvokerChain(final Invoker<T> invoker, String key, String group) {
+    private static <T> Invoker<T> buildInvokerChain(final Invoker<T> invoker, String key, String group) { //构建调用链，并返回头结点
         Invoker<T> last = invoker;
         List<Filter> filters = ExtensionLoader.getExtensionLoader(Filter.class).getActivateExtension(invoker.getUrl(), key, group);
 
         if (!filters.isEmpty()) {
-            for (int i = filters.size() - 1; i >= 0; i--) {
+            for (int i = filters.size() - 1; i >= 0; i--) { //从后往前遍历，最后一个就是头结点
                 final Filter filter = filters.get(i);
                 final Invoker<T> next = last;
                 last = new Invoker<T>() {
@@ -148,15 +148,15 @@ public class ProtocolFilterWrapper implements Protocol {
     }
 
     @Override
-    public <T> Exporter<T> export(Invoker<T> invoker) throws RpcException {
-        if (UrlUtils.isRegistry(invoker.getUrl())) {
+    public <T> Exporter<T> export(Invoker<T> invoker) throws RpcException { //在协议暴露时，构建invoker对应的调用链路
+        if (UrlUtils.isRegistry(invoker.getUrl())) { //若url对应的协议是注册协议，则不构建调用链
             return protocol.export(invoker);
         }
         return protocol.export(buildInvokerChain(invoker, SERVICE_FILTER_KEY, CommonConstants.PROVIDER));
     }
 
     @Override
-    public <T> Invoker<T> refer(Class<T> type, URL url) throws RpcException {
+    public <T> Invoker<T> refer(Class<T> type, URL url) throws RpcException { //在协议引用时，构建invoker对应的调用链路
         if (UrlUtils.isRegistry(url)) {
             return protocol.refer(type, url);
         }

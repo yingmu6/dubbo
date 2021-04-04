@@ -27,7 +27,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 /**
- * {@link AsyncRpcResult} is introduced in 3.0.0 to replace RpcResult, and RpcResult is replaced with {@link AppResponse}:
+ * {@link AsyncRpcResult} is introduced（引进） in 3.0.0 to replace RpcResult, and RpcResult is replaced with {@link AppResponse}:
  * <ul>
  *     <li>AsyncRpcResult is the object that is actually passed in the call chain</li>
  *     <li>AppResponse only simply represents the business result</li>
@@ -152,7 +152,7 @@ public class AppResponse implements Result {
     }
 
     @Override
-    public void addObjectAttachments(Map<String, Object> map) {
+    public void addObjectAttachments(Map<String, Object> map) { //map中按对象设置
         if (map == null) {
             return;
         }

@@ -50,7 +50,7 @@ public class AttachmentsAdapter {
             return super.remove(key);
         }
 
-        private String convert(Object obj) {
+        private String convert(Object obj) { //将对象转换为String
             if (obj instanceof String) {
                 return (String) obj;
             }

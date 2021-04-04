@@ -75,7 +75,7 @@ public interface Result extends Serializable {
      * Recreate.
      * <p>
      * <code>
-     * if (hasException()) {
+     * if (hasException()) {  //若有异常则抛出异常，没有异常则返回具体值
      * throw getException();
      * } else {
      * return getValue();
@@ -94,6 +94,7 @@ public interface Result extends Serializable {
      */
     Map<String, String> getAttachments();
 
+    // ------以下是相对于2.5.6新增的内容------
     /**
      * get attachments.
      *
@@ -112,7 +113,7 @@ public interface Result extends Serializable {
     /**
      * Add the specified map to existing attachments in this instance.
      *
-     * @param map
+     * @param map（支持使用对象传输）
      */
     @Experimental("Experiment api for supporting Object transmission")
     void addObjectAttachments(Map<String, Object> map);
@@ -172,6 +173,7 @@ public interface Result extends Serializable {
 
     /**
      * Add a callback which can be triggered when the RPC call finishes.
+     * (添加一个回调，在RPC完成调用后触发)
      * <p>
      * Just as the method name implies, this method will guarantee the callback being triggered under the same context as when the call was started,
      * see implementation in {@link Result#whenCompleteWithContext(BiConsumer)}
