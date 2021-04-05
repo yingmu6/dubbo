@@ -22,7 +22,7 @@ import org.apache.dubbo.rpc.protocol.dubbo.FutureAdapter;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * Used for async call scenario. But if the method you are calling has a {@link CompletableFuture<?>} signature
+ * Used for async call scenario（脚本）. But if the method you are calling has a {@link CompletableFuture<?>} signature
  * you do not need to use this class since you will get a Future response directly.
  * <p>
  * Remember to save the Future reference before making another call using the same thread, otherwise,

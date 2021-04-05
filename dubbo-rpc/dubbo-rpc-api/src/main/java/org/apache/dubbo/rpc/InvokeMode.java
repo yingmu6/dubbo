@@ -16,7 +16,7 @@
  */
 package org.apache.dubbo.rpc;
 
-public enum InvokeMode {
+public enum InvokeMode { //调用模式
 
     SYNC, ASYNC, FUTURE;
 

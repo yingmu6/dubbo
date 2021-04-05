@@ -71,6 +71,7 @@ public interface Constants {
     int DEFAULT_SESSION_TIMEOUT = 60 * 1000;
 
     /**
+     * 默认重试次数：3次
      * Default value for the times of retry: 3
      */
     int DEFAULT_REGISTRY_RETRY_TIMES = 3;
@@ -78,6 +79,7 @@ public interface Constants {
     int DEFAULT_REGISTRY_RECONNECT_PERIOD = 3 * 1000;
 
     /**
+     * 默认重试时间间隔：5秒
      * Default value for the period of retry interval in milliseconds: 5000
      */
     int DEFAULT_REGISTRY_RETRY_PERIOD = 5 * 1000;

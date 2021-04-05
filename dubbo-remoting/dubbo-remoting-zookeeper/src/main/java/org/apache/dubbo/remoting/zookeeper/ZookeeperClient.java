@@ -21,7 +21,7 @@ import org.apache.dubbo.common.URL;
 import java.util.List;
 import java.util.concurrent.Executor;
 
-public interface ZookeeperClient {
+public interface ZookeeperClient { //zookeeper客户端封装功能
 
     void create(String path, boolean ephemeral);
 
