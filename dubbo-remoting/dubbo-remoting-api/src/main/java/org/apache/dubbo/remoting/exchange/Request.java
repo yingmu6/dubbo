@@ -49,7 +49,7 @@ public class Request {
         mId = id;
     }
 
-    private static long newId() {
+    private static long newId() { //id自增超过最大值以后，会从最小值开始增长，负数也能作为id值
         // getAndIncrement() When it grows to MAX_VALUE, it will grow to MIN_VALUE, and the negative can be used as ID
         return INVOKE_ID.getAndIncrement();
     }
@@ -117,7 +117,7 @@ public class Request {
         mData = msg;
     }
 
-    public boolean isHeartbeat() {
+    public boolean isHeartbeat() { //判断是否是心跳请求，是事件且请求数据为空
         return mEvent && HEARTBEAT_EVENT == mData;
     }
 

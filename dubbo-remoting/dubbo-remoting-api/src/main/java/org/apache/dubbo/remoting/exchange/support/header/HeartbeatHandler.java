@@ -90,7 +90,7 @@ public class HeartbeatHandler extends AbstractChannelHandlerDelegate {
         handler.received(channel, message);
     }
 
-    private void setReadTimestamp(Channel channel) {
+    private void setReadTimestamp(Channel channel) { //传入通道channel的实例
         channel.setAttribute(KEY_READ_TIMESTAMP, System.currentTimeMillis());
     }
 
