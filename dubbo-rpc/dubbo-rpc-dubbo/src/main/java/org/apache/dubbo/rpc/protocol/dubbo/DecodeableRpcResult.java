@@ -82,9 +82,9 @@ public class DecodeableRpcResult extends AppResponse implements Codec, Decodeabl
 
         byte flag = in.readByte();
         switch (flag) {
-            case DubboCodec.RESPONSE_NULL_VALUE:
+            case DubboCodec.RESPONSE_NULL_VALUE: //响应空值不处理
                 break;
-            case DubboCodec.RESPONSE_VALUE:
+            case DubboCodec.RESPONSE_VALUE: //响应有值时，对值进行处理
                 handleValue(in);
                 break;
             case DubboCodec.RESPONSE_WITH_EXCEPTION:
@@ -142,7 +142,7 @@ public class DecodeableRpcResult extends AppResponse implements Codec, Decodeabl
             } else if (returnTypes.length == 1) {
                 value = in.readObject((Class<?>) returnTypes[0]);
             } else {
-                value = in.readObject((Class<?>) returnTypes[0], returnTypes[1]);
+                value = in.readObject((Class<?>) returnTypes[0], returnTypes[1]); //返回类型 + 泛化类型
             }
             setValue(value);
         } catch (ClassNotFoundException e) {

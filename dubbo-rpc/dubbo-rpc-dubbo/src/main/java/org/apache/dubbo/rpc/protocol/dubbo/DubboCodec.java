@@ -66,7 +66,7 @@ public class DubboCodec extends ExchangeCodec {
         byte flag = header[2], proto = (byte) (flag & SERIALIZATION_MASK);
         // get request id.
         long id = Bytes.bytes2long(header, 4);
-        if ((flag & FLAG_REQUEST) == 0) {
+        if ((flag & FLAG_REQUEST) == 0) { //位运算，判断是对request、还是response进行解码
             // decode response.
             Response res = new Response(id);
             if ((flag & FLAG_EVENT) != 0) {
@@ -78,7 +78,7 @@ public class DubboCodec extends ExchangeCodec {
             try {
                 if (status == Response.OK) {
                     Object data;
-                    if (res.isEvent()) {
+                    if (res.isEvent()) { //若是事件的话，按事件进行解析
                         ObjectInput in = CodecSupport.deserialize(channel.getUrl(), is, proto);
                         data = decodeEventData(channel, in);
                     } else {

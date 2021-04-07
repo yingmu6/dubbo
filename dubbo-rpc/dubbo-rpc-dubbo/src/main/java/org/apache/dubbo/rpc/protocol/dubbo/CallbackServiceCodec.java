@@ -82,6 +82,7 @@ class CallbackServiceCodec {
 
     /**
      * export or unexport callback service on client side
+     * （在客户端暴露或取消暴露的服务）
      *
      * @param channel
      * @param url
@@ -120,13 +121,13 @@ class CallbackServiceCodec {
         tmpMap.put(INTERFACE_KEY, clazz.getName());
         URL exportUrl = new URL(DubboProtocol.NAME, channel.getLocalAddress().getAddress().getHostAddress(), channel.getLocalAddress().getPort(), clazz.getName() + "." + instid, tmpMap);
 
-        // no need to generate multiple exporters for different channel in the same JVM, cache key cannot collide.
+        // no need to generate multiple exporters for different channel in the same JVM, cache key cannot collide（冲突）.
         String cacheKey = getClientSideCallbackServiceCacheKey(instid);
         String countKey = getClientSideCountKey(clazz.getName());
         if (export) {
             // one channel can have multiple callback instances, no need to re-export for different instance.
             if (!channel.hasAttribute(cacheKey)) {
-                if (!isInstancesOverLimit(channel, url, clazz.getName(), instid, false)) {
+                if (!isInstancesOverLimit(channel, url, clazz.getName(), instid, false)) { //在没有超过实例限制数时，将服务暴露，并且增加实例数目
                     ApplicationModel.getServiceRepository().registerService(clazz);
                     Invoker<?> invoker = PROXY_FACTORY.getInvoker(inst, clazz, exportUrl);
                     // should destroy resource?
@@ -197,7 +198,7 @@ class CallbackServiceCodec {
                     logger.error(e.getMessage(), e);
                 }
                 // cancel refer, directly remove from the map
-                channel.removeAttribute(proxyCacheKey);
+                channel.removeAttribute(proxyCacheKey); //通道中移除对应的属性
                 channel.removeAttribute(invokerCacheKey);
                 decreaseInstanceCount(channel, countkey);
             }
@@ -237,7 +238,7 @@ class CallbackServiceCodec {
         }
     }
 
-    private static void increaseInstanceCount(Channel channel, String countkey) {
+    private static void increaseInstanceCount(Channel channel, String countkey) { //增加暴露的实例数
         try {
             //ignore concurrent problem?
             Integer count = (Integer) channel.getAttribute(countkey);
@@ -252,7 +253,7 @@ class CallbackServiceCodec {
         }
     }
 
-    private static void decreaseInstanceCount(Channel channel, String countkey) {
+    private static void decreaseInstanceCount(Channel channel, String countkey) { //减少暴露的实例数
         try {
             Integer count = (Integer) channel.getAttribute(countkey);
             if (count == null || count <= 0) {

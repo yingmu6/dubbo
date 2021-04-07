@@ -74,10 +74,10 @@ public class RpcUtils {
             if (invocation != null && invocation.getInvoker() != null
                     && invocation.getInvoker().getUrl() != null
                     && invocation.getInvoker().getInterface() != GenericService.class
-                    && !invocation.getMethodName().startsWith("$")) {
+                    && !invocation.getMethodName().startsWith("$")) { //排除泛化接口、$命名的方法
                 String service = invocation.getInvoker().getUrl().getServiceInterface();
                 if (StringUtils.isNotEmpty(service)) {
-                    Method method = getMethodByService(invocation, service);
+                    Method method = getMethodByService(invocation, service);  //通过服务名、调用信息找到方法对象Method
                     return ReflectUtils.getReturnTypes(method);
                 }
             }
