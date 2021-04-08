@@ -53,7 +53,7 @@ public class DubboNamespaceHandler extends NamespaceHandlerSupport implements Co
      * 2）实现ConfigurableSourceBeanMetadataElement
      */
 
-    static {
+    static { //static在类加载时，Version中有静态方法，会先执行Version.checkDuplicate(Version.class)，再执行Version.checkDuplicate(DubboNamespaceHandler.class);
         Version.checkDuplicate(DubboNamespaceHandler.class);
     }
 
@@ -62,7 +62,7 @@ public class DubboNamespaceHandler extends NamespaceHandlerSupport implements Co
      * （元素名是不带命名空间的，如<dubbo:application> 元素为application）
      */
     @Override
-    public void init() {
+    public void init() { //设置父类NamespaceHandlerSupport的Map<String, BeanDefinitionParser> parsers，元素名与bean解析器的映射关系
         registerBeanDefinitionParser("application", new DubboBeanDefinitionParser(ApplicationConfig.class, true));
         registerBeanDefinitionParser("module", new DubboBeanDefinitionParser(ModuleConfig.class, true));
         registerBeanDefinitionParser("registry", new DubboBeanDefinitionParser(RegistryConfig.class, true));
@@ -76,7 +76,7 @@ public class DubboNamespaceHandler extends NamespaceHandlerSupport implements Co
         registerBeanDefinitionParser("protocol", new DubboBeanDefinitionParser(ProtocolConfig.class, true));
         registerBeanDefinitionParser("service", new DubboBeanDefinitionParser(ServiceBean.class, true));
         registerBeanDefinitionParser("reference", new DubboBeanDefinitionParser(ReferenceBean.class, false));
-        registerBeanDefinitionParser("annotation", new AnnotationBeanDefinitionParser());
+        registerBeanDefinitionParser("annotation", new AnnotationBeanDefinitionParser()); //对应注解解析器
     }
 
     /**

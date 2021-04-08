@@ -44,7 +44,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.MOCK_HEARTBEAT_E
  * GenericGoogleProtobuf object input implementation
  */
 public class GenericProtobufJsonObjectInput implements ObjectInput {
-    private final BufferedReader reader;
+    private final BufferedReader reader; //字符缓冲输入流
 
     public GenericProtobufJsonObjectInput(InputStream in) {
         this.reader = new BufferedReader(new InputStreamReader(in));

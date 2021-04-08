@@ -127,7 +127,7 @@ public class ClassUtils {
         return forName(name, caller.getClassLoader());
     }
 
-    public static ClassLoader getCallerClassLoader(Class<?> caller) {
+    public static ClassLoader getCallerClassLoader(Class<?> caller) { //获取调用者的类加载器
         return caller.getClassLoader();
     }
 

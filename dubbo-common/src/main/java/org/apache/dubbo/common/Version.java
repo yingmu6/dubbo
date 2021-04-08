@@ -56,7 +56,7 @@ public final class Version {
     public static final int HIGHEST_PROTOCOL_VERSION = 2009900; // 2.0.99
     private static final Map<String, Integer> VERSION2INT = new HashMap<String, Integer>();
 
-    static {
+    static { //类在加载时，会被执行。  所以，会先检测Version、在检测其它类（先看看类都进行了哪些初始化）
         // check if there's duplicated jar
         Version.checkDuplicate(Version.class);
     }
@@ -226,7 +226,7 @@ public final class Version {
         return file;
     }
 
-    public static void checkDuplicate(Class<?> cls, boolean failOnError) {
+    public static void checkDuplicate(Class<?> cls, boolean failOnError) { //构建类对应的相对路径，如org/apache/dubbo/config/spring/schema/DubboNamespaceHandler.class
         checkDuplicate(cls.getName().replace('.', '/') + ".class", failOnError);
     }
 
@@ -241,7 +241,7 @@ public final class Version {
             // duplicated jar is found
             if (files.size() > 1) {
                 String error = "Duplicate class " + path + " in " + files.size() + " jar " + files;
-                if (failOnError) {
+                if (failOnError) { //若需要抛出异常，则抛异常，默认只打error日志，不终止服务
                     throw new IllegalStateException(error);
                 } else {
                     logger.error(error);
@@ -255,13 +255,13 @@ public final class Version {
     /**
      * search resources in caller's classloader
      */
-    private static Set<String> getResources(String path) throws IOException {
+    private static Set<String> getResources(String path) throws IOException { //path的值，如：org/apache/dubbo/config/spring/schema/DubboNamespaceHandler.class
         Enumeration<URL> urls = ClassUtils.getCallerClassLoader(Version.class).getResources(path);
         Set<String> files = new HashSet<String>();
         while (urls.hasMoreElements()) {
-            URL url = urls.nextElement();
+            URL url = urls.nextElement(); //本地文件也可以用url表示，如：file:/Users/chenshengyong/selfPro/db-self-2.7/dubbo/dubbo-common/target/classes/org/apache/dubbo/common/Version.class
             if (url != null) {
-                String file = url.getFile();
+                String file = url.getFile(); //文件路径是：编译后的绝对路径，不是源文件，如/Users/chenshengyong/selfPro/db-self-2.7/dubbo/dubbo-config/dubbo-config-spring/target/classes/org/apache/dubbo/config/spring/schema/DubboNamespaceHandler.class
                 if (StringUtils.isNotEmpty(file)) {
                     files.add(file);
                 }

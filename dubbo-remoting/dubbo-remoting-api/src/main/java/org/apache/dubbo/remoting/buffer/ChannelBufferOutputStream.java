@@ -47,7 +47,7 @@ public class ChannelBufferOutputStream extends OutputStream {
     }
 
     @Override
-    public void write(byte[] b) throws IOException {
+    public void write(byte[] b) throws IOException { //重写java输出流的方法，内部转换用自定义的数据模型进行操作
         buffer.writeBytes(b);
     }
 
