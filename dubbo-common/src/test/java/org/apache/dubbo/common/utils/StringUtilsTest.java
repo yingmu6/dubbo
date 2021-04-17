@@ -334,7 +334,7 @@ public class StringUtilsTest {
     }
 
     @Test
-    public void testCamelToSplitName() throws Exception {
+    public void testCamelToSplitName() throws Exception { //字符串驼峰处理
         assertEquals("ab-cd-ef", StringUtils.camelToSplitName("abCdEf", "-"));
         assertEquals("ab-cd-ef", StringUtils.camelToSplitName("AbCdEf", "-"));
         assertEquals("ab-cd-ef", StringUtils.camelToSplitName("ab-cd-ef", "-"));

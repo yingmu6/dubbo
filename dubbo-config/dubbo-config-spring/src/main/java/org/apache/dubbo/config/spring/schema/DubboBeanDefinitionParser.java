@@ -100,7 +100,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
             }
             id = generatedBeanName;
             int counter = 2;
-            while (parserContext.getRegistry().containsBeanDefinition(id)) { //若id名已存在，则加上计数标识
+            while (parserContext.getRegistry().containsBeanDefinition(id)) { //若bean已存在，则加上计数标识
                 id = generatedBeanName + (counter++);
             }
         }
@@ -145,19 +145,19 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
             String name = setter.getName();
             if (name.length() > 3 && name.startsWith("set")
                     && Modifier.isPublic(setter.getModifiers())
-                    && setter.getParameterTypes().length == 1) { //遍历bean中的set方法
+                    && setter.getParameterTypes().length == 1) { //遍历bean中的set方法，只处理一个参数的setter方法
                 Class<?> type = setter.getParameterTypes()[0];
-                String beanProperty = name.substring(3, 4).toLowerCase() + name.substring(4);
+                String beanProperty = name.substring(3, 4).toLowerCase() + name.substring(4); //解析出属性名，如方法名为setName，属性名为name
                 String property = StringUtils.camelToSplitName(beanProperty, "-");
                 props.add(property);
                 // check the setter/getter whether match (检查set、get方法是否匹配)
                 Method getter = null;
                 try {
-                    getter = beanClass.getMethod("get" + name.substring(3), new Class<?>[0]);
+                    getter = beanClass.getMethod("get" + name.substring(3), new Class<?>[0]);//获取指定的方法对应的Method，如getName
                 } catch (NoSuchMethodException e) {
                     try {
-                        getter = beanClass.getMethod("is" + name.substring(3), new Class<?>[0]);
-                    } catch (NoSuchMethodException e2) {
+                        getter = beanClass.getMethod("is" + name.substring(3), new Class<?>[0]); //处理is开头的方法，比如ApplicationConfig中的isDefault()方法
+                    } catch (NoSuchMethodException e2) { //允许没有getter的方法，比如EnvironmentAware，只有setter方法，不能抛出异常，不然引起应用启动失败
                         // ignore, there is no need any log here since some class implement the interface: EnvironmentAware,
                         // ApplicationAware, etc. They only have setter method, otherwise will cause the error log during application start up.
                     }
@@ -175,7 +175,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
                     parseArguments(id, element.getChildNodes(), beanDefinition, parserContext);
                 } else {
                     String value = resolveAttribute(element, property, parserContext);
-                    if (value != null) {
+                    if (value != null) { //若值为null或者""，则不处理
                         value = value.trim();
                         if (value.length() > 0) {
                             if ("registry".equals(property) && RegistryConfig.NO_AVAILABLE.equalsIgnoreCase(value)) {
@@ -193,8 +193,8 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
                             } else {
                                 Object reference;
                                 if (isPrimitive(type)) { //属性类型为基本类型，并且为指定的值，则将值值为null
-                                    if ("async".equals(property) && "false".equals(value)
-                                            || "timeout".equals(property) && "0".equals(value)
+                                    if ("async".equals(property) && "false".equals(value) //若为指定的属性和属性值，则设置value为null
+                                            || "timeout".equals(property) && "0".equals(value) //每个判断条件作为一行，清晰明了
                                             || "delay".equals(property) && "0".equals(value)
                                             || "version".equals(property) && "0.0.0".equals(value)
                                             || "stat".equals(property) && "-1".equals(value)
@@ -218,7 +218,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
                                     }
                                     reference = new RuntimeBeanReference(value);
                                 }
-                                beanDefinition.getPropertyValues().addPropertyValue(beanProperty, reference);
+                                beanDefinition.getPropertyValues().addPropertyValue(beanProperty, reference); //将属性名、属性值组装成PropertyValue对象，放到List<PropertyValue>属性值列表中
                             }
                         }
                     }
@@ -244,7 +244,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
         return beanDefinition;
     }
 
-    private static boolean isPrimitive(Class<?> cls) {
+    private static boolean isPrimitive(Class<?> cls) { //Class中isPrimitive()，判断是否是基本类型，Class中native方法，在Class的基础上做了封装，加上额外的类型
         return cls.isPrimitive() || cls == Boolean.class || cls == Byte.class
                 || cls == Character.class || cls == Short.class || cls == Integer.class
                 || cls == Long.class || cls == Float.class || cls == Double.class
@@ -431,10 +431,10 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
     }
 
     /**
-     * 解析属性值
+     * 解析元素中的属性值 如：<dubbo:application name="test"/> ，name的属性值为test
      */
     private static String resolveAttribute(Element element, String attributeName, ParserContext parserContext) {
-        String attributeValue = element.getAttribute(attributeName);
+        String attributeValue = element.getAttribute(attributeName); //获取元素中，指定属性名对应的属性值
         Environment environment = parserContext.getReaderContext().getEnvironment();
         return environment.resolvePlaceholders(attributeValue);
     }
