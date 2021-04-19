@@ -14,23 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.dubbo.demo.consumer.comp;
+package org.apache.dubbo.demo.provider;
 
-import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.dubbo.demo.DemoService;
+import org.apache.dubbo.rpc.RpcContext;
 
-import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CompletableFuture;
 
-@Component("demoServiceComponent")
-public class DemoServiceComponent implements DemoService {
-    @DubboReference
-    private DemoService demoService;
+public class DemoServiceImqqp implements DemoService {
+    private static final Logger logger = LoggerFactory.getLogger(DemoServiceImqqp.class);
+
+    private String name;
+    private Integer age;
 
     @Override
     public String sayHello(String name) {
-        return demoService.sayHello(name);
+        logger.info("Hel444lo " + name + ", request from consumer: " + RpcContext.getContext().getRemoteAddress());
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return "Hello " + name + ", resp7887onse from provider: " + RpcContext.getContext().getLocalAddress();
     }
 
     @Override
@@ -40,6 +48,14 @@ public class DemoServiceComponent implements DemoService {
 
     @Override
     public CompletableFuture<String> sayHelloAsync(String name) {
-        return null;
+        CompletableFuture<String> cf = CompletableFuture.supplyAsync(() -> {
+//            try {
+//                Thread.sleep(1000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+            return "async result";
+        });
+        return cf;
     }
 }

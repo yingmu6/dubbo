@@ -78,7 +78,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
     }
 
     @SuppressWarnings("unchecked")
-    private static RootBeanDefinition parse(Element element, ParserContext parserContext, Class<?> beanClass, boolean required) {
+    private static RootBeanDefinition parse(Element element, ParserContext parserContext, Class<?> beanClass, boolean required) { //ParserContext：通过bean定义解析过程传递的上下文，封装所有相关配置和状态，嵌套在XmlReaderContext内
         RootBeanDefinition beanDefinition = new RootBeanDefinition();
         beanDefinition.setBeanClass(beanClass);
         beanDefinition.setLazyInit(false);
@@ -115,7 +115,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
          * 对指定的bean进行处理，如ProtocolConfig、ServiceBean、ProviderConfig、ConsumerConfig等
          */
         if (ProtocolConfig.class.equals(beanClass)) {
-            for (String name : parserContext.getRegistry().getBeanDefinitionNames()) {
+            for (String name : parserContext.getRegistry().getBeanDefinitionNames()) { //遍历已注册的bean对应的名称列表，比如<dubbo:protocol name="dubbo"/>对应的bean的name为"dubbo"等
                 BeanDefinition definition = parserContext.getRegistry().getBeanDefinition(name);
                 PropertyValue property = definition.getPropertyValues().getPropertyValue("protocol");
                 if (property != null) {
@@ -128,11 +128,12 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
         } else if (ServiceBean.class.equals(beanClass)) {
             String className = resolveAttribute(element, "class", parserContext);
             if (StringUtils.isNotEmpty(className)) {
-                RootBeanDefinition classDefinition = new RootBeanDefinition();
+                RootBeanDefinition classDefinition = new RootBeanDefinition(); //根bean定义也可以用于注册单个bean定义
                 classDefinition.setBeanClass(ReflectUtils.forName(className));
                 classDefinition.setLazyInit(false);
                 parseProperties(element.getChildNodes(), classDefinition, parserContext);
-                beanDefinition.getPropertyValues().addPropertyValue("ref", new BeanDefinitionHolder(classDefinition, id + "Impl"));
+                beanDefinition.getPropertyValues().addPropertyValue("ref", new BeanDefinitionHolder(classDefinition, id + "Impl")); //BeanDefinitionHolder：带有名称和别名的bean定义的Holder
+                // 此处的bean实例，会在bean的名称后面加上Impl，如：org.apache.dubbo.demo.DemoService + "Impl"，对应的实现类是org.apache.dubbo.demo.DemoServiceImpl
             }
         } else if (ProviderConfig.class.equals(beanClass)) {
             parseNested(element, parserContext, ServiceBean.class, true, "service", "provider", id, beanDefinition);
@@ -260,20 +261,21 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
             return;
         }
         boolean first = true;
-        for (int i = 0; i < nodeList.getLength(); i++) {
+        for (int i = 0; i < nodeList.getLength(); i++) { //可以有多个内嵌节点
             Node node = nodeList.item(i);
             if (!(node instanceof Element)) {
                 continue;
             }
-            if (tag.equals(node.getNodeName())
-                    || tag.equals(node.getLocalName())) {
+            if (tag.equals(node.getNodeName()) //带上命名空间的节点名称，如dubbo:service
+                    || tag.equals(node.getLocalName())) { //去掉命名空间的名称，如service
                 if (first) {
                     first = false;
                     String isDefault = resolveAttribute(element, "default", parserContext);
-                    if (StringUtils.isEmpty(isDefault)) {
+                    if (StringUtils.isEmpty(isDefault)) { //处理默认属性default
                         beanDefinition.getPropertyValues().addPropertyValue("default", "false");
                     }
                 }
+                // 内部嵌套的元素，按单个元素解析的方式依次解析
                 BeanDefinition subDefinition = parse((Element) node, parserContext, beanClass, required);
                 if (subDefinition != null && StringUtils.isNotEmpty(ref)) {
                     subDefinition.getPropertyValues().addPropertyValue(property, new RuntimeBeanReference(ref));
@@ -283,26 +285,26 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
     }
 
     /**
-     * 解析属性
+     * 解析属性（解析元素属性值，并存入PropertyValue对象）
      */
     private static void parseProperties(NodeList nodeList, RootBeanDefinition beanDefinition, ParserContext parserContext) {
         if (nodeList == null) {
             return;
         }
-        for (int i = 0; i < nodeList.getLength(); i++) {
+        for (int i = 0; i < nodeList.getLength(); i++) { //NodeList: 提供了有序节点的抽象节点的集合
             if (!(nodeList.item(i) instanceof Element)) {
                 continue;
             }
             Element element = (Element) nodeList.item(i);
-            if ("property".equals(element.getNodeName())
+            if ("property".equals(element.getNodeName()) //只对属性节点处理
                     || "property".equals(element.getLocalName())) {
-                String name = resolveAttribute(element, "name", parserContext);
+                String name = resolveAttribute(element, "name", parserContext); //解析<property>中的name属性
                 if (StringUtils.isNotEmpty(name)) {
                     String value = resolveAttribute(element, "value", parserContext);
                     String ref = resolveAttribute(element, "ref", parserContext);
-                    if (StringUtils.isNotEmpty(value)) {
-                        beanDefinition.getPropertyValues().addPropertyValue(name, value);
-                    } else if (StringUtils.isNotEmpty(ref)) {
+                    if (StringUtils.isNotEmpty(value)) { //解析基本属性
+                        beanDefinition.getPropertyValues().addPropertyValue(name, value); //属性值列表beanDefinition.getPropertyValues()， 对应<property>的值
+                    } else if (StringUtils.isNotEmpty(ref)) { //解析含有引用的属性，创建对应的bean
                         beanDefinition.getPropertyValues().addPropertyValue(name, new RuntimeBeanReference(ref));
                     } else {
                         throw new UnsupportedOperationException("Unsupported <property name=\"" + name + "\"> sub tag, Only supported <property name=\"" + name + "\" ref=\"...\" /> or <property name=\"" + name + "\" value=\"...\" />");

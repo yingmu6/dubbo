@@ -50,7 +50,7 @@ public class DubboComponentScanRegistrarTest {
     }
 
     @Test
-    public void test() {
+    public void test() { //todo @csy 待测试
 
         AnnotationConfigApplicationContext providerContext = new AnnotationConfigApplicationContext();
 

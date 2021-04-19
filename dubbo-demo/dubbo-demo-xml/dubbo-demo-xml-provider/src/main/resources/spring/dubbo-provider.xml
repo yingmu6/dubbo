@@ -28,8 +28,23 @@
 
     <dubbo:protocol name="dubbo"/>
 
-    <bean id="demoService" class="org.apache.dubbo.demo.provider.DemoServiceImpl"/>
+    <bean id="demoService" class="org.apache.dubbo.demo.provider.DemoServiceImqqp"/>
+    <bean id="actives" class="org.apache.dubbo.demo.provider.DemoServiceImqqp"/>
+    <bean id="greetingService" class="org.apache.dubbo.demo.provider.GreetingServiceImpl"/>
 
-    <dubbo:service interface="org.apache.dubbo.demo.DemoService" class="org.apache.dubbo.demo.DemoService" ref="demoService" filter=""/>
 
+    <dubbo:service interface="org.apache.dubbo.demo.DemoService" class="org.apache.dubbo.demo.DemoService" ref="demoService" filter="">
+         <dubbo:method name="sayHello2" timeout="1000" async="true"/> <!-- 方法级别配置，并不是说展示哪个方法，就暴露哪个方法，与暴露没关 -->
+         <property name="actives" value="12"/>
+         <property name="ref" ref="actives"/>
+    </dubbo:service>
+    <!--
+      方法级别的设置，设值后url的值，会对应为，如timeout="1000"，<methodName>.timeout
+    -->
+
+    <!-- <dubbo:service> 可以单独配置，也可以放在<dubbo:provider>中配置  -->
+    <dubbo:provider timeout="2000" xml:base="dubbo-provider.xml" id="test">
+        <dubbo:parameter key="name" value="zhang"/>
+        <dubbo:service interface="org.apache.dubbo.demo.GreetingService" ref="greetingService"/>
+    </dubbo:provider>
 </beans>
