@@ -139,7 +139,7 @@ public class ApplicationConfig extends AbstractConfig {
     private Boolean qosAcceptForeignIp;
 
     /**
-     * Customized parameters
+     * Customized parameters（自定义参数）
      */
     private Map<String, String> parameters;
 

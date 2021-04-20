@@ -30,21 +30,34 @@
 
     <bean id="demoService" class="org.apache.dubbo.demo.provider.DemoServiceImqqp"/>
     <bean id="actives" class="org.apache.dubbo.demo.provider.DemoServiceImqqp"/>
-    <bean id="greetingService" class="org.apache.dubbo.demo.provider.GreetingServiceImpl"/>
+    <bean id="greetingService" class="org.apache.dubbo.demo.provider.GreetingServiceImpl">
+<!--        <dubbo:parameter key="greet" value="hello"/>-->   <!-- 此处为普通的spring bean，嵌套元素不能是dubbo元素，不然会报配置错误 -->
+    </bean>
 
 
     <dubbo:service interface="org.apache.dubbo.demo.DemoService" class="org.apache.dubbo.demo.DemoService" ref="demoService" filter="">
-         <dubbo:method name="sayHello2" timeout="1000" async="true"/> <!-- 方法级别配置，并不是说展示哪个方法，就暴露哪个方法，与暴露没关 -->
+         <dubbo:method name="sayHello2" timeout="1000" async="true" return="false"> <!-- 方法级别配置，并不是说展示哪个方法，就暴露哪个方法，与暴露没关 -->
+<!--           <dubbo:argument index="0" type="java.lang.String" callback="true"/>-->  <!-- 若设置回调，type就需要接口类型-->
+         </dubbo:method>
          <property name="actives" value="12"/>
          <property name="ref" ref="actives"/>
     </dubbo:service>
     <!--
       方法级别的设置，设值后url的值，会对应为，如timeout="1000"，<methodName>.timeout
+      onreturn等方法，如果设置为false，则请求发送成功后直接返回Null
     -->
 
     <!-- <dubbo:service> 可以单独配置，也可以放在<dubbo:provider>中配置  -->
     <dubbo:provider timeout="2000" xml:base="dubbo-provider.xml" id="test">
         <dubbo:parameter key="name" value="zhang"/>
+        <dubbo:parameter key="name" value="lisi"/>
         <dubbo:service interface="org.apache.dubbo.demo.GreetingService" ref="greetingService"/>
     </dubbo:provider>
+
+    <!--
+        <dubbo:parameter>
+        同时该标签为<dubbo:protocol>或<dubbo:service>
+        或<dubbo:provider>或<dubbo:reference>或<dubbo:consumer>的子标签，用于配置自定义参数，
+        该配置项将作为扩展点设置自定义参数使用
+    -->
 </beans>

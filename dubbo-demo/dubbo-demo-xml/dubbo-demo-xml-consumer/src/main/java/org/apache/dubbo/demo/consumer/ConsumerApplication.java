@@ -33,7 +33,7 @@ public class ConsumerApplication {
         context.start();
         DemoService demoService = context.getBean("demoService", DemoService.class);
 //        CompletableFuture<String> hello = demoService.sayHelloAsync("world");
-        String response = demoService.sayHello("how are you?");
+        String response = demoService.sayHello2("how are you?");
         System.out.println("demoService result: " + response);
 
         GreetingService greetingService = context.getBean("greetingService", GreetingService.class);
