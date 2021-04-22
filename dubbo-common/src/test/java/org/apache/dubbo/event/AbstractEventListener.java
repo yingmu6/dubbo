@@ -18,12 +18,12 @@ package org.apache.dubbo.event;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-public abstract class AbstractEventListener<E extends Event> implements EventListener<E> {
+public abstract class AbstractEventListener<E extends Event> implements EventListener<E> { //抽象事件监听器，泛型的上界是Event
 
     private final AtomicInteger eventOccurs = new AtomicInteger(0);
 
     @Override
-    public final void onEvent(E event) {
+    public final void onEvent(E event) { //事件发生时：累计发生次数，并处理对应事件
         eventOccurs.getAndIncrement();
         handleEvent(event);
     }
@@ -34,7 +34,7 @@ public abstract class AbstractEventListener<E extends Event> implements EventLis
         return eventOccurs.get();
     }
 
-    protected void println(String message) {
+    protected void println(String message) { //打印事件消息
         System.out.printf("[%s] %s\n", Thread.currentThread().getName(), message);
     }
 }

@@ -36,9 +36,9 @@ public class SpringExtensionFactory implements ExtensionFactory {
 
     private static final Set<ApplicationContext> CONTEXTS = new ConcurrentHashSet<ApplicationContext>();
 
-    public static void addApplicationContext(ApplicationContext context) {
+    public static void addApplicationContext(ApplicationContext context) { //把ApplicationContext添加到本地缓存，并注册钩子函数
         CONTEXTS.add(context);
-        if (context instanceof ConfigurableApplicationContext) {
+        if (context instanceof ConfigurableApplicationContext) { //registerShutdownHook: 注册钩子函数，在应用关闭前，会做一些清理操作，比如销毁应用中的所有bean，改变激活标志等
             ((ConfigurableApplicationContext) context).registerShutdownHook();
         }
     }
@@ -66,7 +66,7 @@ public class SpringExtensionFactory implements ExtensionFactory {
         }
 
         for (ApplicationContext context : CONTEXTS) {
-            T bean = BeanFactoryUtils.getOptionalBean(context, name, type);
+            T bean = BeanFactoryUtils.getOptionalBean(context, name, type); //从spring容器中查找指定名称、指定类型的bean
             if (bean != null) {
                 return bean;
             }

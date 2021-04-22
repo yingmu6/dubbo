@@ -1211,12 +1211,12 @@ public final class ReflectUtils {
      */
     public static Set<ParameterizedType> findParameterizedTypes(Class<?> sourceClass) {
         // Add Generic Interfaces
-        List<Type> genericTypes = new LinkedList<>(asList(sourceClass.getGenericInterfaces()));
+        List<Type> genericTypes = new LinkedList<>(asList(sourceClass.getGenericInterfaces())); //Type:是Java中所有类型的通用超接口
         // Add Generic Super Class
         genericTypes.add(sourceClass.getGenericSuperclass());
 
-        Set<ParameterizedType> parameterizedTypes = genericTypes.stream()
-                .filter(type -> type instanceof ParameterizedType)// filter ParameterizedType
+        Set<ParameterizedType> parameterizedTypes = genericTypes.stream() //泛型处理
+                .filter(type -> type instanceof ParameterizedType)// filter ParameterizedType，过滤参数话类型, Type是Java编程语言【所有类型】的公共高级接口。它们包括原始类型、参数化类型(泛型)、数组类型、类型变量和基本类型。
                 .map(type -> ParameterizedType.class.cast(type))  // cast to ParameterizedType
                 .collect(Collectors.toSet());
 

@@ -161,7 +161,7 @@ public abstract class AbstractEventDispatcher implements EventDispatcher {
      * @see EventListener
      * @see ServiceLoader#load(Class)
      */
-    protected void loadEventListenerInstances() {
+    protected void loadEventListenerInstances() { //加载所有事件监听器对应的实例
         ExtensionLoader<EventListener> loader = ExtensionLoader.getExtensionLoader(EventListener.class);
         loader.getSupportedExtensionInstances().forEach(this::addEventListener);
     }

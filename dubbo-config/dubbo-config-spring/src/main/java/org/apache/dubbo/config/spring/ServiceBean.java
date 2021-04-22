@@ -39,7 +39,12 @@ import org.springframework.context.ApplicationEventPublisherAware;
  */
 public class ServiceBean<T> extends ServiceConfig<T> implements InitializingBean, DisposableBean,
         ApplicationContextAware, BeanNameAware, ApplicationEventPublisherAware {
-
+    /**
+     * InitializingBean：bean初始化后，回调afterPropertiesSet
+     * DisposableBean：bean销毁时，回调destroy()
+     * ApplicationContextAware, BeanNameAware：感知ApplicationContext、BeanName等信息
+     * ApplicationEventPublisherAware：事件发布
+     */
 
     private static final long serialVersionUID = 213195494150089726L;
 
@@ -62,13 +67,13 @@ public class ServiceBean<T> extends ServiceConfig<T> implements InitializingBean
     }
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) {
+    public void setApplicationContext(ApplicationContext applicationContext) { //ApplicationContext: Central interface to provide configuration for an application (核心接口，为应用程序提供配置)
         this.applicationContext = applicationContext;
         SpringExtensionFactory.addApplicationContext(applicationContext);
     }
 
     @Override
-    public void setBeanName(String name) {
+    public void setBeanName(String name) { //会设置bean的名称，比如org.apache.dubbo.demo.DemoService
         this.beanName = name;
     }
 
@@ -83,7 +88,7 @@ public class ServiceBean<T> extends ServiceConfig<T> implements InitializingBean
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        if (StringUtils.isEmpty(getPath())) {
+        if (StringUtils.isEmpty(getPath())) { //若没有设置path，则使用接口名称进行设置
             if (StringUtils.isNotEmpty(getInterface())) {
                 setPath(getInterface());
             }

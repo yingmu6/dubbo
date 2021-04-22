@@ -210,7 +210,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
     }
 
     public void exported() {
-        // dispatch a ServiceConfigExportedEvent since 2.7.4
+        // dispatch（调度） a ServiceConfigExportedEvent since 2.7.4
         dispatch(new ServiceConfigExportedEvent(this));
     }
 

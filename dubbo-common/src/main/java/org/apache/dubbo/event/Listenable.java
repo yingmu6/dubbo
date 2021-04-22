@@ -37,7 +37,7 @@ public interface Listenable<E extends EventListener<?>> {
      * @param listener a {@link EventListener Dubbo event listener}
      *                 If current {@link EventListener} is existed, return <code>false</code>
      * @throws NullPointerException     if <code>listener</code> argument is <code>null</code>
-     * @throws IllegalArgumentException if <code>listener</code> argument is not concrete instance
+     * @throws IllegalArgumentException if <code>listener</code> argument is not concrete instance（没有具体的实例）
      */
     void addEventListener(E listener) throws NullPointerException, IllegalArgumentException;
 
@@ -110,7 +110,7 @@ public interface Listenable<E extends EventListener<?>> {
 
 
     /**
-     * Assets the listener is valid or not
+     * Assets the listener is valid or not （断言监听器是否有效）
      *
      * @param listener the instance of {@link EventListener}
      * @throws NullPointerException
@@ -125,7 +125,7 @@ public interface Listenable<E extends EventListener<?>> {
         int modifiers = listenerClass.getModifiers();
 
         if (Modifier.isAbstract(modifiers) || Modifier.isInterface(modifiers)) {
-            throw new IllegalArgumentException("The listener must be concrete class");
+            throw new IllegalArgumentException("The listener must be concrete class"); //传入的listener必须是个具体的实例
         }
     }
 }

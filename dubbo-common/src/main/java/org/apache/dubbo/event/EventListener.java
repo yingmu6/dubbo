@@ -39,7 +39,7 @@ import static org.apache.dubbo.common.utils.ReflectUtils.findParameterizedTypes;
  */
 @SPI
 @FunctionalInterface
-public interface EventListener<E extends Event> extends java.util.EventListener, Prioritized {
+public interface EventListener<E extends Event> extends java.util.EventListener, Prioritized { //java中EventListener：所有事件监听器接口都必须扩展的标记接口
 
     /**
      * Handle a {@link Event Dubbo Event} when it's be published
@@ -78,7 +78,7 @@ public interface EventListener<E extends Event> extends java.util.EventListener,
     static Class<? extends Event> findEventType(Class<?> listenerClass) {
         Class<? extends Event> eventType = null;
 
-        if (listenerClass != null && EventListener.class.isAssignableFrom(listenerClass)) {
+        if (listenerClass != null && EventListener.class.isAssignableFrom(listenerClass)) { //isAssignableFrom判断一个类或接口是否是另一个类超类或父接口
             eventType = findParameterizedTypes(listenerClass)
                     .stream()
                     .map(EventListener::findEventType)
