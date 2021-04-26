@@ -19,6 +19,6 @@ package org.apache.dubbo.common.context;
 import org.apache.dubbo.common.extension.SPI;
 
 @SPI
-public interface FrameworkExt extends Lifecycle {
+public interface FrameworkExt extends Lifecycle { //FrameworkExt:框架，框架的生命周期
 
 }

@@ -61,7 +61,7 @@ import static org.apache.dubbo.config.AbstractConfig.getTagName;
 import static org.apache.dubbo.config.Constants.PROTOCOLS_SUFFIX;
 import static org.apache.dubbo.config.Constants.REGISTRIES_SUFFIX;
 
-public class ConfigManager extends LifecycleAdapter implements FrameworkExt {
+public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //配置管理器
 
     private static final Logger logger = LoggerFactory.getLogger(ConfigManager.class);
 

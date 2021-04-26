@@ -310,12 +310,12 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
 
     }
 
-    public void completeCompoundConfigs(AbstractInterfaceConfig interfaceConfig) {
+    public void completeCompoundConfigs(AbstractInterfaceConfig interfaceConfig) { //Compound: 复合的；混合的
         if (interfaceConfig != null) {
             if (application == null) {
                 setApplication(interfaceConfig.getApplication());
             }
-            if (module == null) {
+            if (module == null) { //从传入的接口配置中获取所需值，并进行设置
                 setModule(interfaceConfig.getModule());
             }
             if (registries == null) {
@@ -459,7 +459,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
     @Deprecated
     public void setApplication(ApplicationConfig application) {
         this.application = application;
-        if (application != null) {
+        if (application != null) { //在调用set方法设置成员变量值时，进行逻辑判断
             ConfigManager configManager = ApplicationModel.getConfigManager();
             configManager.getApplication().orElseGet(() -> {
                 configManager.setApplication(application);

@@ -215,7 +215,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
     }
 
     private void checkAndUpdateSubConfigs() {
-        // Use default configs defined explicitly with global scope
+        // Use default configs defined explicitly（明确地） with global scope
         completeCompoundConfigs();
         checkDefault();
         checkProtocol();
