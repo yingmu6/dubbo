@@ -399,8 +399,8 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
         });
     }
 
-    protected <C extends AbstractConfig> Map<String, C> getConfigsMap(String configType) {
-        return (Map<String, C>) read(() -> configsCache.getOrDefault(configType, emptyMap()));
+    protected <C extends AbstractConfig> Map<String, C> getConfigsMap(String configType) { //configType如：config-center
+        return (Map<String, C>) read(() -> configsCache.getOrDefault(configType, emptyMap())); //getOrDefault()：从map中获取指定key的值，若值为空，取传入的默认值
     }
 
     protected <C extends AbstractConfig> Collection<C> getConfigs(String configType) {
@@ -452,16 +452,16 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
         });
     }
 
-    private <V> V read(Callable<V> callable) {
+    private <V> V read(Callable<V> callable) { //开启线程读取配置，并在处理时加锁
         Lock readLock = lock.readLock();
         V value = null;
         try {
-            readLock.lock();
+            readLock.lock(); //加锁
             value = callable.call();
         } catch (Throwable e) {
             throw new RuntimeException(e);
         } finally {
-            readLock.unlock();
+            readLock.unlock(); //解锁，要放在finally执行
         }
         return value;
     }

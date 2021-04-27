@@ -121,7 +121,7 @@ public class ServiceBean<T> extends ServiceConfig<T> implements InitializingBean
      */
     private void publishExportEvent() {
         ServiceBeanExportedEvent exportEvent = new ServiceBeanExportedEvent(this);
-        applicationEventPublisher.publishEvent(exportEvent);
+        applicationEventPublisher.publishEvent(exportEvent); //发布事件
     }
 
     @Override

@@ -21,7 +21,7 @@ package org.apache.dubbo.common.logger;
  * <p>
  * This interface is referred from commons-logging
  */
-public interface Logger {
+public interface Logger { //抽象出日志接口
 
     /**
      * Logs a message with trace log level.

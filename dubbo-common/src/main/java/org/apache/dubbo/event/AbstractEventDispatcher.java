@@ -95,6 +95,7 @@ public abstract class AbstractEventDispatcher implements EventDispatcher {
         return sortedListeners(e -> true);
     }
 
+    // 对监听器进行排序
     protected Stream<EventListener> sortedListeners(Predicate<Map.Entry<Class<? extends Event>, List<EventListener>>> predicate) {
         return listenersCache
                 .entrySet()
@@ -112,7 +113,7 @@ public abstract class AbstractEventDispatcher implements EventDispatcher {
     }
 
     @Override
-    public void dispatch(Event event) {
+    public void dispatch(Event event) { //dispatch：调度
 
         Executor executor = getExecutor();
 

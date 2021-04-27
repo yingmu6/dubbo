@@ -23,7 +23,7 @@ import java.util.EventObject;
  * （dubbo的事件对象是基于java的标准事件对象）
  * @since 2.7.5
  */
-public abstract class Event extends EventObject { //事件：包含事件对象和发生的时间
+public abstract class Event extends EventObject { //事件：包含事件对象和发生的时间（包含Service实例变更、reference实例销毁等事件）
 
     private static final long serialVersionUID = -1704315605423947137L;
 

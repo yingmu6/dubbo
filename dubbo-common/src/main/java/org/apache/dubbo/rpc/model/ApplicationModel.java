@@ -80,7 +80,7 @@ public class ApplicationModel { //应用模型
     public static void initFrameworkExts() {
         Set<FrameworkExt> exts = ExtensionLoader.getExtensionLoader(FrameworkExt.class).getSupportedExtensionInstances();
         for (FrameworkExt ext : exts) {
-            ext.initialize();
+            ext.initialize(); //调用FrameworkExt所有扩展实例的initialize初始化方法
         }
     }
 
@@ -89,7 +89,7 @@ public class ApplicationModel { //应用模型
     }
 
     public static ConfigManager getConfigManager() {
-        return (ConfigManager) LOADER.getExtension(ConfigManager.NAME);
+        return (ConfigManager) LOADER.getExtension(ConfigManager.NAME); //config对应的扩展类为ConfigManager
     }
 
     public static ServiceRepository getServiceRepository() {

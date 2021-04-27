@@ -49,7 +49,7 @@ public class Environment extends LifecycleAdapter implements FrameworkExt {
 
     private DynamicConfiguration dynamicConfiguration;
 
-    public Environment() {
+    public Environment() { //对象创建时，初始化成员变量
         this.propertiesConfiguration = new PropertiesConfiguration();
         this.systemConfiguration = new SystemConfiguration();
         this.environmentConfiguration = new EnvironmentConfiguration();

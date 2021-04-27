@@ -21,7 +21,7 @@ import java.util.NoSuchElementException;
 /**
  * Configuration interface, to fetch the value for the specified key.
  */
-public interface Configuration { //配置接口
+public interface Configuration { //配置接口，可以获取各种类型的配置值
     /**
      * Get a string associated with the given configuration key.
      *
@@ -123,7 +123,7 @@ public interface Configuration { //配置接口
         return value != null ? value : defaultValue;
     }
 
-    Object getInternalProperty(String key); //此处的用途是什么？获取key对应的属性值
+    Object getInternalProperty(String key); //此处的用途是什么？获取key对应的属性值，选择不同实例获取，比如apollo、etcd等
 
     /**
      * Check if the configuration contains the specified key.
@@ -137,7 +137,7 @@ public interface Configuration { //配置接口
     }
 
 
-    default <T> T convert(Class<T> cls, String key, T defaultValue) {
+    default <T> T convert(Class<T> cls, String key, T defaultValue) { //cls属性值的类型，比如String、Integer
         // we only process String properties for now
         String value = (String) getProperty(key); //获取key对应的属性值，默认值为null
 
@@ -146,10 +146,11 @@ public interface Configuration { //配置接口
         }
 
         Object obj = value;
-        if (cls.isInstance(value)) {//若值是指定的Class类型，则直接映射
+        if (cls.isInstance(value)) { //判断对象想否是指定Class的实例，若是直接强制转换
             return cls.cast(value);
         }
 
+        // 非强制转换，按具体类型进行转换，否则会报类型转换错误
         if (Boolean.class.equals(cls) || Boolean.TYPE.equals(cls)) { //boolean类型转换
             obj = Boolean.valueOf(value);
         } else if (Number.class.isAssignableFrom(cls) || cls.isPrimitive()) { //数值类型转换

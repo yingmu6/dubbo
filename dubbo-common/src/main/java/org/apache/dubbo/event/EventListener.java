@@ -43,7 +43,7 @@ public interface EventListener<E extends Event> extends java.util.EventListener,
 
     /**
      * Handle a {@link Event Dubbo Event} when it's be published
-     *
+     *（当dubbo事件被发布时，进行事件处理）
      * @param event a {@link Event Dubbo Event}
      */
     void onEvent(E event);

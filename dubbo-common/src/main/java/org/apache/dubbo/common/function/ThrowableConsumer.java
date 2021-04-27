@@ -28,7 +28,7 @@ import java.util.function.Function;
  * @since 2.7.5
  */
 @FunctionalInterface
-public interface ThrowableConsumer<T> {
+public interface ThrowableConsumer<T> { //函数式接口，只要一个接口方法
 
     /**
      * Applies this function to the given argument.

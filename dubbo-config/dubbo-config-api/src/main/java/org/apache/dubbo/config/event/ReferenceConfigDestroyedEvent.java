@@ -28,7 +28,7 @@ import org.apache.dubbo.event.Event;
  * @see Event
  * @since 2.7.5
  */
-public class ReferenceConfigDestroyedEvent extends Event {
+public class ReferenceConfigDestroyedEvent extends Event { //ReferenceConfig对象被销毁时，触发的事件
 
     public ReferenceConfigDestroyedEvent(ReferenceConfig referenceConfig) {
         super(referenceConfig);

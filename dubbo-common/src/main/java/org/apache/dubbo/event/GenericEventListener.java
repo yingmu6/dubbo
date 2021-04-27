@@ -46,7 +46,7 @@ import static org.apache.dubbo.common.function.ThrowableFunction.execute;
  * @see EventListener
  * @since 2.7.5
  */
-public abstract class GenericEventListener implements EventListener<Event> {
+public abstract class GenericEventListener implements EventListener<Event> { //通用的事件监听器
 
     private final Method onEventMethod;
 
@@ -74,7 +74,7 @@ public abstract class GenericEventListener implements EventListener<Event> {
         return eventMethods;
     }
 
-    public final void onEvent(Event event) {
+    public final void onEvent(Event event) { //依次执行缓存中的方法
         Class<?> eventClass = event.getClass();
         handleEventMethods.getOrDefault(eventClass, emptySet()).forEach(method -> {
             ThrowableConsumer.execute(method, m -> {
@@ -84,7 +84,8 @@ public abstract class GenericEventListener implements EventListener<Event> {
     }
 
     /**
-     * The {@link Event event} handle methods must meet following conditions:
+     * The {@link Event event} handle methods must meet（遇见） following conditions:
+     * （事件处理方法必须满足的条件）
      * <ul>
      * <li>not {@link #onEvent(Event)} method</li>
      * <li><code>public</code> accessibility</li>

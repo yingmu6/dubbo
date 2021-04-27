@@ -183,7 +183,7 @@ public class DubboBootstrap extends GenericEventListener {
     /**
      * See {@link ApplicationModel} and {@link ExtensionLoader} for why DubboBootstrap is designed to be singleton.
      */
-    public static DubboBootstrap getInstance() {
+    public static DubboBootstrap getInstance() { //获取实例：单例模式
         if (instance == null) {
             synchronized (DubboBootstrap.class) {
                 if (instance == null) {
@@ -511,12 +511,12 @@ public class DubboBootstrap extends GenericEventListener {
     /**
      * Initialize
      */
-    public void initialize() {
+    public void initialize() { //服务暴露前，做初始化工作
         if (!initialized.compareAndSet(false, true)) {
             return;
         }
 
-        ApplicationModel.initFrameworkExts();
+        ApplicationModel.initFrameworkExts(); //todo @csy pause
 
         startConfigCenter();
 
@@ -658,7 +658,7 @@ public class DubboBootstrap extends GenericEventListener {
      */
     private void useRegistryAsConfigCenterIfNecessary() {
         // we use the loading status of DynamicConfiguration to decide whether ConfigCenter has been initiated.
-        if (environment.getDynamicConfiguration().isPresent()) {
+        if (environment.getDynamicConfiguration().isPresent()) { //已经初始化过，就不再初始化
             return;
         }
 
@@ -679,7 +679,7 @@ public class DubboBootstrap extends GenericEventListener {
                 DynamicConfigurationFactory.class);
     }
 
-    private ConfigCenterConfig registryAsConfigCenter(RegistryConfig registryConfig) {
+    private ConfigCenterConfig registryAsConfigCenter(RegistryConfig registryConfig) { //todo @csy pause
         String protocol = registryConfig.getProtocol();
         Integer port = registryConfig.getPort();
         String id = "config-center-" + protocol + "-" + port;
@@ -729,7 +729,7 @@ public class DubboBootstrap extends GenericEventListener {
     }
 
     /**
-     * Is used the specified registry as a center infrastructure
+     * Is used the specified registry as a center infrastructure（基础设施）
      *
      * @param registryConfig       the {@link RegistryConfig}
      * @param usedRegistryAsCenter the configured value on
@@ -738,7 +738,7 @@ public class DubboBootstrap extends GenericEventListener {
      * @return
      * @since 2.7.8
      */
-    private boolean isUsedRegistryAsCenter(RegistryConfig registryConfig, Supplier<Boolean> usedRegistryAsCenter,
+    private boolean isUsedRegistryAsCenter(RegistryConfig registryConfig, Supplier<Boolean> usedRegistryAsCenter, //registryConfig 如：<dubbo:registry address="zookeeper://127.0.0.1:2181" protocol="zookeeper" port="2181" />
                                            String centerType,
                                            Class<?> extensionClass) {
         final boolean supported;
@@ -747,9 +747,9 @@ public class DubboBootstrap extends GenericEventListener {
         if (configuredValue != null) { // If configured, take its value.
             supported = configuredValue.booleanValue();
         } else {                       // Or check the extension existence
-            String protocol = registryConfig.getProtocol();
+            String protocol = registryConfig.getProtocol(); //protocol: 如zookeeper
             supported = supportsExtension(extensionClass, protocol);
-            if (logger.isInfoEnabled()) {
+            if (logger.isInfoEnabled()) { //若日志级别是info，则打出对应的日志
                 logger.info(format("No value is configured in the registry, the %s extension[name : %s] %s as the %s center"
                         , extensionClass.getSimpleName(), protocol, supported ? "supports" : "does not support", centerType));
             }
@@ -770,7 +770,7 @@ public class DubboBootstrap extends GenericEventListener {
      * @return if supports, return <code>true</code>, or <code>false</code>
      * @since 2.7.8
      */
-    private boolean supportsExtension(Class<?> extensionClass, String name) {
+    private boolean supportsExtension(Class<?> extensionClass, String name) { //判断指定扩展类是否有对应的扩展名
         if (isNotEmpty(name)) {
             ExtensionLoader extensionLoader = getExtensionLoader(extensionClass);
             return extensionLoader.hasExtension(name);
@@ -890,7 +890,7 @@ public class DubboBootstrap extends GenericEventListener {
     /**
      * Start the bootstrap
      */
-    public DubboBootstrap start() {
+    public DubboBootstrap start() { //todo @csy pause **
         if (started.compareAndSet(false, true)) {
             ready.set(false);
             initialize();

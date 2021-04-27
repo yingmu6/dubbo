@@ -1268,16 +1268,16 @@ public final class ReflectUtils {
      * @return
      * @since 2.7.5
      */
-    public static <T> T getProperty(Object bean, String methodName) {
+    public static <T> T getProperty(Object bean, String methodName) { //从指定bean中获取指定方法的值，方法为is、get方法
         Class<?> beanClass = bean.getClass();
         BeanInfo beanInfo = null;
         T propertyValue = null;
 
         try {
-            beanInfo = Introspector.getBeanInfo(beanClass);
+            beanInfo = Introspector.getBeanInfo(beanClass); //beanInfo为：GenericBeanInfo
             propertyValue = (T) Stream.of(beanInfo.getMethodDescriptors())
-                    .filter(methodDescriptor -> methodName.equals(methodDescriptor.getName()))
-                    .findFirst()
+                    .filter(methodDescriptor -> methodName.equals(methodDescriptor.getName())) //对bean中的所有方法过滤，找出与传入方法名相同的方法
+                    .findFirst() //取第一个方法，执行方法调用，返回对应的值
                     .map(method -> {
                         try {
                             return method.getMethod().invoke(bean);
