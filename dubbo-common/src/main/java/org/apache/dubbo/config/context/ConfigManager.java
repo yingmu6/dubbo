@@ -273,7 +273,7 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
         return ofNullable(getConfig(getTagName(RegistryConfig.class), id));
     }
 
-    public List<RegistryConfig> getDefaultRegistries() {
+    public List<RegistryConfig> getDefaultRegistries() { //先获取标签registry对应缓存map值，然后再获取配置config列表
         return getDefaultConfigs(getConfigsMap(getTagName(RegistryConfig.class)));
     }
 
@@ -511,15 +511,15 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
                 config.getClass().getSimpleName() + "#" + DEFAULT_KEY : null;
     }
 
-    static <C extends AbstractConfig> boolean isDefaultConfig(C config) {
+    static <C extends AbstractConfig> boolean isDefaultConfig(C config) { //获取配置中isDefault()方法的返回值，然后再进行判断
         Boolean isDefault = getProperty(config, "isDefault");
         return isDefault == null || TRUE.equals(isDefault);
     }
 
-    static <C extends AbstractConfig> List<C> getDefaultConfigs(Map<String, C> configsMap) {
+    static <C extends AbstractConfig> List<C> getDefaultConfigs(Map<String, C> configsMap) { //对map中的值列表进行过滤，
         return configsMap.values()
                 .stream()
-                .filter(ConfigManager::isDefaultConfig)
+                .filter(ConfigManager::isDefaultConfig) //Predicate: 谓语
                 .collect(Collectors.toList());
     }
 }

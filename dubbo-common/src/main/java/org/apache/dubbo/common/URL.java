@@ -181,7 +181,7 @@ class URL implements Serializable {
         this(protocol, username, password, host, port, path, CollectionUtils.toStringMap(pairs));
     }
 
-    public URL(String protocol,
+    public URL(String protocol, //url的数据模型：协议、用户名、密码、主机号、端口、路径、参数集合
                String username,
                String password,
                String host,
@@ -237,7 +237,7 @@ class URL implements Serializable {
      * @return URL instance
      * @see URL
      */
-    public static URL valueOf(String url) {
+    public static URL valueOf(String url) { //如输入字符串为：zookeeper://127.0.0.1:2181&name=test
         if (url == null || (url = url.trim()).length() == 0) {
             throw new IllegalArgumentException("url == null");
         }
@@ -249,35 +249,35 @@ class URL implements Serializable {
         String path = null;
         Map<String, String> parameters = null;
         int i = url.indexOf('?'); // separator between body and parameters
-        if (i >= 0) {
-            String[] parts = url.substring(i + 1).split("&");
+        if (i >= 0) { //判断是否包含参数
+            String[] parts = url.substring(i + 1).split("&"); //分隔参数
             parameters = new HashMap<>();
-            for (String part : parts) {
+            for (String part : parts) { //参数的元素值，如name=test
                 part = part.trim();
                 if (part.length() > 0) {
-                    int j = part.indexOf('=');
+                    int j = part.indexOf('='); //按等号解析，键值对
                     if (j >= 0) {
-                        String key = part.substring(0, j);
-                        String value = part.substring(j + 1);
-                        parameters.put(key, value);
+                        String key = part.substring(0, j); //key如：name
+                        String value = part.substring(j + 1);//value如：test
+                        parameters.put(key, value); //设置到url的参数map集合中
                         // compatible with lower versions registering "default." keys
-                        if (key.startsWith(DEFAULT_KEY_PREFIX)) {
+                        if (key.startsWith(DEFAULT_KEY_PREFIX)) { //若参数名是"default."开头的，则把这个前缀去掉存储，即这个值会有两个不同的key
                             parameters.putIfAbsent(key.substring(DEFAULT_KEY_PREFIX.length()), value);
                         }
                     } else {
-                        parameters.put(part, part);
+                        parameters.put(part, part); //若没有带上等号，则键值都存为一样的
                     }
                 }
             }
-            url = url.substring(0, i);
+            url = url.substring(0, i); //截取参数前的url，如zookeeper://127.0.0.1:2181
         }
         i = url.indexOf("://");
-        if (i >= 0) {
+        if (i >= 0) { //解析协议，如：zookeeper://127.0.0.1:2181
             if (i == 0) {
                 throw new IllegalStateException("url missing protocol: \"" + url + "\"");
             }
-            protocol = url.substring(0, i);
-            url = url.substring(i + 3);
+            protocol = url.substring(0, i); //如：zookeeper
+            url = url.substring(i + 3); //如：127.0.0.1:2181
         } else {
             // case: file:/path/to/file.txt
             i = url.indexOf(":/");
@@ -295,7 +295,7 @@ class URL implements Serializable {
             path = url.substring(i + 1);
             url = url.substring(0, i);
         }
-        i = url.lastIndexOf('@');
+        i = url.lastIndexOf('@'); //根据@解析用户名、密码
         if (i >= 0) {
             username = url.substring(0, i);
             int j = username.indexOf(':');
@@ -305,8 +305,8 @@ class URL implements Serializable {
             }
             url = url.substring(i + 1);
         }
-        i = url.lastIndexOf(':');
-        if (i >= 0 && i < url.length() - 1) {
+        i = url.lastIndexOf(':'); //url如：127.0.0.1:2181
+        if (i >= 0 && i < url.length() - 1) {  //解析host、ip
             if (url.lastIndexOf('%') > i) {
                 // ipv6 address with scope id
                 // e.g. fe80:0:0:0:894:aeec:f37d:23e1%en0

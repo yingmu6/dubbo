@@ -516,7 +516,7 @@ public class DubboBootstrap extends GenericEventListener {
             return;
         }
 
-        ApplicationModel.initFrameworkExts(); //todo @csy pause
+        ApplicationModel.initFrameworkExts();
 
         startConfigCenter();
 
@@ -596,7 +596,7 @@ public class DubboBootstrap extends GenericEventListener {
         ConfigValidationUtils.validateSslConfig(getSsl());
     }
 
-    private void startConfigCenter() {
+    private void startConfigCenter() { //启动配置中心
 
         useRegistryAsConfigCenterIfNecessary();
 
@@ -652,17 +652,17 @@ public class DubboBootstrap extends GenericEventListener {
     }
 
     /**
-     * For compatibility purpose, use registry as the default config center when
+     * For compatibility purpose(出于兼容性目的), use registry as the default config center when
      * there's no config center specified explicitly and
      * useAsConfigCenter of registryConfig is null or true
      */
-    private void useRegistryAsConfigCenterIfNecessary() {
+    private void useRegistryAsConfigCenterIfNecessary() { //当没有指定配置中心时，默认使用注册中心做配置中心
         // we use the loading status of DynamicConfiguration to decide whether ConfigCenter has been initiated.
-        if (environment.getDynamicConfiguration().isPresent()) { //已经初始化过，就不再初始化
+        if (environment.getDynamicConfiguration().isPresent()) { //有对应的配置实例的，就不使用默认的注册中心
             return;
         }
 
-        if (CollectionUtils.isNotEmpty(configManager.getConfigCenters())) {
+        if (CollectionUtils.isNotEmpty(configManager.getConfigCenters())) { //若xml中配置了<dubbo:config-center/> 也不处理
             return;
         }
 
@@ -679,7 +679,7 @@ public class DubboBootstrap extends GenericEventListener {
                 DynamicConfigurationFactory.class);
     }
 
-    private ConfigCenterConfig registryAsConfigCenter(RegistryConfig registryConfig) { //todo @csy pause
+    private ConfigCenterConfig registryAsConfigCenter(RegistryConfig registryConfig) { //将注册元素进行处理，<dubbo:registry address="zookeeper://127.0.0.1:2181"/>
         String protocol = registryConfig.getProtocol();
         Integer port = registryConfig.getPort();
         String id = "config-center-" + protocol + "-" + port;
@@ -691,7 +691,7 @@ public class DubboBootstrap extends GenericEventListener {
         if (registryConfig.getParameters() != null) {
             cc.getParameters().putAll(registryConfig.getParameters()); // copy the parameters
         }
-        cc.getParameters().put(CLIENT_KEY, registryConfig.getClient());
+        cc.getParameters().put(CLIENT_KEY, registryConfig.getClient()); //配置中心的客户端配置
         cc.setProtocol(protocol);
         cc.setPort(port);
         cc.setGroup(registryConfig.getGroup());
@@ -805,7 +805,7 @@ public class DubboBootstrap extends GenericEventListener {
         if (ArrayUtils.isEmpty(addresses)) {
             throw new IllegalStateException("Invalid registry address found.");
         }
-        String address = addresses[0];
+        String address = addresses[0]; //取第一个注册地址处理
         // since 2.7.8
         // Issue : https://github.com/apache/dubbo/issues/6476
         StringBuilder metadataAddressBuilder = new StringBuilder();
@@ -890,7 +890,7 @@ public class DubboBootstrap extends GenericEventListener {
     /**
      * Start the bootstrap
      */
-    public DubboBootstrap start() { //todo @csy pause **
+    public DubboBootstrap start() {
         if (started.compareAndSet(false, true)) {
             ready.set(false);
             initialize();

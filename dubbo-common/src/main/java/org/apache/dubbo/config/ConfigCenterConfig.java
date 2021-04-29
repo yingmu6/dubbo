@@ -38,7 +38,7 @@ import static org.apache.dubbo.config.Constants.ZOOKEEPER_PROTOCOL;
 /**
  * ConfigCenterConfig
  */
-public class ConfigCenterConfig extends AbstractConfig {
+public class ConfigCenterConfig extends AbstractConfig { //配置中心
     private AtomicBoolean inited = new AtomicBoolean(false);
 
     private String protocol;
@@ -48,8 +48,9 @@ public class ConfigCenterConfig extends AbstractConfig {
     /* The config center cluster, it's real meaning may very on different Config Center products. */
     private String cluster;
 
-    /* The namespace of the config center, generally it's used for multi-tenant,
+    /* The namespace of the config center, generally it's used for multi-tenant（通常用于多租户）,
     but it's real meaning depends on the actual Config Center you use.
+    （但它的真正含义取决于你使用的配置中心）
     */
 
     private String namespace = CommonConstants.DUBBO;
