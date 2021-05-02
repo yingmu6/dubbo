@@ -31,6 +31,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Environment类是Dubbo的环境信息类，主要的作用是加载配置信息，从配置文件中获取系统参数，从外部配置中心加载配置信息等。
+ * https://blog.csdn.net/leisurelen/article/details/107317951
+ */
 public class Environment extends LifecycleAdapter implements FrameworkExt {
     public static final String NAME = "environment";
 
@@ -61,7 +65,7 @@ public class Environment extends LifecycleAdapter implements FrameworkExt {
     public void initialize() throws IllegalStateException {
         ConfigManager configManager = ApplicationModel.getConfigManager();
         Optional<Collection<ConfigCenterConfig>> defaultConfigs = configManager.getDefaultConfigCenter();
-        defaultConfigs.ifPresent(configs -> {
+        defaultConfigs.ifPresent(configs -> { //todo @csy 001 此处设置的值都是怎样的？
             for (ConfigCenterConfig config : configs) {
                 this.setExternalConfigMap(config.getExternalConfiguration());
                 this.setAppExternalConfigMap(config.getAppExternalConfiguration());
@@ -124,9 +128,9 @@ public class Environment extends LifecycleAdapter implements FrameworkExt {
             prefixedConfiguration.addConfiguration(externalConfiguration);
             prefixedConfiguration.addConfiguration(configuration);
             prefixedConfiguration.addConfiguration(propertiesConfiguration);
-        } else {
+        } else { //配置中心的位置不一样
             // The sequence would be: SystemConfiguration -> AbstractConfig -> AppExternalConfiguration -> ExternalConfiguration -> PropertiesConfiguration
-            // Config center has the highest priority
+            // Config center has the highest priority（配置中心有最高优先级）
             prefixedConfiguration.addConfiguration(systemConfiguration);
             prefixedConfiguration.addConfiguration(environmentConfiguration);
             prefixedConfiguration.addConfiguration(configuration);

@@ -36,7 +36,7 @@ public class ConfigConfigurationAdapter implements Configuration {
         for (Map.Entry<String, String> entry : configMetadata.entrySet()) {
             String prefix = config.getPrefix().endsWith(".") ? config.getPrefix() : config.getPrefix() + ".";
             String id = StringUtils.isEmpty(config.getId()) ? "" : config.getId() + ".";
-            metaData.put(prefix + id + entry.getKey(), entry.getValue());
+            metaData.put(prefix + id + entry.getKey(), entry.getValue()); //map中存储的key，如dubbo.config-center.org.apache.dubbo.config.spring.ConfigCenterBean.cluster
         }
     }
 

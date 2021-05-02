@@ -162,7 +162,7 @@ public class DubboBootstrap extends GenericEventListener {
 
     private AtomicBoolean initialized = new AtomicBoolean(false);
 
-    private AtomicBoolean started = new AtomicBoolean(false);
+    private AtomicBoolean started = new AtomicBoolean(false); //启动标识
 
     private AtomicBoolean ready = new AtomicBoolean(true);
 
@@ -512,15 +512,15 @@ public class DubboBootstrap extends GenericEventListener {
      * Initialize
      */
     public void initialize() { //服务暴露前，做初始化工作
-        if (!initialized.compareAndSet(false, true)) {
-            return;
+        if (!initialized.compareAndSet(false, true)) { //compareAndSet返回false，表明实际值与预期值不相等
+            return; //此处initialized为true时进入，表明是已经初始化过来，就不在初始化
         }
 
         ApplicationModel.initFrameworkExts();
 
         startConfigCenter();
 
-        loadRemoteConfigs();
+        loadRemoteConfigs(); //todo @csy pause
 
         checkGlobalConfigs();
 
@@ -814,11 +814,11 @@ public class DubboBootstrap extends GenericEventListener {
         if (isEmpty(protocolFromAddress)) {
             // If the protocol from address is missing, is like :
             // "dubbo.registry.address = 127.0.0.1:2181"
-            String protocolFromConfig = registryConfig.getProtocol();
+            String protocolFromConfig = registryConfig.getProtocol(); //url字符串中的协议为空时，取配置的protocol值
             metadataAddressBuilder.append(protocolFromConfig).append("://");
         }
         metadataAddressBuilder.append(address);
-        return metadataAddressBuilder.toString();
+        return metadataAddressBuilder.toString(); //返回的值如：zookeeper://127.0.0.1:2181/all?default.name=test
     }
 
     private void loadRemoteConfigs() {

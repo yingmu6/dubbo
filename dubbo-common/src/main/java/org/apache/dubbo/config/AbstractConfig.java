@@ -252,6 +252,7 @@ public abstract class AbstractConfig implements Serializable {
         }).collect(Collectors.toSet());
     }
 
+    // 提取属性名称
     private static String extractPropertyName(Class<?> clazz, Method setter) throws Exception {
         String propertyName = setter.getName().substring("set".length());
         Method getter = null;
@@ -261,10 +262,10 @@ public abstract class AbstractConfig implements Serializable {
             getter = clazz.getMethod("is" + propertyName);
         }
         Parameter parameter = getter.getAnnotation(Parameter.class);
-        if (parameter != null && StringUtils.isNotEmpty(parameter.key()) && parameter.useKeyAsProperty()) {
+        if (parameter != null && StringUtils.isNotEmpty(parameter.key()) && parameter.useKeyAsProperty()) { //使用注解上声明的名称作为属性名称
             propertyName = parameter.key();
         } else {
-            propertyName = propertyName.substring(0, 1).toLowerCase() + propertyName.substring(1);
+            propertyName = propertyName.substring(0, 1).toLowerCase() + propertyName.substring(1); //从方法名中提出属性名
         }
         return propertyName;
     }
@@ -310,7 +311,7 @@ public abstract class AbstractConfig implements Serializable {
                 && method.getReturnType() == Map.class);
     }
 
-    private static boolean isParametersSetter(Method method) {
+    private static boolean isParametersSetter(Method method) { //判断是否是设置参数方法setParameters(Map)
         return ("setParameters".equals(method.getName())
                 && Modifier.isPublic(method.getModifiers())
                 && method.getParameterCount() == 1
@@ -324,7 +325,7 @@ public abstract class AbstractConfig implements Serializable {
      * @return the parameters whose raw key will replace "-" to "."
      * @revised 2.7.8 "private" to be "protected"
      */
-    protected static Map<String, String> convert(Map<String, String> parameters, String prefix) {
+    protected static Map<String, String> convert(Map<String, String> parameters, String prefix) { //todo @csy 001 是指怎么转换的？
         if (parameters == null || parameters.isEmpty()) {
             return Collections.emptyMap();
         }
@@ -460,7 +461,7 @@ public abstract class AbstractConfig implements Serializable {
         this.prefix = prefix;
     }
 
-    public void refresh() {
+    public void refresh() { //@csy 001 为啥要刷新，都做了些啥？ 解：从配置中心中获取最新的配置值，然后通过set方法或setParameters方法设置值
         Environment env = ApplicationModel.getEnvironment();
         try {
             CompositeConfiguration compositeConfiguration = env.getPrefixedConfiguration(this);
@@ -469,7 +470,7 @@ public abstract class AbstractConfig implements Serializable {
             for (Method method : methods) {
                 if (MethodUtils.isSetter(method)) {
                     try {
-                        String value = StringUtils.trim(compositeConfiguration.getString(extractPropertyName(getClass(), method)));
+                        String value = StringUtils.trim(compositeConfiguration.getString(extractPropertyName(getClass(), method))); //从配置中心获取属性对应的值
                         // isTypeMatch() is called to avoid duplicate and incorrect update, for example, we have two 'setGeneric' methods in ReferenceConfig.
                         if (StringUtils.isNotEmpty(value) && ClassUtils.isTypeMatch(method.getParameterTypes()[0], value)) {
                             method.invoke(this, ClassUtils.convertPrimitive(method.getParameterTypes()[0], value));

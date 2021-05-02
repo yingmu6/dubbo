@@ -20,6 +20,7 @@ import org.apache.dubbo.common.utils.StringUtils;
 
 /**
  * Configuration from system environment
+ * 从系统环境中获取配置
  */
 public class EnvironmentConfiguration implements Configuration {
 

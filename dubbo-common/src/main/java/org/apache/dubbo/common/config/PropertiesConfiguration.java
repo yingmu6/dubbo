@@ -26,6 +26,7 @@ import java.util.Set;
 
 /**
  * Configuration from system properties and dubbo.properties
+ * （从系统属性和dubbo.properties文件中获取配置信息）
  */
 public class PropertiesConfiguration implements Configuration {
 

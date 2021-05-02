@@ -208,7 +208,7 @@ class URL implements Serializable {
         this.password = password;
         this.host = host;
         this.port = Math.max(port, 0);
-        this.address = getAddress(this.host, this.port);
+        this.address = getAddress(this.host, this.port); //如：127.0.0.1:2181
 
         // trim the beginning "/"
         while (path != null && path.startsWith("/")) {
@@ -220,7 +220,7 @@ class URL implements Serializable {
         } else {
             parameters = new HashMap<>(parameters);
         }
-        this.parameters = Collections.unmodifiableMap(parameters);
+        this.parameters = Collections.unmodifiableMap(parameters); //unmodifiableMap:不可修改的视图，只读不可修改
         this.methodParameters = Collections.unmodifiableMap(methodParameters);
     }
 
@@ -237,7 +237,7 @@ class URL implements Serializable {
      * @return URL instance
      * @see URL
      */
-    public static URL valueOf(String url) { //如输入字符串为：zookeeper://127.0.0.1:2181&name=test
+    public static URL valueOf(String url) { //解析url字符串，转换为URL对象。 如输入字符串为：zookeeper://127.0.0.1:2181?name=test
         if (url == null || (url = url.trim()).length() == 0) {
             throw new IllegalArgumentException("url == null");
         }
@@ -290,7 +290,7 @@ class URL implements Serializable {
             }
         }
 
-        i = url.indexOf('/');
+        i = url.indexOf('/'); //资源路径，如127.0.0.1:2181/all的 path为all
         if (i >= 0) {
             path = url.substring(i + 1);
             url = url.substring(0, i);

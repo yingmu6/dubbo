@@ -57,6 +57,6 @@ public @interface Parameter {
      *
      * </pre>
      */
-    boolean useKeyAsProperty() default true;
+    boolean useKeyAsProperty() default true; //是否把key作为属性名称
 
 }

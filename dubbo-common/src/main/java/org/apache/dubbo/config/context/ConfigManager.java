@@ -61,7 +61,7 @@ import static org.apache.dubbo.config.AbstractConfig.getTagName;
 import static org.apache.dubbo.config.Constants.PROTOCOLS_SUFFIX;
 import static org.apache.dubbo.config.Constants.REGISTRIES_SUFFIX;
 
-public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //配置管理器
+public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //配置管理器，继承适配器，有选择的实现方法
 
     private static final Logger logger = LoggerFactory.getLogger(ConfigManager.class);
 
@@ -139,7 +139,7 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
         if (CollectionUtils.isEmpty(defaults)) {
             defaults = getConfigCenters();
         }
-        return Optional.ofNullable(defaults);
+        return Optional.ofNullable(defaults); //对空值null进行保护，避免空指针
     }
 
     public ConfigCenterConfig getConfigCenter(String id) {
@@ -404,7 +404,7 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
     }
 
     protected <C extends AbstractConfig> Collection<C> getConfigs(String configType) {
-        return (Collection<C>) read(() -> getConfigsMap(configType).values());
+        return (Collection<C>) read(() -> getConfigsMap(configType).values()); //todo @csy 001 此处是怎么返回集合的？
     }
 
     protected <C extends AbstractConfig> C getConfig(String configType, String id) {
@@ -445,7 +445,7 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
         return value;
     }
 
-    private void write(Runnable runnable) {
+    private void write(Runnable runnable) { //todo @csy 001 读、写操作有何不同的？
         write(() -> {
             runnable.run();
             return null;

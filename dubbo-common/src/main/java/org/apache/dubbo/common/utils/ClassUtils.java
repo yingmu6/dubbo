@@ -311,7 +311,7 @@ public class ClassUtils {
             return Boolean.valueOf(value);
         }
         try {
-            if (type == byte.class || type == Byte.class) {
+            if (type == byte.class || type == Byte.class) { //基本类型转换为封装类
                 return Byte.valueOf(value);
             } else if (type == short.class || type == Short.class) {
                 return Short.valueOf(value);
@@ -340,7 +340,7 @@ public class ClassUtils {
      */
     public static boolean isTypeMatch(Class<?> type, String value) {
         if ((type == boolean.class || type == Boolean.class)
-                && !("true".equals(value) || "false".equals(value))) {
+                && !("true".equals(value) || "false".equals(value))) { //todo @csy 此处判断有点模糊，是不是指boolean类型判断？
             return false;
         }
         return true;

@@ -215,7 +215,7 @@ public class RegistryConfig extends AbstractConfig {
                 URL url = URL.valueOf(address); //获取url字符串对应的url实例
 
                 // Refactor since 2.7.8
-                updatePropertyIfAbsent(this::getUsername, this::setUsername, url.getUsername()); //todo @csy pause
+                updatePropertyIfAbsent(this::getUsername, this::setUsername, url.getUsername());
                 updatePropertyIfAbsent(this::getPassword, this::setPassword, url.getPassword());
                 updatePropertyIfAbsent(this::getProtocol, this::setProtocol, url.getProtocol());
                 updatePropertyIfAbsent(this::getPort, this::setPort, url.getPort());

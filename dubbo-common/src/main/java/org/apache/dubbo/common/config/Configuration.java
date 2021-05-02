@@ -20,6 +20,8 @@ import java.util.NoSuchElementException;
 
 /**
  * Configuration interface, to fetch the value for the specified key.
+ *
+ * https://blog.csdn.net/u012881904/article/details/95891448  Dubbo 动态配置中心
  */
 public interface Configuration { //配置接口，可以获取各种类型的配置值
     /**

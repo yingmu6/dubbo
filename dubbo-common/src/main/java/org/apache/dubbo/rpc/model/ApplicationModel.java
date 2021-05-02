@@ -80,7 +80,7 @@ public class ApplicationModel { //应用模型
     public static void initFrameworkExts() {
         Set<FrameworkExt> exts = ExtensionLoader.getExtensionLoader(FrameworkExt.class).getSupportedExtensionInstances();
         for (FrameworkExt ext : exts) {
-            ext.initialize(); //调用FrameworkExt所有扩展实例的initialize初始化方法
+            ext.initialize(); //调用FrameworkExt所有扩展实例的initialize初始化方法，目前主要是Environment中的initialize方法
         }
     }
 

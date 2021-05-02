@@ -28,6 +28,7 @@ import java.util.SortedSet;
  */
 @Deprecated
 public class NopDynamicConfiguration implements DynamicConfiguration {
+    // 默认使用NopDynamicConfigurationFactory实现，这个实现就是就是空白实现，不加载任何信息，并且标记成了启用状态
 
     public NopDynamicConfiguration(URL url) {
         // no-op

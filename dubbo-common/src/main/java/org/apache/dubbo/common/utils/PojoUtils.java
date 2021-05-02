@@ -665,6 +665,7 @@ public class PojoUtils {
 
     /**
      * Update the property if absent
+     * （如果属性值不存在的话，则更新值）
      *
      * @param getterMethod the getter method
      * @param setterMethod the setter method
