@@ -42,7 +42,7 @@ import static org.apache.dubbo.common.extension.ExtensionLoader.getExtensionLoad
  *
  * @see AbstractDynamicConfiguration
  */
-public interface DynamicConfiguration extends Configuration, AutoCloseable { //动态配置
+public interface DynamicConfiguration extends Configuration, AutoCloseable { //动态配置，从配置中心获取配置值，如apollo等
 
     String DEFAULT_GROUP = "dubbo";
 

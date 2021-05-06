@@ -468,7 +468,7 @@ public abstract class AbstractConfig implements Serializable {
             // loop methods, get override value and set the new value back to method
             Method[] methods = getClass().getMethods();
             for (Method method : methods) {
-                if (MethodUtils.isSetter(method)) {
+                if (MethodUtils.isSetter(method)) { //todo @csy 002 待调试，看下具体的数值都有啥？
                     try {
                         String value = StringUtils.trim(compositeConfiguration.getString(extractPropertyName(getClass(), method))); //从配置中心获取属性对应的值
                         // isTypeMatch() is called to avoid duplicate and incorrect update, for example, we have two 'setGeneric' methods in ReferenceConfig.

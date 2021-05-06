@@ -69,7 +69,7 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
 
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
-    final Map<String, Map<String, AbstractConfig>> configsCache = newMap();
+    final Map<String, Map<String, AbstractConfig>> configsCache = newMap(); //配置缓存，key为标签名，如ConfigCenterConfig配置类的标签名为config-center
 
     public ConfigManager() {
     }
@@ -181,7 +181,7 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
     /**
      * Only allows one default ProviderConfig
      */
-    public Optional<ProviderConfig> getDefaultProvider() {
+    public Optional<ProviderConfig> getDefaultProvider() { //todo @csy 002 什么情况下会有多个provider？
         List<ProviderConfig> providerConfigs = getDefaultConfigs(getConfigsMap(getTagName(ProviderConfig.class)));
         if (CollectionUtils.isNotEmpty(providerConfigs)) {
             return Optional.of(providerConfigs.get(0));
@@ -281,7 +281,7 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
         return getConfigs(getTagName(RegistryConfig.class));
     }
 
-    public Set<String> getRegistryIds() {
+    public Set<String> getRegistryIds() { //todo @csy 002 注册id值都是怎样的？
         Set<String> registryIds = new HashSet<>();
         registryIds.addAll(getSubProperties(ApplicationModel.getEnvironment().getExternalConfigurationMap(),
                 REGISTRIES_SUFFIX));
@@ -327,10 +327,10 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
         return getConfig(getTagName(ReferenceConfigBase.class), id);
     }
 
-    protected static Set<String> getSubProperties(Map<String, String> properties, String prefix) {
+    protected static Set<String> getSubProperties(Map<String, String> properties, String prefix) { //todo @csy 002 待调试验证
         return properties.keySet().stream().filter(k -> k.contains(prefix)).map(k -> {
             k = k.substring(prefix.length());
-            return k.substring(0, k.indexOf("."));
+            return k.substring(0, k.indexOf(".")); //将属性map的key进行遍历，去掉前缀、再去掉点号
         }).collect(Collectors.toSet());
     }
 
@@ -393,9 +393,9 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
         if (config == null) {
             return;
         }
-        write(() -> {
-            Map<String, AbstractConfig> configsMap = configsCache.computeIfAbsent(getTagName(config.getClass()), type -> newMap());
-            addIfAbsent(config, configsMap, unique);
+        write(() -> { //线程执行体
+            Map<String, AbstractConfig> configsMap = configsCache.computeIfAbsent(getTagName(config.getClass()), type -> newMap()); //computeIfAbsent:判断值是否存在，不存在是则加入
+            addIfAbsent(config, configsMap, unique); //todo @csy 002 computeIfAbsent待测试确认，是否是没有key关联的值时，才会设置？
         });
     }
 
@@ -478,7 +478,7 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
     }
 
     static <C extends AbstractConfig> void addIfAbsent(C config, Map<String, C> configsMap, boolean unique)
-            throws IllegalStateException {
+            throws IllegalStateException { //todo @csy 002 此处是把config放入缓存中吗？引用传入？
 
         if (config == null || configsMap == null) {
             return;
@@ -508,7 +508,7 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
     static <C extends AbstractConfig> String getId(C config) {
         String id = config.getId();
         return isNotEmpty(id) ? id : isDefaultConfig(config) ?
-                config.getClass().getSimpleName() + "#" + DEFAULT_KEY : null;
+                config.getClass().getSimpleName() + "#" + DEFAULT_KEY : null; //todo @csy 002 待调试，看下"#"号时候的数据
     }
 
     static <C extends AbstractConfig> boolean isDefaultConfig(C config) { //获取配置中isDefault()方法的返回值，然后再进行判断

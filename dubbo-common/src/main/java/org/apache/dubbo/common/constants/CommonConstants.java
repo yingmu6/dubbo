@@ -237,7 +237,7 @@ public interface CommonConstants {
     String DUBBO_PREFERRED_NETWORK_INTERFACE = "dubbo.network.interface.preferred";
 
     @Deprecated
-    String SHUTDOWN_WAIT_SECONDS_KEY = "dubbo.service.shutdown.wait.seconds";
+    String SHUTDOWN_WAIT_SECONDS_KEY = "dubbo.service.shutdown.wait.seconds"; //弃用的，不鼓励使用
     String SHUTDOWN_WAIT_KEY = "dubbo.service.shutdown.wait";
     String DUBBO_PROTOCOL = "dubbo";
 

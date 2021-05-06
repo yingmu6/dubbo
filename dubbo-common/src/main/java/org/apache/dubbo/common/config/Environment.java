@@ -46,7 +46,7 @@ public class Environment extends LifecycleAdapter implements FrameworkExt {
 
     private CompositeConfiguration globalConfiguration;
 
-    private Map<String, String> externalConfigurationMap = new HashMap<>();
+    private Map<String, String> externalConfigurationMap = new HashMap<>(); //todo @csy 002 与appExternalConfigurationMap有何不同？
     private Map<String, String> appExternalConfigurationMap = new HashMap<>();
 
     private boolean configCenterFirst = true;

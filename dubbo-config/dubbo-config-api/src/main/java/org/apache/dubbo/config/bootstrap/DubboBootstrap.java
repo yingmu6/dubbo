@@ -520,7 +520,7 @@ public class DubboBootstrap extends GenericEventListener {
 
         startConfigCenter();
 
-        loadRemoteConfigs(); //todo @csy pause
+        loadRemoteConfigs();
 
         checkGlobalConfigs();
 
@@ -538,7 +538,7 @@ public class DubboBootstrap extends GenericEventListener {
         }
     }
 
-    private void checkGlobalConfigs() {
+    private void checkGlobalConfigs() { //检查总体的配置
         // check Application
         ConfigValidationUtils.validateApplicationConfig(getApplication());
 
@@ -561,7 +561,7 @@ public class DubboBootstrap extends GenericEventListener {
 
         // check Provider
         Collection<ProviderConfig> providers = configManager.getProviders();
-        if (CollectionUtils.isEmpty(providers)) {
+        if (CollectionUtils.isEmpty(providers)) { //若providers配置为空，则创建对应的值，避免后续空指针异常
             configManager.getDefaultProvider().orElseGet(() -> {
                 ProviderConfig providerConfig = new ProviderConfig();
                 configManager.addProvider(providerConfig);
@@ -826,7 +826,7 @@ public class DubboBootstrap extends GenericEventListener {
         List<RegistryConfig> tmpRegistries = new ArrayList<>();
         Set<String> registryIds = configManager.getRegistryIds();
         registryIds.forEach(id -> {
-            if (tmpRegistries.stream().noneMatch(reg -> reg.getId().equals(id))) {
+            if (tmpRegistries.stream().noneMatch(reg -> reg.getId().equals(id))) { //todo @csy 002 noneMatch的含义是什么？此处的逻辑是什么？
                 tmpRegistries.add(configManager.getRegistry(id).orElseGet(() -> {
                     RegistryConfig registryConfig = new RegistryConfig();
                     registryConfig.setId(id);
@@ -852,7 +852,7 @@ public class DubboBootstrap extends GenericEventListener {
             }
         });
 
-        configManager.addProtocols(tmpProtocols);
+        configManager.addProtocols(tmpProtocols); //和addRegistries类似，内部都是调用addConfig(AbstractConfig config)，加载配置
     }
 
 
@@ -1333,7 +1333,7 @@ public class DubboBootstrap extends GenericEventListener {
     public ApplicationConfig getApplication() {
         ApplicationConfig application = configManager
                 .getApplication()
-                .orElseGet(() -> {
+                .orElseGet(() -> { //若缓存中，没有application配置的值，则创建应用配置对象，并返回。此处没有使用 创建一个临时对象，再设置的方式
                     ApplicationConfig applicationConfig = new ApplicationConfig();
                     configManager.setApplication(applicationConfig);
                     return applicationConfig;

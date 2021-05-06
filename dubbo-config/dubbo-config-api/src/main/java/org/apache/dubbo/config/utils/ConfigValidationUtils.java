@@ -374,7 +374,7 @@ public class ConfigValidationUtils {
                     "Please add <dubbo:application name=\"...\" /> to your spring config.");
         }
 
-        // backward compatibility
+        // backward compatibility（向后兼容）
         String wait = ConfigUtils.getProperty(SHUTDOWN_WAIT_KEY);
         if (wait != null && wait.trim().length() > 0) {
             System.setProperty(SHUTDOWN_WAIT_KEY, wait.trim());
@@ -402,7 +402,7 @@ public class ConfigValidationUtils {
     }
 
     public static void validateMetadataConfig(MetadataReportConfig metadataReportConfig) {
-        if (metadataReportConfig == null) {
+        if (metadataReportConfig == null) { //todo @csy 002 此处为啥没有实现逻辑？有啥含义吗？
             return;
         }
     }
@@ -455,7 +455,7 @@ public class ConfigValidationUtils {
         }
     }
 
-    public static void validateProviderConfig(ProviderConfig config) {
+    public static void validateProviderConfig(ProviderConfig config) { //todo @csy 002 待调试，看具体的值
         checkPathName(CONTEXTPATH_KEY, config.getContextpath());
         checkExtension(ThreadPool.class, THREADPOOL_KEY, config.getThreadpool());
         checkMultiExtension(TelnetHandler.class, TELNET, config.getTelnet());
@@ -573,12 +573,15 @@ public class ConfigValidationUtils {
             return;
         }
         for (Map.Entry<String, String> entry : parameters.entrySet()) {
-            if (!entry.getKey().equals(BACKUP_KEY)) {
+            if (!entry.getKey().equals(BACKUP_KEY)) { //todo @csy 002 什么场景会用上？
                 checkNameHasSymbol(entry.getKey(), entry.getValue());
             }
         }
     }
 
+    /**
+     * 检查属性值是否正确（值是否为空、是否超过最大长度、是否与正则表达式匹配）
+     */
     public static void checkProperty(String property, String value, int maxlength, Pattern pattern) {
         if (StringUtils.isEmpty(value)) {
             return;

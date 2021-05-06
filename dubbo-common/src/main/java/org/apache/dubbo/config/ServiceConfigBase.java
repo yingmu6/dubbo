@@ -208,7 +208,7 @@ public abstract class ServiceConfigBase<T> extends AbstractServiceConfig {
         convertProtocolIdsToProtocols();
     }
 
-    public void completeCompoundConfigs() { //todo @csy pause
+    public void completeCompoundConfigs() {
         super.completeCompoundConfigs(provider);
         if (provider != null) {
             if (protocols == null) {
