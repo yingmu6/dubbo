@@ -190,7 +190,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
             bootstrap.initialize();
         }
 
-        checkAndUpdateSubConfigs();
+        checkAndUpdateSubConfigs(); //todo @csy pause
 
         //init serviceMetadata
         serviceMetadata.setVersion(getVersion());
@@ -234,7 +234,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
             throw new IllegalStateException("<dubbo:service interface=\"\" /> interface not allow null!");
         }
 
-        if (ref instanceof GenericService) {
+        if (ref instanceof GenericService) { //泛化接口处理
             interfaceClass = GenericService.class;
             if (StringUtils.isEmpty(generic)) {
                 generic = Boolean.TRUE.toString();
@@ -279,7 +279,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
             }
         }
         checkStubAndLocal(interfaceClass);
-        ConfigValidationUtils.checkMock(interfaceClass, this);
+        ConfigValidationUtils.checkMock(interfaceClass, this); //检查mock信息
         ConfigValidationUtils.validateServiceConfig(this);
         postProcessConfig();
     }

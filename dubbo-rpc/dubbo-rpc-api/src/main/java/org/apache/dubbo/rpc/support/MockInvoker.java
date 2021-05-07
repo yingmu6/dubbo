@@ -185,7 +185,7 @@ final public class MockInvoker<T> implements Invoker<T> {
 
         Class<?> mockClass;
         try {
-            mockClass = ReflectUtils.forName(mockService);
+            mockClass = ReflectUtils.forName(mockService); //获取对应的Class实例
         } catch (Exception e) {
             if (!isDefault) {// does not check Spring bean if it is default config.
                 ExtensionFactory extensionFactory =
@@ -229,7 +229,7 @@ final public class MockInvoker<T> implements Invoker<T> {
      * @param mock mock string
      * @return normalized mock string
      */
-    public static String normalizeMock(String mock) {
+    public static String normalizeMock(String mock) { //mock正确性检查
         if (mock == null) {
             return mock;
         }
@@ -249,7 +249,7 @@ final public class MockInvoker<T> implements Invoker<T> {
         }
 
         if (mock.startsWith(FAIL_PREFIX)) {
-            mock = mock.substring(FAIL_PREFIX.length()).trim();
+            mock = mock.substring(FAIL_PREFIX.length()).trim(); //去除前缀
         }
 
         if (mock.startsWith(FORCE_PREFIX)) {

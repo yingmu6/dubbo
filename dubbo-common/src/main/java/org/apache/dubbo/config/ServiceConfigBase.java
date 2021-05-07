@@ -226,7 +226,7 @@ public abstract class ServiceConfigBase<T> extends AbstractServiceConfig {
         }
     }
 
-    private void convertProtocolIdsToProtocols() {
+    private void convertProtocolIdsToProtocols() { //将协议id转换为协议config
         computeValidProtocolIds();
         if (StringUtils.isEmpty(protocolIds)) {
             if (CollectionUtils.isEmpty(protocols)) {
@@ -244,7 +244,7 @@ public abstract class ServiceConfigBase<T> extends AbstractServiceConfig {
         } else {
             String[] arr = COMMA_SPLIT_PATTERN.split(protocolIds);
             List<ProtocolConfig> tmpProtocols = new ArrayList<>();
-            Arrays.stream(arr).forEach(id -> {
+            Arrays.stream(arr).forEach(id -> { //对数组进行遍历，根据协议id去查找协议config，查到则直接使用实例，没查到则创建实例
                 if (tmpProtocols.stream().noneMatch(prot -> prot.getId().equals(id))) {
                     Optional<ProtocolConfig> globalProtocol = ApplicationModel.getConfigManager().getProtocol(id);
                     if (globalProtocol.isPresent()) {
@@ -413,7 +413,7 @@ public abstract class ServiceConfigBase<T> extends AbstractServiceConfig {
         return StringUtils.isEmpty(this.version) ? (provider != null ? provider.getVersion() : this.version) : this.version;
     }
 
-    private void computeValidProtocolIds() {
+    private void computeValidProtocolIds() { //计算有效的协议id列表
         if (StringUtils.isEmpty(getProtocolIds())) {
             if (getProvider() != null && StringUtils.isNotEmpty(getProvider().getProtocolIds())) {
                 setProtocolIds(getProvider().getProtocolIds());

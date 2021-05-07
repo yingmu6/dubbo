@@ -33,6 +33,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import static org.apache.dubbo.common.constants.CommonConstants.COMMA_SPLIT_PATTERN;
 import static org.apache.dubbo.common.constants.CommonConstants.DUBBO_VERSION_KEY;
@@ -175,7 +176,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
     }
 
     /**
-     * Check whether the registry config is exists, and then conversion it to {@link RegistryConfig}
+     * Check whether the registry config is exists, and then conversion（转换） it to {@link RegistryConfig}
      */
     public void checkRegistry() {
         convertRegistryIdsToRegistries();
@@ -225,7 +226,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
                             "<dubbo:method name=\"\" ... /></<dubbo:reference>");
                 }
 
-                boolean hasMethod = Arrays.stream(interfaceClass.getMethods()).anyMatch(method -> method.getName().equals(methodName));
+                boolean hasMethod = Arrays.stream(interfaceClass.getMethods()).anyMatch(method -> method.getName().equals(methodName)); //判断方法名，是否存在于接口中
                 if (!hasMethod) {
                     throw new IllegalStateException("The interface " + interfaceClass.getName()
                             + " not found method " + methodName);
@@ -286,7 +287,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
         } else {
             String[] ids = COMMA_SPLIT_PATTERN.split(registryIds);
             List<RegistryConfig> tmpRegistries = new ArrayList<>();
-            Arrays.stream(ids).forEach(id -> {
+            Consumer<String> stringConsumer = id -> {
                 if (tmpRegistries.stream().noneMatch(reg -> reg.getId().equals(id))) {
                     Optional<RegistryConfig> globalRegistry = ApplicationModel.getConfigManager().getRegistry(id);
                     if (globalRegistry.isPresent()) {
@@ -298,7 +299,8 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
                         tmpRegistries.add(registryConfig);
                     }
                 }
-            });
+            };
+            Arrays.stream(ids).forEach(stringConsumer);
 
             if (tmpRegistries.size() > ids.length) {
                 throw new IllegalStateException("Too much registries found, the registries assigned to this service " +

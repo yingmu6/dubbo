@@ -253,12 +253,13 @@ public class ConfigValidationUtils {
 
     /**
      * Legitimacy check and setup of local simulated operations. The operations can be a string with Simple operation or
+     * (合法性检查和设置本地模拟操作)
      * a classname whose {@link Class} implements a particular function
      *
      * @param interfaceClass for provider side, it is the {@link Class} of the service that will be exported; for consumer
      *                       side, it is the {@link Class} of the remote service interface that will be referenced
      */
-    public static void checkMock(Class<?> interfaceClass, AbstractInterfaceConfig config) {
+    public static void checkMock(Class<?> interfaceClass, AbstractInterfaceConfig config) { //
         String mock = config.getMock();
         if (ConfigUtils.isEmpty(mock)) {
             return;

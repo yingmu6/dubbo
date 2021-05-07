@@ -1086,13 +1086,13 @@ public class DubboBootstrap extends GenericEventListener {
         return exporter.supports(getMetadataType());
     }
 
-    private void exportServices() {
+    private void exportServices() { //暴露服务
         configManager.getServices().forEach(sc -> {
             // TODO, compatible with ServiceConfig.export()
             ServiceConfig serviceConfig = (ServiceConfig) sc;
             serviceConfig.setBootstrap(this);
 
-            if (exportAsync) {
+            if (exportAsync) { //异步执行，使用线程池执行相关任务
                 ExecutorService executor = executorRepository.getServiceExporterExecutor();
                 Future<?> future = executor.submit(() -> {
                     sc.export();
