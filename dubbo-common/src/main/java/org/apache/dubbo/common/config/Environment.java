@@ -46,7 +46,7 @@ public class Environment extends LifecycleAdapter implements FrameworkExt {
 
     private CompositeConfiguration globalConfiguration;
 
-    private Map<String, String> externalConfigurationMap = new HashMap<>(); //todo @csy 002 与appExternalConfigurationMap有何不同？
+    private Map<String, String> externalConfigurationMap = new HashMap<>();
     private Map<String, String> appExternalConfigurationMap = new HashMap<>();
 
     private boolean configCenterFirst = true;
@@ -65,7 +65,7 @@ public class Environment extends LifecycleAdapter implements FrameworkExt {
     public void initialize() throws IllegalStateException {
         ConfigManager configManager = ApplicationModel.getConfigManager();
         Optional<Collection<ConfigCenterConfig>> defaultConfigs = configManager.getDefaultConfigCenter();
-        defaultConfigs.ifPresent(configs -> { //todo @csy 001 此处设置的值都是怎样的？
+        defaultConfigs.ifPresent(configs -> {
             for (ConfigCenterConfig config : configs) {
                 this.setExternalConfigMap(config.getExternalConfiguration());
                 this.setAppExternalConfigMap(config.getAppExternalConfiguration());

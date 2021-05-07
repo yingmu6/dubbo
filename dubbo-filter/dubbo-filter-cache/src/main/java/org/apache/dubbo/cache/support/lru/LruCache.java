@@ -40,7 +40,7 @@ import java.util.Map;
  * @see org.apache.dubbo.cache.support.AbstractCacheFactory
  * @see org.apache.dubbo.cache.filter.CacheFilter
  */
-public class LruCache implements Cache { //@csy 功能用途
+public class LruCache implements Cache {
     /**
      * https://baike.baidu.com/item/LRU  LRU 最近最少使用
      */

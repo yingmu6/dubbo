@@ -50,7 +50,7 @@ import static org.apache.dubbo.metadata.MetadataConstants.META_DATA_STORE_TAG;
 /**
  * RedisMetadataReport
  */
-public class RedisMetadataReport extends AbstractMetadataReport {
+public class RedisMetadataReport extends AbstractMetadataReport { //redis 作为元数据中心
 
     private final static String REDIS_DATABASE_KEY = "database";
     private final static Logger logger = LoggerFactory.getLogger(RedisMetadataReport.class);

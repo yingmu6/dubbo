@@ -25,9 +25,9 @@ package org.apache.dubbo.cache;
  * @see org.apache.dubbo.cache.support.expiring.ExpiringCache
  * @see org.apache.dubbo.cache.support.threadlocal.ThreadLocalCache
  */
-public interface Cache { //@csy 什么场景下会用到缓存？为啥会用到filter包、不用到common包？
+public interface Cache {
     /**
-     *  解：通过缓存结果加速访问速度
+     *  通过缓存结果加速访问速度
      *  结果缓存，用于加速热门数据的访问速度，Dubbo 提供声明式缓存，以减少用户加缓存的工作量。
      *  缓存类型:
      *   lru 基于最近最少使用原则删除多余缓存，保持最热的数据被缓存。
@@ -40,7 +40,7 @@ public interface Cache { //@csy 什么场景下会用到缓存？为啥会用到
      * @param key  Unique identifier（唯一的标识） for the object being store.
      * @param value Value getting store
      */
-    void put(Object key, Object value); //@csy 相同的key，value是否会被覆盖 解：会被覆盖了，底层用到map的数据结构
+    void put(Object key, Object value); //相同的key，value是否会被覆盖 解：会被覆盖了，底层用到map的数据结构
 
     /**
      * API to return stored value using a key.

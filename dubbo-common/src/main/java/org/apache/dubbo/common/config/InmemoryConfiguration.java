@@ -22,7 +22,7 @@ import java.util.Map;
 /**
  * In-memory configuration
  */
-public class InmemoryConfiguration implements Configuration { //todo @csy 002 内存中的配置是指本地缓存吗？
+public class InmemoryConfiguration implements Configuration {
 
     // stores the configuration key-value pairs
     private Map<String, String> store = new LinkedHashMap<>();

@@ -62,7 +62,7 @@ public final class AccessLogData {
      * 从rpc调用上下文中获取值，并设置到当前缓存map中
      */
     private AccessLogData() {
-        RpcContext context = RpcContext.getContext(); //@csy RpcContext了解，解：临时状态记录器
+        RpcContext context = RpcContext.getContext(); //RpcContext了解，解：临时状态记录器
         data = new HashMap<>();
         setLocalHost(context.getLocalHost());
         setLocalPort(context.getLocalPort());
@@ -75,7 +75,7 @@ public final class AccessLogData {
      *
      * @return instance of AccessLogData
      */
-    public static AccessLogData newLogData() { //@csy 静态方法是为了单例模式？ 解：不是，每调用一次都会生成新的对象
+    public static AccessLogData newLogData() { //静态方法是为了单例模式？ 解：不是，每调用一次都会生成新的对象
         return new AccessLogData();
     }
 

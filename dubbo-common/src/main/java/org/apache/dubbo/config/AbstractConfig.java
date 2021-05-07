@@ -325,7 +325,7 @@ public abstract class AbstractConfig implements Serializable {
      * @return the parameters whose raw key will replace "-" to "."
      * @revised 2.7.8 "private" to be "protected"
      */
-    protected static Map<String, String> convert(Map<String, String> parameters, String prefix) { //todo @csy 001 是指怎么转换的？
+    protected static Map<String, String> convert(Map<String, String> parameters, String prefix) {
         if (parameters == null || parameters.isEmpty()) {
             return Collections.emptyMap();
         }
@@ -461,14 +461,14 @@ public abstract class AbstractConfig implements Serializable {
         this.prefix = prefix;
     }
 
-    public void refresh() { //@csy 001 为啥要刷新，都做了些啥？ 解：从配置中心中获取最新的配置值，然后通过set方法或setParameters方法设置值
+    public void refresh() { //从配置中心中获取最新的配置值，然后通过set方法或setParameters方法设置值
         Environment env = ApplicationModel.getEnvironment();
         try {
             CompositeConfiguration compositeConfiguration = env.getPrefixedConfiguration(this);
             // loop methods, get override value and set the new value back to method
             Method[] methods = getClass().getMethods();
             for (Method method : methods) {
-                if (MethodUtils.isSetter(method)) { //todo @csy 002 待调试，看下具体的数值都有啥？
+                if (MethodUtils.isSetter(method)) {
                     try {
                         String value = StringUtils.trim(compositeConfiguration.getString(extractPropertyName(getClass(), method))); //从配置中心获取属性对应的值
                         // isTypeMatch() is called to avoid duplicate and incorrect update, for example, we have two 'setGeneric' methods in ReferenceConfig.

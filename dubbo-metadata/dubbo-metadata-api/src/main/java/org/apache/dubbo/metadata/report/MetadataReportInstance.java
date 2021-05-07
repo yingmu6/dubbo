@@ -38,7 +38,7 @@ public class MetadataReportInstance { //该类的用途是？解：用来保存M
         if (init.get()) {
             return;
         }
-        MetadataReportFactory metadataReportFactory = ExtensionLoader.getExtensionLoader(MetadataReportFactory.class).getAdaptiveExtension();
+        MetadataReportFactory metadataReportFactory = ExtensionLoader.getExtensionLoader(MetadataReportFactory.class).getAdaptiveExtension(); //默认是RedisMetadataReportFactory元数据工厂
         if (METADATA_REPORT_KEY.equals(metadataReportURL.getProtocol())) {
             String protocol = metadataReportURL.getParameter(METADATA_REPORT_KEY, DEFAULT_DIRECTORY);
             metadataReportURL = URLBuilder.from(metadataReportURL)

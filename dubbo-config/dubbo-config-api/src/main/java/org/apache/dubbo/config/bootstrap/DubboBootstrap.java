@@ -643,7 +643,7 @@ public class DubboBootstrap extends GenericEventListener {
             return;
         }
         MetadataReportConfig metadataReportConfig = metadataReportConfigs.iterator().next();
-        ConfigValidationUtils.validateMetadataConfig(metadataReportConfig);
+        ConfigValidationUtils.validateMetadataConfig(metadataReportConfig); //取其中一个实例校验
         if (!metadataReportConfig.isValid()) {
             return;
         }
@@ -717,7 +717,7 @@ public class DubboBootstrap extends GenericEventListener {
         configManager
                 .getDefaultRegistries()
                 .stream()
-                .filter(this::isUsedRegistryAsMetadataCenter)
+                .filter(this::isUsedRegistryAsMetadataCenter) //使用注册中心作为元数据中心
                 .map(this::registryAsMetadataCenter)
                 .forEach(configManager::addMetadataReport);
 
@@ -826,7 +826,7 @@ public class DubboBootstrap extends GenericEventListener {
         List<RegistryConfig> tmpRegistries = new ArrayList<>();
         Set<String> registryIds = configManager.getRegistryIds();
         registryIds.forEach(id -> {
-            if (tmpRegistries.stream().noneMatch(reg -> reg.getId().equals(id))) { //todo @csy 002 noneMatch的含义是什么？此处的逻辑是什么？
+            if (tmpRegistries.stream().noneMatch(reg -> reg.getId().equals(id))) {
                 tmpRegistries.add(configManager.getRegistry(id).orElseGet(() -> {
                     RegistryConfig registryConfig = new RegistryConfig();
                     registryConfig.setId(id);

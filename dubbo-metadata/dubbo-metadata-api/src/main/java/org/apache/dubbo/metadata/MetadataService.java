@@ -44,7 +44,7 @@ import static org.apache.dubbo.common.URL.buildKey;
  */
 public interface MetadataService {
     /**
-     * @csy 功能用途是啥？Metadata是指啥？元数据指啥？会暴露dubbo服务？是用来管理注册的数据的吗？
+     * 功能用途是啥？Metadata是指啥？元数据指啥？会暴露dubbo服务？是用来管理注册的数据的吗？
      * 解：用来管理服务分组、服务版本、服务名、方法列表、方法参数列表、超时时间等数据，以key-value形式持久化存储
      * https://lexburner.github.io/dubbo-metadata/
      * https://dubbo.apache.org/zh/docs/v2.7/user/references/metadata/
@@ -117,7 +117,7 @@ public interface MetadataService {
      * @see #toSortedStrings(Stream)
      * @see URL#toFullString()
      */
-    default SortedSet<String> getExportedURLs() {//@csy SortedSet是排好序的集合吗？ 解：是指排好序的集合
+    default SortedSet<String> getExportedURLs() {//SortedSet是排好序的集合吗？ 解：是指排好序的集合
         return getExportedURLs(ALL_SERVICE_INTERFACES);
     }
 

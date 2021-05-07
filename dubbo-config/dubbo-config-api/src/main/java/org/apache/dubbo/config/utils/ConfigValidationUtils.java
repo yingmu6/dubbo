@@ -402,7 +402,7 @@ public class ConfigValidationUtils {
     }
 
     public static void validateMetadataConfig(MetadataReportConfig metadataReportConfig) {
-        if (metadataReportConfig == null) { //todo @csy 002 此处为啥没有实现逻辑？有啥含义吗？
+        if (metadataReportConfig == null) {
             return;
         }
     }
@@ -455,7 +455,7 @@ public class ConfigValidationUtils {
         }
     }
 
-    public static void validateProviderConfig(ProviderConfig config) { //todo @csy 002 待调试，看具体的值
+    public static void validateProviderConfig(ProviderConfig config) {
         checkPathName(CONTEXTPATH_KEY, config.getContextpath());
         checkExtension(ThreadPool.class, THREADPOOL_KEY, config.getThreadpool());
         checkMultiExtension(TelnetHandler.class, TELNET, config.getTelnet());
@@ -573,7 +573,7 @@ public class ConfigValidationUtils {
             return;
         }
         for (Map.Entry<String, String> entry : parameters.entrySet()) {
-            if (!entry.getKey().equals(BACKUP_KEY)) { //todo @csy 002 什么场景会用上？
+            if (!entry.getKey().equals(BACKUP_KEY)) {
                 checkNameHasSymbol(entry.getKey(), entry.getValue());
             }
         }

@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public final class URLBuilder {
+public final class URLBuilder { //URL的构造器
     private String protocol;
 
     private String username;
@@ -104,7 +104,7 @@ public final class URLBuilder {
         this.methodParameters = (methodParameters != null ? methodParameters : new HashMap<>());
     }
 
-    public static URLBuilder from(URL url) {
+    public static URLBuilder from(URL url) { //读取输入的url进行构建
         String protocol = url.getProtocol();
         String username = url.getUsername();
         String password = url.getPassword();
@@ -124,7 +124,7 @@ public final class URLBuilder {
                 methodParameters);
     }
 
-    public URL build() {
+    public URL build() { //进行参数校验以及URL构建
         if (StringUtils.isEmpty(username) && StringUtils.isNotEmpty(password)) {
             throw new IllegalArgumentException("Invalid url, password without username!");
         }

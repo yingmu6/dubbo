@@ -263,7 +263,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
     public void storeProviderMetadata(MetadataIdentifier providerMetadataIdentifier, ServiceDefinition serviceDefinition) {
         if (syncReport) {
             storeProviderMetadataTask(providerMetadataIdentifier, serviceDefinition);
-        } else {
+        } else { //异步上报，使用线程池执行
             reportCacheExecutor.execute(() -> storeProviderMetadataTask(providerMetadataIdentifier, serviceDefinition));
         }
     }
@@ -412,7 +412,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
         return subtract + (FOUR_HOURS_IN_MILLISECONDS / 2) + ThreadLocalRandom.current().nextInt(FOUR_HOURS_IN_MILLISECONDS);
     }
 
-    class MetadataReportRetry {
+    class MetadataReportRetry { //MetadataReport重试处理类
         protected final Logger logger = LoggerFactory.getLogger(getClass());
 
         final ScheduledExecutorService retryExecutor = newScheduledThreadPool(0, new NamedThreadFactory("DubboMetadataReportRetryTimer", true));

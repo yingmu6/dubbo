@@ -40,7 +40,7 @@ public abstract class AbstractMetadataReportFactory implements MetadataReportFac
                 .removeParameters(EXPORT_KEY, REFER_KEY);
         String key = url.toServiceString();
         // Lock the metadata access process to ensure a single instance of the metadata instance
-        LOCK.lock();
+        LOCK.lock(); // 加锁处理，确保MetadataReport保持单实例
         try {
             MetadataReport metadataReport = SERVICE_STORE_MAP.get(key);
             if (metadataReport != null) {
