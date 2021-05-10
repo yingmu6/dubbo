@@ -166,7 +166,7 @@ public class ConfigValidationUtils {
     private static final Pattern PATTERN_KEY = Pattern.compile("[*,\\-._0-9a-zA-Z]+");
 
 
-    public static List<URL> loadRegistries(AbstractInterfaceConfig interfaceConfig, boolean provider) {
+    public static List<URL> loadRegistries(AbstractInterfaceConfig interfaceConfig, boolean provider) { //构造注册URL
         // check && override if necessary
         List<URL> registryList = new ArrayList<URL>();
         ApplicationConfig application = interfaceConfig.getApplication();
@@ -179,7 +179,7 @@ public class ConfigValidationUtils {
                 }
                 if (!RegistryConfig.NO_AVAILABLE.equalsIgnoreCase(address)) {
                     Map<String, String> map = new HashMap<String, String>();
-                    AbstractConfig.appendParameters(map, application);
+                    AbstractConfig.appendParameters(map, application); //依次添加application、config参数
                     AbstractConfig.appendParameters(map, config);
                     map.put(PATH_KEY, RegistryService.class.getName());
                     AbstractInterfaceConfig.appendRuntimeParameters(map);

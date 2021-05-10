@@ -135,7 +135,7 @@ public abstract class AbstractConfig implements Serializable {
                     String str = String.valueOf(value).trim();
                     if (value != null && str.length() > 0) {
                         if (parameter != null && parameter.escaped()) {
-                            str = URL.encode(str);
+                            str = URL.encode(str); //编码字符串
                         }
                         if (parameter != null && parameter.append()) {
                             String pre = parameters.get(key);
@@ -270,7 +270,7 @@ public abstract class AbstractConfig implements Serializable {
         return propertyName;
     }
 
-    private static String calculatePropertyFromGetter(String name) {
+    private static String calculatePropertyFromGetter(String name) { //从get方法中获取属性名
         int i = name.startsWith("get") ? 3 : 2;
         return StringUtils.camelToSplitName(name.substring(i, i + 1).toLowerCase() + name.substring(i + 1), ".");
     }
@@ -308,7 +308,7 @@ public abstract class AbstractConfig implements Serializable {
         return ("getParameters".equals(name)
                 && Modifier.isPublic(method.getModifiers())
                 && method.getParameterTypes().length == 0
-                && method.getReturnType() == Map.class);
+                && method.getReturnType() == Map.class); //返回值是Map类型
     }
 
     private static boolean isParametersSetter(Method method) { //判断是否是设置参数方法setParameters(Map)
@@ -332,7 +332,7 @@ public abstract class AbstractConfig implements Serializable {
 
         Map<String, String> result = new HashMap<>();
         String pre = (prefix != null && prefix.length() > 0 ? prefix + "." : "");
-        for (Map.Entry<String, String> entry : parameters.entrySet()) {
+        for (Map.Entry<String, String> entry : parameters.entrySet()) { //若前缀不为空，则将参数的键带上前缀
             String key = entry.getKey();
             String value = entry.getValue();
             result.put(pre + key, value);

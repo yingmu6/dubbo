@@ -190,7 +190,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
             bootstrap.initialize();
         }
 
-        checkAndUpdateSubConfigs(); //todo @csy pause
+        checkAndUpdateSubConfigs();
 
         //init serviceMetadata
         serviceMetadata.setVersion(getVersion());
@@ -354,7 +354,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
                 String retryKey = method.getName() + ".retry";
                 if (map.containsKey(retryKey)) {
                     String retryValue = map.remove(retryKey);
-                    if ("false".equals(retryValue)) {
+                    if ("false".equals(retryValue)) { // 对重试参数进行转换处理
                         map.put(method.getName() + ".retries", "0");
                     }
                 }
@@ -406,7 +406,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
 
         if (ProtocolUtils.isGeneric(generic)) {
             map.put(GENERIC_KEY, generic);
-            map.put(METHODS_KEY, ANY_VALUE);
+            map.put(METHODS_KEY, ANY_VALUE); //泛化类型的方法为*
         } else {
             String revision = Version.getVersion(interfaceClass, version);
             if (revision != null && revision.length() > 0) {
@@ -425,7 +425,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
         /**
          * Here the token value configured by the provider is used to assign the value to ServiceConfig#token
          */
-        if(ConfigUtils.isEmpty(token) && provider != null) {
+        if(ConfigUtils.isEmpty(token) && provider != null) { //令牌token处理
             token = provider.getToken();
         }
 
@@ -568,7 +568,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
             if (provider != null && StringUtils.isEmpty(hostToBind)) {
                 hostToBind = provider.getHost();
             }
-            if (isInvalidLocalHost(hostToBind)) {
+            if (isInvalidLocalHost(hostToBind)) { //todo @csy pause
                 anyhost = true;
                 try {
                     logger.info("No valid ip found from environment, try to find valid host from DNS.");

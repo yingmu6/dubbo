@@ -59,7 +59,7 @@ public class ServiceRepository extends LifecycleAdapter implements FrameworkExt 
         }
     }
 
-    public ServiceDescriptor registerService(Class<?> interfaceClazz) {
+    public ServiceDescriptor registerService(Class<?> interfaceClazz) { //注册服务：把类与服务描述信息写到本地缓存中
         return services.computeIfAbsent(interfaceClazz.getName(),
                 _k -> new ServiceDescriptor(interfaceClazz));
     }
@@ -115,7 +115,7 @@ public class ServiceRepository extends LifecycleAdapter implements FrameworkExt 
                                  Object serviceInstance,
                                  ServiceDescriptor serviceModel,
                                  ServiceConfigBase<?> serviceConfig,
-                                 ServiceMetadata serviceMetadata) {
+                                 ServiceMetadata serviceMetadata) { //注册提供者信息
         ProviderModel providerModel = new ProviderModel(serviceKey, serviceInstance, serviceModel, serviceConfig,
                 serviceMetadata);
         providers.putIfAbsent(serviceKey, providerModel);

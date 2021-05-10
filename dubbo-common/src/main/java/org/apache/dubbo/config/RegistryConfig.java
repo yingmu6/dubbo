@@ -36,7 +36,7 @@ import static org.apache.dubbo.config.Constants.REGISTRIES_SUFFIX;
  */
 public class RegistryConfig extends AbstractConfig {
 
-    public static final String NO_AVAILABLE = "N/A";
+    public static final String NO_AVAILABLE = "N/A"; //不可使用
     private static final long serialVersionUID = 5508512956753757169L;
 
     /**

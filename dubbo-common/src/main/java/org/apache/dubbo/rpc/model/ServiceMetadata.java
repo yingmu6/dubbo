@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Notice, this class currently has no usage inside Dubbo.
+ * Notice, this class currently has no usage inside Dubbo（在Dubbo内部没有被运用）.
  *
  * data related to service level such as name, version, classloader of business service,
  * security info, etc. Also with a AttributeMap for extension.

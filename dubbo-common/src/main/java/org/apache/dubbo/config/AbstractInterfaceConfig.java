@@ -189,7 +189,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
         }
     }
 
-    public static void appendRuntimeParameters(Map<String, String> map) {
+    public static void appendRuntimeParameters(Map<String, String> map) { //添加运行相关参数
         map.put(DUBBO_VERSION_KEY, Version.getProtocolVersion());
         map.put(RELEASE_KEY, Version.getVersion());
         map.put(TIMESTAMP_KEY, String.valueOf(System.currentTimeMillis()));

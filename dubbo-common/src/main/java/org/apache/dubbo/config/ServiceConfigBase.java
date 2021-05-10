@@ -399,7 +399,7 @@ public abstract class ServiceConfigBase<T> extends AbstractServiceConfig {
     }
 
     @Parameter(excluded = true)
-    public String getUniqueServiceName() {
+    public String getUniqueServiceName() { //接口名+分组+版本，组成唯一服务名
         return URL.buildKey(interfaceName, getGroup(), getVersion());
     }
 
