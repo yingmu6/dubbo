@@ -326,7 +326,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
         }
     }
 
-    private void doExportUrlsFor1Protocol(ProtocolConfig protocolConfig, List<URL> registryURLs) {
+    private void doExportUrlsFor1Protocol(ProtocolConfig protocolConfig, List<URL> registryURLs) { //TODO @CSY 方法待调试
         String name = protocolConfig.getName();
         if (StringUtils.isEmpty(name)) {
             name = DUBBO;
@@ -453,14 +453,14 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
 
         String scope = url.getParameter(SCOPE_KEY);
         // don't export when none is configured
-        if (!SCOPE_NONE.equalsIgnoreCase(scope)) {
+        if (!SCOPE_NONE.equalsIgnoreCase(scope)) { //服务暴露范围为none时，不处理
 
             // export to local if the config is not remote (export to remote only when config is remote)
-            if (!SCOPE_REMOTE.equalsIgnoreCase(scope)) {
+            if (!SCOPE_REMOTE.equalsIgnoreCase(scope)) { //暴露本地服务
                 exportLocal(url);
             }
             // export to remote if the config is not local (export to local only when config is local)
-            if (!SCOPE_LOCAL.equalsIgnoreCase(scope)) {
+            if (!SCOPE_LOCAL.equalsIgnoreCase(scope)) { //暴露远程服务
                 if (CollectionUtils.isNotEmpty(registryURLs)) {
                     for (URL registryURL : registryURLs) {
                         //if protocol is only injvm ,not register
@@ -568,7 +568,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
             if (provider != null && StringUtils.isEmpty(hostToBind)) {
                 hostToBind = provider.getHost();
             }
-            if (isInvalidLocalHost(hostToBind)) { //todo @csy pause
+            if (isInvalidLocalHost(hostToBind)) { //地址无效时，尝试获取有效的网络地址
                 anyhost = true;
                 try {
                     logger.info("No valid ip found from environment, try to find valid host from DNS.");
@@ -636,7 +636,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
         portToBind = parsePort(port);
 
         // if there's no bind port found from environment, keep looking up.
-        if (portToBind == null) {
+        if (portToBind == null) { //todo @csy 待调试
             portToBind = protocolConfig.getPort();
             if (provider != null && (portToBind == null || portToBind == 0)) {
                 portToBind = provider.getPort();

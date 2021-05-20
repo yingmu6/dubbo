@@ -41,7 +41,7 @@ public class MethodDescriptor {//方法的描述信息
     private final String methodName;
     private final boolean generic;
 
-    public MethodDescriptor(Method method) {
+    public MethodDescriptor(Method method) { //构造方法对象的描述符
         this.method = method;
         this.parameterClasses = method.getParameterTypes();
         this.returnClass = method.getReturnType();

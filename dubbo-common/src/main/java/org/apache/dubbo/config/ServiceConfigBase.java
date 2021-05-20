@@ -183,7 +183,7 @@ public abstract class ServiceConfigBase<T> extends AbstractServiceConfig {
 
     public Optional<String> getContextPath(ProtocolConfig protocolConfig) {
         String contextPath = protocolConfig.getContextpath();
-        if (StringUtils.isEmpty(contextPath) && provider != null) {
+        if (StringUtils.isEmpty(contextPath) && provider != null) { //todo @csy 待调试 contextPath
             contextPath = provider.getContextpath();
         }
         return Optional.ofNullable(contextPath);

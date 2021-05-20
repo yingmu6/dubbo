@@ -52,7 +52,7 @@ public class ServiceRepository extends LifecycleAdapter implements FrameworkExt 
     public ServiceRepository() {
         Set<BuiltinServiceDetector> builtinServices
                 = ExtensionLoader.getExtensionLoader(BuiltinServiceDetector.class).getSupportedExtensionInstances();
-        if (CollectionUtils.isNotEmpty(builtinServices)) {
+        if (CollectionUtils.isNotEmpty(builtinServices)) { //将内嵌服务写到缓存Map中services
             for (BuiltinServiceDetector service : builtinServices) {
                 registerService(service.getService());
             }
@@ -60,7 +60,7 @@ public class ServiceRepository extends LifecycleAdapter implements FrameworkExt 
     }
 
     public ServiceDescriptor registerService(Class<?> interfaceClazz) { //注册服务：把类与服务描述信息写到本地缓存中
-        return services.computeIfAbsent(interfaceClazz.getName(),
+         return services.computeIfAbsent(interfaceClazz.getName(), //interfaceClazz.getName()的值如："org.apache.dubbo.rpc.service.EchoService"
                 _k -> new ServiceDescriptor(interfaceClazz));
     }
 

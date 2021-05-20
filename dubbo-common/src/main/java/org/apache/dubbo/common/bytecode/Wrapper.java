@@ -77,7 +77,7 @@ public abstract class Wrapper { //包装类
 
         @Override
         public Object invokeMethod(Object instance, String mn, Class<?>[] types, Object[] args) throws NoSuchMethodException {
-            if ("getClass".equals(mn)) {
+            if ("getClass".equals(mn)) { //根据方法名选择执行不同的方法
                 return instance.getClass();
             }
             if ("hashCode".equals(mn)) {
