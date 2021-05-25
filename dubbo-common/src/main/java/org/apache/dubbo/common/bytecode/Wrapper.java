@@ -41,7 +41,7 @@ public abstract class Wrapper { //包装类
     private static final String[] OBJECT_METHODS = new String[]{"getClass", "hashCode", "toString", "equals"};
     private static final Wrapper OBJECT_WRAPPER = new Wrapper() { //类加载时创建Wrapper实例
         @Override
-        public String[] getMethodNames() {
+        public String[] getMethodNames() { //匿名内部类，对应实现抽象方法
             return OBJECT_METHODS;
         }
 
@@ -113,23 +113,23 @@ public abstract class Wrapper { //包装类
             return OBJECT_WRAPPER;
         }
 
-        return WRAPPER_MAP.computeIfAbsent(c, key -> makeWrapper(key)); //构建封装类，并设置到缓存中
+        return WRAPPER_MAP.computeIfAbsent(c, key -> makeWrapper(key)); //构建封装类，并设置到缓存中，key的值与c相同
     }
 
-    private static Wrapper makeWrapper(Class<?> c) {
+    private static Wrapper makeWrapper(Class<?> c) { //为指定class构建Wrapper封装类的实例
         if (c.isPrimitive()) { //基本类型不能创建封装类
             throw new IllegalArgumentException("Can not create wrapper for primitive type: " + c);
         }
 
-        String name = c.getName(); //如：String.class.getName() 返回java.lang.String
+        String name = c.getName(); //如：String.class.getName() 返回java.lang.String，再如：org.apache.dubbo.demo.GreetingService
         ClassLoader cl = ClassUtils.getClassLoader(c);
 
-        // 拼接类代码对应的字符串
+        // 拼接类代码对应的字符串 (对应Wrapper类中的抽象方法)
         StringBuilder c1 = new StringBuilder("public void setPropertyValue(Object o, String n, Object v){ ");
         StringBuilder c2 = new StringBuilder("public Object getPropertyValue(Object o, String n){ ");
         StringBuilder c3 = new StringBuilder("public Object invokeMethod(Object o, String n, Class[] p, Object[] v) throws " + InvocationTargetException.class.getName() + "{ ");
 
-        c1.append(name).append(" w; try{ w = ((").append(name).append(")$1); }catch(Throwable e){ throw new IllegalArgumentException(e); }");
+        c1.append(name).append(" w; try{ w = ((").append(name).append(")$1); }catch(Throwable e){ throw new IllegalArgumentException(e); }"); //如：public void setPropertyValue(Object o, String n, Object v){ org.apache.dubbo.demo.GreetingService w; try{ w = ((org.apache.dubbo.demo.GreetingService)$1); }catch(Throwable e){ throw new IllegalArgumentException(e); }
         c2.append(name).append(" w; try{ w = ((").append(name).append(")$1); }catch(Throwable e){ throw new IllegalArgumentException(e); }");
         c3.append(name).append(" w; try{ w = ((").append(name).append(")$1); }catch(Throwable e){ throw new IllegalArgumentException(e); }");
 
@@ -139,7 +139,7 @@ public abstract class Wrapper { //包装类
         List<String> dmns = new ArrayList<>(); // declaring method names.
 
         // get all public field.
-        for (Field f : c.getFields()) {
+        for (Field f : c.getFields()) { //todo @csy-001 构建进入条件
             String fn = f.getName();
             Class<?> ft = f.getType();
             if (Modifier.isStatic(f.getModifiers()) || Modifier.isTransient(f.getModifiers())) { //static、transient修饰的字段不处理
@@ -168,13 +168,13 @@ public abstract class Wrapper { //包装类
                 c3.append(" && ").append(" $3.length == ").append(len);
 
                 boolean override = false;
-                for (Method m2 : methods) {
+                for (Method m2 : methods) { //判断是否重写
                     if (m != m2 && m.getName().equals(m2.getName())) {
                         override = true;
                         break;
                     }
                 }
-                if (override) {
+                if (override) { //todo @csy-001 构建执行条件
                     if (len > 0) {
                         for (int l = 0; l < len; l++) {
                             c3.append(" && ").append(" $3[").append(l).append("].getName().equals(\"")
@@ -191,7 +191,7 @@ public abstract class Wrapper { //包装类
                     c3.append(" return ($w)w.").append(mn).append('(').append(args(m.getParameterTypes(), "$4")).append(");");
                 }
 
-                c3.append(" }");
+                c3.append(" }"); //如：public Object invokeMethod(Object o, String n, Class[] p, Object[] v) throws java.lang.reflect.InvocationTargetException{ org.apache.dubbo.demo.GreetingService w; try{ w = ((org.apache.dubbo.demo.GreetingService)$1); }catch(Throwable e){ throw new IllegalArgumentException(e); } try{ if( "hello".equals( $2 )  &&  $3.length == 0 ) {  return ($w)w.hello(); }
 
                 mns.add(mn);
                 if (m.getDeclaringClass() == c) {
@@ -211,15 +211,15 @@ public abstract class Wrapper { //包装类
         for (Map.Entry<String, Method> entry : ms.entrySet()) {
             String md = entry.getKey();
             Method method = entry.getValue();
-            if ((matcher = ReflectUtils.GETTER_METHOD_DESC_PATTERN.matcher(md)).matches()) {
+            if ((matcher = ReflectUtils.GETTER_METHOD_DESC_PATTERN.matcher(md)).matches()) { //匹配get方法
                 String pn = propertyName(matcher.group(1));
                 c2.append(" if( $2.equals(\"").append(pn).append("\") ){ return ($w)w.").append(method.getName()).append("(); }");
                 pts.put(pn, method.getReturnType());
-            } else if ((matcher = ReflectUtils.IS_HAS_CAN_METHOD_DESC_PATTERN.matcher(md)).matches()) {
+            } else if ((matcher = ReflectUtils.IS_HAS_CAN_METHOD_DESC_PATTERN.matcher(md)).matches()) { //匹配is、has、can方法
                 String pn = propertyName(matcher.group(1));
                 c2.append(" if( $2.equals(\"").append(pn).append("\") ){ return ($w)w.").append(method.getName()).append("(); }");
                 pts.put(pn, method.getReturnType());
-            } else if ((matcher = ReflectUtils.SETTER_METHOD_DESC_PATTERN.matcher(md)).matches()) {
+            } else if ((matcher = ReflectUtils.SETTER_METHOD_DESC_PATTERN.matcher(md)).matches()) { //匹配set方法
                 Class<?> pt = method.getParameterTypes()[0];
                 String pn = propertyName(matcher.group(1));
                 c1.append(" if( $2.equals(\"").append(pn).append("\") ){ w.").append(method.getName()).append("(").append(arg(pt, "$3")).append("); return; }");
@@ -232,8 +232,8 @@ public abstract class Wrapper { //包装类
         // make class（构建Class对象）
         long id = WRAPPER_CLASS_COUNTER.getAndIncrement();
         ClassGenerator cc = ClassGenerator.newInstance(cl);
-        cc.setClassName((Modifier.isPublic(c.getModifiers()) ? Wrapper.class.getName() : c.getName() + "$sw") + id);
-        cc.setSuperClass(Wrapper.class);
+        cc.setClassName((Modifier.isPublic(c.getModifiers()) ? Wrapper.class.getName() : c.getName() + "$sw") + id); //org.apache.dubbo.common.bytecode.Wrapper0， todo @csy-001 $sw取哪里的值？
+        cc.setSuperClass(Wrapper.class); //将Wrapper指定为父类
 
         cc.addDefaultConstructor();
         cc.addField("public static String[] pns;"); // property name array.
@@ -264,7 +264,7 @@ public abstract class Wrapper { //包装类
             for (Method m : ms.values()) {
                 wc.getField("mts" + ix++).set(null, m.getParameterTypes());
             }
-            return (Wrapper) wc.newInstance(); //创建class对应的实例
+            return (Wrapper) wc.newInstance(); //创建class对应的实例， todo @csy-001 Class类了解
         } catch (RuntimeException e) {
             throw e;
         } catch (Throwable e) {
@@ -308,7 +308,7 @@ public abstract class Wrapper { //包装类
         return "(" + ReflectUtils.getName(cl) + ")" + name;
     }
 
-    private static String args(Class<?>[] cs, String name) {
+    private static String args(Class<?>[] cs, String name) { //todo @csy-001 构建条件进入
         int len = cs.length;
         if (len == 0) {
             return "";
@@ -323,7 +323,7 @@ public abstract class Wrapper { //包装类
         return sb.toString();
     }
 
-    private static String propertyName(String pn) {
+    private static String propertyName(String pn) { //todo @csy-001 构建进入条件
         return pn.length() == 1 || Character.isLowerCase(pn.charAt(1)) ? Character.toLowerCase(pn.charAt(0)) + pn.substring(1) : pn;
     }
 
@@ -336,7 +336,7 @@ public abstract class Wrapper { //包装类
                 return true;
             }
         }
-        return false;
+        return false; //若所有的方法都是Object中的，表明是Object对象，不处理
     }
 
     /**
@@ -442,7 +442,7 @@ public abstract class Wrapper { //包装类
     }
 
     /**
-     * invoke method.
+     * invoke method.(调用实例中的对应方法)
      *
      * @param instance instance.
      * @param mn       method name.

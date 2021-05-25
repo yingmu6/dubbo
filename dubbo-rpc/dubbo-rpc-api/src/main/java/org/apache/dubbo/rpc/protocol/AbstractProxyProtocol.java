@@ -80,7 +80,7 @@ public abstract class AbstractProxyProtocol extends AbstractProtocol { //@pause 
         Exporter<T> exporter = (Exporter<T>) exporterMap.get(uri);
         if (exporter != null) {
             // When modifying the configuration through override, you need to re-expose the newly modified service.
-            if (Objects.equals(exporter.getInvoker().getUrl(), invoker.getUrl())) {
+            if (Objects.equals(exporter.getInvoker().getUrl(), invoker.getUrl())) { //缓存中的配置与实际配置有变更时，重新暴露服务
                 return exporter;
             }
         }

@@ -326,7 +326,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
         }
     }
 
-    private void doExportUrlsFor1Protocol(ProtocolConfig protocolConfig, List<URL> registryURLs) { //TODO @CSY 方法待调试
+    private void doExportUrlsFor1Protocol(ProtocolConfig protocolConfig, List<URL> registryURLs) { //todo @csy 待调试
         String name = protocolConfig.getName();
         if (StringUtils.isEmpty(name)) {
             name = DUBBO;
@@ -519,7 +519,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
     /**
      * always export injvm
      */
-    private void exportLocal(URL url) {
+    private void exportLocal(URL url) { //todo @pause
         URL local = URLBuilder.from(url)
                 .setProtocol(LOCAL_PROTOCOL)
                 .setHost(LOCALHOST_VALUE)

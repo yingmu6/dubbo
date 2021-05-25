@@ -38,6 +38,6 @@ public interface Node { //节点
     /**
      * destroy.（销毁节点）
      */
-    void destroy();
+    void destroy(); //todo @csy-001 销毁节点，都做了哪些操作，只是设置available标识吗？
 
 }

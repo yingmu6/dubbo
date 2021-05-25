@@ -116,6 +116,7 @@ public abstract class AbstractProxyInvoker<T> implements Invoker<T> {
         return CompletableFuture.completedFuture(value);
     }
 
+    // 调用某个实例的某个方法
     protected abstract Object doInvoke(T proxy, String methodName, Class<?>[] parameterTypes, Object[] arguments) throws Throwable;
 
     @Override

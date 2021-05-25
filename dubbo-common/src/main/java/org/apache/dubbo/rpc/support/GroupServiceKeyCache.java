@@ -33,7 +33,7 @@ public class GroupServiceKeyCache {
         this.serviceKeyMap = new ConcurrentHashMap<>(512);
     }
 
-    public String getServiceKey(String serviceName, String serviceVersion, int port) {
+    public String getServiceKey(String serviceName, String serviceVersion, int port) { //通过服务名、服务版本、端口号构建服务key
         ConcurrentMap<String, ConcurrentMap<Integer, String>> versionMap = serviceKeyMap.get(serviceName);
         if (versionMap == null) {
             serviceKeyMap.putIfAbsent(serviceName, new ConcurrentHashMap<>());

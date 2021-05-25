@@ -64,7 +64,7 @@ public abstract class AbstractProxyFactory implements ProxyFactory { //AbstractP
             }
         }
 
-        if (generic) { //泛化类型，处理泛化类型
+        if (generic) { //泛化类型，处理泛化类型  todo @csy-001 构建用例测试该入口
             if (!GenericService.class.isAssignableFrom(invoker.getInterface())) { //兼容alibaba的GenericService泛化类型
                 interfaces.add(com.alibaba.dubbo.rpc.service.GenericService.class);
             }
@@ -81,9 +81,9 @@ public abstract class AbstractProxyFactory implements ProxyFactory { //AbstractP
         interfaces.add(invoker.getInterface()); //实际接口对应的Class
         interfaces.addAll(Arrays.asList(INTERNAL_INTERFACES)); //预定接口对应的Class
 
-        return getProxy(invoker, interfaces.toArray(new Class<?>[0])); //调用抽象方法，具体的实现交由子类执行（上帝视角）
+        return getProxy(invoker, interfaces.toArray(new Class<?>[0])); //调用抽象方法，具体的实现交由子类执行
     }
 
-    public abstract <T> T getProxy(Invoker<T> invoker, Class<?>[] types);
+    public abstract <T> T getProxy(Invoker<T> invoker, Class<?>[] types); //todo @csy-001 是怎么选择抽象类的实例的？SPI机制吗？
 
 }

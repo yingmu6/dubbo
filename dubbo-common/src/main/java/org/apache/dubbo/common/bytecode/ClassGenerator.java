@@ -47,7 +47,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * ClassGenerator（javassist方式产生代理对象）
  */
-public final class ClassGenerator {
+public final class ClassGenerator { //todo @csy-001 该类的用途是什么？
 
     private static final AtomicLong CLASS_NAME_COUNTER = new AtomicLong(0);
     private static final String SIMPLE_NAME_TAG = "<init>";
@@ -90,8 +90,8 @@ public final class ClassGenerator {
 
         ClassPool pool = POOL_MAP.get(loader);
         if (pool == null) {
-            pool = new ClassPool(true);
-            pool.appendClassPath(new LoaderClassPath(loader)); //设置类路径
+            pool = new ClassPool(true); //todo @csy-001 javassist了解，以及ClassPool了解
+            pool.appendClassPath(new LoaderClassPath(loader)); //设置类路径, todo @csy-001 LoaderClassPath了解
             POOL_MAP.put(loader, pool);
         }
         return pool;
@@ -291,7 +291,7 @@ public final class ClassGenerator {
             mCtc.detach(); //detach:分离， 从ClassPool中移除CtClass
         }
         // 基于当前类维护的数据，进行逻辑处理
-        long id = CLASS_NAME_COUNTER.getAndIncrement();
+        long id = CLASS_NAME_COUNTER.getAndIncrement(); //todo @csy-001 待调试
         try {
             CtClass ctcs = mSuperClass == null ? null : mPool.get(mSuperClass);
             if (mClassName == null) {

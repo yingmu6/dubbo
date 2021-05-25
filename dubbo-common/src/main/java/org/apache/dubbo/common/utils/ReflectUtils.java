@@ -116,7 +116,7 @@ public final class ReflectUtils {
 
     public static final String ARRAY_DESC = "(?:\\[+(?:(?:[VZBCDFIJS])|" + CLASS_DESC + "))";
 
-    public static final String DESC_REGEX = "(?:(?:[VZBCDFIJS])|" + CLASS_DESC + "|" + ARRAY_DESC + ")";
+    public static final String DESC_REGEX = "(?:(?:[VZBCDFIJS])|" + CLASS_DESC + "|" + ARRAY_DESC + ")"; //todo @csy-001 此处的标识都是什么含义？VZBCDFIJS
 
     public static final Pattern DESC_PATTERN = Pattern.compile(DESC_REGEX);
 
@@ -126,9 +126,9 @@ public final class ReflectUtils {
 
     public static final Pattern GETTER_METHOD_DESC_PATTERN = Pattern.compile("get([A-Z][_a-zA-Z0-9]*)\\(\\)(" + DESC_REGEX + ")"); //get方法描述对应的正则表达值
 
-    public static final Pattern SETTER_METHOD_DESC_PATTERN = Pattern.compile("set([A-Z][_a-zA-Z0-9]*)\\((" + DESC_REGEX + ")\\)V");
+    public static final Pattern SETTER_METHOD_DESC_PATTERN = Pattern.compile("set([A-Z][_a-zA-Z0-9]*)\\((" + DESC_REGEX + ")\\)V"); //todo @csy-001 pattern与matcher使用实践
 
-    public static final Pattern IS_HAS_CAN_METHOD_DESC_PATTERN = Pattern.compile("(?:is|has|can)([A-Z][_a-zA-Z0-9]*)\\(\\)Z");
+    public static final Pattern IS_HAS_CAN_METHOD_DESC_PATTERN = Pattern.compile("(?:is|has|can)([A-Z][_a-zA-Z0-9]*)\\(\\)Z"); //todo @csy-001 此处正则表达式含义是啥？
 
     private static final ConcurrentMap<String, Class<?>> DESC_CLASS_CACHE = new ConcurrentHashMap<String, Class<?>>();
 
@@ -401,7 +401,7 @@ public final class ReflectUtils {
             ret.append(c.getName().replace('.', '/'));
             ret.append(';');
         }
-        return ret.toString();
+        return ret.toString(); //如：Ljava/lang/String;
     }
 
     /**
@@ -438,8 +438,8 @@ public final class ReflectUtils {
         for (int i = 0; i < parameterTypes.length; i++) {
             ret.append(getDesc(parameterTypes[i]));
         }
-        ret.append(')').append(getDesc(m.getReturnType()));
-        return ret.toString();
+        ret.append(')').append(getDesc(m.getReturnType())); //todo @csy-001 带上入参会是怎样的？
+        return ret.toString(); //如：hello()Ljava/lang/String;
     }
 
     public static String[] getDescArray(final Method m) {
@@ -712,7 +712,7 @@ public final class ReflectUtils {
     }
 
     /**
-     * name to class. //todo 此处待调试，看下基本类型、对象类型是怎么转换的
+     * name to class.
      * "boolean" => boolean.class
      * "java.util.Map[][]" => java.util.Map[][].class
      *
@@ -720,7 +720,7 @@ public final class ReflectUtils {
      * @param name name.
      * @return Class instance.
      */
-    private static Class<?> name2class(ClassLoader cl, String name) throws ClassNotFoundException {
+    private static Class<?> name2class(ClassLoader cl, String name) throws ClassNotFoundException {//todo @csy-001 此处待调试，看下基本类型、对象类型是怎么转换的
         int c = 0, index = name.indexOf('[');
         if (index > 0) {
             c = (name.length() - index) / 2;
