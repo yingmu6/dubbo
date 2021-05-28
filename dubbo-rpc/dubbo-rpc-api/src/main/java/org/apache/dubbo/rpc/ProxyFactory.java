@@ -26,7 +26,7 @@ import static org.apache.dubbo.rpc.Constants.PROXY_KEY;
  * ProxyFactory. (API/SPI, Singleton, ThreadSafe)
  */
 @SPI("javassist")
-public interface ProxyFactory {
+public interface ProxyFactory { //todo @csy-002 自适应扩展中，是怎么获取url的值的，键key是怎么取的？
     /**
      * 代理模式了解，解：通过代理对象对目标对象进行访问控制
      * 代理模式：https://www.runoob.com/design-pattern/proxy-pattern.html

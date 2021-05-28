@@ -25,7 +25,7 @@ import java.net.InetSocketAddress;
  * @see RemotingServer#getChannels()
  * @see RemotingServer#getChannel(InetSocketAddress)
  */
-public interface Channel extends Endpoint { //通道
+public interface Channel extends Endpoint { //通道 todo @csy-002 通道的概念是啥？与NIO中的Channel有啥区别吗？
 
     /**
      * get remote address.

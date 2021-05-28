@@ -278,7 +278,7 @@ public class DubboProtocol extends AbstractProtocol {
     }
 
     @Override
-    public <T> Exporter<T> export(Invoker<T> invoker) throws RpcException {
+    public <T> Exporter<T> export(Invoker<T> invoker) throws RpcException { //todo @csy-002 是不是默认进入的？
         URL url = invoker.getUrl();
 
         // export service.
@@ -289,7 +289,7 @@ public class DubboProtocol extends AbstractProtocol {
         //export an stub service for dispatching event
         Boolean isStubSupportEvent = url.getParameter(STUB_EVENT_KEY, DEFAULT_STUB_EVENT);
         Boolean isCallbackservice = url.getParameter(IS_CALLBACK_SERVICE, false);
-        if (isStubSupportEvent && !isCallbackservice) {
+        if (isStubSupportEvent && !isCallbackservice) { //todo @csy-002 存根事件、回调服务都是怎样的？调试了解下
             String stubServiceMethods = url.getParameter(STUB_EVENT_METHODS_KEY);
             if (stubServiceMethods == null || stubServiceMethods.length() == 0) {
                 if (logger.isWarnEnabled()) {
@@ -314,7 +314,7 @@ public class DubboProtocol extends AbstractProtocol {
         if (isServer) {
             ProtocolServer server = serverMap.get(key);
             if (server == null) {
-                synchronized (this) {
+                synchronized (this) { //todo @csy-002 了解synchronized使用方式以及底层原理
                     server = serverMap.get(key);
                     if (server == null) {
                         serverMap.put(key, createServer(url));
@@ -327,12 +327,12 @@ public class DubboProtocol extends AbstractProtocol {
         }
     }
 
-    private ProtocolServer createServer(URL url) {
+    private ProtocolServer createServer(URL url) { //todo @csy-002 此方法的用途是啥？ @pause-002
         url = URLBuilder.from(url)
                 // send readonly event when server closes, it's enabled by default
                 .addParameterIfAbsent(CHANNEL_READONLYEVENT_SENT_KEY, Boolean.TRUE.toString())
                 // enable heartbeat by default
-                .addParameterIfAbsent(HEARTBEAT_KEY, String.valueOf(DEFAULT_HEARTBEAT))
+                .addParameterIfAbsent(HEARTBEAT_KEY, String.valueOf(DEFAULT_HEARTBEAT)) //心跳间隔时间
                 .addParameter(CODEC_KEY, DubboCodec.NAME)
                 .build();
         String str = url.getParameter(SERVER_KEY, DEFAULT_REMOTING_SERVER);
@@ -359,7 +359,7 @@ public class DubboProtocol extends AbstractProtocol {
         return new DubboProtocolServer(server);
     }
 
-    private void optimizeSerialization(URL url) throws RpcException {
+    private void optimizeSerialization(URL url) throws RpcException { //todo @csy-002 是怎么优化序列化的方式？
         String className = url.getParameter(OPTIMIZER_KEY, "");
         if (StringUtils.isEmpty(className) || optimizers.contains(className)) {
             return;

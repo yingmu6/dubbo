@@ -78,15 +78,15 @@ public class HessianProtocol extends AbstractProxyProtocol {
     }
 
     @Override
-    protected <T> Runnable doExport(T impl, Class<T> type, URL url) throws RpcException {
+    protected <T> Runnable doExport(T impl, Class<T> type, URL url) throws RpcException { //todo @csy-002 此处是org.apache.dubbo.rpc.protocol.AbstractProxyProtocol.doExport默认实现吗？
         String addr = getAddr(url);
         ProtocolServer protocolServer = serverMap.get(addr);
         if (protocolServer == null) {
-            RemotingServer remotingServer = httpBinder.bind(url, new HessianHandler());
+            RemotingServer remotingServer = httpBinder.bind(url, new HessianHandler()); //todo @csy-002 此处是绑定事件吗？是怎么做回调的？
             serverMap.put(addr, new ProxyProtocolServer(remotingServer));
         }
         final String path = url.getAbsolutePath();
-        final HessianSkeleton skeleton = new HessianSkeleton(impl, type);
+        final HessianSkeleton skeleton = new HessianSkeleton(impl, type); //todo @csy Hessian 了解以及基本使用
         skeletonMap.put(path, skeleton);
 
         final String genericPath = path + "/" + GENERIC_KEY;
@@ -181,7 +181,7 @@ public class HessianProtocol extends AbstractProxyProtocol {
                 RpcContext.getContext().setRemoteAddress(request.getRemoteAddr(), request.getRemotePort());
 
                 Enumeration<String> enumeration = request.getHeaderNames();
-                while (enumeration.hasMoreElements()) {
+                while (enumeration.hasMoreElements()) { //todo @csy-002 待调试覆盖
                     String key = enumeration.nextElement();
                     if (key.startsWith(DEFAULT_EXCHANGER)) {
                         RpcContext.getContext().setAttachment(key.substring(DEFAULT_EXCHANGER.length()),

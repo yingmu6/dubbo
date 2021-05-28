@@ -72,7 +72,7 @@ public interface RegistryConstants {
      *
      * @since 2.7.5
      */
-    String SERVICE_REGISTRY_PROTOCOL = "service-discovery-registry";
+    String SERVICE_REGISTRY_PROTOCOL = "service-discovery-registry"; //todo @csy-002 什么场景下使用的？
 
     /**
      * The parameter key of the subscribed service names for Service-Oriented Registry

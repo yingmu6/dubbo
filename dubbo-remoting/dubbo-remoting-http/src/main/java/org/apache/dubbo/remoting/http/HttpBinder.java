@@ -25,7 +25,7 @@ import org.apache.dubbo.remoting.Constants;
  * HttpBinder
  */
 @SPI("jetty")
-public interface HttpBinder {
+public interface HttpBinder { //todo @csy-002 该类的用途是啥？
 
     /**
      * bind the server.

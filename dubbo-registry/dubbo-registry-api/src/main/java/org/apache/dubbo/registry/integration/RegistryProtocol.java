@@ -187,7 +187,7 @@ public class RegistryProtocol implements Protocol {
     }
 
     @Override
-    public <T> Exporter<T> export(final Invoker<T> originInvoker) throws RpcException {
+    public <T> Exporter<T> export(final Invoker<T> originInvoker) throws RpcException { //todo @csy-002 注册协议都暴露了什么？
         URL registryUrl = getRegistryUrl(originInvoker);
         // url to export locally
         URL providerUrl = getProviderUrl(originInvoker);

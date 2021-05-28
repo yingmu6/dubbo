@@ -25,7 +25,7 @@ import org.apache.dubbo.remoting.transport.ChannelHandlerDispatcher;
 /**
  * Transporter facade. (API, Static, ThreadSafe)
  */
-public class Transporters {
+public class Transporters { //todo @csy-002 都做哪些传输处理的？
 
     static {
         // check duplicate jar package
@@ -53,7 +53,7 @@ public class Transporters {
         } else {
             handler = new ChannelHandlerDispatcher(handlers);
         }
-        return getTransporter().bind(url, handler);
+        return getTransporter().bind(url, handler); //todo @csy-002 此处是怎么选择实例的，比如NettyTransporter
     }
 
     public static Client connect(String url, ChannelHandler... handler) throws RemotingException {

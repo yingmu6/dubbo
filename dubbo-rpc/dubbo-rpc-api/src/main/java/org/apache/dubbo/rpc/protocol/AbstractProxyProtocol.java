@@ -84,7 +84,8 @@ public abstract class AbstractProxyProtocol extends AbstractProtocol { //@pause 
                 return exporter;
             }
         }
-        final Runnable runnable = doExport(proxyFactory.getProxy(invoker, true), invoker.getInterface(), invoker.getUrl());
+        final Runnable runnable = doExport(proxyFactory.getProxy(invoker, true), invoker.getInterface(), invoker.getUrl()); //todo @csy-002 默认会选择哪个实现类？
+        // todo @csy-002 此处返回的Runnable的执行体都有啥？
         exporter = new AbstractExporter<T>(invoker) {
             @Override
             public void unexport() {
@@ -142,10 +143,10 @@ public abstract class AbstractProxyProtocol extends AbstractProtocol { //@pause 
         return re;
     }
 
-    protected String getAddr(URL url) {
+    protected String getAddr(URL url) { //地址格式，ip:host
         String bindIp = url.getParameter(Constants.BIND_IP_KEY, url.getHost());
         if (url.getParameter(ANYHOST_KEY, false)) {
-            bindIp = ANYHOST_VALUE;
+            bindIp = ANYHOST_VALUE; //todo @csy-002 任意主机是在哪种场景下使用的？
         }
         return NetUtils.getIpByHost(bindIp) + ":" + url.getParameter(Constants.BIND_PORT_KEY, url.getPort());
     }

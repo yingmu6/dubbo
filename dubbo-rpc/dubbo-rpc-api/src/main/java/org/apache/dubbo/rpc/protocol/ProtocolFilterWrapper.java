@@ -51,15 +51,15 @@ public class ProtocolFilterWrapper implements Protocol {
         this.protocol = protocol;
     }
 
-    private static <T> Invoker<T> buildInvokerChain(final Invoker<T> invoker, String key, String group) { //构建调用链，并返回头结点
+    private static <T> Invoker<T> buildInvokerChain(final Invoker<T> invoker, String key, String group) { //构建调用链，并返回头结点， todo @csy-002 调用链都是怎样构造的？是在哪里调用的？
         Invoker<T> last = invoker;
-        List<Filter> filters = ExtensionLoader.getExtensionLoader(Filter.class).getActivateExtension(invoker.getUrl(), key, group);
+        List<Filter> filters = ExtensionLoader.getExtensionLoader(Filter.class).getActivateExtension(invoker.getUrl(), key, group); //todo @csy 此处自适应扩展是怎么获取到过滤器列表的
 
         if (!filters.isEmpty()) {
             for (int i = filters.size() - 1; i >= 0; i--) { //从后往前遍历，最后一个就是头结点
                 final Filter filter = filters.get(i);
                 final Invoker<T> next = last;
-                last = new Invoker<T>() {
+                last = new Invoker<T>() { //todo @csy-002 该链表是怎么链接的
 
                     @Override
                     public Class<T> getInterface() {
@@ -81,7 +81,7 @@ public class ProtocolFilterWrapper implements Protocol {
                         Result asyncResult;
                         try {
                             asyncResult = filter.invoke(next, invocation);
-                        } catch (Exception e) {
+                        } catch (Exception e) { //todo @csy-002 待调试
                             if (filter instanceof ListenableFilter) {
                                 ListenableFilter listenableFilter = ((ListenableFilter) filter);
                                 try {

@@ -129,7 +129,7 @@ public abstract class Wrapper { //包装类
         StringBuilder c2 = new StringBuilder("public Object getPropertyValue(Object o, String n){ ");
         StringBuilder c3 = new StringBuilder("public Object invokeMethod(Object o, String n, Class[] p, Object[] v) throws " + InvocationTargetException.class.getName() + "{ ");
 
-        c1.append(name).append(" w; try{ w = ((").append(name).append(")$1); }catch(Throwable e){ throw new IllegalArgumentException(e); }"); //如：public void setPropertyValue(Object o, String n, Object v){ org.apache.dubbo.demo.GreetingService w; try{ w = ((org.apache.dubbo.demo.GreetingService)$1); }catch(Throwable e){ throw new IllegalArgumentException(e); }
+        c1.append(name).append(" w; try{ w = ((").append(name).append(")$1); }catch(Throwable e){ throw new IllegalArgumentException(e); }"); //如：(org.apache.dubbo.demo.GreetingService)$1 ; 做类型强制转换
         c2.append(name).append(" w; try{ w = ((").append(name).append(")$1); }catch(Throwable e){ throw new IllegalArgumentException(e); }");
         c3.append(name).append(" w; try{ w = ((").append(name).append(")$1); }catch(Throwable e){ throw new IllegalArgumentException(e); }");
 
@@ -191,7 +191,11 @@ public abstract class Wrapper { //包装类
                     c3.append(" return ($w)w.").append(mn).append('(').append(args(m.getParameterTypes(), "$4")).append(");");
                 }
 
-                c3.append(" }"); //如：public Object invokeMethod(Object o, String n, Class[] p, Object[] v) throws java.lang.reflect.InvocationTargetException{ org.apache.dubbo.demo.GreetingService w; try{ w = ((org.apache.dubbo.demo.GreetingService)$1); }catch(Throwable e){ throw new IllegalArgumentException(e); } try{ if( "hello".equals( $2 )  &&  $3.length == 0 ) {  return ($w)w.hello(); }
+                c3.append(" }");
+                //如：public Object invokeMethod(Object o, String n, Class[] p, Object[] v)
+                // throws java.lang.reflect.InvocationTargetException{ org.apache.dubbo.demo.GreetingService w;
+                // try{ w = ((org.apache.dubbo.demo.GreetingService)$1); }catch(Throwable e){ throw new IllegalArgumentException(e); }
+                // try{ if( "hello".equals( $2 )  &&  $3.length == 0 ) {  return ($w)w.hello(); }
 
                 mns.add(mn);
                 if (m.getDeclaringClass() == c) {

@@ -22,7 +22,7 @@ import org.apache.dubbo.common.extension.SPI;
  * ExporterListener. (SPI, Singleton, ThreadSafe)
  */
 @SPI
-public interface ExporterListener { //暴露监听器是怎么被使用的？解：对Exporter事件进行监听，包含暴露和取消暴露（当有服务暴露时，触发该事件。）
+public interface ExporterListener { //暴露监听器是怎么被使用的？解：对Exporter事件进行监听，包含暴露和取消暴露（当有服务暴露时，触发该事件。） todo @csy-002 为什么没看到具体的实现类？使用了匿名内部类吗？哪里有调用？
 
     /**
      * The exporter exported.

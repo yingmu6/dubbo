@@ -36,13 +36,13 @@ public class ListenerExporterWrapper<T> implements Exporter<T> {
 
     private final List<ExporterListener> listeners;
 
-    public ListenerExporterWrapper(Exporter<T> exporter, List<ExporterListener> listeners) {
+    public ListenerExporterWrapper(Exporter<T> exporter, List<ExporterListener> listeners) { //todo @csy-002 此处的用途是什么？待调试
         if (exporter == null) {
             throw new IllegalArgumentException("exporter == null");
         }
         this.exporter = exporter;
         this.listeners = listeners;
-        if (CollectionUtils.isNotEmpty(listeners)) {// 赋值并进行listener暴露
+        if (CollectionUtils.isNotEmpty(listeners)) {// 赋值并进行listener暴露  todo @csy-002 什么情况下listeners有值？目前看size是0
             RuntimeException exception = null;
             for (ExporterListener listener : listeners) {
                 if (listener != null) {

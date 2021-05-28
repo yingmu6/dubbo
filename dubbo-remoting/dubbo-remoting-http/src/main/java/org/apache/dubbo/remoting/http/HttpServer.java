@@ -22,7 +22,7 @@ import org.apache.dubbo.remoting.RemotingServer;
 
 import java.net.InetSocketAddress;
 
-public interface HttpServer extends Resetable, RemotingServer {
+public interface HttpServer extends Resetable, RemotingServer { //todo @csy-002 此处的应用场景是啥？
 
     /**
      * get http handler.

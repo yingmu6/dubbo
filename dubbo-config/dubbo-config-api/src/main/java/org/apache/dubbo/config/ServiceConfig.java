@@ -461,7 +461,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
             }
             // export to remote if the config is not local (export to local only when config is local)
             if (!SCOPE_LOCAL.equalsIgnoreCase(scope)) { //暴露远程服务
-                if (CollectionUtils.isNotEmpty(registryURLs)) {
+                if (CollectionUtils.isNotEmpty(registryURLs)) { //todo @csy-002 此处registryURLs的值如，registryURLs[0] 如registry://127.0.0.1:2181/all?application=demo-provider....是在哪里变为这个registry url的？
                     for (URL registryURL : registryURLs) {
                         //if protocol is only injvm ,not register
                         if (LOCAL_PROTOCOL.equalsIgnoreCase(url.getProtocol())) {
@@ -473,7 +473,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
                             url = url.addParameterAndEncoded(MONITOR_KEY, monitorUrl.toFullString());
                         }
                         if (logger.isInfoEnabled()) {
-                            if (url.getParameter(REGISTER_KEY, true)) {
+                            if (url.getParameter(REGISTER_KEY, true)) { //todo @csy-002 此处有啥区别吗？
                                 logger.info("Register dubbo service " + interfaceClass.getName() + " url " + url + " to registry " + registryURL);
                             } else {
                                 logger.info("Export dubbo service " + interfaceClass.getName() + " to url " + url);
@@ -481,7 +481,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
                         }
 
                         // For providers, this is used to enable custom proxy to generate invoker
-                        String proxy = url.getParameter(PROXY_KEY);
+                        String proxy = url.getParameter(PROXY_KEY); //todo @pause
                         if (StringUtils.isNotEmpty(proxy)) {
                             registryURL = registryURL.addParameter(PROXY_KEY, proxy);
                         }
@@ -519,13 +519,13 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
     /**
      * always export injvm
      */
-    private void exportLocal(URL url) { //todo @pause
+    private void exportLocal(URL url) {
         URL local = URLBuilder.from(url)
                 .setProtocol(LOCAL_PROTOCOL)
                 .setHost(LOCALHOST_VALUE)
                 .setPort(0)
                 .build();
-        Exporter<?> exporter = PROTOCOL.export(
+        Exporter<?> exporter = PROTOCOL.export( //todo @csy-002 是怎么进入InjvmProtocol的？何时url换成injvm开头的？
                 PROXY_FACTORY.getInvoker(ref, (Class) interfaceClass, local));
         exporters.add(exporter);
         logger.info("Export dubbo service " + interfaceClass.getName() + " to local registry url : " + local);

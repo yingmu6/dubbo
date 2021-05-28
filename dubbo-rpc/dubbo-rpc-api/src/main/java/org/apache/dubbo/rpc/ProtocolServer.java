@@ -24,7 +24,7 @@ import org.apache.dubbo.remoting.RemotingServer;
  * while each ProtocolServer holds zero or one RemotingServer.
  * （每个协议都包含一个或多个ProtocolServer（通常由端口号决定），而每个ProtocolServer则包含零个或一个RemotingServer）
  */
-public interface ProtocolServer {
+public interface ProtocolServer { //todo @csy-002 ProtocolServer、RemotingServer待了解
 
     default RemotingServer getRemotingServer() { //返回null或一个RemotingServer
         return null;

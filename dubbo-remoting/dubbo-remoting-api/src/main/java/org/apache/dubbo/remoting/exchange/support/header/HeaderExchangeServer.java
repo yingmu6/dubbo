@@ -254,7 +254,7 @@ public class HeaderExchangeServer implements ExchangeServer {
         if (time / HEARTBEAT_CHECK_TICK <= 0) {
             return LEAST_HEARTBEAT_DURATION;
         } else {
-            return time / HEARTBEAT_CHECK_TICK;
+            return time / HEARTBEAT_CHECK_TICK; //todo @csy-002 心跳机制是怎样的？
         }
     }
 

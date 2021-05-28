@@ -24,7 +24,7 @@ import org.apache.dubbo.remoting.RemotingException;
  * TelnetHandler
  */
 @SPI
-public interface TelnetHandler {
+public interface TelnetHandler { //todo @csy-002 改处理类的功能用途是啥？
 
     /**
      * telnet.

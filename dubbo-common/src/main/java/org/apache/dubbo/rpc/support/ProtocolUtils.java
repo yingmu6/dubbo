@@ -45,7 +45,7 @@ public class ProtocolUtils {
     public static String serviceKey(int port, String serviceName, String serviceVersion, String serviceGroup) {
         serviceGroup = serviceGroup == null ? "" : serviceGroup;
         GroupServiceKeyCache groupServiceKeyCache = groupServiceKeyCacheMap.get(serviceGroup);
-        if (groupServiceKeyCache == null) {
+        if (groupServiceKeyCache == null) { //对服务组进行缓存
             groupServiceKeyCacheMap.putIfAbsent(serviceGroup, new GroupServiceKeyCache(serviceGroup));
             groupServiceKeyCache = groupServiceKeyCacheMap.get(serviceGroup);
         }

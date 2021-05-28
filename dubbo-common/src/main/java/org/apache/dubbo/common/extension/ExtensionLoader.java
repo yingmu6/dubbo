@@ -140,7 +140,7 @@ public class ExtensionLoader<T> {
         return asList(strategies);
     }
 
-    private ExtensionLoader(Class<?> type) {
+    private ExtensionLoader(Class<?> type) { //todo @csy-002 此处递归待调试下，看下递归流程？
         this.type = type;
         objectFactory = (type == ExtensionFactory.class ? null : ExtensionLoader.getExtensionLoader(ExtensionFactory.class).getAdaptiveExtension());
     }
@@ -257,7 +257,7 @@ public class ExtensionLoader<T> {
      * @return extension list which are activated （返回匹配的扩展类列表）
      * @see org.apache.dubbo.common.extension.Activate
      */
-    public List<T> getActivateExtension(URL url, String[] values, String group) { //获取Activate对应的扩展类列表
+    public List<T> getActivateExtension(URL url, String[] values, String group) { //获取Activate对应的扩展类列表，todo @csy-002 待调试，整理下逻辑
         List<T> activateExtensions = new ArrayList<>();
         List<String> names = values == null ? new ArrayList<>(0) : asList(values);
         if (!names.contains(REMOVE_VALUE_PREFIX + DEFAULT_KEY)) {

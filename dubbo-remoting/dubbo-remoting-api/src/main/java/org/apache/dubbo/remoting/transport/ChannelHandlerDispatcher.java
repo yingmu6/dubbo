@@ -35,7 +35,7 @@ public class ChannelHandlerDispatcher implements ChannelHandler {
 
     private final Collection<ChannelHandler> channelHandlers = new CopyOnWriteArraySet<ChannelHandler>();
 
-    public ChannelHandlerDispatcher() {
+    public ChannelHandlerDispatcher() { //todo @csy-002 Dispatcher调度器的设计思路是啥?
     }
 
     public ChannelHandlerDispatcher(ChannelHandler... handlers) {

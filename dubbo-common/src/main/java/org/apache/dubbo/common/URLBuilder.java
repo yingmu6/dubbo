@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public final class URLBuilder { //URL的构造器
+public final class URLBuilder { //URL的构造器， todo @csy-002 使用构造器的有点好处是什么？
     private String protocol;
 
     private String username;

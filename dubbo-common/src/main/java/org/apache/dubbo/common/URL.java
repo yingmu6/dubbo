@@ -111,7 +111,7 @@ class URL implements Serializable {
 
     private final String path;
 
-    private final Map<String, String> parameters;
+    private final Map<String, String> parameters; //todo @csy-002 改map中一般都存有哪些值的？
 
     private final Map<String, Map<String, String>> methodParameters;
 
@@ -604,7 +604,7 @@ class URL implements Serializable {
         return parameters.get(key);
     }
 
-    public String getParameter(String key, String defaultValue) {
+    public String getParameter(String key, String defaultValue) { //从参数map中获取参数对应的值，若没有则返回默认值
         String value = getParameter(key);
         return StringUtils.isEmpty(value) ? defaultValue : value;
     }
