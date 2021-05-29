@@ -205,10 +205,10 @@ public class ConfigValidationUtils {
         return registryList;
     }
 
-    public static URL loadMonitor(AbstractInterfaceConfig interfaceConfig, URL registryURL) {
+    public static URL loadMonitor(AbstractInterfaceConfig interfaceConfig, URL registryURL) { //加载监控中心
         Map<String, String> map = new HashMap<String, String>();
-        map.put(INTERFACE_KEY, MonitorService.class.getName());
-        AbstractInterfaceConfig.appendRuntimeParameters(map);
+        map.put(INTERFACE_KEY, MonitorService.class.getName()); //MonitorService.class.getName()的值如：org.apache.dubbo.monitor.MonitorService
+        AbstractInterfaceConfig.appendRuntimeParameters(map); //附加运行参数
         //set ip
         String hostToRegistry = ConfigUtils.getSystemProperty(DUBBO_IP_TO_REGISTRY);
         if (StringUtils.isEmpty(hostToRegistry)) {

@@ -44,7 +44,7 @@ public abstract class AbstractPeer implements Endpoint, ChannelHandler {
         if (handler == null) {
             throw new IllegalArgumentException("handler == null");
         }
-        this.url = url;
+        this.url = url; //设置url以及通道处理器ChannelHandler
         this.handler = handler;
     }
 

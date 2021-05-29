@@ -327,7 +327,7 @@ public class DubboProtocol extends AbstractProtocol {
         }
     }
 
-    private ProtocolServer createServer(URL url) { //todo @csy-002 此方法的用途是啥？ @pause-002
+    private ProtocolServer createServer(URL url) { //todo @csy-002 此方法的用途是啥?
         url = URLBuilder.from(url)
                 // send readonly event when server closes, it's enabled by default
                 .addParameterIfAbsent(CHANNEL_READONLYEVENT_SENT_KEY, Boolean.TRUE.toString())

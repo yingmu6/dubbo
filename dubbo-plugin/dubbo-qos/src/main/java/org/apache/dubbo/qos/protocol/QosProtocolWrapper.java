@@ -45,7 +45,7 @@ public class QosProtocolWrapper implements Protocol {
 
     private Protocol protocol;
 
-    public QosProtocolWrapper(Protocol protocol) {
+    public QosProtocolWrapper(Protocol protocol) { //封装类：构造函数中包含扩展接口
         if (protocol == null) {
             throw new IllegalArgumentException("protocol == null");
         }

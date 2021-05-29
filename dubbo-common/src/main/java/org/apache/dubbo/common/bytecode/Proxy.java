@@ -161,7 +161,7 @@ public abstract class Proxy { //代理抽象类
                 }
                 ccp.addInterface(ics[i]); //添加满足条件的接口
 
-                for (Method method : ics[i].getMethods()) { //@pause 调试到此处
+                for (Method method : ics[i].getMethods()) {
                     String desc = ReflectUtils.getDesc(method);
                     if (worked.contains(desc) || Modifier.isStatic(method.getModifiers())) {
                         continue;

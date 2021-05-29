@@ -114,7 +114,7 @@ public interface CommonConstants {
 
     String TIMEOUT_KEY = "timeout";
 
-    int DEFAULT_TIMEOUT = 1000;
+    int DEFAULT_TIMEOUT = 1000; //默认超时时间 1s
 
     // used by invocation attachments to transfer timeout from Consumer to Provider.
     // works as a replacement of TIMEOUT_KEY on wire, which seems to be totally useless in previous releases).

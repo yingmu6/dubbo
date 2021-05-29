@@ -29,7 +29,7 @@ import org.apache.dubbo.remoting.transport.ChannelHandlerAdapter;
 /**
  * Exchanger facade. (API, Static, ThreadSafe)
  */
-public class Exchangers {
+public class Exchangers { //todo @csy-003 此处是门面模式吗？门面模式是怎样设计的？
 
     static {
         // check duplicate jar package

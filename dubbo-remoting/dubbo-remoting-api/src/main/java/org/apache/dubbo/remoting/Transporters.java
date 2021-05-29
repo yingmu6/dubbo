@@ -53,7 +53,7 @@ public class Transporters { //todo @csy-002 都做哪些传输处理的？
         } else {
             handler = new ChannelHandlerDispatcher(handlers);
         }
-        return getTransporter().bind(url, handler); //todo @csy-002 此处是怎么选择实例的，比如NettyTransporter
+        return getTransporter().bind(url, handler); //@csy-002 此处是怎么选择实例的，比如NettyTransporter  解：@SPI("netty") SPI中指定的实现
     }
 
     public static Client connect(String url, ChannelHandler... handler) throws RemotingException {

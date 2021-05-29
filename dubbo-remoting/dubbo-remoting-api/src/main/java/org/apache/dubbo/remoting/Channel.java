@@ -55,7 +55,7 @@ public interface Channel extends Endpoint { //通道 todo @csy-002 通道的概�
      * @param key key.
      * @return value.
      */
-    Object getAttribute(String key);
+    Object getAttribute(String key); //从通道中读取数据
 
     /**
      * set attribute.
@@ -63,7 +63,7 @@ public interface Channel extends Endpoint { //通道 todo @csy-002 通道的概�
      * @param key   key.
      * @param value value.
      */
-    void setAttribute(String key, Object value);
+    void setAttribute(String key, Object value); //把数据写到通道中
 
     /**
      * remove attribute.

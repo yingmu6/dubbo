@@ -78,7 +78,7 @@ public class NettyServer extends AbstractServer implements RemotingServer {
     }
 
     /**
-     * Init and start netty server
+     * Init and start netty server（初始化并启动netty服务端）
      *
      * @throws Throwable
      */
@@ -94,7 +94,7 @@ public class NettyServer extends AbstractServer implements RemotingServer {
         final NettyServerHandler nettyServerHandler = new NettyServerHandler(getUrl(), this);
         channels = nettyServerHandler.getChannels();
 
-        bootstrap.group(bossGroup, workerGroup)
+        bootstrap.group(bossGroup, workerGroup) //todo @csy-003 netty中ChannelOption、ChannelInitializer等概念了解
                 .channel(NettyEventLoopFactory.serverSocketChannelClass())
                 .option(ChannelOption.SO_REUSEADDR, Boolean.TRUE)
                 .childOption(ChannelOption.TCP_NODELAY, Boolean.TRUE)
@@ -117,7 +117,7 @@ public class NettyServer extends AbstractServer implements RemotingServer {
                     }
                 });
         // bind
-        ChannelFuture channelFuture = bootstrap.bind(getBindAddress());
+        ChannelFuture channelFuture = bootstrap.bind(getBindAddress()); //todo @csy-003 ChannelFuture了解
         channelFuture.syncUninterruptibly();
         channel = channelFuture.channel();
 

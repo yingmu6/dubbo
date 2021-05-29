@@ -88,7 +88,7 @@ public class ApplicationModel { //应用模型
         return (Environment) LOADER.getExtension(Environment.NAME);
     }
 
-    public static ConfigManager getConfigManager() {
+    public static ConfigManager getConfigManager() { //todo @csy-003 待调试
         return (ConfigManager) LOADER.getExtension(ConfigManager.NAME); //config对应的扩展类为ConfigManager
     }
 

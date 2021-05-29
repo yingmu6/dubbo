@@ -259,7 +259,7 @@ public class HeaderExchangeServer implements ExchangeServer {
     }
 
     private void startIdleCheckTask(URL url) {
-        if (!server.canHandleIdle()) {
+        if (!server.canHandleIdle()) { //todo @csy-003 何时进入处理的？
             AbstractTimerTask.ChannelProvider cp = () -> unmodifiableCollection(HeaderExchangeServer.this.getChannels());
             int idleTimeout = getIdleTimeout(url);
             long idleTimeoutTick = calculateLeastDuration(idleTimeout);

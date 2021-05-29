@@ -46,7 +46,7 @@ import static org.apache.dubbo.rpc.Constants.TOKEN_KEY;
  *
  * @serial Don't change the class name and properties.
  */
-public class RpcInvocation implements Invocation, Serializable {//@pause 调用信息Invocation了解
+public class RpcInvocation implements Invocation, Serializable {//todo @csy-003 调用信息Invocation了解
 
     private static final long serialVersionUID = -4355285085441097045L;
 

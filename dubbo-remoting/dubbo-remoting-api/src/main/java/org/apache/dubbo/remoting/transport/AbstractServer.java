@@ -48,7 +48,7 @@ public abstract class AbstractServer extends AbstractEndpoint implements Remotin
     protected static final String SERVER_THREAD_POOL_NAME = "DubboServerHandler";
     private static final Logger logger = LoggerFactory.getLogger(AbstractServer.class);
     ExecutorService executor;
-    private InetSocketAddress localAddress;
+    private InetSocketAddress localAddress; //todo @csy-003 InetSocketAddress 了解
     private InetSocketAddress bindAddress;
     private int accepts;
     private int idleTimeout;
@@ -56,7 +56,7 @@ public abstract class AbstractServer extends AbstractEndpoint implements Remotin
     private ExecutorRepository executorRepository = ExtensionLoader.getExtensionLoader(ExecutorRepository.class).getDefaultExtension();
 
     public AbstractServer(URL url, ChannelHandler handler) throws RemotingException {
-        super(url, handler);
+        super(url, handler); //调用父类构造函数，进行父类初始  todo @csy-003 super功能了解
         localAddress = getUrl().toInetSocketAddress();
 
         String bindIp = getUrl().getParameter(Constants.BIND_IP_KEY, getUrl().getHost());
@@ -68,7 +68,7 @@ public abstract class AbstractServer extends AbstractEndpoint implements Remotin
         this.accepts = url.getParameter(ACCEPTS_KEY, DEFAULT_ACCEPTS);
         this.idleTimeout = url.getParameter(IDLE_TIMEOUT_KEY, DEFAULT_IDLE_TIMEOUT);
         try {
-            doOpen();
+            doOpen(); //打开服务 todo @csy 此处是怎么选择具体实例中的方法的？
             if (logger.isInfoEnabled()) {
                 logger.info("Start " + getClass().getSimpleName() + " bind " + getBindAddress() + ", export " + getLocalAddress());
             }

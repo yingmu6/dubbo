@@ -84,7 +84,7 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
         return ofNullable(getConfig(getTagName(ApplicationConfig.class)));
     }
 
-    public ApplicationConfig getApplicationOrElseThrow() {
+    public ApplicationConfig getApplicationOrElseThrow() { //若没有获取到应用配置，则抛出异常
         return getApplication().orElseThrow(() -> new IllegalStateException("There's no ApplicationConfig specified."));
     }
 

@@ -312,7 +312,7 @@ public class ConfigUtils {
     public static int getPid() {
         if (PID < 0) {
             try {
-                RuntimeMXBean runtime = ManagementFactory.getRuntimeMXBean();
+                RuntimeMXBean runtime = ManagementFactory.getRuntimeMXBean(); //todo @csy-003 RuntimeMXBean待了解？
                 String name = runtime.getName(); // format: "pid@hostname"
                 PID = Integer.parseInt(name.substring(0, name.indexOf('@')));
             } catch (Throwable e) {

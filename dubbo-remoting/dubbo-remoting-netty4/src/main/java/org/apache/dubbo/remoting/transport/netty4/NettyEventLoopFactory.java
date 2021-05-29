@@ -40,7 +40,7 @@ public class NettyEventLoopFactory {
                 new NioEventLoopGroup(threads, threadFactory);
     }
 
-    public static Class<? extends SocketChannel> socketChannelClass() {
+    public static Class<? extends SocketChannel> socketChannelClass() { //todo @csy-003 EpollSocketChannel与NioSocketChannel的差异是什么？
         return shouldEpoll() ? EpollSocketChannel.class : NioSocketChannel.class;
     }
 

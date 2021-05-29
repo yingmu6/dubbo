@@ -236,7 +236,7 @@ final class DeprecatedExchangeCodec extends DeprecatedTelnetCodec implements Cod
         os.write(data); // write data.    （协议体：将传入对象序列化后写入）
     }
 
-    protected void encodeResponse(Channel channel, OutputStream os, Response res) throws IOException { //@pause 编码响应对象待了解
+    protected void encodeResponse(Channel channel, OutputStream os, Response res) throws IOException { //todo @csy-003 编码响应对象待了解
         try {
             Serialization serialization = CodecSupport.getSerialization(channel.getUrl());
             // header.

@@ -75,7 +75,7 @@ public interface Constants {
 
     String CONNECT_TIMEOUT_KEY = "connect.timeout";
 
-    int DEFAULT_CONNECT_TIMEOUT = 3000;
+    int DEFAULT_CONNECT_TIMEOUT = 3000; //默认连接超时时间3s
 
     String SERIALIZATION_KEY = "serialization";
 

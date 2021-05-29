@@ -20,7 +20,7 @@ package org.apache.dubbo.common.extension;
  * ExtensionFactory
  */
 @SPI
-public interface ExtensionFactory {
+public interface ExtensionFactory { //todo @csy-003 扩展工厂是何时使用的
 
     /**
      * Get extension.

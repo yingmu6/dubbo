@@ -27,11 +27,11 @@ import org.apache.dubbo.remoting.buffer.ChannelBuffer;
 
 import java.io.IOException;
 
-public class CodecAdapter implements Codec2 {//编码适配器
+public class CodecAdapter implements Codec2 {//编码适配器，外部使用同样的接口，内部进行适配转换
 
     private Codec codec;
 
-    public CodecAdapter(Codec codec) {
+    public CodecAdapter(Codec codec) { //todo @csy-003 适配器模式都有哪些形式？
         Assert.notNull(codec, "codec == null");
         this.codec = codec;
     }

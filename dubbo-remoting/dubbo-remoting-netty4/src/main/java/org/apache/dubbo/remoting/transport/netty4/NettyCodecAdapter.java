@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * NettyCodecAdapter.
  */
-final public class NettyCodecAdapter {
+final public class NettyCodecAdapter { //todo @csy-003 此处做适配器，是哪里做适配的？
 
     private final ChannelHandler encoder = new InternalEncoder();
 
@@ -59,7 +59,7 @@ final public class NettyCodecAdapter {
         return decoder;
     }
 
-    private class InternalEncoder extends MessageToByteEncoder {
+    private class InternalEncoder extends MessageToByteEncoder { //todo @csy-003 MessageToByteEncoder 待了解
 
         @Override
         protected void encode(ChannelHandlerContext ctx, Object msg, ByteBuf out) throws Exception {

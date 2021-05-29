@@ -46,7 +46,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.ANYHOST_VALUE;
 /**
  * AbstractProxyProtocol
  */
-public abstract class AbstractProxyProtocol extends AbstractProtocol { //@pause 代理待了解实践
+public abstract class AbstractProxyProtocol extends AbstractProtocol { //todo @csy-003 代理待了解实践
 
     private final List<Class<?>> rpcExceptions = new CopyOnWriteArrayList<Class<?>>();
 

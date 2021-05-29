@@ -112,7 +112,7 @@ public abstract class AbstractConfig implements Serializable {
     }
 
     @SuppressWarnings("unchecked")
-    public static void appendParameters(Map<String, String> parameters, Object config, String prefix) {
+    public static void appendParameters(Map<String, String> parameters, Object config, String prefix) { //todo @csy-pause 待调试，parameters都用途是啥？是指把config中的属性值写到参数map中吗？
         if (config == null) {
             return;
         }
@@ -120,7 +120,7 @@ public abstract class AbstractConfig implements Serializable {
         for (Method method : methods) {
             try {
                 String name = method.getName();
-                if (MethodUtils.isGetter(method)) {
+                if (MethodUtils.isGetter(method)) { //todo @pause
                     Parameter parameter = method.getAnnotation(Parameter.class);
                     if (method.getReturnType() == Object.class || parameter != null && parameter.excluded()) {
                         continue;

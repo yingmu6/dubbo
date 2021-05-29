@@ -40,7 +40,7 @@ public class HeaderExchanger implements Exchanger {
     }
 
     @Override
-    public ExchangeServer bind(URL url, ExchangeHandler handler) throws RemotingException { //todo @csy-002 绑定的流程是指什么？为啥一开始会进入HeaderExchanger
+    public ExchangeServer bind(URL url, ExchangeHandler handler) throws RemotingException { //todo @csy-002 绑定的流程是指什么？为啥一开始会进入HeaderExchanger（SPI指定的）
         return new HeaderExchangeServer(Transporters.bind(url, new DecodeHandler(new HeaderExchangeHandler(handler))));
     }
 
