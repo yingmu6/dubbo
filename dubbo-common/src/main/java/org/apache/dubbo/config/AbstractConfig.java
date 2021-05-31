@@ -112,7 +112,11 @@ public abstract class AbstractConfig implements Serializable {
     }
 
     @SuppressWarnings("unchecked")
-    public static void appendParameters(Map<String, String> parameters, Object config, String prefix) { //todo @csy-pause 待调试，parameters都用途是啥？是指把config中的属性值写到参数map中吗？
+    public static void appendParameters(Map<String, String> parameters, Object config, String prefix) {
+        /**
+         * @csy-004 待调试，parameters都用途是啥？是指把config中的属性值写到参数map中吗？
+         * 解：该方法的作用就是，将Config配置对象中的属性值进行筛选，按键值对写到参数map中，而参数map用于后续通讯的数据传输
+         */
         if (config == null) {
             return;
         }
@@ -120,27 +124,27 @@ public abstract class AbstractConfig implements Serializable {
         for (Method method : methods) {
             try {
                 String name = method.getName();
-                if (MethodUtils.isGetter(method)) { //todo @pause
+                if (MethodUtils.isGetter(method)) {
                     Parameter parameter = method.getAnnotation(Parameter.class);
-                    if (method.getReturnType() == Object.class || parameter != null && parameter.excluded()) {
+                    if (method.getReturnType() == Object.class || parameter != null && parameter.excluded()) { //方法返回值为对象或在声明@Parameter且参数被排除时，跳过不处理
                         continue;
                     }
                     String key;
-                    if (parameter != null && parameter.key().length() > 0) {
+                    if (parameter != null && parameter.key().length() > 0) { //若方法使用了@Parameter注解声明，且设置了key的值，则将该值作为参数key
                         key = parameter.key();
                     } else {
-                        key = calculatePropertyFromGetter(name);
+                        key = calculatePropertyFromGetter(name); //获取得到属性名，如getProtocol()方法的属性名为protocol(若属性名是驼峰的，则按分隔符处理，如getProtocolName(),若分隔符为"."，则最终的属性名为protocol.name)
                     }
-                    Object value = method.invoke(config);
+                    Object value = method.invoke(config); //使用反射机制，调用对象的方法，获取到方法返回的值
                     String str = String.valueOf(value).trim();
                     if (value != null && str.length() > 0) {
                         if (parameter != null && parameter.escaped()) {
-                            str = URL.encode(str); //编码字符串
+                            str = URL.encode(str); //若escaped指定是需要编码的，则编码字符串
                         }
-                        if (parameter != null && parameter.append()) {
+                        if (parameter != null && parameter.append()) { //若属性key对应的值有多个，是否要在原来的值上附加
                             String pre = parameters.get(key);
                             if (pre != null && pre.length() > 0) {
-                                str = pre + "," + str;
+                                str = pre + "," + str; //附加到原有的值上
                             }
                         }
                         if (prefix != null && prefix.length() > 0) {
@@ -150,7 +154,7 @@ public abstract class AbstractConfig implements Serializable {
                     } else if (parameter != null && parameter.required()) {
                         throw new IllegalStateException(config.getClass().getSimpleName() + "." + key + " == null");
                     }
-                } else if (isParametersGetter(method)) {
+                } else if (isParametersGetter(method)) { //若是getParameters()方法，则可以将该方法的返回值Map<String, String>直接设置到处理的参数map中
                     Map<String, String> map = (Map<String, String>) method.invoke(config, new Object[0]);
                     parameters.putAll(convert(map, prefix));
                 }
@@ -303,7 +307,7 @@ public abstract class AbstractConfig implements Serializable {
         return null;
     }
 
-    private static boolean isParametersGetter(Method method) {
+    private static boolean isParametersGetter(Method method) { //判断是否是Map getParameters()方法
         String name = method.getName();
         return ("getParameters".equals(name)
                 && Modifier.isPublic(method.getModifiers())
@@ -335,7 +339,7 @@ public abstract class AbstractConfig implements Serializable {
         for (Map.Entry<String, String> entry : parameters.entrySet()) { //若前缀不为空，则将参数的键带上前缀
             String key = entry.getKey();
             String value = entry.getValue();
-            result.put(pre + key, value);
+            result.put(pre + key, value); //若key包含"-"，会存在两种形式的key
             // For compatibility, key like "registry-type" will has a duplicate key "registry.type"
             if (key.contains("-")) {
                 result.put(pre + key.replace('-', '.'), value);

@@ -234,7 +234,7 @@ public interface CommonConstants {
      *
      * @since 2.7.6
      */
-    String DUBBO_PREFERRED_NETWORK_INTERFACE = "dubbo.network.interface.preferred";
+    String DUBBO_PREFERRED_NETWORK_INTERFACE = "dubbo.network.interface.preferred"; //可设置首选的网络接口
 
     @Deprecated
     String SHUTDOWN_WAIT_SECONDS_KEY = "dubbo.service.shutdown.wait.seconds"; //弃用的，不鼓励使用

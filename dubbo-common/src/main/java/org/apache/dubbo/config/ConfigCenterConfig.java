@@ -134,7 +134,7 @@ public class ConfigCenterConfig extends AbstractConfig { //配置中心
         this.protocol = protocol;
     }
 
-    @Parameter(excluded = true)
+    @Parameter(excluded = true) //不会出现在url暴露的参数中
     public String getAddress() {
         return address;
     }

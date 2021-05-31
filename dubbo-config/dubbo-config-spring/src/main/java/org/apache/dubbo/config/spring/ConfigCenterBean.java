@@ -37,7 +37,7 @@ import java.util.Map;
  * So it's ok for this bean not to be the first Dubbo Config bean being initialized.
  * <p>
  */
-public class ConfigCenterBean extends ConfigCenterConfig implements ApplicationContextAware, DisposableBean, EnvironmentAware {
+public class ConfigCenterBean extends ConfigCenterConfig implements ApplicationContextAware, DisposableBean, EnvironmentAware { //todo @csy-004 此类的用途是啥？何时被使用？
 
     private transient ApplicationContext applicationContext;
 

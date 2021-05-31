@@ -890,7 +890,7 @@ public class DubboBootstrap extends GenericEventListener {
     /**
      * Start the bootstrap
      */
-    public DubboBootstrap start() {
+    public DubboBootstrap start() { //todo @csy-004 都启动了些啥功能？待调试
         if (started.compareAndSet(false, true)) {
             ready.set(false);
             initialize();

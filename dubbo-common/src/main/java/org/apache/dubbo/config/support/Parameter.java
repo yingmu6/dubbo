@@ -28,19 +28,19 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
-public @interface Parameter {
+public @interface Parameter { //作用在方法上，对方法对应的属性进行处理
 
     String key() default "";
 
     boolean required() default false;
 
-    boolean excluded() default false; //排除在外
+    boolean excluded() default false; //排除在外，不会暴露在url的参数中
 
-    boolean escaped() default false;
+    boolean escaped() default false; //表明参数是否需要编码
 
     boolean attribute() default false;
 
-    boolean append() default false;
+    boolean append() default false; //若参数key对应的值已存在，是否需要在原来的key对应的值附加，如protocol=dubbo,http
 
     /**
      * if {@link #key()} is specified, it will be used as the key for the annotated property when generating url.

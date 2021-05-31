@@ -31,7 +31,7 @@ import java.util.Objects;
  *
  * @since 2.7.5
  */
-abstract class OneTimeExecutionApplicationContextEventListener implements ApplicationListener, ApplicationContextAware {
+abstract class OneTimeExecutionApplicationContextEventListener implements ApplicationListener, ApplicationContextAware { //todo @csy-004 此处都会在什么事件触发时处理？ApplicationListener、ApplicationContextAware都有什么功能？
 
     private ApplicationContext applicationContext;
 

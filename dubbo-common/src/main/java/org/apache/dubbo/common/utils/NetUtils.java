@@ -80,7 +80,7 @@ public class NetUtils {
     private static volatile InetAddress LOCAL_ADDRESS = null;
 
     private static final String SPLIT_IPV4_CHARACTER = "\\.";
-    private static final String SPLIT_IPV6_CHARACTER = ":";
+    private static final String SPLIT_IPV6_CHARACTER = ":"; //todo @csy-004 ipv4与ipv6的差异是啥？
 
     public static int getRandomPort() {
         return RND_PORT_START + ThreadLocalRandom.current().nextInt(RND_PORT_RANGE);
@@ -162,11 +162,11 @@ public class NetUtils {
      * @return true if it is reachable
      */
     static boolean isPreferIPV6Address() {
-        return Boolean.getBoolean("java.net.preferIPv6Addresses");
+        return Boolean.getBoolean("java.net.preferIPv6Addresses"); //todo @csy-004 此处Boolean是怎么取值的？
     }
 
     /**
-     * normalize the ipv6 Address, convert scope name to scope id.
+     * normalize（使标准化） the ipv6 Address, convert scope name to scope id.
      * e.g.
      * convert
      * fe80:0:0:0:894:aeec:f37d:23e1%en0
@@ -179,7 +179,7 @@ public class NetUtils {
      * @param address the input address
      * @return the normalized address, with scope id converted to int
      */
-    static InetAddress normalizeV6Address(Inet6Address address) {
+    static InetAddress normalizeV6Address(Inet6Address address) { //todo @csy-004 此处是怎么格式化的？
         String addr = address.getHostAddress();
         int i = addr.lastIndexOf('%');
         if (i > 0) {
@@ -204,7 +204,7 @@ public class NetUtils {
         if (address != null) {
             return HOST_ADDRESS = address.getHostAddress();
         }
-        return LOCALHOST_VALUE;
+        return LOCALHOST_VALUE; //若没有查找到本地地址，则使用的默认的127.0.0.1
     }
 
     public static String filterLocalHost(String host) {
@@ -243,7 +243,7 @@ public class NetUtils {
      *
      * @return first valid local IP
      */
-    public static InetAddress getLocalAddress() {
+    public static InetAddress getLocalAddress() { //todo @pause-004
         if (LOCAL_ADDRESS != null) {
             return LOCAL_ADDRESS;
         }
@@ -253,7 +253,7 @@ public class NetUtils {
     }
 
     private static Optional<InetAddress> toValidAddress(InetAddress address) {
-        if (address instanceof Inet6Address) {
+        if (address instanceof Inet6Address) { //ipv6地址如：/fe80:0:0:0:2e4f:d3b:f73b:cb7c%utun1
             Inet6Address v6Address = (Inet6Address) address;
             if (isPreferIPV6Address()) {
                 return Optional.ofNullable(normalizeV6Address(v6Address));
@@ -265,7 +265,10 @@ public class NetUtils {
         return Optional.empty();
     }
 
-    private static InetAddress getLocalAddress0() { //todo @csy-003 此处待调试，看查找网络地址的处理方式
+    private static InetAddress getLocalAddress0() {
+        /**
+         * todo @csy-003 此处待调试，看查找网络地址的处理方式
+         */
         InetAddress localAddress = null;
 
         // @since 2.7.6, choose the {@link NetworkInterface} first
@@ -308,9 +311,9 @@ public class NetUtils {
      * @throws SocketException SocketException if an I/O error occurs.
      * @since 2.7.6
      */
-    private static boolean ignoreNetworkInterface(NetworkInterface networkInterface) throws SocketException {
+    private static boolean ignoreNetworkInterface(NetworkInterface networkInterface) throws SocketException { //是否是需要忽略的网络接口
         return networkInterface == null
-                || networkInterface.isLoopback()
+                || networkInterface.isLoopback() //todo @csy-004 什么是环路地址、虚拟地址、up等
                 || networkInterface.isVirtual()
                 || !networkInterface.isUp();
     }
@@ -322,9 +325,9 @@ public class NetUtils {
      * @throws SocketException SocketException if an I/O error occurs.
      * @since 2.7.6
      */
-    private static List<NetworkInterface> getValidNetworkInterfaces() throws SocketException {
+    private static List<NetworkInterface> getValidNetworkInterfaces() throws SocketException { //获取有效的网络接口
         List<NetworkInterface> validNetworkInterfaces = new LinkedList<>();
-        Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+        Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces(); //获取到当前机器的所有网络接口
         while (interfaces.hasMoreElements()) {
             NetworkInterface networkInterface = interfaces.nextElement();
             if (ignoreNetworkInterface(networkInterface)) { // ignore
@@ -356,7 +359,7 @@ public class NetUtils {
      */
     public static NetworkInterface findNetworkInterface() {
 
-        List<NetworkInterface> validNetworkInterfaces = emptyList();
+        List<NetworkInterface> validNetworkInterfaces = emptyList(); //todo @csy-004 NetworkInterface了解以及使用
         try {
             validNetworkInterfaces = getValidNetworkInterfaces();
         } catch (Throwable e) {
@@ -365,7 +368,7 @@ public class NetUtils {
 
         NetworkInterface result = null;
 
-        // Try to find the preferred one
+        // Try to find the preferred（首选的） one
         for (NetworkInterface networkInterface : validNetworkInterfaces) {
             if (isPreferredNetworkInterface(networkInterface)) {
                 result = networkInterface;
@@ -377,7 +380,7 @@ public class NetUtils {
             for (NetworkInterface networkInterface : validNetworkInterfaces) {
                 Enumeration<InetAddress> addresses = networkInterface.getInetAddresses();
                 while (addresses.hasMoreElements()) {
-                    Optional<InetAddress> addressOp = toValidAddress(addresses.nextElement());
+                    Optional<InetAddress> addressOp = toValidAddress(addresses.nextElement()); //todo @csy-004 Optional待了解实践
                     if (addressOp.isPresent()) {
                         try {
                             if (addressOp.get().isReachable(100)) {
