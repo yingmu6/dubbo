@@ -36,7 +36,7 @@ public class Hessian2ObjectOutput implements ObjectOutput {
         return h2o;
     });
 
-    private final Hessian2Output mH2o;
+    private final Hessian2Output mH2o; //todo @csy-005 hessian2 序列化、反序列化方式待了解
 
     public Hessian2ObjectOutput(OutputStream os) {
         mH2o = OUTPUT_TL.get();

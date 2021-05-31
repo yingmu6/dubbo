@@ -111,7 +111,7 @@ class URL implements Serializable {
 
     private final String path;
 
-    private final Map<String, String> parameters; //todo @csy-002 改map中一般都存有哪些值的？
+    private final Map<String, String> parameters; //@csy-002 该map中一般都存有哪些值的？存的是url中的参数键值，即?与&分隔的键值对
 
     private final Map<String, Map<String, String>> methodParameters;
 

@@ -166,7 +166,7 @@ public class TelnetCodec extends TransportCodec { //todo @csy-002 此处的编�
     }
 
     @SuppressWarnings("unchecked")
-    protected Object decode(Channel channel, ChannelBuffer buffer, int readable, byte[] message) throws IOException {
+    protected Object decode(Channel channel, ChannelBuffer buffer, int readable, byte[] message) throws IOException { //todo @csy-005 此处解码的逻辑是怎样的？待调试？
         if (isClientSide(channel)) {
             return toString(message, getCharset(channel));
         }

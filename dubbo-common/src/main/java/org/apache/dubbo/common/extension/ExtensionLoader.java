@@ -140,7 +140,10 @@ public class ExtensionLoader<T> {
         return asList(strategies);
     }
 
-    private ExtensionLoader(Class<?> type) { //todo @csy-002 此处递归待调试下，看下递归流程？
+    /**
+     * todo @csy-002 此处递归待调试下，看下递归流程？
+     */
+    private ExtensionLoader(Class<?> type) {
         this.type = type;
         objectFactory = (type == ExtensionFactory.class ? null : ExtensionLoader.getExtensionLoader(ExtensionFactory.class).getAdaptiveExtension());
     }
@@ -149,6 +152,9 @@ public class ExtensionLoader<T> {
         return type.isAnnotationPresent(SPI.class);
     }
 
+    /**
+     * todo @csy-005 待调试梳理 @pause
+     */
     @SuppressWarnings("unchecked")
     public static <T> ExtensionLoader<T> getExtensionLoader(Class<T> type) {
         if (type == null) {
@@ -753,12 +759,20 @@ public class ExtensionLoader<T> {
 
     private Map<String, Class<?>> getExtensionClasses() {
         Map<String, Class<?>> classes = cachedClasses.get();
-        if (classes == null) {//从缓存中获取扩展类，若不存在则从文件中读取，并加载到缓存中
+        if (classes == null) {//从缓存中获取扩展类，若不存在则从文件中读取，并加载到缓存中（锁外判断）
             synchronized (cachedClasses) {
                 classes = cachedClasses.get();
-                if (classes == null) { //todo @csy-003 synchronized + 双重判定的优势是什么？
+                /**
+                 * @csy-003 synchronized + 双重判定的优势是什么？（用在单实例创建）
+                 * https://www.cnblogs.com/xz816111/p/8470048.html
+                 * 解：1）提升性能，若synchronized放在方法上，每次调用方法时都会加锁，降低性能
+                 *    2）锁外判断，在实例不为空时，就不必进入锁内判断了
+                 *       锁内判断，多个线程同时访问时，可能都通过外部判断，所以锁内要做下判断，已经创建过的对象就不在创建
+                 *    3）创建的实例，应该用volatile修饰，避免指令重排，虽然有对象引用，但是对象还未创建
+                 */
+                if (classes == null) { //（锁内判断）
                     classes = loadExtensionClasses();
-                    cachedClasses.set(classes);
+                    cachedClasses.set(classes); //应该使用volatile，避免指令重排时，会访问到未初始化的对象
                 }
             }
         }
@@ -893,7 +907,12 @@ public class ExtensionLoader<T> {
      */
     private void loadClass(Map<String, Class<?>> extensionClasses, java.net.URL resourceURL, Class<?> clazz, String name,
                            boolean overridden) throws NoSuchMethodException {
-        if (!type.isAssignableFrom(clazz)) { //todo @csy-003 Class中的方法isAssignableFrom待了解实现
+        /**
+         * @csy-003 Class中的方法isAssignableFrom待了解实现
+         * 解：isAssignableFrom 判断一个class（类或接口）是否与另一个class相同，或者是否是另一个class的父类或父接口
+         * 如：type与clazz对应的Class是否相同，或type是否是clazz父类或父接口
+         */
+        if (!type.isAssignableFrom(clazz)) {
             throw new IllegalStateException("Error occurred when loading extension class (interface: " +
                     type + ", class line: " + clazz.getName() + "), class "
                     + clazz.getName() + " is not subtype of interface.");

@@ -23,7 +23,7 @@ import org.apache.dubbo.remoting.buffer.ChannelBuffer;
 import java.io.IOException;
 
 @SPI
-public interface Codec2 {
+public interface Codec2 {  //todo @csy-003 编解码了解 https://cloud.tencent.com/developer/article/1443600
 
     @Adaptive({Constants.CODEC_KEY})
     void encode(Channel channel, ChannelBuffer buffer, Object message) throws IOException;

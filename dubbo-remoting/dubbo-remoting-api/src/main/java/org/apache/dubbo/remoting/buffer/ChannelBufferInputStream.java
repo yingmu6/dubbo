@@ -20,7 +20,7 @@ package org.apache.dubbo.remoting.buffer;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class ChannelBufferInputStream extends InputStream {
+public class ChannelBufferInputStream extends InputStream { //todo @csy-005 用途以及使用场景是怎样的？
 
     private final ChannelBuffer buffer;
     private final int startIndex;

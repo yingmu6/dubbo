@@ -21,7 +21,7 @@ import java.io.IOException;
 /**
  * Basic data type output interface.（支持输出各种基本类型的数据）
  */
-public interface DataOutput {
+public interface DataOutput { //todo @csy-005 待了解用途
 
     /**
      * Write boolean.

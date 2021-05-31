@@ -201,7 +201,7 @@ import java.nio.ByteBuffer;
  *
  *
  */
-public interface ChannelBuffer extends Comparable<ChannelBuffer> {
+public interface ChannelBuffer extends Comparable<ChannelBuffer> { //todo @csy-005 此处的ChannelBuffer用途和含义是什么？
 
     /**
      * Returns the number of bytes (octets) this buffer can contain.

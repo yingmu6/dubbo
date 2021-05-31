@@ -162,7 +162,7 @@ public class NetUtils {
      * @return true if it is reachable
      */
     static boolean isPreferIPV6Address() {
-        return Boolean.getBoolean("java.net.preferIPv6Addresses"); //todo @csy-004 此处Boolean是怎么取值的？
+        return Boolean.getBoolean("java.net.preferIPv6Addresses"); //@csy-004 此处Boolean是怎么取值的？ 解：从源码上看，是先从系统属性中获取值，再做解析System.getProperty(name)
     }
 
     /**
@@ -179,7 +179,7 @@ public class NetUtils {
      * @param address the input address
      * @return the normalized address, with scope id converted to int
      */
-    static InetAddress normalizeV6Address(Inet6Address address) { //todo @csy-004 此处是怎么格式化的？
+    static InetAddress normalizeV6Address(Inet6Address address) { //todo @csy-004 此处是怎么格式化的？哪种情况会进入该逻辑
         String addr = address.getHostAddress();
         int i = addr.lastIndexOf('%');
         if (i > 0) {
@@ -243,7 +243,7 @@ public class NetUtils {
      *
      * @return first valid local IP
      */
-    public static InetAddress getLocalAddress() { //todo @pause-004
+    public static InetAddress getLocalAddress() {
         if (LOCAL_ADDRESS != null) {
             return LOCAL_ADDRESS;
         }
@@ -252,7 +252,7 @@ public class NetUtils {
         return localAddress;
     }
 
-    private static Optional<InetAddress> toValidAddress(InetAddress address) {
+    private static Optional<InetAddress> toValidAddress(InetAddress address) { //转换为有效地址，ipv6、ipv4的表现形式不一样
         if (address instanceof Inet6Address) { //ipv6地址如：/fe80:0:0:0:2e4f:d3b:f73b:cb7c%utun1
             Inet6Address v6Address = (Inet6Address) address;
             if (isPreferIPV6Address()) {
@@ -267,11 +267,19 @@ public class NetUtils {
 
     private static InetAddress getLocalAddress0() {
         /**
-         * todo @csy-003 此处待调试，看查找网络地址的处理方式
+         * @csy-003 此处待调试，看查找网络地址的处理方式
+         * 解：已调试，处理方式如下
+         * 1）查询符合条件的网络接口NetworkInterface
+         *    a）获取到机器的所有网络接口，做初步的筛选，比如排除回路地址、虚拟地址等
+         *    b）对筛选的网络接口列表进行处理，判断是否包含系统属性执行的网络接口，若有直接返回
+         *    c）对网络接口列表中的地址进行处理，先按ipv4或ipv6的标准格式进行格式化，然后判断地址是否可达，若可达直接返回
+         *    d）若都没找到，则直接找网络接口列表中的第一个处理
+         * 2）遍历网络接口中的地址，判断是否有可达的地址
+         * 3）若没查询到，则使用InetAddress.getLocalHost()查询
          */
         InetAddress localAddress = null;
 
-        // @since 2.7.6, choose the {@link NetworkInterface} first
+        // @since 2.7.6, choose the {@link NetworkInterface} first （优先使用网络接口NetworkInterface查询本地地址）
         try {
             NetworkInterface networkInterface = findNetworkInterface();
             Enumeration<InetAddress> addresses = networkInterface.getInetAddresses();
@@ -292,7 +300,7 @@ public class NetUtils {
         }
 
         try {
-            localAddress = InetAddress.getLocalHost();
+            localAddress = InetAddress.getLocalHost(); //若网络接口没查询到本地地址，则使用InetAddress中方法查找， todo @csy-005 相比NetworkInterface，InetAddress.getLocalHost查询有哪些不足？
             Optional<InetAddress> addressOp = toValidAddress(localAddress);
             if (addressOp.isPresent()) {
                 return addressOp.get();
@@ -346,9 +354,9 @@ public class NetUtils {
      * the property value from {@link CommonConstants#DUBBO_PREFERRED_NETWORK_INTERFACE}, return <code>true</code>,
      * or <code>false</code>
      */
-    public static boolean isPreferredNetworkInterface(NetworkInterface networkInterface) {
-        String preferredNetworkInterface = System.getProperty(DUBBO_PREFERRED_NETWORK_INTERFACE);
-        return Objects.equals(networkInterface.getDisplayName(), preferredNetworkInterface);
+    public static boolean isPreferredNetworkInterface(NetworkInterface networkInterface) { //判断是否是系统环境中设置的首选接口
+        String preferredNetworkInterface = System.getProperty(DUBBO_PREFERRED_NETWORK_INTERFACE); //若系统属性中没设置，则返回null，即不会与哪个网络接口匹配
+        return Objects.equals(networkInterface.getDisplayName(), preferredNetworkInterface); //根据网络接口显示名称做判断
     }
 
     /**
@@ -376,16 +384,16 @@ public class NetUtils {
             }
         }
 
-        if (result == null) { // If not found, try to get the first one
+        if (result == null) { // If not found, try to get the first one（若按首选接口方式没有查到，则继续查找）
             for (NetworkInterface networkInterface : validNetworkInterfaces) {
-                Enumeration<InetAddress> addresses = networkInterface.getInetAddresses();
+                Enumeration<InetAddress> addresses = networkInterface.getInetAddresses(); //todo @csy-005 方法中使用了内部类，作用域是怎样的？内部类都有哪些使用方式？
                 while (addresses.hasMoreElements()) {
                     Optional<InetAddress> addressOp = toValidAddress(addresses.nextElement()); //todo @csy-004 Optional待了解实践
                     if (addressOp.isPresent()) {
                         try {
-                            if (addressOp.get().isReachable(100)) {
+                            if (addressOp.get().isReachable(100)) { //测试网络地址是否在指定时间是可达的isReachable
                                 result = networkInterface;
-                                break;
+                                break; //只要找到一个有效IP地址，则结束循环 todo @csy-005 break能结束多重循环吗
                             }
                         } catch (IOException e) {
                             // ignore
@@ -395,7 +403,7 @@ public class NetUtils {
             }
         }
 
-        if (result == null) {
+        if (result == null) { //若没有找到可达的地址，则直接返回列表中第一个地址
             result = first(validNetworkInterfaces);
         }
 
