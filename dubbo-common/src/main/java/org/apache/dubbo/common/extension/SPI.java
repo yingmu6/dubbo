@@ -55,6 +55,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface SPI {
+    /**
+     * SPI全称为Service Provider Interface，是一种服务发现机制。SPI的本质是将接口实现类的全限定名配置在文件中，
+     * 并由服务加载器读取配置文件，加载实现类。这样可以在运行时，动态为接口加载实现类。其实这有有点像IOC的思想,将装配的控制权移到程序之外
+     */
 
     /**
      * default extension name

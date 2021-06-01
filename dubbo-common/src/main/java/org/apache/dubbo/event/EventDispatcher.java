@@ -30,7 +30,7 @@ import java.util.concurrent.Executor;
  * @since 2.7.5
  */
 @SPI("direct")
-public interface EventDispatcher extends Listenable<EventListener<?>> {
+public interface EventDispatcher extends Listenable<EventListener<?>> { //todo @csy-006 Dispatcher应该怎么解读？此处的事件分配器的使用场景是什么？
 
     /**
      * Direct（直接） {@link Executor} uses sequential execution model（使用顺序执行模型）

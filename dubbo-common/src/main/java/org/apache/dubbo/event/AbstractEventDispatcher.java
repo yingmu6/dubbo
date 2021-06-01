@@ -113,7 +113,7 @@ public abstract class AbstractEventDispatcher implements EventDispatcher {
     }
 
     @Override
-    public void dispatch(Event event) { //dispatch：调度
+    public void dispatch(Event event) { //dispatch：调度 todo @csy-006 使用场景是怎样的？待调试
 
         Executor executor = getExecutor();
 

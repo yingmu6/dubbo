@@ -116,7 +116,7 @@ import static org.apache.dubbo.remoting.Constants.CLIENT_KEY;
  *
  * @since 2.7.5
  */
-public class DubboBootstrap extends GenericEventListener {
+public class DubboBootstrap extends GenericEventListener { //todo @csy-006 引导程序都做了啥？
 
     public static final String DEFAULT_REGISTRY_ID = "REGISTRY#DEFAULT";
 

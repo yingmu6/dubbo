@@ -27,6 +27,6 @@ import java.util.concurrent.ForkJoinPool;
 public class ParallelEventDispatcher extends AbstractEventDispatcher {
 
     public ParallelEventDispatcher() {
-        super(ForkJoinPool.commonPool());
+        super(ForkJoinPool.commonPool()); //todo @csy-006 ForkJoinPool待了解
     }
 }

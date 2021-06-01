@@ -30,7 +30,7 @@ import static org.apache.dubbo.common.extension.ExtensionLoader.getExtensionLoad
  * @since 2.7.5
  */
 @SPI("default")
-public interface ServiceNameMapping extends Prioritized {
+public interface ServiceNameMapping extends Prioritized { //todo @csy-006 此处是在什么时候使用加载的？
 
     /**
      * Map the specified Dubbo service interface, group, version and protocol to current Dubbo service name

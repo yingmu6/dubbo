@@ -85,6 +85,11 @@ public class ExtensionLoader<T> {
 
     private static final Pattern NAME_SEPARATOR = Pattern.compile("\\s*[,]+\\s*"); //类变量：类的所有对象共同拥有，成员变量：对象独自拥有
 
+    /**
+     * SPI接口与ExtensionLoader扩展加载类的映射
+     *   1）包含了ExtensionFactory接口与其它接口的映射
+     *   2）每一个SPI接口对应一个ExtensionLoader
+     */
     private static final ConcurrentMap<Class<?>, ExtensionLoader<?>> EXTENSION_LOADERS = new ConcurrentHashMap<>(64);
 
     private static final ConcurrentMap<Class<?>, Object> EXTENSION_INSTANCES = new ConcurrentHashMap<>(64);
@@ -141,7 +146,17 @@ public class ExtensionLoader<T> {
     }
 
     /**
-     * todo @csy-002 此处递归待调试下，看下递归流程？
+     * @csy-002 此处递归待调试下，看下递归流程？递归的原理是什么？
+     * 递归：直接或间接调用自身的一种方法，它通常把一个大型复杂的问题层层转化为一个与原问题相似的规模较小的问题来求解，
+     *      递归策略只需少量的程序就可描述出解题过程所需要的多次重复计算，大大地减少了程序的代码量
+     *      https://baike.baidu.com/item/%E9%80%92%E5%BD%92/1740695?fr=aladdin （分治法）
+     * 递归函数的执行过程，函数代码虽然只有一份，但在执行的过程中，每调用一次，就会有一次入栈，生成一份不同的参数、局部变量和返回地址（若没递归结束条件，则会栈溢出）
+     * 一般来说，递归需要有边界条件、递归前进段和递归返回段。当边界条件不满足时，递归前进；当边界条件满足时，递归返回。
+     *
+     * 此处objectFactory设置的逻辑
+     * 1）若SPI接口是ExtensionFactory，则objectFactory设置为null，因为自身已经是ExtensionFactory类型了
+     * 2）若SPI接口非ExtensionFactory，则需要objectFactory实例的值，因为ExtensionFactory本身是SPI接口，所以还需要SPI的方式
+     *    先获取到ExtensionLoader，再获取自适应的扩展实例
      */
     private ExtensionLoader(Class<?> type) {
         this.type = type;
@@ -153,10 +168,10 @@ public class ExtensionLoader<T> {
     }
 
     /**
-     * todo @csy-005 待调试梳理 @pause
+     * @csy-006 ExtensionLoader加载器的概念是啥？与类加载器概念有何异同？
      */
     @SuppressWarnings("unchecked")
-    public static <T> ExtensionLoader<T> getExtensionLoader(Class<T> type) {
+    public static <T> ExtensionLoader<T> getExtensionLoader(Class<T> type) { //每一个SPI接口对应一个ExtensionLoader
         if (type == null) {
             throw new IllegalArgumentException("Extension type == null");
         }
