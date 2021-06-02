@@ -23,7 +23,7 @@ import org.apache.dubbo.common.extension.SPI;
  */
 
 @SPI
-public interface ConfigInitializer {
+public interface ConfigInitializer { //todo @csy-007 该接口的用途以及使用场景是啥？没看到实现类，在哪里实现的？
 
     default void initReferConfig(ReferenceConfig referenceConfig) {
 

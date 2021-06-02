@@ -1393,4 +1393,12 @@ public class DubboBootstrap extends GenericEventListener { //todo @csy-006 引�
         ssl.refresh();
         return ssl;
     }
+
+    /**
+     * @csy-007 启动日志中，是哪里打印出来的？
+     * [DUBBO] DubboBootstrap is ready., dubbo version: , current host: 192.168.2.100
+     * [DUBBO] DubboBootstrap has started., dubbo version: , current host: 192.168.2.100
+     *
+     * 解：start() 方法中打印的
+     */
 }

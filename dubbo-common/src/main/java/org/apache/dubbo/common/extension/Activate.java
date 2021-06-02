@@ -26,6 +26,7 @@ import java.lang.annotation.Target;
 
 /**
  * Activate. This annotation is useful for automatically activate（自动激活） certain（某些） extensions with the given criteria(条件),
+ * （@Activate 被用于自动激活某些带有条件的扩展，按条件匹配来激活扩展类）
  * for examples: <code>@Activate</code> can be used to load certain <code>Filter</code> extension when there are
  * multiple implementations.
  * <ol>
@@ -53,7 +54,7 @@ public @interface Activate {
     String[] group() default {};
 
     /**
-     * Activate the current extension when the specified keys appear in the URL's parameters.
+     * Activate the current extension when the specified keys appear in the URL's parameters.（todo @csy-007 与URL的参数有什么关系？）
      * <p>
      * For example, given <code>@Activate("cache, validation")</code>, the current extension will be return only when
      * there's either <code>cache</code> or <code>validation</code> key appeared in the URL's parameters.

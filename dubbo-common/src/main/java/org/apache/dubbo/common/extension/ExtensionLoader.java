@@ -66,27 +66,28 @@ import static org.apache.dubbo.common.constants.CommonConstants.REMOVE_VALUE_PRE
  * at present designed to be singleton or static (by itself totally static or uses some static fields).
  * So the instances returned from them are of process or classloader scope. If you want to support
  * multiple dubbo servers in a single process, you may need to refactor these three classes.
+ * （ApplicationModel、DubboBootstrap、ExtensionLoader被设计为单例模式，若想支持多服务的，就需要重构这三个类了）
  * <p>
- * Load dubbo extensions
+ * Load dubbo extensions（加载dubbo的扩展信息）
  * <ul>
- * <li>auto inject dependency extension </li>
- * <li>auto wrap extension in wrapper </li>
- * <li>default extension is an adaptive instance</li>
+ * <li>auto inject dependency extension </li> 自动注入依赖扩展
+ * <li>auto wrap extension in wrapper </li>   wrapper自动封装扩展
+ * <li>default extension is an adaptive instance</li> adaptive的实例是默认扩展
  * </ul>
  *
  * @see <a href="http://java.sun.com/j2se/1.5.0/docs/guide/jar/jar.html#Service%20Provider">Service Provider in Java 5</a>
- * @see org.apache.dubbo.common.extension.SPI
- * @see org.apache.dubbo.common.extension.Adaptive
- * @see org.apache.dubbo.common.extension.Activate
+ * @see org.apache.dubbo.common.extension.SPI     SPI标识注解
+ * @see org.apache.dubbo.common.extension.Adaptive  自适应注解
+ * @see org.apache.dubbo.common.extension.Activate  自动激活注解
  */
-public class ExtensionLoader<T> {
+public class ExtensionLoader<T> { //todo @csy-007 被设计为单例模式，只有一个实例吗？EXTENSION_LOADERS维护的有多个ExtensionLoader怎么解读？
 
     private static final Logger logger = LoggerFactory.getLogger(ExtensionLoader.class);
 
     private static final Pattern NAME_SEPARATOR = Pattern.compile("\\s*[,]+\\s*"); //类变量：类的所有对象共同拥有，成员变量：对象独自拥有
 
     /**
-     * SPI接口与ExtensionLoader扩展加载类的映射
+     * SPI接口Class与ExtensionLoader扩展加载类的映射
      *   1）包含了ExtensionFactory接口与其它接口的映射
      *   2）每一个SPI接口对应一个ExtensionLoader
      */
@@ -102,7 +103,7 @@ public class ExtensionLoader<T> {
 
     private final Holder<Map<String, Class<?>>> cachedClasses = new Holder<>();
 
-    private final Map<String, Object> cachedActivates = new ConcurrentHashMap<>(); //扩展名与@Active注解的映射
+    private final Map<String, Object> cachedActivates = new ConcurrentHashMap<>(); //扩展名与@Active注解的映射，todo @csy-007 此处的Object是具体的实例吗？是怎么设置的？
     private final ConcurrentMap<String, Holder<Object>> cachedInstances = new ConcurrentHashMap<>();
     private final Holder<Object> cachedAdaptiveInstance = new Holder<>();
     private volatile Class<?> cachedAdaptiveClass = null;
@@ -127,7 +128,7 @@ public class ExtensionLoader<T> {
      * @return non-null
      * @since 2.7.7
      */
-    private static LoadingStrategy[] loadLoadingStrategies() {
+    private static LoadingStrategy[] loadLoadingStrategies() { //todo @csy-007 此处是使用java SPI吗？
         return stream(load(LoadingStrategy.class).spliterator(), false)
                 .sorted()
                 .toArray(LoadingStrategy[]::new);
@@ -158,7 +159,7 @@ public class ExtensionLoader<T> {
      * 2）若SPI接口非ExtensionFactory，则需要objectFactory实例的值，因为ExtensionFactory本身是SPI接口，所以还需要SPI的方式
      *    先获取到ExtensionLoader，再获取自适应的扩展实例
      */
-    private ExtensionLoader(Class<?> type) {
+    private ExtensionLoader(Class<?> type) { //私有的构造方法
         this.type = type;
         objectFactory = (type == ExtensionFactory.class ? null : ExtensionLoader.getExtensionLoader(ExtensionFactory.class).getAdaptiveExtension());
     }
@@ -169,6 +170,10 @@ public class ExtensionLoader<T> {
 
     /**
      * @csy-006 ExtensionLoader加载器的概念是啥？与类加载器概念有何异同？
+     * ExtensionLoader：加载dubbo的扩展类
+     * ClassLoader：classloader顾名思义，即是类加载。虚拟机把描述类的数据从class字节码文件加载到内存，并对数据进行检验、转换解析和初始化，
+     *              最终形成可以被虚拟机直接使用的Java类型，这就是虚拟机的类加载机制
+     *              https://juejin.cn/post/6931972267609948167
      */
     @SuppressWarnings("unchecked")
     public static <T> ExtensionLoader<T> getExtensionLoader(Class<T> type) { //每一个SPI接口对应一个ExtensionLoader
@@ -278,40 +283,59 @@ public class ExtensionLoader<T> {
      * @return extension list which are activated （返回匹配的扩展类列表）
      * @see org.apache.dubbo.common.extension.Activate
      */
-    public List<T> getActivateExtension(URL url, String[] values, String group) { //获取Activate对应的扩展类列表，todo @csy-002 待调试，整理下逻辑
-        List<T> activateExtensions = new ArrayList<>();
+
+    /**
+     * 获取满足匹配条件的Activate对应的扩展类列表， @csy-002 待调试，整理下逻辑
+
+     */
+    public List<T> getActivateExtension(URL url, String[] values, String group) {
+        List<T> activateExtensions = new ArrayList<>(); //todo @csy-007 url出现configInitializer:// ，这是什么协议？
         List<String> names = values == null ? new ArrayList<>(0) : asList(values);
-        if (!names.contains(REMOVE_VALUE_PREFIX + DEFAULT_KEY)) { //若扩展名列表不包含-default
-            getExtensionClasses();
+        /**
+         * 在扩展名列表不包含-default时进行处理
+         * @csy-007 此处-default是指什么？去除默认扩展吗？
+         * 是的，"-"表式剔除的含义
+         */
+        if (!names.contains(REMOVE_VALUE_PREFIX + DEFAULT_KEY)) {
+            getExtensionClasses(); //此处没有用到方法的返回值，主要使用方法中的loadExtensionClasses()，若缓存中没有对应的值，则对应加载并设置到缓存中
             for (Map.Entry<String, Object> entry : cachedActivates.entrySet()) {
                 String name = entry.getKey();
                 Object activate = entry.getValue();
 
                 String[] activateGroup, activateValue;
 
-                if (activate instanceof Activate) {
+                if (activate instanceof Activate) { //取注解@Activate上设置的group、value值
                     activateGroup = ((Activate) activate).group();
                     activateValue = ((Activate) activate).value();
-                } else if (activate instanceof com.alibaba.dubbo.common.extension.Activate) {
+                } else if (activate instanceof com.alibaba.dubbo.common.extension.Activate) { //兼容老版本的功能
                     activateGroup = ((com.alibaba.dubbo.common.extension.Activate) activate).group();
                     activateValue = ((com.alibaba.dubbo.common.extension.Activate) activate).value();
                 } else {
                     continue;
                 }
-                if (isMatchGroup(group, activateGroup) //比较分组group、值value
+
+                /**
+                 * 自动激活条件匹配逻辑
+                 * 1）将查询参数group与注解中group值进行比较
+                 * 2）扩展名name没有加载过且不是"-"移除的扩展名
+                 * 3）将注解中声明的value值与url中参数值进行比较
+                 * 若都满足条件，则获取扩展名对应的实例，并加载到
+                 *    activateExtensions自动激活扩展的列表中
+                 */
+                if (isMatchGroup(group, activateGroup)
                         && !names.contains(name)
                         && !names.contains(REMOVE_VALUE_PREFIX + name)
                         && isActive(activateValue, url)) {
                     activateExtensions.add(getExtension(name));
                 }
             }
-            activateExtensions.sort(ActivateComparator.COMPARATOR);
+            activateExtensions.sort(ActivateComparator.COMPARATOR); //将可激活扩展类列表进行排序，todo @csy-007 会回调哪个方法
         }
         List<T> loadedExtensions = new ArrayList<>();
-        for (int i = 0; i < names.size(); i++) {
+        for (int i = 0; i < names.size(); i++) { //todo @csy-007 为啥提供者启动时，没有进入这个循环？消费端启动时，也没进入
             String name = names.get(i);
             if (!name.startsWith(REMOVE_VALUE_PREFIX)
-                    && !names.contains(REMOVE_VALUE_PREFIX + name)) {
+                    && !names.contains(REMOVE_VALUE_PREFIX + name)) { //todo @csy-007 此处逻辑会在什么场景下进入？
                 if (DEFAULT_KEY.equals(name)) {
                     if (!loadedExtensions.isEmpty()) {
                         activateExtensions.addAll(0, loadedExtensions);
@@ -328,11 +352,11 @@ public class ExtensionLoader<T> {
         return activateExtensions;
     }
 
-    private boolean isMatchGroup(String group, String[] groups) {//比较分组是否匹配
-        if (StringUtils.isEmpty(group)) {
+    private boolean isMatchGroup(String group, String[] groups) {//比较分组是否匹配，group是传入的参数即为查询条件，groups是@Activate注解上设置的值
+        if (StringUtils.isEmpty(group)) { //若没有传入查询条件，则可以匹配所有组，直接匹配成功
             return true;
         }
-        if (groups != null && groups.length > 0) {
+        if (groups != null && groups.length > 0) { //若输入查询条件，且@Activate注解上也设置group值，则进行匹配比较，只要与其中一个group条件匹配即为匹配成功。若都没匹配成功，则匹配失败
             for (String g : groups) {
                 if (group.equals(g)) {
                     return true;
@@ -342,26 +366,32 @@ public class ExtensionLoader<T> {
         return false;
     }
 
-    private boolean isActive(String[] keys, URL url) { //比较值
-        if (keys.length == 0) {
+    private boolean isActive(String[] keys, URL url) { //比较值，keys是@Activate注解上的value值，将注解中value值与url的值进行比较
+        if (keys.length == 0) { //若注解上没设置，表明匹配成功
             return true;
         }
-        for (String key : keys) {
-            // @Active(value="key1:value1, key2:value2")
+        for (String key : keys) { //遍历注解上的所有key
+            // @Active(value="key1:value1, key2:value2")    2.5.6版本时没有key1:value1这种形式，直接用key来比较的
             String keyValue = null;
-            if (key.contains(":")) {
+            if (key.contains(":")) { //分隔key中设置的值
                 String[] arr = key.split(":");
                 key = arr[0];
                 keyValue = arr[1];
             }
 
-            for (Map.Entry<String, String> entry : url.getParameters().entrySet()) {
+            for (Map.Entry<String, String> entry : url.getParameters().entrySet()) { //遍历url的参数集合
                 String k = entry.getKey();
                 String v = entry.getValue();
+                /**
+                 * @csy-007 此处比较逻辑待调试了解？
+                 * 将注解上的key与url的参数key进行比较
+                 *  1）若key相同或url中的key以注解中的key结尾，且注解上key对应的value与url中设置的value相同，则匹配通过
+                 *  2）或者在keyValue为空，但url设置的value不为空时，则匹配通过，即@Active(value="key1, key2") 这种格式
+                 */
                 if ((k.equals(key) || k.endsWith("." + key))
                         && ((keyValue != null && keyValue.equals(v)) || (keyValue == null && ConfigUtils.isNotEmpty(v)))) {
                     return true;
-                }
+                } // &&的优先级高于|| ，如System.out.println(false && true || true);
             }
         }
         return false;
@@ -772,9 +802,9 @@ public class ExtensionLoader<T> {
         return getExtensionClasses().get(name);
     }
 
-    private Map<String, Class<?>> getExtensionClasses() {
+    private Map<String, Class<?>> getExtensionClasses() { //从缓存中获取扩展类，若不存在则从文件中读取，并加载到缓存中
         Map<String, Class<?>> classes = cachedClasses.get();
-        if (classes == null) {//从缓存中获取扩展类，若不存在则从文件中读取，并加载到缓存中（锁外判断）
+        if (classes == null) { //锁外判断
             synchronized (cachedClasses) {
                 classes = cachedClasses.get();
                 /**
@@ -800,11 +830,11 @@ public class ExtensionLoader<T> {
     private Map<String, Class<?>> loadExtensionClasses() {
         cacheDefaultExtensionName();
 
-        Map<String, Class<?>> extensionClasses = new HashMap<>();
+        Map<String, Class<?>> extensionClasses = new HashMap<>(); //配置文件中，扩展名name以及扩展类Class的映射Map
 
-        for (LoadingStrategy strategy : strategies) {
+        for (LoadingStrategy strategy : strategies) { //todo @csy-007 加载时是怎么找到文件路径的？怎样查找到其它文件的配置内容的？
             loadDirectory(extensionClasses, strategy.directory(), type.getName(), strategy.preferExtensionClassLoader(), strategy.overridden(), strategy.excludedPackages());
-            loadDirectory(extensionClasses, strategy.directory(), type.getName().replace("org.apache", "com.alibaba"), strategy.preferExtensionClassLoader(), strategy.overridden(), strategy.excludedPackages());
+            loadDirectory(extensionClasses, strategy.directory(), type.getName().replace("org.apache", "com.alibaba"), strategy.preferExtensionClassLoader(), strategy.overridden(), strategy.excludedPackages()); //todo @csy-007 此处替换com.alibaba，是怎么操作的？有何用途？
         }
 
         return extensionClasses;
@@ -836,9 +866,9 @@ public class ExtensionLoader<T> {
         loadDirectory(extensionClasses, dir, type, false, false);
     }
 
-    private void loadDirectory(Map<String, Class<?>> extensionClasses, String dir, String type,
+    private void loadDirectory(Map<String, Class<?>> extensionClasses, String dir, String type, //extensionClasses引用传递，形参的改变会影响实参改变
                                boolean extensionLoaderClassLoaderFirst, boolean overridden, String... excludedPackages) {
-        String fileName = dir + type;
+        String fileName = dir + type; //如dir："META-INF/dubbo/internal/" ，type："org.apache.dubbo.common.extension.ExtensionFactory"
         try {
             Enumeration<java.net.URL> urls = null;
             ClassLoader classLoader = findClassLoader();
@@ -872,7 +902,7 @@ public class ExtensionLoader<T> {
     }
 
     private void loadResource(Map<String, Class<?>> extensionClasses, ClassLoader classLoader,
-                              java.net.URL resourceURL, boolean overridden, String... excludedPackages) {
+                              java.net.URL resourceURL, boolean overridden, String... excludedPackages) { //todo @csy-007 功能用途是什么？
         try { //资源放在try里面创建，不使用时会自动被释放
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(resourceURL.openStream(), StandardCharsets.UTF_8))) {
                 String line; //todo @csy-003 BufferedReader、InputStreamReader了解实践
@@ -887,8 +917,8 @@ public class ExtensionLoader<T> {
                             String name = null;
                             int i = line.indexOf('='); //按等号进行分隔
                             if (i > 0) {
-                                name = line.substring(0, i).trim();
-                                line = line.substring(i + 1).trim();
+                                name = line.substring(0, i).trim(); //扩展名
+                                line = line.substring(i + 1).trim(); //扩展类对应的全路径类名
                             }
                             if (line.length() > 0 && !isExcluded(line, excludedPackages)) { //扩展类的全路径名称，如org.apache.dubbo.rpc.protocol.dubbo.filter.TraceFilter
                                 loadClass(extensionClasses, resourceURL, Class.forName(line, true, classLoader), name, overridden);
@@ -918,7 +948,7 @@ public class ExtensionLoader<T> {
     }
 
     /**
-     * 读取配置文件中的内容，并加载到缓存中
+     * 读取配置文件中的内容，并加载到缓存中，加载到不同类型的缓存中，比如cachedAdaptiveClass、cachedWrapperClasses、extensionClasses等
      */
     private void loadClass(Map<String, Class<?>> extensionClasses, java.net.URL resourceURL, Class<?> clazz, String name,
                            boolean overridden) throws NoSuchMethodException {
