@@ -80,7 +80,11 @@ import static org.apache.dubbo.common.constants.CommonConstants.REMOVE_VALUE_PRE
  * @see org.apache.dubbo.common.extension.Adaptive  自适应注解
  * @see org.apache.dubbo.common.extension.Activate  自动激活注解
  */
-public class ExtensionLoader<T> { //todo @csy-007 被设计为单例模式，只有一个实例吗？EXTENSION_LOADERS维护的有多个ExtensionLoader怎么解读？
+public class ExtensionLoader<T> {
+    /**
+     * @csy-007 ExtensionLoader是单例模式吗？
+     * 解：不是，每一个SPI接口对应一个ExtensionLoader实例，测试如org.apache.dubbo.common.extension.ExtensionLoaderTest#test_getDefaultExtension()
+     */
 
     private static final Logger logger = LoggerFactory.getLogger(ExtensionLoader.class);
 
@@ -103,11 +107,11 @@ public class ExtensionLoader<T> { //todo @csy-007 被设计为单例模式，只
 
     private final Holder<Map<String, Class<?>>> cachedClasses = new Holder<>();
 
-    private final Map<String, Object> cachedActivates = new ConcurrentHashMap<>(); //扩展名与@Active注解的映射，todo @csy-007 此处的Object是具体的实例吗？是怎么设置的？
+    private final Map<String, Object> cachedActivates = new ConcurrentHashMap<>(); //扩展名与@Active注解的映射，@csy-007 此处的Object是具体的实例吗？是怎么设置的？解：不是扩展实例，是@Active对象，在cacheActivateClass方法中设置的
     private final ConcurrentMap<String, Holder<Object>> cachedInstances = new ConcurrentHashMap<>();
     private final Holder<Object> cachedAdaptiveInstance = new Holder<>();
     private volatile Class<?> cachedAdaptiveClass = null;
-    private String cachedDefaultName; //缓存默认的扩展名，若SPI上没声明，则为null
+    private String cachedDefaultName; //缓存默认的扩展名，即为SPI上声明的扩展名
     private volatile Throwable createAdaptiveInstanceError;
 
     private Set<Class<?>> cachedWrapperClasses;
@@ -128,7 +132,12 @@ public class ExtensionLoader<T> { //todo @csy-007 被设计为单例模式，只
      * @return non-null
      * @since 2.7.7
      */
-    private static LoadingStrategy[] loadLoadingStrategies() { //todo @csy-007 此处是使用java SPI吗？
+    /**
+     * 使用java SPI处理，获取各个加载策略并进行排序
+     * （关注自身数据结构+算法即可，调用的第三方组件，只需关注数据结构即可，内部算法初步时可以不看，深入时再对应看，有问题可以抛出来单独处理）
+     * （做到专注、集中，将时间、精力集中突破核心功能点）
+     */
+    private static LoadingStrategy[] loadLoadingStrategies() {
         return stream(load(LoadingStrategy.class).spliterator(), false)
                 .sorted()
                 .toArray(LoadingStrategy[]::new);
@@ -159,7 +168,7 @@ public class ExtensionLoader<T> { //todo @csy-007 被设计为单例模式，只
      * 2）若SPI接口非ExtensionFactory，则需要objectFactory实例的值，因为ExtensionFactory本身是SPI接口，所以还需要SPI的方式
      *    先获取到ExtensionLoader，再获取自适应的扩展实例
      */
-    private ExtensionLoader(Class<?> type) { //私有的构造方法
+    private ExtensionLoader(Class<?> type) { //私有的构造方法，创建ExtensionLoader实例
         this.type = type;
         objectFactory = (type == ExtensionFactory.class ? null : ExtensionLoader.getExtensionLoader(ExtensionFactory.class).getAdaptiveExtension());
     }
@@ -289,7 +298,7 @@ public class ExtensionLoader<T> { //todo @csy-007 被设计为单例模式，只
 
      */
     public List<T> getActivateExtension(URL url, String[] values, String group) {
-        List<T> activateExtensions = new ArrayList<>(); //todo @csy-007 url出现configInitializer:// ，这是什么协议？
+        List<T> activateExtensions = new ArrayList<>();
         List<String> names = values == null ? new ArrayList<>(0) : asList(values);
         /**
          * 在扩展名列表不包含-default时进行处理
@@ -329,7 +338,7 @@ public class ExtensionLoader<T> { //todo @csy-007 被设计为单例模式，只
                     activateExtensions.add(getExtension(name));
                 }
             }
-            activateExtensions.sort(ActivateComparator.COMPARATOR); //将可激活扩展类列表进行排序，todo @csy-007 会回调哪个方法
+            activateExtensions.sort(ActivateComparator.COMPARATOR); //将可激活扩展类列表进行排序
         }
         List<T> loadedExtensions = new ArrayList<>();
         for (int i = 0; i < names.size(); i++) { //todo @csy-007 为啥提供者启动时，没有进入这个循环？消费端启动时，也没进入
@@ -802,7 +811,7 @@ public class ExtensionLoader<T> { //todo @csy-007 被设计为单例模式，只
         return getExtensionClasses().get(name);
     }
 
-    private Map<String, Class<?>> getExtensionClasses() { //从缓存中获取扩展类，若不存在则从文件中读取，并加载到缓存中
+    private Map<String, Class<?>> getExtensionClasses() { //从缓存中获取扩展类映射Map，若不存在则从文件中读取，并加载到缓存中
         Map<String, Class<?>> classes = cachedClasses.get();
         if (classes == null) { //锁外判断
             synchronized (cachedClasses) {
@@ -832,9 +841,9 @@ public class ExtensionLoader<T> { //todo @csy-007 被设计为单例模式，只
 
         Map<String, Class<?>> extensionClasses = new HashMap<>(); //配置文件中，扩展名name以及扩展类Class的映射Map
 
-        for (LoadingStrategy strategy : strategies) { //todo @csy-007 加载时是怎么找到文件路径的？怎样查找到其它文件的配置内容的？
+        for (LoadingStrategy strategy : strategies) { //兼容加载老版本的SPI接口，如com.alibaba.*
             loadDirectory(extensionClasses, strategy.directory(), type.getName(), strategy.preferExtensionClassLoader(), strategy.overridden(), strategy.excludedPackages());
-            loadDirectory(extensionClasses, strategy.directory(), type.getName().replace("org.apache", "com.alibaba"), strategy.preferExtensionClassLoader(), strategy.overridden(), strategy.excludedPackages()); //todo @csy-007 此处替换com.alibaba，是怎么操作的？有何用途？
+            loadDirectory(extensionClasses, strategy.directory(), type.getName().replace("org.apache", "com.alibaba"), strategy.preferExtensionClassLoader(), strategy.overridden(), strategy.excludedPackages());
         }
 
         return extensionClasses;
@@ -866,6 +875,9 @@ public class ExtensionLoader<T> { //todo @csy-007 被设计为单例模式，只
         loadDirectory(extensionClasses, dir, type, false, false);
     }
 
+    /**
+     * 加载指定目录下配置文件，读取扩展配置信息并写到缓存中
+     */
     private void loadDirectory(Map<String, Class<?>> extensionClasses, String dir, String type, //extensionClasses引用传递，形参的改变会影响实参改变
                                boolean extensionLoaderClassLoaderFirst, boolean overridden, String... excludedPackages) {
         String fileName = dir + type; //如dir："META-INF/dubbo/internal/" ，type："org.apache.dubbo.common.extension.ExtensionFactory"
@@ -874,7 +886,7 @@ public class ExtensionLoader<T> { //todo @csy-007 被设计为单例模式，只
             ClassLoader classLoader = findClassLoader();
 
             // try to load from ExtensionLoader's ClassLoader first
-            if (extensionLoaderClassLoaderFirst) { //todo @csy-003 此处是什么含义？
+            if (extensionLoaderClassLoaderFirst) { //@csy-003 此处是什么含义？尝试用ExtensionLoader的类加载器加载文件资源
                 ClassLoader extensionLoaderClassLoader = ExtensionLoader.class.getClassLoader();
                 if (ClassLoader.getSystemClassLoader() != extensionLoaderClassLoader) {
                     urls = extensionLoaderClassLoader.getResources(fileName);
@@ -883,7 +895,7 @@ public class ExtensionLoader<T> { //todo @csy-007 被设计为单例模式，只
 
             if (urls == null || !urls.hasMoreElements()) {
                 if (classLoader != null) {
-                    urls = classLoader.getResources(fileName); //todo @csy-003 目前给出的相对了，如META-INF/dubbo/internal/org.apache.dubbo.rpc.Filter，是在哪里去加载文件的？
+                    urls = classLoader.getResources(fileName);
                 } else {
                     urls = ClassLoader.getSystemResources(fileName);
                 }
@@ -891,7 +903,7 @@ public class ExtensionLoader<T> { //todo @csy-007 被设计为单例模式，只
 
             if (urls != null) {
                 while (urls.hasMoreElements()) {
-                    java.net.URL resourceURL = urls.nextElement(); //todo @csy-003 此处的路径如，是从哪里查到的？file:/Users/chenshengyong/selfPro/db-self-2.7/dubbo/dubbo-rpc/dubbo-rpc-dubbo/target/classes/META-INF/dubbo/internal/org.apache.dubbo.rpc.Filter
+                    java.net.URL resourceURL = urls.nextElement();
                     loadResource(extensionClasses, classLoader, resourceURL, overridden, excludedPackages);
                 }
             }
@@ -901,11 +913,15 @@ public class ExtensionLoader<T> { //todo @csy-007 被设计为单例模式，只
         }
     }
 
+    /**
+     * @csy-007 功能用途是什么？
+     * 读取扩展配置文件的内容，解析出扩展配置信息，并加载到本地缓存中
+     */
     private void loadResource(Map<String, Class<?>> extensionClasses, ClassLoader classLoader,
-                              java.net.URL resourceURL, boolean overridden, String... excludedPackages) { //todo @csy-007 功能用途是什么？
+                              java.net.URL resourceURL, boolean overridden, String... excludedPackages) {
         try { //资源放在try里面创建，不使用时会自动被释放
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(resourceURL.openStream(), StandardCharsets.UTF_8))) {
-                String line; //todo @csy-003 BufferedReader、InputStreamReader了解实践
+                String line;
                 while ((line = reader.readLine()) != null) {//读取每一行，对每一行进行解析
                     final int ci = line.indexOf('#');
                     if (ci >= 0) { //若是注释的话，把注释内容去掉
@@ -966,7 +982,7 @@ public class ExtensionLoader<T> { //todo @csy-007 被设计为单例模式，只
             cacheAdaptiveClass(clazz, overridden);
         } else if (isWrapperClass(clazz)) { //封装类型
             cacheWrapperClass(clazz);
-        } else { //todo @csy-003 此处是否是自动激活还有SPI指定扩展名的情况？
+        } else { //@csy-003 此处是否是自动激活还有SPI指定扩展名的情况？
             clazz.getConstructor();
             if (StringUtils.isEmpty(name)) { //todo @csy-003 此处什么场景下会进入？
                 name = findAnnotationName(clazz);

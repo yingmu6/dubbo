@@ -24,7 +24,11 @@ import org.apache.dubbo.common.extension.SPI;
 
 @SPI
 public interface ConfigInitializer { //todo @csy-007 该接口的用途以及使用场景是啥？没看到实现类，在哪里实现的？
-
+    /**
+     * @csy-007 url出现configInitializer://，这是什么协议？解：做配置初始化，出现在org.apache.dubbo.config.ServiceConfig#checkAndUpdateSubConfigs()
+     * https://dmsupine.com/2021/05/23/dubbo-fu-wu-dao-chu-yuan-ma/ 服务导出流程中的配置
+     * 在Spring容器启动的时候执行了服务导出的过程，dubboBootstrap.start()
+     */
     default void initReferConfig(ReferenceConfig referenceConfig) {
 
     }

@@ -37,6 +37,7 @@ import org.apache.dubbo.common.extension.ext1.impl.SimpleExtImpl1;
 import org.apache.dubbo.common.extension.ext1.impl.SimpleExtImpl2;
 import org.apache.dubbo.common.extension.ext10_multi_names.Ext10MultiNames;
 import org.apache.dubbo.common.extension.ext2.Ext2;
+import org.apache.dubbo.common.extension.ext3.UseProtocolKeyExt;
 import org.apache.dubbo.common.extension.ext6_wrap.WrappedExt;
 import org.apache.dubbo.common.extension.ext6_wrap.impl.Ext5Wrapper1;
 import org.apache.dubbo.common.extension.ext6_wrap.impl.Ext5Wrapper2;
@@ -88,7 +89,7 @@ public class ExtensionLoaderTest {
             fail();
         } catch (IllegalArgumentException expected) {
             assertThat(expected.getMessage(),
-                    containsString("Extension type == null"));
+                    containsString("Extension type == null")); //如果实际值与预期的值不同，则会抛出异常
         }
     }
 
@@ -118,9 +119,23 @@ public class ExtensionLoaderTest {
 
     @Test
     public void test_getDefaultExtension() throws Exception {
-        SimpleExt ext = getExtensionLoader(SimpleExt.class).getDefaultExtension();
+        ExtensionLoader<SimpleExt> extensionLoader1 = getExtensionLoader(SimpleExt.class);
+        SimpleExt ext = extensionLoader1.getDefaultExtension();
         assertThat(ext, instanceOf(SimpleExtImpl1.class));
 
+        // 先获取扩展加载器，然后再执行相应的方法
+        ExtensionLoader<UseProtocolKeyExt> extensionLoader2 = getExtensionLoader(UseProtocolKeyExt.class);
+        UseProtocolKeyExt keyExt = extensionLoader2.getDefaultExtension();
+
+        /**
+         * extensionLoader2、extensionLoader3 属于同一扩展接口的扩展加载器，是同一个实例（会判断缓存中是否存在）
+         *     ExtensionLoader<T> loader = (ExtensionLoader<T>) EXTENSION_LOADERS.get(type);
+         */
+        ExtensionLoader<UseProtocolKeyExt> extensionLoader3 = getExtensionLoader(UseProtocolKeyExt.class);
+        UseProtocolKeyExt keyExt2 = extensionLoader3.getDefaultExtension();
+
+        assertThat(keyExt, instanceOf(UseProtocolKeyExt.class));
+        assertThat(keyExt2, instanceOf(UseProtocolKeyExt.class));
         String name = getExtensionLoader(SimpleExt.class).getDefaultExtensionName();
         assertEquals("impl1", name);
     }

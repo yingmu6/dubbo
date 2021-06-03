@@ -32,7 +32,7 @@ public class AdaptiveExtensionFactory implements ExtensionFactory {
 
     private final List<ExtensionFactory> factories;
 
-    public AdaptiveExtensionFactory() {
+    public AdaptiveExtensionFactory() { //todo @csy-008 用途以及使用场景？
         ExtensionLoader<ExtensionFactory> loader = ExtensionLoader.getExtensionLoader(ExtensionFactory.class);
         List<ExtensionFactory> list = new ArrayList<ExtensionFactory>();
         for (String name : loader.getSupportedExtensions()) {
