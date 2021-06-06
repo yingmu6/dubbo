@@ -24,11 +24,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marker for extension interface
+ * Marker for extension interface（扩展接口标识）
  * <p/>
  * Changes on extension configuration file <br/>
  * Use <code>Protocol</code> as an example, its configuration file 'META-INF/dubbo/com.xxx.Protocol' is changes from: <br/>
- * <pre>
+ * <pre>  （配置文件中是没有设置扩展名的）
  *     com.foo.XxxProtocol
  *     com.foo.YyyProtocol
  * </pre>
@@ -44,6 +44,7 @@ import java.lang.annotation.Target;
  * If there's third party library referenced by static field or by method in extension implementation, its class will
  * fail to initialize if the third party library doesn't exist. In this case, dubbo cannot figure out extension's id
  * therefore cannot be able to map the exception information with the extension, if the previous format is used.
+ * （在静态字段或方法引用第三方库时，若第三方库不存在则会引起类初始化失败，Extension标识的dubbo信息就拿不到，异常信息就和配置信息对应不起来）
  * <p/>
  * For example:
  * <p>
@@ -52,6 +53,7 @@ import java.lang.annotation.Target;
  * </p>
  *
  * @deprecated because it's too general, switch to use {@link org.apache.dubbo.common.extension.SPI}
+ * 因为含义广泛被废弃，使用@SPI代替
  */
 @Deprecated
 @Documented

@@ -143,6 +143,10 @@ public class ExtensionLoaderTest {
     @Test
     public void test_getDefaultExtension_NULL() throws Exception {
         Ext2 ext = getExtensionLoader(Ext2.class).getDefaultExtension();
+        /**
+         * @csy-009 此处为啥没有获取到扩展实例，对应的配置文件有看到配置的
+         * 解：是因为没有默认扩展名，getDefaultExtension()返回的就为空，默认扩展名是指SPI(value=) ，声明的value值
+         */
         assertNull(ext);
 
         String name = getExtensionLoader(Ext2.class).getDefaultExtensionName();
@@ -151,6 +155,9 @@ public class ExtensionLoaderTest {
 
     @Test
     public void test_getExtension() throws Exception {
+        /**
+         * todo @csy-009 扩展类的实例是怎么创建的？
+         */
         assertTrue(getExtensionLoader(SimpleExt.class).getExtension("impl1") instanceof SimpleExtImpl1);
         assertTrue(getExtensionLoader(SimpleExt.class).getExtension("impl2") instanceof SimpleExtImpl2);
     }

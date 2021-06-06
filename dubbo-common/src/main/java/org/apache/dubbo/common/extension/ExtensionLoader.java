@@ -97,15 +97,15 @@ public class ExtensionLoader<T> {
      */
     private static final ConcurrentMap<Class<?>, ExtensionLoader<?>> EXTENSION_LOADERS = new ConcurrentHashMap<>(64);
 
-    private static final ConcurrentMap<Class<?>, Object> EXTENSION_INSTANCES = new ConcurrentHashMap<>(64);
+    private static final ConcurrentMap<Class<?>, Object> EXTENSION_INSTANCES = new ConcurrentHashMap<>(64); //扩展类Class与扩展实例的映射
 
     private final Class<?> type;
 
     private final ExtensionFactory objectFactory;
 
-    private final ConcurrentMap<Class<?>, String> cachedNames = new ConcurrentHashMap<>();
+    private final ConcurrentMap<Class<?>, String> cachedNames = new ConcurrentHashMap<>(); //实例类Class与扩张名的映射
 
-    private final Holder<Map<String, Class<?>>> cachedClasses = new Holder<>();
+    private final Holder<Map<String, Class<?>>> cachedClasses = new Holder<>(); //当前扩展接口，所有扩展名与扩展类Class的映射
 
     private final Map<String, Object> cachedActivates = new ConcurrentHashMap<>(); //扩展名与@Active注解的映射，@csy-007 此处的Object是具体的实例吗？是怎么设置的？解：不是扩展实例，是@Active对象，在cacheActivateClass方法中设置的
     private final ConcurrentMap<String, Holder<Object>> cachedInstances = new ConcurrentHashMap<>();
@@ -423,7 +423,7 @@ public class ExtensionLoader<T> {
         return (T) holder.get();
     }
 
-    private Holder<Object> getOrCreateHolder(String name) {//获取或创建Holder
+    private Holder<Object> getOrCreateHolder(String name) {
         Holder<Object> holder = cachedInstances.get(name);
         if (holder == null) {
             cachedInstances.putIfAbsent(name, new Holder<>());
@@ -473,7 +473,7 @@ public class ExtensionLoader<T> {
         return getExtension(name, true);
     }
 
-    public T getExtension(String name, boolean wrap) {
+    public T getExtension(String name, boolean wrap) { //todo @csy-009 配置文件中的扩展名与扩展类Class都是一次性加载好的，那扩展类的实例是怎么做到按需加载的？
         if (StringUtils.isEmpty(name)) {
             throw new IllegalArgumentException("Extension name == null");
         }
@@ -658,7 +658,7 @@ public class ExtensionLoader<T> {
         return (T) instance;
     }
 
-    private IllegalStateException findException(String name) {
+    private IllegalStateException findException(String name) { //todo @csy-009 待覆盖调试
         for (Map.Entry<String, IllegalStateException> entry : exceptions.entrySet()) {
             if (entry.getKey().toLowerCase().contains(name.toLowerCase())) {
                 return entry.getValue();
@@ -685,6 +685,7 @@ public class ExtensionLoader<T> {
 
     @SuppressWarnings("unchecked")
     private T createExtension(String name, boolean wrap) {
+        // 先加载扩展接口对应的所有扩展类Class，然后在找出扩展名对应扩展类Class
         Class<?> clazz = getExtensionClasses().get(name);
         if (clazz == null) {
             throw findException(name);
@@ -692,7 +693,7 @@ public class ExtensionLoader<T> {
         try {
             T instance = (T) EXTENSION_INSTANCES.get(clazz);
             if (instance == null) {
-                EXTENSION_INSTANCES.putIfAbsent(clazz, clazz.newInstance()); //设置扩展类的实例
+                EXTENSION_INSTANCES.putIfAbsent(clazz, clazz.newInstance()); //通过Class的newInstance()创建实例
                 instance = (T) EXTENSION_INSTANCES.get(clazz);
             }
             injectExtension(instance); //注入扩展实例
@@ -730,6 +731,10 @@ public class ExtensionLoader<T> {
         return getExtensionClasses().containsKey(name);
     }
 
+    /**
+     * @csy-009 注入扩展逻辑是怎样的？
+     * 解：创建扩展类的实例后，若该实例的属性中包含其他
+     */
     private T injectExtension(T instance) {
 
         if (objectFactory == null) {
@@ -737,24 +742,24 @@ public class ExtensionLoader<T> {
         }
 
         try {
-            for (Method method : instance.getClass().getMethods()) {
+            for (Method method : instance.getClass().getMethods()) { //todo @csy-009 待覆盖测试
                 if (!isSetter(method)) {
                     continue;
                 }
                 /**
                  * Check {@link DisableInject} to see if we need auto injection for this property
                  */
-                if (method.getAnnotation(DisableInject.class) != null) {
+                if (method.getAnnotation(DisableInject.class) != null) { //若方法上声明@DisableInject，则不进行注入处理
                     continue;
                 }
                 Class<?> pt = method.getParameterTypes()[0];
-                if (ReflectUtils.isPrimitives(pt)) {
+                if (ReflectUtils.isPrimitives(pt)) { //todo @csy-009 参数类型只要不是基本类型就可以注入吗？非SPI类型的实例可以吗？
                     continue;
                 }
 
                 try {
                     String property = getSetterProperty(method);
-                    Object object = objectFactory.getExtension(pt, property);
+                    Object object = objectFactory.getExtension(pt, property);//todo @csy-009 此处是怎么获取对象的？
                     if (object != null) {
                         method.invoke(instance, object);
                     }
@@ -886,7 +891,7 @@ public class ExtensionLoader<T> {
             ClassLoader classLoader = findClassLoader();
 
             // try to load from ExtensionLoader's ClassLoader first
-            if (extensionLoaderClassLoaderFirst) { //@csy-003 此处是什么含义？尝试用ExtensionLoader的类加载器加载文件资源
+            if (extensionLoaderClassLoaderFirst) { //@csy-003 此处是什么含义？解：尝试用ExtensionLoader的类加载器加载文件资源
                 ClassLoader extensionLoaderClassLoader = ExtensionLoader.class.getClassLoader();
                 if (ClassLoader.getSystemClassLoader() != extensionLoaderClassLoader) {
                     urls = extensionLoaderClassLoader.getResources(fileName);
@@ -915,7 +920,8 @@ public class ExtensionLoader<T> {
 
     /**
      * @csy-007 功能用途是什么？
-     * 读取扩展配置文件的内容，解析出扩展配置信息，并加载到本地缓存中
+     * 会读取扩展配置文件的所有内容，把所有的扩展名与扩展类解析，并依次放入对应的缓存
+     * （把扩展配置文件中的信息，加载到缓存中）
      */
     private void loadResource(Map<String, Class<?>> extensionClasses, ClassLoader classLoader,
                               java.net.URL resourceURL, boolean overridden, String... excludedPackages) {
@@ -965,6 +971,7 @@ public class ExtensionLoader<T> {
 
     /**
      * 读取配置文件中的内容，并加载到缓存中，加载到不同类型的缓存中，比如cachedAdaptiveClass、cachedWrapperClasses、extensionClasses等
+     * （对配置文件中对应的Class进行判断，设置到对应类型的缓存中）
      */
     private void loadClass(Map<String, Class<?>> extensionClasses, java.net.URL resourceURL, Class<?> clazz, String name,
                            boolean overridden) throws NoSuchMethodException {
@@ -973,18 +980,18 @@ public class ExtensionLoader<T> {
          * 解：isAssignableFrom 判断一个class（类或接口）是否与另一个class相同，或者是否是另一个class的父类或父接口
          * 如：type与clazz对应的Class是否相同，或type是否是clazz父类或父接口
          */
-        if (!type.isAssignableFrom(clazz)) {
+        if (!type.isAssignableFrom(clazz)) { //判断实例类是不是接口type的子类型
             throw new IllegalStateException("Error occurred when loading extension class (interface: " +
                     type + ", class line: " + clazz.getName() + "), class "
                     + clazz.getName() + " is not subtype of interface.");
         }
-        if (clazz.isAnnotationPresent(Adaptive.class)) { //自适应类型@Adaptive
+        if (clazz.isAnnotationPresent(Adaptive.class)) { //判断扩展实现类是否包含@Adaptive注解
             cacheAdaptiveClass(clazz, overridden);
         } else if (isWrapperClass(clazz)) { //封装类型
             cacheWrapperClass(clazz);
-        } else { //@csy-003 此处是否是自动激活还有SPI指定扩展名的情况？
+        } else { //@csy-003 此处是否是自动激活还有SPI指定扩展名的情况？解：SPI修饰的是扩展接口，这里的clazz是扩展实现类，所以此处扩展实现类带有@Activate、@Extension或没带注解都可进入
             clazz.getConstructor();
-            if (StringUtils.isEmpty(name)) { //todo @csy-003 此处什么场景下会进入？
+            if (StringUtils.isEmpty(name)) { //@csy-003 此处什么场景下会进入？解：扩展名为空的情况
                 name = findAnnotationName(clazz);
                 if (name.length() == 0) {
                     throw new IllegalStateException("No such extension name for the class " + clazz.getName() + " in the config " + resourceURL);
@@ -1018,7 +1025,7 @@ public class ExtensionLoader<T> {
         Class<?> c = extensionClasses.get(name);
         if (c == null || overridden) {
             extensionClasses.put(name, clazz);
-        } else if (c != clazz) {
+        } else if (c != clazz) { //一个扩展名只能对应一个扩展类
             String duplicateMsg = "Duplicate extension " + type.getName() + " name " + name + " on " + c.getName() + " and " + clazz.getName();
             logger.error(duplicateMsg);
             throw new IllegalStateException(duplicateMsg);
@@ -1047,9 +1054,9 @@ public class ExtensionLoader<T> {
      * cache Adaptive class which is annotated with <code>Adaptive</code>
      */
     private void cacheAdaptiveClass(Class<?> clazz, boolean overridden) {
-        if (cachedAdaptiveClass == null || overridden) {
+        if (cachedAdaptiveClass == null || overridden) { //若缓存中自适应扩展Class为空，或自适应扩展Class不为空且overridden为true允许覆盖时，则将配置文件中的Class类设置到缓存中
             cachedAdaptiveClass = clazz;
-        } else if (!cachedAdaptiveClass.equals(clazz)) {
+        } else if (!cachedAdaptiveClass.equals(clazz)) { //若缓存中自适应扩展Class不为空，且不允许覆盖时，若出现不同的自适应扩展类，则抛出异常，只允许出现一个自适应扩展类
             throw new IllegalStateException("More than 1 adaptive class found: "
                     + cachedAdaptiveClass.getName()
                     + ", " + clazz.getName());
@@ -1072,8 +1079,9 @@ public class ExtensionLoader<T> {
      * test if clazz is a wrapper class
      * <p>
      * which has Constructor with given class type as its only argument
+     * （判断是否有把扩展接口作为唯一参数的构造函数）
      */
-    private boolean isWrapperClass(Class<?> clazz) { //判断某个类是否是封装类，看该类是否包含有扩展接口作为参数的构造函数，如org.apache.dubbo.rpc.protocol.dubbo.filter.TraceFilter，需要看是否有如 TraceFilter(Filter filter)的构造函数
+    private boolean isWrapperClass(Class<?> clazz) { //如org.apache.dubbo.rpc.protocol.dubbo.filter.TraceFilter，需要看是否有如 TraceFilter(Filter filter)的构造函数
         try {
             clazz.getConstructor(type);
             return true;
@@ -1085,12 +1093,12 @@ public class ExtensionLoader<T> {
     @SuppressWarnings("deprecation")
     private String findAnnotationName(Class<?> clazz) {
         org.apache.dubbo.common.Extension extension = clazz.getAnnotation(org.apache.dubbo.common.Extension.class);
-        if (extension != null) {
+        if (extension != null) { //若是使用@Extension注解的，则取注解上的值
             return extension.value();
         }
 
         String name = clazz.getSimpleName();
-        if (name.endsWith(type.getSimpleName())) {
+        if (name.endsWith(type.getSimpleName())) { //若@SPI中没设置扩展名，对类名进行截取获取扩展名，todo @csy-009 待调试
             name = name.substring(0, name.length() - type.getSimpleName().length());
         }
         return name.toLowerCase();

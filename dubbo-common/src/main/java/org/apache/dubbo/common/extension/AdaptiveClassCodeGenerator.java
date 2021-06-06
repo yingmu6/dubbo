@@ -86,7 +86,7 @@ public class AdaptiveClassCodeGenerator {
     /**
      * generate and return class code
      */
-    public String generate() {
+    public String generate() { //todo @csy-009 产生自适应扩展的逻辑是啥？与2.5.6有啥不同？
         // no need to generate adaptive class since there's no adaptive method found.
         if (!hasAdaptiveMethod()) {
             throw new IllegalStateException("No adaptive method exist on extension " + type.getName() + ", refuse to create the adaptive class!");
