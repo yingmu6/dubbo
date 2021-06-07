@@ -35,7 +35,7 @@ import java.util.Optional;
  * Environment类是Dubbo的环境信息类，主要的作用是加载配置信息，从配置文件中获取系统参数，从外部配置中心加载配置信息等。
  * https://blog.csdn.net/leisurelen/article/details/107317951
  */
-public class Environment extends LifecycleAdapter implements FrameworkExt {
+public class Environment extends LifecycleAdapter implements FrameworkExt { //todo @csy-010 数据结构待了解
     public static final String NAME = "environment";
 
     private final PropertiesConfiguration propertiesConfiguration;
@@ -62,7 +62,7 @@ public class Environment extends LifecycleAdapter implements FrameworkExt {
     }
 
     @Override
-    public void initialize() throws IllegalStateException {
+    public void initialize() throws IllegalStateException { //todo @csy-010 都做了哪些初始化？
         ConfigManager configManager = ApplicationModel.getConfigManager();
         Optional<Collection<ConfigCenterConfig>> defaultConfigs = configManager.getDefaultConfigCenter();
         defaultConfigs.ifPresent(configs -> {

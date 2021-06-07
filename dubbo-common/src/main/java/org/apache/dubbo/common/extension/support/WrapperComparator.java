@@ -29,7 +29,7 @@ public class WrapperComparator implements Comparator<Object> {
     public static final Comparator<Object> COMPARATOR = new WrapperComparator();
 
     @Override
-    public int compare(Object o1, Object o2) {
+    public int compare(Object o1, Object o2) { //todo @csy-010 比较逻辑待了解
         if (o1 == null && o2 == null) {
             return 0;
         }

@@ -17,10 +17,12 @@
 package org.apache.dubbo.common.extension.ext6_wrap.impl;
 
 import org.apache.dubbo.common.URL;
+import org.apache.dubbo.common.extension.Wrapper;
 import org.apache.dubbo.common.extension.ext6_wrap.WrappedExt;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Wrapper(matches = {"impl2"}, mismatches = {"impl1"})
 public class Ext5Wrapper2 implements WrappedExt {
     public static AtomicInteger echoCount = new AtomicInteger();
     WrappedExt instance;
@@ -31,6 +33,6 @@ public class Ext5Wrapper2 implements WrappedExt {
 
     public String echo(URL url, String s) {
         echoCount.incrementAndGet();
-        return instance.echo(url, s);
+        return instance.echo(url, s); //封装类：在调用目标方法前后进行拦截处理
     }
 }

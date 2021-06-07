@@ -116,7 +116,7 @@ public class ExtensionLoader<T> {
 
     private Set<Class<?>> cachedWrapperClasses;
 
-    private Map<String, IllegalStateException> exceptions = new ConcurrentHashMap<>();
+    private Map<String, IllegalStateException> exceptions = new ConcurrentHashMap<>(); //加载时扩展类时，行信息与异常的映射Map
 
     private static volatile LoadingStrategy[] strategies = loadLoadingStrategies();
 
@@ -470,10 +470,14 @@ public class ExtensionLoader<T> {
      */
     @SuppressWarnings("unchecked")
     public T getExtension(String name) {
-        return getExtension(name, true);
+        return getExtension(name, true); //获取的扩展实例都创建对应的封装类
     }
 
-    public T getExtension(String name, boolean wrap) { //todo @csy-009 配置文件中的扩展名与扩展类Class都是一次性加载好的，那扩展类的实例是怎么做到按需加载的？
+    /**
+     * @csy-009 配置文件中的扩展名与扩展类Class都是一次性加载好的，那扩展类的实例是怎么做到按需加载的？
+     * 解：如本方法中的getOrCreateHolder(name)，就是只创建指定扩展名的实例
+     */
+    public T getExtension(String name, boolean wrap) {
         if (StringUtils.isEmpty(name)) {
             throw new IllegalArgumentException("Extension name == null");
         }
@@ -515,7 +519,7 @@ public class ExtensionLoader<T> {
         return getExtension(cachedDefaultName);
     }
 
-    public boolean hasExtension(String name) {
+    public boolean hasExtension(String name) { //判断指定的扩展名是否有对应的扩展信息
         if (StringUtils.isEmpty(name)) {
             throw new IllegalArgumentException("Extension name == null");
         }
@@ -523,7 +527,7 @@ public class ExtensionLoader<T> {
         return c != null;
     }
 
-    public Set<String> getSupportedExtensions() {
+    public Set<String> getSupportedExtensions() { //获取支持的扩展名集合
         Map<String, Class<?>> clazzes = getExtensionClasses();
         return Collections.unmodifiableSet(new TreeSet<>(clazzes.keySet()));
     }
@@ -556,8 +560,8 @@ public class ExtensionLoader<T> {
      * @param clazz extension class
      * @throws IllegalStateException when extension with the same name has already been registered.
      */
-    public void addExtension(String name, Class<?> clazz) {
-        getExtensionClasses(); // load classes
+    public void addExtension(String name, Class<?> clazz) { //添加扩展（动态添加，非配置文件中配置）
+        getExtensionClasses(); // load classes（加载扩展类）
 
         if (!type.isAssignableFrom(clazz)) {
             throw new IllegalStateException("Input type " +
@@ -577,7 +581,7 @@ public class ExtensionLoader<T> {
                         name + " already exists (Extension " + type + ")!");
             }
 
-            cachedNames.put(clazz, name);
+            cachedNames.put(clazz, name); //符合条件后，设置到缓存中
             cachedClasses.get().put(name, clazz);
         } else {
             if (cachedAdaptiveClass != null) {
@@ -658,7 +662,7 @@ public class ExtensionLoader<T> {
         return (T) instance;
     }
 
-    private IllegalStateException findException(String name) { //todo @csy-009 待覆盖调试
+    private IllegalStateException findException(String name) {
         for (Map.Entry<String, IllegalStateException> entry : exceptions.entrySet()) {
             if (entry.getKey().toLowerCase().contains(name.toLowerCase())) {
                 return entry.getValue();
@@ -668,7 +672,7 @@ public class ExtensionLoader<T> {
 
 
         int i = 1;
-        for (Map.Entry<String, IllegalStateException> entry : exceptions.entrySet()) {
+        for (Map.Entry<String, IllegalStateException> entry : exceptions.entrySet()) { //若加载配置文件时，出现异常则进行信息追加
             if (i == 1) {
                 buf.append(", possible causes: ");
             }
@@ -691,29 +695,31 @@ public class ExtensionLoader<T> {
             throw findException(name);
         }
         try {
+            //通过Class的newInstance()创建实例（反射机制）
             T instance = (T) EXTENSION_INSTANCES.get(clazz);
             if (instance == null) {
-                EXTENSION_INSTANCES.putIfAbsent(clazz, clazz.newInstance()); //通过Class的newInstance()创建实例
+                EXTENSION_INSTANCES.putIfAbsent(clazz, clazz.newInstance());
                 instance = (T) EXTENSION_INSTANCES.get(clazz);
             }
-            injectExtension(instance); //注入扩展实例
+            //注入依赖的扩展实例
+            injectExtension(instance);
 
-
+            //注入封装类的实例（若需要封装的话，会将封装类的实例，覆盖扩展指定的实现类）
             if (wrap) {
 
                 List<Class<?>> wrapperClassesList = new ArrayList<>();
-                if (cachedWrapperClasses != null) {
+                if (cachedWrapperClasses != null) { //当前扩展接口对应的封装类列表，如WrappedExt的封装类列表为Ext5Wrapper1、Ext5Wrapper2
                     wrapperClassesList.addAll(cachedWrapperClasses);
                     wrapperClassesList.sort(WrapperComparator.COMPARATOR);
-                    Collections.reverse(wrapperClassesList);
+                    Collections.reverse(wrapperClassesList); //将列表中元素反向翻转
                 }
 
                 if (CollectionUtils.isNotEmpty(wrapperClassesList)) {
                     for (Class<?> wrapperClass : wrapperClassesList) {
-                        Wrapper wrapper = wrapperClass.getAnnotation(Wrapper.class);
+                        Wrapper wrapper = wrapperClass.getAnnotation(Wrapper.class); //todo @csy-010 为啥使用了@Wrapper注解，获取的值还为null？声明了注解@Wrapper和未声明的处理逻辑是怎样的？
                         if (wrapper == null
                                 || (ArrayUtils.contains(wrapper.matches(), name) && !ArrayUtils.contains(wrapper.mismatches(), name))) {
-                            instance = injectExtension((T) wrapperClass.getConstructor(type).newInstance(instance));
+                            instance = injectExtension((T) wrapperClass.getConstructor(type).newInstance(instance)); //用封装类覆盖扩展类的实例
                         }
                     }
                 }
@@ -733,7 +739,7 @@ public class ExtensionLoader<T> {
 
     /**
      * @csy-009 注入扩展逻辑是怎样的？
-     * 解：创建扩展类的实例后，若该实例的属性中包含其他
+     * 解：创建扩展类的实例后，若该实例的属性中包含其他扩展类，会使用Set方法设置
      */
     private T injectExtension(T instance) {
 
@@ -753,15 +759,19 @@ public class ExtensionLoader<T> {
                     continue;
                 }
                 Class<?> pt = method.getParameterTypes()[0];
-                if (ReflectUtils.isPrimitives(pt)) { //todo @csy-009 参数类型只要不是基本类型就可以注入吗？非SPI类型的实例可以吗？
+                /**
+                 * @csy-009 参数类型只要不是基本类型就可以注入吗？非SPI类型的实例可以吗？
+                 * 解：非SPI类型也不可以，使用ExtensionFactory工厂创建扩展对象时，明确指出是SPI接口
+                 */
+                if (ReflectUtils.isPrimitives(pt)) {
                     continue;
                 }
 
                 try {
                     String property = getSetterProperty(method);
-                    Object object = objectFactory.getExtension(pt, property);//todo @csy-009 此处是怎么获取对象的？
+                    Object object = objectFactory.getExtension(pt, property);//@csy-009 此处是怎么获取对象的？解：通过扩展工厂获取扩展对象
                     if (object != null) {
-                        method.invoke(instance, object);
+                        method.invoke(instance, object); //使用反射机制调用Set方法，进入扩展对象的依赖注入
                     }
                 } catch (Exception e) {
                     logger.error("Failed to inject via method " + method.getName()
@@ -934,12 +944,12 @@ public class ExtensionLoader<T> {
                         line = line.substring(0, ci);
                     }
                     line = line.trim();
-                    if (line.length() > 0) {
+                    if (line.length() > 0) {//@csy-010 解析的时候，怎么去掉扫描行里面的空格？如SimpleExt对应的配置文件，解：调用trim()方法
                         try {
                             String name = null;
                             int i = line.indexOf('='); //按等号进行分隔
                             if (i > 0) {
-                                name = line.substring(0, i).trim(); //扩展名
+                                name = line.substring(0, i).trim(); //扩展名（去空格）
                                 line = line.substring(i + 1).trim(); //扩展类对应的全路径类名
                             }
                             if (line.length() > 0 && !isExcluded(line, excludedPackages)) { //扩展类的全路径名称，如org.apache.dubbo.rpc.protocol.dubbo.filter.TraceFilter

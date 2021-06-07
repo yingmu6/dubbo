@@ -153,7 +153,7 @@ public final class ReflectUtils {
     private ReflectUtils() {
     }
 
-    public static boolean isPrimitives(Class<?> cls) {
+    public static boolean isPrimitives(Class<?> cls) { //判断是否是原始类型
         if (cls.isArray()) {
             return isPrimitive(cls.getComponentType());
         }
@@ -165,7 +165,7 @@ public final class ReflectUtils {
                 || Number.class.isAssignableFrom(cls) || Date.class.isAssignableFrom(cls);
     }
 
-    public static Class<?> getBoxedClass(Class<?> c) {
+    public static Class<?> getBoxedClass(Class<?> c) { //获取基本类型的封装类型
         if (c == int.class) {
             c = Integer.class;
         } else if (c == boolean.class) {

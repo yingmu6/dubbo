@@ -156,7 +156,8 @@ public class ExtensionLoaderTest {
     @Test
     public void test_getExtension() throws Exception {
         /**
-         * todo @csy-009 扩展类的实例是怎么创建的？
+         * @csy-009 扩展类的实例是怎么创建的？
+         * 解：先加载扩展类，然后通过反射机制创建实例对象，并且处理依赖注入、封装类的实例化
          */
         assertTrue(getExtensionLoader(SimpleExt.class).getExtension("impl1") instanceof SimpleExtImpl1);
         assertTrue(getExtensionLoader(SimpleExt.class).getExtension("impl2") instanceof SimpleExtImpl2);
@@ -164,6 +165,10 @@ public class ExtensionLoaderTest {
 
     @Test
     public void test_getExtension_WithWrapper() throws Exception {
+        /**
+         * @csy-010 此处配置文件中impl1明明配置的是org.apache.dubbo.common.extension.ext6_wrap.impl.Ext5Impl1，为啥会取到Ext5Wrapper1的实例？
+         * 解：若需要封装的话，if (wrap) {instance = injectExtension((T) wrapperClass.getConstructor(type).newInstance(instance)); ....} 会把封装类实例覆盖扩展类的实例
+         */
         WrappedExt impl1 = getExtensionLoader(WrappedExt.class).getExtension("impl1");
         assertThat(impl1, anyOf(instanceOf(Ext5Wrapper1.class), instanceOf(Ext5Wrapper2.class)));
 
@@ -175,7 +180,7 @@ public class ExtensionLoaderTest {
         int echoCount1 = Ext5Wrapper1.echoCount.get();
         int echoCount2 = Ext5Wrapper2.echoCount.get();
 
-        assertEquals("Ext5Impl1-echo", impl1.echo(url, "ha"));
+        assertEquals("Ext5Impl1-echo", impl1.echo(url, "ha")); //先调用封装类，然后封装类中拦截处理，最后再调用具体实例方法
         assertEquals(echoCount1 + 1, Ext5Wrapper1.echoCount.get());
         assertEquals(echoCount2 + 1, Ext5Wrapper2.echoCount.get());
     }
@@ -213,7 +218,7 @@ public class ExtensionLoaderTest {
     @Test
     public void test_hasExtension() throws Exception {
         assertTrue(getExtensionLoader(SimpleExt.class).hasExtension("impl1"));
-        assertFalse(getExtensionLoader(SimpleExt.class).hasExtension("impl1,impl2"));
+        assertFalse(getExtensionLoader(SimpleExt.class).hasExtension("impl1,impl2")); //扩展名只有单一一个，不支持类似这种分隔
         assertFalse(getExtensionLoader(SimpleExt.class).hasExtension("xxx"));
 
         try {
@@ -230,6 +235,11 @@ public class ExtensionLoaderTest {
         assertFalse(getExtensionLoader(WrappedExt.class).hasExtension("impl1,impl2"));
         assertFalse(getExtensionLoader(WrappedExt.class).hasExtension("xxx"));
 
+        /**
+         * @csy-010 此处为啥没有wrapper1扩展实例？配置WrappedExt对应的配置文件是配置的（并不是配置文件中配置了，就存在扩展，要判断具体的类型，比如封装类等等）
+         * 解：是从cachedClasses缓存类中取值判断的，wrapper1对应的是封装类，设置在cachedWrapperClasses
+         * 所以wrapper1对应的类是封装类，在cachedClasses没有找到
+         */
         assertFalse(getExtensionLoader(WrappedExt.class).hasExtension("wrapper1"));
 
         try {
@@ -272,7 +282,7 @@ public class ExtensionLoaderTest {
             assertThat(expected.getMessage(), containsString("No such extension org.apache.dubbo.common.extension.ext8_add.AddExt1 by name Manual"));
         }
 
-        getExtensionLoader(AddExt1.class).addExtension("Manual1", AddExt1_ManualAdd1.class);
+        getExtensionLoader(AddExt1.class).addExtension("Manual1", AddExt1_ManualAdd1.class); //添加扩展信息
         AddExt1 ext = getExtensionLoader(AddExt1.class).getExtension("Manual1");
 
         assertThat(ext, instanceOf(AddExt1_ManualAdd1.class));
@@ -280,7 +290,7 @@ public class ExtensionLoaderTest {
     }
 
     @Test
-    public void test_AddExtension_NoExtend() throws Exception {
+    public void test_AddExtension_NoExtend() throws Exception { //todo @pause
 //        ExtensionLoader.getExtensionLoader(Ext9Empty.class).getSupportedExtensions();
         getExtensionLoader(Ext9Empty.class).addExtension("ext9", Ext9EmptyImpl.class);
         Ext9Empty ext = getExtensionLoader(Ext9Empty.class).getExtension("ext9");

@@ -19,7 +19,7 @@ package org.apache.dubbo.common.extension;
 /**
  * The annotated class will only work as a wrapper when the condition matches.
  */
-public @interface Wrapper {
+public @interface Wrapper { //todo @csy-010 注解可以没有作用范围吗？ 是怎么使用的，没看到具体的使用地方？
 
     /**
      * the extension names that need to be wrapped.
