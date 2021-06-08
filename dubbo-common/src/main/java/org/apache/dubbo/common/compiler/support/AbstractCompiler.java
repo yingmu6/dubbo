@@ -31,7 +31,7 @@ public abstract class AbstractCompiler implements Compiler {
     private static final Pattern CLASS_PATTERN = Pattern.compile("class\\s+([$_a-zA-Z][$_a-zA-Z0-9]*)\\s+");
 
     @Override
-    public Class<?> compile(String code, ClassLoader classLoader) {
+    public Class<?> compile(String code, ClassLoader classLoader) { //todo @csy-011 编译逻辑是什么？
         code = code.trim();
         Matcher matcher = PACKAGE_PATTERN.matcher(code);
         String pkg;

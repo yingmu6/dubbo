@@ -112,7 +112,7 @@ public class ExtensionLoader<T> {
     private final Holder<Object> cachedAdaptiveInstance = new Holder<>();
     private volatile Class<?> cachedAdaptiveClass = null;
     private String cachedDefaultName; //缓存默认的扩展名，即为SPI上声明的扩展名
-    private volatile Throwable createAdaptiveInstanceError;
+    private volatile Throwable createAdaptiveInstanceError; //创建自适应扩展实例时发生的错误
 
     private Set<Class<?>> cachedWrapperClasses;
 
@@ -572,7 +572,7 @@ public class ExtensionLoader<T> {
                     clazz + " can't be interface!");
         }
 
-        if (!clazz.isAnnotationPresent(Adaptive.class)) {
+        if (!clazz.isAnnotationPresent(Adaptive.class)) { //非自适应扩展时，需要对扩展名进行校验
             if (StringUtils.isBlank(name)) {
                 throw new IllegalStateException("Extension name is blank (Extension " + type + ")!");
             }
@@ -588,7 +588,7 @@ public class ExtensionLoader<T> {
                 throw new IllegalStateException("Adaptive Extension already exists (Extension " + type + ")!");
             }
 
-            cachedAdaptiveClass = clazz;
+            cachedAdaptiveClass = clazz; //自适应扩展，是不需要处理扩展名的
         }
     }
 
@@ -636,10 +636,10 @@ public class ExtensionLoader<T> {
     }
 
     @SuppressWarnings("unchecked")
-    public T getAdaptiveExtension() {
+    public T getAdaptiveExtension() { //获取自适应扩展实例
         Object instance = cachedAdaptiveInstance.get();
         if (instance == null) {
-            if (createAdaptiveInstanceError != null) {
+            if (createAdaptiveInstanceError != null) { //实例为空，且异常信息的实例不为空，表明当时创建自适应实例时，出现异常
                 throw new IllegalStateException("Failed to create adaptive instance: " +
                         createAdaptiveInstanceError.toString(),
                         createAdaptiveInstanceError);
@@ -650,7 +650,7 @@ public class ExtensionLoader<T> {
                 if (instance == null) {
                     try {
                         instance = createAdaptiveExtension();
-                        cachedAdaptiveInstance.set(instance);
+                        cachedAdaptiveInstance.set(instance); //创建自适应实例，并设置到缓存中
                     } catch (Throwable t) {
                         createAdaptiveInstanceError = t;
                         throw new IllegalStateException("Failed to create adaptive instance: " + t.toString(), t);
@@ -995,7 +995,7 @@ public class ExtensionLoader<T> {
                     type + ", class line: " + clazz.getName() + "), class "
                     + clazz.getName() + " is not subtype of interface.");
         }
-        if (clazz.isAnnotationPresent(Adaptive.class)) { //判断扩展实现类是否包含@Adaptive注解
+        if (clazz.isAnnotationPresent(Adaptive.class)) { //判断扩展实现类是否包含@Adaptive注解（类上带有@Adaptive注解）
             cacheAdaptiveClass(clazz, overridden);
         } else if (isWrapperClass(clazz)) { //封装类型
             cacheWrapperClass(clazz);
@@ -1016,7 +1016,7 @@ public class ExtensionLoader<T> {
                     saveInExtensionClass(extensionClasses, clazz, n, overridden);
                 }
             }
-        }
+        } //todo @csy-011 若不是类上带有@Adaptive注解，而是方法上带有注解，会进行怎样的处理逻辑？
     }
 
     /**
@@ -1125,12 +1125,17 @@ public class ExtensionLoader<T> {
 
     private Class<?> getAdaptiveExtensionClass() {
         getExtensionClasses();
-        if (cachedAdaptiveClass != null) {
+        if (cachedAdaptiveClass != null) { //若配置文件中有配置自适应扩展类，就使用配置文件的
             return cachedAdaptiveClass;
         }
-        return cachedAdaptiveClass = createAdaptiveExtensionClass();
+        return cachedAdaptiveClass = createAdaptiveExtensionClass(); //@csy-011 何时会进入该逻辑？解：当配置文件中没设置自适应扩展类时进入
     }
 
+    /**
+     * 创建自适应扩展类
+     * 1）产生自适应类对应的代码字符串
+     * 2）找到适合的编译器对代码字符串进行编译，生成对应的Class
+     */
     private Class<?> createAdaptiveExtensionClass() {
         String code = new AdaptiveClassCodeGenerator(type, cachedDefaultName).generate();
         ClassLoader classLoader = findClassLoader();

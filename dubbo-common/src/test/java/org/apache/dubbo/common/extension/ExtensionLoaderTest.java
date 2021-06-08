@@ -290,7 +290,7 @@ public class ExtensionLoaderTest {
     }
 
     @Test
-    public void test_AddExtension_NoExtend() throws Exception { //todo @pause
+    public void test_AddExtension_NoExtend() throws Exception {
 //        ExtensionLoader.getExtensionLoader(Ext9Empty.class).getSupportedExtensions();
         getExtensionLoader(Ext9Empty.class).addExtension("ext9", Ext9EmptyImpl.class);
         Ext9Empty ext = getExtensionLoader(Ext9Empty.class).getExtension("ext9");
@@ -312,7 +312,7 @@ public class ExtensionLoaderTest {
     }
 
     @Test
-    public void test_AddExtension_Adaptive() throws Exception {
+    public void test_AddExtension_Adaptive() throws Exception { //添加自适应扩展类
         ExtensionLoader<AddExt2> loader = getExtensionLoader(AddExt2.class);
         loader.addExtension(null, AddExt2_ManualAdaptive.class);
 
@@ -324,7 +324,7 @@ public class ExtensionLoaderTest {
     public void test_AddExtension_Adaptive_ExceptionWhenExistedAdaptive() throws Exception {
         ExtensionLoader<AddExt1> loader = getExtensionLoader(AddExt1.class);
 
-        loader.getAdaptiveExtension();
+        loader.getAdaptiveExtension(); //todo @pause
 
         try {
             loader.addExtension(null, AddExt1_ManualAdaptive.class);

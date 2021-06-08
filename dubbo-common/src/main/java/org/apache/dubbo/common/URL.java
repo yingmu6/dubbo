@@ -113,7 +113,7 @@ class URL implements Serializable {
 
     private final Map<String, String> parameters; //@csy-002 该map中一般都存有哪些值的？存的是url中的参数键值，即?与&分隔的键值对
 
-    private final Map<String, Map<String, String>> methodParameters;
+    private final Map<String, Map<String, String>> methodParameters; //todo @csy-011 都存储了什么内容？待调试
 
     // ==== cache ====
 
@@ -850,7 +850,7 @@ class URL implements Serializable {
         return URL.decode(getMethodParameter(method, key, defaultValue));
     }
 
-    public String getMethodParameter(String method, String key) {
+    public String getMethodParameter(String method, String key) { //todo @csy-011 此处methodParameters都有什么？是怎么获取到值的？
         Map<String, String> keyMap = methodParameters.get(method);
         String value = null;
         if (keyMap != null) {

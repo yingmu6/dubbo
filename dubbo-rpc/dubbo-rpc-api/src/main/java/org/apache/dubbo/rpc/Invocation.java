@@ -28,7 +28,7 @@ import java.util.stream.Stream;
  * @see org.apache.dubbo.rpc.Invoker#invoke(Invocation)
  * @see org.apache.dubbo.rpc.RpcInvocation
  */
-public interface Invocation { //调用方式
+public interface Invocation { //调用方式 todo @csy-011 调用信息的功能作用以及实现类了解
 
     String getTargetServiceUniqueName();
 
