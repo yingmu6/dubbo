@@ -72,7 +72,7 @@ public abstract class AbstractRegistryFactory implements RegistryFactory {
     /**
      * Close all created registries
      */
-    public static void destroyAll() {
+    public static void destroyAll() { //todo @csy-012 销毁的处理逻辑是怎样的？
         if (!destroyed.compareAndSet(false, true)) {
             return;
         }
@@ -85,12 +85,12 @@ public abstract class AbstractRegistryFactory implements RegistryFactory {
         try {
             for (Registry registry : getRegistries()) {
                 try {
-                    registry.destroy();
+                    registry.destroy(); //清除远端注册中心内容
                 } catch (Throwable e) {
                     LOGGER.error(e.getMessage(), e);
                 }
             }
-            REGISTRIES.clear();
+            REGISTRIES.clear(); //清除本地缓存内容
         } finally {
             // Release the lock
             LOCK.unlock();

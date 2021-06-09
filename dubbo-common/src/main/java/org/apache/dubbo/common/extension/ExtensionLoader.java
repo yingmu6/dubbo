@@ -80,7 +80,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.REMOVE_VALUE_PRE
  * @see org.apache.dubbo.common.extension.Adaptive  自适应注解
  * @see org.apache.dubbo.common.extension.Activate  自动激活注解
  */
-public class ExtensionLoader<T> {
+public class ExtensionLoader<T> { //将配置文件中的信息，加载到内存缓存中
     /**
      * @csy-007 ExtensionLoader是单例模式吗？
      * 解：不是，每一个SPI接口对应一个ExtensionLoader实例，测试如org.apache.dubbo.common.extension.ExtensionLoaderTest#test_getDefaultExtension()
@@ -116,7 +116,7 @@ public class ExtensionLoader<T> {
 
     private Set<Class<?>> cachedWrapperClasses;
 
-    private Map<String, IllegalStateException> exceptions = new ConcurrentHashMap<>(); //加载时扩展类时，行信息与异常的映射Map
+    private Map<String, IllegalStateException> exceptions = new ConcurrentHashMap<>(); //加载时扩展类时，扩展类字符串值与异常的映射Map
 
     private static volatile LoadingStrategy[] strategies = loadLoadingStrategies();
 
@@ -236,11 +236,11 @@ public class ExtensionLoader<T> {
         return ClassUtils.getClassLoader(ExtensionLoader.class);
     }
 
-    public String getExtensionName(T extensionInstance) {
-        return getExtensionName(extensionInstance.getClass());
+    public String getExtensionName(T extensionInstance) { //获取扩展实例对应的扩展名
+        return getExtensionName(extensionInstance.getClass()); //转换为按扩展Class去取对应的扩展名
     }
 
-    public String getExtensionName(Class<?> extensionClass) {
+    public String getExtensionName(Class<?> extensionClass) { //获取扩展Class对应的扩展名
         getExtensionClasses();// load class
         return cachedNames.get(extensionClass);
     }
@@ -295,9 +295,8 @@ public class ExtensionLoader<T> {
 
     /**
      * 获取满足匹配条件的Activate对应的扩展类列表， @csy-002 待调试，整理下逻辑
-
      */
-    public List<T> getActivateExtension(URL url, String[] values, String group) {
+    public List<T> getActivateExtension(URL url, String[] values, String group) { //将URL中配置的参数与@Activate配置的内容进行比较
         List<T> activateExtensions = new ArrayList<>();
         List<String> names = values == null ? new ArrayList<>(0) : asList(values);
         /**
@@ -332,10 +331,10 @@ public class ExtensionLoader<T> {
                  *    activateExtensions自动激活扩展的列表中
                  */
                 if (isMatchGroup(group, activateGroup)
-                        && !names.contains(name)
+                        && !names.contains(name) //未匹配过的name
                         && !names.contains(REMOVE_VALUE_PREFIX + name)
                         && isActive(activateValue, url)) {
-                    activateExtensions.add(getExtension(name));
+                    activateExtensions.add(getExtension(name)); //若匹配，则创建扩展名对应的实例并加载到列表中
                 }
             }
             activateExtensions.sort(ActivateComparator.COMPARATOR); //将可激活扩展类列表进行排序
@@ -389,13 +388,13 @@ public class ExtensionLoader<T> {
             }
 
             for (Map.Entry<String, String> entry : url.getParameters().entrySet()) { //遍历url的参数集合
-                String k = entry.getKey();
-                String v = entry.getValue();
+                String k = entry.getKey(); //从url中取到的参数键key
+                String v = entry.getValue(); //从url中取到的参数值value
                 /**
                  * @csy-007 此处比较逻辑待调试了解？
                  * 将注解上的key与url的参数key进行比较
-                 *  1）若key相同或url中的key以注解中的key结尾，且注解上key对应的value与url中设置的value相同，则匹配通过
-                 *  2）或者在keyValue为空，但url设置的value不为空时，则匹配通过，即@Active(value="key1, key2") 这种格式
+                 *  1）若url中的键与注解上的key相等或以注解的可以结尾，且注解上key对应的value与url中设置的value相同，则匹配通过
+                 *  2）或者在注解上键对应值为空，但url设置的value不为空时，则匹配通过，即@Active(value="key1, key2") 这种格式
                  */
                 if ((k.equals(key) || k.endsWith("." + key))
                         && ((keyValue != null && keyValue.equals(v)) || (keyValue == null && ConfigUtils.isNotEmpty(v)))) {
@@ -469,8 +468,8 @@ public class ExtensionLoader<T> {
      * will be thrown.
      */
     @SuppressWarnings("unchecked")
-    public T getExtension(String name) {
-        return getExtension(name, true); //获取的扩展实例都创建对应的封装类
+    public T getExtension(String name) { //获取的扩展名对应的实例 (在配置文件中配置的或者动态添加的扩展)
+        return getExtension(name, true);
     }
 
     /**
@@ -593,12 +592,12 @@ public class ExtensionLoader<T> {
     }
 
     /**
-     * Replace the existing extension via API
+     * Replace the existing extension via API（替换存在的扩展）
      *
      * @param name  extension name
      * @param clazz extension class
      * @throws IllegalStateException when extension to be placed doesn't exist
-     * @deprecated not recommended any longer, and use only when test
+     * @deprecated not recommended any longer, and use only when test （不再推荐使用，仅在测试时使用）
      */
     @Deprecated
     public void replaceExtension(String name, Class<?> clazz) {
@@ -617,12 +616,12 @@ public class ExtensionLoader<T> {
             if (StringUtils.isBlank(name)) {
                 throw new IllegalStateException("Extension name is blank (Extension " + type + ")!");
             }
-            if (!cachedClasses.get().containsKey(name)) {
+            if (!cachedClasses.get().containsKey(name)) { //判断需要替换的扩展名是否存在
                 throw new IllegalStateException("Extension name " +
                         name + " doesn't exist (Extension " + type + ")!");
             }
 
-            cachedNames.put(clazz, name);
+            cachedNames.put(clazz, name); //替换缓存中扩展信息，并移除缓存实例
             cachedClasses.get().put(name, clazz);
             cachedInstances.remove(name);
         } else {
@@ -663,7 +662,7 @@ public class ExtensionLoader<T> {
     }
 
     private IllegalStateException findException(String name) {
-        for (Map.Entry<String, IllegalStateException> entry : exceptions.entrySet()) {
+        for (Map.Entry<String, IllegalStateException> entry : exceptions.entrySet()) { //若存在异常信息，且扩展名与异常Map中key匹配，则直接返回异常
             if (entry.getKey().toLowerCase().contains(name.toLowerCase())) {
                 return entry.getValue();
             }
@@ -691,7 +690,7 @@ public class ExtensionLoader<T> {
     private T createExtension(String name, boolean wrap) {
         // 先加载扩展接口对应的所有扩展类Class，然后在找出扩展名对应扩展类Class
         Class<?> clazz = getExtensionClasses().get(name);
-        if (clazz == null) {
+        if (clazz == null) { //配置文件中，若没有查找到扩展名对应的Class类，则抛出扩展发现异常
             throw findException(name);
         }
         try {
@@ -826,7 +825,12 @@ public class ExtensionLoader<T> {
         return getExtensionClasses().get(name);
     }
 
-    private Map<String, Class<?>> getExtensionClasses() { //从缓存中获取扩展类映射Map，若不存在则从文件中读取，并加载到缓存中
+    /**
+     * 从缓存中获取扩展类映射Map，若不存在则从文件中读取，并加载到缓存中
+     * （缓存中存在则中缓存中取，不存在则从配置文件中读取，并加载到缓存中）
+     * （缓存中不存在，可能是还没加载过，也可能是机器重启，内存中的内容被清除）
+     */
+    private Map<String, Class<?>> getExtensionClasses() {
         Map<String, Class<?>> classes = cachedClasses.get();
         if (classes == null) { //锁外判断
             synchronized (cachedClasses) {
@@ -955,7 +959,7 @@ public class ExtensionLoader<T> {
                             if (line.length() > 0 && !isExcluded(line, excludedPackages)) { //扩展类的全路径名称，如org.apache.dubbo.rpc.protocol.dubbo.filter.TraceFilter
                                 loadClass(extensionClasses, resourceURL, Class.forName(line, true, classLoader), name, overridden);
                             }
-                        } catch (Throwable t) {
+                        } catch (Throwable t) { //捕获异常，并设置到异常Map中
                             IllegalStateException e = new IllegalStateException("Failed to load extension class (interface: " + type + ", class line: " + line + ") in " + resourceURL + ", cause: " + t.getMessage(), t);
                             exceptions.put(line, e);
                         }
@@ -1107,11 +1111,12 @@ public class ExtensionLoader<T> {
             return extension.value();
         }
 
-        String name = clazz.getSimpleName();
-        if (name.endsWith(type.getSimpleName())) { //若@SPI中没设置扩展名，对类名进行截取获取扩展名，todo @csy-009 待调试
+        // 在配置文件中没有配置扩展名时，可将配置的类信息进行处理，获取扩展名。
+        String name = clazz.getSimpleName(); //@csy-012 当配置文件中没指定name，是怎么处理的，比如：ActivateExt1Impl1在配置文件中没有配置name，通过截取扩招类名来处理
+        if (name.endsWith(type.getSimpleName())) { //若@SPI中没设置扩展名，对类名进行截取获取扩展名，@csy-009 待调试：已调试
             name = name.substring(0, name.length() - type.getSimpleName().length());
         }
-        return name.toLowerCase();
+        return name.toLowerCase(); //将扩展名小写，比如ActivateExt1Impl1对应的扩展类为activateext1impl1
     }
 
     @SuppressWarnings("unchecked")

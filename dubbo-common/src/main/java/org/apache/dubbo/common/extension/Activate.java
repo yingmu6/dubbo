@@ -64,7 +64,7 @@ public @interface Activate {
      * @see ExtensionLoader#getActivateExtension(URL, String)
      * @see ExtensionLoader#getActivateExtension(URL, String, String)
      */
-    String[] value() default {};
+    String[] value() default {}; //扩展名列表
 
     /**
      * Relative ordering info, optional
@@ -89,5 +89,5 @@ public @interface Activate {
      *
      * @return absolute ordering info
      */
-    int order() default 0;
+    int order() default 0; //todo @csy-012 取负数值有啥影响吗？比如取-100和300有区别吗？
 }

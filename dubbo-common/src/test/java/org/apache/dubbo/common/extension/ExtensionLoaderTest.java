@@ -324,7 +324,7 @@ public class ExtensionLoaderTest {
     public void test_AddExtension_Adaptive_ExceptionWhenExistedAdaptive() throws Exception {
         ExtensionLoader<AddExt1> loader = getExtensionLoader(AddExt1.class);
 
-        loader.getAdaptiveExtension(); //todo @pause
+        loader.getAdaptiveExtension();
 
         try {
             loader.addExtension(null, AddExt1_ManualAdaptive.class);
@@ -336,6 +336,7 @@ public class ExtensionLoaderTest {
 
     @Test
     public void test_replaceExtension() throws Exception {
+        // todo @csy-012 配置文件都有哪些配置方式？若没有配置扩展名，怎么做映射的？
         try {
             getExtensionLoader(AddExt1.class).getExtension("Manual2");
             fail();
@@ -350,6 +351,7 @@ public class ExtensionLoaderTest {
             assertEquals("impl1", getExtensionLoader(AddExt1.class).getExtensionName(AddExt1Impl1.class));
         }
         {
+            // 替换已存在的扩展
             getExtensionLoader(AddExt1.class).replaceExtension("impl1", AddExt1_ManualAdd2.class);
             AddExt1 ext = getExtensionLoader(AddExt1.class).getExtension("impl1");
 
@@ -359,7 +361,7 @@ public class ExtensionLoaderTest {
     }
 
     @Test
-    public void test_replaceExtension_Adaptive() throws Exception {
+    public void test_replaceExtension_Adaptive() throws Exception { //替换带有@Adaptive注解的扩展类
         ExtensionLoader<AddExt3> loader = getExtensionLoader(AddExt3.class);
 
         AddExt3 adaptive = loader.getAdaptiveExtension();
@@ -385,7 +387,7 @@ public class ExtensionLoaderTest {
 
     @Test
     public void test_replaceExtension_Adaptive_ExceptionWhenNotExistedExtension() throws Exception {
-        ExtensionLoader<AddExt4> loader = getExtensionLoader(AddExt4.class);
+        ExtensionLoader<AddExt4> loader = getExtensionLoader(AddExt4.class); //AddExt4类没有对应的配置文件，所以缓存中没有对应配置
 
         try {
             loader.replaceExtension(null, AddExt4_ManualAdaptive.class);
@@ -402,11 +404,11 @@ public class ExtensionLoaderTest {
         loader.getExtension("ok");
 
         try {
-            loader.getExtension("error");
+            loader.getExtension("error"); //error对应的类Ext7InitErrorImpl，在初始化时会主动抛出异常， todo @csy-012 在哪里捕获这个异常的？为啥没有再loadClass方法抛出异常？ExceptionInInitializerError是什么时候抛出的异常？
             fail();
-        } catch (IllegalStateException expected) {
+        } catch (IllegalStateException expected) { //上层应用主动接口异常并进行处理
             assertThat(expected.getMessage(), containsString("Failed to load extension class (interface: interface org.apache.dubbo.common.extension.ext7.InitErrorExt"));
-            assertThat(expected.getCause(), instanceOf(ExceptionInInitializerError.class));
+            assertThat(expected.getCause(), instanceOf(ExceptionInInitializerError.class)); //ExceptionInInitializerError初始化时发生的异常
         }
     }
 
@@ -417,14 +419,17 @@ public class ExtensionLoaderTest {
         List<ActivateExt1> list = getExtensionLoader(ActivateExt1.class)
                 .getActivateExtension(url, new String[]{}, "default_group");
         Assertions.assertEquals(1, list.size());
-        Assertions.assertSame(list.get(0).getClass(), ActivateExt1Impl1.class);
+        Assertions.assertSame(list.get(0).getClass(), ActivateExt1Impl1.class); //找到一个符合条件的扩展类实例
 
         // test group
-        url = url.addParameter(GROUP_KEY, "group1");
-        list = getExtensionLoader(ActivateExt1.class)
+        url = url.addParameter(GROUP_KEY, "group1"); //值如：test://localhost/test?group=group1
+        list = getExtensionLoader(ActivateExt1.class) //group1在配置文件中没有
                 .getActivateExtension(url, new String[]{}, "group1");
         Assertions.assertEquals(1, list.size());
         Assertions.assertSame(list.get(0).getClass(), GroupActivateExtImpl.class);
+
+        ActivateExt1 activateExt1 = getExtensionLoader(ActivateExt1.class).getExtension("group");
+        System.out.println(activateExt1.echo("est3333")); //todo @csy-012 当扩展名与@Activate中的value值一样时怎么取？cachedClasses、cachedActivates是怎么存储的？
 
         // test old @Activate group
         url = url.addParameter(GROUP_KEY, "old_group");
@@ -437,7 +442,7 @@ public class ExtensionLoaderTest {
         // test value
         url = url.removeParameter(GROUP_KEY);
         url = url.addParameter(GROUP_KEY, "value");
-        url = url.addParameter("value", "value");
+        url = url.addParameter("value", "value"); //url的值如：test://localhost/test?group=value&value=value
         list = getExtensionLoader(ActivateExt1.class)
                 .getActivateExtension(url, new String[]{}, "value");
         Assertions.assertEquals(1, list.size());

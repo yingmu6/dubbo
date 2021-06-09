@@ -22,7 +22,7 @@ import org.apache.dubbo.common.extension.SPI;
  * StatusChecker
  */
 @SPI
-public interface StatusChecker {
+public interface StatusChecker { //todo @csy-012 对应的实现逻辑都是怎样的？
 
     /**
      * check status

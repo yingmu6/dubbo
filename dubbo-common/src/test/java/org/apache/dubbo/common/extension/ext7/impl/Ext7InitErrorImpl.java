@@ -23,7 +23,7 @@ public class Ext7InitErrorImpl implements InitErrorExt {
 
     static {
         if (true) {
-            throw new RuntimeException("intended!");
+            throw new RuntimeException("intended!"); //类初始化时，抛出异常
         }
     }
 
