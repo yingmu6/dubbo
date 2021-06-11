@@ -33,7 +33,14 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
-public @interface Adaptive { //todo @csy-011 方法描述的含义是什么？
+public @interface Adaptive {
+    /**
+     * @csy-011 方法描述的含义是什么？
+     * 解：描述的是方法中使用@Adaptive时，获取扩展名的方式
+     * 1）从url取注解上声明的key对应的值作为扩展名
+     * 2）若都没取到值，去SPI上声明的默认值
+     */
+
     /**
      * Decide which target extension to be injected. The name of the target extension is decided by the parameter passed
      * in the URL, and the parameter names are given by this method.

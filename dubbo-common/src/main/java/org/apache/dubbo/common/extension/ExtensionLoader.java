@@ -304,7 +304,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
          * @csy-007 此处-default是指什么？去除默认扩展吗？
          * 是的，"-"表式剔除的含义
          */
-        if (!names.contains(REMOVE_VALUE_PREFIX + DEFAULT_KEY)) {
+        if (!names.contains(REMOVE_VALUE_PREFIX + DEFAULT_KEY)) { //处理带上@Activate的扩展类，将url上设置的值与注解上设置的值进行比较
             getExtensionClasses(); //此处没有用到方法的返回值，主要使用方法中的loadExtensionClasses()，若缓存中没有对应的值，则对应加载并设置到缓存中
             for (Map.Entry<String, Object> entry : cachedActivates.entrySet()) {
                 String name = entry.getKey();
@@ -340,17 +340,21 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
             activateExtensions.sort(ActivateComparator.COMPARATOR); //将可激活扩展类列表进行排序
         }
         List<T> loadedExtensions = new ArrayList<>();
-        for (int i = 0; i < names.size(); i++) { //todo @csy-007 为啥提供者启动时，没有进入这个循环？消费端启动时，也没进入
+        /**
+         * @csy-007 为啥提供者启动时，没有进入这个循环？消费端启动时，也没进入
+         * 解：这里的@Activate注解不要求group设置为provider、consumer，所以提供端、消费端启动时没进入也是正常的
+         */
+        for (int i = 0; i < names.size(); i++) {
             String name = names.get(i);
             if (!name.startsWith(REMOVE_VALUE_PREFIX)
-                    && !names.contains(REMOVE_VALUE_PREFIX + name)) { //todo @csy-007 此处逻辑会在什么场景下进入？
-                if (DEFAULT_KEY.equals(name)) {
+                    && !names.contains(REMOVE_VALUE_PREFIX + name)) { //@csy-007 此处逻辑会在什么场景下进入？解：处理不再cachedActivates缓存中的扩展，如ExtensionLoaderTest.testLoadDefaultActivateExtension
+                if (DEFAULT_KEY.equals(name)) { //扩展名为default时，加载
                     if (!loadedExtensions.isEmpty()) {
-                        activateExtensions.addAll(0, loadedExtensions);
+                        activateExtensions.addAll(0, loadedExtensions); //@csy-0014 在指定位置加载列表，原来的值会被覆盖吗？不会覆盖，元素会向后移动
                         loadedExtensions.clear();
                     }
                 } else {
-                    loadedExtensions.add(getExtension(name));
+                    loadedExtensions.add(getExtension(name)); //从cachedClasses缓存中获取指定扩展名对应的扩展类，此处若没有查到指定的扩展，是会抛出没找到扩展的异常
                 }
             }
         }
@@ -715,7 +719,12 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
 
                 if (CollectionUtils.isNotEmpty(wrapperClassesList)) {
                     for (Class<?> wrapperClass : wrapperClassesList) {
-                        Wrapper wrapper = wrapperClass.getAnnotation(Wrapper.class); //todo @csy-010 为啥使用了@Wrapper注解，获取的值还为null？声明了注解@Wrapper和未声明的处理逻辑是怎样的？
+                        /**
+                         * @csy-010 为啥使用了@Wrapper注解，获取的值还为null？声明了注解@Wrapper和未声明的处理逻辑是怎样的？
+                         * 解：此处github上有同上的问题，说是@Wrapper没有生效，从语义上看不确定是否有问题
+                         * 可参考 https://github.com/apache/dubbo/issues/6946
+                         */
+                        Wrapper wrapper = wrapperClass.getAnnotation(Wrapper.class);
                         if (wrapper == null
                                 || (ArrayUtils.contains(wrapper.matches(), name) && !ArrayUtils.contains(wrapper.mismatches(), name))) {
                             instance = injectExtension((T) wrapperClass.getConstructor(type).newInstance(instance)); //用封装类覆盖扩展类的实例
@@ -747,7 +756,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
         }
 
         try {
-            for (Method method : instance.getClass().getMethods()) { //todo @csy-009 待覆盖测试
+            for (Method method : instance.getClass().getMethods()) { //@csy-009 待覆盖测试，解：调试类和方法，ExtensionLoader_Adaptive_Test.test_getAdaptiveExtension_inject
                 if (!isSetter(method)) {
                     continue;
                 }
@@ -769,7 +778,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
                 try {
                     String property = getSetterProperty(method);
                     Object object = objectFactory.getExtension(pt, property);//@csy-009 此处是怎么获取对象的？解：通过扩展工厂获取扩展对象
-                    if (object != null) {
+                    if (object != null) { //获取到的扩展实例不为空时，则为对象属性设置值，如Ext6扩展接口的实现类Ext6Impl1
                         method.invoke(instance, object); //使用反射机制调用Set方法，进入扩展对象的依赖注入
                     }
                 } catch (Exception e) {
@@ -972,8 +981,13 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
         }
     }
 
+    /**
+     * @csy-003 此处什么时候会进行排除？
+     * 解：若指定排除的包，则加载类时，该包下的类不会加载到缓存中loadResource
+     * 什么时候进行排除的话，这个主要看加载策略是否重写了LoadingStrategy#excludedPackages()，默认情况下不排除的
+     */
     private boolean isExcluded(String className, String... excludedPackages) {
-        if (excludedPackages != null) { //todo @csy-003 此处什么时候会进行排除？
+        if (excludedPackages != null) {
             for (String excludePackage : excludedPackages) {
                 if (className.startsWith(excludePackage + ".")) {
                     return true;
@@ -984,7 +998,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
     }
 
     /**
-     * 读取配置文件中的内容，并加载到缓存中，加载到不同类型的缓存中，比如cachedAdaptiveClass、cachedWrapperClasses、extensionClasses等
+     * 加载配置文件中的内容，并设置到不同类型的缓存中，比如cachedAdaptiveClass、cachedWrapperClasses、extensionClasses、cachedActivates等
      * （对配置文件中对应的Class进行判断，设置到对应类型的缓存中）
      */
     private void loadClass(Map<String, Class<?>> extensionClasses, java.net.URL resourceURL, Class<?> clazz, String name,
@@ -1020,7 +1034,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
                     saveInExtensionClass(extensionClasses, clazz, n, overridden);
                 }
             }
-        } //todo @csy-011 若不是类上带有@Adaptive注解，而是方法上带有注解，会进行怎样的处理逻辑？
+        } //@csy-011 若不是类上带有@Adaptive注解，而是方法上带有注解，会进行怎样的处理逻辑？ 解：会生成自适应类，带上注解的，会根据url获取扩展名
     }
 
     /**

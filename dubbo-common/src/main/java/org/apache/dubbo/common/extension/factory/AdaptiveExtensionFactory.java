@@ -32,10 +32,10 @@ public class AdaptiveExtensionFactory implements ExtensionFactory {
 
     private final List<ExtensionFactory> factories;
 
-    public AdaptiveExtensionFactory() { //@csy-008 用途以及使用场景？
+    public AdaptiveExtensionFactory() {
         ExtensionLoader<ExtensionFactory> loader = ExtensionLoader.getExtensionLoader(ExtensionFactory.class);
         List<ExtensionFactory> list = new ArrayList<ExtensionFactory>();
-        for (String name : loader.getSupportedExtensions()) {
+        for (String name : loader.getSupportedExtensions()) { //对象创建时，加载所有支持的扩展实例
             list.add(loader.getExtension(name));
         }
         factories = Collections.unmodifiableList(list);
@@ -44,8 +44,8 @@ public class AdaptiveExtensionFactory implements ExtensionFactory {
     @Override
     public <T> T getExtension(Class<T> type, String name) {
         for (ExtensionFactory factory : factories) {
-            T extension = factory.getExtension(type, name);
-            if (extension != null) {
+            T extension = factory.getExtension(type, name); //不同的实例，就会调用对应的实例方法，比如SpiExtensionFactory、SpringExtensionFactory
+            if (extension != null) { //返回具体实例，如SimpleExt$Adaptive@2608
                 return extension;
             }
         }

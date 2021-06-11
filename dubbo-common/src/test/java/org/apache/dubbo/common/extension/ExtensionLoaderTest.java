@@ -167,7 +167,7 @@ public class ExtensionLoaderTest {
     public void test_getExtension_WithWrapper() throws Exception {
         /**
          * @csy-010 此处配置文件中impl1明明配置的是org.apache.dubbo.common.extension.ext6_wrap.impl.Ext5Impl1，为啥会取到Ext5Wrapper1的实例？
-         * 解：若需要封装的话，if (wrap) {instance = injectExtension((T) wrapperClass.getConstructor(type).newInstance(instance)); ....} 会把封装类实例覆盖扩展类的实例
+         * 解：若需要封装的话，if (wrap) {instance = injectExtension((T) wrapperClass.getConstructor(type).newInstance(instance)); ....} 会先调用封装类，然后封装类中再调用目标类
          */
         WrappedExt impl1 = getExtensionLoader(WrappedExt.class).getExtension("impl1");
         assertThat(impl1, anyOf(instanceOf(Ext5Wrapper1.class), instanceOf(Ext5Wrapper2.class)));
@@ -461,7 +461,7 @@ public class ExtensionLoaderTest {
     @Test
     public void testLoadDefaultActivateExtension() throws Exception {
         // test default
-        URL url = URL.valueOf("test://localhost/test?ext=order1,default");
+        URL url = URL.valueOf("test://localhost/test?ext=order1,default,order4");
         List<ActivateExt1> list = getExtensionLoader(ActivateExt1.class)
                 .getActivateExtension(url, "ext", "default_group");
         Assertions.assertEquals(2, list.size());
