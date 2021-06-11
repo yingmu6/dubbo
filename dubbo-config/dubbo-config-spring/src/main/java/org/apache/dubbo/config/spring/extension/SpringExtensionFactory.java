@@ -31,7 +31,7 @@ import java.util.Set;
 /**
  * SpringExtensionFactory
  */
-public class SpringExtensionFactory implements ExtensionFactory {
+public class SpringExtensionFactory implements ExtensionFactory { //通过Spring获取指定类型、指定名称的实例
     private static final Logger logger = LoggerFactory.getLogger(SpringExtensionFactory.class);
 
     private static final Set<ApplicationContext> CONTEXTS = new ConcurrentHashSet<ApplicationContext>();
@@ -61,7 +61,7 @@ public class SpringExtensionFactory implements ExtensionFactory {
     public <T> T getExtension(Class<T> type, String name) {
 
         //SPI should be get from SpiExtensionFactory
-        if (type.isInterface() && type.isAnnotationPresent(SPI.class)) {
+        if (type.isInterface() && type.isAnnotationPresent(SPI.class)) { //处理非SPI接口
             return null;
         }
 
