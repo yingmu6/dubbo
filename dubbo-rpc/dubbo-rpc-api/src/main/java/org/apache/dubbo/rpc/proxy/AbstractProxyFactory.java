@@ -34,15 +34,16 @@ import static org.apache.dubbo.common.constants.CommonConstants.COMMA_SPLIT_PATT
 import static org.apache.dubbo.rpc.Constants.INTERFACES;
 
 /**
- * AbstractProxyFactory
+ * AbstractProxyFactory抽象代理工厂类只实现了接口getProxy方法并对参数校验，getInvoker方法交由子类完成
+ * AbstractProxyFactory实现了getProxy方法，并对该方法实现了新的抽象getProxy(Invoker<T> invoker, Class<?>[] types)
  */
-public abstract class AbstractProxyFactory implements ProxyFactory { //AbstractProxyFactory抽象代理工厂类只实现了接口getProxy方法并对参数校验，getInvoker方法交由子类完成
+public abstract class AbstractProxyFactory implements ProxyFactory {
     private static final Class<?>[] INTERNAL_INTERFACES = new Class<?>[]{ //所有的代理类都实现了EchoService接口
             EchoService.class, Destroyable.class
     };
 
     @Override
-    public <T> T getProxy(Invoker<T> invoker) throws RpcException {
+    public <T> T getProxy(Invoker<T> invoker) throws RpcException { //todo @pause 代理相关了解
         return getProxy(invoker, false);
     }
 
@@ -53,20 +54,24 @@ public abstract class AbstractProxyFactory implements ProxyFactory { //AbstractP
      */
     @Override
     public <T> T getProxy(Invoker<T> invoker, boolean generic) throws RpcException {
-        Set<Class<?>> interfaces = new HashSet<>(); //需要代理的接口集合
+        /**
+         * 查找需要代理的接口集合
+         */
+        Set<Class<?>> interfaces = new HashSet<>();
 
+        //todo @csy-015 url中的INTERFACES内容会是什么？从哪里写入的？
         String config = invoker.getUrl().getParameter(INTERFACES); //启动时，Invoker对应的实例为MockClusterInvoker,MockClusterInvoker中的invoker为AbstractCluster$InterceptorInvokerNode（内部类）
         if (config != null && config.length() > 0) { //从url中获取配置的接口类型，设置到Class集合中
             String[] types = COMMA_SPLIT_PATTERN.split(config);
             for (String type : types) {
                 // TODO can we load successfully for a different classloader?.
-                interfaces.add(ReflectUtils.forName(type));
+                interfaces.add(ReflectUtils.forName(type)); //生成指定类型的Class，并加到集合中
             }
         }
 
         if (generic) { //泛化类型，处理泛化类型  todo @csy-001 构建用例测试该入口
             if (!GenericService.class.isAssignableFrom(invoker.getInterface())) { //兼容alibaba的GenericService泛化类型
-                interfaces.add(com.alibaba.dubbo.rpc.service.GenericService.class);
+                interfaces.add(com.alibaba.dubbo.rpc.service.GenericService.class); //若不是apache的泛化类，就加载alibaba的泛化类
             }
 
             try {
@@ -81,6 +86,9 @@ public abstract class AbstractProxyFactory implements ProxyFactory { //AbstractP
         interfaces.add(invoker.getInterface()); //实际接口对应的Class
         interfaces.addAll(Arrays.asList(INTERNAL_INTERFACES)); //预定接口对应的Class
 
+        /**
+         * 对查找到的接口集合进行代理
+         */
         return getProxy(invoker, interfaces.toArray(new Class<?>[0])); //调用抽象方法，具体的实现交由子类执行
     }
 

@@ -45,7 +45,7 @@ import static org.apache.dubbo.rpc.Constants.STUB_KEY;
 /**
  * StubProxyFactoryWrapper
  */
-public class StubProxyFactoryWrapper implements ProxyFactory {
+public class StubProxyFactoryWrapper implements ProxyFactory { //todo @csy-015 该类的功能用途是什么？
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StubProxyFactoryWrapper.class);
 

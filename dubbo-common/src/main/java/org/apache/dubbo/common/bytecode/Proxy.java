@@ -45,8 +45,8 @@ public abstract class Proxy { //代理抽象类
      * https://blog.csdn.net/yaomingyang/article/details/80981004
      * https://www.jianshu.com/p/4df6e4d7eb46  java的proxy与invocationHandler使用
      */
-    public static final InvocationHandler RETURN_NULL_INVOKER = (proxy, method, args) -> null; //返回null的调用
-    public static final InvocationHandler THROW_UNSUPPORTED_INVOKER = new InvocationHandler() { //抛出不支持的调用
+    public static final InvocationHandler RETURN_NULL_INVOKER = (proxy, method, args) -> null; //构建返回值为NULL的InvocationHandler对象 todo @csy-015-P3 lambda的表达形式都有哪些？函数式接口了解？
+    public static final InvocationHandler THROW_UNSUPPORTED_INVOKER = new InvocationHandler() { //通过匿名类构建带有异常返回的InvocationHandler对象
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) {
             throw new UnsupportedOperationException("Method [" + ReflectUtils.getName(method) + "] unimplemented.");
@@ -54,7 +54,7 @@ public abstract class Proxy { //代理抽象类
     };
     private static final AtomicLong PROXY_CLASS_COUNTER = new AtomicLong(0);
     private static final String PACKAGE_NAME = Proxy.class.getPackage().getName();
-    private static final Map<ClassLoader, Map<String, Object>> PROXY_CACHE_MAP = new WeakHashMap<ClassLoader, Map<String, Object>>();
+    private static final Map<ClassLoader, Map<String, Object>> PROXY_CACHE_MAP = new WeakHashMap<ClassLoader, Map<String, Object>>(); //todo @csy-015-P3 WeakHashMap弱引用待了解
 
     private static final Object PENDING_GENERATION_MARKER = new Object(); //"等待生成标记"对象
 
@@ -72,7 +72,7 @@ public abstract class Proxy { //代理抽象类
     }
 
     /**
-     * Get proxy.（获取代理对象）
+     * Get proxy.（获取指定类加载器、Class集合对应的代理对象）
      * 1）通过拼接形式组装Class类的代码，包含构造方法、成员方法、成员变量等
      * 2）通过javassist对代码处理并转换为Class对象ccp.toClass()
      * 3）通过Class对象创建代理实例newInstance
@@ -81,7 +81,7 @@ public abstract class Proxy { //代理抽象类
      * @param ics interface class array.
      * @return Proxy instance.
      */
-    public static Proxy getProxy(ClassLoader cl, Class<?>... ics) { //创建代理具体的实现逻辑
+    public static Proxy getProxy(ClassLoader cl, Class<?>... ics) { //创建代理具体的实现逻辑，todo @csy-015-P1 待调试
         if (ics.length > MAX_PROXY_COUNT) {
             throw new IllegalArgumentException("interface limit exceeded");
         }
@@ -95,11 +95,11 @@ public abstract class Proxy { //代理抽象类
 
             Class<?> tmp = null;
             try {
-                tmp = Class.forName(itf, false, cl);
+                tmp = Class.forName(itf, false, cl); //todo @csy-015-P3 根据类名获取Class对象原理待了解
             } catch (ClassNotFoundException e) {
             }
 
-            if (tmp != ics[i]) { //使用类加载器获取Class对象与传入的Class对象进行比较，看是否相同
+            if (tmp != ics[i]) {
                 throw new IllegalArgumentException(ics[i] + " is not visible from class loader");
             }
 
@@ -112,7 +112,7 @@ public abstract class Proxy { //代理抽象类
         // get cache by class loader.
         final Map<String, Object> cache;
         synchronized (PROXY_CACHE_MAP) {
-            cache = PROXY_CACHE_MAP.computeIfAbsent(cl, k -> new HashMap<>());
+            cache = PROXY_CACHE_MAP.computeIfAbsent(cl, k -> new HashMap<>()); //todo @csy-015-P3 Map中computeIfAbsent方法待了解？
         }
 
         Proxy proxy = null;
@@ -120,8 +120,8 @@ public abstract class Proxy { //代理抽象类
             do {
                 Object value = cache.get(key);
                 if (value instanceof Reference<?>) { //若是Reference的实例，则强制转换为Proxy
-                    proxy = (Proxy) ((Reference<?>) value).get();
-                    if (proxy != null) {
+                    proxy = (Proxy) ((Reference<?>) value).get(); //todo @csy-015-P3 Reference待了解
+                    if (proxy != null) { //若缓存中存在代理对象，则直接返回
                         return proxy;
                     }
                 }
@@ -132,7 +132,7 @@ public abstract class Proxy { //代理抽象类
                     } catch (InterruptedException e) {
                     }
                 } else {
-                    cache.put(key, PENDING_GENERATION_MARKER);
+                    cache.put(key, PENDING_GENERATION_MARKER); //todo @csy-015-P2 此处的等待标志的用途是什么？
                     break;
                 }
             }
@@ -151,7 +151,7 @@ public abstract class Proxy { //代理抽象类
             for (int i = 0; i < ics.length; i++) {
                 if (!Modifier.isPublic(ics[i].getModifiers())) {
                     String npkg = ics[i].getPackage().getName();
-                    if (pkg == null) {
+                    if (pkg == null) { //todo @csy-015-P2 什么情况下接口没有包名？待覆盖测试
                         pkg = npkg;
                     } else {
                         if (!pkg.equals(npkg)) { //非公有的接口，在不同包中是不能访问的
@@ -161,9 +161,9 @@ public abstract class Proxy { //代理抽象类
                 }
                 ccp.addInterface(ics[i]); //添加满足条件的接口
 
-                for (Method method : ics[i].getMethods()) {
-                    String desc = ReflectUtils.getDesc(method);
-                    if (worked.contains(desc) || Modifier.isStatic(method.getModifiers())) {
+                for (Method method : ics[i].getMethods()) { //对接口的方法进行处理
+                    String desc = ReflectUtils.getDesc(method); //获取方法的描述信息，如getName()Ljava/lang/String;
+                    if (worked.contains(desc) || Modifier.isStatic(method.getModifiers())) { //若方法已经处理过或是静态方法则不处理
                         continue;
                     }
                     if (ics[i].isInterface() && Modifier.isStatic(method.getModifiers())) {
@@ -176,11 +176,11 @@ public abstract class Proxy { //代理抽象类
                     Class<?>[] pts = method.getParameterTypes();
 
                     StringBuilder code = new StringBuilder("Object[] args = new Object[").append(pts.length).append("];");
-                    for (int j = 0; j < pts.length; j++) {
-                        code.append(" args[").append(j).append("] = ($w)$").append(j + 1).append(";");
+                    for (int j = 0; j < pts.length; j++) { //为参数列表中参数一一赋值
+                        code.append(" args[").append(j).append("] = ($w)$").append(j + 1).append(";"); //如：Object[] args = new Object[2]; args[0] = ($w)$1; args[1] = ($w)$2;
                     }
-                    code.append(" Object ret = handler.invoke(this, methods[").append(ix).append("], args);");
-                    if (!Void.TYPE.equals(rt)) { //对返回类型进行判断
+                    code.append(" Object ret = handler.invoke(this, methods[").append(ix).append("], args);"); //执行方法的invoke调用
+                    if (!Void.TYPE.equals(rt)) { //若方法返回类型不为void，处理方法返回语句
                         code.append(" return ").append(asArgument(rt, "ret")).append(";");
                     }
 
@@ -194,11 +194,11 @@ public abstract class Proxy { //代理抽象类
             }
 
             // create ProxyInstance class.
-            String pcn = pkg + ".proxy" + id;
+            String pcn = pkg + ".proxy" + id; //如：ProxyTest在包org.apache.dubbo.common.bytecode，则生成org.apache.dubbo.common.bytecode.proxy0的代理类
             ccp.setClassName(pcn);
             ccp.addField("public static java.lang.reflect.Method[] methods;"); //添加字段对应的字符串
             ccp.addField("private " + InvocationHandler.class.getName() + " handler;");
-            ccp.addConstructor(Modifier.PUBLIC, new Class<?>[]{InvocationHandler.class}, new Class<?>[0], "handler=$1;"); //添加构造函数对应的字符串
+            ccp.addConstructor(Modifier.PUBLIC, new Class<?>[]{InvocationHandler.class}, new Class<?>[0], "handler=$1;"); //添加构造函数对应的字符串，使用占位符来动态取值
             ccp.addDefaultConstructor();
             Class<?> clazz = ccp.toClass(); //转换为class对象
             clazz.getField("methods").set(null, methods.toArray(new Method[0]));
@@ -236,7 +236,7 @@ public abstract class Proxy { //代理抽象类
         return proxy;
     }
 
-    private static String asArgument(Class<?> cl, String name) { //对参数类型进行判断
+    private static String asArgument(Class<?> cl, String name) { //对返回类型进行判断，并组装返回的表达式
         if (cl.isPrimitive()) { //基本类型处理
             if (Boolean.TYPE == cl) {
                 return name + "==null?false:((Boolean)" + name + ").booleanValue()";
@@ -264,7 +264,7 @@ public abstract class Proxy { //代理抽象类
             }
             throw new RuntimeException(name + " is unknown primitive type.");
         }
-        return "(" + ReflectUtils.getName(cl) + ")" + name; //类型强制转换
+        return "(" + ReflectUtils.getName(cl) + ")" + name; //类型强制转换，如(java.lang.String)ret
     }
 
     /**

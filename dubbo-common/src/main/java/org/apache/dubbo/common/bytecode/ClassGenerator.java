@@ -47,7 +47,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * ClassGenerator（javassist方式产生代理对象）
  */
-public final class ClassGenerator { //todo @csy-001 该类的用途是什么？
+public final class ClassGenerator { //@csy-001 该类的用途是什么？解：类产生工具类，现在数据转换为Dubbo内部数据形式，再在底层进行转换，转换为javassist所需的数据形式
 
     private static final AtomicLong CLASS_NAME_COUNTER = new AtomicLong(0);
     private static final String SIMPLE_NAME_TAG = "<init>";
@@ -56,7 +56,7 @@ public final class ClassGenerator { //todo @csy-001 该类的用途是什么？
     private CtClass mCtc;   //类class
     private String mClassName;
     private String mSuperClass;
-    private Set<String> mInterfaces;
+    private Set<String> mInterfaces; //存放
     private List<String> mFields; //存放字段对应的字符串，如ccp.addField("public static java.lang.reflect.Method[] methods;");
     private List<String> mConstructors; //存放构造函数对应的字符串
     private List<String> mMethods; //存放方法对应的字符串
@@ -67,7 +67,7 @@ public final class ClassGenerator { //todo @csy-001 该类的用途是什么？
     private ClassGenerator() {
     }
 
-    private ClassGenerator(ClassPool pool) {
+    private ClassGenerator(ClassPool pool) { //todo @csy-015-P3 类池待了解？
         mPool = pool; //设置类池
     }
 
@@ -89,7 +89,7 @@ public final class ClassGenerator { //todo @csy-001 该类的用途是什么？
         }
 
         ClassPool pool = POOL_MAP.get(loader);
-        if (pool == null) {
+        if (pool == null) { //若缓存中没有类池，则创建类型，并与ClassLoader映射设置到缓存中
             pool = new ClassPool(true); //todo @csy-001 javassist了解，以及ClassPool了解
             pool.appendClassPath(new LoaderClassPath(loader)); //设置类路径, todo @csy-001 LoaderClassPath了解
             POOL_MAP.put(loader, pool);
@@ -97,7 +97,7 @@ public final class ClassGenerator { //todo @csy-001 该类的用途是什么？
         return pool;
     }
 
-    private static String modifier(int mod) {
+    private static String modifier(int mod) { //根据修饰符值获取到对应的描述字符串
         StringBuilder modifier = new StringBuilder();
         if (Modifier.isPublic(mod)) {
             modifier.append("public");
@@ -130,7 +130,7 @@ public final class ClassGenerator { //todo @csy-001 该类的用途是什么？
         if (mInterfaces == null) {
             mInterfaces = new HashSet<String>();
         }
-        mInterfaces.add(cn);
+        mInterfaces.add(cn); //将需要处理的接口名添加到待处理的集合中
         return this;
     }
 
@@ -184,10 +184,13 @@ public final class ClassGenerator { //todo @csy-001 该类的用途是什么？
         return addMethod(name, mod, rt, pts, null, body);
     }
 
+    /**
+     * 构建方法描述信息：方法声明 + 方法体
+     */
     public ClassGenerator addMethod(String name, int mod, Class<?> rt, Class<?>[] pts, Class<?>[] ets,
                                     String body) {
         StringBuilder sb = new StringBuilder();
-        sb.append(modifier(mod)).append(' ').append(ReflectUtils.getName(rt)).append(' ').append(name);
+        sb.append(modifier(mod)).append(' ').append(ReflectUtils.getName(rt)).append(' ').append(name); //如：ProxyTest.ITest中方法public java.lang.String getName
         sb.append('(');
         for (int i = 0; i < pts.length; i++) {
             if (i > 0) {
@@ -197,7 +200,7 @@ public final class ClassGenerator { //todo @csy-001 该类的用途是什么？
             sb.append(" arg").append(i);
         }
         sb.append(')');
-        if (ArrayUtils.isNotEmpty(ets)) {
+        if (ArrayUtils.isNotEmpty(ets)) { //处理方法异常声明
             sb.append(" throws ");
             for (int i = 0; i < ets.length; i++) {
                 if (i > 0) {
@@ -206,7 +209,15 @@ public final class ClassGenerator { //todo @csy-001 该类的用途是什么？
                 sb.append(ReflectUtils.getName(ets[i]));
             }
         }
-        sb.append('{').append(body).append('}');
+        sb.append('{').append(body).append('}'); //方法拼接：方法声明 + {方法体}
+        /**
+         * //如ProxyTest.ITest中方法
+         * public java.lang.String getName(){Object[] args = new Object[0];
+         * Object ret = handler.invoke(this, methods[0], args); return (java.lang.String)ret;}
+         *
+         * public void setName(java.lang.String arg0,java.lang.String arg1){Object[] args = new Object[2];
+         * args[0] = ($w)$1; args[1] = ($w)$2; Object ret = handler.invoke(this, methods[1], args);}
+         */
         return addMethod(sb.toString());
     }
 
