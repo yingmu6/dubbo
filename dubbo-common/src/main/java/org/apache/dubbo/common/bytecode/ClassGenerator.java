@@ -64,14 +64,14 @@ public final class ClassGenerator { //@csy-001 该类的用途是什么？解：
     private Map<String, Constructor<?>> mCopyConstructors; // <constructor desc,constructor instance> 方法描述符与构造实例的映射
     private boolean mDefaultConstructor = false;
 
-    private ClassGenerator() {
+    private ClassGenerator() { //私有的构造函数，不直接对外暴露
     }
 
     private ClassGenerator(ClassPool pool) { //todo @csy-015-P3 类池待了解？
         mPool = pool; //设置类池
     }
 
-    public static ClassGenerator newInstance() {
+    public static ClassGenerator newInstance() { //静态方法，创建实例对象
         return new ClassGenerator(getClassPool(Thread.currentThread().getContextClassLoader()));
     }
 
@@ -176,7 +176,7 @@ public final class ClassGenerator { //@csy-001 该类的用途是什么？解：
         if (mMethods == null) {
             mMethods = new ArrayList<String>();
         }
-        mMethods.add(code); //加到缓存列表中
+        mMethods.add(code);
         return this;
     }
 
@@ -297,12 +297,13 @@ public final class ClassGenerator { //@csy-001 该类的用途是什么？解：
                 getClass().getProtectionDomain());
     }
 
-    public Class<?> toClass(ClassLoader loader, ProtectionDomain pd) { //将当前维护的成员方法、成员变量对应字符串转换为Class对象
+    // todo @csy-016-P1 该方法的功能用途是啥？待调试
+    public Class<?> toClass(ClassLoader loader, ProtectionDomain pd) { //将当前维护的成员方法、成员变量对应字符串转换为Class对象  todo @csy-016-P2 ProtectionDomain的功能用途是什么？
         if (mCtc != null) {
             mCtc.detach(); //detach:分离， 从ClassPool中移除CtClass
         }
         // 基于当前类维护的数据，进行逻辑处理
-        long id = CLASS_NAME_COUNTER.getAndIncrement(); //todo @csy-001 待调试
+        long id = CLASS_NAME_COUNTER.getAndIncrement();
         try {
             CtClass ctcs = mSuperClass == null ? null : mPool.get(mSuperClass);
             if (mClassName == null) {
@@ -359,7 +360,7 @@ public final class ClassGenerator { //@csy-001 该类的用途是什么？解：
         }
     }
 
-    public void release() {
+    public void release() {//清除当前对象维护的数据
         if (mCtc != null) {
             mCtc.detach();
         }

@@ -81,7 +81,7 @@ public abstract class Proxy { //代理抽象类
      * @param ics interface class array.
      * @return Proxy instance.
      */
-    public static Proxy getProxy(ClassLoader cl, Class<?>... ics) { //创建代理具体的实现逻辑，todo @csy-015-P1 待调试
+    public static Proxy getProxy(ClassLoader cl, Class<?>... ics) { //创建代理具体的实现逻辑，todo @csy-015-P1 待调试 @pause
         if (ics.length > MAX_PROXY_COUNT) {
             throw new IllegalArgumentException("interface limit exceeded");
         }
@@ -149,7 +149,7 @@ public abstract class Proxy { //代理抽象类
             List<Method> methods = new ArrayList<>();
 
             for (int i = 0; i < ics.length; i++) {
-                if (!Modifier.isPublic(ics[i].getModifiers())) {
+                if (!Modifier.isPublic(ics[i].getModifiers())) { //判断接口的修饰符
                     String npkg = ics[i].getPackage().getName();
                     if (pkg == null) { //todo @csy-015-P2 什么情况下接口没有包名？待覆盖测试
                         pkg = npkg;
@@ -166,7 +166,7 @@ public abstract class Proxy { //代理抽象类
                     if (worked.contains(desc) || Modifier.isStatic(method.getModifiers())) { //若方法已经处理过或是静态方法则不处理
                         continue;
                     }
-                    if (ics[i].isInterface() && Modifier.isStatic(method.getModifiers())) {
+                    if (ics[i].isInterface() && Modifier.isStatic(method.getModifiers())) { //静态方法不处理
                         continue;
                     }
                     worked.add(desc); //将方法描述信息加入集合，用于根据方法描述符判断
@@ -208,7 +208,7 @@ public abstract class Proxy { //代理抽象类
             ccm = ClassGenerator.newInstance(cl);
             ccm.setClassName(fcn);
             ccm.addDefaultConstructor();
-            ccm.setSuperClass(Proxy.class); //设置代理类
+            ccm.setSuperClass(Proxy.class); //设置父类
             ccm.addMethod("public Object newInstance(" + InvocationHandler.class.getName() + " h){ return new " + pcn + "($1); }"); //将InvocationHandler处理类编织到代码中
             Class<?> pc = ccm.toClass();
             proxy = (Proxy) pc.newInstance();

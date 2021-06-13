@@ -43,7 +43,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  */
 
-public class ApplicationModel { //应用模型
+public class ApplicationModel { //应用模型  todo @csy-016-P2 功能用途是什么？何时被使用？
     protected static final Logger LOGGER = LoggerFactory.getLogger(ApplicationModel.class);
     public static final String NAME = "application";
 

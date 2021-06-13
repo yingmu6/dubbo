@@ -33,6 +33,7 @@ import java.util.concurrent.ConcurrentMap;
 import static org.apache.dubbo.common.BaseServiceMetadata.interfaceFromServiceKey;
 import static org.apache.dubbo.common.BaseServiceMetadata.versionFromServiceKey;
 
+//todo @csy-016-P3 功能用途待了解？
 public class ServiceRepository extends LifecycleAdapter implements FrameworkExt { //服务仓库：管理服务与ConsumerModel、ProviderModel模型的关系（将数据与行为封装在一个类型，满足类的封装性）
 
     public static final String NAME = "repository"; //对应的SPI实例repository=org.apache.dubbo.rpc.model.ServiceRepository

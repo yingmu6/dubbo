@@ -19,7 +19,7 @@ package org.apache.dubbo.rpc.model;
 import org.apache.dubbo.common.extension.SPI;
 
 @SPI
-public interface ApplicationInitListener {
+public interface ApplicationInitListener { //todo @csy-016-P3 功能用途是啥？何时使用？没有看到配置类
     /**
      * init the application
      */
