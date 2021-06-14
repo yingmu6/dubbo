@@ -152,7 +152,7 @@ public final class ClassGenerator { //@csy-001 该类的用途是什么？解：
         if (mFields == null) {
             mFields = new ArrayList<String>();
         }
-        mFields.add(code);
+        mFields.add(code); //将属性对应的字符串加到列表中
         return this;
     }
 
