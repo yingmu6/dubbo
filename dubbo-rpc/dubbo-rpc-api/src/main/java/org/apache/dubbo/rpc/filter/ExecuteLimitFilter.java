@@ -19,12 +19,7 @@ package org.apache.dubbo.rpc.filter;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.constants.CommonConstants;
 import org.apache.dubbo.common.extension.Activate;
-import org.apache.dubbo.rpc.Filter;
-import org.apache.dubbo.rpc.Invocation;
-import org.apache.dubbo.rpc.Invoker;
-import org.apache.dubbo.rpc.Result;
-import org.apache.dubbo.rpc.RpcException;
-import org.apache.dubbo.rpc.RpcStatus;
+import org.apache.dubbo.rpc.*;
 
 import static org.apache.dubbo.rpc.Constants.EXECUTES_KEY;
 
@@ -44,7 +39,7 @@ public class ExecuteLimitFilter implements Filter, Filter.Listener { //应用于
         URL url = invoker.getUrl();
         String methodName = invocation.getMethodName();
         int max = url.getMethodParameter(methodName, EXECUTES_KEY, 0);
-        if (!RpcStatus.beginCount(url, methodName, max)) {
+        if (!RpcStatus.beginCount(url, methodName, max)) { //todo @csy-017-P2 是调用次数限制，还是客户端连接数限制
             throw new RpcException(RpcException.LIMIT_EXCEEDED_EXCEPTION,
                     "Failed to invoke method " + invocation.getMethodName() + " in provider " +
                             url + ", cause: The service using threads greater than <dubbo:service executes=\"" + max +
