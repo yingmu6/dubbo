@@ -17,11 +17,8 @@
 package org.apache.dubbo.demo.consumer;
 
 import org.apache.dubbo.demo.DemoService;
-
 import org.apache.dubbo.demo.GreetingService;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import java.util.concurrent.CompletableFuture;
 
 public class ConsumerApplication {
     /**
@@ -40,5 +37,6 @@ public class ConsumerApplication {
         System.out.println("greetingService result: " + greetingService.hello());
 
         System.in.read();
+        
     }
 }
