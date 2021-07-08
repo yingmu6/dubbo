@@ -35,13 +35,13 @@ public class RpcStatus { //都记录了哪些状态值？后台管理页面有�
      * ConcurrentMap：https://www.jianshu.com/p/8f7b2cd34c47
      * ConcurrentMap，它是一个接口，是一个能够支持并发访问的java.util.map集合
      * ConcurrentHashMap是一个线程安全，并且是一个高效的HashMap
-     *
+     * <p>
      * HashTable与HashMap的结构一致，都是哈希表实现。HashTable线程安全的，HashMap不是线程安全的
      * https://crossoverjie.top/2018/07/23/java-senior/ConcurrentHashMap/
      */
-    private static final ConcurrentMap<String, RpcStatus> SERVICE_STATISTICS = new ConcurrentHashMap<String, RpcStatus>();
+    private static final ConcurrentMap<String, RpcStatus> SERVICE_STATISTICS = new ConcurrentHashMap<String, RpcStatus>(); //服务的调用统计
 
-    private static final ConcurrentMap<String, ConcurrentMap<String, RpcStatus>> METHOD_STATISTICS = new ConcurrentHashMap<String, ConcurrentMap<String, RpcStatus>>();
+    private static final ConcurrentMap<String, ConcurrentMap<String, RpcStatus>> METHOD_STATISTICS = new ConcurrentHashMap<String, ConcurrentMap<String, RpcStatus>>(); //方法的调用统计
     private final ConcurrentMap<String, Object> values = new ConcurrentHashMap<String, Object>();
     private final AtomicInteger active = new AtomicInteger();
     private final AtomicLong total = new AtomicLong();
@@ -61,7 +61,7 @@ public class RpcStatus { //都记录了哪些状态值？后台管理页面有�
      */
     public static RpcStatus getStatus(URL url) {// 从缓存中获取指定的值
         String uri = url.toIdentityString();
-        return SERVICE_STATISTICS.computeIfAbsent(uri, key -> new RpcStatus()); //在键key不存在时，设置value
+        return SERVICE_STATISTICS.computeIfAbsent(uri, key -> new RpcStatus()); //在键key不存在时，设置value，存在时直接返回key对应的value
     }
 
     /**
@@ -77,7 +77,7 @@ public class RpcStatus { //都记录了哪些状态值？后台管理页面有�
      * @param methodName
      * @return status
      */
-    public static RpcStatus getStatus(URL url, String methodName) {
+    public static RpcStatus getStatus(URL url, String methodName) { //获取方法对应的信息
         String uri = url.toIdentityString();
         ConcurrentMap<String, RpcStatus> map = METHOD_STATISTICS.computeIfAbsent(uri, k -> new ConcurrentHashMap<>()); //ConcurrentMap了解，computeIfAbsent方法了解
         return map.computeIfAbsent(methodName, k -> new RpcStatus()); //此处的含义是什么？函数式接口，设置方法名与RpcStatus的关系
@@ -99,9 +99,11 @@ public class RpcStatus { //都记录了哪些状态值？后台管理页面有�
     }
 
     /**
-     * todo @csy-017-P2 是对应什么数据进行计数？
-     *
      * @param url
+     * @csy-017-P2 是对应什么数据进行计数？
+     * 解：判断是否能开始计数
+     * 判断标准： 是否达到整数最大值Integer.MAX_VALUE，是否尝试加1后超过设置的最大值
+     * 若满足计数标准，则将计数加1
      */
     public static boolean beginCount(URL url, String methodName, int max) {
         max = (max <= 0) ? Integer.MAX_VALUE : max;
@@ -115,15 +117,17 @@ public class RpcStatus { //都记录了哪些状态值？后台管理页面有�
             if (i + 1 > max) {
                 return false;
             }
-            if (methodStatus.active.compareAndSet(i, i + 1)) {
+            if (methodStatus.active.compareAndSet(i, i + 1)) { //循环比较值，若当前的值与期望的值相同，则做更新并且跳出循环
                 break;
             }
         }
-        appStatus.active.incrementAndGet();
+        appStatus.active.incrementAndGet(); //调用时加1，调用后会减1
         return true;
     }
 
     /**
+     * 结束调用时，对调用计数以及耗时做处理
+     *
      * @param url
      * @param elapsed
      * @param succeeded
@@ -139,7 +143,7 @@ public class RpcStatus { //都记录了哪些状态值？后台管理页面有�
      * totalElapsed与elapsed相加
      */
     private static void endCount(RpcStatus status, long elapsed, boolean succeeded) {
-        status.active.decrementAndGet();
+        status.active.decrementAndGet(); //调用结束时，正常调用的次数active - 1
         status.total.incrementAndGet();
         status.totalElapsed.addAndGet(elapsed);
         if (status.maxElapsed.get() < elapsed) {

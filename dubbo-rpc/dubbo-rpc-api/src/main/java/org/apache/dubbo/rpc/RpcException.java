@@ -111,7 +111,7 @@ public /**final**/ class RpcException extends RuntimeException {
         return code == NO_INVOKER_AVAILABLE_AFTER_FILTER;
     }
 
-    public boolean isLimitExceed() {
+    public boolean isLimitExceed() { //判断是否是超出限制的异常
         return code == LIMIT_EXCEEDED_EXCEPTION || getCause() instanceof LimitExceededException;
     }
 }
