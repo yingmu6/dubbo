@@ -35,7 +35,7 @@
     </bean>
 
 
-    <dubbo:service interface="org.apache.dubbo.demo.DemoService" class="org.apache.dubbo.demo.DemoService" ref="demoService" filter="">
+    <dubbo:service interface="org.apache.dubbo.demo.DemoService" class="org.apache.dubbo.demo.DemoService" ref="demoService" filter="" executes=""> <!-- executes并发限制数 -->
          <dubbo:method name="sayHello2" timeout="1000" async="true" return="false"> <!-- 方法级别配置，并不是说展示哪个方法，就暴露哪个方法，与暴露没关 -->
 <!--           <dubbo:argument index="0" type="java.lang.String" callback="true"/>-->  <!-- 若设置回调，type就需要接口类型-->
          </dubbo:method>

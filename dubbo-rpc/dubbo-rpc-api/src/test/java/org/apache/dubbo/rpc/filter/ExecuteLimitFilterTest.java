@@ -17,14 +17,8 @@
 package org.apache.dubbo.rpc.filter;
 
 import org.apache.dubbo.common.URL;
-import org.apache.dubbo.rpc.AppResponse;
-import org.apache.dubbo.rpc.Invocation;
-import org.apache.dubbo.rpc.Invoker;
-import org.apache.dubbo.rpc.Result;
-import org.apache.dubbo.rpc.RpcException;
-import org.apache.dubbo.rpc.RpcStatus;
+import org.apache.dubbo.rpc.*;
 import org.apache.dubbo.rpc.support.BlockMyInvoker;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -93,14 +87,14 @@ public class ExecuteLimitFilterTest {
         int totalExecute = 20;
         final AtomicInteger failed = new AtomicInteger(0);
 
-        final Invocation invocation = Mockito.mock(Invocation.class);
+        final Invocation invocation = Mockito.mock(Invocation.class); //todo @csy-018-P3 了解改Mock的功能以及使用
         when(invocation.getMethodName()).thenReturn("testMoreThanExecuteLimitInvoke");
 
         URL url = URL.valueOf("test://test:11/test?accesslog=true&group=dubbo&version=1.1&executes=" + maxExecute);
         final Invoker<ExecuteLimitFilter> invoker = new BlockMyInvoker<ExecuteLimitFilter>(url, 1000);
 
-        final CountDownLatch latch = new CountDownLatch(1);
-        for (int i = 0; i < totalExecute; i++) {
+        final CountDownLatch latch = new CountDownLatch(1); //todo @csy-P3 CountDownLatch了解以及使用
+        for (int i = 0; i < totalExecute; i++) { //模拟并发调用
             Thread thread = new Thread(new Runnable() {
 
                 public void run() {
@@ -112,6 +106,7 @@ public class ExecuteLimitFilterTest {
                     try {
                         executeLimitFilter.invoke(invoker, invocation);
                     } catch (RpcException expected) {
+                        System.out.println("超过限制数异常, " + expected.getMessage());
                         failed.incrementAndGet();
                     }
 
