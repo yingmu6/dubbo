@@ -23,27 +23,11 @@ import javassist.NotFoundException;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
-import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.GenericArrayType;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.net.URL;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Future;
@@ -229,7 +213,7 @@ public final class ReflectUtils {
         return true;
     }
 
-    public static String getCodeBase(Class<?> cls) {
+    public static String getCodeBase(Class<?> cls) { //todo @csy-019 功能用途是什么？
         if (cls == null) {
             return null;
         }
@@ -896,7 +880,7 @@ public final class ReflectUtils {
     }
 
     /**
-     * Find method from method signature
+     * Find method from method signature（根据方法的签名查找Method对象）
      *
      * @param clazz      Target class to find method
      * @param methodName Method signature, e.g.: method1(int, String). It is allowed to provide method name only, e.g.: method2
@@ -934,9 +918,9 @@ public final class ReflectUtils {
         } else {
             Class<?>[] types = new Class<?>[parameterTypes.length];
             for (int i = 0; i < parameterTypes.length; i++) {
-                types[i] = ReflectUtils.name2class(parameterTypes[i]);
+                types[i] = ReflectUtils.name2class(parameterTypes[i]); //依次将类型名称name转换为Class
             }
-            method = clazz.getMethod(methodName, types);
+            method = clazz.getMethod(methodName, types); //根据Class中的方法获取Method对象
 
         }
         SIGNATURE_METHODS_CACHE.put(signature, method);

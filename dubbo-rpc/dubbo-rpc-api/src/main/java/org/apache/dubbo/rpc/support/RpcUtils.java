@@ -32,17 +32,8 @@ import java.lang.reflect.Type;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static org.apache.dubbo.common.constants.CommonConstants.$INVOKE;
-import static org.apache.dubbo.common.constants.CommonConstants.$INVOKE_ASYNC;
-import static org.apache.dubbo.common.constants.CommonConstants.GENERIC_PARAMETER_DESC;
-import static org.apache.dubbo.common.constants.CommonConstants.TIMEOUT_ATTACHMENT_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.TIMEOUT_KEY;
-import static org.apache.dubbo.rpc.Constants.$ECHO;
-import static org.apache.dubbo.rpc.Constants.$ECHO_PARAMETER_DESC;
-import static org.apache.dubbo.rpc.Constants.ASYNC_KEY;
-import static org.apache.dubbo.rpc.Constants.AUTO_ATTACH_INVOCATIONID_KEY;
-import static org.apache.dubbo.rpc.Constants.ID_KEY;
-import static org.apache.dubbo.rpc.Constants.RETURN_KEY;
+import static org.apache.dubbo.common.constants.CommonConstants.*;
+import static org.apache.dubbo.rpc.Constants.*;
 /**
  * RpcUtils
  */
@@ -164,7 +155,7 @@ public class RpcUtils {
         return isAsync;
     }
 
-    public static boolean isReturnTypeFuture(Invocation inv) {
+    public static boolean isReturnTypeFuture(Invocation inv) { //判断返回类型是否是Future类型
         Class<?> clazz;
         if (inv instanceof RpcInvocation) {
             clazz = ((RpcInvocation) inv).getReturnType();
@@ -221,7 +212,7 @@ public class RpcUtils {
 
     public static long getTimeout(Invocation invocation, long defaultTimeout) {
         long timeout = defaultTimeout;
-        Object genericTimeout = invocation.getObjectAttachment(TIMEOUT_ATTACHMENT_KEY);
+        Object genericTimeout = invocation.getObjectAttachment(TIMEOUT_ATTACHMENT_KEY); //从附加参数中获取指定key的值
         if (genericTimeout != null) {
             timeout = convertToNumber(genericTimeout, defaultTimeout);
         }
@@ -239,10 +230,10 @@ public class RpcUtils {
         return timeout;
     }
 
-    private static long convertToNumber(Object obj, long defaultTimeout) {
+    private static long convertToNumber(Object obj, long defaultTimeout) { //将对象转换为数字
         long timeout = 0;
         try {
-            if (obj instanceof String) {
+            if (obj instanceof String) { //按不同的类型解析数字
                 timeout = Long.parseLong((String) obj);
             } else if (obj instanceof Number) {
                 timeout = ((Number) obj).longValue();

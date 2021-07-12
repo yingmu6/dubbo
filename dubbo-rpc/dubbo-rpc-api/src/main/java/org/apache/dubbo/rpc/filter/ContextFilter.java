@@ -18,14 +18,7 @@ package org.apache.dubbo.rpc.filter;
 
 import org.apache.dubbo.common.extension.Activate;
 import org.apache.dubbo.common.utils.StringUtils;
-import org.apache.dubbo.rpc.Filter;
-import org.apache.dubbo.rpc.Invocation;
-import org.apache.dubbo.rpc.Invoker;
-import org.apache.dubbo.rpc.Result;
-import org.apache.dubbo.rpc.RpcContext;
-import org.apache.dubbo.rpc.RpcException;
-import org.apache.dubbo.rpc.RpcInvocation;
-import org.apache.dubbo.rpc.TimeoutCountDown;
+import org.apache.dubbo.rpc.*;
 import org.apache.dubbo.rpc.support.RpcUtils;
 
 import java.util.HashMap;
@@ -34,19 +27,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import static org.apache.dubbo.common.constants.CommonConstants.DUBBO_VERSION_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.GROUP_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.INTERFACE_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.PATH_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.PROVIDER;
-import static org.apache.dubbo.common.constants.CommonConstants.REMOTE_APPLICATION_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.TIMEOUT_ATTACHMENT_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.TIMEOUT_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.TIME_COUNTDOWN_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.VERSION_KEY;
-import static org.apache.dubbo.rpc.Constants.ASYNC_KEY;
-import static org.apache.dubbo.rpc.Constants.FORCE_USE_TAG;
-import static org.apache.dubbo.rpc.Constants.TOKEN_KEY;
+import static org.apache.dubbo.common.constants.CommonConstants.*;
+import static org.apache.dubbo.rpc.Constants.*;
 
 
 /**
@@ -80,19 +62,20 @@ public class ContextFilter implements Filter, Filter.Listener {
     }
 
     @Override
-    public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
+    public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException { //todo @csy-019-P2 上下文过滤器都处理哪些内容？
         Map<String, Object> attachments = invocation.getObjectAttachments();
         if (attachments != null) {
             Map<String, Object> newAttach = new HashMap<>(attachments.size());
             for (Map.Entry<String, Object> entry : attachments.entrySet()) {
                 String key = entry.getKey();
-                if (!UNLOADING_KEYS.contains(key)) { //不在初始化的集合中，就设置到集合中
+                if (!UNLOADING_KEYS.contains(key)) { //不在集合中，就设置到附加参数Map中
                     newAttach.put(key, entry.getValue());
                 }
             }
             attachments = newAttach;
         }
 
+        // 设置上下文信息
         RpcContext context = RpcContext.getContext();
         context.setInvoker(invoker)
                 .setInvocation(invocation)
@@ -112,7 +95,7 @@ public class ContextFilter implements Filter, Filter.Listener {
 
         // merged from dubbox
         // we may already added some attachments into RpcContext before this filter (e.g. in rest protocol)
-        if (attachments != null) {
+        if (attachments != null) { //todo @csy-019-P3 此处设置的值是怎样的？
             if (context.getObjectAttachments() != null) {
                 context.getObjectAttachments().putAll(attachments);
             } else {
@@ -125,7 +108,7 @@ public class ContextFilter implements Filter, Filter.Listener {
         }
 
         try {
-            context.clearAfterEachInvoke(false);
+            context.clearAfterEachInvoke(false); //todo @csy-019-P3 为啥此处要做清理？
             return invoker.invoke(invocation);
         } finally {
             context.clearAfterEachInvoke(true);

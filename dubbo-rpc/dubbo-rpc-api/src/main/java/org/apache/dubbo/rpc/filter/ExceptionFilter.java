@@ -22,12 +22,7 @@ import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
 import org.apache.dubbo.common.utils.ReflectUtils;
 import org.apache.dubbo.common.utils.StringUtils;
-import org.apache.dubbo.rpc.Filter;
-import org.apache.dubbo.rpc.Invocation;
-import org.apache.dubbo.rpc.Invoker;
-import org.apache.dubbo.rpc.Result;
-import org.apache.dubbo.rpc.RpcContext;
-import org.apache.dubbo.rpc.RpcException;
+import org.apache.dubbo.rpc.*;
 import org.apache.dubbo.rpc.service.GenericService;
 
 import java.lang.reflect.Method;
@@ -54,12 +49,12 @@ public class ExceptionFilter implements Filter, Filter.Listener { //异常过滤
 
     @Override
     public void onResponse(Result appResponse, Invoker<?> invoker, Invocation invocation) {
-        if (appResponse.hasException() && GenericService.class != invoker.getInterface()) {
+        if (appResponse.hasException() && GenericService.class != invoker.getInterface()) { //处理非泛型接口的异常
             try {
                 Throwable exception = appResponse.getException();
 
                 // directly throw if it's checked exception
-                if (!(exception instanceof RuntimeException) && (exception instanceof Exception)) {
+                if (!(exception instanceof RuntimeException) && (exception instanceof Exception)) { //todo @csy-019-P3 什么是检查和非检查异常？ 非!、与&、或||的优先级是怎样的？
                     return;
                 }
                 // directly throw if the exception appears in the signature
@@ -68,7 +63,7 @@ public class ExceptionFilter implements Filter, Filter.Listener { //异常过滤
                     Class<?>[] exceptionClassses = method.getExceptionTypes();
                     for (Class<?> exceptionClass : exceptionClassses) {
                         if (exception.getClass().equals(exceptionClass)) {
-                            return;
+                            return; //todo @csy-019-P3 此处为啥会return进行终止
                         }
                     }
                 } catch (NoSuchMethodException e) {
@@ -85,7 +80,7 @@ public class ExceptionFilter implements Filter, Filter.Listener { //异常过滤
                     return;
                 }
                 // directly throw if it's JDK exception
-                String className = exception.getClass().getName();
+                String className = exception.getClass().getName(); //todo @csy-019 此处的处理逻辑是怎样的？
                 if (className.startsWith("java.") || className.startsWith("javax.")) {
                     return;
                 }

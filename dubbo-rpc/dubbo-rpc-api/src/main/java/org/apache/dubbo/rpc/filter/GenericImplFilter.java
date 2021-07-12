@@ -25,13 +25,7 @@ import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
 import org.apache.dubbo.common.utils.PojoUtils;
 import org.apache.dubbo.common.utils.ReflectUtils;
-import org.apache.dubbo.rpc.Constants;
-import org.apache.dubbo.rpc.Filter;
-import org.apache.dubbo.rpc.Invocation;
-import org.apache.dubbo.rpc.Invoker;
-import org.apache.dubbo.rpc.Result;
-import org.apache.dubbo.rpc.RpcException;
-import org.apache.dubbo.rpc.RpcInvocation;
+import org.apache.dubbo.rpc.*;
 import org.apache.dubbo.rpc.service.GenericService;
 import org.apache.dubbo.rpc.support.ProtocolUtils;
 import org.apache.dubbo.rpc.support.RpcUtils;
@@ -41,9 +35,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
-import static org.apache.dubbo.common.constants.CommonConstants.$INVOKE;
-import static org.apache.dubbo.common.constants.CommonConstants.$INVOKE_ASYNC;
-import static org.apache.dubbo.common.constants.CommonConstants.GENERIC_PARAMETER_DESC;
+import static org.apache.dubbo.common.constants.CommonConstants.*;
 import static org.apache.dubbo.rpc.Constants.GENERIC_KEY;
 
 /**
@@ -66,7 +58,7 @@ public class GenericImplFilter implements Filter, Filter.Listener {
             RpcInvocation invocation2 = new RpcInvocation(invocation);
 
             /**
-             * Mark this invocation as a generic impl call, this value will be removed automatically before passing on the wire.
+             * Mark this invocation as a generic impl call, this value will be removed automatically before passing on the wire.  todo @csy-P3 此句的含义是什么？
              * See {@link RpcUtils#sieveUnnecessaryAttachments(Invocation)}
              */
             invocation2.put(GENERIC_IMPL_MARKER, true);
@@ -75,7 +67,7 @@ public class GenericImplFilter implements Filter, Filter.Listener {
             Class<?>[] parameterTypes = invocation2.getParameterTypes();
             Object[] arguments = invocation2.getArguments();
 
-            String[] types = new String[parameterTypes.length];
+            String[] types = new String[parameterTypes.length]; //todo @csy-P3 此处的值待调试
             for (int i = 0; i < parameterTypes.length; i++) {
                 types[i] = ReflectUtils.getName(parameterTypes[i]);
             }
@@ -97,11 +89,11 @@ public class GenericImplFilter implements Filter, Filter.Listener {
             }
             invocation2.setParameterTypes(GENERIC_PARAMETER_TYPES);
             invocation2.setParameterTypesDesc(GENERIC_PARAMETER_DESC);
-            invocation2.setArguments(new Object[]{methodName, types, args});
+            invocation2.setArguments(new Object[] {methodName, types, args});
             return invoker.invoke(invocation2);
         }
         // making a generic call to a normal service
-        else if (isMakingGenericCall(generic, invocation)) {
+        else if (isMakingGenericCall(generic, invocation)) { //todo @csy-P3 此判断的逻辑是表明正常的、非Future调用吗？
 
             Object[] args = (Object[]) invocation.getArguments()[2];
             if (ProtocolUtils.isJavaGenericSerialization(generic)) {
@@ -130,18 +122,18 @@ public class GenericImplFilter implements Filter, Filter.Listener {
     }
 
     @Override
-    public void onResponse(Result appResponse, Invoker<?> invoker, Invocation invocation) {
+    public void onResponse(Result appResponse, Invoker<?> invoker, Invocation invocation) { //todo @csy-019-P2 待调试了解
         String generic = invoker.getUrl().getParameter(GENERIC_KEY);
         String methodName = invocation.getMethodName();
         Class<?>[] parameterTypes = invocation.getParameterTypes();
         Object genericImplMarker = invocation.get(GENERIC_IMPL_MARKER);
-        if (genericImplMarker != null && (boolean) invocation.get(GENERIC_IMPL_MARKER)) {
+        if (genericImplMarker != null && (boolean) invocation.get(GENERIC_IMPL_MARKER)) { //包含泛化实现的标识
             if (!appResponse.hasException()) {
                 Object value = appResponse.getValue();
                 try {
                     Class<?> invokerInterface = invoker.getInterface();
                     if (!$INVOKE.equals(methodName) && !$INVOKE_ASYNC.equals(methodName)
-                            && invokerInterface.isAssignableFrom(GenericService.class)) {
+                            && invokerInterface.isAssignableFrom(GenericService.class)) { //todo @csy-019-P3 此处的判断逻辑是啥？
                         try {
                             // find the real interface from url
                             String realInterface = invoker.getUrl().getParameter(Constants.INTERFACE);
@@ -169,7 +161,7 @@ public class GenericImplFilter implements Filter, Filter.Listener {
                 }
             } else if (appResponse.getException() instanceof com.alibaba.dubbo.rpc.service.GenericException) {
                 com.alibaba.dubbo.rpc.service.GenericException exception = (com.alibaba.dubbo.rpc.service.GenericException) appResponse.getException();
-                try {
+                try { //todo @csy-019-P2 异常的处理逻辑是怎样的？
                     String className = exception.getExceptionClass();
                     Class<?> clazz = ReflectUtils.forName(className);
                     Throwable targetException = null;
@@ -215,7 +207,7 @@ public class GenericImplFilter implements Filter, Filter.Listener {
 
     private boolean isCallingGenericImpl(String generic, Invocation invocation) {
         return ProtocolUtils.isGeneric(generic)
-                && (!$INVOKE.equals(invocation.getMethodName()) && !$INVOKE_ASYNC.equals(invocation.getMethodName()))
+                && (!$INVOKE.equals(invocation.getMethodName()) && !$INVOKE_ASYNC.equals(invocation.getMethodName())) //todo @csy-P3 为什么要不等于$INVOKE
                 && invocation instanceof RpcInvocation;
     }
 

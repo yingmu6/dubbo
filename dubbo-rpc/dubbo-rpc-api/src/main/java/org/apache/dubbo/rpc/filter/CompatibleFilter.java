@@ -20,11 +20,7 @@ import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
 import org.apache.dubbo.common.utils.CompatibleTypeUtils;
 import org.apache.dubbo.common.utils.PojoUtils;
-import org.apache.dubbo.rpc.Filter;
-import org.apache.dubbo.rpc.Invocation;
-import org.apache.dubbo.rpc.Invoker;
-import org.apache.dubbo.rpc.Result;
-import org.apache.dubbo.rpc.RpcException;
+import org.apache.dubbo.rpc.*;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -32,7 +28,7 @@ import java.lang.reflect.Type;
 import static org.apache.dubbo.remoting.Constants.SERIALIZATION_KEY;
 
 /**
- * CompatibleFilter make the remote method's return value compatible to invoker's version of object.
+ * CompatibleFilter make the remote method's return value compatible（兼容的） to invoker's version of object.
  * To make return object compatible it does
  * <pre>
  *    1)If the url contain serialization key of type <b>json</b> or <b>fastjson</b> then transform
@@ -43,9 +39,8 @@ import static org.apache.dubbo.remoting.Constants.SERIALIZATION_KEY;
  * </pre>
  *
  * @see Filter
- *
  */
-public class CompatibleFilter implements Filter, Filter.Listener {
+public class CompatibleFilter implements Filter, Filter.Listener { //todo @csy-019-P3 兼容的过滤器是怎样的？兼容哪些内容
 
     private static Logger logger = LoggerFactory.getLogger(CompatibleFilter.class);
 
@@ -64,7 +59,7 @@ public class CompatibleFilter implements Filter, Filter.Listener {
                     Class<?> type = method.getReturnType();
                     Object newValue;
                     String serialization = invoker.getUrl().getParameter(SERIALIZATION_KEY);
-                    if ("json".equals(serialization) || "fastjson".equals(serialization)) {
+                    if ("json".equals(serialization) || "fastjson".equals(serialization)) { //todo @csy-019-P3 为啥与序列化、反序列化关联的？
                         // If the serialization key is json or fastjson
                         Type gtype = method.getGenericReturnType();
                         newValue = PojoUtils.realize(value, type, gtype);

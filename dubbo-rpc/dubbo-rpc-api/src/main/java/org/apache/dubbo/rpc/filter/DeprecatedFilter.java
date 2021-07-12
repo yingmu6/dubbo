@@ -21,11 +21,7 @@ import org.apache.dubbo.common.extension.Activate;
 import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
 import org.apache.dubbo.common.utils.ConcurrentHashSet;
-import org.apache.dubbo.rpc.Filter;
-import org.apache.dubbo.rpc.Invocation;
-import org.apache.dubbo.rpc.Invoker;
-import org.apache.dubbo.rpc.Result;
-import org.apache.dubbo.rpc.RpcException;
+import org.apache.dubbo.rpc.*;
 
 import java.util.Set;
 
@@ -45,7 +41,7 @@ public class DeprecatedFilter implements Filter {
     private static final Set<String> LOGGED = new ConcurrentHashSet<String>();
 
     @Override
-    public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
+    public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException { //todo @csy-019-P3 Deprecated，了解弃用标识
         String key = invoker.getInterface().getName() + "." + invocation.getMethodName();
         if (!LOGGED.contains(key)) {
             LOGGED.add(key);

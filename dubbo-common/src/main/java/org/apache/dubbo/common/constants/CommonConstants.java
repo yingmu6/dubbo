@@ -209,7 +209,7 @@ public interface CommonConstants {
     /**
      * generic call
      */
-    String $INVOKE = "$invoke";
+    String $INVOKE = "$invoke"; //GenericService的方法名
     String $INVOKE_ASYNC = "$invokeAsync";
     String GENERIC_PARAMETER_DESC = "Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;";
 
@@ -293,7 +293,7 @@ public interface CommonConstants {
 
     String GENERIC_SERIALIZATION_BEAN = "bean";
 
-    String GENERIC_RAW_RETURN = "raw.return";
+    String GENERIC_RAW_RETURN = "raw.return"; //todo @csy-019-P3 raw类型是怎样的？
 
     String GENERIC_SERIALIZATION_PROTOBUF = "protobuf-json";
 

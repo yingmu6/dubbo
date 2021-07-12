@@ -18,12 +18,7 @@ package org.apache.dubbo.rpc.filter;
 
 import org.apache.dubbo.common.constants.CommonConstants;
 import org.apache.dubbo.common.extension.Activate;
-import org.apache.dubbo.rpc.AsyncRpcResult;
-import org.apache.dubbo.rpc.Filter;
-import org.apache.dubbo.rpc.Invocation;
-import org.apache.dubbo.rpc.Invoker;
-import org.apache.dubbo.rpc.Result;
-import org.apache.dubbo.rpc.RpcException;
+import org.apache.dubbo.rpc.*;
 
 import static org.apache.dubbo.rpc.Constants.$ECHO;
 
@@ -31,7 +26,7 @@ import static org.apache.dubbo.rpc.Constants.$ECHO;
  * Dubbo provided default Echo echo service, which is available for all dubbo provider service interface.
  */
 @Activate(group = CommonConstants.PROVIDER, order = -110000)
-public class EchoFilter implements Filter {
+public class EchoFilter implements Filter { //Echo 服务用来判断服务提供者是否可用
 
     @Override
     public Result invoke(Invoker<?> invoker, Invocation inv) throws RpcException {
