@@ -22,11 +22,7 @@ import org.apache.dubbo.common.logger.LoggerFactory;
 import org.apache.dubbo.common.utils.ConcurrentHashSet;
 import org.apache.dubbo.common.utils.ConfigUtils;
 import org.apache.dubbo.common.utils.NamedThreadFactory;
-import org.apache.dubbo.rpc.Filter;
-import org.apache.dubbo.rpc.Invocation;
-import org.apache.dubbo.rpc.Invoker;
-import org.apache.dubbo.rpc.Result;
-import org.apache.dubbo.rpc.RpcException;
+import org.apache.dubbo.rpc.*;
 import org.apache.dubbo.rpc.support.AccessLogData;
 
 import java.io.File;
@@ -43,9 +39,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static org.apache.dubbo.common.constants.CommonConstants.GROUP_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.PROVIDER;
-import static org.apache.dubbo.common.constants.CommonConstants.VERSION_KEY;
+import static org.apache.dubbo.common.constants.CommonConstants.*;
 import static org.apache.dubbo.rpc.Constants.ACCESS_LOG_KEY;
 
 /**
@@ -123,7 +117,7 @@ public class AccessLogFilter implements Filter {
         try {
             String accessLogKey = invoker.getUrl().getParameter(ACCESS_LOG_KEY);
             if (ConfigUtils.isNotEmpty(accessLogKey)) {
-                AccessLogData logData = buildAccessLogData(invoker, inv);
+                AccessLogData logData = buildAccessLogData(invoker, inv); //构建日志数据
                 log(accessLogKey, logData);
             }
         } catch (Throwable t) {
@@ -136,7 +130,7 @@ public class AccessLogFilter implements Filter {
         Set<AccessLogData> logSet = LOG_ENTRIES.computeIfAbsent(accessLog, k -> new ConcurrentHashSet<>());
 
         if (logSet.size() < LOG_MAX_BUFFER) {
-            logSet.add(accessLogData);
+            logSet.add(accessLogData); //todo @csy-020-P3 此处设置值有何用处？既没有返回值，也没有引用传递
         } else {
             logger.warn("AccessLog buffer is full. Do a force writing to file to clear buffer.");
             //just write current logSet to file.
@@ -147,7 +141,7 @@ public class AccessLogFilter implements Filter {
     }
 
     // 把日志到文件中
-    private void writeLogSetToFile(String accessLog, Set<AccessLogData> logSet) {
+    private void writeLogSetToFile(String accessLog, Set<AccessLogData> logSet) { //todo @csy-pause
         try {
             if (ConfigUtils.isDefault(accessLog)) {
                 processWithServiceLogger(logSet);
