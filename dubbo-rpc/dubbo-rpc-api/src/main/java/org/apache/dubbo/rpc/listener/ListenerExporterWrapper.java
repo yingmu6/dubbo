@@ -27,6 +27,7 @@ import java.util.List;
 
 /**
  * ListenerExporter
+ * https://www.daimajiaoliu.com/daima/47e1f411a100401 dubbo 服务提供者初始使用到ListenerExporterWrapper扩展点，进行服务监听
  */
 public class ListenerExporterWrapper<T> implements Exporter<T> {
 

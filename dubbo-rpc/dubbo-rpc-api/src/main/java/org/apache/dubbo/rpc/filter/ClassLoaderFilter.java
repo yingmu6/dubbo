@@ -18,11 +18,7 @@ package org.apache.dubbo.rpc.filter;
 
 import org.apache.dubbo.common.constants.CommonConstants;
 import org.apache.dubbo.common.extension.Activate;
-import org.apache.dubbo.rpc.Filter;
-import org.apache.dubbo.rpc.Invocation;
-import org.apache.dubbo.rpc.Invoker;
-import org.apache.dubbo.rpc.Result;
-import org.apache.dubbo.rpc.RpcException;
+import org.apache.dubbo.rpc.*;
 
 /**
  * Set the current execution thread class loader to service interface's class loader.
@@ -36,7 +32,7 @@ public class ClassLoaderFilter implements Filter {
         Thread.currentThread().setContextClassLoader(invoker.getInterface().getClassLoader());
         try {
             return invoker.invoke(invocation);
-        } finally {
+        } finally { //@csy-021-P3 此处是否是会执行到？为啥此处还要重新设置类加载器？解：finally是无论如何都会执行到的，即使有return；执行调用时用invoker对应的类加载器，执行完后恢复原来的
             Thread.currentThread().setContextClassLoader(ocl);
         }
     }

@@ -18,6 +18,6 @@ package org.apache.dubbo.rpc;
 
 public enum InvokeMode { //调用模式
 
-    SYNC, ASYNC, FUTURE;
+    SYNC, ASYNC, FUTURE; //todo @csy-021-P3 ASYNC与FUTURE方式有何差异？
 
 }

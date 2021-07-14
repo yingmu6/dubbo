@@ -23,6 +23,7 @@ import org.apache.dubbo.common.extension.SPI;
  */
 @SPI
 public interface InvokerListener { //功能用途是怎样的？解：对Invoker事件进行监听，包含引用、销毁事件（当有服务引用时，触发该事件）
+    //todo @csy-021-P3 监听器lister、过滤器filter两者的机制有何不同，是怎样的处理方式？
 
     /**
      * The invoker referred

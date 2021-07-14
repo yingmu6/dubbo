@@ -18,14 +18,14 @@ package org.apache.dubbo.rpc;
 
 import java.util.concurrent.TimeUnit;
 
-public final class TimeoutCountDown implements Comparable<TimeoutCountDown> {
+public final class TimeoutCountDown implements Comparable<TimeoutCountDown> { //TimeoutCountDown：超时倒计时
 
   public static TimeoutCountDown newCountDown(long timeout, TimeUnit unit) {
     return new TimeoutCountDown(timeout, unit);
   }
 
-  private final long timeoutInMillis;
-  private final long deadlineInNanos;
+  private final long timeoutInMillis; //超时时间
+  private final long deadlineInNanos; //截止时间
   private volatile boolean expired;
 
   private TimeoutCountDown(long timeout, TimeUnit unit) {

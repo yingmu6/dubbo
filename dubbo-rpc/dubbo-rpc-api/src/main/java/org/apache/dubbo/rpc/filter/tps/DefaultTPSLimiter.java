@@ -26,11 +26,11 @@ import static org.apache.dubbo.rpc.Constants.*;
 
 /**
  * DefaultTPSLimiter is a default implementation for tps filter. It is an in memory based implementation for storing
- * tps information. It internally use
+ * tps information. It internally（内部地） use
  *
  * @see org.apache.dubbo.rpc.filter.TpsLimitFilter
  */
-public class DefaultTPSLimiter implements TPSLimiter {
+public class DefaultTPSLimiter implements TPSLimiter { //https://blog.51cto.com/u_15023237/2559351  Dubbo tps过滤器器实现原理(基于漏桶算法)
 
     private final ConcurrentMap<String, StatItem> stats = new ConcurrentHashMap<String, StatItem>();
 

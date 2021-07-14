@@ -279,7 +279,7 @@ public class PojoUtils {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private static Object realize0(Object pojo, Class<?> type, Type genericType, final Map<Object, Object> history) {
+    private static Object realize0(Object pojo, Class<?> type, Type genericType, final Map<Object, Object> history) { //todo @csy-021-P1 该方法的功能用途是啥，待调试
         if (pojo == null) {
             return null;
         }
@@ -635,7 +635,7 @@ public class PojoUtils {
         return result;
     }
 
-    public static boolean isPojo(Class<?> cls) {
+    public static boolean isPojo(Class<?> cls) { //判断是否是pojo类型，非基本类型、且非集合类型、且非Map类型
         return !ReflectUtils.isPrimitives(cls)
                 && !Collection.class.isAssignableFrom(cls)
                 && !Map.class.isAssignableFrom(cls);

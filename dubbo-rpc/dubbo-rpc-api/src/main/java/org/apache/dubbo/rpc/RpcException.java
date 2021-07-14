@@ -26,7 +26,8 @@ import javax.naming.LimitExceededException;
  * @see org.apache.dubbo.rpc.Invoker#invoke(Invocation)
  * @since 1.0
  */
-public /**final**/ class RpcException extends RuntimeException {
+public /**final**/
+class RpcException extends RuntimeException { //注释掉final修饰，允许被继承
 
     public static final int UNKNOWN_EXCEPTION = 0;
     public static final int NETWORK_EXCEPTION = 1;
@@ -34,7 +35,7 @@ public /**final**/ class RpcException extends RuntimeException {
     public static final int BIZ_EXCEPTION = 3;
     public static final int FORBIDDEN_EXCEPTION = 4;
     public static final int SERIALIZATION_EXCEPTION = 5;
-    public static final int NO_INVOKER_AVAILABLE_AFTER_FILTER = 6;
+    public static final int NO_INVOKER_AVAILABLE_AFTER_FILTER = 6; //6,7,8相比2.5.6增加的异常
     public static final int LIMIT_EXCEEDED_EXCEPTION = 7;
     public static final int TIMEOUT_TERMINATE = 8;
     private static final long serialVersionUID = 7815426752583648734L;

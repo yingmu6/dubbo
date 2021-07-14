@@ -32,7 +32,7 @@ public abstract class AbstractExporter<T> implements Exporter<T> {
 
     private volatile boolean unexported = false;
 
-    public AbstractExporter(Invoker<T> invoker) {
+    public AbstractExporter(Invoker<T> invoker) { //对调用信息invoker进行参数校验
         if (invoker == null) {
             throw new IllegalStateException("service invoker == null");
         }

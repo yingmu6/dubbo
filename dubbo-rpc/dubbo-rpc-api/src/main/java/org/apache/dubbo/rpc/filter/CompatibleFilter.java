@@ -40,7 +40,7 @@ import static org.apache.dubbo.remoting.Constants.SERIALIZATION_KEY;
  *
  * @see Filter
  */
-public class CompatibleFilter implements Filter, Filter.Listener { //todo @csy-019-P3 兼容的过滤器是怎样的？兼容哪些内容
+public class CompatibleFilter implements Filter, Filter.Listener { //@csy-019-P3 功能用途是怎样的？解：是对响应的值做兼容处理
 
     private static Logger logger = LoggerFactory.getLogger(CompatibleFilter.class);
 
@@ -59,7 +59,7 @@ public class CompatibleFilter implements Filter, Filter.Listener { //todo @csy-0
                     Class<?> type = method.getReturnType();
                     Object newValue;
                     String serialization = invoker.getUrl().getParameter(SERIALIZATION_KEY);
-                    if ("json".equals(serialization) || "fastjson".equals(serialization)) { //todo @csy-019-P3 为啥与序列化、反序列化关联的？
+                    if ("json".equals(serialization) || "fastjson".equals(serialization)) { //@csy-019-P3 为啥与序列化、反序列化关联的？解：因为是对返回值进行处理
                         // If the serialization key is json or fastjson
                         Type gtype = method.getGenericReturnType();
                         newValue = PojoUtils.realize(value, type, gtype);
@@ -71,7 +71,7 @@ public class CompatibleFilter implements Filter, Filter.Listener { //todo @csy-0
                         newValue = value;
                     }
                     if (newValue != value) {
-                        appResponse.setValue(newValue);
+                        appResponse.setValue(newValue); //将处理后的新值设置到响应的值中
                     }
                 } catch (Throwable t) {
                     logger.warn(t.getMessage(), t);

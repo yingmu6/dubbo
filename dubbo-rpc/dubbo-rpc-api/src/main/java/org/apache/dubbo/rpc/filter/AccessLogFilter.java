@@ -115,7 +115,7 @@ public class AccessLogFilter implements Filter {
     @Override
     public Result invoke(Invoker<?> invoker, Invocation inv) throws RpcException {
         try {
-            String accessLogKey = invoker.getUrl().getParameter(ACCESS_LOG_KEY);
+            String accessLogKey = invoker.getUrl().getParameter(ACCESS_LOG_KEY); //todo @csy-021-P3 ACCESS_LOG_KEY值是怎么设置的？AccessLogData.newLogData()
             if (ConfigUtils.isNotEmpty(accessLogKey)) {
                 AccessLogData logData = buildAccessLogData(invoker, inv); //构建日志数据
                 log(accessLogKey, logData);
@@ -130,8 +130,8 @@ public class AccessLogFilter implements Filter {
         Set<AccessLogData> logSet = LOG_ENTRIES.computeIfAbsent(accessLog, k -> new ConcurrentHashSet<>());
 
         if (logSet.size() < LOG_MAX_BUFFER) {
-            logSet.add(accessLogData); //todo @csy-020-P3 此处设置值有何用处？既没有返回值，也没有引用传递
-        } else {
+            logSet.add(accessLogData); //@csy-020-P3 此处设置值有何用处？既没有返回值，也没有引用传递（是不是会影响LOG_ENTRIES）解：logSet是Map中的值，该值改变，Map中的值也对应改变
+        } else { //超过最大日志缓存数时，将日志写到日志文件中
             logger.warn("AccessLog buffer is full. Do a force writing to file to clear buffer.");
             //just write current logSet to file.
             writeLogSetToFile(accessLog, logSet);
@@ -141,9 +141,9 @@ public class AccessLogFilter implements Filter {
     }
 
     // 把日志到文件中
-    private void writeLogSetToFile(String accessLog, Set<AccessLogData> logSet) { //todo @csy-pause
+    private void writeLogSetToFile(String accessLog, Set<AccessLogData> logSet) {
         try {
-            if (ConfigUtils.isDefault(accessLog)) {
+            if (ConfigUtils.isDefault(accessLog)) { //设置了默认值
                 processWithServiceLogger(logSet);
             } else {
                 File file = new File(accessLog);
@@ -199,14 +199,14 @@ public class AccessLogFilter implements Filter {
              iterator.hasNext();                                   //条件语句，循环结构的循环条件
              iterator.remove()) {                                  //迭代语句，循环结构的迭代部分，通常用来修改循环变量的值
             AccessLogData logData = iterator.next();
-            LoggerFactory.getLogger(LOG_KEY + "." + logData.getServiceName()).info(logData.getLogMessage());
+            LoggerFactory.getLogger(LOG_KEY + "." + logData.getServiceName()).info(logData.getLogMessage()); //依次打印日志
         }
     }
 
     private void createIfLogDirAbsent(File file) {
         File dir = file.getParentFile();
         if (null != dir && !dir.exists()) {
-            dir.mkdirs();
+            dir.mkdirs(); //创建目录
         }
     }
 

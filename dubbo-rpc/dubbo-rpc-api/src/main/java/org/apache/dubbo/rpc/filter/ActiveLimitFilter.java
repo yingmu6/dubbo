@@ -18,12 +18,7 @@ package org.apache.dubbo.rpc.filter;
 
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.extension.Activate;
-import org.apache.dubbo.rpc.Filter;
-import org.apache.dubbo.rpc.Invocation;
-import org.apache.dubbo.rpc.Invoker;
-import org.apache.dubbo.rpc.Result;
-import org.apache.dubbo.rpc.RpcException;
-import org.apache.dubbo.rpc.RpcStatus;
+import org.apache.dubbo.rpc.*;
 
 import static org.apache.dubbo.common.constants.CommonConstants.CONSUMER;
 import static org.apache.dubbo.common.constants.CommonConstants.TIMEOUT_KEY;
@@ -116,7 +111,7 @@ public class ActiveLimitFilter implements Filter, Filter.Listener { // 用途是
     private void notifyFinish(final RpcStatus rpcStatus, int max) {
         if (max > 0) {
             synchronized (rpcStatus) {
-                rpcStatus.notifyAll();
+                rpcStatus.notifyAll(); //todo @csy-021-P3 此处的notifyAll()了解
             }
         }
     }

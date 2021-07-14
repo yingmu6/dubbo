@@ -19,16 +19,17 @@ package org.apache.dubbo.rpc.filter.tps;
 import java.util.concurrent.atomic.LongAdder;
 
 /**
- * Judge whether a particular invocation of service provider method should be allowed within a configured time interval.
+ * Judge whether a particular（特别的） invocation of service provider method should be allowed within a configured time interval.
+ * （判断是否应该在配置的时间间隔内允许对服务提供者方法的特定调用）
  * As a state it contain name of key ( e.g. method), last invocation time, interval and rate count.
  */
-class StatItem { //todo @csy-P3 该类的功能、用途是什么？
+class StatItem { //@csy-P3 该类的功能、用途是什么？解：使用令牌桶进行限流  https://blog.csdn.net/cbhyk/article/details/86064725
 
     private String name;
 
     private long lastResetTime;
 
-    private long interval;
+    private long interval; //interval:间隔
 
     private LongAdder token;
 
@@ -42,9 +43,9 @@ class StatItem { //todo @csy-P3 该类的功能、用途是什么？
         this.token = buildLongAdder(rate);
     }
 
-    public boolean isAllowable() {
+    public boolean isAllowable() { //判断是否还有剩余令牌，并把令牌数减1
         long now = System.currentTimeMillis();
-        if (now > lastResetTime + interval) {
+        if (now > lastResetTime + interval) { //没有超过指定时间间隔
             token = buildLongAdder(rate);
             lastResetTime = now;
         }
@@ -52,7 +53,18 @@ class StatItem { //todo @csy-P3 该类的功能、用途是什么？
         if (token.sum() < 0) {
             return false;
         }
-        token.decrement();
+        token.decrement(); //todo @csy-021-P3 了解漏桶算法
+
+        /**
+         * 2.5.6的处理方式
+         * int value = token.get();
+         * boolean flag = false;
+         * while (value > 0 && !flag) {
+         *    flag = token.compareAndSet(value, value - 1);
+         *    value = token.get();
+         * }
+         * return flag;
+         */
         return true;
     }
 

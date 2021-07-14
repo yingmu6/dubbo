@@ -16,10 +16,9 @@
  */
 package org.apache.dubbo.rpc.support;
 
+import com.alibaba.fastjson.JSON;
 import org.apache.dubbo.common.utils.StringUtils;
 import org.apache.dubbo.rpc.RpcContext;
-
-import com.alibaba.fastjson.JSON;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -64,7 +63,7 @@ public final class AccessLogData {
     private AccessLogData() {
         RpcContext context = RpcContext.getContext(); //RpcContext了解，解：临时状态记录器
         data = new HashMap<>();
-        setLocalHost(context.getLocalHost());
+        setLocalHost(context.getLocalHost()); //todo @csy-021-P3 此处创建时能获取到IP，是哪里设置的？
         setLocalPort(context.getLocalPort());
         setRemoteHost(context.getRemoteHost());
         setRemotePort(context.getRemotePort());
@@ -242,7 +241,7 @@ public final class AccessLogData {
             sn.append(JSON.toJSONString(args));
         }
 
-        return sn.toString();
+        return sn.toString(); //todo @csy-021-P3 待调试查看数据
     }
 
     private Date getInvocationTime() {

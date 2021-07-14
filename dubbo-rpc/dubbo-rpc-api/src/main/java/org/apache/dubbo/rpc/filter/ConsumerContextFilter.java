@@ -47,13 +47,13 @@ public class ConsumerContextFilter implements Filter { //消费端的上下文�
         }
 
         // pass default timeout set by end user (ReferenceConfig)
-        Object countDown = context.get(TIME_COUNTDOWN_KEY);
-        if (countDown != null) {
+        Object countDown = context.get(TIME_COUNTDOWN_KEY); //设置服务调用的倒计时
+        if (countDown != null) { //相比2.5.6增加的TIMEOUT_TERMINATE 超时终止的异常
             TimeoutCountDown timeoutCountDown = (TimeoutCountDown) countDown;
             if (timeoutCountDown.isExpired()) {
                 return AsyncRpcResult.newDefaultAsyncResult(new RpcException(RpcException.TIMEOUT_TERMINATE,
                         "No time left for making the following call: " + invocation.getServiceName() + "."
-                                + invocation.getMethodName() + ", terminate directly."), invocation);
+                                + invocation.getMethodName() + ", terminate directly."), invocation); //left：剩下的， 此处表明没有剩下时间进行服务调用
             }
         }
         return invoker.invoke(invocation);
