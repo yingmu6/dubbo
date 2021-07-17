@@ -19,11 +19,7 @@ package org.apache.dubbo.rpc.protocol.dubbo;
 import org.apache.dubbo.rpc.AppResponse;
 import org.apache.dubbo.rpc.RpcException;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 
 /**
  * This is the type of the Future instance users get in an async call:
@@ -36,7 +32,7 @@ public class FutureAdapter<V> extends CompletableFuture<V> {
 
     public FutureAdapter(CompletableFuture<AppResponse> future) {
         this.appResponseFuture = future;
-        future.whenComplete((appResponse, t) -> {
+        future.whenComplete((appResponse, t) -> { //todo @csy-022-P2 此处的处理逻辑是怎样的？
             if (t != null) {
                 if (t instanceof CompletionException) {
                     t = t.getCause();

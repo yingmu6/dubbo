@@ -26,7 +26,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.$INVOKE;
  * Replaced with {@link MethodDescriptor}
  */
 @Deprecated
-public class ConsumerMethodModel {
+public class ConsumerMethodModel { //todo @csy-022-P2 此类的功能用途是什么？为什么会弃用，替代的类是什么？
     private final Method method;
     //    private final boolean isCallBack;
 //    private final boolean isFuture;

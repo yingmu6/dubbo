@@ -21,23 +21,17 @@ import org.apache.dubbo.common.logger.LoggerFactory;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.AbstractExecutorService;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 
 /**
  * The most important difference between this Executor and other normal Executor is that this one doesn't manage
  * any thread.
- *
+ * <p>
  * Tasks submitted to this executor through {@link #execute(Runnable)} will not get scheduled to a specific thread, though normal executors always do the schedule.
  * Those tasks are stored in a blocking queue and will only be executed when a thread calls {@link #waitAndDrain()}, the thread executing the task
  * is exactly the same as the one calling waitAndDrain.
  */
-public class ThreadlessExecutor extends AbstractExecutorService {
+public class ThreadlessExecutor extends AbstractExecutorService { //todo @csy-022-P3 该类的功能用途是什么？
     private static final Logger logger = LoggerFactory.getLogger(ThreadlessExecutor.class.getName());
 
     private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
@@ -72,7 +66,7 @@ public class ThreadlessExecutor extends AbstractExecutorService {
      * Waits until there is a task, executes the task and all queued tasks (if there're any). The task is either a normal
      * response or a timeout response.
      */
-    public void waitAndDrain() throws InterruptedException {
+    public void waitAndDrain() throws InterruptedException { //todo @csy-022-P3 该方法的用途是什么？
         /**
          * Usually, {@link #waitAndDrain()} will only get called once. It blocks for the response for the first time,
          * once the response (the task) reached and being executed waitAndDrain will return, the whole request process

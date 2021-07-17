@@ -22,11 +22,7 @@ import org.apache.dubbo.common.threadpool.ThreadlessExecutor;
 import org.apache.dubbo.rpc.model.ConsumerMethodModel;
 
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -46,7 +42,7 @@ import static org.apache.dubbo.common.utils.ReflectUtils.defaultReturn;
  * {@link #getValue()} and {@link #getException()} are all inherited from {@link Result} interface, implementing them are mainly
  * for compatibility consideration. Because many legacy {@link Filter} implementation are most possibly to call getValue directly.
  */
-public class AsyncRpcResult implements Result {
+public class AsyncRpcResult implements Result { //todo @csy-022-P2 2.5.6是没有该异步RPC结果的，那2.5.6是怎么处理异步调用的？
     private static final Logger logger = LoggerFactory.getLogger(AsyncRpcResult.class);
 
     /**
@@ -318,7 +314,7 @@ public class AsyncRpcResult implements Result {
     }
 
     public static AsyncRpcResult newDefaultAsyncResult(Object value, Throwable t, Invocation invocation) {
-        CompletableFuture<AppResponse> future = new CompletableFuture<>();
+        CompletableFuture<AppResponse> future = new CompletableFuture<>(); //todo @csy-022-P3 CompletableFuture了解以及使用
         AppResponse result = new AppResponse();
         if (t != null) {
             result.setException(t);

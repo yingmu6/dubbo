@@ -151,9 +151,9 @@ public abstract class AbstractInvoker<T> implements Invoker<T> {
         invocation.setInvokeMode(RpcUtils.getInvokeMode(url, invocation));
         RpcUtils.attachInvocationIdIfAsync(getUrl(), invocation);
 
-        AsyncRpcResult asyncResult; //todo @csy-pause-021
+        AsyncRpcResult asyncResult;
         try {
-            asyncResult = (AsyncRpcResult) doInvoke(invocation);
+            asyncResult = (AsyncRpcResult) doInvoke(invocation); //抽象方法，调用子类的具体的实现
         } catch (InvocationTargetException e) { // biz exception
             Throwable te = e.getTargetException();
             if (te == null) {

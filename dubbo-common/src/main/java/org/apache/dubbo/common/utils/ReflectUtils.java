@@ -122,7 +122,7 @@ public final class ReflectUtils {
 
     private static Map<Class<?>, Object> primitiveDefaults = new HashMap<>();
 
-    static {
+    static { //基本类型默认的值
         primitiveDefaults.put(int.class, 0);
         primitiveDefaults.put(long.class, 0L);
         primitiveDefaults.put(byte.class, (byte) 0);
