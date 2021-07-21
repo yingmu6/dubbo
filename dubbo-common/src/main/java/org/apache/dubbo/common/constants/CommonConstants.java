@@ -297,7 +297,7 @@ public interface CommonConstants {
 
     String GENERIC_SERIALIZATION_PROTOBUF = "protobuf-json";
 
-    String GENERIC_WITH_CLZ_KEY = "generic.include.class";
+    String GENERIC_WITH_CLZ_KEY = "generic.include.class"; //todo @csy-023-P3 这里的使用场景是怎样的？
 
     /**
      * The limit of callback service instances for one interface on every client

@@ -40,7 +40,7 @@ import java.util.function.Supplier;
  * <p/>
  * Other type will be covert to a map which contains the attributes and value pair of object.
  */
-public class PojoUtils {
+public class PojoUtils { //todo @csy-023-P1 该类的功能用途是什么？
 
     private static final Logger logger = LoggerFactory.getLogger(PojoUtils.class);
     private static final ConcurrentMap<String, Method> NAME_METHODS_CACHE = new ConcurrentHashMap<String, Method>();
@@ -115,7 +115,7 @@ public class PojoUtils {
         }
         history.put(pojo, pojo);
 
-        if (pojo.getClass().isArray()) {
+        if (pojo.getClass().isArray()) { //todo @csy-023-P2 此处的处理逻辑是怎样的？
             int len = Array.getLength(pojo);
             Object[] dest = new Object[len];
             history.put(pojo, dest);
@@ -159,7 +159,7 @@ public class PojoUtils {
             }
         }
         // public field
-        for (Field field : pojo.getClass().getFields()) {
+        for (Field field : pojo.getClass().getFields()) { //todo @csy-023-P3 此处的处理逻辑是怎样的？
             if (ReflectUtils.isPublicInstanceField(field)) {
                 try {
                     Object fieldValue = field.get(pojo);
@@ -189,7 +189,7 @@ public class PojoUtils {
         return realize0(pojo, type, genericType, new IdentityHashMap<Object, Object>());
     }
 
-    private static class PojoInvocationHandler implements InvocationHandler {
+    private static class PojoInvocationHandler implements InvocationHandler { //todo @csy-023-P3 该处理的功能用途是啥？
 
         private Map<Object, Object> map;
 
@@ -220,7 +220,7 @@ public class PojoUtils {
     }
 
     @SuppressWarnings("unchecked")
-    private static Collection<Object> createCollection(Class<?> type, int len) {
+    private static Collection<Object> createCollection(Class<?> type, int len) { //创建指定类型集合
         if (type.isAssignableFrom(ArrayList.class)) {
             return new ArrayList<Object>(len);
         }
@@ -237,7 +237,7 @@ public class PojoUtils {
         return new ArrayList<Object>();
     }
 
-    private static Map createMap(Map src) {
+    private static Map createMap(Map src) { //判断Map的实际类型，创建对应类型的实例
         Class<? extends Map> cl = src.getClass();
         Map result = null;
         if (HashMap.class == cl) {
@@ -279,7 +279,11 @@ public class PojoUtils {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private static Object realize0(Object pojo, Class<?> type, Type genericType, final Map<Object, Object> history) { //todo @csy-021-P1 该方法的功能用途是啥，待调试
+    /**
+     * todo @csy-021-P1 该方法的功能用途是啥，待调试
+     * realize：实现
+     */
+    private static Object realize0(Object pojo, Class<?> type, Type genericType, final Map<Object, Object> history) {
         if (pojo == null) {
             return null;
         }
@@ -292,7 +296,7 @@ public class PojoUtils {
                 && !(type != null && type.isArray()
                 && type.getComponentType().isEnum()
                 && pojo.getClass() == String[].class)) {
-            return CompatibleTypeUtils.compatibleTypeConvert(pojo, type);
+            return CompatibleTypeUtils.compatibleTypeConvert(pojo, type); //todo @csy-023-P2 此处是怎么适配的？
         }
 
         Object o = history.get(pojo);
@@ -303,20 +307,20 @@ public class PojoUtils {
 
         history.put(pojo, pojo);
 
-        if (pojo.getClass().isArray()) {
-            if (Collection.class.isAssignableFrom(type)) {
+        if (pojo.getClass().isArray()) { //todo @csy-023-P3 POJO的概念是啥？
+            if (Collection.class.isAssignableFrom(type)) { //是集合类型
                 Class<?> ctype = pojo.getClass().getComponentType();
-                int len = Array.getLength(pojo);
+                int len = Array.getLength(pojo); //获取数组对应长度
                 Collection dest = createCollection(type, len);
                 history.put(pojo, dest);
                 for (int i = 0; i < len; i++) {
-                    Object obj = Array.get(pojo, i);
-                    Object value = realize0(obj, ctype, null, history);
+                    Object obj = Array.get(pojo, i); //返回数组中指定下标的值
+                    Object value = realize0(obj, ctype, null, history); //todo @csy-023-P2 此处的递归用途是啥？
                     dest.add(value);
                 }
                 return dest;
             } else {
-                Class<?> ctype = (type != null && type.isArray() ? type.getComponentType() : pojo.getClass().getComponentType());
+                Class<?> ctype = (type != null && type.isArray() ? type.getComponentType() : pojo.getClass().getComponentType()); //todo @csy-023-P3 getComponentType()功能用途是什么？
                 int len = Array.getLength(pojo);
                 Object dest = Array.newInstance(ctype, len);
                 history.put(pojo, dest);
@@ -329,7 +333,7 @@ public class PojoUtils {
             }
         }
 
-        if (pojo instanceof Collection<?>) {
+        if (pojo instanceof Collection<?>) { //todo @csy-023-P2 此处的逻辑与pojo.getClass().isArray()的处理有何不同？
             if (type.isArray()) {
                 Class<?> ctype = type.getComponentType();
                 Collection<Object> src = (Collection<Object>) pojo;
@@ -436,8 +440,8 @@ public class PojoUtils {
                     result.put(key, value);
                 }
                 return result;
-            } else if (type.isInterface()) {
-                Object dest = Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[]{type}, new PojoInvocationHandler(map));
+            } else if (type.isInterface()) { //todo @csy-023-P3 此处为啥要创建代理对象，都做了哪些代理操作？
+                Object dest = Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[] {type}, new PojoInvocationHandler(map));
                 history.put(pojo, dest);
                 return dest;
             } else {
@@ -448,7 +452,7 @@ public class PojoUtils {
                     if (key instanceof String) {
                         String name = (String) key;
                         Object value = entry.getValue();
-                        if (value != null) {
+                        if (value != null) { //todo @csy-023-P3 此处的处理逻辑是怎样的？
                             Method method = getSetterMethod(dest.getClass(), name, value.getClass());
                             Field field = getField(dest.getClass(), name);
                             if (method != null) {
@@ -476,7 +480,7 @@ public class PojoUtils {
                         }
                     }
                 }
-                if (dest instanceof Throwable) {
+                if (dest instanceof Throwable) { //异常信息处理
                     Object message = map.get("message");
                     if (message instanceof String) {
                         try {
@@ -502,7 +506,7 @@ public class PojoUtils {
      * @param clazz {@link Class}
      * @return Return String.class for {@link com.alibaba.fastjson.JSONObject}
      */
-    private static Type getKeyTypeForMap(Class<?> clazz) {
+    private static Type getKeyTypeForMap(Class<?> clazz) { //todo @csy-023-P3 此方法的功能用途是什么？
         Type[] interfaces = clazz.getGenericInterfaces();
         if (!ArrayUtils.isEmpty(interfaces)) {
             for (Type type : interfaces) {
@@ -527,7 +531,7 @@ public class PojoUtils {
     private static Type getGenericClassByIndex(Type genericType, int index) {
         Type clazz = null;
         // find parameterized type
-        if (genericType instanceof ParameterizedType) {
+        if (genericType instanceof ParameterizedType) { //todo @csy-023-P3 ParameterizedType的功能用途是什么？
             ParameterizedType t = (ParameterizedType) genericType;
             Type[] types = t.getActualTypeArguments();
             clazz = types[index];
@@ -554,7 +558,7 @@ public class PojoUtils {
                 Constructor<?> constructor = constructors[0];
                 if (constructor.getParameterTypes().length > 0) {
                     for (Constructor<?> c : constructors) {
-                        if (c.getParameterTypes().length < constructor.getParameterTypes().length) {
+                        if (c.getParameterTypes().length < constructor.getParameterTypes().length) { //todo @csy-023-P3 此处的判断逻辑是什么？
                             constructor = c;
                             if (constructor.getParameterTypes().length == 0) {
                                 break;

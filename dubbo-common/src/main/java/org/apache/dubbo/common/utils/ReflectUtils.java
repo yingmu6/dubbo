@@ -1105,7 +1105,7 @@ public final class ReflectUtils {
         return null;
     }
 
-    public static boolean isBeanPropertyWriteMethod(Method method) {
+    public static boolean isBeanPropertyWriteMethod(Method method) { //判断是否是set方法
         return method != null
                 && Modifier.isPublic(method.getModifiers())
                 && !Modifier.isStatic(method.getModifiers())
