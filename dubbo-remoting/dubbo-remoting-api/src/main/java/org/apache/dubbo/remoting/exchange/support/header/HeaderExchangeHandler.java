@@ -21,11 +21,7 @@ import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
 import org.apache.dubbo.common.utils.NetUtils;
 import org.apache.dubbo.common.utils.StringUtils;
-import org.apache.dubbo.remoting.Channel;
-import org.apache.dubbo.remoting.ChannelHandler;
-import org.apache.dubbo.remoting.Constants;
-import org.apache.dubbo.remoting.ExecutionException;
-import org.apache.dubbo.remoting.RemotingException;
+import org.apache.dubbo.remoting.*;
 import org.apache.dubbo.remoting.exchange.ExchangeChannel;
 import org.apache.dubbo.remoting.exchange.ExchangeHandler;
 import org.apache.dubbo.remoting.exchange.Request;
@@ -48,7 +44,7 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
 
     private final ExchangeHandler handler;
 
-    public HeaderExchangeHandler(ExchangeHandler handler) {
+    public HeaderExchangeHandler(ExchangeHandler handler) { //在创建对象时，指定处理类
         if (handler == null) {
             throw new IllegalArgumentException("handler == null");
         }
@@ -163,7 +159,7 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
     }
 
     @Override
-    public void received(Channel channel, Object message) throws RemotingException {
+    public void received(Channel channel, Object message) throws RemotingException { //对请求、响应、Telnet消息处理
         final ExchangeChannel exchangeChannel = HeaderExchangeChannel.getOrAddChannel(channel);
         if (message instanceof Request) {
             // handle request.
@@ -184,7 +180,9 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
                 Exception e = new Exception("Dubbo client can not supported string message: " + message + " in channel: " + channel + ", url: " + channel.getUrl());
                 logger.error(e.getMessage(), e);
             } else {
-                String echo = handler.telnet(channel, (String) message);
+                String echo = handler.telnet(channel, (String) message); //进行Telnet指令调用
+
+
                 if (echo != null && echo.length() > 0) {
                     channel.send(echo);
                 }

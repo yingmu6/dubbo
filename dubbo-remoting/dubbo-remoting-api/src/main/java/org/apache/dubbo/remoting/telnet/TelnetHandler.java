@@ -24,7 +24,7 @@ import org.apache.dubbo.remoting.RemotingException;
  * TelnetHandler
  */
 @SPI
-public interface TelnetHandler { //todo @csy-002 改处理类的功能用途是啥？
+public interface TelnetHandler { //@csy-002 改处理类的功能用途是啥？解：telnet命令的处理类
 
     /**
      * telnet.
@@ -32,6 +32,6 @@ public interface TelnetHandler { //todo @csy-002 改处理类的功能用途是�
      * @param channel
      * @param message
      */
-    String telnet(Channel channel, String message) throws RemotingException;
+    String telnet(Channel channel, String message) throws RemotingException; //todo @csy-024-P2 有多个实现类，不能指令时怎么进行分发的？
 
 }

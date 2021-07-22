@@ -31,7 +31,7 @@ import org.apache.dubbo.remoting.telnet.support.Help;
 @Help(parameter = "[-t <milliseconds>]", summary = "Shutdown Dubbo Application.", detail = "Shutdown Dubbo Application.")
 public class ShutdownTelnetHandler implements TelnetHandler {
     @Override
-    public String telnet(Channel channel, String message) throws RemotingException {
+    public String telnet(Channel channel, String message) throws RemotingException { //todo @csy-024-P2 进入时message是什么内容？是不是把指令截取了的
 
         int sleepMilliseconds = 0;
         if (StringUtils.isNotEmpty(message)) {
@@ -43,7 +43,7 @@ public class ShutdownTelnetHandler implements TelnetHandler {
             }
         }
         long start = System.currentTimeMillis();
-        if (sleepMilliseconds > 0) {
+        if (sleepMilliseconds > 0) { //在指定的时间后停止应用，若没有配置时间，则立即停止
             try {
                 Thread.sleep(sleepMilliseconds);
             } catch (InterruptedException e) {

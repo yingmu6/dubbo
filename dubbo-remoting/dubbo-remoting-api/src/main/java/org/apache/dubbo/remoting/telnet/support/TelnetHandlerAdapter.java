@@ -33,16 +33,16 @@ public class TelnetHandlerAdapter extends ChannelHandlerAdapter implements Telne
     private final ExtensionLoader<TelnetHandler> extensionLoader = ExtensionLoader.getExtensionLoader(TelnetHandler.class);
 
     @Override
-    public String telnet(Channel channel, String message) throws RemotingException {
+    public String telnet(Channel channel, String message) throws RemotingException { //@csy-024-P2 此处是否是指令入口、分发的地方？解：是Telnet指令处理的地方
         String prompt = channel.getUrl().getParameterAndDecoded(Constants.PROMPT_KEY, Constants.DEFAULT_PROMPT);
         boolean noprompt = message.contains("--no-prompt");
-        message = message.replace("--no-prompt", "");
+        message = message.replace("--no-prompt", ""); //@csy-024-P3 此处的参数是什么含义？ 解：telnet提示键
         StringBuilder buf = new StringBuilder();
         message = message.trim();
         String command;
         if (message.length() > 0) {
             int i = message.indexOf(' ');
-            if (i > 0) {
+            if (i > 0) { //拆分命令和参数
                 command = message.substring(0, i).trim();
                 message = message.substring(i + 1).trim();
             } else {
@@ -53,10 +53,10 @@ public class TelnetHandlerAdapter extends ChannelHandlerAdapter implements Telne
             command = "";
         }
         if (command.length() > 0) {
-            if (extensionLoader.hasExtension(command)) {
+            if (extensionLoader.hasExtension(command)) { //将命令名作为SPI的扩展名
                 if (commandEnabled(channel.getUrl(), command)) {
                     try {
-                        String result = extensionLoader.getExtension(command).telnet(channel, message);
+                        String result = extensionLoader.getExtension(command).telnet(channel, message); //从接收的字符串解析出命令，根据dubbo的spi扩展机制获取对应的TelnetHandler实现
                         if (result == null) {
                             return null;
                         }

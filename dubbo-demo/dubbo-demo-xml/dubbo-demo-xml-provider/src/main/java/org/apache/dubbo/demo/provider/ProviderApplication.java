@@ -22,6 +22,6 @@ public class ProviderApplication {
     public static void main(String[] args) throws Exception {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("spring/dubbo-provider.xml");
         context.start();
-        System.in.read();
+        System.in.read(); //todo @csy-024-P2  提供者启动时所用端口是在哪里设置的？比如20880？
     }
 }
