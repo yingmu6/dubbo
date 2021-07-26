@@ -125,7 +125,7 @@ public interface Constants {
 
     String CHECK_KEY = "check";
 
-    String PROMPT_KEY = "prompt";
+    String PROMPT_KEY = "prompt"; //telnet中的提示键可以设置，默认为dubbo>
 
     String DEFAULT_PROMPT = "dubbo>";
     String TELNET = "telnet";

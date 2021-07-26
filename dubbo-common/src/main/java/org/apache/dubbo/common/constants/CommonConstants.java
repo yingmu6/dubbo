@@ -54,7 +54,7 @@ public interface CommonConstants {
 
     String DOT_SEPARATOR = ".";
 
-    Pattern COMMA_SPLIT_PATTERN = Pattern.compile("\\s*[,]+\\s*"); //todo @csy-013 Pattern源码待查看
+    Pattern COMMA_SPLIT_PATTERN = Pattern.compile("\\s*[,]+\\s*"); //todo @csy-025-P2 Pattern能使用，熟悉常见正则表达式
 
     String PATH_SEPARATOR = "/";
 
