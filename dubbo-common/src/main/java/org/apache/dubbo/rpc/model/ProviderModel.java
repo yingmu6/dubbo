@@ -21,16 +21,10 @@ import org.apache.dubbo.common.URL;
 import org.apache.dubbo.config.ServiceConfigBase;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
- * ProviderModel is about published services
+ * ProviderModel is about published services（ProviderModel是已经发布服务的模型）
  */
 public class ProviderModel {
     private String serviceKey;

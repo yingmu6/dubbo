@@ -16,6 +16,10 @@
  */
 package org.apache.dubbo.remoting.transport.netty4;
 
+import io.netty.channel.ChannelDuplexHandler;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPromise;
+import io.netty.handler.timeout.IdleStateEvent;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
@@ -23,11 +27,6 @@ import org.apache.dubbo.common.utils.NetUtils;
 import org.apache.dubbo.remoting.Channel;
 import org.apache.dubbo.remoting.ChannelHandler;
 import org.apache.dubbo.remoting.transport.netty4.SslHandlerInitializer.HandshakeCompletionEvent;
-
-import io.netty.channel.ChannelDuplexHandler;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelPromise;
-import io.netty.handler.timeout.IdleStateEvent;
 
 import java.net.InetSocketAddress;
 import java.util.Map;
@@ -38,7 +37,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @io.netty.channel.ChannelHandler.Sharable
 public class NettyServerHandler extends ChannelDuplexHandler { //todo @csy-002 该类的用途是什么？
-    private static final Logger logger = LoggerFactory.getLogger(NettyServerHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(NettyServerHandler.class); //todo @csy-026-P3 Netty的ChannelDuplexHandler的功能用途是什么？
     /**
      * the cache for alive worker channel.
      * <ip:port, dubbo channel>
@@ -65,16 +64,16 @@ public class NettyServerHandler extends ChannelDuplexHandler { //todo @csy-002 �
     }
 
     @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+    public void channelActive(ChannelHandlerContext ctx) throws Exception { //建立通道连接，todo @csy-026-P3 为啥telnet输入时，一开始handler的实例是NettySever
         NettyChannel channel = NettyChannel.getOrAddChannel(ctx.channel(), url, handler);
         if (channel != null) {
             channels.put(NetUtils.toAddressString((InetSocketAddress) ctx.channel().remoteAddress()), channel);
         }
-        handler.connected(channel);
+        handler.connected(channel); //todo @csy-026-P2 输入telnet指令时，明明只输入url，但是这个url为，是怎么转换来的？dubbo://172.16.21.232:20880/org.apache.dubbo.demo.GreetingService?anyhost=true&application=demo-provider&base=dubbo-provider.xml&bind.ip=172.16.21.232&bind.port=20880&channel.readonly.sent=true&codec=dubbo&deprecated=false&dubbo=2.0.2&dynamic=true&generic=false&heartbeat=60000&interface=org.apache.dubbo.demo.GreetingService&metadata-type=remote&methods=hello&name=lisi&pid=8391&qos.port=22222&release=&side=provider&threadname=DubboServerHandler-172.16.21.232:20880&timeout=2000&timestamp=1627273281798
 
-        if (logger.isInfoEnabled()) {
+        if (logger.isInfoEnabled()) { //todo @csy-026-P3 dubbo输出日志中都会有 [Dubbo]是不是日志过滤器处理的？
             logger.info("The connection of " + channel.getRemoteAddress() + " -> " + channel.getLocalAddress() + " is established.");
-        }
+        } //@csy-026-P2 进入该方法时，调用链路是怎样的？解：进入该方法前，都是Netty的调用链路，如io.netty.channel.AbstractChannelHandlerContext.invokeChannelActive()
     }
 
     @Override
@@ -93,17 +92,17 @@ public class NettyServerHandler extends ChannelDuplexHandler { //todo @csy-002 �
     }
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception { //从通道中读取内容
         NettyChannel channel = NettyChannel.getOrAddChannel(ctx.channel(), url, handler);
-        handler.received(channel, msg);
+        handler.received(channel, msg); //todo @csy-026-P3 输入telnet时，调到哪个实例类？
     }
 
 
     @Override
-    public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
+    public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception { //todo @csy-026-P2 telnet时，返回值会进入该方法，是怎么进入的？
         super.write(ctx, msg, promise);
         NettyChannel channel = NettyChannel.getOrAddChannel(ctx.channel(), url, handler);
-        handler.sent(channel, msg);
+        handler.sent(channel, msg); //todo @csy-026-P3 调试时，看到的是NettyServer类型，单NettyServer却没有sent方法？
     }
 
     @Override

@@ -36,13 +36,13 @@ import static org.apache.dubbo.common.constants.CommonConstants.DEFAULT_TIMEOUT;
 import static org.apache.dubbo.common.constants.CommonConstants.TIMEOUT_KEY;
 
 /**
- * NettyChannel maintains the cache of channel.
+ * NettyChannel maintains the cache of channel.（NettyChannel维持通道Channel的缓存）
  */
 final class NettyChannel extends AbstractChannel {
 
     private static final Logger logger = LoggerFactory.getLogger(NettyChannel.class);
     /**
-     * the cache for netty channel and dubbo channel
+     * the cache for netty channel and dubbo channel （Netty与Dubbo两者通道的映射）
      */
     private static final ConcurrentMap<Channel, NettyChannel> CHANNEL_MAP = new ConcurrentHashMap<Channel, NettyChannel>();
     /**
@@ -83,10 +83,10 @@ final class NettyChannel extends AbstractChannel {
         if (ch == null) {
             return null;
         }
-        NettyChannel ret = CHANNEL_MAP.get(ch);
+        NettyChannel ret = CHANNEL_MAP.get(ch); //根据Netty通道查找对应的Dubbo封装的通道
         if (ret == null) {
             NettyChannel nettyChannel = new NettyChannel(ch, url, handler);
-            if (ch.isActive()) {
+            if (ch.isActive()) { //通道是处理激活状态的
                 nettyChannel.markActive(true);
                 ret = CHANNEL_MAP.putIfAbsent(ch, nettyChannel);
             }
@@ -145,6 +145,7 @@ final class NettyChannel extends AbstractChannel {
 
     /**
      * Send message by netty and whether to wait the completion of the send.
+     * (通过Netty发送消息，并且可以选择等待发送)
      *
      * @param message message that need send.
      * @param sent    whether to ack async-sent
@@ -158,7 +159,7 @@ final class NettyChannel extends AbstractChannel {
         boolean success = true;
         int timeout = 0;
         try {
-            ChannelFuture future = channel.writeAndFlush(message);
+            ChannelFuture future = channel.writeAndFlush(message); //使用Netty的Channel进行发送消息
             if (sent) {
                 // wait timeout ms
                 timeout = getUrl().getPositiveParameter(TIMEOUT_KEY, DEFAULT_TIMEOUT);

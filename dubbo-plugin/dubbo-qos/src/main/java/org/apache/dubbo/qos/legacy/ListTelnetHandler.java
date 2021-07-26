@@ -23,11 +23,7 @@ import org.apache.dubbo.qos.command.util.ServiceCheckUtils;
 import org.apache.dubbo.remoting.Channel;
 import org.apache.dubbo.remoting.telnet.TelnetHandler;
 import org.apache.dubbo.remoting.telnet.support.Help;
-import org.apache.dubbo.rpc.model.ApplicationModel;
-import org.apache.dubbo.rpc.model.ConsumerModel;
-import org.apache.dubbo.rpc.model.MethodDescriptor;
-import org.apache.dubbo.rpc.model.ProviderModel;
-import org.apache.dubbo.rpc.model.ServiceRepository;
+import org.apache.dubbo.rpc.model.*;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -65,7 +61,7 @@ public class ListTelnetHandler implements TelnetHandler {
             }
         }
 
-        if (StringUtils.isEmpty(service)) {
+        if (StringUtils.isEmpty(service)) { //若没指定服务，则打印所有服务
             printAllServices(buf, detail);
         } else {
             printSpecifiedService(service, buf, detail);
@@ -82,8 +78,8 @@ public class ListTelnetHandler implements TelnetHandler {
         printAllReferredServices(buf, detail);
     }
 
-    private void printAllProvidedServices(StringBuilder buf, boolean detail) {
-        List<ProviderModel> providerModels = serviceRepository.getExportedServices();
+    private void printAllProvidedServices(StringBuilder buf, boolean detail) { //输出所有提供者暴露的服务信息
+        List<ProviderModel> providerModels = serviceRepository.getExportedServices(); //从缓存的服务仓库里获取提供者模型列表
         if (!providerModels.isEmpty()) {
             buf.append("PROVIDER:\r\n");
         }
@@ -99,7 +95,7 @@ public class ListTelnetHandler implements TelnetHandler {
         }
     }
 
-    private void printAllReferredServices(StringBuilder buf, boolean detail) {
+    private void printAllReferredServices(StringBuilder buf, boolean detail) { //输出所有消费者引用的服务信息
         List<ConsumerModel> consumerModels = serviceRepository.getReferredServices();
         if (!consumerModels.isEmpty()) {
             buf.append("CONSUMER:\r\n");

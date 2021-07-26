@@ -23,11 +23,7 @@ import org.apache.dubbo.common.logger.LoggerFactory;
 import org.apache.dubbo.common.threadpool.manager.ExecutorRepository;
 import org.apache.dubbo.common.utils.ExecutorUtil;
 import org.apache.dubbo.common.utils.NetUtils;
-import org.apache.dubbo.remoting.Channel;
-import org.apache.dubbo.remoting.ChannelHandler;
-import org.apache.dubbo.remoting.Constants;
-import org.apache.dubbo.remoting.RemotingException;
-import org.apache.dubbo.remoting.RemotingServer;
+import org.apache.dubbo.remoting.*;
 
 import java.net.InetSocketAddress;
 import java.util.Collection;
@@ -35,10 +31,7 @@ import java.util.concurrent.ExecutorService;
 
 import static org.apache.dubbo.common.constants.CommonConstants.ANYHOST_KEY;
 import static org.apache.dubbo.common.constants.CommonConstants.ANYHOST_VALUE;
-import static org.apache.dubbo.remoting.Constants.ACCEPTS_KEY;
-import static org.apache.dubbo.remoting.Constants.DEFAULT_ACCEPTS;
-import static org.apache.dubbo.remoting.Constants.DEFAULT_IDLE_TIMEOUT;
-import static org.apache.dubbo.remoting.Constants.IDLE_TIMEOUT_KEY;
+import static org.apache.dubbo.remoting.Constants.*;
 
 /**
  * AbstractServer
@@ -182,7 +175,7 @@ public abstract class AbstractServer extends AbstractEndpoint implements Remotin
     }
 
     @Override
-    public void disconnected(Channel ch) throws RemotingException {
+    public void disconnected(Channel ch) throws RemotingException { //拒绝连接
         Collection<Channel> channels = getChannels();
         if (channels.isEmpty()) {
             logger.warn("All clients has disconnected from " + ch.getLocalAddress() + ". You can graceful shutdown now.");

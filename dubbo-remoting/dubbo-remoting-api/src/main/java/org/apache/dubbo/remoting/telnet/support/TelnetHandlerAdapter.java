@@ -36,7 +36,7 @@ public class TelnetHandlerAdapter extends ChannelHandlerAdapter implements Telne
     public String telnet(Channel channel, String message) throws RemotingException { //@csy-024-P2 此处是否是指令入口、分发的地方？解：是Telnet指令处理的地方
         String prompt = channel.getUrl().getParameterAndDecoded(Constants.PROMPT_KEY, Constants.DEFAULT_PROMPT); //todo @csy-025-P3 PROMPT_KEY在XML中是怎么配置的？
         boolean noprompt = message.contains("--no-prompt");
-        message = message.replace("--no-prompt", ""); //@csy-024-P3 此处的参数是什么含义？ 解：telnet提示键（如果做了配置）
+        message = message.replace("--no-prompt", ""); //@csy-024-P3 此处的参数是什么含义？ 解：telnet提示键（如果做了配置，将不显示dubbo>）
         StringBuilder buf = new StringBuilder();
         message = message.trim();
         String command;
@@ -78,7 +78,15 @@ public class TelnetHandlerAdapter extends ChannelHandlerAdapter implements Telne
             buf.append("\r\n"); //todo @csy-025-P3 "\r\n" 分别代表什么含义？
         }
         if (StringUtils.isNotEmpty(prompt) && !noprompt) { //提示键处理：若提示键内容不为空且没有禁用，则作对应展示
-            buf.append(prompt); //todo @csy-025-P3 这里为啥将提示语放在最后？拼接书序倒是怎样？
+            buf.append(prompt);
+            /**
+             * @csy-025-P3 这里为啥将提示语放在最后？拼接书序倒是怎样？ 解：提示符拼接再最后，如
+             * dubbo>ls
+             * PROVIDER:
+             * org.apache.dubbo.demo.GreetingService
+             *
+             * dubbo>
+             */
         }
         return buf.toString(); //响应给telnet客户端的内容，todo @csy-025-P2 是怎么响应的？
     }

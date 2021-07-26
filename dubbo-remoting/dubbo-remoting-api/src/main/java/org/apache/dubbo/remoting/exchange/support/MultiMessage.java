@@ -17,17 +17,12 @@
 
 package org.apache.dubbo.remoting.exchange.support;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * @see org.apache.dubbo.remoting.transport.MultiMessageHandler
  */
-public final class MultiMessage implements Iterable {
+public final class MultiMessage implements Iterable { //包含多个消息
 
     private final List messages = new ArrayList();
 
