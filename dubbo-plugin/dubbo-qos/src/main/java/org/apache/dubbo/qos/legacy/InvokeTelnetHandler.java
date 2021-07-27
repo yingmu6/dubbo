@@ -16,6 +16,7 @@
  */
 package org.apache.dubbo.qos.legacy;
 
+import com.alibaba.fastjson.JSON;
 import org.apache.dubbo.common.extension.Activate;
 import org.apache.dubbo.common.utils.CollectionUtils;
 import org.apache.dubbo.common.utils.ReflectUtils;
@@ -28,14 +29,8 @@ import org.apache.dubbo.rpc.model.ApplicationModel;
 import org.apache.dubbo.rpc.model.MethodDescriptor;
 import org.apache.dubbo.rpc.model.ProviderModel;
 
-import com.alibaba.fastjson.JSON;
-
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.apache.dubbo.common.utils.PojoUtils.realize;
 
@@ -45,7 +40,7 @@ import static org.apache.dubbo.common.utils.PojoUtils.realize;
 @Activate
 @Help(parameter = "[service.]method(args) ", summary = "Invoke the service method.",
         detail = "Invoke the service method.")
-public class InvokeTelnetHandler implements TelnetHandler {
+public class InvokeTelnetHandler implements TelnetHandler { //todo @csy-027-P2 invoke 枚举类型是怎么传递？按对象传递吗？
 
     public static final String INVOKE_MESSAGE_KEY = "telnet.invoke.method.message";
     public static final String INVOKE_METHOD_LIST_KEY = "telnet.invoke.method.list";

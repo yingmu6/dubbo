@@ -33,10 +33,12 @@ public class ConsumerApplication {
         String response = demoService.sayHello2("how are you?");
         System.out.println("demoService result: " + response);
 
-        GreetingService greetingService = context.getBean("greetingService", GreetingService.class);
-        System.out.println("greetingService result: " + greetingService.hello());
+        for (int i = 0; i < 3; i++) {
+            GreetingService greetingService = context.getBean("greetingService", GreetingService.class);
+            System.out.println("greetingService result: " + greetingService.hello());
+        }
 
         System.in.read();
-        
+
     }
 }

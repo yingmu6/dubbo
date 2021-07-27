@@ -1,5 +1,7 @@
 package org.apache.dubbo.demo.provider;
 
+import org.apache.dubbo.demo.Fruit;
+import org.apache.dubbo.demo.FruitEnum;
 import org.apache.dubbo.demo.GreetingService;
 
 /**
@@ -11,5 +13,15 @@ public class GreetingServiceImpl implements GreetingService {
     public String hello() {
         System.out.println("你好 Greeting!");
         return "hello GreetingServiceImpl";
+    }
+
+    @Override
+    public String hello(Fruit fruit) {
+        return fruit.getWeight() + ";" + fruit.getPrice();
+    }
+
+    @Override
+    public String hello(FruitEnum fruitEnum) {
+        return fruitEnum.name() + ";";
     }
 }

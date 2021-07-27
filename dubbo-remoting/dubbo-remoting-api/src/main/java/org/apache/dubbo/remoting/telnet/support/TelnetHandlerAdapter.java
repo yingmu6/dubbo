@@ -28,13 +28,23 @@ import org.apache.dubbo.remoting.transport.ChannelHandlerAdapter;
 import static org.apache.dubbo.common.constants.CommonConstants.COMMA_SPLIT_PATTERN;
 import static org.apache.dubbo.remoting.Constants.TELNET;
 
-public class TelnetHandlerAdapter extends ChannelHandlerAdapter implements TelnetHandler { //todo @csy-025-P3 了解下telnet的原理
+public class TelnetHandlerAdapter extends ChannelHandlerAdapter implements TelnetHandler {
+    /**
+     * @csy-025-P3 了解下telnet的原理
+     * 解：Telnet协议是TCP/IP协议族中的一员，是Internet远程登陆服务的标准协议。
+     * Telnet协议的目的是提供一个相对通用的，双向的，面向八位字节的通信方法，允许界面终端设备和面向终端的过程能通过一个标准过程进行互相交互。
+     * 应用Telnet协议能够把本地用户所使用的计算机变成远程主机系统的一个终端。
+     */
 
-    private final ExtensionLoader<TelnetHandler> extensionLoader = ExtensionLoader.getExtensionLoader(TelnetHandler.class);
+    private final ExtensionLoader<TelnetHandler> extensionLoader = ExtensionLoader.getExtensionLoader(TelnetHandler.class); //todo @csy-027-P3 此处的成员变量是怎么赋值的？
+
+    // todo @csy-027-P2 当有多个服务暴露时，Channel中的url是选择哪个服务Service的？
+    // todo @csy-027-P2 "Connection closed by foreign host"，telent的通道什么时候会被关闭？
+    // todo @csy-027-P3 cd指令对应哪个处理类，默认缺省服务又是指啥？
 
     @Override
     public String telnet(Channel channel, String message) throws RemotingException { //@csy-024-P2 此处是否是指令入口、分发的地方？解：是Telnet指令处理的地方
-        String prompt = channel.getUrl().getParameterAndDecoded(Constants.PROMPT_KEY, Constants.DEFAULT_PROMPT); //todo @csy-025-P3 PROMPT_KEY在XML中是怎么配置的？
+        String prompt = channel.getUrl().getParameterAndDecoded(Constants.PROMPT_KEY, Constants.DEFAULT_PROMPT); //@csy-025-P3 PROMPT_KEY在XML中是怎么配置的？解：在暴露的服务配置url参数<dubbo:parameter/>
         boolean noprompt = message.contains("--no-prompt");
         message = message.replace("--no-prompt", ""); //@csy-024-P3 此处的参数是什么含义？ 解：telnet提示键（如果做了配置，将不显示dubbo>）
         StringBuilder buf = new StringBuilder();
@@ -75,12 +85,12 @@ public class TelnetHandlerAdapter extends ChannelHandlerAdapter implements Telne
             }
         }
         if (buf.length() > 0) {
-            buf.append("\r\n"); //todo @csy-025-P3 "\r\n" 分别代表什么含义？
+            buf.append("\r\n"); //@csy-025-P3 "\r\n" 分别代表什么含义？解：\r 回车符，\n 换行符，用回车符换行符结束指令
         }
         if (StringUtils.isNotEmpty(prompt) && !noprompt) { //提示键处理：若提示键内容不为空且没有禁用，则作对应展示
             buf.append(prompt);
             /**
-             * @csy-025-P3 这里为啥将提示语放在最后？拼接书序倒是怎样？ 解：提示符拼接再最后，如
+             * @csy-025-P3 这里为啥将提示语放在最后？拼接顺序是怎样？ 解：提示符拼接在最后，作为下一个指令的提示符，如
              * dubbo>ls
              * PROVIDER:
              * org.apache.dubbo.demo.GreetingService
@@ -92,7 +102,7 @@ public class TelnetHandlerAdapter extends ChannelHandlerAdapter implements Telne
     }
 
     private boolean commandEnabled(URL url, String command) { //判断指令是否能启用
-        String supportCommands = url.getParameter(TELNET); //todo @csy-025-P3 TELNET这个URL参数XML是哪里设置的？
+        String supportCommands = url.getParameter(TELNET); //@csy-025-P3 TELNET这个URL参数XML是哪里设置的？解：<dubbo:parameter/> 设置的
         if (StringUtils.isEmpty(supportCommands)) {
             return true;
         }

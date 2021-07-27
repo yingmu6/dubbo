@@ -150,7 +150,7 @@ public class CountTelnetHandler implements TelnetHandler {
         return TelnetUtils.toTable(header, table);
     }
 
-    private List<String> createRow(String methodName,RpcStatus count) {
+    private List<String> createRow(String methodName, RpcStatus count) {
         List<String> row = new ArrayList<String>();
         row.add(methodName);
         row.add(String.valueOf(count.getTotal()));
@@ -160,4 +160,17 @@ public class CountTelnetHandler implements TelnetHandler {
         row.add(count.getSucceededMaxElapsed() + "ms");
         return row;
     }
+
+    /**
+     * todo @csy-027-P3
+     * 1）类似这种展示是怎么输出的？
+     * +--------+-------+--------+--------+---------+-----+
+     * | method | total | failed | active | average | max |
+     * +--------+-------+--------+--------+---------+-----+
+     * | hello  | 0     | 0      | 0      | 0ms     | 0ms |
+     * +--------+-------+--------+--------+---------+-----+
+     *
+     * 2）org.apache.dubbo.demo.consumer.ConsumerApplication中明明循环调用了GreetingService的hello方法
+     * 为啥执行 "count GreetingService"却显示方法调用为0次
+     */
 }

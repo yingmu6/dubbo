@@ -16,6 +16,7 @@
  */
 package org.apache.dubbo.rpc.protocol.dubbo.filter;
 
+import com.alibaba.fastjson.JSON;
 import org.apache.dubbo.common.constants.CommonConstants;
 import org.apache.dubbo.common.extension.Activate;
 import org.apache.dubbo.common.logger.Logger;
@@ -24,14 +25,7 @@ import org.apache.dubbo.common.utils.CollectionUtils;
 import org.apache.dubbo.common.utils.ConcurrentHashSet;
 import org.apache.dubbo.remoting.Channel;
 import org.apache.dubbo.remoting.Constants;
-import org.apache.dubbo.rpc.Filter;
-import org.apache.dubbo.rpc.Invocation;
-import org.apache.dubbo.rpc.Invoker;
-import org.apache.dubbo.rpc.Result;
-import org.apache.dubbo.rpc.RpcContext;
-import org.apache.dubbo.rpc.RpcException;
-
-import com.alibaba.fastjson.JSON;
+import org.apache.dubbo.rpc.*;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -99,7 +93,7 @@ public class TraceFilter implements Filter {
                                 channel.setAttribute(TRACE_COUNT, c);
                             }
                             count = c.getAndIncrement();
-                            if (count < max) {
+                            if (count < max) { //todo @csy-027-P3 此处的功能，在执行telnet时也会触发吗？
                                 String prompt = channel.getUrl().getParameter(Constants.PROMPT_KEY, Constants.DEFAULT_PROMPT);
                                 channel.send("\r\n" + RpcContext.getContext().getRemoteAddress() + " -> "
                                         + invoker.getInterface().getName()

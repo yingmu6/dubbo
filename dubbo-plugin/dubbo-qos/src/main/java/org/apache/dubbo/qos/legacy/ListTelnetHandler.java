@@ -38,7 +38,7 @@ public class ListTelnetHandler implements TelnetHandler {
     private ServiceRepository serviceRepository = ApplicationModel.getServiceRepository();
 
     @Override
-    public String telnet(Channel channel, String message) {
+    public String telnet(Channel channel, String message) { //todo @csy-027-P3 为什么ls org.apache.dubbo.demo.GreetingService与ls GreetingService中类全路径名和类的简称效果是一样的？
         StringBuilder buf = new StringBuilder();
         String service = null;
         boolean detail = false;
@@ -127,9 +127,9 @@ public class ListTelnetHandler implements TelnetHandler {
         }
     }
 
-    private void printSpecifiedReferredService(String service, StringBuilder buf, boolean detail) {
+    private void printSpecifiedReferredService(String service, StringBuilder buf, boolean detail) { //todo @csy-027-P3 一般情况下，提供者与消费者的xml都是分开的，也可以混合使用吗？此处的as consumer在什么条件下能打印出来
         for (ConsumerModel consumer : ApplicationModel.allConsumerModels()) {
-            if (isConsumerMatcher(service,consumer)) {
+            if (isConsumerMatcher(service, consumer)) {
                 buf.append(consumer.getServiceKey()).append(" (as consumer):\r\n");
                 for (MethodDescriptor method : consumer.getAllMethods()) {
                     printMethod(method.getMethod(), buf, detail);

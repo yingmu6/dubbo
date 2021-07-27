@@ -17,21 +17,11 @@
 package org.apache.dubbo.config.spring.schema;
 
 import org.apache.dubbo.common.Version;
-import org.apache.dubbo.config.ApplicationConfig;
-import org.apache.dubbo.config.ConsumerConfig;
-import org.apache.dubbo.config.MetadataReportConfig;
-import org.apache.dubbo.config.MetricsConfig;
-import org.apache.dubbo.config.ModuleConfig;
-import org.apache.dubbo.config.MonitorConfig;
-import org.apache.dubbo.config.ProtocolConfig;
-import org.apache.dubbo.config.ProviderConfig;
-import org.apache.dubbo.config.RegistryConfig;
-import org.apache.dubbo.config.SslConfig;
+import org.apache.dubbo.config.*;
 import org.apache.dubbo.config.spring.ConfigCenterBean;
 import org.apache.dubbo.config.spring.ReferenceBean;
 import org.apache.dubbo.config.spring.ServiceBean;
 import org.apache.dubbo.config.spring.beans.factory.config.ConfigurableSourceBeanMetadataElement;
-
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
@@ -98,7 +88,7 @@ public class DubboNamespaceHandler extends NamespaceHandlerSupport implements Co
          * issue : https://github.com/apache/dubbo/issues/6275
          */
         registerCommonBeans(registry);
-        BeanDefinition beanDefinition = super.parse(element, parserContext);
+        BeanDefinition beanDefinition = super.parse(element, parserContext); //todo @csy-027-P3 当xml配置错误时，报错Configuration problem，是依据什么判断的，xsd吗？
         setSource(beanDefinition);
         return beanDefinition;
     }

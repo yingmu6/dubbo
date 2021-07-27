@@ -36,7 +36,7 @@ import java.lang.reflect.Method;
 public class TraceTelnetHandler implements TelnetHandler {
 
     @Override
-    public String telnet(Channel channel, String message) {
+    public String telnet(Channel channel, String message) { //todo @csy-027 此处监控调用次数的？ 为啥断开连接后就终止了？
         String service = (String) channel.getAttribute(ChangeTelnetHandler.SERVICE_KEY);
         if ((service == null || service.length() == 0)
                 && (message == null || message.length() == 0)) {
