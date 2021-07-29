@@ -22,7 +22,7 @@ package org.apache.dubbo.demo;
 public interface GreetingService {
     String hello();
 
-    String hello(Fruit fruit);
+//    String hello(Fruit fruit);
 
-    String hello(FruitEnum fruitEnum);
+//    String hello(FruitEnum fruitEnum);
 }

@@ -22,7 +22,7 @@ import java.util.Map;
 /**
  * Object output interface.
  */
-public interface ObjectOutput extends DataOutput { //既可以输出对象类型，也可以输出基本类型
+public interface ObjectOutput extends DataOutput { //todo @csy-028-P3 该方法的功能用途是什么？
 
     /**
      * write object.（输出对象类型的数据）

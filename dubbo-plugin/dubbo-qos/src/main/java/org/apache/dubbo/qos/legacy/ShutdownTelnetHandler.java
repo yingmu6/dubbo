@@ -29,7 +29,7 @@ import org.apache.dubbo.remoting.telnet.support.Help;
  */
 @Activate
 @Help(parameter = "[-t <milliseconds>]", summary = "Shutdown Dubbo Application.", detail = "Shutdown Dubbo Application.")
-public class ShutdownTelnetHandler implements TelnetHandler {
+public class ShutdownTelnetHandler implements TelnetHandler { //todo @csy-028-P2 为啥执行了shutdown，但是ls还能查到服务，倒是是停止了啥？关闭应用，为啥还能再连接？
     @Override
     public String telnet(Channel channel, String message) throws RemotingException { //todo @csy-024-P2 进入时message是什么内容？是不是把指令截取了的
 

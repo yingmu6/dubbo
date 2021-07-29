@@ -49,7 +49,7 @@ public class TelnetCodec extends TransportCodec { //todo @csy-002 此处的编�
 
     private static final byte[] UP = new byte[]{27, 91, 65};
 
-    private static final byte[] DOWN = new byte[]{27, 91, 66};
+    private static final byte[] DOWN = new byte[] {27, 91, 66}; //todo @csy-028-P3 这些数值的含义是什么？
 
     private static final List<?> ENTER = Arrays.asList(
             new byte[]{'\r', '\n'} /* Windows Enter */,
@@ -60,10 +60,10 @@ public class TelnetCodec extends TransportCodec { //todo @csy-002 此处的编�
             new byte[]{-1, -12, -1, -3, 6} /* Linux Ctrl+C */,
             new byte[]{-1, -19, -1, -3, 6} /* Linux Pause */);
 
-    private static Charset getCharset(Channel channel) {
+    private static Charset getCharset(Channel channel) { //todo @csy-028-P3 Charset字符集待了解？字符集都有哪些？
         if (channel != null) {
             Object attribute = channel.getAttribute(CHARSET_KEY);
-            if (attribute instanceof String) {
+            if (attribute instanceof String) { //判断是String类型还是Charset类型
                 try {
                     return Charset.forName((String) attribute);
                 } catch (Throwable t) {
@@ -89,10 +89,10 @@ public class TelnetCodec extends TransportCodec { //todo @csy-002 此处的编�
         } catch (Throwable t) {
             logger.warn(t.getMessage(), t);
         }
-        return Charset.defaultCharset();
+        return Charset.defaultCharset(); //todo @csy-028-P3获取自定义字符集待了解
     }
 
-    private static String toString(byte[] message, Charset charset) throws UnsupportedEncodingException {
+    private static String toString(byte[] message, Charset charset) throws UnsupportedEncodingException { //todo @csy-028-P3 待调试
         byte[] copy = new byte[message.length];
         int index = 0;
         for (int i = 0; i < message.length; i++) {
