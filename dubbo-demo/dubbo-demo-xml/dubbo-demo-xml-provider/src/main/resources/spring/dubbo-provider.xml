@@ -39,7 +39,8 @@
         <dubbo:parameter key="prompt" value="csy4>"/>
     </dubbo:service>
 
-    <dubbo:service interface="org.apache.dubbo.demo.GreetingService" ref="greetingService">
+    <!-- todo @csy-029-P3 如何暴露多协议服务，此处的设置是否生效？如设置为http协议，DubboProtocol.getDubboProtocol().getExporters()是否还能获取到http暴露的服务 -->
+    <dubbo:service interface="org.apache.dubbo.demo.GreetingService" ref="greetingService" protocol="http">
         <dubbo:parameter key="prompt" value="csy3>"/>
 <!--        <dubbo:parameter key="telnet" value="ls,ts"/>-->
     </dubbo:service>

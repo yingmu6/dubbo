@@ -145,7 +145,7 @@ public class TelnetCodec extends TransportCodec { //todo @csy-002 此处的编�
     }
 
     @Override
-    public void encode(Channel channel, ChannelBuffer buffer, Object message) throws IOException {
+    public void encode(Channel channel, ChannelBuffer buffer, Object message) throws IOException { //响应请求内容时编码
         if (message instanceof String) {
             if (isClientSide(channel)) {
                 message = message + "\r\n";
@@ -158,7 +158,7 @@ public class TelnetCodec extends TransportCodec { //todo @csy-002 此处的编�
     }
 
     @Override
-    public Object decode(Channel channel, ChannelBuffer buffer) throws IOException {
+    public Object decode(Channel channel, ChannelBuffer buffer) throws IOException { //收到请求内容时解码
         int readable = buffer.readableBytes();
         byte[] message = new byte[readable];
         buffer.readBytes(message);

@@ -87,7 +87,7 @@ class URL implements Serializable {
     // by default, port to registry
     private final int port;
 
-    private final String path;
+    private final String path; //todo @csy-029-P3 此处的值是怎么设置的，都有哪些值？
 
     // todo @csy-027-P3 <dubbo:paramter/> 设置的值，是怎么写到url的parameters属性的
     private final Map<String, String> parameters; //@csy-002 该map中一般都存有哪些值的？存的是url中的参数键值，即?与&分隔的键值对

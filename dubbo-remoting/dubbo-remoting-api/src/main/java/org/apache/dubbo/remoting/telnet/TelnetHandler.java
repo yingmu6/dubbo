@@ -34,4 +34,9 @@ public interface TelnetHandler { //@csy-002 改处理类的功能用途是啥？
      */
     String telnet(Channel channel, String message) throws RemotingException; //todo @csy-024-P2 有多个实现类，不能指令时怎么进行分发的？
 
+    /**
+     * todo @csy-029-P2 telnet连接时，不操作一定时间，会关闭通道，这是在哪里设置的？超时时间是在哪里设置的？使用到netty能力还是dubbo自行处理的？
+     * 抛出的信息，"Connection closed by foreign host."
+     */
+
 }

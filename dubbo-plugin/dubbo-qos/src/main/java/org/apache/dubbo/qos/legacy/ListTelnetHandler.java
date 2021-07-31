@@ -33,7 +33,7 @@ import java.util.List;
  */
 @Activate
 @Help(parameter = "[-l] [service]", summary = "List services and methods.", detail = "List services and methods.")
-public class ListTelnetHandler implements TelnetHandler {
+public class ListTelnetHandler implements TelnetHandler { //todo @csy-029-P3 是否做了缓存，感觉第一次慢些，后面都比较快的
 
     private ServiceRepository serviceRepository = ApplicationModel.getServiceRepository();
 
