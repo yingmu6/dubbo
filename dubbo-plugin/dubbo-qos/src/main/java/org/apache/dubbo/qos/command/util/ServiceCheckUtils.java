@@ -30,7 +30,7 @@ import java.util.Map;
 
 public class ServiceCheckUtils {
 
-    public static boolean isRegistered(ProviderModel providerModel) {
+    public static boolean isRegistered(ProviderModel providerModel) { //todo @csy-030-P3 此处方法的功能用途？
         // TODO, only check the status of one registry and no protocol now.
         Collection<Registry> registries = AbstractRegistryFactory.getRegistries();
         if (CollectionUtils.isNotEmpty(registries)) {

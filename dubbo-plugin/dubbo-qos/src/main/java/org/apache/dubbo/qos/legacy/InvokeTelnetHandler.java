@@ -55,17 +55,18 @@ public class InvokeTelnetHandler implements TelnetHandler { //todo @csy-027-P2 i
                     "invoke com.xxx.XxxService.xxxMethod(1234, \"abcd\", {\"prop\" : \"value\"})"; //按服务全称调用方法
         }
 
-        String service = (String) channel.getAttribute(ChangeTelnetHandler.SERVICE_KEY);
+        String service = (String) channel.getAttribute(ChangeTelnetHandler.SERVICE_KEY); //获取缺省服务
 
         int i = message.indexOf("(");
 
-        if (i < 0 || !message.endsWith(")")) {
+        if (i < 0 || !message.endsWith(")")) { //参数判断，若没有以"("开头，或没有以")"结尾，则属于无效的参数格式
             return "Invalid parameters, format: service.method(args)";
         }
 
+        // 解析出方法名、参数信息
         String method = message.substring(0, i).trim();
-        String args = message.substring(i + 1, message.length() - 1).trim();
-        i = method.lastIndexOf(".");
+        String args = message.substring(i + 1, message.length() - 1).trim(); //将输入的参数去掉左右括号
+        i = method.lastIndexOf("."); //找到最后"."的位置，即服务名与方法名的分隔符
         if (i >= 0) {
             service = method.substring(0, i).trim();
             method = method.substring(i + 1).trim();
@@ -80,19 +81,19 @@ public class InvokeTelnetHandler implements TelnetHandler { //todo @csy-027-P2 i
         StringBuilder buf = new StringBuilder();
         Method invokeMethod = null;
         ProviderModel selectedProvider = null;
-        if (isInvokedSelectCommand(channel)) {
+        if (isInvokedSelectCommand(channel)) { //todo @csy-030-P3 select 待调试
             selectedProvider = (ProviderModel) channel.getAttribute(INVOKE_METHOD_PROVIDER_KEY);
             invokeMethod = (Method) channel.getAttribute(SelectTelnetHandler.SELECT_METHOD_KEY);
         } else {
             for (ProviderModel provider : ApplicationModel.allProviderModels()) {
-                if (isServiceMatch(service, provider)) {
+                if (isServiceMatch(service, provider)) { //将输入的服务名与提供者中的服务名进行匹配
                     selectedProvider = provider;
                     List<Method> methodList = findSameSignatureMethod(provider.getAllMethods(), method, list);
                     if (CollectionUtils.isNotEmpty(methodList)) {
                         if (methodList.size() == 1) {
                             invokeMethod = methodList.get(0);
                         } else {
-                            List<Method> matchMethods = findMatchMethods(methodList, list);
+                            List<Method> matchMethods = findMatchMethods(methodList, list); //todo @csy-030-P3 此处是如何匹配方法的？
                             if (CollectionUtils.isNotEmpty(matchMethods)) {
                                 if (matchMethods.size() == 1) {
                                     invokeMethod = matchMethods.get(0);
@@ -106,7 +107,7 @@ public class InvokeTelnetHandler implements TelnetHandler { //todo @csy-027-P2 i
                             }
                         }
                     }
-                    break;
+                    break; //找到执行的服务，则跳出循环
                 }
             }
         }
@@ -123,7 +124,7 @@ public class InvokeTelnetHandler implements TelnetHandler { //todo @csy-027-P2 i
                     long start = System.currentTimeMillis();
                     AppResponse result = new AppResponse();
                     try {
-                        Object o = invokeMethod.invoke(selectedProvider.getServiceInstance(), array);
+                        Object o = invokeMethod.invoke(selectedProvider.getServiceInstance(), array); //todo @csy-030-P2 使用反射机制调用，为啥不用dubbo的调用方式？
                         result.setValue(o);
                     } catch (Throwable t) {
                         result.setException(t);
@@ -158,7 +159,7 @@ public class InvokeTelnetHandler implements TelnetHandler { //todo @csy-027-P2 i
         List<Method> sameSignatureMethods = new ArrayList<>();
         for (MethodDescriptor model : methods) {
             Method method = model.getMethod();
-            if (method.getName().equals(lookupMethodName) && method.getParameterTypes().length == args.size()) {
+            if (method.getName().equals(lookupMethodName) && method.getParameterTypes().length == args.size()) { //只要方法名以及参数列表个数相同，则匹配到方法
                 sameSignatureMethods.add(method);
             }
         }
@@ -229,7 +230,7 @@ public class InvokeTelnetHandler implements TelnetHandler { //todo @csy-027-P2 i
         return true;
     }
 
-    private void printSelectMessage(StringBuilder buf, List<Method> methods) {
+    private void printSelectMessage(StringBuilder buf, List<Method> methods) { //todo @csy-030-P3 待调试
         buf.append("Methods:\r\n");
         for (int i = 0; i < methods.size(); i++) {
             Method method = methods.get(i);

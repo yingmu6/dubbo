@@ -19,20 +19,14 @@ package org.apache.dubbo.rpc.model;
 import org.apache.dubbo.common.utils.CollectionUtils;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * ServiceModel and ServiceMetadata are to some extend duplicated with each other.
  * We should merge them in the future.
  * （ServiceModel和ServiceMetadata在某种程度上是相互复制的。我们将来应该合并它们）
  */
-public class ServiceDescriptor { //服务的描述信息
+public class ServiceDescriptor { //服务的描述信息，todo @csy-030-P3 待调试
     private final String serviceName; //服务名，如："org.apache.dubbo.rpc.service.EchoService"
     private final Class<?> serviceInterfaceClass;
     // to accelerate search

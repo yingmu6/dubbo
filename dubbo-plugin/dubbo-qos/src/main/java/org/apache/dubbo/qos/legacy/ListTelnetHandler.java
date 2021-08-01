@@ -43,7 +43,7 @@ public class ListTelnetHandler implements TelnetHandler { //todo @csy-029-P3 是
         String service = null;
         boolean detail = false;
         if (message.length() > 0) {
-            String[] parts = message.split("\\s+");
+            String[] parts = message.split("\\s+"); //todo @csy-030-P3 此处会分割出什么？正则表达式是什么含义？
             for (String part : parts) {
                 if ("-l".equals(part)) {
                     detail = true;

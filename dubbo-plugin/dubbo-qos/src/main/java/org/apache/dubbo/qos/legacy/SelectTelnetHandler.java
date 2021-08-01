@@ -32,7 +32,7 @@ import java.util.List;
 @Activate
 @Help(parameter = "[index]", summary = "Select the index of the method you want to invoke.",
         detail = "Select the index of the method you want to invoke.")
-public class SelectTelnetHandler implements TelnetHandler {
+public class SelectTelnetHandler implements TelnetHandler { //todo @csy-030-P2 当匹配到多个方法时，根据列表选择要调用的方法，待使用
     public static final String SELECT_METHOD_KEY = "telnet.select.method";
     public static final String SELECT_KEY = "telnet.select";
 

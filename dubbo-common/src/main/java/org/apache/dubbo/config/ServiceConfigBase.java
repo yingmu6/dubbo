@@ -39,7 +39,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.DUBBO;
  *
  * @export
  */
-public abstract class ServiceConfigBase<T> extends AbstractServiceConfig {
+public abstract class ServiceConfigBase<T> extends AbstractServiceConfig { //todo @csy-030-P3 功能用途待了解
 
     private static final long serialVersionUID = 3033787999037024738L;
 
