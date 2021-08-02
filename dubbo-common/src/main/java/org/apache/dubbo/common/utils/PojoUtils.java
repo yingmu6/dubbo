@@ -376,7 +376,7 @@ public class PojoUtils { //todo @csy-023-P1 该类的功能用途是什么？
             }
 
             // special logic for enum
-            if (type.isEnum()) {
+            if (type.isEnum()) { //对枚举型做特殊处理
                 Object name = ((Map<Object, Object>) pojo).get("name");
                 if (name != null) {
                     return Enum.valueOf((Class<Enum>) type, name.toString());
@@ -572,6 +572,10 @@ public class PojoUtils { //todo @csy-023-P1 该类的功能用途是什么？
             } catch (InstantiationException e) {
                 throw new RuntimeException(e.getMessage(), e);
             } catch (IllegalAccessException e) {
+                /**
+                 * invoke调用时若有枚举类型的参数，若invoke hello({"name":"APPLE","class":"org.apache.dubbo.demo.FruitEnum"})，
+                 * 填写的name、class有错，会抛出java.lang.IllegalArgumentException: Cannot reflectively create enum objects
+                 */
                 throw new RuntimeException(e.getMessage(), e);
             } catch (InvocationTargetException e) {
                 throw new RuntimeException(e.getMessage(), e);

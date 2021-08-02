@@ -54,6 +54,7 @@ public class InvokeTelnetHandler implements TelnetHandler { //todo @csy-027-P2 i
                     "invoke XxxService.xxxMethod(1234, \"abcd\", {\"prop\" : \"value\"})\r\n" + //按服务简写名调用方法
                     "invoke com.xxx.XxxService.xxxMethod(1234, \"abcd\", {\"prop\" : \"value\"})"; //按服务全称调用方法
         }
+        // invoke hello({"name":"APPLE","class":"org.apache.dubbo.demo.FruitEnum"}) 调用枚举类型，需要指定调用的枚举name，已经Class类
 
         String service = (String) channel.getAttribute(ChangeTelnetHandler.SERVICE_KEY); //获取缺省服务
 
@@ -120,11 +121,11 @@ public class InvokeTelnetHandler implements TelnetHandler { //todo @csy-027-P2 i
             if (invokeMethod != null) {
                 try {
                     Object[] array = realize(list.toArray(), invokeMethod.getParameterTypes(),
-                            invokeMethod.getGenericParameterTypes());
+                            invokeMethod.getGenericParameterTypes()); //将参数进行解析
                     long start = System.currentTimeMillis();
                     AppResponse result = new AppResponse();
                     try {
-                        Object o = invokeMethod.invoke(selectedProvider.getServiceInstance(), array); //todo @csy-030-P2 使用反射机制调用，为啥不用dubbo的调用方式？
+                        Object o = invokeMethod.invoke(selectedProvider.getServiceInstance(), array); //使用反射机制的Method的invoke调用
                         result.setValue(o);
                     } catch (Throwable t) {
                         result.setException(t);
@@ -148,7 +149,7 @@ public class InvokeTelnetHandler implements TelnetHandler { //todo @csy-027-P2 i
     }
 
 
-    private boolean isServiceMatch(String service, ProviderModel provider) {
+    private boolean isServiceMatch(String service, ProviderModel provider) { //判断指定服务名是否有匹配的服务
         return provider.getServiceKey().equalsIgnoreCase(service)
                 || provider.getServiceInterfaceClass().getSimpleName().equalsIgnoreCase(service)
                 || provider.getServiceInterfaceClass().getName().equalsIgnoreCase(service)
@@ -159,7 +160,7 @@ public class InvokeTelnetHandler implements TelnetHandler { //todo @csy-027-P2 i
         List<Method> sameSignatureMethods = new ArrayList<>();
         for (MethodDescriptor model : methods) {
             Method method = model.getMethod();
-            if (method.getName().equals(lookupMethodName) && method.getParameterTypes().length == args.size()) { //只要方法名以及参数列表个数相同，则匹配到方法
+            if (method.getName().equals(lookupMethodName) && method.getParameterTypes().length == args.size()) { //只要方法名以及参数列表个数相同，则匹配到方法（此处没有比较参数类型）
                 sameSignatureMethods.add(method);
             }
         }

@@ -5,16 +5,22 @@ package org.apache.dubbo.demo;
  * @date 2021/7/27
  */
 public enum FruitEnum {
-    APPLE("苹果", 10.0),
-    PEER("梨", 12.0);
+    APPLE("apple", 10.0),
+    PEER("peer", 12.0);
 
-    private String name;
+    private String category;
     private Double price;
 
-    private FruitEnum(String name, Double price) {
-        this.name = name;
+    private FruitEnum(String category, Double price) {
+        this.category = category;
         this.price = price;
     }
 
+    public String getCategory() {
+        return category;
+    }
 
+    public Double getPrice() {
+        return price;
+    }
 }

@@ -40,12 +40,12 @@ public class SelectTelnetHandler implements TelnetHandler { //todo @csy-030-P2 �
 
     @Override
     @SuppressWarnings("unchecked")
-    public String telnet(Channel channel, String message) {
+    public String telnet(Channel channel, String message) { //执行invoke GreetingService.hello("111") 时，会出现select提示，todo @csy-031-P2 待调试
         if (message == null || message.length() == 0) {
             return "Please input the index of the method you want to invoke, eg: \r\n select 1";
         }
         List<Method> methodList = (List<Method>) channel.getAttribute(InvokeTelnetHandler.INVOKE_METHOD_LIST_KEY);
-        if (CollectionUtils.isEmpty(methodList)) {
+        if (CollectionUtils.isEmpty(methodList)) { //需要先执行invoke指令
             return "Please use the invoke command first.";
         }
         if (!StringUtils.isInteger(message) || Integer.parseInt(message) < 1 || Integer.parseInt(message) > methodList.size()) {
@@ -53,8 +53,8 @@ public class SelectTelnetHandler implements TelnetHandler { //todo @csy-030-P2 �
         }
         Method method = methodList.get(Integer.parseInt(message) - 1);
         channel.setAttribute(SELECT_METHOD_KEY, method);
-        channel.setAttribute(SELECT_KEY, Boolean.TRUE);
-        String invokeMessage = (String) channel.getAttribute(InvokeTelnetHandler.INVOKE_MESSAGE_KEY);
+        channel.setAttribute(SELECT_KEY, Boolean.TRUE); //往通道中设置属性
+        String invokeMessage = (String) channel.getAttribute(InvokeTelnetHandler.INVOKE_MESSAGE_KEY); //获取invoke在通道中设置的调用信息，并执行invoke调用
         return invokeTelnetHandler.telnet(channel, invokeMessage);
     }
 }
