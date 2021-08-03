@@ -44,6 +44,8 @@ public class ChangeTelnetHandler implements TelnetHandler { //改变缺省服务
             buf.append("Cancelled default service ").append(service).append(".");
         } else {
             boolean found = false;
+
+            // 从暴露的服务列表中，查找是否存在指定的服务
             for (Exporter<?> exporter : DubboProtocol.getDubboProtocol().getExporters()) { //将输入的服务名依次与暴露的服务名进行比较，todo @csy-029-P3 此处只从dubbo暴露的服务中查找，是不是不通过dubbo协议暴露的，就存在找不到服务问题？
                 if (message.equals(exporter.getInvoker().getInterface().getSimpleName()) //getSimpleName() 简写类名，不包含包名DemoService
                         || message.equals(exporter.getInvoker().getInterface().getName()) //getName() 完整类名：org.apache.dubbo.demo.DemoService

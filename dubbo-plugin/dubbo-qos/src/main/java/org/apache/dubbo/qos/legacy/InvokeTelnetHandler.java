@@ -40,7 +40,7 @@ import static org.apache.dubbo.common.utils.PojoUtils.realize;
 @Activate
 @Help(parameter = "[service.]method(args) ", summary = "Invoke the service method.",
         detail = "Invoke the service method.")
-public class InvokeTelnetHandler implements TelnetHandler { //todo @csy-027-P2 invoke 枚举类型是怎么传递？按对象传递吗？
+public class InvokeTelnetHandler implements TelnetHandler { //@csy-027-P2 invoke 枚举类型是怎么传递？按对象传递吗？解：枚举按{"name":"xx","class":"xx"}来传递的
 
     public static final String INVOKE_MESSAGE_KEY = "telnet.invoke.method.message";
     public static final String INVOKE_METHOD_LIST_KEY = "telnet.invoke.method.list";
@@ -54,7 +54,11 @@ public class InvokeTelnetHandler implements TelnetHandler { //todo @csy-027-P2 i
                     "invoke XxxService.xxxMethod(1234, \"abcd\", {\"prop\" : \"value\"})\r\n" + //按服务简写名调用方法
                     "invoke com.xxx.XxxService.xxxMethod(1234, \"abcd\", {\"prop\" : \"value\"})"; //按服务全称调用方法
         }
-        // invoke hello({"name":"APPLE","class":"org.apache.dubbo.demo.FruitEnum"}) 调用枚举类型，需要指定调用的枚举name，已经Class类
+        /**
+         * 1）invoke GreetingService.hello({"name":"APPLE","class":"org.apache.dubbo.demo.FruitEnum"}) 调用枚举类型，需要指定调用的枚举name，枚举的Class类
+         * 2）invoke调用方法时，如invoke GreetingService.hello(aaa) 传入字符串要带上""，表示字符串，若不带上""，JSON反序列化时，
+         *    会认为是java.lang.Object类型，但是这个对象又没有字段，所以会解析异常，如：Invalid json argument, cause: syntax error, pos 2, line 1, column 3[aaa]
+         */
 
         String service = (String) channel.getAttribute(ChangeTelnetHandler.SERVICE_KEY); //获取缺省服务
 
@@ -75,40 +79,41 @@ public class InvokeTelnetHandler implements TelnetHandler { //todo @csy-027-P2 i
 
         List<Object> list;
         try {
-            list = JSON.parseArray("[" + args + "]", Object.class);
-        } catch (Throwable t) {
+            list = JSON.parseArray("[" + args + "]", Object.class); //JSON解析字符串，就是一个反序列化的过程
+        } catch (Throwable t) { //
             return "Invalid json argument, cause: " + t.getMessage();
         }
         StringBuilder buf = new StringBuilder();
         Method invokeMethod = null;
         ProviderModel selectedProvider = null;
-        if (isInvokedSelectCommand(channel)) { //todo @csy-030-P3 select 待调试
+        // 查找要执行的服务实例、实例的方法
+        if (isInvokedSelectCommand(channel)) { //@csy-030-P3 select 待调试，解：判断是否有执行过select指令，若执行过，则直接从通道中获取select指令设置的服务实例、执行的方法(就不再进行方法匹配了)
             selectedProvider = (ProviderModel) channel.getAttribute(INVOKE_METHOD_PROVIDER_KEY);
             invokeMethod = (Method) channel.getAttribute(SelectTelnetHandler.SELECT_METHOD_KEY);
         } else {
             for (ProviderModel provider : ApplicationModel.allProviderModels()) {
                 if (isServiceMatch(service, provider)) { //将输入的服务名与提供者中的服务名进行匹配
                     selectedProvider = provider;
-                    List<Method> methodList = findSameSignatureMethod(provider.getAllMethods(), method, list);
-                    if (CollectionUtils.isNotEmpty(methodList)) {
+                    List<Method> methodList = findSameSignatureMethod(provider.getAllMethods(), method, list); //根据方法名以及参数个数进行方法匹配
+                    if (CollectionUtils.isNotEmpty(methodList)) { //若只找到一个方式，则匹配成功，就不在进行匹配了
                         if (methodList.size() == 1) {
                             invokeMethod = methodList.get(0);
                         } else {
-                            List<Method> matchMethods = findMatchMethods(methodList, list); //todo @csy-030-P3 此处是如何匹配方法的？
+                            List<Method> matchMethods = findMatchMethods(methodList, list); //@csy-030-P3 此处是如何匹配方法的？若按参数个数找到多个方式，则继续按参数类型匹配方法
                             if (CollectionUtils.isNotEmpty(matchMethods)) {
                                 if (matchMethods.size() == 1) {
                                     invokeMethod = matchMethods.get(0);
-                                } else { //exist overridden method
+                                } else { //exist overridden method  若按参数个数、参数类型，还是匹配到多个方法，系统不能自主选择调用哪个方式，就需要把信息输出给用户，让用户自己抉择
                                     channel.setAttribute(INVOKE_METHOD_PROVIDER_KEY, provider);
                                     channel.setAttribute(INVOKE_METHOD_LIST_KEY, matchMethods);
-                                    channel.setAttribute(INVOKE_MESSAGE_KEY, message);
+                                    channel.setAttribute(INVOKE_MESSAGE_KEY, message); //把invoke指定调用的信息写入通道属性中，用户在执行select指令时会用到
                                     printSelectMessage(buf, matchMethods);
                                     return buf.toString();
                                 }
                             }
                         }
                     }
-                    break; //找到执行的服务，则跳出循环
+                    break; //找到执行的服务和执行的方法，则跳出循环
                 }
             }
         }
@@ -125,7 +130,8 @@ public class InvokeTelnetHandler implements TelnetHandler { //todo @csy-027-P2 i
                     long start = System.currentTimeMillis();
                     AppResponse result = new AppResponse();
                     try {
-                        Object o = invokeMethod.invoke(selectedProvider.getServiceInstance(), array); //使用反射机制的Method的invoke调用
+                        //使用反射机制的Method的invoke调用，调用要素：对象实例Object、调用方法Method、方法参数列表Parameters
+                        Object o = invokeMethod.invoke(selectedProvider.getServiceInstance(), array);
                         result.setValue(o);
                     } catch (Throwable t) {
                         result.setException(t);
@@ -153,9 +159,10 @@ public class InvokeTelnetHandler implements TelnetHandler { //todo @csy-027-P2 i
         return provider.getServiceKey().equalsIgnoreCase(service)
                 || provider.getServiceInterfaceClass().getSimpleName().equalsIgnoreCase(service)
                 || provider.getServiceInterfaceClass().getName().equalsIgnoreCase(service)
-                || StringUtils.isEmpty(service);
+                || StringUtils.isEmpty(service); // 服务名为空时，也是算匹配到服务的
     }
 
+    // 按方法名称和参数个数进行匹配
     private List<Method> findSameSignatureMethod(Set<MethodDescriptor> methods, String lookupMethodName, List<Object> args) {
         List<Method> sameSignatureMethods = new ArrayList<>();
         for (MethodDescriptor model : methods) {
@@ -183,8 +190,8 @@ public class InvokeTelnetHandler implements TelnetHandler { //todo @csy-027-P2 i
             return false;
         }
         for (int i = 0; i < types.length; i++) {
-            Class<?> type = types[i];
-            Object arg = args.get(i);
+            Class<?> type = types[i]; //暴露服务中方法的参数
+            Object arg = args.get(i); //invoke输入的参数
 
             if (arg == null) {
                 if (type.isPrimitive()) {
@@ -197,7 +204,7 @@ public class InvokeTelnetHandler implements TelnetHandler { //todo @csy-027-P2 i
 
             if (ReflectUtils.isPrimitive(arg.getClass())) {
                 // allow string arg to enum type, @see PojoUtils.realize0()
-                if (arg instanceof String && type.isEnum()) {
+                if (arg instanceof String && type.isEnum()) { //字符型参数与枚举型参数是匹配的
                     continue;
                 }
 
@@ -208,7 +215,7 @@ public class InvokeTelnetHandler implements TelnetHandler { //todo @csy-027-P2 i
                 if (!ReflectUtils.isCompatible(type, arg)) {
                     return false;
                 }
-            } else if (arg instanceof Map) {
+            } else if (arg instanceof Map) { //todo @csy-032-P3 枚举是否进入此处判断
                 String name = (String) ((Map<?, ?>) arg).get("class");
                 if (StringUtils.isNotEmpty(name)) {
                     Class<?> cls = ReflectUtils.forName(name);
@@ -249,7 +256,7 @@ public class InvokeTelnetHandler implements TelnetHandler { //todo @csy-027-P2 i
     }
 
     private boolean isInvokedSelectCommand(Channel channel) {
-        if (channel.hasAttribute(SelectTelnetHandler.SELECT_KEY)) {
+        if (channel.hasAttribute(SelectTelnetHandler.SELECT_KEY)) { //判断是否执行过select指令
             channel.removeAttribute(SelectTelnetHandler.SELECT_KEY);
             return true;
         }

@@ -44,16 +44,16 @@ public class SelectTelnetHandler implements TelnetHandler { //todo @csy-030-P2 �
         if (message == null || message.length() == 0) {
             return "Please input the index of the method you want to invoke, eg: \r\n select 1";
         }
-        List<Method> methodList = (List<Method>) channel.getAttribute(InvokeTelnetHandler.INVOKE_METHOD_LIST_KEY);
+        List<Method> methodList = (List<Method>) channel.getAttribute(InvokeTelnetHandler.INVOKE_METHOD_LIST_KEY); //获取invoke指令匹配的方法列表
         if (CollectionUtils.isEmpty(methodList)) { //需要先执行invoke指令
             return "Please use the invoke command first.";
         }
-        if (!StringUtils.isInteger(message) || Integer.parseInt(message) < 1 || Integer.parseInt(message) > methodList.size()) {
+        if (!StringUtils.isInteger(message) || Integer.parseInt(message) < 1 || Integer.parseInt(message) > methodList.size()) { //对选择的下标进行合法性校验
             return "Illegal index ,please input select 1~" + methodList.size();
         }
-        Method method = methodList.get(Integer.parseInt(message) - 1);
+        Method method = methodList.get(Integer.parseInt(message) - 1); //根据用户选择的下标，选择到具体执行的方法Method，并写到通道属性中，接下来执行invoke指令时会用到
         channel.setAttribute(SELECT_METHOD_KEY, method);
-        channel.setAttribute(SELECT_KEY, Boolean.TRUE); //往通道中设置属性
+        channel.setAttribute(SELECT_KEY, Boolean.TRUE);
         String invokeMessage = (String) channel.getAttribute(InvokeTelnetHandler.INVOKE_MESSAGE_KEY); //获取invoke在通道中设置的调用信息，并执行invoke调用
         return invokeTelnetHandler.telnet(channel, invokeMessage);
     }

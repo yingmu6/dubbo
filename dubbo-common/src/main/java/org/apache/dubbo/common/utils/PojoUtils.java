@@ -68,8 +68,8 @@ public class PojoUtils { //todo @csy-023-P1 该类的功能用途是什么？
         return dests;
     }
 
-    public static Object[] realize(Object[] objs, Class<?>[] types, Type[] gtypes) {
-        if (objs.length != types.length || objs.length != gtypes.length) {
+    public static Object[] realize(Object[] objs, Class<?>[] types, Type[] gtypes) { //todo @csy-032-P3 Class与Type的区分？
+        if (objs.length != types.length || objs.length != gtypes.length) { //传入的参数数目与调用方法的参数个数不相等异常
             throw new IllegalArgumentException("args.length != types.length");
         }
         Object[] dests = new Object[objs.length];
