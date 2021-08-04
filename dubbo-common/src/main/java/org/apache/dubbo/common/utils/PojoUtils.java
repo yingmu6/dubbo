@@ -29,7 +29,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
- * PojoUtils. Travel object deeply, and convert complex type to simple type.
+ * PojoUtils. Travel object deeply, and convert complex type to simple type. (深度遍历对象，并将复杂类型转换为简单类型),同时也提供了反向转换。
  * <p/>
  * Simple type below will be remained:
  * <ul>
@@ -40,7 +40,13 @@ import java.util.function.Supplier;
  * <p/>
  * Other type will be covert to a map which contains the attributes and value pair of object.
  */
-public class PojoUtils { //todo @csy-023-P1 该类的功能用途是什么？
+public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUtils 提供了将复杂对象转换为简单的对象，通过简单对象转换为复杂对象。有点像序列化和反序列
+    /**
+     * POJO（Plain Ordinary Java Object）简单的Java对象，实际就是普通JavaBeans，是为了避免和EJB混淆所创造的简称。
+     * 使用POJO名称是为了避免和EJB混淆起来, 而且简称比较直接. 其中有一些属性及其getter setter方法的类,没有业务逻辑
+     * <p>
+     * JavaBean则比POJO复杂很多， Java Bean是可复用的组件，对Java Bean 并没有严格的规范，理论上讲，任何一个 Java 类都可以是一个 Bean
+     */
 
     private static final Logger logger = LoggerFactory.getLogger(PojoUtils.class);
     private static final ConcurrentMap<String, Method> NAME_METHODS_CACHE = new ConcurrentHashMap<String, Method>();
@@ -84,7 +90,7 @@ public class PojoUtils { //todo @csy-023-P1 该类的功能用途是什么？
     }
 
     @SuppressWarnings("unchecked")
-    private static Object generalize(Object pojo, Map<Object, Object> history) { //todo @csy-019-P2 序列化待调试了解
+    private static Object generalize(Object pojo, Map<Object, Object> history) { //generalize：使一般化，就复杂对象转换为一般对象
         if (pojo == null) {
             return null;
         }
@@ -101,7 +107,7 @@ public class PojoUtils { //todo @csy-023-P1 该类的功能用途是什么？
             return values;
         }
 
-        if (ReflectUtils.isPrimitives(pojo.getClass())) {
+        if (ReflectUtils.isPrimitives(pojo.getClass())) { //基本类型直接返回，不做处理
             return pojo;
         }
 

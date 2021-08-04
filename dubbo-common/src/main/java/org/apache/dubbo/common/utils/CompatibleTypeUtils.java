@@ -32,8 +32,8 @@ public class CompatibleTypeUtils {
     }
 
     /**
-     * Compatible type convert. Null value is allowed to pass in. If no conversion is needed, then the original value
-     * will be returned.
+     * Compatible（兼容的） type convert. Null value is allowed to pass in（Null值是允许被输入的）. If no conversion is needed, then the original value
+     * will be returned.（如果不需要转换，则会将原始的值返回）
      * <p>
      * Supported compatible type conversions include (primary types and corresponding wrappers are not listed):
      * <ul>
@@ -43,8 +43,8 @@ public class CompatibleTypeUtils {
      * </ul>
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static Object compatibleTypeConvert(Object value, Class<?> type) {//todo @csy-021-P2 是怎样进行类型转换适配的？
-        if (value == null || type == null || type.isAssignableFrom(value.getClass())) {
+    public static Object compatibleTypeConvert(Object value, Class<?> type) { //value: 具体的值，type：期待的类型
+        if (value == null || type == null || type.isAssignableFrom(value.getClass())) { //若值或类型为空，或值的类型与期待的类型相同，则直接返回
             return value;
         }
 

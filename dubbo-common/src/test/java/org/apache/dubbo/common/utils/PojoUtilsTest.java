@@ -16,43 +16,24 @@
  */
 package org.apache.dubbo.common.utils;
 
+import com.alibaba.fastjson.JSONObject;
 import org.apache.dubbo.common.model.Person;
 import org.apache.dubbo.common.model.SerializablePerson;
 import org.apache.dubbo.common.model.User;
-import org.apache.dubbo.common.model.person.BigPerson;
-import org.apache.dubbo.common.model.person.FullAddress;
-import org.apache.dubbo.common.model.person.PersonInfo;
-import org.apache.dubbo.common.model.person.PersonStatus;
-import org.apache.dubbo.common.model.person.Phone;
-
-import com.alibaba.fastjson.JSONObject;
+import org.apache.dubbo.common.model.person.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class PojoUtilsTest {
+public class PojoUtilsTest { //todo @csy-033-P2 工具类待测试
 
     BigPerson bigPerson;
 
