@@ -24,7 +24,7 @@ import org.apache.dubbo.remoting.RemotingException;
  * TelnetHandler
  */
 @SPI
-public interface TelnetHandler { //@csy-002 改处理类的功能用途是啥？解：telnet命令的处理类
+public interface TelnetHandler { //@csy-002 改处理类的功能用途是啥？解：telnet命令的处理接口
 
     /**
      * telnet.
@@ -32,11 +32,17 @@ public interface TelnetHandler { //@csy-002 改处理类的功能用途是啥？
      * @param channel
      * @param message
      */
-    String telnet(Channel channel, String message) throws RemotingException; //todo @csy-024-P2 有多个实现类，不能指令时怎么进行分发的？
+    String telnet(Channel channel, String message) throws RemotingException;
+    /**
+     * @csy-024-P2 有多个实现类，不同指令时怎么进行分发的？解：通过实现类TelnetHandlerAdapter将输入的字符串message进行解析，获取到指令名以及执行内容，
+     * 再把指令名称作为SPI的扩展名，根据SPI机制获取到对应的实例
+     */
 
     /**
-     * todo @csy-029-P2 telnet连接时，不操作一定时间，会关闭通道，这是在哪里设置的？超时时间是在哪里设置的？使用到netty能力还是dubbo自行处理的？
-     * 抛出的信息，"Connection closed by foreign host."
+     * @csy-029-P2 telnet连接时，不操作一定时间，会关闭通道，这是在哪里设置的？超时时间是在哪里设置的？使用到netty能力还是dubbo自行处理的？
+     * 抛出的信息，"Connection closed by foreign host." (Telnet被服务端拒绝时抛出的)
+     *
+     *
      */
 
 }

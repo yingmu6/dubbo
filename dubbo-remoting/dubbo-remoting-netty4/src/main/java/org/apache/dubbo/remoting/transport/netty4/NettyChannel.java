@@ -50,7 +50,7 @@ final class NettyChannel extends AbstractChannel {
      */
     private final Channel channel;
 
-    private final Map<String, Object> attributes = new ConcurrentHashMap<String, Object>(); //缓存属性的值（通道中的属性值）
+    private final Map<String, Object> attributes = new ConcurrentHashMap<String, Object>(); //通道中的属性值
 
     private final AtomicBoolean active = new AtomicBoolean(false);
 
@@ -62,7 +62,7 @@ final class NettyChannel extends AbstractChannel {
      * @param url
      * @param handler dubbo handler that contain netty handler
      */
-    private NettyChannel(Channel channel, URL url, ChannelHandler handler) {
+    private NettyChannel(Channel channel, URL url, ChannelHandler handler) { //传入Netty的通道Channel，构建Dubbo的数据接口NettyChannel
         super(url, handler);
         if (channel == null) {
             throw new IllegalArgumentException("netty channel == null;");
@@ -98,13 +98,13 @@ final class NettyChannel extends AbstractChannel {
     }
 
     /**
-     * Remove the inactive channel.
+     * Remove the inactive（不活跃的、闲置的） channel.
      *
      * @param ch netty channel
      */
     static void removeChannelIfDisconnected(Channel ch) {
         if (ch != null && !ch.isActive()) {
-            NettyChannel nettyChannel = CHANNEL_MAP.remove(ch);
+            NettyChannel nettyChannel = CHANNEL_MAP.remove(ch); //移除缓存中通道的映射，并且将激活标识置为false
             if (nettyChannel != null) {
                 nettyChannel.markActive(false);
             }
@@ -182,7 +182,7 @@ final class NettyChannel extends AbstractChannel {
     @Override
     public void close() {
         try {
-            super.close();
+            super.close(); //关闭dubbo的通道（将dubbo中的通道状态置为关闭状态）
         } catch (Exception e) {
             logger.warn(e.getMessage(), e);
         }
@@ -192,7 +192,7 @@ final class NettyChannel extends AbstractChannel {
             logger.warn(e.getMessage(), e);
         }
         try {
-            attributes.clear();
+            attributes.clear(); //移除通道中设置的属性值
         } catch (Exception e) {
             logger.warn(e.getMessage(), e);
         }
@@ -200,7 +200,7 @@ final class NettyChannel extends AbstractChannel {
             if (logger.isInfoEnabled()) {
                 logger.info("Close netty channel " + channel);
             }
-            channel.close();
+            channel.close(); //关闭Netty的通道
         } catch (Exception e) {
             logger.warn(e.getMessage(), e);
         }

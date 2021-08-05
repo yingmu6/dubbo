@@ -106,12 +106,12 @@ public class NettyServerHandler extends ChannelDuplexHandler { //todo @csy-002 �
     }
 
     @Override
-    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-        // server will close channel when server don't receive any heartbeat from client util timeout.
-        if (evt instanceof IdleStateEvent) {
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception { // 心跳检测是双向的（重写了netty的方法，当netty事件触发时，会回调重写的方法）
+        // server will close channel when server don't receive any heartbeat from client util timeout. （在服务端没有收到客户端的心跳检测时，会关闭通道）
+        if (evt instanceof IdleStateEvent) { //IdleStateEvent：空闲状态的事件（当通道空闲时，会触发事件）
             NettyChannel channel = NettyChannel.getOrAddChannel(ctx.channel(), url, handler);
             try {
-                logger.info("IdleStateEvent triggered, close channel " + channel);
+                logger.info("IdleStateEvent triggered, close channel " + channel); //todo @pause
                 channel.close();
             } finally {
                 NettyChannel.removeChannelIfDisconnected(ctx.channel());
