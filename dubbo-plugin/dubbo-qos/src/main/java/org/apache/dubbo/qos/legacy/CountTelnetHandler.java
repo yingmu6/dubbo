@@ -162,7 +162,6 @@ public class CountTelnetHandler implements TelnetHandler {
     }
 
     /**
-     * todo @csy-027-P3
      * 1）类似这种展示是怎么输出的？
      * +--------+-------+--------+--------+---------+-----+
      * | method | total | failed | active | average | max |

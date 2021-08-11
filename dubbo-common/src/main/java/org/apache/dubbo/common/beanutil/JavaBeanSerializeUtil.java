@@ -61,7 +61,7 @@ public final class JavaBeanSerializeUtil {
         return serialize(obj, JavaBeanAccessor.FIELD);
     }
 
-    public static JavaBeanDescriptor serialize(Object obj, JavaBeanAccessor accessor) { //todo @csy-P2 java bean的序列化待了解
+    public static JavaBeanDescriptor serialize(Object obj, JavaBeanAccessor accessor) {
         if (obj == null) {
             return null;
         }

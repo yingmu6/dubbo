@@ -18,11 +18,7 @@ package org.apache.dubbo.common.extension;
 
 import org.apache.dubbo.common.URL;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * Activate. This annotation is useful for automatically activate（自动激活） certain（某些） extensions with the given criteria(条件),
@@ -54,7 +50,7 @@ public @interface Activate {
     String[] group() default {};
 
     /**
-     * Activate the current extension when the specified keys appear in the URL's parameters.（todo @csy-007 与URL的参数有什么关系？）
+     * Activate the current extension when the specified keys appear in the URL's parameters.
      * <p>
      * For example, given <code>@Activate("cache, validation")</code>, the current extension will be return only when
      * there's either <code>cache</code> or <code>validation</code> key appeared in the URL's parameters.
@@ -89,5 +85,5 @@ public @interface Activate {
      *
      * @return absolute ordering info
      */
-    int order() default 0; //todo @csy-012 取负数值有啥影响吗？比如取-100和300有区别吗？
+    int order() default 0;
 }

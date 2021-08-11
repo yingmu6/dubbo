@@ -63,7 +63,7 @@ public final class AccessLogData {
     private AccessLogData() {
         RpcContext context = RpcContext.getContext(); //RpcContext了解，解：临时状态记录器
         data = new HashMap<>();
-        setLocalHost(context.getLocalHost()); //todo @csy-021-P3 此处创建时能获取到IP，是哪里设置的？
+        setLocalHost(context.getLocalHost());
         setLocalPort(context.getLocalPort());
         setRemoteHost(context.getRemoteHost());
         setRemotePort(context.getRemotePort());
@@ -241,7 +241,7 @@ public final class AccessLogData {
             sn.append(JSON.toJSONString(args));
         }
 
-        return sn.toString(); //todo @csy-021-P3 待调试查看数据
+        return sn.toString();
     }
 
     private Date getInvocationTime() {

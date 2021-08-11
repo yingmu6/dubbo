@@ -236,7 +236,7 @@ public class DubboProtocol extends AbstractProtocol {
     }
 
     @Override
-    public <T> Exporter<T> export(Invoker<T> invoker) throws RpcException { //todo @csy-002 是不是默认进入的？
+    public <T> Exporter<T> export(Invoker<T> invoker) throws RpcException {
         URL url = invoker.getUrl();
 
         // export service.
@@ -247,7 +247,7 @@ public class DubboProtocol extends AbstractProtocol {
         //export an stub service for dispatching event
         Boolean isStubSupportEvent = url.getParameter(STUB_EVENT_KEY, DEFAULT_STUB_EVENT);
         Boolean isCallbackservice = url.getParameter(IS_CALLBACK_SERVICE, false);
-        if (isStubSupportEvent && !isCallbackservice) { //todo @csy-002 存根事件、回调服务都是怎样的？调试了解下
+        if (isStubSupportEvent && !isCallbackservice) {
             String stubServiceMethods = url.getParameter(STUB_EVENT_METHODS_KEY);
             if (stubServiceMethods == null || stubServiceMethods.length() == 0) {
                 if (logger.isWarnEnabled()) {
@@ -272,7 +272,7 @@ public class DubboProtocol extends AbstractProtocol {
         if (isServer) {
             ProtocolServer server = serverMap.get(key);
             if (server == null) {
-                synchronized (this) { //todo @csy-002 了解synchronized使用方式以及底层原理
+                synchronized (this) {
                     server = serverMap.get(key);
                     if (server == null) {
                         serverMap.put(key, createServer(url));
@@ -285,7 +285,7 @@ public class DubboProtocol extends AbstractProtocol {
         }
     }
 
-    private ProtocolServer createServer(URL url) { //todo @csy-002 此方法的用途是啥?
+    private ProtocolServer createServer(URL url) {
         url = URLBuilder.from(url)
                 // send readonly event when server closes, it's enabled by default
                 .addParameterIfAbsent(CHANNEL_READONLYEVENT_SENT_KEY, Boolean.TRUE.toString())
@@ -317,7 +317,7 @@ public class DubboProtocol extends AbstractProtocol {
         return new DubboProtocolServer(server);
     }
 
-    private void optimizeSerialization(URL url) throws RpcException { //todo @csy-002 是怎么优化序列化的方式？
+    private void optimizeSerialization(URL url) throws RpcException {
         String className = url.getParameter(OPTIMIZER_KEY, "");
         if (StringUtils.isEmpty(className) || optimizers.contains(className)) {
             return;

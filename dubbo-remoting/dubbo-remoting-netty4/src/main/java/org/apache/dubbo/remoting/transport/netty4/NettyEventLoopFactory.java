@@ -16,9 +16,6 @@
  */
 package org.apache.dubbo.remoting.transport.netty4;
 
-import org.apache.dubbo.common.config.Configuration;
-import org.apache.dubbo.rpc.model.ApplicationModel;
-
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.Epoll;
 import io.netty.channel.epoll.EpollEventLoopGroup;
@@ -30,6 +27,8 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.DefaultThreadFactory;
+import org.apache.dubbo.common.config.Configuration;
+import org.apache.dubbo.rpc.model.ApplicationModel;
 
 import java.util.concurrent.ThreadFactory;
 
@@ -40,7 +39,7 @@ public class NettyEventLoopFactory {
                 new NioEventLoopGroup(threads, threadFactory);
     }
 
-    public static Class<? extends SocketChannel> socketChannelClass() { //todo @csy-003 EpollSocketChannel与NioSocketChannel的差异是什么？
+    public static Class<? extends SocketChannel> socketChannelClass() {
         return shouldEpoll() ? EpollSocketChannel.class : NioSocketChannel.class;
     }
 

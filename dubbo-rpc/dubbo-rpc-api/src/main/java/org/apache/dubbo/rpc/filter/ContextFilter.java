@@ -62,7 +62,7 @@ public class ContextFilter implements Filter, Filter.Listener {
     }
 
     @Override
-    public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException { //todo @csy-019-P2 上下文过滤器都处理哪些内容？
+    public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
         Map<String, Object> attachments = invocation.getObjectAttachments();
         if (attachments != null) {
             Map<String, Object> newAttach = new HashMap<>(attachments.size());
@@ -95,7 +95,7 @@ public class ContextFilter implements Filter, Filter.Listener {
 
         // merged from dubbox
         // we may already added some attachments into RpcContext before this filter (e.g. in rest protocol)
-        if (attachments != null) { //todo @csy-019-P3 此处设置的值是怎样的？
+        if (attachments != null) {
             if (context.getObjectAttachments() != null) {
                 context.getObjectAttachments().putAll(attachments);
             } else {
@@ -108,7 +108,7 @@ public class ContextFilter implements Filter, Filter.Listener {
         }
 
         try {
-            context.clearAfterEachInvoke(false); //todo @csy-019-P3 为啥此处要做清理？
+            context.clearAfterEachInvoke(false);
             return invoker.invoke(invocation);
         } finally {
             context.clearAfterEachInvoke(true);

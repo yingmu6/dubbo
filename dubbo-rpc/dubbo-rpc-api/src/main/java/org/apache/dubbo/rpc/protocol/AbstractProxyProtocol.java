@@ -21,18 +21,9 @@ import org.apache.dubbo.common.Parameters;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.utils.NetUtils;
 import org.apache.dubbo.common.utils.StringUtils;
-import org.apache.dubbo.remoting.Channel;
-import org.apache.dubbo.remoting.ChannelHandler;
 import org.apache.dubbo.remoting.Constants;
-import org.apache.dubbo.remoting.RemotingException;
-import org.apache.dubbo.remoting.RemotingServer;
-import org.apache.dubbo.rpc.Exporter;
-import org.apache.dubbo.rpc.Invocation;
-import org.apache.dubbo.rpc.Invoker;
-import org.apache.dubbo.rpc.ProtocolServer;
-import org.apache.dubbo.rpc.ProxyFactory;
-import org.apache.dubbo.rpc.Result;
-import org.apache.dubbo.rpc.RpcException;
+import org.apache.dubbo.remoting.*;
+import org.apache.dubbo.rpc.*;
 
 import java.net.InetSocketAddress;
 import java.util.Collection;
@@ -46,7 +37,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.ANYHOST_VALUE;
 /**
  * AbstractProxyProtocol
  */
-public abstract class AbstractProxyProtocol extends AbstractProtocol { //todo @csy-003 代理待了解实践
+public abstract class AbstractProxyProtocol extends AbstractProtocol {
 
     private final List<Class<?>> rpcExceptions = new CopyOnWriteArrayList<Class<?>>();
 
@@ -84,8 +75,7 @@ public abstract class AbstractProxyProtocol extends AbstractProtocol { //todo @c
                 return exporter;
             }
         }
-        final Runnable runnable = doExport(proxyFactory.getProxy(invoker, true), invoker.getInterface(), invoker.getUrl()); //todo @csy-002 默认会选择哪个实现类？
-        // todo @csy-002 此处返回的Runnable的执行体都有啥？
+        final Runnable runnable = doExport(proxyFactory.getProxy(invoker, true), invoker.getInterface(), invoker.getUrl());
         exporter = new AbstractExporter<T>(invoker) {
             @Override
             public void unexport() {
@@ -146,7 +136,7 @@ public abstract class AbstractProxyProtocol extends AbstractProtocol { //todo @c
     protected String getAddr(URL url) { //地址格式，ip:host
         String bindIp = url.getParameter(Constants.BIND_IP_KEY, url.getHost());
         if (url.getParameter(ANYHOST_KEY, false)) {
-            bindIp = ANYHOST_VALUE; //todo @csy-002 任意主机是在哪种场景下使用的？
+            bindIp = ANYHOST_VALUE;
         }
         return NetUtils.getIpByHost(bindIp) + ":" + url.getParameter(Constants.BIND_PORT_KEY, url.getPort());
     }

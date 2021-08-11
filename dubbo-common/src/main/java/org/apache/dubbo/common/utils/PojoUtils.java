@@ -53,7 +53,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
     private static final ConcurrentMap<Class<?>, ConcurrentMap<String, Field>> CLASS_FIELD_CACHE = new ConcurrentHashMap<Class<?>, ConcurrentMap<String, Field>>();
     private static final boolean GENERIC_WITH_CLZ = Boolean.parseBoolean(ConfigUtils.getProperty(CommonConstants.GENERIC_WITH_CLZ_KEY, "true"));
 
-    public static Object[] generalize(Object[] objs) { //todo @csy-P2 序列化流程是怎样的
+    public static Object[] generalize(Object[] objs) {
         Object[] dests = new Object[objs.length];
         for (int i = 0; i < objs.length; i++) {
             dests[i] = generalize(objs[i]);
@@ -74,7 +74,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
         return dests;
     }
 
-    public static Object[] realize(Object[] objs, Class<?>[] types, Type[] gtypes) { //todo @csy-032-P3 Class与Type的区分？
+    public static Object[] realize(Object[] objs, Class<?>[] types, Type[] gtypes) {
         if (objs.length != types.length || objs.length != gtypes.length) { //传入的参数数目与调用方法的参数个数不相等异常
             throw new IllegalArgumentException("args.length != types.length");
         }
@@ -121,7 +121,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
         }
         history.put(pojo, pojo);
 
-        if (pojo.getClass().isArray()) { //todo @csy-023-P2 此处的处理逻辑是怎样的？
+        if (pojo.getClass().isArray()) {
             int len = Array.getLength(pojo);
             Object[] dest = new Object[len];
             history.put(pojo, dest);
@@ -165,7 +165,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
             }
         }
         // public field
-        for (Field field : pojo.getClass().getFields()) { //todo @csy-023-P3 此处的处理逻辑是怎样的？
+        for (Field field : pojo.getClass().getFields()) {
             if (ReflectUtils.isPublicInstanceField(field)) {
                 try {
                     Object fieldValue = field.get(pojo);
@@ -195,7 +195,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
         return realize0(pojo, type, genericType, new IdentityHashMap<Object, Object>());
     }
 
-    private static class PojoInvocationHandler implements InvocationHandler { //todo @csy-023-P3 该处理的功能用途是啥？
+    private static class PojoInvocationHandler implements InvocationHandler {
 
         private Map<Object, Object> map;
 
@@ -286,7 +286,6 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     /**
-     * todo @csy-021-P1 该方法的功能用途是啥，待调试
      * realize：实现
      */
     private static Object realize0(Object pojo, Class<?> type, Type genericType, final Map<Object, Object> history) {
@@ -302,7 +301,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
                 && !(type != null && type.isArray()
                 && type.getComponentType().isEnum()
                 && pojo.getClass() == String[].class)) {
-            return CompatibleTypeUtils.compatibleTypeConvert(pojo, type); //todo @csy-023-P2 此处是怎么适配的？
+            return CompatibleTypeUtils.compatibleTypeConvert(pojo, type);
         }
 
         Object o = history.get(pojo);
@@ -313,7 +312,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
 
         history.put(pojo, pojo);
 
-        if (pojo.getClass().isArray()) { //todo @csy-023-P3 POJO的概念是啥？
+        if (pojo.getClass().isArray()) {
             if (Collection.class.isAssignableFrom(type)) { //是集合类型
                 Class<?> ctype = pojo.getClass().getComponentType();
                 int len = Array.getLength(pojo); //获取数组对应长度
@@ -321,12 +320,12 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
                 history.put(pojo, dest);
                 for (int i = 0; i < len; i++) {
                     Object obj = Array.get(pojo, i); //返回数组中指定下标的值
-                    Object value = realize0(obj, ctype, null, history); //todo @csy-023-P2 此处的递归用途是啥？
+                    Object value = realize0(obj, ctype, null, history);
                     dest.add(value);
                 }
                 return dest;
             } else {
-                Class<?> ctype = (type != null && type.isArray() ? type.getComponentType() : pojo.getClass().getComponentType()); //todo @csy-023-P3 getComponentType()功能用途是什么？
+                Class<?> ctype = (type != null && type.isArray() ? type.getComponentType() : pojo.getClass().getComponentType());
                 int len = Array.getLength(pojo);
                 Object dest = Array.newInstance(ctype, len);
                 history.put(pojo, dest);
@@ -339,7 +338,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
             }
         }
 
-        if (pojo instanceof Collection<?>) { //todo @csy-023-P2 此处的逻辑与pojo.getClass().isArray()的处理有何不同？
+        if (pojo instanceof Collection<?>) {
             if (type.isArray()) {
                 Class<?> ctype = type.getComponentType();
                 Collection<Object> src = (Collection<Object>) pojo;
@@ -446,7 +445,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
                     result.put(key, value);
                 }
                 return result;
-            } else if (type.isInterface()) { //todo @csy-023-P3 此处为啥要创建代理对象，都做了哪些代理操作？
+            } else if (type.isInterface()) {
                 Object dest = Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[] {type}, new PojoInvocationHandler(map));
                 history.put(pojo, dest);
                 return dest;
@@ -458,7 +457,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
                     if (key instanceof String) {
                         String name = (String) key;
                         Object value = entry.getValue();
-                        if (value != null) { //todo @csy-023-P3 此处的处理逻辑是怎样的？
+                        if (value != null) {
                             Method method = getSetterMethod(dest.getClass(), name, value.getClass());
                             Field field = getField(dest.getClass(), name);
                             if (method != null) {
@@ -512,7 +511,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
      * @param clazz {@link Class}
      * @return Return String.class for {@link com.alibaba.fastjson.JSONObject}
      */
-    private static Type getKeyTypeForMap(Class<?> clazz) { //todo @csy-023-P3 此方法的功能用途是什么？
+    private static Type getKeyTypeForMap(Class<?> clazz) {
         Type[] interfaces = clazz.getGenericInterfaces();
         if (!ArrayUtils.isEmpty(interfaces)) {
             for (Type type : interfaces) {
@@ -537,7 +536,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
     private static Type getGenericClassByIndex(Type genericType, int index) {
         Type clazz = null;
         // find parameterized type
-        if (genericType instanceof ParameterizedType) { //todo @csy-023-P3 ParameterizedType的功能用途是什么？
+        if (genericType instanceof ParameterizedType) {
             ParameterizedType t = (ParameterizedType) genericType;
             Type[] types = t.getActualTypeArguments();
             clazz = types[index];
@@ -564,7 +563,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
                 Constructor<?> constructor = constructors[0];
                 if (constructor.getParameterTypes().length > 0) {
                     for (Constructor<?> c : constructors) {
-                        if (c.getParameterTypes().length < constructor.getParameterTypes().length) { //todo @csy-023-P3 此处的判断逻辑是什么？
+                        if (c.getParameterTypes().length < constructor.getParameterTypes().length) {
                             constructor = c;
                             if (constructor.getParameterTypes().length == 0) {
                                 break;

@@ -58,7 +58,6 @@ public abstract class AbstractProxyFactory implements ProxyFactory {
          */
         Set<Class<?>> interfaces = new HashSet<>();
 
-        //todo @csy-015 url中的INTERFACES内容会是什么？从哪里写入的？
         String config = invoker.getUrl().getParameter(INTERFACES); //启动时，Invoker对应的实例为MockClusterInvoker,MockClusterInvoker中的invoker为AbstractCluster$InterceptorInvokerNode（内部类）
         if (config != null && config.length() > 0) { //从url中获取配置的接口类型，设置到Class集合中
             String[] types = COMMA_SPLIT_PATTERN.split(config);
@@ -68,7 +67,7 @@ public abstract class AbstractProxyFactory implements ProxyFactory {
             }
         }
 
-        if (generic) { //泛化类型，处理泛化类型  todo @csy-001 构建用例测试该入口
+        if (generic) { //泛化类型，处理泛化类型
             if (!GenericService.class.isAssignableFrom(invoker.getInterface())) { //兼容alibaba的GenericService泛化类型
                 interfaces.add(com.alibaba.dubbo.rpc.service.GenericService.class); //若不是apache的泛化类，就加载alibaba的泛化类
             }
@@ -91,6 +90,6 @@ public abstract class AbstractProxyFactory implements ProxyFactory {
         return getProxy(invoker, interfaces.toArray(new Class<?>[0])); //调用抽象方法，具体的实现交由子类执行
     }
 
-    public abstract <T> T getProxy(Invoker<T> invoker, Class<?>[] types); //todo @csy-001 是怎么选择抽象类的实例的？SPI机制吗？
+    public abstract <T> T getProxy(Invoker<T> invoker, Class<?>[] types);
 
 }

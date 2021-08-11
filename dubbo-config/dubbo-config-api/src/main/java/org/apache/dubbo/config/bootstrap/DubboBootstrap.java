@@ -31,28 +31,8 @@ import org.apache.dubbo.common.threadpool.manager.ExecutorRepository;
 import org.apache.dubbo.common.utils.ArrayUtils;
 import org.apache.dubbo.common.utils.CollectionUtils;
 import org.apache.dubbo.common.utils.StringUtils;
-import org.apache.dubbo.config.ApplicationConfig;
-import org.apache.dubbo.config.ConfigCenterConfig;
-import org.apache.dubbo.config.ConsumerConfig;
-import org.apache.dubbo.config.DubboShutdownHook;
-import org.apache.dubbo.config.MetadataReportConfig;
-import org.apache.dubbo.config.MetricsConfig;
-import org.apache.dubbo.config.ModuleConfig;
-import org.apache.dubbo.config.MonitorConfig;
-import org.apache.dubbo.config.ProtocolConfig;
-import org.apache.dubbo.config.ProviderConfig;
-import org.apache.dubbo.config.ReferenceConfig;
-import org.apache.dubbo.config.RegistryConfig;
-import org.apache.dubbo.config.ServiceConfig;
-import org.apache.dubbo.config.ServiceConfigBase;
-import org.apache.dubbo.config.SslConfig;
-import org.apache.dubbo.config.bootstrap.builders.ApplicationBuilder;
-import org.apache.dubbo.config.bootstrap.builders.ConsumerBuilder;
-import org.apache.dubbo.config.bootstrap.builders.ProtocolBuilder;
-import org.apache.dubbo.config.bootstrap.builders.ProviderBuilder;
-import org.apache.dubbo.config.bootstrap.builders.ReferenceBuilder;
-import org.apache.dubbo.config.bootstrap.builders.RegistryBuilder;
-import org.apache.dubbo.config.bootstrap.builders.ServiceBuilder;
+import org.apache.dubbo.config.*;
+import org.apache.dubbo.config.bootstrap.builders.*;
 import org.apache.dubbo.config.context.ConfigManager;
 import org.apache.dubbo.config.utils.ConfigValidationUtils;
 import org.apache.dubbo.config.utils.ReferenceConfigCache;
@@ -64,22 +44,12 @@ import org.apache.dubbo.metadata.MetadataServiceExporter;
 import org.apache.dubbo.metadata.WritableMetadataService;
 import org.apache.dubbo.metadata.report.MetadataReportFactory;
 import org.apache.dubbo.metadata.report.MetadataReportInstance;
-import org.apache.dubbo.registry.client.DefaultServiceInstance;
-import org.apache.dubbo.registry.client.ServiceDiscovery;
-import org.apache.dubbo.registry.client.ServiceDiscoveryRegistry;
-import org.apache.dubbo.registry.client.ServiceInstance;
-import org.apache.dubbo.registry.client.ServiceInstanceCustomizer;
+import org.apache.dubbo.registry.client.*;
 import org.apache.dubbo.registry.support.AbstractRegistryFactory;
 import org.apache.dubbo.rpc.model.ApplicationModel;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.SortedSet;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -96,9 +66,7 @@ import static java.util.Arrays.asList;
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
 import static org.apache.dubbo.common.config.ConfigurationUtils.parseProperties;
 import static org.apache.dubbo.common.config.configcenter.DynamicConfiguration.getDynamicConfiguration;
-import static org.apache.dubbo.common.constants.CommonConstants.DEFAULT_METADATA_STORAGE_TYPE;
-import static org.apache.dubbo.common.constants.CommonConstants.REGISTRY_SPLIT_PATTERN;
-import static org.apache.dubbo.common.constants.CommonConstants.REMOTE_METADATA_STORAGE_TYPE;
+import static org.apache.dubbo.common.constants.CommonConstants.*;
 import static org.apache.dubbo.common.extension.ExtensionLoader.getExtensionLoader;
 import static org.apache.dubbo.common.function.ThrowableAction.execute;
 import static org.apache.dubbo.common.utils.StringUtils.isEmpty;
@@ -116,7 +84,7 @@ import static org.apache.dubbo.remoting.Constants.CLIENT_KEY;
  *
  * @since 2.7.5
  */
-public class DubboBootstrap extends GenericEventListener { //todo @csy-006 引导程序都做了啥？何时被调用的？
+public class DubboBootstrap extends GenericEventListener {
 
     public static final String DEFAULT_REGISTRY_ID = "REGISTRY#DEFAULT";
 
@@ -890,7 +858,7 @@ public class DubboBootstrap extends GenericEventListener { //todo @csy-006 引�
     /**
      * Start the bootstrap
      */
-    public DubboBootstrap start() { //todo @csy-004 都启动了些啥功能？待调试
+    public DubboBootstrap start() {
         if (started.compareAndSet(false, true)) {
             ready.set(false);
             initialize();

@@ -21,15 +21,7 @@ import org.apache.dubbo.common.constants.CommonConstants;
 import org.apache.dubbo.common.extension.Activate;
 import org.apache.dubbo.common.extension.ExtensionLoader;
 import org.apache.dubbo.common.utils.UrlUtils;
-import org.apache.dubbo.rpc.Exporter;
-import org.apache.dubbo.rpc.Filter;
-import org.apache.dubbo.rpc.Invocation;
-import org.apache.dubbo.rpc.Invoker;
-import org.apache.dubbo.rpc.ListenableFilter;
-import org.apache.dubbo.rpc.Protocol;
-import org.apache.dubbo.rpc.ProtocolServer;
-import org.apache.dubbo.rpc.Result;
-import org.apache.dubbo.rpc.RpcException;
+import org.apache.dubbo.rpc.*;
 
 import java.util.List;
 
@@ -51,15 +43,15 @@ public class ProtocolFilterWrapper implements Protocol {
         this.protocol = protocol;
     }
 
-    private static <T> Invoker<T> buildInvokerChain(final Invoker<T> invoker, String key, String group) { //构建调用链，并返回头结点， todo @csy-002 调用链都是怎样构造的？是在哪里调用的？
+    private static <T> Invoker<T> buildInvokerChain(final Invoker<T> invoker, String key, String group) { //构建调用链，并返回头结点
         Invoker<T> last = invoker;
-        List<Filter> filters = ExtensionLoader.getExtensionLoader(Filter.class).getActivateExtension(invoker.getUrl(), key, group); //todo @csy 此处自适应扩展是怎么获取到过滤器列表的
+        List<Filter> filters = ExtensionLoader.getExtensionLoader(Filter.class).getActivateExtension(invoker.getUrl(), key, group);
 
         if (!filters.isEmpty()) {
             for (int i = filters.size() - 1; i >= 0; i--) { //从后往前遍历，最后一个就是头结点
                 final Filter filter = filters.get(i);
                 final Invoker<T> next = last;
-                last = new Invoker<T>() { //todo @csy-002 该链表是怎么链接的
+                last = new Invoker<T>() {
 
                     @Override
                     public Class<T> getInterface() {
@@ -81,7 +73,7 @@ public class ProtocolFilterWrapper implements Protocol {
                         Result asyncResult;
                         try {
                             asyncResult = filter.invoke(next, invocation);
-                        } catch (Exception e) { //todo @csy-002 待调试
+                        } catch (Exception e) {
                             if (filter instanceof ListenableFilter) {
                                 ListenableFilter listenableFilter = ((ListenableFilter) filter);
                                 try {

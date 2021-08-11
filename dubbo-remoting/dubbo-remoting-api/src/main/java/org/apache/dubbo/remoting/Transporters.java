@@ -25,7 +25,7 @@ import org.apache.dubbo.remoting.transport.ChannelHandlerDispatcher;
 /**
  * Transporter facade. (API, Static, ThreadSafe)
  */
-public class Transporters { //todo @csy-002 都做哪些传输处理的？
+public class Transporters {
 
     static {
         // check duplicate jar package

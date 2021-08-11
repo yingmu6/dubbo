@@ -215,7 +215,7 @@ public class InvokeTelnetHandler implements TelnetHandler { //@csy-027-P2 invoke
                 if (!ReflectUtils.isCompatible(type, arg)) {
                     return false;
                 }
-            } else if (arg instanceof Map) { //todo @csy-032-P3 枚举是否进入此处判断
+            } else if (arg instanceof Map) {
                 String name = (String) ((Map<?, ?>) arg).get("class");
                 if (StringUtils.isNotEmpty(name)) {
                     Class<?> cls = ReflectUtils.forName(name);
@@ -238,7 +238,7 @@ public class InvokeTelnetHandler implements TelnetHandler { //@csy-027-P2 invoke
         return true;
     }
 
-    private void printSelectMessage(StringBuilder buf, List<Method> methods) { //todo @csy-030-P3 待调试
+    private void printSelectMessage(StringBuilder buf, List<Method> methods) {
         buf.append("Methods:\r\n");
         for (int i = 0; i < methods.size(); i++) {
             Method method = methods.get(i);

@@ -269,7 +269,7 @@ final class NettyChannel extends AbstractChannel {
     }
 
     @Override
-    public String toString() { //todo @csy-025-P3 打印出的 "NettyChannel [channel=[id: 0xa1f784d3, L:/0:0:0:0:0:0:0:1:20880 - R:/0:0:0:0:0:0:0:1:50907]]" 对象信息是怎么拼接的，L和R分别代表本地地址和远程地址吗？
+    public String toString() {
         return "NettyChannel [channel=" + channel + "]";
     }
 

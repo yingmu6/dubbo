@@ -16,6 +16,7 @@
  */
 package org.apache.dubbo.metadata.store;
 
+import com.google.gson.Gson;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
@@ -23,13 +24,7 @@ import org.apache.dubbo.common.utils.StringUtils;
 import org.apache.dubbo.metadata.WritableMetadataService;
 import org.apache.dubbo.metadata.definition.model.ServiceDefinition;
 
-import com.google.gson.Gson;
-
-import static org.apache.dubbo.common.constants.CommonConstants.INTERFACE_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.PID_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.PROVIDER_SIDE;
-import static org.apache.dubbo.common.constants.CommonConstants.SIDE_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.TIMESTAMP_KEY;
+import static org.apache.dubbo.common.constants.CommonConstants.*;
 import static org.apache.dubbo.common.utils.ClassUtils.forName;
 import static org.apache.dubbo.metadata.definition.ServiceDefinitionBuilder.buildFullDefinition;
 import static org.apache.dubbo.remoting.Constants.BIND_IP_KEY;
@@ -57,7 +52,7 @@ public abstract class AbstractAbstractWritableMetadataService implements Writabl
         url = url.removeParameters(PID_KEY, TIMESTAMP_KEY, BIND_IP_KEY, BIND_PORT_KEY, TIMESTAMP_KEY);
 
         String side = url.getParameter(SIDE_KEY);
-        if (PROVIDER_SIDE.equalsIgnoreCase(side)) { //todo @csy-003 元数据待了解实践
+        if (PROVIDER_SIDE.equalsIgnoreCase(side)) {
             publishProviderServiceDefinition(url); //处理提供者定义的数据
         } else {
             publishConsumerParameters(url);        //处理消费者定义的参数

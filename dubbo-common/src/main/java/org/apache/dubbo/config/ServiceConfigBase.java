@@ -39,7 +39,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.DUBBO;
  *
  * @export
  */
-public abstract class ServiceConfigBase<T> extends AbstractServiceConfig { //todo @csy-030-P3 功能用途待了解
+public abstract class ServiceConfigBase<T> extends AbstractServiceConfig {
 
     private static final long serialVersionUID = 3033787999037024738L;
 
@@ -183,7 +183,7 @@ public abstract class ServiceConfigBase<T> extends AbstractServiceConfig { //tod
 
     public Optional<String> getContextPath(ProtocolConfig protocolConfig) {
         String contextPath = protocolConfig.getContextpath();
-        if (StringUtils.isEmpty(contextPath) && provider != null) { //todo @csy 待调试 contextPath
+        if (StringUtils.isEmpty(contextPath) && provider != null) {
             contextPath = provider.getContextpath();
         }
         return Optional.ofNullable(contextPath);

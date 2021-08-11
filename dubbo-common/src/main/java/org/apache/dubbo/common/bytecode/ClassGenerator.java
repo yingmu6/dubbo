@@ -16,16 +16,7 @@
  */
 package org.apache.dubbo.common.bytecode;
 
-import javassist.CannotCompileException;
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.CtConstructor;
-import javassist.CtField;
-import javassist.CtMethod;
-import javassist.CtNewConstructor;
-import javassist.CtNewMethod;
-import javassist.LoaderClassPath;
-import javassist.NotFoundException;
+import javassist.*;
 import org.apache.dubbo.common.utils.ArrayUtils;
 import org.apache.dubbo.common.utils.ClassUtils;
 import org.apache.dubbo.common.utils.ReflectUtils;
@@ -35,12 +26,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.security.ProtectionDomain;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -67,7 +53,7 @@ public final class ClassGenerator { //@csy-001 该类的用途是什么？解：
     private ClassGenerator() { //私有的构造函数，不直接对外暴露
     }
 
-    private ClassGenerator(ClassPool pool) { //todo @csy-015-P3 类池待了解？
+    private ClassGenerator(ClassPool pool) {
         mPool = pool; //设置类池
     }
 
@@ -90,8 +76,8 @@ public final class ClassGenerator { //@csy-001 该类的用途是什么？解：
 
         ClassPool pool = POOL_MAP.get(loader);
         if (pool == null) { //若缓存中没有类池，则创建类型，并与ClassLoader映射设置到缓存中
-            pool = new ClassPool(true); //todo @csy-001 javassist了解，以及ClassPool了解
-            pool.appendClassPath(new LoaderClassPath(loader)); //设置类路径, todo @csy-001 LoaderClassPath了解
+            pool = new ClassPool(true);
+            pool.appendClassPath(new LoaderClassPath(loader));
             POOL_MAP.put(loader, pool);
         }
         return pool;
@@ -297,8 +283,7 @@ public final class ClassGenerator { //@csy-001 该类的用途是什么？解：
                 getClass().getProtectionDomain());
     }
 
-    // todo @csy-016-P1 该方法的功能用途是啥？待调试
-    public Class<?> toClass(ClassLoader loader, ProtectionDomain pd) { //将当前维护的成员方法、成员变量对应字符串转换为Class对象  todo @csy-016-P2 ProtectionDomain的功能用途是什么？
+    public Class<?> toClass(ClassLoader loader, ProtectionDomain pd) { //将当前维护的成员方法、成员变量对应字符串转换为Class对象
         if (mCtc != null) {
             mCtc.detach(); //detach:分离， 从ClassPool中移除CtClass
         }

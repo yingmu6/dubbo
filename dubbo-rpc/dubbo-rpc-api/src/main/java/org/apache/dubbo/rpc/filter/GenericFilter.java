@@ -43,7 +43,7 @@ import static org.apache.dubbo.rpc.Constants.GENERIC_KEY;
  * GenericInvokerFilter.
  */
 @Activate(group = CommonConstants.PROVIDER, order = -20000)
-public class GenericFilter implements Filter, Filter.Listener { //todo @csy-019-P1 泛化类型过滤器待了解，为啥会与序列化、反序列化关联
+public class GenericFilter implements Filter, Filter.Listener {
 
     @Override
     public Result invoke(Invoker<?> invoker, Invocation inv) throws RpcException {
@@ -74,7 +74,7 @@ public class GenericFilter implements Filter, Filter.Listener { //todo @csy-019-
                         || ProtocolUtils.isDefaultGenericSerialization(generic)
                         || ProtocolUtils.isGenericReturnRawResult(generic)) {
                     args = PojoUtils.realize(args, params, method.getGenericParameterTypes());
-                } else if (ProtocolUtils.isJavaGenericSerialization(generic)) { //todo @csy-019-P2 泛化调用的序列化方式都有哪些
+                } else if (ProtocolUtils.isJavaGenericSerialization(generic)) {
                     for (int i = 0; i < args.length; i++) {
                         if (byte[].class == args[i].getClass()) {
                             try (UnsafeByteArrayInputStream is = new UnsafeByteArrayInputStream((byte[]) args[i])) {
@@ -108,7 +108,7 @@ public class GenericFilter implements Filter, Filter.Listener { //todo @csy-019-
                                             args[i].getClass().getName());
                         }
                     }
-                } else if (ProtocolUtils.isProtobufGenericSerialization(generic)) { //todo @csy-019-P3 此处Protobuf的序列化方式是怎样的？
+                } else if (ProtocolUtils.isProtobufGenericSerialization(generic)) {
                     // as proto3 only accept one protobuf parameter
                     if (args.length == 1 && args[0] instanceof String) {
                         try (UnsafeByteArrayInputStream is =
@@ -160,7 +160,7 @@ public class GenericFilter implements Filter, Filter.Listener { //todo @csy-019-
                     GenericException tmp = (GenericException) appException;
                     appException = new com.alibaba.dubbo.rpc.service.GenericException(tmp.getExceptionClass(), tmp.getExceptionMessage());
                 }
-                if (!(appException instanceof com.alibaba.dubbo.rpc.service.GenericException)) { //todo @csy-019-P3 此处为啥实例都是alibaba的GenericException？
+                if (!(appException instanceof com.alibaba.dubbo.rpc.service.GenericException)) {
                     appException = new com.alibaba.dubbo.rpc.service.GenericException(appException);
                 }
                 appResponse.setException(appException);

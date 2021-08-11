@@ -36,7 +36,7 @@ import java.util.Collection;
 public class PortTelnetHandler implements TelnetHandler {
 
     @Override
-    public String telnet(Channel channel, String message) { //todo @csy-027-P3 此处是ps命令的入口吗？ps指令是如何执行的？
+    public String telnet(Channel channel, String message) {
         StringBuilder buf = new StringBuilder();
         String port = null;
         boolean detail = false;

@@ -32,7 +32,7 @@ import java.util.List;
 @Activate
 @Help(parameter = "[index]", summary = "Select the index of the method you want to invoke.",
         detail = "Select the index of the method you want to invoke.")
-public class SelectTelnetHandler implements TelnetHandler { //todo @csy-030-P2 当匹配到多个方法时，根据列表选择要调用的方法，待使用
+public class SelectTelnetHandler implements TelnetHandler {
     public static final String SELECT_METHOD_KEY = "telnet.select.method";
     public static final String SELECT_KEY = "telnet.select";
 
@@ -40,7 +40,7 @@ public class SelectTelnetHandler implements TelnetHandler { //todo @csy-030-P2 �
 
     @Override
     @SuppressWarnings("unchecked")
-    public String telnet(Channel channel, String message) { //执行invoke GreetingService.hello("111") 时，会出现select提示，todo @csy-031-P2 待调试
+    public String telnet(Channel channel, String message) { //执行invoke GreetingService.hello("111") 时，会出现select提示
         if (message == null || message.length() == 0) {
             return "Please input the index of the method you want to invoke, eg: \r\n select 1";
         }

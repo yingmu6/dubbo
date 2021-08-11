@@ -25,12 +25,7 @@ import org.apache.dubbo.registry.Registry;
 import org.apache.dubbo.registry.RegistryFactory;
 import org.apache.dubbo.registry.RegistryService;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -72,7 +67,7 @@ public abstract class AbstractRegistryFactory implements RegistryFactory {
     /**
      * Close all created registries
      */
-    public static void destroyAll() { //todo @csy-012 销毁的处理逻辑是怎样的？
+    public static void destroyAll() {
         if (!destroyed.compareAndSet(false, true)) {
             return;
         }

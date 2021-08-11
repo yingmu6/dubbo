@@ -35,7 +35,7 @@ public class DecodeHandler extends AbstractChannelHandlerDelegate {
     }
 
     @Override
-    public void received(Channel channel, Object message) throws RemotingException { //todo @csy-025-P3 此处接收的消息是只有来自客户端的，还是服务端也能接收？
+    public void received(Channel channel, Object message) throws RemotingException {
         if (message instanceof Decodeable) {
             decode(message);
         }
@@ -48,7 +48,7 @@ public class DecodeHandler extends AbstractChannelHandlerDelegate {
             decode(((Response) message).getResult());
         }
 
-        handler.received(channel, message); //todo @csy-025-P3 终端输入telnet命令时，为啥进入这里？为啥接下来会又进入HeaderExchangeHandler？
+        handler.received(channel, message);
     }
 
     private void decode(Object message) {

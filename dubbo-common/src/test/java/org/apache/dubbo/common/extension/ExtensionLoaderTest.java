@@ -22,13 +22,7 @@ import org.apache.dubbo.common.convert.StringToBooleanConverter;
 import org.apache.dubbo.common.convert.StringToDoubleConverter;
 import org.apache.dubbo.common.convert.StringToIntegerConverter;
 import org.apache.dubbo.common.extension.activate.ActivateExt1;
-import org.apache.dubbo.common.extension.activate.impl.ActivateExt1Impl1;
-import org.apache.dubbo.common.extension.activate.impl.GroupActivateExtImpl;
-import org.apache.dubbo.common.extension.activate.impl.OldActivateExt1Impl2;
-import org.apache.dubbo.common.extension.activate.impl.OldActivateExt1Impl3;
-import org.apache.dubbo.common.extension.activate.impl.OrderActivateExtImpl1;
-import org.apache.dubbo.common.extension.activate.impl.OrderActivateExtImpl2;
-import org.apache.dubbo.common.extension.activate.impl.ValueActivateExtImpl;
+import org.apache.dubbo.common.extension.activate.impl.*;
 import org.apache.dubbo.common.extension.convert.String2BooleanConverter;
 import org.apache.dubbo.common.extension.convert.String2DoubleConverter;
 import org.apache.dubbo.common.extension.convert.String2IntegerConverter;
@@ -46,19 +40,12 @@ import org.apache.dubbo.common.extension.ext8_add.AddExt1;
 import org.apache.dubbo.common.extension.ext8_add.AddExt2;
 import org.apache.dubbo.common.extension.ext8_add.AddExt3;
 import org.apache.dubbo.common.extension.ext8_add.AddExt4;
-import org.apache.dubbo.common.extension.ext8_add.impl.AddExt1Impl1;
-import org.apache.dubbo.common.extension.ext8_add.impl.AddExt1_ManualAdaptive;
-import org.apache.dubbo.common.extension.ext8_add.impl.AddExt1_ManualAdd1;
-import org.apache.dubbo.common.extension.ext8_add.impl.AddExt1_ManualAdd2;
-import org.apache.dubbo.common.extension.ext8_add.impl.AddExt2_ManualAdaptive;
-import org.apache.dubbo.common.extension.ext8_add.impl.AddExt3_ManualAdaptive;
-import org.apache.dubbo.common.extension.ext8_add.impl.AddExt4_ManualAdaptive;
+import org.apache.dubbo.common.extension.ext8_add.impl.*;
 import org.apache.dubbo.common.extension.ext9_empty.Ext9Empty;
 import org.apache.dubbo.common.extension.ext9_empty.impl.Ext9EmptyImpl;
 import org.apache.dubbo.common.extension.injection.InjectExt;
 import org.apache.dubbo.common.extension.injection.impl.InjectExtImpl;
 import org.apache.dubbo.common.lang.Prioritized;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -70,16 +57,10 @@ import java.util.Set;
 import static org.apache.dubbo.common.constants.CommonConstants.GROUP_KEY;
 import static org.apache.dubbo.common.extension.ExtensionLoader.getExtensionLoader;
 import static org.apache.dubbo.common.extension.ExtensionLoader.getLoadingStrategies;
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.anyOf;
-import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ExtensionLoaderTest {
     @Test
@@ -336,7 +317,6 @@ public class ExtensionLoaderTest {
 
     @Test
     public void test_replaceExtension() throws Exception {
-        // todo @csy-012 配置文件都有哪些配置方式？若没有配置扩展名，怎么做映射的？
         try {
             getExtensionLoader(AddExt1.class).getExtension("Manual2");
             fail();
@@ -404,7 +384,7 @@ public class ExtensionLoaderTest {
         loader.getExtension("ok");
 
         try {
-            loader.getExtension("error"); //error对应的类Ext7InitErrorImpl，在初始化时会主动抛出异常， todo @csy-012 在哪里捕获这个异常的？为啥没有再loadClass方法抛出异常？ExceptionInInitializerError是什么时候抛出的异常？
+            loader.getExtension("error"); //error对应的类Ext7InitErrorImpl，在初始化时会主动抛出异常
             fail();
         } catch (IllegalStateException expected) { //上层应用主动接口异常并进行处理
             assertThat(expected.getMessage(), containsString("Failed to load extension class (interface: interface org.apache.dubbo.common.extension.ext7.InitErrorExt"));
@@ -429,7 +409,7 @@ public class ExtensionLoaderTest {
         Assertions.assertSame(list.get(0).getClass(), GroupActivateExtImpl.class);
 
         ActivateExt1 activateExt1 = getExtensionLoader(ActivateExt1.class).getExtension("group");
-        System.out.println(activateExt1.echo("est3333")); //todo @csy-012 当扩展名与@Activate中的value值一样时怎么取？cachedClasses、cachedActivates是怎么存储的？
+        System.out.println(activateExt1.echo("est3333"));
 
         // test old @Activate group
         url = url.addParameter(GROUP_KEY, "old_group");

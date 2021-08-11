@@ -26,7 +26,7 @@ import java.util.*;
  * We should merge them in the future.
  * （ServiceModel和ServiceMetadata在某种程度上是相互复制的。我们将来应该合并它们）
  */
-public class ServiceDescriptor { //服务的描述信息，todo @csy-030-P3 待调试
+public class ServiceDescriptor { //服务的描述信息
     private final String serviceName; //服务名，如："org.apache.dubbo.rpc.service.EchoService"
     private final Class<?> serviceInterfaceClass;
     // to accelerate search

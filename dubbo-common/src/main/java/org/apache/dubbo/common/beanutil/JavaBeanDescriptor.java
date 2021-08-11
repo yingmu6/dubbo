@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public final class JavaBeanDescriptor implements Serializable, Iterable<Map.Entry<Object, Object>> { //todo @csy-019-P3 java bean的描述符是指啥？
+public final class JavaBeanDescriptor implements Serializable, Iterable<Map.Entry<Object, Object>> {
 
     private static final long serialVersionUID = -8505586483570518029L;
 

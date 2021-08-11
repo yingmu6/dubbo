@@ -16,10 +16,9 @@
  */
 package org.apache.dubbo.common.serialize.hessian2;
 
+import com.alibaba.com.caucho.hessian.io.Hessian2Output;
 import org.apache.dubbo.common.serialize.ObjectOutput;
 import org.apache.dubbo.common.serialize.hessian2.dubbo.Hessian2FactoryInitializer;
-
-import com.alibaba.com.caucho.hessian.io.Hessian2Output;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -36,7 +35,7 @@ public class Hessian2ObjectOutput implements ObjectOutput {
         return h2o;
     });
 
-    private final Hessian2Output mH2o; //todo @csy-005 hessian2 序列化、反序列化方式待了解
+    private final Hessian2Output mH2o;
 
     public Hessian2ObjectOutput(OutputStream os) {
         mH2o = OUTPUT_TL.get();

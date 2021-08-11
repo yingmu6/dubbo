@@ -30,7 +30,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.TIME_COUNTDOWN_K
  * Log any invocation timeout, but don't stop server from running
  */
 @Activate(group = CommonConstants.PROVIDER)
-public class TimeoutFilter implements Filter, Filter.Listener { //todo @csy-019-P2 何时被调用，是在过滤链中吗
+public class TimeoutFilter implements Filter, Filter.Listener {
 
     private static final Logger logger = LoggerFactory.getLogger(TimeoutFilter.class);
 

@@ -21,12 +21,12 @@ import org.apache.dubbo.common.logger.LoggerFactory;
 import org.apache.dubbo.remoting.Channel;
 import org.apache.dubbo.remoting.ChannelHandler;
 
-public class ChannelEventRunnable implements Runnable { //todo @csy-027-P2 通道事件线程的用途是什么？是在什么情况下触发的？
+public class ChannelEventRunnable implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(ChannelEventRunnable.class);
 
     private final ChannelHandler handler;
     private final Channel channel;
-    private final ChannelState state; //todo @csy-027-P3 成员变量的值是在哪里赋值的？
+    private final ChannelState state;
     private final Throwable exception;
     private final Object message;
 

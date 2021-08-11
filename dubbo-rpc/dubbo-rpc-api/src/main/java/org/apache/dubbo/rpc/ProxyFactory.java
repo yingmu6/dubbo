@@ -45,7 +45,7 @@ public interface ProxyFactory {
      * @return proxy
      */
     @Adaptive({PROXY_KEY})
-    <T> T getProxy(Invoker<T> invoker) throws RpcException; //todo @csy-015 什么情况下会创建代理？消费者、提供者是如何创建代理对象的？
+    <T> T getProxy(Invoker<T> invoker) throws RpcException;
 
     /**
      * create proxy.

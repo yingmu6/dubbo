@@ -16,6 +16,12 @@
  */
 package org.apache.dubbo.rpc.protocol.hessian;
 
+import com.caucho.hessian.HessianException;
+import com.caucho.hessian.client.HessianConnectionException;
+import com.caucho.hessian.client.HessianConnectionFactory;
+import com.caucho.hessian.client.HessianProxyFactory;
+import com.caucho.hessian.io.HessianMethodSerializationException;
+import com.caucho.hessian.server.HessianSkeleton;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.remoting.RemotingServer;
 import org.apache.dubbo.remoting.http.HttpBinder;
@@ -26,13 +32,6 @@ import org.apache.dubbo.rpc.RpcException;
 import org.apache.dubbo.rpc.protocol.AbstractProxyProtocol;
 import org.apache.dubbo.rpc.service.GenericService;
 import org.apache.dubbo.rpc.support.ProtocolUtils;
-
-import com.caucho.hessian.HessianException;
-import com.caucho.hessian.client.HessianConnectionException;
-import com.caucho.hessian.client.HessianConnectionFactory;
-import com.caucho.hessian.client.HessianProxyFactory;
-import com.caucho.hessian.io.HessianMethodSerializationException;
-import com.caucho.hessian.server.HessianSkeleton;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -49,11 +48,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.TIMEOUT_KEY;
 import static org.apache.dubbo.remoting.Constants.CLIENT_KEY;
 import static org.apache.dubbo.remoting.Constants.DEFAULT_EXCHANGER;
 import static org.apache.dubbo.rpc.Constants.GENERIC_KEY;
-import static org.apache.dubbo.rpc.protocol.hessian.Constants.DEFAULT_HESSIAN2_REQUEST;
-import static org.apache.dubbo.rpc.protocol.hessian.Constants.DEFAULT_HESSIAN_OVERLOAD_METHOD;
-import static org.apache.dubbo.rpc.protocol.hessian.Constants.DEFAULT_HTTP_CLIENT;
-import static org.apache.dubbo.rpc.protocol.hessian.Constants.HESSIAN2_REQUEST_KEY;
-import static org.apache.dubbo.rpc.protocol.hessian.Constants.HESSIAN_OVERLOAD_METHOD_KEY;
+import static org.apache.dubbo.rpc.protocol.hessian.Constants.*;
 
 /**
  * http rpc support.
@@ -78,15 +73,15 @@ public class HessianProtocol extends AbstractProxyProtocol {
     }
 
     @Override
-    protected <T> Runnable doExport(T impl, Class<T> type, URL url) throws RpcException { //todo @csy-002 此处是org.apache.dubbo.rpc.protocol.AbstractProxyProtocol.doExport默认实现吗？
+    protected <T> Runnable doExport(T impl, Class<T> type, URL url) throws RpcException {
         String addr = getAddr(url);
         ProtocolServer protocolServer = serverMap.get(addr);
         if (protocolServer == null) {
-            RemotingServer remotingServer = httpBinder.bind(url, new HessianHandler()); //todo @csy-002 此处是绑定事件吗？是怎么做回调的？
+            RemotingServer remotingServer = httpBinder.bind(url, new HessianHandler());
             serverMap.put(addr, new ProxyProtocolServer(remotingServer));
         }
         final String path = url.getAbsolutePath();
-        final HessianSkeleton skeleton = new HessianSkeleton(impl, type); //todo @csy Hessian 了解以及基本使用
+        final HessianSkeleton skeleton = new HessianSkeleton(impl, type);
         skeletonMap.put(path, skeleton);
 
         final String genericPath = path + "/" + GENERIC_KEY;
@@ -181,7 +176,7 @@ public class HessianProtocol extends AbstractProxyProtocol {
                 RpcContext.getContext().setRemoteAddress(request.getRemoteAddr(), request.getRemotePort());
 
                 Enumeration<String> enumeration = request.getHeaderNames();
-                while (enumeration.hasMoreElements()) { //todo @csy-002 待调试覆盖
+                while (enumeration.hasMoreElements()) {
                     String key = enumeration.nextElement();
                     if (key.startsWith(DEFAULT_EXCHANGER)) {
                         RpcContext.getContext().setAttachment(key.substring(DEFAULT_EXCHANGER.length()),

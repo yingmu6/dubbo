@@ -18,11 +18,7 @@ package org.apache.dubbo.event;
 
 import org.apache.dubbo.common.extension.ExtensionLoader;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.ServiceLoader;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executor;
@@ -113,7 +109,7 @@ public abstract class AbstractEventDispatcher implements EventDispatcher {
     }
 
     @Override
-    public void dispatch(Event event) { //dispatch：调度 todo @csy-006 使用场景是怎样的？待调试
+    public void dispatch(Event event) {
 
         Executor executor = getExecutor();
 

@@ -37,7 +37,7 @@ public class ExecuteLimitFilter implements Filter, Filter.Listener { //应用于
 
     @Override
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
-        URL url = invoker.getUrl(); //todo @csy-018-P3 是怎样构建URL的，url中的parameters是怎么设置的？
+        URL url = invoker.getUrl();
         String methodName = invocation.getMethodName();
         int max = url.getMethodParameter(methodName, EXECUTES_KEY, 0);
         if (!RpcStatus.beginCount(url, methodName, max)) { //@csy-017-P2 是调用次数限制，还是并发调用请求数，怎么模拟使用 解：根据原子计数判断是否超过指定的并发数

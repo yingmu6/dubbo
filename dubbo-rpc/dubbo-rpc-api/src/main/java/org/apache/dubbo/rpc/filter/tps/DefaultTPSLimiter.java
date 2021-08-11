@@ -36,7 +36,7 @@ public class DefaultTPSLimiter implements TPSLimiter { //https://blog.51cto.com/
 
     @Override
     public boolean isAllowable(URL url, Invocation invocation) {
-        int rate = url.getParameter(TPS_LIMIT_RATE_KEY, -1); //todo @csy-019 rate是啥？为啥还会有小于0的值？
+        int rate = url.getParameter(TPS_LIMIT_RATE_KEY, -1);
         long interval = url.getParameter(TPS_LIMIT_INTERVAL_KEY, DEFAULT_TPS_LIMIT_INTERVAL);
         String serviceKey = url.getServiceKey();
         if (rate > 0) {

@@ -33,11 +33,11 @@ import java.io.OutputStream;
  * </pre>
  */
 @SPI("hessian2")
-public interface Serialization { //todo @csy-019-P2 序列化方式都有哪些？都都什么差异的
+public interface Serialization {
 
     /**
      * Get content type unique id, recommended that custom implementations use values different with
-     * any value of {@link Constants} and don't greater than ExchangeCodec.SERIALIZATION_MASK (31) 
+     * any value of {@link Constants} and don't greater than ExchangeCodec.SERIALIZATION_MASK (31)
      * because dubbo protocol use 5 bits to record serialization ID in header.
      *
      * @return content type id

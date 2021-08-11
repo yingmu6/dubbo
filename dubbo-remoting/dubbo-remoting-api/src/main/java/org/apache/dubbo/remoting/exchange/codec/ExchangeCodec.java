@@ -83,7 +83,7 @@ public class ExchangeCodec extends TelnetCodec {
     }
 
     @Override
-    protected Object decode(Channel channel, ChannelBuffer buffer, int readable, byte[] header) throws IOException { //todo @csy-005 解码是怎么处理半包、粘包的？
+    protected Object decode(Channel channel, ChannelBuffer buffer, int readable, byte[] header) throws IOException {
         // check magic number.
         if (readable > 0 && header[0] != MAGIC_HIGH
                 || readable > 1 && header[1] != MAGIC_LOW) {
@@ -134,7 +134,7 @@ public class ExchangeCodec extends TelnetCodec {
         }
     }
 
-    protected Object decodeBody(Channel channel, InputStream is, byte[] header) throws IOException { //todo @csy-005 是如果解码body的？
+    protected Object decodeBody(Channel channel, InputStream is, byte[] header) throws IOException {
         byte flag = header[2], proto = (byte) (flag & SERIALIZATION_MASK);
         // get request id.
         long id = Bytes.bytes2long(header, 4);
@@ -212,10 +212,10 @@ public class ExchangeCodec extends TelnetCodec {
         // header.
         byte[] header = new byte[HEADER_LENGTH]; //dubbo请求头，固定16字节
         // set magic number.
-        Bytes.short2bytes(MAGIC, header); //todo @csy-005 前两个字节分别是 -38、-69，是怎么算出来的？
+        Bytes.short2bytes(MAGIC, header);
 
         // set request and serialization flag.
-        header[2] = (byte) (FLAG_REQUEST | serialization.getContentTypeId()); //todo @csy-005 此处为啥要做逻辑与运算？
+        header[2] = (byte) (FLAG_REQUEST | serialization.getContentTypeId());
 
         if (req.isTwoWay()) {
             header[2] |= FLAG_TWOWAY;
@@ -232,7 +232,7 @@ public class ExchangeCodec extends TelnetCodec {
         buffer.writerIndex(savedWriteIndex + HEADER_LENGTH);
         ChannelBufferOutputStream bos = new ChannelBufferOutputStream(buffer);
         ObjectOutput out = serialization.serialize(channel.getUrl(), bos);
-        if (req.isEvent()) { //todo @csy-005 事件数据和请求数据编码有何不同
+        if (req.isEvent()) {
             encodeEventData(channel, out, req.getData());
         } else {
             encodeRequestData(channel, out, req.getData(), req.getVersion());
@@ -245,7 +245,7 @@ public class ExchangeCodec extends TelnetCodec {
         bos.close();
         int len = bos.writtenBytes();
         checkPayload(channel, len);
-        Bytes.int2bytes(len, header, 12); //todo @csy-005 怎么组装为16字节的
+        Bytes.int2bytes(len, header, 12);
 
         // write
         buffer.writerIndex(savedWriteIndex);
@@ -253,7 +253,7 @@ public class ExchangeCodec extends TelnetCodec {
         buffer.writerIndex(savedWriteIndex + HEADER_LENGTH + len);
     }
 
-    protected void encodeResponse(Channel channel, ChannelBuffer buffer, Response res) throws IOException { //todo @csy encodeRequest与encodeResponse处理有何不同？
+    protected void encodeResponse(Channel channel, ChannelBuffer buffer, Response res) throws IOException {
         int savedWriteIndex = buffer.writerIndex();
         try {
             Serialization serialization = getSerialization(channel);

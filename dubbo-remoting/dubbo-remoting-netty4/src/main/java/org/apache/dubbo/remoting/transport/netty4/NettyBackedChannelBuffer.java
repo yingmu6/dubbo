@@ -27,7 +27,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
-public class NettyBackedChannelBuffer implements ChannelBuffer { //todo @csy-026-P3 该类的功能用途是啥？
+public class NettyBackedChannelBuffer implements ChannelBuffer {
 
     private ByteBuf buffer;
 

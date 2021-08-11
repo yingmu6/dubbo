@@ -20,7 +20,6 @@ import org.apache.dubbo.common.config.ConfigurationUtils;
 import org.apache.dubbo.common.utils.StringUtils;
 import org.apache.dubbo.config.ConfigCenterConfig;
 import org.apache.dubbo.config.spring.extension.SpringExtensionFactory;
-
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -37,7 +36,7 @@ import java.util.Map;
  * So it's ok for this bean not to be the first Dubbo Config bean being initialized.
  * <p>
  */
-public class ConfigCenterBean extends ConfigCenterConfig implements ApplicationContextAware, DisposableBean, EnvironmentAware { //todo @csy-004 此类的用途是啥？何时被使用？
+public class ConfigCenterBean extends ConfigCenterConfig implements ApplicationContextAware, DisposableBean, EnvironmentAware {
 
     private transient ApplicationContext applicationContext;
 

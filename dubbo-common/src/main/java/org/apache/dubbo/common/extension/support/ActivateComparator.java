@@ -27,8 +27,7 @@ import java.util.Comparator;
 /**
  * OrderComparator
  */
-public class ActivateComparator implements Comparator<Object> { //todo @csy-007 针对自动激活扩展类列表进行排序，待调试覆盖
-
+public class ActivateComparator implements Comparator<Object> {
     public static final Comparator<Object> COMPARATOR = new ActivateComparator();
 
     @Override

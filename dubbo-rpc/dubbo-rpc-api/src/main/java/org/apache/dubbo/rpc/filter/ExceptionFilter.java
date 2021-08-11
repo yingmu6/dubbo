@@ -54,7 +54,7 @@ public class ExceptionFilter implements Filter, Filter.Listener { //异常过滤
                 Throwable exception = appResponse.getException();
 
                 // directly throw if it's checked exception
-                if (!(exception instanceof RuntimeException) && (exception instanceof Exception)) { //todo @csy-019-P3 什么是检查和非检查异常？ 非!、与&、或||的优先级是怎样的？
+                if (!(exception instanceof RuntimeException) && (exception instanceof Exception)) {
                     return;
                 }
                 // directly throw if the exception appears in the signature
@@ -63,7 +63,7 @@ public class ExceptionFilter implements Filter, Filter.Listener { //异常过滤
                     Class<?>[] exceptionClassses = method.getExceptionTypes();
                     for (Class<?> exceptionClass : exceptionClassses) {
                         if (exception.getClass().equals(exceptionClass)) {
-                            return; //todo @csy-019-P3 此处为啥会return进行终止
+                            return;
                         }
                     }
                 } catch (NoSuchMethodException e) {
@@ -80,7 +80,7 @@ public class ExceptionFilter implements Filter, Filter.Listener { //异常过滤
                     return;
                 }
                 // directly throw if it's JDK exception
-                String className = exception.getClass().getName(); //todo @csy-019 此处的处理逻辑是怎样的？
+                String className = exception.getClass().getName();
                 if (className.startsWith("java.") || className.startsWith("javax.")) {
                     return;
                 }

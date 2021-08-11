@@ -22,11 +22,10 @@ public class ProviderApplication {
     public static void main(String[] args) throws Exception {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("spring/dubbo-provider.xml");
         context.start();
-        System.in.read(); //todo @csy-024-P2  提供者启动时所用端口是在哪里设置的？比如20880？
+        System.in.read();
     }
 
     /**
-     * todo @csy-025-P3
      * 1）启动日志是哪里打印的？
      * 如：[23/07/21 12:47:32:707 CST] main  INFO bootstrap.DubboBootstrap:  [DUBBO] DubboBootstrap has started., dubbo version: , current host: 192.168.1.107
      *

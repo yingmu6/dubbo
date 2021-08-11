@@ -182,7 +182,6 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
             } else {
                 String echo = handler.telnet(channel, (String) message); //进行Telnet指令调用
 
-                //todo @csy-027-P3  命令echo status | nc -i 1 localhost 20880 是怎么被执行的？为啥能回复 "OK"？与telnet指令有啥区别？
                 if (echo != null && echo.length() > 0) {
                     channel.send(echo);
                 }

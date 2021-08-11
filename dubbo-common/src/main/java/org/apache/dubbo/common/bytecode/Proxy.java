@@ -24,13 +24,7 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.WeakHashMap;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static org.apache.dubbo.common.constants.CommonConstants.MAX_PROXY_COUNT;
@@ -120,7 +114,7 @@ public abstract class Proxy { //代理抽象类
         }
 
         Proxy proxy = null;
-        synchronized (cache) { //加锁处理 ，todo @csy-016 此处的cache缓存的功能用途是什么？
+        synchronized (cache) { //加锁处理
             do {
                 Object value = cache.get(key);
                 if (value instanceof Reference<?>) { //若是Reference的实例，则强制转换为Proxy
@@ -136,7 +130,7 @@ public abstract class Proxy { //代理抽象类
                     } catch (InterruptedException e) {
                     }
                 } else {
-                    cache.put(key, PENDING_GENERATION_MARKER); //todo @csy-015 此处的等待标志的用途是什么？
+                    cache.put(key, PENDING_GENERATION_MARKER);
                     break;
                 }
             }
@@ -242,7 +236,7 @@ public abstract class Proxy { //代理抽象类
                 ccm.release();
             }
             synchronized (cache) {
-                if (proxy == null) { //todo @csy-016-P3 newInstance() 创建的对象，什么情况下会为null？
+                if (proxy == null) {
                     cache.remove(key);
                 } else {
                     cache.put(key, new WeakReference<Proxy>(proxy));

@@ -24,30 +24,13 @@ import org.apache.dubbo.common.logger.LoggerFactory;
 import org.apache.dubbo.common.logger.support.FailsafeLogger;
 
 import java.io.IOException;
-import java.net.Inet4Address;
-import java.net.Inet6Address;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.MulticastSocket;
-import java.net.NetworkInterface;
-import java.net.ServerSocket;
-import java.net.SocketException;
-import java.net.UnknownHostException;
-import java.util.Enumeration;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.net.*;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Pattern;
 
 import static java.util.Collections.emptyList;
-import static org.apache.dubbo.common.constants.CommonConstants.ANYHOST_VALUE;
-import static org.apache.dubbo.common.constants.CommonConstants.DUBBO_IP_TO_BIND;
-import static org.apache.dubbo.common.constants.CommonConstants.DUBBO_PREFERRED_NETWORK_INTERFACE;
-import static org.apache.dubbo.common.constants.CommonConstants.LOCALHOST_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.LOCALHOST_VALUE;
+import static org.apache.dubbo.common.constants.CommonConstants.*;
 import static org.apache.dubbo.common.utils.CollectionUtils.first;
 
 /**
@@ -80,7 +63,7 @@ public class NetUtils {
     private static volatile InetAddress LOCAL_ADDRESS = null;
 
     private static final String SPLIT_IPV4_CHARACTER = "\\.";
-    private static final String SPLIT_IPV6_CHARACTER = ":"; //todo @csy-004 ipv4与ipv6的差异是啥？
+    private static final String SPLIT_IPV6_CHARACTER = ":";
 
     public static int getRandomPort() {
         return RND_PORT_START + ThreadLocalRandom.current().nextInt(RND_PORT_RANGE);
@@ -179,7 +162,7 @@ public class NetUtils {
      * @param address the input address
      * @return the normalized address, with scope id converted to int
      */
-    static InetAddress normalizeV6Address(Inet6Address address) { //todo @csy-004 此处是怎么格式化的？哪种情况会进入该逻辑
+    static InetAddress normalizeV6Address(Inet6Address address) {
         String addr = address.getHostAddress();
         int i = addr.lastIndexOf('%');
         if (i > 0) {
@@ -300,7 +283,7 @@ public class NetUtils {
         }
 
         try {
-            localAddress = InetAddress.getLocalHost(); //若网络接口没查询到本地地址，则使用InetAddress中方法查找， todo @csy-005 相比NetworkInterface，InetAddress.getLocalHost查询有哪些不足？
+            localAddress = InetAddress.getLocalHost();
             Optional<InetAddress> addressOp = toValidAddress(localAddress);
             if (addressOp.isPresent()) {
                 return addressOp.get();
@@ -321,7 +304,7 @@ public class NetUtils {
      */
     private static boolean ignoreNetworkInterface(NetworkInterface networkInterface) throws SocketException { //是否是需要忽略的网络接口
         return networkInterface == null
-                || networkInterface.isLoopback() //todo @csy-004 什么是环路地址、虚拟地址、up等
+                || networkInterface.isLoopback()
                 || networkInterface.isVirtual()
                 || !networkInterface.isUp();
     }
@@ -367,7 +350,7 @@ public class NetUtils {
      */
     public static NetworkInterface findNetworkInterface() {
 
-        List<NetworkInterface> validNetworkInterfaces = emptyList(); //todo @csy-004 NetworkInterface了解以及使用
+        List<NetworkInterface> validNetworkInterfaces = emptyList();
         try {
             validNetworkInterfaces = getValidNetworkInterfaces();
         } catch (Throwable e) {
@@ -386,14 +369,14 @@ public class NetUtils {
 
         if (result == null) { // If not found, try to get the first one（若按首选接口方式没有查到，则继续查找）
             for (NetworkInterface networkInterface : validNetworkInterfaces) {
-                Enumeration<InetAddress> addresses = networkInterface.getInetAddresses(); //todo @csy-005 方法中使用了内部类，作用域是怎样的？内部类都有哪些使用方式？
+                Enumeration<InetAddress> addresses = networkInterface.getInetAddresses(); //方法中使用了内部类，作用域是怎样的？内部类都有哪些使用方式？
                 while (addresses.hasMoreElements()) {
-                    Optional<InetAddress> addressOp = toValidAddress(addresses.nextElement()); //todo @csy-004 Optional待了解实践
+                    Optional<InetAddress> addressOp = toValidAddress(addresses.nextElement());
                     if (addressOp.isPresent()) {
                         try {
                             if (addressOp.get().isReachable(100)) { //测试网络地址是否在指定时间是可达的isReachable
                                 result = networkInterface;
-                                break; //只要找到一个有效IP地址，则结束循环 todo @csy-005 break能结束多重循环吗
+                                break; //只要找到一个有效IP地址，则结束循环
                             }
                         } catch (IOException e) {
                             // ignore

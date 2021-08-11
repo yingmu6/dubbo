@@ -43,7 +43,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  */
 
-public class ApplicationModel { //应用模型  todo @csy-016-P2 功能用途是什么？何时被使用？
+public class ApplicationModel { //应用模型
     protected static final Logger LOGGER = LoggerFactory.getLogger(ApplicationModel.class);
     public static final String NAME = "application";
 
@@ -88,7 +88,7 @@ public class ApplicationModel { //应用模型  todo @csy-016-P2 功能用途是
         return (Environment) LOADER.getExtension(Environment.NAME);
     }
 
-    public static ConfigManager getConfigManager() { //todo @csy-003 待调试
+    public static ConfigManager getConfigManager() {
         return (ConfigManager) LOADER.getExtension(ConfigManager.NAME); //config对应的扩展类为ConfigManager
     }
 

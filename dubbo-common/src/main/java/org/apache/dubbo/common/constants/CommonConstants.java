@@ -54,7 +54,7 @@ public interface CommonConstants {
 
     String DOT_SEPARATOR = ".";
 
-    Pattern COMMA_SPLIT_PATTERN = Pattern.compile("\\s*[,]+\\s*"); //todo @csy-025-P2 Pattern能使用，熟悉常见正则表达式
+    Pattern COMMA_SPLIT_PATTERN = Pattern.compile("\\s*[,]+\\s*");
 
     String PATH_SEPARATOR = "/";
 
@@ -293,11 +293,11 @@ public interface CommonConstants {
 
     String GENERIC_SERIALIZATION_BEAN = "bean";
 
-    String GENERIC_RAW_RETURN = "raw.return"; //todo @csy-019-P3 raw类型是怎样的？
+    String GENERIC_RAW_RETURN = "raw.return";
 
     String GENERIC_SERIALIZATION_PROTOBUF = "protobuf-json";
 
-    String GENERIC_WITH_CLZ_KEY = "generic.include.class"; //todo @csy-023-P3 这里的使用场景是怎样的？
+    String GENERIC_WITH_CLZ_KEY = "generic.include.class";
 
     /**
      * The limit of callback service instances for one interface on every client

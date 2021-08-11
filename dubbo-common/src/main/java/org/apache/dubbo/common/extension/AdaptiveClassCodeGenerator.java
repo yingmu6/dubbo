@@ -249,7 +249,7 @@ public class AdaptiveClassCodeGenerator {
     /**
      * generate extName assigment code
      */
-    private String generateExtNameAssignment(String[] value, boolean hasInvocation) { //获取扩展名对应的语句， todo @csy-011 待调试了解
+    private String generateExtNameAssignment(String[] value, boolean hasInvocation) { //获取扩展名对应的语句
         // TODO: refactor it
         String getNameCode = null;
         for (int i = value.length - 1; i >= 0; --i) { //从右往左设置默认值，然后取值时从左到右取值（根据默认属性名、protocol自适应名称、是否有Invocation参数等因素来判断扩展名的获取方式）
@@ -276,7 +276,7 @@ public class AdaptiveClassCodeGenerator {
                         getNameCode = "url.getProtocol()";
                     }
                 }
-            } else { //todo @csy-011 多个value情况、是否有默认值情况、是否有Invocation参数的情况待调试？
+            } else {
                 if (!"protocol".equals(value[i])) {
                     if (hasInvocation) {
                         getNameCode = String.format("url.getMethodParameter(methodName, \"%s\", \"%s\")", value[i], defaultExtName);
@@ -309,7 +309,7 @@ public class AdaptiveClassCodeGenerator {
                 .mapToObj(i -> String.format(CODE_EXTENSION_METHOD_INVOKE_ARGUMENT, i))
                 .collect(Collectors.joining(", "));
 
-        return returnStatement + String.format("extension.%s(%s);\n", method.getName(), args); //todo @csy-011 此处待调试，看具体产生的语句
+        return returnStatement + String.format("extension.%s(%s);\n", method.getName(), args);
     }
 
     /**
@@ -378,7 +378,7 @@ public class AdaptiveClassCodeGenerator {
         if (index != null) { //getUrl方法
             return generateGetUrlNullCheck(index, pts[index], "getUrl");
         } else {             //非getUrl方法
-            Map.Entry<String, Integer> entry = getterReturnUrl.entrySet().iterator().next(); //todo @csy-011 此处待调试
+            Map.Entry<String, Integer> entry = getterReturnUrl.entrySet().iterator().next();
             return generateGetUrlNullCheck(entry.getValue(), pts[entry.getValue()], entry.getKey());
         }
     }

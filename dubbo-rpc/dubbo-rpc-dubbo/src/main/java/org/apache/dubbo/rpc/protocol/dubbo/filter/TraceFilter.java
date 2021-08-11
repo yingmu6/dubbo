@@ -93,7 +93,7 @@ public class TraceFilter implements Filter {
                                 channel.setAttribute(TRACE_COUNT, c);
                             }
                             count = c.getAndIncrement();
-                            if (count < max) { //todo @csy-027-P3 此处的功能，在执行telnet时也会触发吗？
+                            if (count < max) {
                                 String prompt = channel.getUrl().getParameter(Constants.PROMPT_KEY, Constants.DEFAULT_PROMPT);
                                 channel.send("\r\n" + RpcContext.getContext().getRemoteAddress() + " -> "
                                         + invoker.getInterface().getName()

@@ -111,7 +111,7 @@ public class ActiveLimitFilter implements Filter, Filter.Listener { // 用途是
     private void notifyFinish(final RpcStatus rpcStatus, int max) {
         if (max > 0) {
             synchronized (rpcStatus) {
-                rpcStatus.notifyAll(); //todo @csy-021-P3 此处的notifyAll()了解
+                rpcStatus.notifyAll();
             }
         }
     }

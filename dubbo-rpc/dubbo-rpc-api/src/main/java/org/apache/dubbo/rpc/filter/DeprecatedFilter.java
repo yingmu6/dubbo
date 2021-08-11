@@ -41,7 +41,7 @@ public class DeprecatedFilter implements Filter {
     private static final Set<String> LOGGED = new ConcurrentHashSet<String>();
 
     @Override
-    public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException { //todo @csy-019-P3 Deprecated，了解弃用标识
+    public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
         String key = invoker.getInterface().getName() + "." + invocation.getMethodName();
         if (!LOGGED.contains(key)) {
             LOGGED.add(key);

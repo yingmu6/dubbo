@@ -36,11 +36,7 @@ public class TelnetHandlerAdapter extends ChannelHandlerAdapter implements Telne
      * 应用Telnet协议能够把本地用户所使用的计算机变成远程主机系统的一个终端。
      */
 
-    private final ExtensionLoader<TelnetHandler> extensionLoader = ExtensionLoader.getExtensionLoader(TelnetHandler.class); //todo @csy-027-P3 此处的成员变量是怎么赋值的？
-
-    // todo @csy-027-P2 当有多个服务暴露时，Channel中的url是选择哪个服务Service的？
-    // todo @csy-027-P2 "Connection closed by foreign host"，telent的通道什么时候会被关闭？
-    // todo @csy-027-P3 cd指令对应哪个处理类，默认缺省服务又是指啥？
+    private final ExtensionLoader<TelnetHandler> extensionLoader = ExtensionLoader.getExtensionLoader(TelnetHandler.class);
 
     @Override
     public String telnet(Channel channel, String message) throws RemotingException { //@csy-024-P2 此处是否是指令入口、分发的地方？解：是Telnet指令处理的地方
@@ -63,7 +59,7 @@ public class TelnetHandlerAdapter extends ChannelHandlerAdapter implements Telne
             command = "";
         }
         if (command.length() > 0) { //@csy-025-P3 telnet输入回车时，会进行怎样的操作？解：输入回车时，写到通道的内容为空字符串，不会进入此处逻辑
-            if (extensionLoader.hasExtension(command)) { //将命令名作为SPI的扩展名，todo @csy-025-P3 为什么org.apache.dubbo.remoting.telnet.TelnetHandler配置文件会有多个？SPI扩展时，到底加载哪些？
+            if (extensionLoader.hasExtension(command)) { //将命令名作为SPI的扩展名
                 if (commandEnabled(channel.getUrl(), command)) {
                     try {
                         String result = extensionLoader.getExtension(command).telnet(channel, message); //获取指定命令的实例，并将结果写到channel
@@ -98,7 +94,7 @@ public class TelnetHandlerAdapter extends ChannelHandlerAdapter implements Telne
              * dubbo>
              */
         }
-        return buf.toString(); //响应给telnet客户端的内容，todo @csy-025-P2 是怎么响应的？
+        return buf.toString(); //响应给telnet客户端的内容
     }
 
     private boolean commandEnabled(URL url, String command) { //判断指令是否能启用

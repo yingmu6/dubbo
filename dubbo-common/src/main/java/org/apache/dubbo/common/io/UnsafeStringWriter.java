@@ -22,7 +22,7 @@ import java.io.Writer;
 /**
  * Thread-unsafe StringWriter.
  */
-public class UnsafeStringWriter extends Writer { //todo @csy-010 为啥是线程不安全的写？
+public class UnsafeStringWriter extends Writer {
     private StringBuilder mBuffer;
 
     public UnsafeStringWriter() {

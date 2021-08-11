@@ -38,7 +38,7 @@ public class TpsLimitFilter implements Filter {
     private final TPSLimiter tpsLimiter = new DefaultTPSLimiter();
 
     @Override
-    public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException { //todo @csy-19-P3 tps是啥？是怎么做限制的？
+    public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
 
         if (!tpsLimiter.isAllowable(invoker.getUrl(), invocation)) {
             throw new RpcException(

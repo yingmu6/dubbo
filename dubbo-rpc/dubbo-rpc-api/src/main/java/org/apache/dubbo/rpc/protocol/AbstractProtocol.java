@@ -40,7 +40,7 @@ public abstract class AbstractProtocol implements Protocol {
     /**
      * <serviceKey, Exporter>
      */
-    protected final Map<String, Exporter<?>> exporterMap = new ConcurrentHashMap<String, Exporter<?>>(); //todo @csy-032-P2 启动时，是怎么把暴露的服务写到本地缓存的？
+    protected final Map<String, Exporter<?>> exporterMap = new ConcurrentHashMap<String, Exporter<?>>();
 
     /**
      * <host:port, ProtocolServer>

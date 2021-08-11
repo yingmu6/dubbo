@@ -33,7 +33,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class PojoUtilsTest { //todo @csy-033-P2 工具类待测试
+public class PojoUtilsTest {
 
     BigPerson bigPerson;
 

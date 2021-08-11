@@ -33,19 +33,19 @@ import java.util.List;
  */
 @Activate
 @Help(parameter = "[-l] [service]", summary = "List services and methods.", detail = "List services and methods.")
-public class ListTelnetHandler implements TelnetHandler { //todo @csy-029-P3 是否做了缓存，感觉第一次慢些，后面都比较快的
+public class ListTelnetHandler implements TelnetHandler {
 
     private ServiceRepository serviceRepository = ApplicationModel.getServiceRepository();
 
     @Override
-    public String telnet(Channel channel, String message) { //todo @csy-027-P3 为什么ls org.apache.dubbo.demo.GreetingService与ls GreetingService中类全路径名和类的简称效果是一样的？
+    public String telnet(Channel channel, String message) {
         StringBuilder buf = new StringBuilder();
         String service = null;
         boolean detail = false;
         if (message.length() > 0) {
-            String[] parts = message.split("\\s+"); //todo @csy-030-P3 此处会分割出什么？正则表达式是什么含义？
+            String[] parts = message.split("\\s+");
             for (String part : parts) {
-                if ("-l".equals(part)) { //todo @csy-031-P3 为啥ls -l 不支持默认服务，而ls是支持默认服务的
+                if ("-l".equals(part)) {
                     detail = true;
                 } else {
                     if (!StringUtils.isEmpty(service)) {
@@ -127,7 +127,7 @@ public class ListTelnetHandler implements TelnetHandler { //todo @csy-029-P3 是
         }
     }
 
-    private void printSpecifiedReferredService(String service, StringBuilder buf, boolean detail) { //todo @csy-027-P3 一般情况下，提供者与消费者的xml都是分开的，也可以混合使用吗？此处的as consumer在什么条件下能打印出来
+    private void printSpecifiedReferredService(String service, StringBuilder buf, boolean detail) {
         for (ConsumerModel consumer : ApplicationModel.allConsumerModels()) {
             if (isConsumerMatcher(service, consumer)) {
                 buf.append(consumer.getServiceKey()).append(" (as consumer):\r\n");

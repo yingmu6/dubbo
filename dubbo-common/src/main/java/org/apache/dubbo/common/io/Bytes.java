@@ -18,11 +18,7 @@ package org.apache.dubbo.common.io;
 
 import org.apache.dubbo.common.utils.IOUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
@@ -89,7 +85,7 @@ public class Bytes {
      * @param v value.
      * @param b byte array.
      */
-    public static void short2bytes(short v, byte[] b, int off) { //todo @csy-005 此处运算的逻辑？
+    public static void short2bytes(short v, byte[] b, int off) {
         b[off + 1] = (byte) v;
         b[off + 0] = (byte) (v >>> 8);
     }
@@ -196,7 +192,7 @@ public class Bytes {
      * @param b   byte array.
      * @param off array offset.
      */
-    public static void long2bytes(long v, byte[] b, int off) { //todo @csy-005 此处的运算逻辑含义是什么？
+    public static void long2bytes(long v, byte[] b, int off) {
         b[off + 7] = (byte) v;
         b[off + 6] = (byte) (v >>> 8);
         b[off + 5] = (byte) (v >>> 16);

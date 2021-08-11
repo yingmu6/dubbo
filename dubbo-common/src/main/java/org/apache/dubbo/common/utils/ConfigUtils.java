@@ -26,17 +26,11 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.apache.dubbo.common.constants.CommonConstants.COMMA_SPLIT_PATTERN;
-import static org.apache.dubbo.common.constants.CommonConstants.DEFAULT_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.REMOVE_VALUE_PREFIX;
+import static org.apache.dubbo.common.constants.CommonConstants.*;
 
 public class ConfigUtils {
 
@@ -312,7 +306,7 @@ public class ConfigUtils {
     public static int getPid() {
         if (PID < 0) {
             try {
-                RuntimeMXBean runtime = ManagementFactory.getRuntimeMXBean(); //todo @csy-003 RuntimeMXBean待了解？
+                RuntimeMXBean runtime = ManagementFactory.getRuntimeMXBean();
                 String name = runtime.getName(); // format: "pid@hostname"
                 PID = Integer.parseInt(name.substring(0, name.indexOf('@')));
             } catch (Throwable e) {

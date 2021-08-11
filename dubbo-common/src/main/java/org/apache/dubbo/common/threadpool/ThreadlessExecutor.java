@@ -31,7 +31,7 @@ import java.util.concurrent.*;
  * Those tasks are stored in a blocking queue and will only be executed when a thread calls {@link #waitAndDrain()}, the thread executing the task
  * is exactly the same as the one calling waitAndDrain.
  */
-public class ThreadlessExecutor extends AbstractExecutorService { //todo @csy-022-P3 该类的功能用途是什么？
+public class ThreadlessExecutor extends AbstractExecutorService {
     private static final Logger logger = LoggerFactory.getLogger(ThreadlessExecutor.class.getName());
 
     private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
@@ -66,7 +66,7 @@ public class ThreadlessExecutor extends AbstractExecutorService { //todo @csy-02
      * Waits until there is a task, executes the task and all queued tasks (if there're any). The task is either a normal
      * response or a timeout response.
      */
-    public void waitAndDrain() throws InterruptedException { //todo @csy-022-P3 该方法的用途是什么？
+    public void waitAndDrain() throws InterruptedException {
         /**
          * Usually, {@link #waitAndDrain()} will only get called once. It blocks for the response for the first time,
          * once the response (the task) reached and being executed waitAndDrain will return, the whole request process

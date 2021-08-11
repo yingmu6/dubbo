@@ -22,7 +22,7 @@ public interface LoadingStrategy extends Prioritized { //加载策略：加载�
 
     String directory();
 
-    default boolean preferExtensionClassLoader() { //todo @csy-008 此处的用途是什么？
+    default boolean preferExtensionClassLoader() {
         return false;
     }
 

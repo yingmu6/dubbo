@@ -115,7 +115,7 @@ public class AccessLogFilter implements Filter {
     @Override
     public Result invoke(Invoker<?> invoker, Invocation inv) throws RpcException {
         try {
-            String accessLogKey = invoker.getUrl().getParameter(ACCESS_LOG_KEY); //todo @csy-021-P3 ACCESS_LOG_KEY值是怎么设置的？AccessLogData.newLogData()
+            String accessLogKey = invoker.getUrl().getParameter(ACCESS_LOG_KEY);
             if (ConfigUtils.isNotEmpty(accessLogKey)) {
                 AccessLogData logData = buildAccessLogData(invoker, inv); //构建日志数据
                 log(accessLogKey, logData);

@@ -23,11 +23,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
@@ -139,7 +135,7 @@ public abstract class Wrapper { //包装类
         List<String> dmns = new ArrayList<>(); // declaring method names.
 
         // get all public field.
-        for (Field f : c.getFields()) { //todo @csy-001 构建进入条件
+        for (Field f : c.getFields()) {
             String fn = f.getName();
             Class<?> ft = f.getType();
             if (Modifier.isStatic(f.getModifiers()) || Modifier.isTransient(f.getModifiers())) { //static、transient修饰的字段不处理
@@ -174,7 +170,7 @@ public abstract class Wrapper { //包装类
                         break;
                     }
                 }
-                if (override) { //todo @csy-001 构建执行条件
+                if (override) {
                     if (len > 0) {
                         for (int l = 0; l < len; l++) {
                             c3.append(" && ").append(" $3[").append(l).append("].getName().equals(\"")
@@ -236,7 +232,7 @@ public abstract class Wrapper { //包装类
         // make class（构建Class对象）
         long id = WRAPPER_CLASS_COUNTER.getAndIncrement();
         ClassGenerator cc = ClassGenerator.newInstance(cl);
-        cc.setClassName((Modifier.isPublic(c.getModifiers()) ? Wrapper.class.getName() : c.getName() + "$sw") + id); //org.apache.dubbo.common.bytecode.Wrapper0， todo @csy-001 $sw取哪里的值？
+        cc.setClassName((Modifier.isPublic(c.getModifiers()) ? Wrapper.class.getName() : c.getName() + "$sw") + id); //org.apache.dubbo.common.bytecode.Wrapper0
         cc.setSuperClass(Wrapper.class); //将Wrapper指定为父类
 
         cc.addDefaultConstructor();
@@ -268,7 +264,7 @@ public abstract class Wrapper { //包装类
             for (Method m : ms.values()) {
                 wc.getField("mts" + ix++).set(null, m.getParameterTypes());
             }
-            return (Wrapper) wc.newInstance(); //创建class对应的实例， todo @csy-001 Class类了解
+            return (Wrapper) wc.newInstance();
         } catch (RuntimeException e) {
             throw e;
         } catch (Throwable e) {
@@ -312,7 +308,7 @@ public abstract class Wrapper { //包装类
         return "(" + ReflectUtils.getName(cl) + ")" + name;
     }
 
-    private static String args(Class<?>[] cs, String name) { //todo @csy-001 构建条件进入
+    private static String args(Class<?>[] cs, String name) {
         int len = cs.length;
         if (len == 0) {
             return "";
@@ -327,7 +323,7 @@ public abstract class Wrapper { //包装类
         return sb.toString();
     }
 
-    private static String propertyName(String pn) { //todo @csy-001 构建进入条件
+    private static String propertyName(String pn) {
         return pn.length() == 1 || Character.isLowerCase(pn.charAt(1)) ? Character.toLowerCase(pn.charAt(0)) + pn.substring(1) : pn;
     }
 

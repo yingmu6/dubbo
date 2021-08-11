@@ -53,7 +53,7 @@ class StatItem { //@csy-P3 该类的功能、用途是什么？解：使用令�
         if (token.sum() < 0) {
             return false;
         }
-        token.decrement(); //todo @csy-021-P3 了解漏桶算法
+        token.decrement();
 
         /**
          * 2.5.6的处理方式

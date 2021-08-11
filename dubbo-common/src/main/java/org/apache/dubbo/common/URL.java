@@ -87,12 +87,11 @@ class URL implements Serializable {
     // by default, port to registry
     private final int port;
 
-    private final String path; //todo @csy-029-P3 此处的值是怎么设置的，都有哪些值？
+    private final String path;
 
-    // todo @csy-027-P3 <dubbo:paramter/> 设置的值，是怎么写到url的parameters属性的
     private final Map<String, String> parameters; //@csy-002 该map中一般都存有哪些值的？存的是url中的参数键值，即?与&分隔的键值对
 
-    private final Map<String, Map<String, String>> methodParameters; //todo @csy-011 都存储了什么内容？待调试
+    private final Map<String, Map<String, String>> methodParameters;
 
     // ==== cache ====
 
@@ -829,7 +828,7 @@ class URL implements Serializable {
         return URL.decode(getMethodParameter(method, key, defaultValue));
     }
 
-    public String getMethodParameter(String method, String key) { //todo @csy-011 此处methodParameters都有什么？是怎么获取到值的？
+    public String getMethodParameter(String method, String key) {
         Map<String, String> keyMap = methodParameters.get(method);
         String value = null;
         if (keyMap != null) {
@@ -888,7 +887,7 @@ class URL implements Serializable {
         return l;
     }
 
-    public int getMethodParameter(String method, String key, int defaultValue) { //todo @csy-018-P3 获取方法参数，是怎么处理的？怎么用上本地缓存的？
+    public int getMethodParameter(String method, String key, int defaultValue) {
         Number n = getCachedNumber(method, key);
         if (n != null) {
             return n.intValue();

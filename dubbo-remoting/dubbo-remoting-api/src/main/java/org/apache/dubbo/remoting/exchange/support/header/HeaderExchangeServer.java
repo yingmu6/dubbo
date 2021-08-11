@@ -24,11 +24,7 @@ import org.apache.dubbo.common.timer.HashedWheelTimer;
 import org.apache.dubbo.common.utils.Assert;
 import org.apache.dubbo.common.utils.CollectionUtils;
 import org.apache.dubbo.common.utils.NamedThreadFactory;
-import org.apache.dubbo.remoting.Channel;
-import org.apache.dubbo.remoting.ChannelHandler;
-import org.apache.dubbo.remoting.Constants;
-import org.apache.dubbo.remoting.RemotingException;
-import org.apache.dubbo.remoting.RemotingServer;
+import org.apache.dubbo.remoting.*;
 import org.apache.dubbo.remoting.exchange.ExchangeChannel;
 import org.apache.dubbo.remoting.exchange.ExchangeServer;
 import org.apache.dubbo.remoting.exchange.Request;
@@ -41,9 +37,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.util.Collections.unmodifiableCollection;
 import static org.apache.dubbo.common.constants.CommonConstants.READONLY_EVENT;
-import static org.apache.dubbo.remoting.Constants.HEARTBEAT_CHECK_TICK;
-import static org.apache.dubbo.remoting.Constants.LEAST_HEARTBEAT_DURATION;
-import static org.apache.dubbo.remoting.Constants.TICKS_PER_WHEEL;
+import static org.apache.dubbo.remoting.Constants.*;
 import static org.apache.dubbo.remoting.utils.UrlUtils.getHeartbeat;
 import static org.apache.dubbo.remoting.utils.UrlUtils.getIdleTimeout;
 
@@ -254,12 +248,12 @@ public class HeaderExchangeServer implements ExchangeServer {
         if (time / HEARTBEAT_CHECK_TICK <= 0) {
             return LEAST_HEARTBEAT_DURATION;
         } else {
-            return time / HEARTBEAT_CHECK_TICK; //todo @csy-002 心跳机制是怎样的？
+            return time / HEARTBEAT_CHECK_TICK;
         }
     }
 
     private void startIdleCheckTask(URL url) {
-        if (!server.canHandleIdle()) { //todo @csy-003 何时进入处理的？
+        if (!server.canHandleIdle()) {
             AbstractTimerTask.ChannelProvider cp = () -> unmodifiableCollection(HeaderExchangeServer.this.getChannels());
             int idleTimeout = getIdleTimeout(url);
             long idleTimeoutTick = calculateLeastDuration(idleTimeout);

@@ -88,7 +88,7 @@ public class DubboNamespaceHandler extends NamespaceHandlerSupport implements Co
          * issue : https://github.com/apache/dubbo/issues/6275
          */
         registerCommonBeans(registry);
-        BeanDefinition beanDefinition = super.parse(element, parserContext); //todo @csy-027-P3 当xml配置错误时，报错Configuration problem，是依据什么判断的，xsd吗？
+        BeanDefinition beanDefinition = super.parse(element, parserContext);
         setSource(beanDefinition);
         return beanDefinition;
     }

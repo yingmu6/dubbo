@@ -31,7 +31,7 @@ public class CodecAdapter implements Codec2 {//编码适配器，外部使用同
 
     private Codec codec;
 
-    public CodecAdapter(Codec codec) { //todo @csy-003 适配器模式都有哪些形式？
+    public CodecAdapter(Codec codec) {
         Assert.notNull(codec, "codec == null");
         this.codec = codec;
     }

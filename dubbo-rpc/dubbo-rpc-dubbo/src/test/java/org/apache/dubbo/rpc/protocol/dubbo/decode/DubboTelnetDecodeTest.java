@@ -81,7 +81,7 @@ public class DubboTelnetDecodeTest {
      * @throws InterruptedException
      */
     @Test
-    public void testDubboDecode() throws InterruptedException, IOException { //todo @csy-025-P2 解码待调试
+    public void testDubboDecode() throws InterruptedException, IOException {
         ByteBuf dubboByteBuf = createDubboByteBuf();
 
         EmbeddedChannel ch = null;

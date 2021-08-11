@@ -236,7 +236,7 @@ final class DeprecatedExchangeCodec extends DeprecatedTelnetCodec implements Cod
         os.write(data); // write data.    （协议体：将传入对象序列化后写入）
     }
 
-    protected void encodeResponse(Channel channel, OutputStream os, Response res) throws IOException { //todo @csy-003 编码响应对象待了解
+    protected void encodeResponse(Channel channel, OutputStream os, Response res) throws IOException {
         try {
             Serialization serialization = CodecSupport.getSerialization(channel.getUrl());
             // header.
@@ -245,7 +245,9 @@ final class DeprecatedExchangeCodec extends DeprecatedTelnetCodec implements Cod
             Bytes.short2bytes(MAGIC, header);
             // set request and serialization flag.
             header[2] = serialization.getContentTypeId();
-            if (res.isHeartbeat()) header[2] |= FLAG_EVENT;
+            if (res.isHeartbeat()) {
+                header[2] |= FLAG_EVENT;
+            }
             // set response status.
             byte status = res.getStatus();
             header[3] = status;

@@ -32,7 +32,7 @@ public class FutureAdapter<V> extends CompletableFuture<V> {
 
     public FutureAdapter(CompletableFuture<AppResponse> future) {
         this.appResponseFuture = future;
-        future.whenComplete((appResponse, t) -> { //todo @csy-022-P2 此处的处理逻辑是怎样的？
+        future.whenComplete((appResponse, t) -> {
             if (t != null) {
                 if (t instanceof CompletionException) {
                     t = t.getCause();
