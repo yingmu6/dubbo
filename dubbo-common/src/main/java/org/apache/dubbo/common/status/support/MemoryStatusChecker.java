@@ -27,7 +27,7 @@ import org.apache.dubbo.common.status.StatusChecker;
 public class MemoryStatusChecker implements StatusChecker {
 
     @Override
-    public Status check() {
+    public Status check() { //判断内存是否超过最小的2M
         Runtime runtime = Runtime.getRuntime();
         long freeMemory = runtime.freeMemory();
         long totalMemory = runtime.totalMemory();

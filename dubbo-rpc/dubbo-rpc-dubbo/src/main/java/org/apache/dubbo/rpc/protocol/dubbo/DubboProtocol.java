@@ -275,7 +275,7 @@ public class DubboProtocol extends AbstractProtocol {
                 synchronized (this) {
                     server = serverMap.get(key);
                     if (server == null) {
-                        serverMap.put(key, createServer(url));
+                        serverMap.put(key, createServer(url)); //将地址信息与服务实例放到缓存Map中
                     }
                 }
             } else {

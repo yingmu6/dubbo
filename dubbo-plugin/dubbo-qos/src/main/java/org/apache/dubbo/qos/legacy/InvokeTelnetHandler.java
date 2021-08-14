@@ -240,7 +240,7 @@ public class InvokeTelnetHandler implements TelnetHandler { //@csy-027-P2 invoke
 
     private void printSelectMessage(StringBuilder buf, List<Method> methods) {
         buf.append("Methods:\r\n");
-        for (int i = 0; i < methods.size(); i++) {
+        for (int i = 0; i < methods.size(); i++) { //打印出方法列表
             Method method = methods.get(i);
             buf.append(i + 1).append(". ").append(method.getName()).append("(");
             Class<?>[] parameterTypes = method.getParameterTypes();

@@ -288,7 +288,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
     /**
      * realize：实现
      */
-    private static Object realize0(Object pojo, Class<?> type, Type genericType, final Map<Object, Object> history) {
+    private static Object realize0(Object pojo, Class<?> type, Type genericType, final Map<Object, Object> history) { //@pause
         if (pojo == null) {
             return null;
         }

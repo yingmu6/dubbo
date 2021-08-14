@@ -30,10 +30,15 @@ import java.util.List;
  */
 @Activate
 public class ServerStatusChecker implements StatusChecker {
+    /**
+     * 服务状态检查
+     * 1）检查暴露的服务列表是否为空
+     * 2）依次检查服务，判断服务是否处于激活状态
+     */
 
     @Override
     public Status check() {
-        List<ProtocolServer> servers = DubboProtocol.getDubboProtocol().getServers();
+        List<ProtocolServer> servers = DubboProtocol.getDubboProtocol().getServers(); //
         if (servers == null || servers.isEmpty()) {
             return new Status(Status.Level.UNKNOWN);
         }
@@ -41,6 +46,7 @@ public class ServerStatusChecker implements StatusChecker {
         StringBuilder buf = new StringBuilder();
         for (ProtocolServer protocolServer : servers) {
             RemotingServer server = protocolServer.getRemotingServer();
+            server.close();
             if (!server.isBound()) {
                 level = Status.Level.ERROR;
                 buf.setLength(0);

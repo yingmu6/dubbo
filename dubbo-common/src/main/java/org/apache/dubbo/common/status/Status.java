@@ -54,7 +54,7 @@ public class Status {
     /**
      * Level
      */
-    public enum Level {
+    public enum Level { //检查结果的枚举
         /**
          * OK
          */

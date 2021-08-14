@@ -34,7 +34,7 @@ public class RegistryStatusChecker implements StatusChecker {
     @Override
     public Status check() {
         Collection<Registry> registries = AbstractRegistryFactory.getRegistries();
-        if (registries.isEmpty()) {
+        if (registries.isEmpty()) { //判断注册实例列表是否为空
             return new Status(Status.Level.UNKNOWN);
         }
         Status.Level level = Status.Level.OK;
@@ -44,7 +44,7 @@ public class RegistryStatusChecker implements StatusChecker {
                 buf.append(",");
             }
             buf.append(registry.getUrl().getAddress());
-            if (!registry.isAvailable()) {
+            if (!registry.isAvailable()) { //判断注册实例是否可用
                 level = Status.Level.ERROR;
                 buf.append("(disconnected)");
             } else {

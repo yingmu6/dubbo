@@ -202,7 +202,7 @@ class URL implements Serializable {
         this.methodParameters = Collections.unmodifiableMap(methodParameters);
     }
 
-    private static String getAddress(String host, int port) {
+    private static String getAddress(String host, int port) { //构建地址信息，包含host、port
         return port <= 0 ? host : host + ':' + port;
     }
 

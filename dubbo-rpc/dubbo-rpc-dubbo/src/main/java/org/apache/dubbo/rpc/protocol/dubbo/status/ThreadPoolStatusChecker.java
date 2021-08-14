@@ -46,7 +46,7 @@ public class ThreadPoolStatusChecker implements StatusChecker {
 
             if (executor instanceof ThreadPoolExecutor) {
                 ThreadPoolExecutor tp = (ThreadPoolExecutor) executor;
-                boolean ok = tp.getActiveCount() < tp.getMaximumPoolSize() - 1;
+                boolean ok = tp.getActiveCount() < tp.getMaximumPoolSize() - 1; //判断正在使用的线程数是否超过最大线程数-1（因为一般都是新加线程时判断，若判断成功，表明可以加入新线程）
                 Status.Level lvl = Status.Level.OK;
                 if (!ok) {
                     level = Status.Level.WARN;
