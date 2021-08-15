@@ -29,6 +29,6 @@ public interface StatusChecker {
      *
      * @return status
      */
-    Status check(); //
+    Status check(); //test
 
 }
