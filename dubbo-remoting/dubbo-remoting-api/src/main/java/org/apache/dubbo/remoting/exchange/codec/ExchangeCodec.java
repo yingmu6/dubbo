@@ -53,9 +53,9 @@ public class ExchangeCodec extends TelnetCodec {
     protected static final byte MAGIC_HIGH = Bytes.short2bytes(MAGIC)[0];
     protected static final byte MAGIC_LOW = Bytes.short2bytes(MAGIC)[1];
     // message flag.
-    protected static final byte FLAG_REQUEST = (byte) 0x80;
-    protected static final byte FLAG_TWOWAY = (byte) 0x40;
-    protected static final byte FLAG_EVENT = (byte) 0x20;
+    protected static final byte FLAG_REQUEST = (byte) 0x80; // 十进制为128，二进制位10000000
+    protected static final byte FLAG_TWOWAY = (byte) 0x40; // 十进制为64，二进制位01000000
+    protected static final byte FLAG_EVENT = (byte) 0x20; // 十进制为32，二进制位00100000
     protected static final int SERIALIZATION_MASK = 0x1f;
     private static final Logger logger = LoggerFactory.getLogger(ExchangeCodec.class);
 
@@ -214,18 +214,18 @@ public class ExchangeCodec extends TelnetCodec {
         // set magic number.
         Bytes.short2bytes(MAGIC, header);
 
-        // set request and serialization flag.
-        header[2] = (byte) (FLAG_REQUEST | serialization.getContentTypeId());
+        // set request and serialization flag.  等价于：10000000 | serialization.getContentTypeId()
+        header[2] = (byte) (FLAG_REQUEST | serialization.getContentTypeId()); // 处理第三个字节的第一位，因为在请求的方法中，所以按位与后标识为1
 
-        if (req.isTwoWay()) {
-            header[2] |= FLAG_TWOWAY;
+        if (req.isTwoWay()) { // 按位或运算，二进制位只要出现1的，结果就为1（每位只有0或1）
+            header[2] |= FLAG_TWOWAY; // 等价于 header[2] = header[2] | 01000000; （处理第三个字节的第二位）
         }
         if (req.isEvent()) {
-            header[2] |= FLAG_EVENT;
+            header[2] |= FLAG_EVENT; // 等价于 header[2] = header[2] | 00100000; （处理第三个字节的第三位）
         }
 
         // set request id.
-        Bytes.long2bytes(req.getId(), header, 4);
+        Bytes.long2bytes(req.getId(), header, 4); //处理请求id，从第5个字节开始
 
         // encode request data.
         int savedWriteIndex = buffer.writerIndex();

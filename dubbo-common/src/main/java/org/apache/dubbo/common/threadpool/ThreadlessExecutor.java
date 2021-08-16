@@ -25,11 +25,14 @@ import java.util.concurrent.*;
 
 /**
  * The most important difference between this Executor and other normal Executor is that this one doesn't manage
- * any thread.
+ * any thread. （这个Executor和其他普通Executor之间最重要的区别是，这个Executor不管理任何线程）
  * <p>
  * Tasks submitted to this executor through {@link #execute(Runnable)} will not get scheduled to a specific thread, though normal executors always do the schedule.
  * Those tasks are stored in a blocking queue and will only be executed when a thread calls {@link #waitAndDrain()}, the thread executing the task
  * is exactly the same as the one calling waitAndDrain.
+ * <p>
+ * （通过execute(Runnable)提交给这个执行器的任务不会被调度到特定的线程，尽管普通执行器总是执行调度。
+ * 这些任务存储在阻塞队列中，只有当线程调用waitAndDrain()(执行任务的线程)时才会执行和调用waitAndDrain的是一样的吗）
  */
 public class ThreadlessExecutor extends AbstractExecutorService {
     private static final Logger logger = LoggerFactory.getLogger(ThreadlessExecutor.class.getName());

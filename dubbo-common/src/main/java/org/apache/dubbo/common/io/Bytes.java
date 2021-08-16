@@ -194,7 +194,7 @@ public class Bytes {
      */
     public static void long2bytes(long v, byte[] b, int off) {
         b[off + 7] = (byte) v;
-        b[off + 6] = (byte) (v >>> 8);
+        b[off + 6] = (byte) (v >>> 8); // 无符号右移：各二进位全部右移若干位，高位补0，低位丢弃
         b[off + 5] = (byte) (v >>> 16);
         b[off + 4] = (byte) (v >>> 24);
         b[off + 3] = (byte) (v >>> 32);
@@ -307,7 +307,7 @@ public class Bytes {
      * @param off offset.
      * @return int.
      */
-    public static float bytes2float(byte[] b, int off) {
+    public static float bytes2float(byte[] b, int off) { //0xFF 十进制为255，二进制位 11111111
         int i = ((b[off + 3] & 0xFF) << 0) +
                 ((b[off + 2] & 0xFF) << 8) +
                 ((b[off + 1] & 0xFF) << 16) +
