@@ -16,16 +16,7 @@
  */
 package org.apache.dubbo.common.utils;
 
-import java.util.AbstractSet;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableSet;
@@ -184,7 +175,7 @@ public class CollectionUtils {
         return obj1.equals(obj2);
     }
 
-    public static Map<String, String> toStringMap(String... pairs) {
+    public static Map<String, String> toStringMap(String... pairs) { //将符合约定的字符串数组转换为Map，按key、value、key、value组合的
         Map<String, String> parameters = new HashMap<>();
         if (ArrayUtils.isEmpty(pairs)) {
             return parameters;

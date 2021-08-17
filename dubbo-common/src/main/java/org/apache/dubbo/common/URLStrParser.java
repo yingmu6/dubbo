@@ -157,10 +157,10 @@ public final class URLStrParser {
      *                      encodedURLStr after decode format: protocol://username:password@host:port/path?k1=v1&k2=v2
      *                      [protocol://][username:password@][host:port]/[path][?k1=v1&k2=v2]
      */
-    public static URL parseEncodedStr(String encodedURLStr) {
-        Map<String, String> parameters = null;
-        int pathEndIdx = encodedURLStr.indexOf("%3F");// '?'
-        if (pathEndIdx >= 0) {
+    public static URL parseEncodedStr(String encodedURLStr) { //解析编码后的URL字符串，产生对应的URL对象
+        Map<String, String> parameters = null; //编码前的字符串/context/path?version=1.0.0&application=morgan，编码后的字符串：%2Fcontext%2Fpath%3Fapplication%3Dmorgan%26version%3D1.0.0
+        int pathEndIdx = encodedURLStr.indexOf("%3F");// '?'  查找参数分隔符
+        if (pathEndIdx >= 0) { //解析编码后的参数键值对
             parameters = parseEncodedParams(encodedURLStr, pathEndIdx + 3);
         } else {
             pathEndIdx = encodedURLStr.length();
@@ -177,18 +177,18 @@ public final class URLStrParser {
             return Collections.emptyMap();
         }
 
-        TempBuf tempBuf = DECODE_TEMP_BUF.get();
+        TempBuf tempBuf = DECODE_TEMP_BUF.get(); //从本地线程中获取缓存的TempBuf
         Map<String, String> params = new HashMap<>();
         int nameStart = from;
         int valueStart = -1;
         int i;
-        for (i = from; i < len; i++) {
+        for (i = from; i < len; i++) { //todo @pause
             char ch = str.charAt(i);
             if (ch == '%') {
                 if (i + 3 > len) {
                     throw new IllegalArgumentException("unterminated escape sequence at index " + i + " of: " + str);
                 }
-                ch = (char) decodeHexByte(str, i + 1);
+                ch = (char) decodeHexByte(str, i + 1); //解码为16进制字符
                 i += 2;
             }
 
@@ -318,7 +318,7 @@ public final class URLStrParser {
         return -1;
     }
 
-    private static final class TempBuf {
+    private static final class TempBuf { //内部类，可以构建字符数组、字节数组
 
         private final char[] chars;
 

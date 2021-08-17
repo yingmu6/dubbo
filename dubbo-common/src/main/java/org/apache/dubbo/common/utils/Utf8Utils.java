@@ -29,9 +29,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.apache.dubbo.common.utils;
 
-import static java.lang.Character.MIN_HIGH_SURROGATE;
-import static java.lang.Character.MIN_LOW_SURROGATE;
-import static java.lang.Character.MIN_SUPPLEMENTARY_CODE_POINT;
+import static java.lang.Character.*;
 
 /**
  * See original <a href=
@@ -44,6 +42,7 @@ public final class Utf8Utils {
         //empty
     }
 
+    // 按UTF-8解码
     public static int decodeUtf8(byte[] srcBytes, int srcIdx, int srcSize, char[] destChars, int destIdx) {
         // Bitwise OR combines the sign bits so any negative value fails the check.
         if ((srcIdx | srcSize | srcBytes.length - srcIdx - srcSize) < 0

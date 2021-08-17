@@ -39,7 +39,7 @@ import static org.apache.dubbo.common.convert.Converter.convertIfPossible;
 import static org.apache.dubbo.common.utils.StringUtils.isBlank;
 
 /**
- * URL - Uniform Resource Locator (Immutable, ThreadSafe)
+ * URL - Uniform Resource Locator (Immutable, ThreadSafe) 统一资源定位器
  * <p>
  * url example:
  * <ul>
@@ -75,21 +75,22 @@ class URL implements Serializable {
 
     private static final long serialVersionUID = -1985165475234910535L;
 
-    private final String protocol;
+    //protocol，username，passwored，host，port，path是主要参数，其它键值对放在parameters中
+    private final String protocol; //协议
 
-    private final String username;
+    private final String username; //用户名
 
-    private final String password;
+    private final String password; //密码
 
     // by default, host to registry
-    private final String host;
+    private final String host; //主机
 
     // by default, port to registry
-    private final int port;
+    private final int port; //端口
 
-    private final String path;
+    private final String path; //接口名称
 
-    private final Map<String, String> parameters; //@csy-002 该map中一般都存有哪些值的？存的是url中的参数键值，即?与&分隔的键值对
+    private final Map<String, String> parameters; //参数键值对：存的是url中的参数键值，即?与&分隔的键值对
 
     private final Map<String, Map<String, String>> methodParameters;
 
@@ -103,7 +104,7 @@ class URL implements Serializable {
 
     private volatile transient String ip;
 
-    private volatile transient String full;
+    private volatile transient String full; //带有完整信息的url字符串
 
     private volatile transient String identity;
 
@@ -215,7 +216,7 @@ class URL implements Serializable {
      * @return URL instance
      * @see URL
      */
-    public static URL valueOf(String url) { //解析url字符串，转换为URL对象。 如输入字符串为：zookeeper://127.0.0.1:2181?name=test
+    public static URL valueOf(String url) { //通过URL字符串构建为URL对象。 如输入字符串为：zookeeper://127.0.0.1:2181?name=test
         if (url == null || (url = url.trim()).length() == 0) {
             throw new IllegalArgumentException("url == null");
         }
@@ -310,7 +311,7 @@ class URL implements Serializable {
 
         String methodsString = parameters.get(METHODS_KEY);
         if (StringUtils.isNotEmpty(methodsString)) {
-            List<String> methods = StringUtils.splitToList(methodsString, ',');
+            List<String> methods = StringUtils.splitToList(methodsString, ','); //解析出方法名列表
             for (Map.Entry<String, String> entry : parameters.entrySet()) {
                 String key = entry.getKey();
                 for (int i = 0; i < methods.size(); i++) {
@@ -379,7 +380,7 @@ class URL implements Serializable {
                 : new URL(url.getProtocol(), url.getUsername(), url.getPassword(), url.getHost(), url.getPort(), url.getPath(), newMap);
     }
 
-    public static String encode(String value) {
+    public static String encode(String value) { //对URL字符串进行编码
         if (StringUtils.isEmpty(value)) {
             return "";
         }
@@ -1328,8 +1329,8 @@ class URL implements Serializable {
         return buildString(true, false, parameters); // only return identity message, see the method "equals" and "hashCode"
     }
 
-    public String toFullString() {
-        if (full != null) {
+    public String toFullString() { //将URL对象转换为带有完整信息的URL字符串
+        if (full != null) { //若当前成员变量中有值，则直接返回
             return full;
         }
         return full = buildString(true, true);
@@ -1352,7 +1353,7 @@ class URL implements Serializable {
         return buf.toString();
     }
 
-    private void buildParameters(StringBuilder buf, boolean concat, String[] parameters) { //将参数列表进行拼接
+    private void buildParameters(StringBuilder buf, boolean concat, String[] parameters) { //拼接参数键值对，对应的字符串
         if (CollectionUtils.isNotEmptyMap(getParameters())) {
             List<String> includes = (ArrayUtils.isEmpty(parameters) ? null : Arrays.asList(parameters));
             boolean first = true;
@@ -1389,7 +1390,7 @@ class URL implements Serializable {
             buf.append(protocol);
             buf.append("://");
         }
-        if (appendUser && StringUtils.isNotEmpty(username)) {
+        if (appendUser && StringUtils.isNotEmpty(username)) { //需要附加用户信息且用户名、密码不为空时进行拼接
             buf.append(username);
             if (StringUtils.isNotEmpty(password)) {
                 buf.append(":");
@@ -1398,12 +1399,12 @@ class URL implements Serializable {
             buf.append("@");
         }
         String host;
-        if (useIP) {
-            host = getIp();
+        if (useIP) { //是否使用ip作为主机号
+            host = getIp(); //使用ip
         } else {
-            host = getHost();
+            host = getHost(); //使用host
         }
-        if (StringUtils.isNotEmpty(host)) {
+        if (StringUtils.isNotEmpty(host)) { //主机号不为空时，进行拼接
             buf.append(host);
             if (port > 0) {
                 buf.append(":");
@@ -1411,7 +1412,7 @@ class URL implements Serializable {
             }
         }
         String path;
-        if (useService) {
+        if (useService) { //是否使用服务key作为接口名称
             path = getServiceKey();
         } else {
             path = getPath();
@@ -1511,7 +1512,7 @@ class URL implements Serializable {
         return getServiceInterface();
     }
 
-    public String getServiceInterface() {
+    public String getServiceInterface() { //从参数键值对中获取interface接口信息，若没有则使用path作为默认值
         return getParameter(INTERFACE_KEY, path);
     }
 
@@ -1630,7 +1631,7 @@ class URL implements Serializable {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(Object obj) { //比较两个URL是否相等
         if (this == obj) {
             return true;
         }
