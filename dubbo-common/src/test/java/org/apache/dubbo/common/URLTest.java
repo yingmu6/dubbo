@@ -17,7 +17,6 @@
 package org.apache.dubbo.common;
 
 import org.apache.dubbo.common.utils.CollectionUtils;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -30,11 +29,7 @@ import java.util.function.Predicate;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class URLTest {
 
@@ -69,10 +64,10 @@ public class URLTest {
 
     private void assertURLStrDecoder(URL url) {
         String fullURLStr = url.toFullString();
-        URL newUrl = URLStrParser.parseEncodedStr(URL.encode(fullURLStr));
+        URL newUrl = URLStrParser.parseEncodedStr(URL.encode(fullURLStr)); //将编码后的url字符串，解析为URL对象
         assertEquals(URL.valueOf(fullURLStr), newUrl);
 
-        URL newUrl2 = URLStrParser.parseDecodedStr(fullURLStr);
+        URL newUrl2 = URLStrParser.parseDecodedStr(fullURLStr); //将未编码的字符串，解析为URL对象
         assertEquals(URL.valueOf(fullURLStr), newUrl2);
     }
 

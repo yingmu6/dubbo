@@ -161,7 +161,7 @@ public final class URLStrParser {
         Map<String, String> parameters = null; //编码前的字符串/context/path?version=1.0.0&application=morgan，编码后的字符串：%2Fcontext%2Fpath%3Fapplication%3Dmorgan%26version%3D1.0.0
         int pathEndIdx = encodedURLStr.indexOf("%3F");// '?'  查找参数分隔符
         if (pathEndIdx >= 0) { //解析编码后的参数键值对
-            parameters = parseEncodedParams(encodedURLStr, pathEndIdx + 3);
+            parameters = parseEncodedParams(encodedURLStr, pathEndIdx + 3); //取%3F后面的字符串处理
         } else {
             pathEndIdx = encodedURLStr.length();
         }
@@ -171,7 +171,7 @@ public final class URLStrParser {
         return parseURLBody(encodedURLStr, decodedBody, parameters);
     }
 
-    private static Map<String, String> parseEncodedParams(String str, int from) {
+    private static Map<String, String> parseEncodedParams(String str, int from) { //解析出编码url中的参数键值对
         int len = str.length();
         if (from >= len) {
             return Collections.emptyMap();
@@ -182,17 +182,17 @@ public final class URLStrParser {
         int nameStart = from;
         int valueStart = -1;
         int i;
-        for (i = from; i < len; i++) { //todo @pause
+        for (i = from; i < len; i++) {
             char ch = str.charAt(i);
-            if (ch == '%') {
-                if (i + 3 > len) {
+            if (ch == '%') { //遇到百分号分隔符，解码得到原始的字符
+                if (i + 3 > len) { //分隔符不是完整的情况，抛出异常，比如%3、%等，应该是%3D，百分号后面带两个十六进制数
                     throw new IllegalArgumentException("unterminated escape sequence at index " + i + " of: " + str);
                 }
                 ch = (char) decodeHexByte(str, i + 1); //解码为16进制字符
                 i += 2;
             }
 
-            switch (ch) {
+            switch (ch) { //找到指定的分隔符，做对应的处理
                 case '=':
                     if (nameStart == i) {
                         nameStart = i + 1;
@@ -201,7 +201,7 @@ public final class URLStrParser {
                     }
                     break;
                 case ';':
-                case '&':
+                case '&': //进行参数拼接
                     addParam(str, true, nameStart, valueStart, i - 2, params, tempBuf);
                     nameStart = i + 1;
                     break;

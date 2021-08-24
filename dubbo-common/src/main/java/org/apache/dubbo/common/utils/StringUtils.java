@@ -16,38 +16,20 @@
  */
 package org.apache.dubbo.common.utils;
 
+import com.alibaba.fastjson.JSON;
 import org.apache.dubbo.common.io.UnsafeStringWriter;
 import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
 
-import com.alibaba.fastjson.JSON;
-
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.lang.String.valueOf;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableSet;
-import static org.apache.dubbo.common.constants.CommonConstants.COMMA_SEPARATOR;
-import static org.apache.dubbo.common.constants.CommonConstants.COMMA_SPLIT_PATTERN;
-import static org.apache.dubbo.common.constants.CommonConstants.DOT_REGEX;
-import static org.apache.dubbo.common.constants.CommonConstants.GROUP_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.HIDE_KEY_PREFIX;
-import static org.apache.dubbo.common.constants.CommonConstants.INTERFACE_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.SEPARATOR_REGEX;
-import static org.apache.dubbo.common.constants.CommonConstants.UNDERLINE_SEPARATOR;
-import static org.apache.dubbo.common.constants.CommonConstants.VERSION_KEY;
+import static org.apache.dubbo.common.constants.CommonConstants.*;
 
 /**
  * StringUtils
@@ -1082,7 +1064,7 @@ public final class StringUtils {
     }
 
     /**
-     * Decode a 2-digit hex byte from within a string.
+     * Decode a 2-digit hex byte from within a string.（从字符串中解码一个2位数的十六进制字节）
      */
     public static byte decodeHexByte(CharSequence s, int pos) {
         int hi = decodeHexNibble(s.charAt(pos));
