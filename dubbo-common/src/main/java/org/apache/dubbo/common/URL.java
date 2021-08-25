@@ -220,7 +220,7 @@ class URL implements Serializable {
         if (url == null || (url = url.trim()).length() == 0) {
             throw new IllegalArgumentException("url == null");
         }
-        String protocol = null;
+        String protocol = null; //todo @pause
         String username = null;
         String password = null;
         String host = null;
