@@ -173,7 +173,7 @@ public final class URLStrParser {
 
     private static Map<String, String> parseEncodedParams(String str, int from) { //解析出编码url中的参数键值对
         int len = str.length();
-        if (from >= len) {
+        if (from >= len) { //起始位置不能超过字符串长度
             return Collections.emptyMap();
         }
 

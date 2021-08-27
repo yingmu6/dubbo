@@ -1066,7 +1066,7 @@ public final class StringUtils {
     /**
      * Decode a 2-digit hex byte from within a string.（从字符串中解码一个2位数的十六进制字节）
      */
-    public static byte decodeHexByte(CharSequence s, int pos) {
+    public static byte decodeHexByte(CharSequence s, int pos) { //解析
         int hi = decodeHexNibble(s.charAt(pos));
         int lo = decodeHexNibble(s.charAt(pos + 1));
         if (hi == -1 || lo == -1) {
