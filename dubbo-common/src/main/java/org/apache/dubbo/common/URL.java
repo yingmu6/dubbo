@@ -220,7 +220,7 @@ class URL implements Serializable {
         if (url == null || (url = url.trim()).length() == 0) {
             throw new IllegalArgumentException("url == null");
         }
-        String protocol = null; //todo @pause
+        String protocol = null;
         String username = null;
         String password = null;
         String host = null;
@@ -244,7 +244,7 @@ class URL implements Serializable {
                             parameters.putIfAbsent(key.substring(DEFAULT_KEY_PREFIX.length()), value);
                         }
                     } else {
-                        parameters.put(part, part); //若没有带上等号，则键值都存为一样的
+                        parameters.put(part, part); //若没有带上等号，则键值都存为一样的（如?k0&k1=v1，则k0的值存为k0）
                     }
                 }
             }
@@ -816,7 +816,7 @@ class URL implements Serializable {
         return StringUtils.isEmpty(value) ? defaultValue : Boolean.parseBoolean(value);
     }
 
-    public boolean hasParameter(String key) {
+    public boolean hasParameter(String key) { //判断url中是否有key
         String value = getParameter(key);
         return value != null && value.length() > 0;
     }

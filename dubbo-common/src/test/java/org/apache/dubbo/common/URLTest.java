@@ -35,14 +35,14 @@ public class URLTest {
 
     @Test
     public void test_valueOf_noProtocolAndHost() throws Exception {
-        URL url = URL.valueOf("/context/path?version=1.0.0&application=morgan");
+        URL url = URL.valueOf("/context/path?version=1.0.0&application=morgan"); //没有protocol、host
         assertURLStrDecoder(url);
         assertNull(url.getProtocol());
         assertNull(url.getUsername());
         assertNull(url.getPassword());
         assertNull(url.getHost());
         assertNull(url.getAddress());
-        assertEquals(0, url.getPort());
+        assertEquals(0, url.getPort()); //端口默认为0
         assertEquals("context/path", url.getPath());
         assertEquals(2, url.getParameters().size());
         assertEquals("1.0.0", url.getParameter("version"));
@@ -299,10 +299,11 @@ public class URLTest {
         URL url = URL.valueOf("http://1.2.3.4:8080/path?k0&k1=v1");
 
         assertURLStrDecoder(url);
+        assertTrue(url.hasParameter("k1"));
         assertTrue(url.hasParameter("k0"));
 
         // If a Key has no corresponding Value, then the Key also used as the Value.
-        assertEquals("k0", url.getParameter("k0"));
+        assertEquals("k0", url.getParameter("k0")); //只有key时，value为key的值
     }
 
     @Test
