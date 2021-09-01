@@ -40,7 +40,7 @@ public class ExecuteLimitFilter implements Filter, Filter.Listener { //应用于
         URL url = invoker.getUrl();
         String methodName = invocation.getMethodName();
         int max = url.getMethodParameter(methodName, EXECUTES_KEY, 0);
-        if (!RpcStatus.beginCount(url, methodName, max)) { //@csy-017-P2 是调用次数限制，还是并发调用请求数，怎么模拟使用 解：根据原子计数判断是否超过指定的并发数
+        if (!RpcStatus.beginCount(url, methodName, max)) {
             throw new RpcException(RpcException.LIMIT_EXCEEDED_EXCEPTION,
                     "Failed to invoke method " + invocation.getMethodName() + " in provider " +
                             url + ", cause: The service using threads greater than <dubbo:service executes=\"" + max +

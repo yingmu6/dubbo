@@ -18,7 +18,6 @@ package org.apache.dubbo.demo.provider;
 
 import org.apache.dubbo.demo.DemoService;
 import org.apache.dubbo.rpc.RpcContext;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +42,7 @@ public class DemoServiceImqqp implements DemoService {
 
     @Override
     public String sayHello2(String name) {
-        return null;
+        return "this is sayHello2 " + name;
     }
 
     @Override

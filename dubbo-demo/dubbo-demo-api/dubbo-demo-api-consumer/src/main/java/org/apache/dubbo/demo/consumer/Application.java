@@ -22,15 +22,15 @@ import org.apache.dubbo.config.RegistryConfig;
 import org.apache.dubbo.config.bootstrap.DubboBootstrap;
 import org.apache.dubbo.config.utils.ReferenceConfigCache;
 import org.apache.dubbo.demo.DemoService;
-import org.apache.dubbo.rpc.service.GenericService;
 
 public class Application {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         if (isClassic(args)) {
             runWithRefer();
         } else {
             runWithBootstrap();
         }
+        System.in.read();
     }
 
     private static boolean isClassic(String[] args) {
@@ -49,14 +49,14 @@ public class Application {
                 .start();
 
         DemoService demoService = ReferenceConfigCache.getCache().get(reference);
-        String message = demoService.sayHello("dubbo");
+        String message = demoService.sayHello2("dubbo");
         System.out.println(message);
 
-        // generic invoke
-        GenericService genericService = (GenericService) demoService;
-        Object genericInvokeResult = genericService.$invoke("sayHello", new String[] { String.class.getName() },
-                new Object[] { "dubbo generic invoke" });
-        System.out.println(genericInvokeResult);
+//        // generic invoke
+//        GenericService genericService = (GenericService) demoService;
+//        Object genericInvokeResult = genericService.$invoke("sayHello", new String[] { String.class.getName() },
+//                new Object[] { "dubbo generic invoke" });
+//        System.out.println(genericInvokeResult);
     }
 
     private static void runWithRefer() {

@@ -92,13 +92,13 @@ class URL implements Serializable {
 
     private final Map<String, String> parameters; //参数键值对：存的是url中的参数键值，即?与&分隔的键值对
 
-    private final Map<String, Map<String, String>> methodParameters;
+    private final Map<String, Map<String, String>> methodParameters; //方法级别的参数设置<dubbo:method>，如<"sayHello2, <timeout, 3000>">
 
     // ==== cache ====
 
     private volatile transient Map<String, Number> numbers;
 
-    private volatile transient Map<String, Map<String, Number>> methodNumbers;
+    private volatile transient Map<String, Map<String, Number>> methodNumbers; //key为方法名
 
     private volatile transient Map<String, URL> urls;
 
@@ -835,7 +835,7 @@ class URL implements Serializable {
         if (keyMap != null) {
             value = keyMap.get(key);
         }
-        if (StringUtils.isEmpty(value)) {
+        if (StringUtils.isEmpty(value)) { //若没在方法参数键值对，就从参数键值对里面查询
             value = parameters.get(key);
         }
         return value;
@@ -894,7 +894,7 @@ class URL implements Serializable {
             return n.intValue();
         }
         String value = getMethodParameter(method, key);
-        if (StringUtils.isEmpty(value)) {
+        if (StringUtils.isEmpty(value)) { //值为空时，取默认值
             return defaultValue;
         }
         int i = Integer.parseInt(value);

@@ -25,19 +25,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.apache.dubbo.config.Constants.ON_INVOKE_INSTANCE_KEY;
-import static org.apache.dubbo.config.Constants.ON_INVOKE_METHOD_KEY;
-import static org.apache.dubbo.config.Constants.ON_RETURN_INSTANCE_KEY;
-import static org.apache.dubbo.config.Constants.ON_RETURN_METHOD_KEY;
-import static org.apache.dubbo.config.Constants.ON_THROW_INSTANCE_KEY;
-import static org.apache.dubbo.config.Constants.ON_THROW_METHOD_KEY;
+import static org.apache.dubbo.config.Constants.*;
 
 /**
  * The method configuration
  *
  * @export
  */
-public class MethodConfig extends AbstractMethodConfig {
+public class MethodConfig extends AbstractMethodConfig { // <dubbo:method> 方法级别的配置
 
     private static final long serialVersionUID = 884908855422675941L;
 

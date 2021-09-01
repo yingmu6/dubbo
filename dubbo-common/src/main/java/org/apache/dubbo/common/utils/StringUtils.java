@@ -1056,11 +1056,11 @@ public final class StringUtils {
         return parameters;
     }
 
-    public static int decodeHexNibble(final char c) {
-        // Character.digit() is not used here, as it addresses a larger
+    public static int decodeHexNibble(final char c) { //解码16进制数
+        // Character.digit() is not used here, as it addresses a larger（这里不使用Character.digit()，因为它指向更大的字符集(包括ASCII和全宽拉丁字母)）
         // set of characters (both ASCII and full-width latin letters).
         byte[] hex2b = HEX2B;
-        return c < hex2b.length ? hex2b[c] : -1;
+        return c < hex2b.length ? hex2b[c] : -1; //或者指定位置的16进制数
     }
 
     /**

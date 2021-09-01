@@ -18,31 +18,15 @@ package org.apache.dubbo.config;
 
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.Version;
-import org.apache.dubbo.common.utils.Assert;
-import org.apache.dubbo.common.utils.CollectionUtils;
-import org.apache.dubbo.common.utils.ConfigUtils;
-import org.apache.dubbo.common.utils.ReflectUtils;
-import org.apache.dubbo.common.utils.StringUtils;
+import org.apache.dubbo.common.utils.*;
 import org.apache.dubbo.config.context.ConfigManager;
 import org.apache.dubbo.config.support.Parameter;
 import org.apache.dubbo.rpc.model.ApplicationModel;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 
-import static org.apache.dubbo.common.constants.CommonConstants.COMMA_SPLIT_PATTERN;
-import static org.apache.dubbo.common.constants.CommonConstants.DUBBO_VERSION_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.INVOKER_LISTENER_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.PID_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.REFERENCE_FILTER_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.RELEASE_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.TAG_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.TIMESTAMP_KEY;
+import static org.apache.dubbo.common.constants.CommonConstants.*;
 
 /**
  * AbstractDefaultConfig
@@ -205,7 +189,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
      * @param interfaceClass the interface of remote service
      * @param methods        the methods configured
      */
-    public void checkInterfaceAndMethods(Class<?> interfaceClass, List<MethodConfig> methods) {
+    public void checkInterfaceAndMethods(Class<?> interfaceClass, List<MethodConfig> methods) { //检查配置的方法是否在接口中
         // interface cannot be null
         Assert.notNull(interfaceClass, new IllegalStateException("interface not allow null!"));
 
