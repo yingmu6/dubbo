@@ -39,8 +39,8 @@
 <!--        <dubbo:parameter key="prompt" value="csy4>"/>--> <!-- 设置telnet命令行的提示语 -->
         <dubbo:method name="sayHello2" timeout="3000">
             <!-- <dubbo:method> 的子标签，通过index与type找到参数, 如果为callback，服务提供方将生成反向代理，可以从服务提供方反向调用消费方，通常用于事件推送. -->
-            <dubbo:argument index="0" type="String" callback="false"/>
-            <dubbo:parameter key="aa" value="cc"/> <!-- 方法级别的参数配置 -->
+<!--            <dubbo:argument index="0" type="String" callback="false"/>-->
+<!--            <dubbo:parameter key="aa" value="cc"/> &lt;!&ndash; 方法级别的参数配置 &ndash;&gt;-->
         </dubbo:method>
     </dubbo:service>
 

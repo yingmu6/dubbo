@@ -274,7 +274,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
      */
 
     /**
-     * 获取满足匹配条件的Activate对应的扩展类列表， @csy-002 待调试，整理下逻辑
+     * 获取满足匹配条件的Activate对应的扩展类列表
      */
     public List<T> getActivateExtension(URL url, String[] values, String group) { //将URL中配置的参数与@Activate配置的内容进行比较
         List<T> activateExtensions = new ArrayList<>();
@@ -284,11 +284,11 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
          * @csy-007 此处-default是指什么？去除默认扩展吗？
          * 是的，"-"表式剔除的含义
          */
-        if (!names.contains(REMOVE_VALUE_PREFIX + DEFAULT_KEY)) { //处理带上@Activate的扩展类，将url上设置的值与注解上设置的值进行比较
+        if (!names.contains(REMOVE_VALUE_PREFIX + DEFAULT_KEY)) { //处理带上@Activate的扩展类，将url上设置的值与注解上设置的值进行比较（在输入的value列表不包含"-default"处理）
             getExtensionClasses(); //此处没有用到方法的返回值，主要使用方法中的loadExtensionClasses()，若缓存中没有对应的值，则对应加载并设置到缓存中
-            for (Map.Entry<String, Object> entry : cachedActivates.entrySet()) {
-                String name = entry.getKey();
-                Object activate = entry.getValue();
+            for (Map.Entry<String, Object> entry : cachedActivates.entrySet()) { //将缓存中自动激活的class集合进行遍历处理
+                String name = entry.getKey(); //扩展名
+                Object activate = entry.getValue(); // @Active对象
 
                 String[] activateGroup, activateValue;
 
@@ -303,7 +303,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
                 }
 
                 /**
-                 * 自动激活条件匹配逻辑
+                 * 自动激活条件匹配逻辑（先比较group、再比较value）
                  * 1）将查询参数group与注解中group值进行比较
                  * 2）扩展名name没有加载过且不是"-"移除的扩展名
                  * 3）将注解中声明的value值与url中参数值进行比较
@@ -311,7 +311,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
                  *    activateExtensions自动激活扩展的列表中
                  */
                 if (isMatchGroup(group, activateGroup)
-                        && !names.contains(name) //未匹配过的name
+                        && !names.contains(name)
                         && !names.contains(REMOVE_VALUE_PREFIX + name)
                         && isActive(activateValue, url)) {
                     activateExtensions.add(getExtension(name)); //若匹配，则创建扩展名对应的实例并加载到列表中
@@ -324,7 +324,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
          * @csy-007 为啥提供者启动时，没有进入这个循环？消费端启动时，也没进入
          * 解：这里的@Activate注解不要求group设置为provider、consumer，所以提供端、消费端启动时没进入也是正常的
          */
-        for (int i = 0; i < names.size(); i++) {
+        for (int i = 0; i < names.size(); i++) { //待调试
             String name = names.get(i);
             if (!name.startsWith(REMOVE_VALUE_PREFIX)
                     && !names.contains(REMOVE_VALUE_PREFIX + name)) { //@csy-007 此处逻辑会在什么场景下进入？解：处理不再cachedActivates缓存中的扩展，如ExtensionLoaderTest.testLoadDefaultActivateExtension
@@ -345,7 +345,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
     }
 
     private boolean isMatchGroup(String group, String[] groups) {//比较分组是否匹配，group是传入的参数即为查询条件，groups是@Activate注解上设置的值
-        if (StringUtils.isEmpty(group)) { //若没有传入查询条件，则可以匹配所有组，直接匹配成功
+        if (StringUtils.isEmpty(group)) { //若没有传入group查询条件，则可以匹配所有组，直接匹配成功
             return true;
         }
         if (groups != null && groups.length > 0) { //若输入查询条件，且@Activate注解上也设置group值，则进行匹配比较，只要与其中一个group条件匹配即为匹配成功。若都没匹配成功，则匹配失败
@@ -358,8 +358,8 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
         return false;
     }
 
-    private boolean isActive(String[] keys, URL url) { //比较值，keys是@Activate注解上的value值，将注解中value值与url的值进行比较
-        if (keys.length == 0) { //若注解上没设置，表明匹配成功
+    private boolean isActive(String[] keys, URL url) { //比较值，keys是@Activate注解上的value值，将注解中value值与url的参数键值对进行比较
+        if (keys.length == 0) { //若@Activate注解上没设置value，则不进行value匹配限制
             return true;
         }
         for (String key : keys) { //遍历注解上的所有key

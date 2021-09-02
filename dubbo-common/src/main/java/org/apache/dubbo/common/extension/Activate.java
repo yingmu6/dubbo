@@ -38,8 +38,8 @@ import java.lang.annotation.*;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD})
-public @interface Activate {
+@Target({ElementType.TYPE, ElementType.METHOD}) //可以作用在类上、方法上
+public @interface Activate { //若带上自动激活类设置了group、value，则需要满足设置的条件，才能被激活
     /**
      * Activate the current extension when one of the groups matches（匹配）. The group passed into
      * {@link ExtensionLoader#getActivateExtension(URL, String, String)} will be used for matching.
@@ -51,6 +51,7 @@ public @interface Activate {
 
     /**
      * Activate the current extension when the specified keys appear in the URL's parameters.
+     * （当指定的key出现在url参数时，会激活当前的扩展）
      * <p>
      * For example, given <code>@Activate("cache, validation")</code>, the current extension will be return only when
      * there's either <code>cache</code> or <code>validation</code> key appeared in the URL's parameters.
@@ -60,7 +61,7 @@ public @interface Activate {
      * @see ExtensionLoader#getActivateExtension(URL, String)
      * @see ExtensionLoader#getActivateExtension(URL, String, String)
      */
-    String[] value() default {}; //扩展名列表
+    String[] value() default {};
 
     /**
      * Relative ordering info, optional
