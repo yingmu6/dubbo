@@ -1,0 +1,4 @@
+apple=org.apache.dubbo.common.extension.ext_self.fruit.Apple
+orange=org.apache.dubbo.common.extension.ext_self.fruit.Orange
+peer=org.apache.dubbo.common.extension.ext_self.fruit.Peer
+banana=org.apache.dubbo.common.extension.ext_self.fruit.Banana

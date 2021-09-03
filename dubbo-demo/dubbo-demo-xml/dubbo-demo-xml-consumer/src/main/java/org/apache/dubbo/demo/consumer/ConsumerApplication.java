@@ -37,6 +37,7 @@ public class ConsumerApplication {
 //            System.out.println("greetingService result: " + greetingService.hello());
 //        }
 
+        
         System.in.read();
 
     }

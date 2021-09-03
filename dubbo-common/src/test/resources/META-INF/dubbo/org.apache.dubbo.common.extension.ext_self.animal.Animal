@@ -1,0 +1,3 @@
+dog = org.apache.dubbo.common.extension.ext_self.animal.Dog
+pig = org.apache.dubbo.common.extension.ext_self.animal.Pig
+duck = org.apache.dubbo.common.extension.ext_self.animal.Duck
