@@ -64,8 +64,6 @@
       onreturn等方法，如果设置为false，则请求发送成功后直接返回Null
     -->
 
-
-
     <!-- <dubbo:service> 可以单独配置，也可以放在<dubbo:provider>中配置  -->
 <!--    <dubbo:provider timeout="2000" xml:base="dubbo-provider.xml" id="test">-->
 <!--        <dubbo:parameter key="name" value="zhang"/>-->

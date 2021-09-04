@@ -169,7 +169,7 @@ public abstract class ServiceConfigBase<T> extends AbstractServiceConfig {
         return (delay == null && provider != null) ? provider.getDelay() : delay;
     }
 
-    public void checkRef() {
+    public void checkRef() { //检查<dubbo:service>中ref是否为空 以及是否是暴露接口的实现类
         // reference should not be null, and is the implementation of the given interface
         if (ref == null) {
             throw new IllegalStateException("ref not allow null!");
