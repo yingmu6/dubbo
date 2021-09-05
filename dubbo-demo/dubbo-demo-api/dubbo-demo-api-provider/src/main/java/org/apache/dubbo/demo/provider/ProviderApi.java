@@ -22,10 +22,11 @@ import org.apache.dubbo.config.ServiceConfig;
 import org.apache.dubbo.config.bootstrap.DubboBootstrap;
 import org.apache.dubbo.demo.DemoService;
 import org.apache.dubbo.demo.GreetingService;
+import org.apache.dubbo.demo.ICollectionParamService;
 
 import java.util.concurrent.CountDownLatch;
 
-public class Application {
+public class ProviderApi {
     public static void main(String[] args) throws Exception {
         if (isClassic(args)) {
             startWithExport();
@@ -47,11 +48,16 @@ public class Application {
         service2.setInterface(GreetingService.class);
         service2.setRef(new GreetingServiceImpl());
 
+        ServiceConfig<ICollectionParamService> service3 = new ServiceConfig<>();
+        service3.setInterface(ICollectionParamService.class);
+        service3.setRef(new CollectionParamServiceImpl());
+
         DubboBootstrap bootstrap = DubboBootstrap.getInstance();
         bootstrap.application(new ApplicationConfig("dubbo-demo-api-provider"))
                 .registry(new RegistryConfig("zookeeper://127.0.0.1:2181"))
-                .service(service)
+                .service(service3)
                 .service(service2)
+                .service(service)
                 .start()
                 .await();
     }

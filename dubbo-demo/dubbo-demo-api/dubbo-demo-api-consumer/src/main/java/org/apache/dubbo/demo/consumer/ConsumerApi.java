@@ -16,14 +16,20 @@
  */
 package org.apache.dubbo.demo.consumer;
 
+import com.google.common.collect.Lists;
 import org.apache.dubbo.config.ApplicationConfig;
 import org.apache.dubbo.config.ReferenceConfig;
 import org.apache.dubbo.config.RegistryConfig;
 import org.apache.dubbo.config.bootstrap.DubboBootstrap;
 import org.apache.dubbo.config.utils.ReferenceConfigCache;
 import org.apache.dubbo.demo.DemoService;
+import org.apache.dubbo.demo.ICollectionParamService;
 
-public class Application {
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class ConsumerApi {
     public static void main(String[] args) throws Exception {
         if (isClassic(args)) {
             runWithRefer();
@@ -38,19 +44,34 @@ public class Application {
     }
 
     private static void runWithBootstrap() {
-        ReferenceConfig<DemoService> reference = new ReferenceConfig<>();
-        reference.setInterface(DemoService.class);
-        reference.setGeneric("true");
+//        ReferenceConfig<DemoService> reference = new ReferenceConfig<>();
+//        reference.setInterface(DemoService.class);
+//        reference.setGeneric("true");
+
+        ReferenceConfig<ICollectionParamService> reference2 = new ReferenceConfig<>();
+        reference2.setInterface(ICollectionParamService.class);
 
         DubboBootstrap bootstrap = DubboBootstrap.getInstance();
-        bootstrap.application(new ApplicationConfig("dubbo-demo-api-consumer"))
+        bootstrap.application(new ApplicationConfig("dubbo-demo-api-provider"))
                 .registry(new RegistryConfig("zookeeper://127.0.0.1:2181"))
-                .reference(reference)
+//                .reference(reference)
+                .reference(reference2)
                 .start();
 
-        DemoService demoService = ReferenceConfigCache.getCache().get(reference);
-        String message = demoService.sayHello2("dubbo");
-        System.out.println(message);
+//        DemoService demoService = ReferenceConfigCache.getCache().get(reference);
+//        String message = demoService.sayHello2("dubbo");
+//        System.out.println(message);
+
+        Map<Integer, String> map = new HashMap<>();
+        map.put(1, "aa");
+        map.put(2, "cc");
+        ICollectionParamService collectionParamService = ReferenceConfigCache.getCache().get(reference2);
+        String message2 = collectionParamService.getValWithMapParam(map);
+        System.out.println("map调用：" + message2);
+
+        List<String> params = Lists.newArrayList("aa", "tt");
+        String message3 = collectionParamService.getValWitchListParam(params);
+        System.out.println("list调用：" + message3);
 
 //        // generic invoke
 //        GenericService genericService = (GenericService) demoService;
