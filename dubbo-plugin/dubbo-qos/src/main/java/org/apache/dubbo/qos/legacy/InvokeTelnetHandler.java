@@ -48,7 +48,7 @@ public class InvokeTelnetHandler implements TelnetHandler { //@csy-027-P2 invoke
 
     @Override
     @SuppressWarnings("unchecked")
-    public String telnet(Channel channel, String message) {
+    public String telnet(Channel channel, String message) { //
         if (StringUtils.isEmpty(message)) {
             return "Please input method name, eg: \r\ninvoke xxxMethod(1234, \"abcd\", {\"prop\" : \"value\"})\r\n" +  //调用缺省服务的方法
                     "invoke XxxService.xxxMethod(1234, \"abcd\", {\"prop\" : \"value\"})\r\n" + //按服务简写名调用方法
