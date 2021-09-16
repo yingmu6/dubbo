@@ -23,7 +23,7 @@ import java.util.Map;
  */
 public class FullServiceDefinition extends ServiceDefinition {
 
-    private Map<String, String> parameters;
+    private Map<String, String> parameters; //参数键值对
 
     public Map<String, String> getParameters() {
         return parameters;

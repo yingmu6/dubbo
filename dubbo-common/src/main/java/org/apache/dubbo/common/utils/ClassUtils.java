@@ -20,16 +20,7 @@ package org.apache.dubbo.common.utils;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static java.util.Collections.emptySet;
@@ -59,7 +50,7 @@ public class ClassUtils {
     private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_TYPE_MAP = new HashMap<Class<?>, Class<?>>(16);
 
     /**
-     * Simple Types including:
+     * Simple Types including: 简单类型
      * <ul>
      *     <li>{@link Void}</li>
      *     <li>{@link Boolean}</li>

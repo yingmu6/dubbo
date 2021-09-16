@@ -32,7 +32,7 @@ import static org.apache.dubbo.rpc.model.ApplicationModel.getName;
  * @since 2.7.5
  */
 @SPI(DEFAULT_METADATA_STORAGE_TYPE)
-public interface WritableMetadataService extends MetadataService {
+public interface WritableMetadataService extends MetadataService { //本地的元数据
 
     /**
      * Gets the current Dubbo Service name

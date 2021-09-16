@@ -28,12 +28,7 @@ import org.apache.dubbo.metadata.report.identifier.MetadataIdentifier;
 
 import java.util.SortedSet;
 
-import static org.apache.dubbo.common.constants.CommonConstants.APPLICATION_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.CONSUMER_SIDE;
-import static org.apache.dubbo.common.constants.CommonConstants.GROUP_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.INTERFACE_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.PROVIDER_SIDE;
-import static org.apache.dubbo.common.constants.CommonConstants.VERSION_KEY;
+import static org.apache.dubbo.common.constants.CommonConstants.*;
 
 /**
  * The {@link WritableMetadataService} implementation stores the metadata（存储元数据） of Dubbo services
@@ -42,7 +37,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.VERSION_KEY;
  *
  * @since 2.7.5
  */
-public class RemoteWritableMetadataService extends AbstractAbstractWritableMetadataService {
+public class RemoteWritableMetadataService extends AbstractAbstractWritableMetadataService { //远程存储元数据
 
     private final InMemoryWritableMetadataService writableMetadataServiceDelegate;
 

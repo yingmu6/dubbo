@@ -89,7 +89,7 @@ public abstract class AbstractAbstractWritableMetadataService implements Writabl
     protected void publishConsumerParameters(URL url) {
     }
 
-    protected void publishServiceDefinition(String key, String json) {
+    protected void publishServiceDefinition(String key, String json) { //抽象类的空方法，交由子类实现
     }
 
 }

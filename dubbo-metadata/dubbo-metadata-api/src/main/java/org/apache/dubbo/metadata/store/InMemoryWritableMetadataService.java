@@ -32,9 +32,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static java.util.Collections.emptySortedSet;
-import static java.util.Collections.unmodifiableSortedMap;
-import static java.util.Collections.unmodifiableSortedSet;
+import static java.util.Collections.*;
 import static org.apache.dubbo.common.URL.buildKey;
 import static org.apache.dubbo.common.constants.CommonConstants.PROTOCOL_KEY;
 import static org.apache.dubbo.common.utils.CollectionUtils.isEmpty;
@@ -74,7 +72,7 @@ public class InMemoryWritableMetadataService extends AbstractAbstractWritableMet
      * The {@link Map} caches the json of {@link ServiceDefinition} with
      * {@link BaseServiceMetadata#buildServiceKey(String, String, String) the service key}
      */
-    private final ConcurrentNavigableMap<String, String> serviceDefinitions = new ConcurrentSkipListMap<>();
+    private final ConcurrentNavigableMap<String, String> serviceDefinitions = new ConcurrentSkipListMap<>(); //服务key和服务json字符串的键值对
 
     @Override
     public SortedSet<String> getSubscribedURLs() {
@@ -210,7 +208,7 @@ public class InMemoryWritableMetadataService extends AbstractAbstractWritableMet
                 || protocol.equals(url.getProtocol());
     }
 
-    static class URLComparator implements Comparator<URL> {
+    static class URLComparator implements Comparator<URL> { //url比较器
 
         public static final URLComparator INSTANCE = new URLComparator();
 
