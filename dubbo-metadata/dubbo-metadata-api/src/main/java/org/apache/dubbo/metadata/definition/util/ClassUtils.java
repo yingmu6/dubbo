@@ -63,7 +63,7 @@ public final class ClassUtils {
      * @param clazz Class to parse.
      * @return field list
      */
-    public static List<Field> getNonStaticFields(final Class<?> clazz) {
+    public static List<Field> getNonStaticFields(final Class<?> clazz) { //获取类的非静态字段
         List<Field> result = new ArrayList<>();
         Class<?> target = clazz;
         while (target != null) {

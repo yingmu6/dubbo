@@ -16,7 +16,7 @@
  */
 package org.apache.dubbo.common.context;
 
-public abstract class LifecycleAdapter implements Lifecycle { //生命周期适配器
+public abstract class LifecycleAdapter implements Lifecycle { //生命周期适配器：可选择实现方法
 
     @Override
     public void initialize() throws IllegalStateException {

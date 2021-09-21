@@ -32,11 +32,11 @@ public class BaseServiceMetadata {
     // 构建服务key，group/path:version
     public static String buildServiceKey(String path, String group, String version) {
         StringBuilder buf = new StringBuilder();
-        if (group != null && group.length() > 0) {
+        if (group != null && group.length() > 0) { //存在group时
             buf.append(group).append("/");
         }
         buf.append(path);
-        if (version != null && version.length() > 0) {
+        if (version != null && version.length() > 0) { //存在version时
             buf.append(":").append(version);
         }
         return buf.toString();

@@ -345,7 +345,7 @@ public class ClassUtils {
      * @return non-null read-only {@link Set}
      * @since 2.7.6
      */
-    public static Set<Class<?>> getAllSuperClasses(Class<?> type, Predicate<Class<?>>... classFilters) {
+    public static Set<Class<?>> getAllSuperClasses(Class<?> type, Predicate<Class<?>>... classFilters) { //函数传递
 
         Set<Class<?>> allSuperClasses = new LinkedHashSet<>();
 

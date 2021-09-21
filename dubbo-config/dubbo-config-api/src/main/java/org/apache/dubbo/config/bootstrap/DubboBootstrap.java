@@ -184,7 +184,7 @@ public class DubboBootstrap extends GenericEventListener {
         return registerConsumer == null || !registerConsumer;
     }
 
-    private String getMetadataType() {
+    private String getMetadataType() { //
         String type = getApplication().getMetadataType();
         if (StringUtils.isEmpty(type)) {
             type = DEFAULT_METADATA_STORAGE_TYPE;

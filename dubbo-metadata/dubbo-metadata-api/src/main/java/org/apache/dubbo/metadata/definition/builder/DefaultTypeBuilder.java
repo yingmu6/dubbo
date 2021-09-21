@@ -36,13 +36,13 @@ public final class DefaultTypeBuilder {
         final String name = clazz.getName();
 
         TypeDefinition td = new TypeDefinition(name);
-        // Try to get a cached definition
+        // Try to get a cached definition 尝试从缓存中获取定义
         if (typeCache.containsKey(clazz)) {
             return typeCache.get(clazz);
         }
 
         // Primitive type
-        if (!JaketConfigurationUtils.needAnalyzing(clazz)) {
+        if (!JaketConfigurationUtils.needAnalyzing(clazz)) { //todo @csy-001 此处怎么体现基本类型不处理的？
             return td;
         }
 
@@ -58,7 +58,7 @@ public final class DefaultTypeBuilder {
             Type fieldType = field.getGenericType();
 
             TypeDefinition fieldTd = TypeDefinitionBuilder.build(fieldType, fieldClass, typeCache);
-            td.getProperties().put(fieldName, fieldTd);
+            td.getProperties().put(fieldName, fieldTd); //将字段名与字段类型进行映射
         }
 
         typeCache.put(clazz, td);

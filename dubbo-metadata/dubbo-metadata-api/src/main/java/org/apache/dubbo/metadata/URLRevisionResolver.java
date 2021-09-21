@@ -19,13 +19,7 @@ package org.apache.dubbo.metadata;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.compiler.support.ClassUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -36,6 +30,7 @@ import static org.apache.dubbo.common.utils.CollectionUtils.isEmpty;
 
 /**
  * A class to resolve the version from {@link URL URLs}
+ * （一个从URL中解析版本的类）
  *
  * @revised 2.7.8 repackage and refactor
  * @since 2.7.5
@@ -50,7 +45,7 @@ public class URLRevisionResolver {
     /**
      * @since 2.7.8
      */
-    public static final URLRevisionResolver INSTANCE = new URLRevisionResolver();
+    public static final URLRevisionResolver INSTANCE = new URLRevisionResolver(); //静态变量设置实例：单例模式
 
     /**
      * Resolve revision as {@link String} from the specified the {@link URL#toFullString() strings} presenting the {@link URL URLs}.
@@ -118,7 +113,7 @@ public class URLRevisionResolver {
                 .collect(Collectors.toList());
     }
 
-    private SortedSet<String> resolveMethodSignatures(Collection<URL> urls) {
+    private SortedSet<String> resolveMethodSignatures(Collection<URL> urls) { //处理方法签名
         return urls.stream()
                 .map(URL::getServiceInterface)                 // get the service interface
                 .map(ClassUtils::forName)                      // load business interface class
@@ -137,7 +132,7 @@ public class URLRevisionResolver {
                 .collect(TreeSet::new, Set::add, Set::addAll); // sort and remove the duplicate
     }
 
-    private long hashCode(String value) {
+    private long hashCode(String value) { //hashcode 计算
         long h = 0;
         char[] chars = value.toCharArray();
         for (int i = 0; i < chars.length; i++) {

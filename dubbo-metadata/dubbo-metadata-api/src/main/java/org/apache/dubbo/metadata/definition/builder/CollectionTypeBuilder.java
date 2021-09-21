@@ -55,7 +55,7 @@ public class CollectionTypeBuilder implements TypeBuilder {
         }
 
         Type actualType = actualTypeArgs[0];
-        if (actualType instanceof ParameterizedType) {
+        if (actualType instanceof ParameterizedType) { //todo @csy-001 怎么体现是Collection操作的？
             // Nested collection or map.
             Class<?> rawType = (Class<?>) ((ParameterizedType) actualType).getRawType();
             TypeDefinitionBuilder.build(actualType, rawType, typeCache);

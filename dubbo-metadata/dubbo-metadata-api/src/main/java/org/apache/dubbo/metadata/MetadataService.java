@@ -198,7 +198,7 @@ public interface MetadataService {
      * @param url {@link URL url}
      * @return
      */
-    static boolean isMetadataServiceURL(URL url) {
+    static boolean isMetadataServiceURL(URL url) { //判断是否是MetadataService对应的URL
         String serviceInterface = url.getServiceInterface();
         return SERVICE_INTERFACE_NAME.equals(serviceInterface);
     }
@@ -209,7 +209,7 @@ public interface MetadataService {
      * @param urls the strings presents the {@link URL Dubbo URLs}
      * @return non-null
      */
-    static List<URL> toURLs(Iterable<String> urls) {
+    static List<URL> toURLs(Iterable<String> urls) { //把url字符串集合转换为URL列表
         return stream(urls.spliterator(), false)
                 .map(URL::valueOf)
                 .collect(Collectors.toList());

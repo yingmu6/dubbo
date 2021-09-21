@@ -29,7 +29,7 @@ public class ServiceDefinition implements Serializable { //服务定义
     private String canonicalName; //canonical:简洁的
     private String codeSource;
     private List<MethodDefinition> methods;
-    private List<TypeDefinition> types;
+    private List<TypeDefinition> types; //todo @csy-001 都定义的哪些内容？数据是怎样的？
 
     public String getCanonicalName() {
         return canonicalName;
@@ -87,7 +87,7 @@ public class ServiceDefinition implements Serializable { //服务定义
         if (!(o instanceof ServiceDefinition)) {
             return false;
         }
-        ServiceDefinition that = (ServiceDefinition) o;
+        ServiceDefinition that = (ServiceDefinition) o; //比较对象中的属性
         return Objects.equals(getCanonicalName(), that.getCanonicalName()) &&
                 Objects.equals(getCodeSource(), that.getCodeSource()) &&
                 Objects.equals(getMethods(), that.getMethods()) &&

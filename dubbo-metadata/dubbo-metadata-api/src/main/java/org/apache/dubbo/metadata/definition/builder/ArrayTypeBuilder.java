@@ -32,13 +32,16 @@ public class ArrayTypeBuilder implements TypeBuilder {
         if (clazz == null) {
             return false;
         }
-        return clazz.isArray();
+        return clazz.isArray(); //判断是否是数组类型
     }
 
     @Override
     public TypeDefinition build(Type type, Class<?> clazz, Map<Class<?>, TypeDefinition> typeCache) {
         // Process the component type of an array.
         Class<?> componentType = clazz.getComponentType();
+        /**
+         * todo @csy-001 此处会调用TypeDefinitionBuilder#build，而TypeDefinitionBuilder又会调用具体实例的build，会不会死循环？
+         */
         TypeDefinitionBuilder.build(componentType, componentType, typeCache);
 
         final String canonicalName = clazz.getCanonicalName();

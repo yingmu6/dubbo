@@ -16,19 +16,14 @@
  */
 package org.apache.dubbo.metadata.definition;
 
+import com.google.gson.Gson;
 import org.apache.dubbo.metadata.definition.builder.CollectionTypeBuilder;
 import org.apache.dubbo.metadata.definition.builder.DefaultTypeBuilder;
 import org.apache.dubbo.metadata.definition.builder.EnumTypeBuilder;
 import org.apache.dubbo.metadata.definition.builder.MapTypeBuilder;
-import org.apache.dubbo.metadata.definition.common.ClassExtendsMap;
-import org.apache.dubbo.metadata.definition.common.ColorEnum;
-import org.apache.dubbo.metadata.definition.common.OuterClass;
-import org.apache.dubbo.metadata.definition.common.ResultWithRawCollections;
-import org.apache.dubbo.metadata.definition.common.TestService;
+import org.apache.dubbo.metadata.definition.common.*;
 import org.apache.dubbo.metadata.definition.model.ServiceDefinition;
 import org.apache.dubbo.metadata.definition.model.TypeDefinition;
-
-import com.google.gson.Gson;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -37,9 +32,10 @@ import org.junit.jupiter.api.Test;
  * <p>
  * 16/9/22.
  */
-public class MetadataTest {
+public class MetadataTest { //todo @csy-001 待调试
 
     /**
+     *
      */
     @Test
     public void testInnerClassType() {

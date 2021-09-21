@@ -24,11 +24,7 @@ import org.apache.dubbo.metadata.definition.builder.TypeBuilder;
 import org.apache.dubbo.metadata.definition.model.TypeDefinition;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.apache.dubbo.common.utils.ClassUtils.isSimpleType;
 
@@ -52,7 +48,7 @@ public class TypeDefinitionBuilder {
         if (builder != null) {
             td = builder.build(type, clazz, typeCache);
             td.setTypeBuilderName(builder.getClass().getName());
-        } else {
+        } else { //若没有找到构建器，则使用默认构建器
             td = DefaultTypeBuilder.build(clazz, typeCache);
             td.setTypeBuilderName(DefaultTypeBuilder.class.getName());
         }
@@ -63,9 +59,9 @@ public class TypeDefinitionBuilder {
     }
 
     private static TypeBuilder getGenericTypeBuilder(Type type, Class<?> clazz) {
-        for (TypeBuilder builder : BUILDERS) {
+        for (TypeBuilder builder : BUILDERS) { //匹配符合条件的类型构建器
             try {
-                if (builder.accept(type, clazz)) {
+                if (builder.accept(type, clazz)) { //根据类型匹配构建器
                     return builder;
                 }
             } catch (NoClassDefFoundError cnfe) {

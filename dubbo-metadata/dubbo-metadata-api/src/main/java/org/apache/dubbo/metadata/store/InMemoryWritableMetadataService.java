@@ -124,7 +124,7 @@ public class InMemoryWritableMetadataService extends AbstractAbstractWritableMet
     }
 
     @Override
-    protected void publishServiceDefinition(String key, String json) {
+    protected void publishServiceDefinition(String key, String json) { //发布服务定义信息：写到本地缓存中
         serviceDefinitions.put(key, json); //将服务key，与服务定义的json字符串存在本地缓存中
     }
 

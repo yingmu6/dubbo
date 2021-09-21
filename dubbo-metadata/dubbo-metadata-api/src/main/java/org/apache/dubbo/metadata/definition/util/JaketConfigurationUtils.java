@@ -28,7 +28,7 @@ public class JaketConfigurationUtils {
 
     private static final String CONFIGURATION_FILE = "jaket.properties";
 
-    private static String[] includedInterfacePackages;
+    private static String[] includedInterfacePackages; //todo @csy-001 值都有什么？
     private static String[] includedTypePackages;
     private static String[] closedTypes;
 
@@ -36,9 +36,9 @@ public class JaketConfigurationUtils {
         Properties props = new Properties();
         InputStream inStream = JaketConfigurationUtils.class.getClassLoader().getResourceAsStream(CONFIGURATION_FILE);
         try {
-            props.load(inStream);
+            props.load(inStream); //把文件中的内容加载到Properties对象中
             String value = (String) props.get("included_interface_packages");
-            if (StringUtils.isNotEmpty(value)) {
+            if (StringUtils.isNotEmpty(value)) { //解析属性的值
                 includedInterfacePackages = value.split(",");
             }
 
@@ -71,7 +71,7 @@ public class JaketConfigurationUtils {
         return true;
     }
 
-    public static boolean isExcludedType(Class<?> clazz) {
+    public static boolean isExcludedType(Class<?> clazz) { //判断是否是排除的类型
         if (includedTypePackages == null || includedTypePackages.length == 0) {
             return false;
         }
@@ -85,7 +85,7 @@ public class JaketConfigurationUtils {
         return true;
     }
 
-    public static boolean needAnalyzing(Class<?> clazz) {
+    public static boolean needAnalyzing(Class<?> clazz) { //todo @csy-001 业务逻辑是怎样的？
         String canonicalName = clazz.getCanonicalName();
 
         if (closedTypes != null && closedTypes.length > 0) {

@@ -22,11 +22,7 @@ import org.apache.dubbo.common.config.Environment;
 import org.apache.dubbo.common.constants.CommonConstants;
 import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
-import org.apache.dubbo.common.utils.ClassUtils;
-import org.apache.dubbo.common.utils.CollectionUtils;
-import org.apache.dubbo.common.utils.MethodUtils;
-import org.apache.dubbo.common.utils.ReflectUtils;
-import org.apache.dubbo.common.utils.StringUtils;
+import org.apache.dubbo.common.utils.*;
 import org.apache.dubbo.config.context.ConfigManager;
 import org.apache.dubbo.config.support.Parameter;
 import org.apache.dubbo.rpc.model.ApplicationModel;
@@ -36,11 +32,7 @@ import javax.annotation.PostConstruct;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -66,7 +58,7 @@ public abstract class AbstractConfig implements Serializable {
      */
     private static final String[] SUFFIXES = new String[]{"Config", "Bean", "ConfigBase"};
 
-    static {
+    static { //预置的属性键值对
         LEGACY_PROPERTIES.put("dubbo.protocol.name", "dubbo.service.protocol");
         LEGACY_PROPERTIES.put("dubbo.protocol.host", "dubbo.service.server.host");
         LEGACY_PROPERTIES.put("dubbo.protocol.port", "dubbo.service.server.port");

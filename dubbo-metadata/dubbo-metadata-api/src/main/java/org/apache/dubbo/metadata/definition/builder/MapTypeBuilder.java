@@ -26,9 +26,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 import static org.apache.dubbo.common.utils.StringUtils.replace;
-import static org.apache.dubbo.common.utils.TypeUtils.getRawClass;
-import static org.apache.dubbo.common.utils.TypeUtils.isClass;
-import static org.apache.dubbo.common.utils.TypeUtils.isParameterizedType;
+import static org.apache.dubbo.common.utils.TypeUtils.*;
 
 /**
  * 2015/1/27.
@@ -69,7 +67,7 @@ public class MapTypeBuilder implements TypeBuilder {
 
         TypeDefinition typeDefinition = new TypeDefinition(mapType);
 
-        for (int i = 0; i < actualTypeArgsLength; i++) {
+        for (int i = 0; i < actualTypeArgsLength; i++) { //todo @csy-001 怎么体现Map的处理的？
             Type actualType = actualTypeArgs[i];
             TypeDefinition item = null;
             Class<?> rawType = getRawClass(actualType);

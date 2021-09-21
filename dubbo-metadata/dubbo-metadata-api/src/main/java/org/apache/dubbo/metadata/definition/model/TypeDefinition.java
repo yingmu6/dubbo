@@ -19,16 +19,12 @@ package org.apache.dubbo.metadata.definition.model;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * 2015/1/27.
  */
-public class TypeDefinition implements Serializable { //类型定义
+public class TypeDefinition implements Serializable { //类型定义 todo @csy-001 功能用途是什么？
 
     private String id;
     private String type;
@@ -36,7 +32,7 @@ public class TypeDefinition implements Serializable { //类型定义
     private List<TypeDefinition> items;
     @SerializedName("enum")
     private List<String> enums;
-    private String $ref;
+    private String $ref; //todo @csy-001 该属性都是怎样的内容？
     private Map<String, TypeDefinition> properties;
     private String typeBuilderName;
 

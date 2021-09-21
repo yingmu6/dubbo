@@ -88,7 +88,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
     private final Holder<Map<String, Class<?>>> cachedClasses = new Holder<>(); //当前扩展接口，所有扩展名与扩展类Class的映射
 
     private final Map<String, Object> cachedActivates = new ConcurrentHashMap<>(); //扩展名与@Active注解的映射，@csy-007 此处的Object是具体的实例吗？是怎么设置的？解：不是扩展实例，是@Active对象，在cacheActivateClass方法中设置的
-    private final ConcurrentMap<String, Holder<Object>> cachedInstances = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, Holder<Object>> cachedInstances = new ConcurrentHashMap<>(); //扩展名与实例映射的键值对
     private final Holder<Object> cachedAdaptiveInstance = new Holder<>();
     private volatile Class<?> cachedAdaptiveClass = null;
     private String cachedDefaultName; //缓存默认的扩展名，即为SPI上声明的扩展名
@@ -452,7 +452,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
      * will be thrown.
      */
     @SuppressWarnings("unchecked")
-    public T getExtension(String name) { //获取的扩展名对应的实例 (在配置文件中配置的或者动态添加的扩展)
+    public T getExtension(String name) { //获取的扩展名对应的实例，默认是对实例进行封装的wrap=true
         return getExtension(name, true);
     }
 
@@ -515,16 +515,16 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
         return Collections.unmodifiableSet(new TreeSet<>(clazzes.keySet()));
     }
 
-    public Set<T> getSupportedExtensionInstances() {
+    public Set<T> getSupportedExtensionInstances() { //获取支持的扩展实例
         List<T> instances = new LinkedList<>();
         Set<String> supportedExtensions = getSupportedExtensions();
         if (CollectionUtils.isNotEmpty(supportedExtensions)) {
-            for (String name : supportedExtensions) {
+            for (String name : supportedExtensions) { //依次遍历扩展名，然后获取对应的实例
                 instances.add(getExtension(name));
             }
         }
         // sort the Prioritized instances
-        sort(instances, Prioritized.COMPARATOR);
+        sort(instances, Prioritized.COMPARATOR); //使用Prioritized比较器，进行排序
         return new LinkedHashSet<>(instances);
     }
 
@@ -688,7 +688,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
             injectExtension(instance);
 
             //注入封装类的实例（若需要封装的话，会将封装类的实例，覆盖扩展指定的实现类）
-            if (wrap) {
+            if (wrap) { //todo @csy-001 封装类都有哪些，是怎么对目标实例进行封装的？
 
                 List<Class<?>> wrapperClassesList = new ArrayList<>();
                 if (cachedWrapperClasses != null) { //当前扩展接口对应的封装类列表，如WrappedExt的封装类列表为Ext5Wrapper1、Ext5Wrapper2
@@ -729,7 +729,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
      * @csy-009 注入扩展逻辑是怎样的？
      * 解：创建扩展类的实例后，若该实例的属性中包含其他扩展类，会使用Set方法设置
      */
-    private T injectExtension(T instance) {
+    private T injectExtension(T instance) { //todo @csy-001 注入扩展实例是怎样的？
 
         if (objectFactory == null) {
             return instance;

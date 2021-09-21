@@ -1251,10 +1251,10 @@ class URL implements Serializable {
         for (String key : keys) {
             map.remove(key);
         }
-        if (map.size() == getParameters().size()) {
+        if (map.size() == getParameters().size()) { //说明url的键值对中没有需要移除的键
             return this;
         }
-        return new URL(protocol, username, password, host, port, path, map);
+        return new URL(protocol, username, password, host, port, path, map); //若参数键值对有变动，则重新构造URL
     }
 
     public URL clearParameters() {

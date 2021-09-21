@@ -18,12 +18,7 @@ package org.apache.dubbo.common.utils;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -36,24 +31,23 @@ import static java.util.stream.StreamSupport.stream;
 import static org.apache.dubbo.common.function.Predicates.and;
 import static org.apache.dubbo.common.function.Streams.filterAll;
 import static org.apache.dubbo.common.function.Streams.filterList;
-import static org.apache.dubbo.common.utils.ClassUtils.getAllInterfaces;
-import static org.apache.dubbo.common.utils.ClassUtils.getAllSuperClasses;
-import static org.apache.dubbo.common.utils.ClassUtils.isAssignableFrom;
+import static org.apache.dubbo.common.utils.ClassUtils.*;
 
 /**
  * The utilities class for {@link Type}
+ * （Type的工具类）
  *
  * @since 2.7.6
  */
 public interface TypeUtils {
 
-    Predicate<Class<?>> NON_OBJECT_TYPE_FILTER = t -> !Objects.equals(Object.class, t);
+    Predicate<Class<?>> NON_OBJECT_TYPE_FILTER = t -> !Objects.equals(Object.class, t); //非对象类型过滤器
 
     static boolean isParameterizedType(Type type) {
         return type instanceof ParameterizedType;
     }
 
-    static Type getRawType(Type type) {
+    static Type getRawType(Type type) { //todo @csy-001 Raw是什么类型？
         if (isParameterizedType(type)) {
             return ((ParameterizedType) type).getRawType();
         } else {
@@ -172,7 +166,7 @@ public interface TypeUtils {
                 .map(Class::getGenericSuperclass)
                 .filter(TypeUtils::isParameterizedType)
                 .map(ParameterizedType.class::cast)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()); //todo @csy-001 此处的过滤条件是怎样的？
 
         return unmodifiableList(filterAll(allGenericSuperClasses, typeFilters));
     }
