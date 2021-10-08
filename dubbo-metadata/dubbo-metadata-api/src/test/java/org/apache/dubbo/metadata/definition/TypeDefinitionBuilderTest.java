@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 public class TypeDefinitionBuilderTest {
 
     @Test
-    public void testSortTypeBuilder() { //todo @csy-001 待调试
+    public void testSortTypeBuilder() {
         TypeBuilder tb = TypeDefinitionBuilder.BUILDERS.get(0);
         Assertions.assertTrue(tb instanceof TestTypeBuilder);
 

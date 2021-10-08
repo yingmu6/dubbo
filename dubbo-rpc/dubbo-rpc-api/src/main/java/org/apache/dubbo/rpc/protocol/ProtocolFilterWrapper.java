@@ -36,7 +36,7 @@ public class ProtocolFilterWrapper implements Protocol {
 
     private final Protocol protocol;
 
-    public ProtocolFilterWrapper(Protocol protocol) {
+    public ProtocolFilterWrapper(Protocol protocol) { //对Protocol进行封装
         if (protocol == null) {
             throw new IllegalArgumentException("protocol == null");
         }
@@ -51,7 +51,7 @@ public class ProtocolFilterWrapper implements Protocol {
             for (int i = filters.size() - 1; i >= 0; i--) { //从后往前遍历，最后一个就是头结点
                 final Filter filter = filters.get(i);
                 final Invoker<T> next = last;
-                last = new Invoker<T>() {
+                last = new Invoker<T>() { //将filter封装为invoker
 
                     @Override
                     public Class<T> getInterface() {
@@ -152,6 +152,7 @@ public class ProtocolFilterWrapper implements Protocol {
         if (UrlUtils.isRegistry(url)) {
             return protocol.refer(type, url);
         }
+        // 提供者暴露服务、消费者引用服务，都需要经过过滤链，使用的过滤器，会根据group、value进行匹配
         return buildInvokerChain(protocol.refer(type, url), REFERENCE_FILTER_KEY, CommonConstants.CONSUMER);
     }
 

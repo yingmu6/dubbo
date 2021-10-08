@@ -41,7 +41,7 @@ public class EnumTypeBuilder implements TypeBuilder {
 
         try {
             Method methodValues = clazz.getDeclaredMethod("values");
-            Object[] values = (Object[]) methodValues.invoke(clazz, new Object[0]); //todo @csy-001 此处为啥使用invoke？
+            Object[] values = (Object[]) methodValues.invoke(clazz, new Object[0]);
             int length = values.length;
             for (int i = 0; i < length; i++) {
                 Object value = values[i];

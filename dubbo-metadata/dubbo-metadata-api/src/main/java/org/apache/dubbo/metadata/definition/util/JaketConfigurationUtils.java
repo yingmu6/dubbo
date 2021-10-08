@@ -28,7 +28,7 @@ public class JaketConfigurationUtils {
 
     private static final String CONFIGURATION_FILE = "jaket.properties";
 
-    private static String[] includedInterfacePackages; //todo @csy-001 值都有什么？
+    private static String[] includedInterfacePackages;
     private static String[] includedTypePackages;
     private static String[] closedTypes;
 
@@ -85,7 +85,7 @@ public class JaketConfigurationUtils {
         return true;
     }
 
-    public static boolean needAnalyzing(Class<?> clazz) { //todo @csy-001 业务逻辑是怎样的？
+    public static boolean needAnalyzing(Class<?> clazz) {
         String canonicalName = clazz.getCanonicalName();
 
         if (closedTypes != null && closedTypes.length > 0) {

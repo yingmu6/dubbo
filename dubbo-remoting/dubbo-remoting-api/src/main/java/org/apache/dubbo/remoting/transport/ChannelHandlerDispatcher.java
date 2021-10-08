@@ -29,7 +29,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 /**
  * ChannelListenerDispatcher
  */
-public class ChannelHandlerDispatcher implements ChannelHandler {
+public class ChannelHandlerDispatcher implements ChannelHandler { //handler分发器：发生某个事件时，循环执行维护的通道处理器
 
     private static final Logger logger = LoggerFactory.getLogger(ChannelHandlerDispatcher.class);
 

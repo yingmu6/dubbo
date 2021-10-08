@@ -283,6 +283,8 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
          * 在扩展名列表不包含-default时进行处理
          * @csy-007 此处-default是指什么？去除默认扩展吗？
          * 是的，"-"表式剔除的含义
+         *
+         * 如果Filter中不带有"-default"字段，就会加载系统扩展Filter对象。（系统的Filter对象）
          */
         if (!names.contains(REMOVE_VALUE_PREFIX + DEFAULT_KEY)) { //处理带上@Activate的扩展类，将url上设置的值与注解上设置的值进行比较（在输入的value列表不包含"-default"处理）
             getExtensionClasses(); //此处没有用到方法的返回值，主要使用方法中的loadExtensionClasses()，若缓存中没有对应的值，则对应加载并设置到缓存中
@@ -323,9 +325,12 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
         /**
          * @csy-007 为啥提供者启动时，没有进入这个循环？消费端启动时，也没进入
          * 解：这里的@Activate注解不要求group设置为provider、consumer，所以提供端、消费端启动时没进入也是正常的
+         *
+         * 加载用户自定义扩展Filter对象（自定义的Filter对象）
          */
         for (int i = 0; i < names.size(); i++) { //待调试
             String name = names.get(i);
+            // 带有排除符号"-"的Filter不加载
             if (!name.startsWith(REMOVE_VALUE_PREFIX)
                     && !names.contains(REMOVE_VALUE_PREFIX + name)) { //@csy-007 此处逻辑会在什么场景下进入？解：处理不再cachedActivates缓存中的扩展，如ExtensionLoaderTest.testLoadDefaultActivateExtension
                 if (DEFAULT_KEY.equals(name)) { //扩展名为default时，加载
@@ -688,7 +693,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
             injectExtension(instance);
 
             //注入封装类的实例（若需要封装的话，会将封装类的实例，覆盖扩展指定的实现类）
-            if (wrap) { //todo @csy-001 封装类都有哪些，是怎么对目标实例进行封装的？
+            if (wrap) {
 
                 List<Class<?>> wrapperClassesList = new ArrayList<>();
                 if (cachedWrapperClasses != null) { //当前扩展接口对应的封装类列表，如WrappedExt的封装类列表为Ext5Wrapper1、Ext5Wrapper2
@@ -729,7 +734,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
      * @csy-009 注入扩展逻辑是怎样的？
      * 解：创建扩展类的实例后，若该实例的属性中包含其他扩展类，会使用Set方法设置
      */
-    private T injectExtension(T instance) { //todo @csy-001 注入扩展实例是怎样的？
+    private T injectExtension(T instance) {
 
         if (objectFactory == null) {
             return instance;

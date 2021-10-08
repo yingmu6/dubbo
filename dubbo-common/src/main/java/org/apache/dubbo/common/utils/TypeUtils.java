@@ -47,7 +47,7 @@ public interface TypeUtils {
         return type instanceof ParameterizedType;
     }
 
-    static Type getRawType(Type type) { //todo @csy-001 Raw是什么类型？
+    static Type getRawType(Type type) {
         if (isParameterizedType(type)) {
             return ((ParameterizedType) type).getRawType();
         } else {
@@ -166,7 +166,7 @@ public interface TypeUtils {
                 .map(Class::getGenericSuperclass)
                 .filter(TypeUtils::isParameterizedType)
                 .map(ParameterizedType.class::cast)
-                .collect(Collectors.toList()); //todo @csy-001 此处的过滤条件是怎样的？
+                .collect(Collectors.toList());
 
         return unmodifiableList(filterAll(allGenericSuperClasses, typeFilters));
     }

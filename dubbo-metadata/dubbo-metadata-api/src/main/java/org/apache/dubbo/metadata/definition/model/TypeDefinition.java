@@ -24,7 +24,7 @@ import java.util.*;
 /**
  * 2015/1/27.
  */
-public class TypeDefinition implements Serializable { //类型定义 todo @csy-001 功能用途是什么？
+public class TypeDefinition implements Serializable { //类型定义
 
     private String id;
     private String type;
@@ -32,7 +32,7 @@ public class TypeDefinition implements Serializable { //类型定义 todo @csy-0
     private List<TypeDefinition> items;
     @SerializedName("enum")
     private List<String> enums;
-    private String $ref; //todo @csy-001 该属性都是怎样的内容？
+    private String $ref;
     private Map<String, TypeDefinition> properties;
     private String typeBuilderName;
 

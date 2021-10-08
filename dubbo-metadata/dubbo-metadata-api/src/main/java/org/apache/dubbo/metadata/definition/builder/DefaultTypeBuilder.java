@@ -42,7 +42,7 @@ public final class DefaultTypeBuilder {
         }
 
         // Primitive type
-        if (!JaketConfigurationUtils.needAnalyzing(clazz)) { //todo @csy-001 此处怎么体现基本类型不处理的？
+        if (!JaketConfigurationUtils.needAnalyzing(clazz)) {
             return td;
         }
 

@@ -39,9 +39,7 @@ public class ArrayTypeBuilder implements TypeBuilder {
     public TypeDefinition build(Type type, Class<?> clazz, Map<Class<?>, TypeDefinition> typeCache) {
         // Process the component type of an array.
         Class<?> componentType = clazz.getComponentType();
-        /**
-         * todo @csy-001 此处会调用TypeDefinitionBuilder#build，而TypeDefinitionBuilder又会调用具体实例的build，会不会死循环？
-         */
+        
         TypeDefinitionBuilder.build(componentType, componentType, typeCache);
 
         final String canonicalName = clazz.getCanonicalName();

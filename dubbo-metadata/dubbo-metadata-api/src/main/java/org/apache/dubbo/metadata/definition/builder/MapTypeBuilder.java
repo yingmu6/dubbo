@@ -67,7 +67,7 @@ public class MapTypeBuilder implements TypeBuilder {
 
         TypeDefinition typeDefinition = new TypeDefinition(mapType);
 
-        for (int i = 0; i < actualTypeArgsLength; i++) { //todo @csy-001 怎么体现Map的处理的？
+        for (int i = 0; i < actualTypeArgsLength; i++) {
             Type actualType = actualTypeArgs[i];
             TypeDefinition item = null;
             Class<?> rawType = getRawClass(actualType);

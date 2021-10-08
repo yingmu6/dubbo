@@ -108,7 +108,7 @@ public class ApplicationConfig extends AbstractConfig {
     /**
      * Whether to enable qos or not
      */
-    private Boolean qosEnable; //todo @csy-001 qos值的是什么？
+    private Boolean qosEnable;
 
     /**
      * The qos host to listen

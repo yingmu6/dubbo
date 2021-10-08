@@ -29,7 +29,7 @@ public class ServiceDefinition implements Serializable { //服务定义
     private String canonicalName; //canonical:简洁的
     private String codeSource;
     private List<MethodDefinition> methods;
-    private List<TypeDefinition> types; //todo @csy-001 都定义的哪些内容？数据是怎样的？
+    private List<TypeDefinition> types;
 
     public String getCanonicalName() {
         return canonicalName;

@@ -87,7 +87,7 @@ public interface WritableMetadataService extends MetadataService { //本地的�
      */
     boolean unsubscribeURL(URL url);
 
-    void publishServiceDefinition(URL url); //todo @csy-001 是需要把数据写到哪里？
+    void publishServiceDefinition(URL url);
 
     /**
      * Get {@link ExtensionLoader#getDefaultExtension() the defautl extension} of {@link WritableMetadataService}

@@ -25,7 +25,7 @@ import org.apache.dubbo.remoting.transport.ChannelHandlerDispatcher;
 /**
  * Transporter facade. (API, Static, ThreadSafe)
  */
-public class Transporters {
+public class Transporters { //是网络传输层的门面类，它统一了网络传输层的访问入口，提供了一堆bind与connect静态方法，与信息交换层的Exchangers功能一致。
 
     static {
         // check duplicate jar package
@@ -53,7 +53,7 @@ public class Transporters {
         } else {
             handler = new ChannelHandlerDispatcher(handlers);
         }
-        return getTransporter().bind(url, handler); //@csy-002 此处是怎么选择实例的，比如NettyTransporter  解：@SPI("netty") SPI中指定的实现
+        return getTransporter().bind(url, handler);
     }
 
     public static Client connect(String url, ChannelHandler... handler) throws RemotingException {
@@ -75,7 +75,7 @@ public class Transporters {
         return getTransporter().connect(url, handler);
     }
 
-    public static Transporter getTransporter() {
+    public static Transporter getTransporter() { //获取自适应扩展类
         return ExtensionLoader.getExtensionLoader(Transporter.class).getAdaptiveExtension();
     }
 
