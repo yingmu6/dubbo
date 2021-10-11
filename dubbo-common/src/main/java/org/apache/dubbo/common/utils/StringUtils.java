@@ -550,7 +550,7 @@ public final class StringUtils {
         return false;
     }
 
-    public static boolean isNumeric(String str, boolean allowDot) {
+    public static boolean isNumeric(String str, boolean allowDot) { //allow dot 是否容许小圆点
         if (str == null || str.isEmpty()) {
             return false;
         }
@@ -558,7 +558,7 @@ public final class StringUtils {
         int sz = str.length();
         for (int i = 0; i < sz; i++) {
             if (str.charAt(i) == '.') {
-                if (hasDot || !allowDot) {
+                if (hasDot || !allowDot) { //有小圆点，但又声明不允许小圆点，则认为不是数字
                     return false;
                 }
                 hasDot = true;

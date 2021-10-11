@@ -67,16 +67,16 @@ public abstract class AbstractProxyProtocol extends AbstractProtocol {
     @Override
     @SuppressWarnings("unchecked")
     public <T> Exporter<T> export(final Invoker<T> invoker) throws RpcException {
-        final String uri = serviceKey(invoker.getUrl());
+        final String uri = serviceKey(invoker.getUrl()); //获取url对应的service key
         Exporter<T> exporter = (Exporter<T>) exporterMap.get(uri);
         if (exporter != null) {
             // When modifying the configuration through override, you need to re-expose the newly modified service.
-            if (Objects.equals(exporter.getInvoker().getUrl(), invoker.getUrl())) { //缓存中的配置与实际配置有变更时，重新暴露服务
+            if (Objects.equals(exporter.getInvoker().getUrl(), invoker.getUrl())) { //缓存中的配置与实际配置有变更时，重新暴露服务，否则使用缓存中的服务
                 return exporter;
             }
         }
         final Runnable runnable = doExport(proxyFactory.getProxy(invoker, true), invoker.getInterface(), invoker.getUrl());
-        exporter = new AbstractExporter<T>(invoker) {
+        exporter = new AbstractExporter<T>(invoker) { //通过invoker构建exporter，invoker -》exporter
             @Override
             public void unexport() {
                 super.unexport();

@@ -16,23 +16,12 @@
  */
 package org.apache.dubbo.rpc.support;
 
+import com.alibaba.fastjson.JSON;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.extension.ExtensionFactory;
 import org.apache.dubbo.common.extension.ExtensionLoader;
-import org.apache.dubbo.common.utils.ArrayUtils;
-import org.apache.dubbo.common.utils.ConfigUtils;
-import org.apache.dubbo.common.utils.PojoUtils;
-import org.apache.dubbo.common.utils.ReflectUtils;
-import org.apache.dubbo.common.utils.StringUtils;
-import org.apache.dubbo.rpc.AsyncRpcResult;
-import org.apache.dubbo.rpc.Invocation;
-import org.apache.dubbo.rpc.Invoker;
-import org.apache.dubbo.rpc.ProxyFactory;
-import org.apache.dubbo.rpc.Result;
-import org.apache.dubbo.rpc.RpcException;
-import org.apache.dubbo.rpc.RpcInvocation;
-
-import com.alibaba.fastjson.JSON;
+import org.apache.dubbo.common.utils.*;
+import org.apache.dubbo.rpc.*;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Type;
@@ -40,12 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.apache.dubbo.rpc.Constants.FAIL_PREFIX;
-import static org.apache.dubbo.rpc.Constants.FORCE_PREFIX;
-import static org.apache.dubbo.rpc.Constants.MOCK_KEY;
-import static org.apache.dubbo.rpc.Constants.RETURN_KEY;
-import static org.apache.dubbo.rpc.Constants.RETURN_PREFIX;
-import static org.apache.dubbo.rpc.Constants.THROW_PREFIX;
+import static org.apache.dubbo.rpc.Constants.*;
 
 final public class MockInvoker<T> implements Invoker<T> {
     private final static ProxyFactory PROXY_FACTORY = ExtensionLoader.getExtensionLoader(ProxyFactory.class).getAdaptiveExtension();
@@ -64,7 +48,7 @@ final public class MockInvoker<T> implements Invoker<T> {
         return parseMockValue(mock, null);
     }
 
-    public static Object parseMockValue(String mock, Type[] returnTypes) throws Exception {
+    public static Object parseMockValue(String mock, Type[] returnTypes) throws Exception { //检查mock的值是否符合要求
         Object value = null;
         if ("empty".equals(mock)) {
             value = ReflectUtils.getEmptyObject(returnTypes != null && returnTypes.length > 0 ? (Class<?>) returnTypes[0] : null);
@@ -74,18 +58,18 @@ final public class MockInvoker<T> implements Invoker<T> {
             value = true;
         } else if ("false".equals(mock)) {
             value = false;
-        } else if (mock.length() >= 2 && (mock.startsWith("\"") && mock.endsWith("\"")
+        } else if (mock.length() >= 2 && (mock.startsWith("\"") && mock.endsWith("\"") //此处的mock为2时，为"\"\""
                 || mock.startsWith("\'") && mock.endsWith("\'"))) {
-            value = mock.subSequence(1, mock.length() - 1);
+            value = mock.subSequence(1, mock.length() - 1); //将字符串对应的双引号或单引号去除，如"\"foo\""，去除引号后的字符串为 "foo"
         } else if (returnTypes != null && returnTypes.length > 0 && returnTypes[0] == String.class) {
-            value = mock;
+            value = mock; //返回值的类型为String，直接取mock的值
         } else if (StringUtils.isNumeric(mock, false)) {
             value = JSON.parse(mock);
         } else if (mock.startsWith("{")) {
             value = JSON.parseObject(mock, Map.class);
         } else if (mock.startsWith("[")) {
             value = JSON.parseObject(mock, List.class);
-        } else {
+        } else { //普通字符串
             value = mock;
         }
         if (ArrayUtils.isNotEmpty(returnTypes)) {
