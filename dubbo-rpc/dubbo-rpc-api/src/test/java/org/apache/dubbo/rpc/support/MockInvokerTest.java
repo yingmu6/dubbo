@@ -19,7 +19,6 @@ package org.apache.dubbo.rpc.support;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.rpc.RpcException;
 import org.apache.dubbo.rpc.RpcInvocation;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -27,6 +26,7 @@ import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import static org.apache.dubbo.rpc.Constants.MOCK_KEY;
 
@@ -47,10 +47,24 @@ public class MockInvokerTest {
 
         Assertions.assertEquals(
                 new HashMap<>(), MockInvoker.parseMockValue("{}"));
+        HashMap map = new HashMap<>();
+        map.put("name", "zhangsan");
+
+        String str = "{\"name\":\"zhangsan\"}";
+        String str2 = "{'name':'zhangsan'}"; //代码中：单引号、双引号皆可，xml只能用单引号，双引号带上转义字符不通过
+        Assertions.assertEquals(map, MockInvoker.parseMockValue(str));
+        Assertions.assertEquals(map, MockInvoker.parseMockValue(str2)); //mock的值是JSON对象字符串时，会按Map类型解析
+
+        List list = new ArrayList<>();
+        list.add("zhangsan");
+        list.add("lisi");
+        String arrStr = "['zhangsan','lisi']";
+        Assertions.assertEquals(list, MockInvoker.parseMockValue(arrStr));
+
         Assertions.assertEquals(
                 new ArrayList<>(), MockInvoker.parseMockValue("[]"));
         Assertions.assertEquals("foo",
-                MockInvoker.parseMockValue("foo", new Type[]{String.class}));
+                MockInvoker.parseMockValue("foo", new Type[] {String.class}));
     }
 
     @Test

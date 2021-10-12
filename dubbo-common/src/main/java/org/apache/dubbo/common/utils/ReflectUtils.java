@@ -932,10 +932,10 @@ public final class ReflectUtils {
         return findMethodByMethodSignature(clazz, methodName, null);
     }
 
-    public static Constructor<?> findConstructor(Class<?> clazz, Class<?> paramType) throws NoSuchMethodException {
+    public static Constructor<?> findConstructor(Class<?> clazz, Class<?> paramType) throws NoSuchMethodException {//查找
         Constructor<?> targetConstructor;
         try {
-            targetConstructor = clazz.getConstructor(new Class<?>[]{paramType});
+            targetConstructor = clazz.getConstructor(new Class<?>[] {paramType});
         } catch (NoSuchMethodException e) {
             targetConstructor = null;
             Constructor<?>[] constructors = clazz.getConstructors();

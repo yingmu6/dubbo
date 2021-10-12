@@ -25,32 +25,10 @@
 
     <dubbo:registry address="zookeeper://127.0.0.1:2181"/>
 
-    <!-- mock中return返回 JSON字符串-->
-<!--    <dubbo:reference id="demoService"-->
-<!--                     check="false"-->
-<!--                     interface="org.apache.dubbo.demo.DemoService"-->
-<!--                     timeout="20000"-->
-<!--                     mock="return {'name':'zhangsan'}"-->
-<!--    />-->
-
-    <!-- mock中return返回 JSON数组-->
     <dubbo:reference id="demoService"
                      check="false"
                      interface="org.apache.dubbo.demo.DemoService"
-                     timeout="20000"
-                     mock="return [{'name':'zhangsan'}] "
-    />
-
-    <!-- 此处return返回json字符串，需要使用单引号，双引号语法错误，暂不知原因-->
-    <!--    "return {\"name\":\"zhangsan\"}"-->
-
-<!--    <dubbo:reference id="demoService"-->
-<!--                     check="false"-->
-<!--                     interface="org.apache.dubbo.demo.DemoService"-->
-<!--                     timeout="20000"-->
-<!--                     mock="org.apache.dubbo.demo.consumer.DemoServiceMock"-->
-<!--    />-->
-    <!-- 若为mock="true"，则会去接口目录下找Mock的实现类，位置有限制；但是直接指定类的全路径的话，位置没有限制 -->
+                     timeout="20000"/>
 
     <dubbo:reference id= "greetingService" check="false" interface="org.apache.dubbo.demo.GreetingService"/>
 </beans>

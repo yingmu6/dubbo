@@ -39,7 +39,7 @@ final public class MockInvoker<T> implements Invoker<T> {
     private final URL url;
     private final Class<T> type;
 
-    public MockInvoker(URL url, Class<T> type) {
+    public MockInvoker(URL url, Class<T> type) { //构造时，传入url、type
         this.url = url;
         this.type = type;
     }
@@ -213,7 +213,7 @@ final public class MockInvoker<T> implements Invoker<T> {
      * @param mock mock string
      * @return normalized mock string
      */
-    public static String normalizeMock(String mock) { //mock正确性检查
+    public static String normalizeMock(String mock) { //按标准化补全mock值
         if (mock == null) {
             return mock;
         }
@@ -232,11 +232,11 @@ final public class MockInvoker<T> implements Invoker<T> {
             return "default";
         }
 
-        if (mock.startsWith(FAIL_PREFIX)) {
-            mock = mock.substring(FAIL_PREFIX.length()).trim(); //去除前缀
+        if (mock.startsWith(FAIL_PREFIX)) { //fail:  做为前缀
+            mock = mock.substring(FAIL_PREFIX.length()).trim();
         }
 
-        if (mock.startsWith(FORCE_PREFIX)) {
+        if (mock.startsWith(FORCE_PREFIX)) { //force:  做为前缀
             mock = mock.substring(FORCE_PREFIX.length()).trim();
         }
 
