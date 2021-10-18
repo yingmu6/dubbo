@@ -17,6 +17,7 @@
 package org.apache.dubbo.demo.consumer;
 
 import org.apache.dubbo.demo.DemoService;
+import org.apache.dubbo.rpc.service.GenericService;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class ConsumerApplication {
@@ -32,12 +33,17 @@ public class ConsumerApplication {
         String response = demoService.sayHello2("how are you?");
         System.out.println("demoService result: " + response);
 
+        GenericService genericService = (GenericService) context.getBean("demoService");
+        Object result = genericService.$invoke("sayHello2", new String[] {"java.lang.String"}, new Object[] {"Worldsss"});
+        System.out.println("generic result:" + result);
+
+
 //        for (int i = 0; i < 3; i++) {
 //            GreetingService greetingService = context.getBean("greetingService", GreetingService.class);
 //            System.out.println("greetingService result: " + greetingService.hello());
 //        }
 
-        
+
         System.in.read();
 
     }
