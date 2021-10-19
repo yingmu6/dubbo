@@ -1,4 +1,4 @@
-package org.apache.dubbo.demo.provider;
+package org.apache.dubbo.demo.provider.basic;
 
 import org.apache.dubbo.demo.Fruit;
 import org.apache.dubbo.demo.FruitEnum;

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.dubbo.demo.consumer;
+package org.apache.dubbo.demo.consumer.basic;
 
 import com.google.common.collect.Lists;
 import org.apache.dubbo.config.ApplicationConfig;

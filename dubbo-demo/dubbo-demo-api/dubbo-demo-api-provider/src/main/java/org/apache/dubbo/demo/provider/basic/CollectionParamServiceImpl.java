@@ -1,4 +1,4 @@
-package org.apache.dubbo.demo.provider;
+package org.apache.dubbo.demo.provider.basic;
 
 import org.apache.dubbo.demo.ICollectionParamService;
 
