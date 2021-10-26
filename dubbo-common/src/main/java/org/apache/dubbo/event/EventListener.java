@@ -97,7 +97,7 @@ public interface EventListener<E extends Event> extends java.util.EventListener,
      * @param parameterizedType the {@link ParameterizedType} presents a class of {@link EventListener Dubbo event listener}
      * @return <code>null</code> if not found
      */
-    static Class<? extends Event> findEventType(ParameterizedType parameterizedType) {
+    static Class<? extends Event> findEventType(ParameterizedType parameterizedType) { //查找事件类型
         Class<? extends Event> eventType = null;
 
         Type rawType = parameterizedType.getRawType();

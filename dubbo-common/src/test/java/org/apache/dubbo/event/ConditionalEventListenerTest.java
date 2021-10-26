@@ -37,7 +37,7 @@ public class ConditionalEventListenerTest {
     }
 
     @Test
-    public void testOnEvent() {
+    public void testOnEvent() { //事件测试
 
         OnlyHelloWorldEventListener listener = new OnlyHelloWorldEventListener();
 

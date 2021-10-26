@@ -103,13 +103,13 @@ public abstract class AbstractEventDispatcher implements EventDispatcher {
     }
 
     private <E> void addIfAbsent(Collection<E> collection, E element) {
-        if (!collection.contains(element)) {
+        if (!collection.contains(element)) { // 集合中不存在元素时，添加元素
             collection.add(element);
         }
     }
 
     @Override
-    public void dispatch(Event event) {
+    public void dispatch(Event event) { //
 
         Executor executor = getExecutor();
 
