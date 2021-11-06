@@ -40,19 +40,19 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * AbstractInvoker.
  */
-public abstract class AbstractInvoker<T> implements Invoker<T> {
+public abstract class AbstractInvoker<T> implements Invoker<T> { //
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private final Class<T> type;
+    private final Class<T> type; //invoker封装的接口类型
 
-    private final URL url;
+    private final URL url; //当前invoker关联的url对象
 
-    private final Map<String, Object> attachment;
+    private final Map<String, Object> attachment; //附加信息
 
-    private volatile boolean available = true;
+    private volatile boolean available = true; //是否可用
 
-    private AtomicBoolean destroyed = new AtomicBoolean(false);
+    private AtomicBoolean destroyed = new AtomicBoolean(false); //是否销毁
 
     public AbstractInvoker(Class<T> type, URL url) {
         this(type, url, (Map<String, Object>) null);

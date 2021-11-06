@@ -49,10 +49,11 @@ public class ExchangeCodec extends TelnetCodec {
     // header length.
     protected static final int HEADER_LENGTH = 16;
     // magic header.
+    // 十进制：11*16^0 + 11*16^1 + 10*16^2 + 13*16^3 = 11 + 176 + 2560 + 53248 = 55995
     protected static final short MAGIC = (short) 0xdabb;
     protected static final byte MAGIC_HIGH = Bytes.short2bytes(MAGIC)[0];
     protected static final byte MAGIC_LOW = Bytes.short2bytes(MAGIC)[1];
-    // message flag.
+    // message flag.ExchangeCodec
     protected static final byte FLAG_REQUEST = (byte) 0x80; // 十进制为128，二进制位10000000
     protected static final byte FLAG_TWOWAY = (byte) 0x40; // 十进制为64，二进制位01000000
     protected static final byte FLAG_EVENT = (byte) 0x20; // 十进制为32，二进制位00100000
@@ -205,6 +206,17 @@ public class ExchangeCodec extends TelnetCodec {
             return null;
         }
         return req.getData();
+    }
+
+    // 计算规则 -2^(字节数*8-1)-1 ~ 2^(字节数*8-1)
+    // byte取值范围(占用1个字节) -2^(1*8-1)-1 ~ 2^(1*8-1) = -128 ~ 127
+    // short的取值范围(占用2个字节) -2^(2*8-1)-1 ~ 2^(2*8-1) = ~32768 ~ 32767
+    public static void main(String[] args) {
+        byte[] header = new byte[HEADER_LENGTH];
+        Bytes.short2bytes(MAGIC, header);
+        System.out.println(header[0] + ";;" + header[1]);
+        System.out.println((short) 55995);
+        byte b = 112;
     }
 
     protected void encodeRequest(Channel channel, ChannelBuffer buffer, Request req) throws IOException {

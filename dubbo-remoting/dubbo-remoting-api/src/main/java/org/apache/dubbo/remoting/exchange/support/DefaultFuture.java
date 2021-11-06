@@ -288,7 +288,7 @@ public class DefaultFuture extends CompletableFuture<Object> {
             }
         }
 
-        private void notifyTimeout(DefaultFuture future) {
+        private void notifyTimeout(DefaultFuture future) { //通知超时
             // create exception response.
             Response timeoutResponse = new Response(future.getId());
             // set timeout status.

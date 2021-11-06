@@ -37,7 +37,7 @@ import java.util.concurrent.*;
 public class ThreadlessExecutor extends AbstractExecutorService {
     private static final Logger logger = LoggerFactory.getLogger(ThreadlessExecutor.class.getName());
 
-    private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
+    private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>(); //线程维护在阻塞队列中
 
     private ExecutorService sharedExecutor;
 
@@ -83,7 +83,7 @@ public class ThreadlessExecutor extends AbstractExecutorService {
             return;
         }
 
-        Runnable runnable = queue.take();
+        Runnable runnable = queue.take(); //从阻塞队列中取出线程
 
         synchronized (lock) {
             waiting = false;
@@ -129,9 +129,9 @@ public class ThreadlessExecutor extends AbstractExecutorService {
     @Override
     public void execute(Runnable runnable) {
         synchronized (lock) {
-            if (!waiting) {
+            if (!waiting) { //若无等待的线程，直接加到线程池中
                 sharedExecutor.execute(runnable);
-            } else {
+            } else { //若有等待的线程，加到阻塞队列中
                 queue.add(runnable);
             }
         }
