@@ -18,10 +18,12 @@ package org.apache.dubbo.demo;
 
 import java.util.concurrent.CompletableFuture;
 
+@BasicInfo(username = "demo类")
 public interface DemoService {
 
     String sayHello(String name);
 
+    @BasicInfo(username = "张三", age = 12)
     String sayHello2(String name);
 
     default CompletableFuture<String> sayHelloAsync(String name) {

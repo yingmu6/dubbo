@@ -48,7 +48,7 @@ public final class ClassGenerator { //@csy-001 该类的用途是什么？解：
     private List<String> mMethods; //存放方法对应的字符串
     private Map<String, Method> mCopyMethods; // <method desc,method instance>  方法描述符与方法实例的映射
     private Map<String, Constructor<?>> mCopyConstructors; // <constructor desc,constructor instance> 方法描述符与构造实例的映射
-    private boolean mDefaultConstructor = false;
+    private boolean mDefaultConstructor = false; //是否使用默认构造函数
 
     private ClassGenerator() { //私有的构造函数，不直接对外暴露
     }
@@ -69,7 +69,7 @@ public final class ClassGenerator { //@csy-001 该类的用途是什么？解：
         return ClassGenerator.DC.class.isAssignableFrom(cl);
     }
 
-    public static ClassPool getClassPool(ClassLoader loader) {
+    public static ClassPool getClassPool(ClassLoader loader) { //
         if (loader == null) { //未指定类加载器时，返回默认类池
             return ClassPool.getDefault();
         }
@@ -290,40 +290,40 @@ public final class ClassGenerator { //@csy-001 该类的用途是什么？解：
         // 基于当前类维护的数据，进行逻辑处理
         long id = CLASS_NAME_COUNTER.getAndIncrement();
         try {
-            CtClass ctcs = mSuperClass == null ? null : mPool.get(mSuperClass);
-            if (mClassName == null) {
-                mClassName = (mSuperClass == null || javassist.Modifier.isPublic(ctcs.getModifiers())
+            CtClass ctcs = mSuperClass == null ? null : mPool.get(mSuperClass); // 从类池ClassPool中获取类名mSuperClass对应的CtClass
+            if (mClassName == null) { //若没显示设置类名时，自动生成对应的类名，如 org.apache.dubbo.common.bytecode.ClassGenerator0
+                mClassName = (mSuperClass == null || javassist.Modifier.isPublic(ctcs.getModifiers()) // ||都优先级大于?: 且结合性是从左到右的
                         ? ClassGenerator.class.getName() : mSuperClass + "$sc") + id; //构建类名：取ClassGenerator名称或mSuperClass名称
             }
-            mCtc = mPool.makeClass(mClassName); //创建指定类名的CtClass对象
-            if (mSuperClass != null) {
+            mCtc = mPool.makeClass(mClassName); //根据类名className创建对应的CtClass对象
+            if (mSuperClass != null) { //若CtClass的父类不为空，则进行设置
                 mCtc.setSuperclass(ctcs);
             }
-            mCtc.addInterface(mPool.get(DC.class.getName())); // add dynamic class tag.
-            if (mInterfaces != null) {
+            mCtc.addInterface(mPool.get(DC.class.getName())); // add dynamic class tag. (每一个动态类都实现了DC接口)
+            if (mInterfaces != null) { //设置接口
                 for (String cl : mInterfaces) {
-                    mCtc.addInterface(mPool.get(cl));
+                    mCtc.addInterface(mPool.get(cl)); //
                 }
             }
-            if (mFields != null) {
+            if (mFields != null) { //设置字段
                 for (String code : mFields) {
-                    mCtc.addField(CtField.make(code, mCtc)); // 通过字符对应的字符串构造字段
+                    mCtc.addField(CtField.make(code, mCtc)); // 将字段对应的字符串，转换为CtField
                 }
             }
-            if (mMethods != null) {
+            if (mMethods != null) { //设置方法
                 for (String code : mMethods) {
                     if (code.charAt(0) == ':') {
                         mCtc.addMethod(CtNewMethod.copy(getCtMethod(mCopyMethods.get(code.substring(1))),
-                                code.substring(1, code.indexOf('(')), mCtc, null));
+                                code.substring(1, code.indexOf('(')), mCtc, null)); //todo @csy 此处是在什么场景触发
                     } else {
-                        mCtc.addMethod(CtNewMethod.make(code, mCtc));
+                        mCtc.addMethod(CtNewMethod.make(code, mCtc)); // 将方法对应的字符串，转换为CtMethod
                     }
                 }
             }
-            if (mDefaultConstructor) {
+            if (mDefaultConstructor) { //处理默认的构造函数（无参的构造函数）
                 mCtc.addConstructor(CtNewConstructor.defaultConstructor(mCtc));
             }
-            if (mConstructors != null) {
+            if (mConstructors != null) { //处理构造函数
                 for (String code : mConstructors) {
                     if (code.charAt(0) == ':') {
                         mCtc.addConstructor(CtNewConstructor
@@ -382,7 +382,7 @@ public final class ClassGenerator { //@csy-001 该类的用途是什么？解：
         return getCtClass(c.getDeclaringClass()).getConstructor(ReflectUtils.getDesc(c));
     }
 
-    public static interface DC {
+    public static interface DC { //空接口，动态类标识接口
 
-    } // dynamic class tag interface. 动态类标识
+    } // dynamic class tag interface
 }

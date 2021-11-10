@@ -30,19 +30,20 @@
 <!--    <dubbo:parameter key="prompt" value="csy22"/> 错误的配置 -->
 
     <bean id="demoService" class="org.apache.dubbo.demo.provider.DemoServiceImqqp"/>
+    <dubbo:service interface="org.apache.dubbo.demo.DemoService" ref="demoService"/>
 <!--    <bean id="actives" class="org.apache.dubbo.demo.provider.DemoServiceImqqp"/>-->
 <!--    <bean id="greetingService" class="org.apache.dubbo.demo.provider.GreetingServiceImpl">-->
 <!--        <dubbo:parameter key="greet" value="hello"/>-->   <!-- 此处为普通的spring bean，嵌套元素不能是dubbo元素，不然会报配置错误 -->
 <!--    </bean>-->
 
-    <dubbo:service interface="org.apache.dubbo.demo.DemoService" ref="demoService" executes="1" generic="true">
-<!--        <dubbo:parameter key="prompt" value="csy4>"/>--> <!-- 设置telnet命令行的提示语 -->
-        <dubbo:method name="sayHello2" timeout="3000">
-            <!-- <dubbo:method> 的子标签，通过index与type找到参数, 如果为callback，服务提供方将生成反向代理，可以从服务提供方反向调用消费方，通常用于事件推送. -->
-<!--            <dubbo:argument index="0" type="String" callback="false"/>-->
-<!--            <dubbo:parameter key="aa" value="cc"/> &lt;!&ndash; 方法级别的参数配置 &ndash;&gt;-->
-        </dubbo:method>
-    </dubbo:service>
+<!--    <dubbo:service interface="org.apache.dubbo.demo.DemoService" ref="demoService" executes="1" generic="true">-->
+<!--&lt;!&ndash;        <dubbo:parameter key="prompt" value="csy4>"/>&ndash;&gt; &lt;!&ndash; 设置telnet命令行的提示语 &ndash;&gt;-->
+<!--        <dubbo:method name="sayHello2" timeout="3000">-->
+<!--            &lt;!&ndash; <dubbo:method> 的子标签，通过index与type找到参数, 如果为callback，服务提供方将生成反向代理，可以从服务提供方反向调用消费方，通常用于事件推送. &ndash;&gt;-->
+<!--&lt;!&ndash;            <dubbo:argument index="0" type="String" callback="false"/>&ndash;&gt;-->
+<!--&lt;!&ndash;            <dubbo:parameter key="aa" value="cc"/> &lt;!&ndash; 方法级别的参数配置 &ndash;&gt;&ndash;&gt;-->
+<!--        </dubbo:method>-->
+<!--    </dubbo:service>-->
 
     <!-- 如何暴露多协议服务，此处的设置是否生效？如设置为http协议，DubboProtocol.getDubboProtocol().getExporters()是否还能获取到http暴露的服务 -->
 <!--    <dubbo:service interface="org.apache.dubbo.demo.GreetingService" ref="greetingService" protocol="http">-->

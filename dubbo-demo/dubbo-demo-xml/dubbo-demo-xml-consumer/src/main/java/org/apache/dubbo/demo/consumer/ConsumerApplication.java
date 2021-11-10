@@ -16,8 +16,8 @@
  */
 package org.apache.dubbo.demo.consumer;
 
+import org.apache.dubbo.demo.BasicInfo;
 import org.apache.dubbo.demo.DemoService;
-import org.apache.dubbo.rpc.service.GenericService;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class ConsumerApplication {
@@ -33,9 +33,18 @@ public class ConsumerApplication {
         String response = demoService.sayHello2("how are you?");
         System.out.println("demoService result: " + response);
 
-        GenericService genericService = (GenericService) context.getBean("demoService");
-        Object result = genericService.$invoke("sayHello2", new String[] {"java.lang.String"}, new Object[] {"Worldsss"});
-        System.out.println("generic result:" + result);
+        Class cls = demoService.getClass();
+        System.out.println("是否有注解：" + cls.isAnnotationPresent(BasicInfo.class)); //todo @csy 此处为什么获取不到注解内容
+        if (cls.isAnnotationPresent(BasicInfo.class)) {
+
+        }
+//        BasicInfo basicInfo = (BasicInfo) cls.getAnnotation(BasicInfo.class);
+//        System.out.println(basicInfo.age() + ";;;" + basicInfo.username());
+
+
+//        GenericService genericService = (GenericService) context.getBean("demoService");
+//        Object result = genericService.$invoke("sayHello2", new String[] {"java.lang.String"}, new Object[] {"Worldsss"});
+//        System.out.println("generic result:" + result);
 
 
 //        for (int i = 0; i < 3; i++) {

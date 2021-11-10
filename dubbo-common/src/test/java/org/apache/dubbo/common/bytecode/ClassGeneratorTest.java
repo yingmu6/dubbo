@@ -35,7 +35,7 @@ public class ClassGeneratorTest {
         Bean b = new Bean();
         Field fname = null, fs[] = Bean.class.getDeclaredFields();
         for (Field f : fs) {
-            f.setAccessible(true);
+            f.setAccessible(true); // 设置字段的可见性
             if (f.getName().equals("name"))
                 fname = f;
         }
@@ -47,10 +47,10 @@ public class ClassGeneratorTest {
         cg.addField("public static java.lang.reflect.Field FNAME;");
 
         cg.addMethod("public Object getName(" + Bean.class.getName() + " o){ boolean[][][] bs = new boolean[0][][]; return (String)FNAME.get($1); }");
-        cg.addMethod("public void setName(" + Bean.class.getName() + " o, Object name){ FNAME.set($1, $2); }");
+        cg.addMethod("public void setName(" + Bean.class.getName() + " o, Object name){ FNAME.set($1, $2); }"); //todo @csy 此处的占位符$1, $2是怎么处理的？
 
         cg.addDefaultConstructor();
-        Class<?> cl = cg.toClass();
+        Class<?> cl = cg.toClass(); //转化为Class对象
         cl.getField("FNAME").set(null, fname);
 
         System.out.println(cl.getName());
@@ -64,14 +64,15 @@ public class ClassGeneratorTest {
     public void testMain0() throws Exception {
         Bean b = new Bean();
         Field fname = null, fs[] = Bean.class.getDeclaredFields();
-        for (Field f : fs) {
+        for (Field f : fs) { //从Bean中查找字段名为"name"的字段
             f.setAccessible(true);
-            if (f.getName().equals("name"))
+            if (f.getName().equals("name")) {
                 fname = f;
+            }
         }
 
         ClassGenerator cg = ClassGenerator.newInstance();
-        cg.setClassName(Bean.class.getName() + "$Builder2");
+        cg.setClassName(Bean.class.getName() + "$Builder2"); //设置动态类的名称
         cg.addInterface(Builder.class);
 
         cg.addField("FNAME", Modifier.PUBLIC | Modifier.STATIC, java.lang.reflect.Field.class);
@@ -80,6 +81,7 @@ public class ClassGeneratorTest {
         cg.addMethod("public void setName(" + Bean.class.getName() + " o, Object name){ FNAME.set($1, $2); }");
 
         cg.addDefaultConstructor();
+
         Class<?> cl = cg.toClass();
         cl.getField("FNAME").set(null, fname);
 
@@ -89,6 +91,35 @@ public class ClassGeneratorTest {
         builder.setName(b, "ok");
         System.out.println(b.getName());
     }
+
+
+    @Test
+    public void test() throws InstantiationException, IllegalAccessException {
+        ClassGenerator classGenerator = ClassGenerator.newInstance();
+//        classGenerator.setClassName(Bean.class.getName()); //此处会出现"duplicate class definition"（因为Bean类在当前包下已经定义了）
+        classGenerator.setClassName("org.apache.dubbo.common.bytecode.Bean2");
+
+        // 给Bean类加上一个属性 double weight，设置值，并读出值
+        classGenerator.addField("private double weight = 5.3;"); //会进行语法编译
+        classGenerator.addMethod("public double getWeight() { return weight;}");
+        classGenerator.addMethod("public void setWeight(double weight) { this.weight = weight;}");
+
+        // 设置实现的接口
+        classGenerator.addInterface(UserInfo.class);
+        Class cls = classGenerator.toClass();
+
+        // 通过接口调用具体的方法
+        UserInfo userInfo = (UserInfo) cls.newInstance();
+        userInfo.setWeight(7.8);
+        System.out.println(userInfo.getWeight());
+    }
+
+}
+
+interface UserInfo {
+    double getWeight();
+
+    void setWeight(double weight);
 }
 
 class Bean {
