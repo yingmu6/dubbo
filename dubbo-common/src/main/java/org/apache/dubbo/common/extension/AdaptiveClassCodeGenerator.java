@@ -32,7 +32,7 @@ import java.util.stream.IntStream;
 /**
  * Code generator for Adaptive class（为自适应类产生代码）
  */
-public class AdaptiveClassCodeGenerator {
+public class AdaptiveClassCodeGenerator { //自适应代码产生器
 
     private static final Logger logger = LoggerFactory.getLogger(AdaptiveClassCodeGenerator.class);
 
@@ -160,7 +160,7 @@ public class AdaptiveClassCodeGenerator {
         //构建方法：包含方法返回类型、方法名、方法参数、抛出的异常、内容
         String methodReturnType = method.getReturnType().getCanonicalName(); //获取规范的返回类型，如java.lang.String
         String methodName = method.getName();
-        String methodContent = generateMethodContent(method);
+        String methodContent = generateMethodContent(method); // 产生方法内容
         String methodArgs = generateMethodArguments(method); //如：org.apache.dubbo.common.URL arg0, java.lang.String arg1
         String methodThrows = generateMethodThrows(method);
         // CODE_METHOD_DECLARATION = "public %s %s(%s) %s {\n%s}\n";
