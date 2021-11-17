@@ -742,7 +742,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
 
         try {
             for (Method method : instance.getClass().getMethods()) { //@csy-009 待覆盖测试，解：调试类和方法，ExtensionLoader_Adaptive_Test.test_getAdaptiveExtension_inject
-                if (!isSetter(method)) {
+                if (!isSetter(method)) { //只处理set方法
                     continue;
                 }
                 /**

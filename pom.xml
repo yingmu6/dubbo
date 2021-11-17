@@ -127,6 +127,7 @@
         <checkstyle.skip>true</checkstyle.skip>
         <rat.skip>true</rat.skip>
         <revision>2.7.8</revision>
+<!--        <revision>2.7.8-SELF</revision>-->
     </properties>
 
     <modules>

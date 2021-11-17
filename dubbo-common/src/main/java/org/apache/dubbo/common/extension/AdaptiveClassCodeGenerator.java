@@ -44,7 +44,7 @@ public class AdaptiveClassCodeGenerator { //自适应代码产生器
 
     private static final String CODE_CLASS_DECLARATION = "public class %s$Adaptive implements %s {\n"; //类的声明信息
 
-    private static final String CODE_METHOD_DECLARATION = "public %s %s(%s) %s {\n%s}\n";
+    private static final String CODE_METHOD_DECLARATION = "public %s %s(%s) %s {\n%s}\n"; //方法的声明信息
 
     private static final String CODE_METHOD_ARGUMENT = "%s arg%d";
 
@@ -120,7 +120,7 @@ public class AdaptiveClassCodeGenerator { //自适应代码产生器
     /**
      * generate imports
      */
-    private String generateImports() {
+    private String generateImports() { //使用字符串占位符方式，填充内容
         return String.format(CODE_IMPORTS, ExtensionLoader.class.getName()); //类名如：org.apache.dubbo.common.extension.ExtensionLoader
     }
 
@@ -247,7 +247,7 @@ public class AdaptiveClassCodeGenerator { //自适应代码产生器
     }
 
     /**
-     * generate extName assigment code
+     * generate extName assigment code（产生扩展名的赋值语句）
      */
     private String generateExtNameAssignment(String[] value, boolean hasInvocation) { //获取扩展名对应的语句
         // TODO: refactor it
@@ -255,7 +255,7 @@ public class AdaptiveClassCodeGenerator { //自适应代码产生器
         for (int i = value.length - 1; i >= 0; --i) { //从右往左设置默认值，然后取值时从左到右取值（根据默认属性名、protocol自适应名称、是否有Invocation参数等因素来判断扩展名的获取方式）
             if (i == value.length - 1) {
                 if (null != defaultExtName) { //存在默认扩展名
-                    if (!"protocol".equals(value[i])) { //判断@Adaptive对应的value值
+                    if (!"protocol".equals(value[i])) {
                         if (hasInvocation) {
                             //getMethodParameter(String method, String key, String defaultValue)
                             getNameCode = String.format("url.getMethodParameter(methodName, \"%s\", \"%s\")", value[i], defaultExtName);
@@ -289,7 +289,8 @@ public class AdaptiveClassCodeGenerator { //自适应代码产生器
             }
         }
 
-        return String.format(CODE_EXT_NAME_ASSIGNMENT, getNameCode); //比如：url.getParameter("add.ext1", "impl1")
+        return String.format(CODE_EXT_NAME_ASSIGNMENT, getNameCode); //比如：String extName = url.getParameter("has.adaptive.ext", "adaptive");
+
     }
 
     /**
