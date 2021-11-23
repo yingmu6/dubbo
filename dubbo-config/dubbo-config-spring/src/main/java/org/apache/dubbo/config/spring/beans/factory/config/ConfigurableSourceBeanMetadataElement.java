@@ -32,7 +32,7 @@ public interface ConfigurableSourceBeanMetadataElement {
      * @param beanMetadataElement {@link BeanMetadataElement} instance
      */
     default void setSource(BeanMetadataElement beanMetadataElement) {
-        if (beanMetadataElement instanceof BeanMetadataAttributeAccessor) {
+        if (beanMetadataElement instanceof BeanMetadataAttributeAccessor) { //todo @csy-11/23-P2 此处的功能用途是什么？
             BeanMetadataAttributeAccessor.class.cast(beanMetadataElement).setSource(this);
         }
     }

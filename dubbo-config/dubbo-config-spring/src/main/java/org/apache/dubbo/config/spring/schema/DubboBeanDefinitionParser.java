@@ -73,7 +73,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
     /**
      * 解析元素，设置元素的属性值，返回构建的bean对象
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked") //todo @csy-11/23-P2 该方法是从哪里进入的？
     private static RootBeanDefinition parse(Element element, ParserContext parserContext, Class<?> beanClass, boolean required) { //ParserContext：通过bean定义解析过程传递的上下文，封装所有相关配置和状态，嵌套在XmlReaderContext内
         RootBeanDefinition beanDefinition = new RootBeanDefinition();
         beanDefinition.setBeanClass(beanClass);
@@ -116,7 +116,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
                 PropertyValue property = definition.getPropertyValues().getPropertyValue("protocol");
                 if (property != null) {
                     Object value = property.getValue();
-                    if (value instanceof ProtocolConfig && id.equals(((ProtocolConfig) value).getName())) {
+                    if (value instanceof ProtocolConfig && id.equals(((ProtocolConfig) value).getName())) {// todo @csy-11/23-P2 待调试，此处的处理逻辑是怎样的？
                         definition.getPropertyValues().addPropertyValue("protocol", new RuntimeBeanReference(id));
                     }
                 }
@@ -174,7 +174,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
                     String value = resolveAttribute(element, property, parserContext);
                     if (value != null) { //若值为null或者""，则不处理
                         value = value.trim();
-                        if (value.length() > 0) {
+                        if (value.length() > 0) { //todo @csy-11/23-P2 此处的处理逻辑是怎样的？待调试？
                             if ("registry".equals(property) && RegistryConfig.NO_AVAILABLE.equalsIgnoreCase(value)) {
                                 RegistryConfig registryConfig = new RegistryConfig();
                                 registryConfig.setAddress(RegistryConfig.NO_AVAILABLE);
@@ -214,7 +214,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
                                             throw new IllegalStateException("The exported service ref " + value + " must be singleton! Please set the " + value + " bean scope to singleton, eg: <bean id=\"" + value + "\" scope=\"singleton\" ...>");
                                         }
                                     }
-                                    reference = new RuntimeBeanReference(value);
+                                    reference = new RuntimeBeanReference(value); //todo @csy-11/23-P3 RuntimeBeanReference的功能用途是什么？
                                 }
                                 beanDefinition.getPropertyValues().addPropertyValue(beanProperty, reference); //将属性名、属性值组装成PropertyValue对象，放到List<PropertyValue>属性值列表中
                             }
@@ -326,7 +326,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
             }
             Element element = (Element) nodeList.item(i);
             if ("parameter".equals(element.getNodeName())
-                    || "parameter".equals(element.getLocalName())) {
+                    || "parameter".equals(element.getLocalName())) { //todo @csy-11/23-P2 待调试了解
                 if (parameters == null) {
                     parameters = new ManagedMap();
                 }
@@ -354,7 +354,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
                 continue;
             }
             Element element = (Element) nodeList.item(i);
-            if ("method".equals(element.getNodeName()) || "method".equals(element.getLocalName())) {
+            if ("method".equals(element.getNodeName()) || "method".equals(element.getLocalName())) { //todo @csy-11/23-P2 待调试了解逻辑业务
                 String methodName = resolveAttribute(element, "name", parserContext);
                 if (StringUtils.isEmpty(methodName)) { //方法名是必须的
                     throw new IllegalStateException("<dubbo:method> name attribute == null");
@@ -411,7 +411,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
                 continue;
             }
             Element element = (Element) nodeList.item(i);
-            if ("argument".equals(element.getNodeName()) || "argument".equals(element.getLocalName())) {
+            if ("argument".equals(element.getNodeName()) || "argument".equals(element.getLocalName())) { //todo @csy-11/23-P2 待调试了解处理逻辑？
                 String argumentIndex = resolveAttribute(element, "index", parserContext);
                 if (arguments == null) {
                     arguments = new ManagedList();
@@ -444,6 +444,8 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
         String attributeValue = element.getAttribute(attributeName); //获取元素中，指定属性名对应的属性值
         Environment environment = parserContext.getReaderContext().getEnvironment(); //Environment当前的实例对象是StandardEnvironment
         return environment.resolvePlaceholders(attributeValue); //替换占位符
+
+        //todo @csy-11/23-P2  Environment、ParserContext等概念了解
     }
 
     /**

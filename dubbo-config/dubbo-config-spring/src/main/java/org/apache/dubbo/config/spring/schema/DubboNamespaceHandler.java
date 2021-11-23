@@ -36,7 +36,7 @@ import static org.apache.dubbo.config.spring.util.DubboBeanUtils.registerCommonB
  *
  * @export
  */
-public class DubboNamespaceHandler extends NamespaceHandlerSupport implements ConfigurableSourceBeanMetadataElement {
+public class DubboNamespaceHandler extends NamespaceHandlerSupport implements ConfigurableSourceBeanMetadataElement { //todo @csy-11/23-P2 NamespaceHandler、NamespaceHandlerSupport的主要功能用途是什么？
     /**
      * 数据结构
      * 1）继承了spring的NamespaceHandlerSupport，可以解析自定义的元素
@@ -67,6 +67,7 @@ public class DubboNamespaceHandler extends NamespaceHandlerSupport implements Co
         registerBeanDefinitionParser("service", new DubboBeanDefinitionParser(ServiceBean.class, true)); //将元素名与对应的bean进行对应
         registerBeanDefinitionParser("reference", new DubboBeanDefinitionParser(ReferenceBean.class, false));
         registerBeanDefinitionParser("annotation", new AnnotationBeanDefinitionParser()); //对应注解解析器
+        // todo @csy-11/23-P2 registerBeanDefinitionParser 做了什么处理？
     }
 
     /**
@@ -80,8 +81,8 @@ public class DubboNamespaceHandler extends NamespaceHandlerSupport implements Co
      * @since 2.7.5
      */
     @Override
-    public BeanDefinition parse(Element element, ParserContext parserContext) {
-        BeanDefinitionRegistry registry = parserContext.getRegistry();
+    public BeanDefinition parse(Element element, ParserContext parserContext) { //todo @csy-11/23-P2 parse()和init() 对应发生什么事件执行的？哪个方法先执行的？
+        BeanDefinitionRegistry registry = parserContext.getRegistry(); //todo @csy-11/23-P3 ParserContext、BeanDefinitionRegistry的功能用途是怎样的？
         registerAnnotationConfigProcessors(registry);
         /**
          * @since 2.7.8
@@ -101,7 +102,7 @@ public class DubboNamespaceHandler extends NamespaceHandlerSupport implements Co
      * @see AnnotationConfigUtils
      * @since 2.7.5
      */
-    private void registerAnnotationConfigProcessors(BeanDefinitionRegistry registry) {
+    private void registerAnnotationConfigProcessors(BeanDefinitionRegistry registry) { //todo @csy-11/23-P2 此处的注解是什么意思？怎么使用的？
         AnnotationConfigUtils.registerAnnotationConfigProcessors(registry);
     }
 }
