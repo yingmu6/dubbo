@@ -881,15 +881,15 @@ public final class StringUtils {
             char ch = camelName.charAt(i);
             if (ch >= 'A' && ch <= 'Z') {
                 if (buf == null) {
-                    buf = new StringBuilder();
+                    buf = new StringBuilder(); //StringBuffer是线程安全的，使用synchronized处理效率低，若处理的变量不是共享的，使用StringBuilder即可
                     if (i > 0) {
                         buf.append(camelName, 0, i);
                     }
                 }
                 if (i > 0) {
-                    buf.append(split);
+                    buf.append(split); //附加上分隔符
                 }
-                buf.append(Character.toLowerCase(ch));
+                buf.append(Character.toLowerCase(ch)); //将大写字母变小写后，附加到字符串上
             } else if (buf != null) {
                 buf.append(ch);
             }

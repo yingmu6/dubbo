@@ -314,7 +314,7 @@ public final class ClassGenerator { //@csy-001 该类的用途是什么？解：
                 for (String code : mMethods) {
                     if (code.charAt(0) == ':') {
                         mCtc.addMethod(CtNewMethod.copy(getCtMethod(mCopyMethods.get(code.substring(1))),
-                                code.substring(1, code.indexOf('(')), mCtc, null)); //todo @csy 此处是在什么场景触发
+                                code.substring(1, code.indexOf('(')), mCtc, null));
                     } else {
                         mCtc.addMethod(CtNewMethod.make(code, mCtc)); // 将方法对应的字符串，转换为CtMethod
                     }

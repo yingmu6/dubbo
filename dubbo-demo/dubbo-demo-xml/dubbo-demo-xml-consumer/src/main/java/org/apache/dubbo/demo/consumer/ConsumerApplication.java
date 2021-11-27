@@ -34,7 +34,7 @@ public class ConsumerApplication {
         System.out.println("demoService result: " + response);
 
         Class cls = demoService.getClass();
-        System.out.println("是否有注解：" + cls.isAnnotationPresent(BasicInfo.class)); //todo @csy 此处为什么获取不到注解内容
+        System.out.println("是否有注解：" + cls.isAnnotationPresent(BasicInfo.class));
         if (cls.isAnnotationPresent(BasicInfo.class)) {
 
         }

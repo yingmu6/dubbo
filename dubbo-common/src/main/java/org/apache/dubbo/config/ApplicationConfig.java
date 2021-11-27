@@ -87,18 +87,18 @@ public class ApplicationConfig extends AbstractConfig {
     /**
      * Registry centers
      */
-    private List<RegistryConfig> registries;
+    private List<RegistryConfig> registries; //一个应用信息可以注册到多个注册中心
     private String registryIds;
 
     /**
      * Monitor center
      */
-    private MonitorConfig monitor;
+    private MonitorConfig monitor; //一个应用只对应一个监控中心
 
     /**
      * Is default or not
      */
-    private Boolean isDefault;
+    private Boolean isDefault; //
 
     /**
      * Directory for saving thread dump

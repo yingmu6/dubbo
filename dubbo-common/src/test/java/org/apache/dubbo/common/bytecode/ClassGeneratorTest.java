@@ -47,7 +47,7 @@ public class ClassGeneratorTest {
         cg.addField("public static java.lang.reflect.Field FNAME;");
 
         cg.addMethod("public Object getName(" + Bean.class.getName() + " o){ boolean[][][] bs = new boolean[0][][]; return (String)FNAME.get($1); }");
-        cg.addMethod("public void setName(" + Bean.class.getName() + " o, Object name){ FNAME.set($1, $2); }"); //todo @csy 此处的占位符$1, $2是怎么处理的？
+        cg.addMethod("public void setName(" + Bean.class.getName() + " o, Object name){ FNAME.set($1, $2); }");
 
         cg.addDefaultConstructor();
         Class<?> cl = cg.toClass(); //转化为Class对象
