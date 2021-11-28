@@ -21,16 +21,29 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
        http://dubbo.apache.org/schema/dubbo http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
 
-    <dubbo:application metadata-type="remote" name="demo-provider"/> <!-- 没有设置id时，会尝试查找name等值 -->
+    <dubbo:application metadata-type="remote" name="demo-provider"> <!-- 没有设置id时，会尝试查找name等值 -->
+        <dubbo:parameter key="name" value="zhangsan"/>
+        <dubbo:parameter key="age" value="11"/>
+    </dubbo:application>
+
     <dubbo:metadata-report address="zookeeper://127.0.0.1:2181"/>
     <dubbo:config-center address="zookeeper://127.0.0.1:2181"/>
     <dubbo:registry address="zookeeper://127.0.0.1:2181/all?default.name=test" simplified="true"/>
 
     <dubbo:protocol name="dubbo" port="20881" status="server"/>
+
 <!--    <dubbo:parameter key="prompt" value="csy22"/> 错误的配置 -->
 
     <bean id="demoService" class="org.apache.dubbo.demo.provider.DemoServiceImqqp"/>
-    <dubbo:service interface="org.apache.dubbo.demo.DemoService" ref="demoService"/>
+    <dubbo:provider>
+        <dubbo:service interface="org.apache.dubbo.demo.DemoService" ref="demoService">
+            <dubbo:method name="sayHello" timeout="3000">
+                <!--            <dubbo:parameter key="name" value="haha"/> &lt;!&ndash; 配置自定义参数 &ndash;&gt;-->
+                <dubbo:argument index="0" callback="false"/> <!-- 对方法参数的特征进行描述-->
+            </dubbo:method>
+        </dubbo:service>
+    </dubbo:provider>
+
 <!--    <bean id="actives" class="org.apache.dubbo.demo.provider.DemoServiceImqqp"/>-->
 <!--    <bean id="greetingService" class="org.apache.dubbo.demo.provider.GreetingServiceImpl">-->
 <!--        <dubbo:parameter key="greet" value="hello"/>-->   <!-- 此处为普通的spring bean，嵌套元素不能是dubbo元素，不然会报配置错误 -->

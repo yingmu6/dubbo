@@ -77,7 +77,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
     //parse()方法是从哪里进入的？ 解：DubboNamespaceHandler#parse()中调用父类NamespaceHandlerSupport#parse()，然后在findParserForElement()之中，根据元素名称，从init()时映射的parsers键值对中找到对应的Bean解析器，就进入了该方法（策略模式）
     private static RootBeanDefinition parse(Element element, ParserContext parserContext, Class<?> beanClass, boolean required) { //ParserContext：通过bean定义解析过程传递的上下文，封装所有相关配置和状态，嵌套在XmlReaderContext内
         RootBeanDefinition beanDefinition = new RootBeanDefinition();
-        beanDefinition.setBeanClass(beanClass);
+        beanDefinition.setBeanClass(beanClass); //指定XML对应的bean的class，如MethodConfig.class
         beanDefinition.setLazyInit(false);
         String id = resolveAttribute(element, "id", parserContext); //解析属性名对应的值
         /**
@@ -115,7 +115,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
             for (String name : parserContext.getRegistry().getBeanDefinitionNames()) { //遍历已注册的bean对应的名称列表，比如<dubbo:protocol name="dubbo"/>对应的bean的name为"dubbo"等
                 BeanDefinition definition = parserContext.getRegistry().getBeanDefinition(name);
                 PropertyValue property = definition.getPropertyValues().getPropertyValue("protocol");
-                if (property != null) {
+                if (property != null) { //待覆盖调试（哪种场景可以进入该逻辑）
                     Object value = property.getValue();
                     if (value instanceof ProtocolConfig && id.equals(((ProtocolConfig) value).getName())) {
                         definition.getPropertyValues().addPropertyValue("protocol", new RuntimeBeanReference(id));
@@ -124,7 +124,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
             }
         } else if (ServiceBean.class.equals(beanClass)) {
             String className = resolveAttribute(element, "class", parserContext);
-            if (StringUtils.isNotEmpty(className)) {
+            if (StringUtils.isNotEmpty(className)) { //待覆盖调试（哪种场景可以进入该逻辑）
                 RootBeanDefinition classDefinition = new RootBeanDefinition(); //根bean定义也可以用于注册单个bean定义
                 classDefinition.setBeanClass(ReflectUtils.forName(className));
                 classDefinition.setLazyInit(false);
@@ -139,7 +139,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
         }
         Set<String> props = new HashSet<>();
         ManagedMap parameters = null;
-        for (Method setter : beanClass.getMethods()) { //遍历bean中的方法
+        for (Method setter : beanClass.getMethods()) { //遍历dubbo config bean中的方法，取出属性名，通过XML的Element解析出属性值，依次设置到XML对应的RootBeanDefinition属性中
             String name = setter.getName();
             if (name.length() > 3 && name.startsWith("set")
                     && Modifier.isPublic(setter.getModifiers())
@@ -166,10 +166,10 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
                     continue;
                 }
                 if ("parameters".equals(property)) { //对特殊的属性做处理
-                    parameters = parseParameters(element.getChildNodes(), beanDefinition, parserContext);
-                } else if ("methods".equals(property)) {
-                    parseMethods(id, element.getChildNodes(), beanDefinition, parserContext);
-                } else if ("arguments".equals(property)) {
+                    parameters = parseParameters(element.getChildNodes(), beanDefinition, parserContext); //对子元素<dubbo:parameter/>进行处理（返回参数对应Map：ManagedMap，后续处理parameters属性值）
+                } else if ("methods".equals(property)) { //当dubbo config bean包含methods属性，且包含<dubbo:method/>子元素时，进行处理
+                    parseMethods(id, element.getChildNodes(), beanDefinition, parserContext); //设置beanDefinition的methods属性值
+                } else if ("arguments".equals(property)) { // 设置beanDefinition的arguments属性值
                     parseArguments(id, element.getChildNodes(), beanDefinition, parserContext);
                 } else { //对常规属性做处理
                     String value = resolveAttribute(element, property, parserContext); //解析XML中元素对应的属性值
@@ -181,6 +181,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
                                 registryConfig.setAddress(RegistryConfig.NO_AVAILABLE);
                                 beanDefinition.getPropertyValues().addPropertyValue(beanProperty, registryConfig);
                             } else if ("provider".equals(property) || "registry".equals(property) || ("protocol".equals(property) && AbstractServiceConfig.class.isAssignableFrom(beanClass))) {
+                                // Class中方法isAssignableFrom()：判断当前class是否与参数中指定的class相同，或者是参数指定的class的父类或父接口（主语是当前class，如上的主语即为：AbstractServiceConfig）
                                 /**
                                  * For 'provider' 'protocol' 'registry', keep literal value (should be id/name) and set the value to 'registryIds' 'providerIds' protocolIds'
                                  * The following process should make sure each id refers to the corresponding instance, here's how to find the instance for different use cases:
@@ -237,7 +238,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
                 parameters.put(name, new TypedStringValue(value, String.class));
             }
         }
-        if (parameters != null) {
+        if (parameters != null) { //设置beanDefinition的parameters属性值
             beanDefinition.getPropertyValues().addPropertyValue("parameters", parameters);
         }
         return beanDefinition;
@@ -322,7 +323,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
         }
         ManagedMap parameters = null; //用来保存map的值
         for (int i = 0; i < nodeList.getLength(); i++) { //可以有多个元素<dubbo:parameter>
-            if (!(nodeList.item(i) instanceof Element)) {
+            if (!(nodeList.item(i) instanceof Element)) { //若元素不是Element实例，则不处理
                 continue;
             }
             Element element = (Element) nodeList.item(i);
@@ -331,10 +332,10 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
                 if (parameters == null) {
                     parameters = new ManagedMap();
                 }
-                String key = resolveAttribute(element, "key", parserContext);
-                String value = resolveAttribute(element, "value", parserContext);
+                String key = resolveAttribute(element, "key", parserContext); //解析<dubbo:parameter> 元素中的key
+                String value = resolveAttribute(element, "value", parserContext); //解析<dubbo:parameter> 元素中的value
                 boolean hide = "true".equals(resolveAttribute(element, "hide", parserContext));
-                if (hide) {
+                if (hide) { //是否隐藏，若需要隐藏，加上前缀
                     key = HIDE_KEY_PREFIX + key;
                 }
                 parameters.put(key, new TypedStringValue(value, String.class)); //多个 <dubbo:parameter>时，若key重复，value值会被覆盖
@@ -344,12 +345,12 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
     }
 
     @SuppressWarnings("unchecked")
-    private static void parseMethods(String id, NodeList nodeList, RootBeanDefinition beanDefinition,
+    private static void parseMethods(String id, NodeList nodeList, RootBeanDefinition beanDefinition, //引用传递，设置RootBeanDefinition的属性methods
                                      ParserContext parserContext) {
         if (nodeList == null) {
             return;
         }
-        ManagedList methods = null; //ManagedList：管理列表
+        ManagedList methods = null; //ManagedList：持有bean，对bean进行管理
         for (int i = 0; i < nodeList.getLength(); i++) {
             if (!(nodeList.item(i) instanceof Element)) {
                 continue;
@@ -364,12 +365,12 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
                     methods = new ManagedList();
                 }
                 RootBeanDefinition methodBeanDefinition = parse(element,
-                        parserContext, MethodConfig.class, false);
+                        parserContext, MethodConfig.class, false); //递归解析<dubbo:method>
                 String beanName = id + "." + methodName; //<dubbo:method>对应的bean的名称：如org.apache.dubbo.demo.DemoService.sayHello2
 
                 // If the PropertyValue named "id" can't be found,
                 // bean name will be taken as the "id" PropertyValue for MethodConfig
-                if (!hasPropertyValue(methodBeanDefinition, "id")) { // 若没有包含属性，则添加属性，id是外部bean的标识，如org.apache.dubbo.demo.DemoService
+                if (!hasPropertyValue(methodBeanDefinition, "id")) { // 若没有包含属性id，则将bean的名称作为id的值，如org.apache.dubbo.demo.DemoService
                     addPropertyValue(methodBeanDefinition, "id", beanName);
                 }
 
@@ -378,12 +379,12 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
                 methods.add(methodBeanDefinitionHolder);
             }
         }
-        if (methods != null) {
+        if (methods != null) { //此处的beanDefinition，如果是解析<dubbo:service>中的<dubbo:method>，则为Root bean: org.apache.dubbo.config.spring.ServiceBean
             beanDefinition.getPropertyValues().addPropertyValue("methods", methods);
         }
     }
 
-    // 判断是否包含属性名
+    // 判断XML的Bean的属性Set中是否包含指定的属性
     private static boolean hasPropertyValue(AbstractBeanDefinition beanDefinition, String propertyName) {
         return beanDefinition.getPropertyValues().contains(propertyName);
     }
@@ -397,7 +398,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
     }
 
     /**
-     * 解析<dubbo:argument>标签，并添加arguments属性值
+     * 解析<dubbo:argument>标签，并添加arguments属性值（argument是对方法参数的描述）
      * 该标签为<dubbo:method> 的子标签
      */
     @SuppressWarnings("unchecked")
@@ -408,7 +409,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
         }
         ManagedList arguments = null;
         for (int i = 0; i < nodeList.getLength(); i++) {
-            if (!(nodeList.item(i) instanceof Element)) {
+            if (!(nodeList.item(i) instanceof Element)) { //非元素Element，不处理
                 continue;
             }
             Element element = (Element) nodeList.item(i);
@@ -417,7 +418,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
                 if (arguments == null) {
                     arguments = new ManagedList();
                 }
-                BeanDefinition argumentBeanDefinition = parse(element,
+                BeanDefinition argumentBeanDefinition = parse(element, //递归解析，解析出各个元素中的各个属性值
                         parserContext, ArgumentConfig.class, false);
                 String name = id + "." + argumentIndex;
                 BeanDefinitionHolder argumentBeanDefinitionHolder = new BeanDefinitionHolder(

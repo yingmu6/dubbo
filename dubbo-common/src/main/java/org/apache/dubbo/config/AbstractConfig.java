@@ -72,7 +72,7 @@ public abstract class AbstractConfig implements Serializable {
     /**
      * The config id
      */
-    protected String id;
+    protected String id; //配置id（所有config子类都有）
     protected String prefix;
 
     protected final AtomicBoolean refreshed = new AtomicBoolean(false);
