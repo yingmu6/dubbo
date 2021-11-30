@@ -30,5 +30,7 @@
                      interface="org.apache.dubbo.demo.DemoService"
                      timeout="20000"/>
 
-    <dubbo:reference id= "greetingService" check="false" interface="org.apache.dubbo.demo.GreetingService"/>
+    <dubbo:consumer>
+        <dubbo:reference id= "greetingService" check="false" interface="org.apache.dubbo.demo.GreetingService"/>
+    </dubbo:consumer>
 </beans>

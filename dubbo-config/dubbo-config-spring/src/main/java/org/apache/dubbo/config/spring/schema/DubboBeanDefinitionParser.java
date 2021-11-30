@@ -71,11 +71,39 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
     }
 
     /**
+     * XML关联信息：https://www.w3school.com.cn/xml/index.asp XML w3cschool介绍
+     * 1）XML指可扩展标记语言、被设计用来传输和存储数据。HTML被设计用来显示数据
+     * 2）第一行是XML声明，XML文档必须包含根元素（有且只有一个根元素）。该元素是所有其他元素的父元素。XML文档形成一种树结构。
+     * 3）XML元素指的是从（且包括）开始标签直到（且包括）结束标签的部分。元素可包含其他元素、文本或者两者的混合物。元素也可以拥有属性。
+     * 4）拥有正确语法的XML被称为“形式良好”的XML。可以通过DTD、Schema验证的XML是否是“合法”的XML。
+     * 5）解析器把XML转换为XML DOM对象，XML DOM (XML Document Object Model) 定义了访问和操作XML文档的标准方法。
+     *   DOM把XML文档视为一种树结构。通过这个DOM树，可以访问所有的元素。可以修改它们的内容（文本以及属性），而且可以创建新的元素。
+     *   元素、以及它们的文本和属性，均被视为节点
+     * 6）XML命名空间：提供避免元素命名冲突的方法。所有 XML 文档中的文本均会被解析器解析。只有 CDATA 区段（CDATA section）中的文本会被解析器忽略
+     * 7）简单的说就是Node是一个基类，DOM中的Element，Text和Comment都继承于它。换句话说，Element，Text和Comment是三种特殊的Node，它们分别叫做ELEMENT_NODE, TEXT_NODE和COMMENT_NODE。
+     *
+     * https://zhuanlan.zhihu.com/p/165422508 Node与Element的关系
+     *
+     */
+
+    /**
      * 解析元素，设置元素的属性值，返回构建的bean对象
      */
     @SuppressWarnings("unchecked")
     //parse()方法是从哪里进入的？ 解：DubboNamespaceHandler#parse()中调用父类NamespaceHandlerSupport#parse()，然后在findParserForElement()之中，根据元素名称，从init()时映射的parsers键值对中找到对应的Bean解析器，就进入了该方法（策略模式）
     private static RootBeanDefinition parse(Element element, ParserContext parserContext, Class<?> beanClass, boolean required) { //ParserContext：通过bean定义解析过程传递的上下文，封装所有相关配置和状态，嵌套在XmlReaderContext内
+        /**
+         * ParserContext：注释翻译为：
+         * 通过bean定义解析过程传递的上下文，封装所有相关的配置和状态
+         *
+         * RootBeanDefinition：
+         *   1）RootBeanDefinition可以作为一个重要的通用的bean definition视图。
+         *   2）RootBeanDefinition用来在配置阶段进行注册bean definition。然后，从spring 2.5后，编写注册bean definition有了更好的的方法：GenericBeanDefinition
+         *   3）RootBeanDefinition可以作为其他BeanDefinition的父BeanDefinition，也可以单独作为BeanDefinition，但是不能作为其他BeanDefinition的子BeanDefinition
+         *
+         *  https://zhuanlan.zhihu.com/p/189896257
+         *  https://www.jianshu.com/p/f2298bacc5d9 Spring的RootBeanDefinition、GenericBeanDefinition、ChildBeanDefinition
+         */
         RootBeanDefinition beanDefinition = new RootBeanDefinition();
         beanDefinition.setBeanClass(beanClass); //指定XML对应的bean的class，如MethodConfig.class
         beanDefinition.setLazyInit(false);
@@ -113,7 +141,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
          */
         if (ProtocolConfig.class.equals(beanClass)) {
             for (String name : parserContext.getRegistry().getBeanDefinitionNames()) { //遍历已注册的bean对应的名称列表，比如<dubbo:protocol name="dubbo"/>对应的bean的name为"dubbo"等
-                BeanDefinition definition = parserContext.getRegistry().getBeanDefinition(name);
+                BeanDefinition definition = parserContext.getRegistry().getBeanDefinition(name); //XML中的bean会与BeanDefinition对应
                 PropertyValue property = definition.getPropertyValues().getPropertyValue("protocol");
                 if (property != null) { //待覆盖调试（哪种场景可以进入该逻辑）
                     Object value = property.getValue();
@@ -139,7 +167,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
         }
         Set<String> props = new HashSet<>();
         ManagedMap parameters = null;
-        for (Method setter : beanClass.getMethods()) { //遍历dubbo config bean中的方法，取出属性名，通过XML的Element解析出属性值，依次设置到XML对应的RootBeanDefinition属性中
+        for (Method setter : beanClass.getMethods()) { //遍历dubbo config bean中的方法，取出属性名，通过XML的Element解析出属性值，依次设置到Spring对应的RootBeanDefinition属性中
             String name = setter.getName();
             if (name.length() > 3 && name.startsWith("set")
                     && Modifier.isPublic(setter.getModifiers())
@@ -204,7 +232,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
                                     reference = value;
                                 // 对方法<dubbo:method>元素中的onreturn、onthrow、oninvoke属性进行处理
                                 } else if (ONRETURN.equals(property) || ONTHROW.equals(property) || ONINVOKE.equals(property)) {
-                                    int index = value.lastIndexOf(".");
+                                    int index = value.lastIndexOf("."); //待覆盖调试：事件通知允许Consumer端在调用之前、调用之后或出现异常时，触发oninvoke、onreturn、onthrow三个事件。 https://dubbo.apache.org/zh/docs/advanced/events-notify/
                                     String ref = value.substring(0, index);
                                     String method = value.substring(index + 1);
                                     reference = new RuntimeBeanReference(ref);
@@ -216,7 +244,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
                                             throw new IllegalStateException("The exported service ref " + value + " must be singleton! Please set the " + value + " bean scope to singleton, eg: <bean id=\"" + value + "\" scope=\"singleton\" ...>");
                                         }
                                     }
-                                    reference = new RuntimeBeanReference(value);
+                                    reference = new RuntimeBeanReference(value); //处理bean引用
                                 }
                                 beanDefinition.getPropertyValues().addPropertyValue(beanProperty, reference); //为bean添加属性名以及对应的属性值
                             }
@@ -225,12 +253,24 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
                 }
             }
         }
+        /**
+         * NamedNodeMap简介：
+         *  1）NamedNodeMap 对象代表一个节点的无序列表。
+         *  2）NamedNodeMap 中的节点可以通过它们的名称进行访问。
+         *  3）NamedNodeMap 将会自我更新。如果在节点列表或 XML 文档中删除或添加一个元素，那么该列表将会自动更新。
+         * https://www.runoob.com/dom/dom-namednodemap.html  XML DOM-NamedNodeMap对象
+         *
+         * HTMLCollection和NodeList以及NamedNodeMap之间的关系
+         * 1）它们都是类数组，有length属性，[index]取值方法。
+         * 2）他们都是动态的，必要的时候要缓存起来。
+         * http://tiantang-tt.github.io/2016/06/27/HTMLCollection-NodeList-NamedNodeMap/
+         */
         NamedNodeMap attributes = element.getAttributes();
         int len = attributes.getLength();
         for (int i = 0; i < len; i++) {
-            Node node = attributes.item(i); //解析元素的节点
+            Node node = attributes.item(i);
             String name = node.getLocalName();
-            if (!props.contains(name)) {
+            if (!props.contains(name)) { //遍历属性列表，若没在处理过的属性集合中props，则加到参数parameters列表中
                 if (parameters == null) {
                     parameters = new ManagedMap();
                 }
@@ -255,7 +295,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
      * 解析内嵌元素
      */
     private static void parseNested(Element element, ParserContext parserContext, Class<?> beanClass, boolean required, String tag, String property, String ref, BeanDefinition beanDefinition) {
-        NodeList nodeList = element.getChildNodes();
+        NodeList nodeList = element.getChildNodes(); //获取子节点列表
         if (nodeList == null) {
             return;
         }
@@ -265,20 +305,32 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
             if (!(node instanceof Element)) {
                 continue;
             }
-            if (tag.equals(node.getNodeName()) //带上命名空间的节点名称，如dubbo:service
+            if (tag.equals(node.getNodeName()) //带上命名空间的节点名称，如dubbo:service（按指定的tag查找Node）
                     || tag.equals(node.getLocalName())) { //去掉命名空间的名称，如service
-                if (first) {
-                    first = false;
-                    String isDefault = resolveAttribute(element, "default", parserContext);
+                if (first) { //有多个元素时，如<dubbo:service>，只有第一个元素才处理default值
+                    first = false; //处理好第一个元素后，更改该标志
+                    String isDefault = resolveAttribute(element, "default", parserContext); // default: 是否为缺省协议，用于多协议
                     if (StringUtils.isEmpty(isDefault)) { //处理默认属性default
                         beanDefinition.getPropertyValues().addPropertyValue("default", "false");
                     }
                 }
+                /**
+                 * BeanDefinition：在Spring中，Bean的解析阶段，会把xml配制中的<bean>标签解析成Spring中的BeanDefinition对象
+                 *    1）BeanDefinition是bean在Spring中的描述，有了BeanDefinition我们就可以创建Bean，BeanDefinition是Bean在Spring中的定义形态
+                 *    2）BeanDefinition与Bean的关系, 就好比类与对象的关系. 类在spring的数据结构就是BeanDefinition.根据BeanDefinition得到的对象就是我们需要的Bean
+                 * https://juejin.cn/post/6844903959136567310 Bean与BeanDefinition关系
+                 */
+
                 // 内部嵌套的元素，按单个元素解析的方式依次解析
-                BeanDefinition subDefinition = parse((Element) node, parserContext, beanClass, required);
-                if (subDefinition != null && StringUtils.isNotEmpty(ref)) {
+                BeanDefinition subDefinition = parse((Element) node, parserContext, beanClass, required); //解析嵌套元素，如<dubbo:provider>中<dubbo:service>，此处Node即为<dubbo:service>
+                if (subDefinition != null && StringUtils.isNotEmpty(ref)) { //依赖的bean用RuntimeBeanReference表示
                     subDefinition.getPropertyValues().addPropertyValue(property, new RuntimeBeanReference(ref));
                 }
+                /**
+                 * RuntimeBeanReference：如果一个bean依赖其它的bean，比如<dubbo:service>中ref，那么被依赖的bean就用RuntimeBeanReference表示
+                 * （因为解析阶段，还没有依赖的bean的实例，等解析以后存在实例时，再根据RuntimeBeanReference关联）
+                 * https://blog.csdn.net/Jerryai1/article/details/52980239
+                 */
             }
         }
     }
@@ -441,6 +493,25 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
 
     /**
      * 解析元素中的属性值 如：<dubbo:application name="test"/> ，name的属性值为test
+     * <p>
+     * Environment：相关信息
+     * 1）Environment表示当前应用程序正在运行的环境。Environment接口继承自PropertyResolver，所以它既能处理属性值、也能处理配置Profile
+     * 2）属性管理核心API信息
+     * 核心API主要包括下面4个部分：
+     * PropertySource：属性源。key-value属性对抽象
+     * PropertyResolver：属性解析器。用于解析相应key的value
+     * Profile：配置。只有激活的配置profile的组件/配置才会注册到Spring容器，类似于maven中profile
+     * Environment：环境，本身也是个属性解析器PropertyResolver。它在基础上还提供了Profile特性，能够很好的对多环境支持。
+     * 因此我们一般使用它，而不是底层接口PropertyResolver。 可以简单粗暴的把它理解为Profile 和 PropertyResolver 的组合
+     * https://blog.csdn.net/f641385712/article/details/94402262
+     * <p>
+     * 3）用来表示整个应用运行时的环境，为了更形象地理解Environment，你可以把Spring应用的运行时简单地想象成两个部分：
+     * 一个是Spring应用本身，一个是Spring应用所处的环境。Environment在容器中是一个抽象的集合，是指应用环境的2个方面：profiles和properties。
+     * https://www.jianshu.com/p/5f10192eb958  Spring--Environment类
+     * <p>
+     * 4）https://blog.csdn.net/qq_33366098/article/details/105630266 Environment接口体系
+     * <p>
+     * 5）https://www.cnblogs.com/binarylei/p/10284826.html Spring PropertyResolver 占位符解析
      */
     private static String resolveAttribute(Element element, String attributeName, ParserContext parserContext) {
         String attributeValue = element.getAttribute(attributeName); //获取元素中，指定属性名对应的属性值

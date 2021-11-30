@@ -106,6 +106,16 @@ public class DubboNamespaceHandler extends NamespaceHandlerSupport implements Co
     }
 
     /**
+     * 解析加载Spring Xml的过程：
+     * https://blog.csdn.net/weixin_33747129/article/details/94609557
+     *
+     * Spring关于Xml的bean与Dubbo config的转化
+     *
+     * 进入Dubbo服务暴露的流程
+     */
+
+
+    /**
      * 注册注解配置
      * Register the processors for the Spring Annotation-Driven features
      *
