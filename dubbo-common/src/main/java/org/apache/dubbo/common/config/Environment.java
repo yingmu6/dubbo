@@ -62,10 +62,10 @@ public class Environment extends LifecycleAdapter implements FrameworkExt {
     }
 
     @Override
-    public void initialize() throws IllegalStateException {
-        ConfigManager configManager = ApplicationModel.getConfigManager();
+    public void initialize() throws IllegalStateException { //initialize：[ɪˈnɪʃəlaɪz]： 初始化，对当前对象的属性进行初始化
+        ConfigManager configManager = ApplicationModel.getConfigManager(); //通过SPI机制获取对象实例
         Optional<Collection<ConfigCenterConfig>> defaultConfigs = configManager.getDefaultConfigCenter();
-        defaultConfigs.ifPresent(configs -> {
+        defaultConfigs.ifPresent(configs -> { //ifPresent：若值存在时，带着值执行对应的动作，否则什么都不做
             for (ConfigCenterConfig config : configs) {
                 this.setExternalConfigMap(config.getExternalConfiguration());
                 this.setAppExternalConfigMap(config.getAppExternalConfiguration());

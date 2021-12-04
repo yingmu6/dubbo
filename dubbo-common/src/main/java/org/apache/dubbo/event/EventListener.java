@@ -33,17 +33,23 @@ import static org.apache.dubbo.common.utils.ReflectUtils.findParameterizedTypes;
  * published, whose priority could be changed by {@link #getPriority()} method.
  *
  * @param <E> the concrete class of {@link Event Dubbo Event}
- * @see Event 
+ * @see Event
  * @see java.util.EventListener
  * @since 2.7.5
  */
 @SPI
 @FunctionalInterface
 public interface EventListener<E extends Event> extends java.util.EventListener, Prioritized { //java中EventListener：所有事件监听器接口都必须扩展的标记接口
+    /**
+     * java.util.EventListener：java事件监听器
+     * A tagging interface that all event listener interfaces must extend
+     * （EventListener：是所有事件监听器必须继承的标记接口）
+     */
 
     /**
      * Handle a {@link Event Dubbo Event} when it's be published
-     *（当dubbo事件被发布时，进行事件处理）
+     * （当dubbo事件被发布时，进行事件处理）
+     *
      * @param event a {@link Event Dubbo Event}
      */
     void onEvent(E event);

@@ -21,9 +21,15 @@ import java.util.EventObject;
 /**
  * An event object of Dubbo is based on the Java standard {@link EventObject event}
  * （dubbo的事件对象是基于java的标准事件对象）
+ *
  * @since 2.7.5
  */
 public abstract class Event extends EventObject { //事件：包含事件对象和发生的时间（包含Service实例变更、reference实例销毁等事件）
+    /**
+     * java.util.EventObject：java的事件对象
+     * The root class from which all event state objects shall be derived（派生）
+     * （所有的事件状态对象，都是应该从EventObject派生出来的）
+     */
 
     private static final long serialVersionUID = -1704315605423947137L;
 
@@ -38,7 +44,7 @@ public abstract class Event extends EventObject { //事件：包含事件对象�
      * @param source The object on which the Event initially occurred.
      * @throws IllegalArgumentException if source is null.
      */
-    public Event(Object source) { //EventObject:所有事件状态对象的根类
+    public Event(Object source) { //EventObject:所有事件状态对象的父类
         super(source);
         this.timestamp = System.currentTimeMillis();
     }

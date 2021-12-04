@@ -21,29 +21,10 @@ import org.apache.dubbo.common.context.LifecycleAdapter;
 import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
 import org.apache.dubbo.common.utils.CollectionUtils;
-import org.apache.dubbo.config.AbstractConfig;
-import org.apache.dubbo.config.ApplicationConfig;
-import org.apache.dubbo.config.ConfigCenterConfig;
-import org.apache.dubbo.config.ConsumerConfig;
-import org.apache.dubbo.config.MetadataReportConfig;
-import org.apache.dubbo.config.MetricsConfig;
-import org.apache.dubbo.config.ModuleConfig;
-import org.apache.dubbo.config.MonitorConfig;
-import org.apache.dubbo.config.ProtocolConfig;
-import org.apache.dubbo.config.ProviderConfig;
-import org.apache.dubbo.config.ReferenceConfigBase;
-import org.apache.dubbo.config.RegistryConfig;
-import org.apache.dubbo.config.ServiceConfigBase;
-import org.apache.dubbo.config.SslConfig;
+import org.apache.dubbo.config.*;
 import org.apache.dubbo.rpc.model.ApplicationModel;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -136,7 +117,7 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
 
     public Optional<Collection<ConfigCenterConfig>> getDefaultConfigCenter() {
         Collection<ConfigCenterConfig> defaults = getDefaultConfigs(getConfigsMap(getTagName(ConfigCenterConfig.class)));
-        if (CollectionUtils.isEmpty(defaults)) {
+        if (CollectionUtils.isEmpty(defaults)) { //若没有默认配置，则不进行筛选，返回所有配置实例ConfigCenterConfig
             defaults = getConfigCenters();
         }
         return Optional.ofNullable(defaults); //对空值null进行保护，避免空指针
@@ -399,7 +380,7 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
         });
     }
 
-    protected <C extends AbstractConfig> Map<String, C> getConfigsMap(String configType) { //configType如：config-center
+    protected <C extends AbstractConfig> Map<String, C> getConfigsMap(String configType) { //configType如：config-center，因为AbstractConfig有许多实例，所以返回值使用泛型
         return (Map<String, C>) read(() -> configsCache.getOrDefault(configType, emptyMap())); //getOrDefault()：从map中获取指定key的值，若值为空，取传入的默认值
     }
 
@@ -457,7 +438,7 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
         V value = null;
         try {
             readLock.lock(); //加锁
-            value = callable.call();
+            value = callable.call(); //执行线程的处理逻辑，获取执行的返回值
         } catch (Throwable e) {
             throw new RuntimeException(e);
         } finally {
@@ -511,12 +492,12 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
                 config.getClass().getSimpleName() + "#" + DEFAULT_KEY : null;
     }
 
-    static <C extends AbstractConfig> boolean isDefaultConfig(C config) { //获取配置中isDefault()方法的返回值，然后再进行判断
+    static <C extends AbstractConfig> boolean isDefaultConfig(C config) {
         Boolean isDefault = getProperty(config, "isDefault");
-        return isDefault == null || TRUE.equals(isDefault);
+        return isDefault == null || TRUE.equals(isDefault); //若不包含isDefault属性或isDefault属性值为true，则为默认配置（反义：包含isDefault属性，且为false）
     }
 
-    static <C extends AbstractConfig> List<C> getDefaultConfigs(Map<String, C> configsMap) { //对map中的值列表进行过滤，
+    static <C extends AbstractConfig> List<C> getDefaultConfigs(Map<String, C> configsMap) { //对map中的值列表进行过滤，configsMap值如<类的全路径名：对象实例>=<"org.apache.dubbo.config.spring.ConfigCenterBean", ConfigCenterBean@3154>
         return configsMap.values()
                 .stream()
                 .filter(ConfigManager::isDefaultConfig) //Predicate: 谓语

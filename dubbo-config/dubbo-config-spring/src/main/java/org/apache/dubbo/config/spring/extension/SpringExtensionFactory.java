@@ -16,13 +16,12 @@
  */
 package org.apache.dubbo.config.spring.extension;
 
+import com.alibaba.spring.util.BeanFactoryUtils;
 import org.apache.dubbo.common.extension.ExtensionFactory;
 import org.apache.dubbo.common.extension.SPI;
 import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
 import org.apache.dubbo.common.utils.ConcurrentHashSet;
-
-import com.alibaba.spring.util.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -36,6 +35,17 @@ public class SpringExtensionFactory implements ExtensionFactory { //通过Spring
 
     private static final Set<ApplicationContext> CONTEXTS = new ConcurrentHashSet<ApplicationContext>();
 
+    /**
+     * ConfigurableApplicationContext：
+     * 1）ConfigurableApplicationContext 接口的作用就是设置上下文ID，设置父应用上下文，添加监听器，刷新容器，关闭，判断是否活跃等方法
+     * 2）ConfigurableApplicationContext 直接继承了 ApplicationContext, Lifecycle, Closeable 接口，所以 ApplicationContext 是 ApplicationContext 的子类。
+     * 3）ApplicationContext 接口就会发现里面之后get方法，没有set方法，所以子接口就提供了set方法。
+     * <p>
+     * JVM钩子函数：
+     * 1）在某些情况下，我们需要在JVM关闭时做些扫尾的工作，比如删除临时文件、停止日志服务以及内存数据写到磁盘等，为此JVM提供了关闭钩子（shutdown hooks）来做这些事情
+     * 2）Runtime封装Java应用运行时的环境。通过Runtime实例，使得应用程序和其运行环境相连接。Runtime是在应用启动期间自动建立，应用程序不能够创建Runtime
+     * 但是我们可以通过Runtime.getRuntime()来获得当前应用的Runtime对象引用，通过该引用我们可以获得当前运行环境的相关信息，比如空闲内存、最大内存以及为当前虚拟机添加关闭钩子
+     */
     public static void addApplicationContext(ApplicationContext context) { //把ApplicationContext添加到本地缓存，并注册钩子函数
         CONTEXTS.add(context);
         if (context instanceof ConfigurableApplicationContext) { //registerShutdownHook: 注册钩子函数，在应用关闭前，会做一些清理操作，比如销毁应用中的所有bean，改变激活标志等
@@ -58,7 +68,7 @@ public class SpringExtensionFactory implements ExtensionFactory { //通过Spring
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T getExtension(Class<T> type, String name) {
+    public <T> T getExtension(Class<T> type, String name) { //从spring容器中查找指定名称、指定类型的bean
 
         //SPI should be get from SpiExtensionFactory
         if (type.isInterface() && type.isAnnotationPresent(SPI.class)) { //处理非SPI接口
@@ -66,7 +76,7 @@ public class SpringExtensionFactory implements ExtensionFactory { //通过Spring
         }
 
         for (ApplicationContext context : CONTEXTS) {
-            T bean = BeanFactoryUtils.getOptionalBean(context, name, type); //从spring容器中查找指定名称、指定类型的bean
+            T bean = BeanFactoryUtils.getOptionalBean(context, name, type);
             if (bean != null) {
                 return bean;
             }

@@ -879,7 +879,7 @@ public final class StringUtils {
         StringBuilder buf = null;
         for (int i = 0; i < camelName.length(); i++) {
             char ch = camelName.charAt(i);
-            if (ch >= 'A' && ch <= 'Z') {
+            if (ch >= 'A' && ch <= 'Z') { //处理大写字母
                 if (buf == null) {
                     buf = new StringBuilder(); //StringBuffer是线程安全的，使用synchronized处理效率低，若处理的变量不是共享的，使用StringBuilder即可
                     if (i > 0) {
@@ -889,8 +889,8 @@ public final class StringUtils {
                 if (i > 0) {
                     buf.append(split); //附加上分隔符
                 }
-                buf.append(Character.toLowerCase(ch)); //将大写字母变小写后，附加到字符串上
-            } else if (buf != null) {
+                buf.append(Character.toLowerCase(ch)); //将大写字母变小写后，附加到字符串上（第一个字符若是大写，直接变为小写，不用使用分隔符，如ConfigCenter，最终转换结果为config-center）
+            } else if (buf != null) { //小写字母，直接附加在字符串上
                 buf.append(ch);
             }
         }

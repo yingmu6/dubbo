@@ -159,10 +159,10 @@ public class RegistryConfig extends AbstractConfig {
     /**
      * the address work as config center or not
      */
-    private Boolean useAsConfigCenter;
+    private Boolean useAsConfigCenter; //是否把注册中心地址用于配置中心地址
 
     /**
-     * the address work as remote metadata center or not
+     * the address work as remote metadata center（元数据中心） or not
      */
     private Boolean useAsMetadataCenter;
 

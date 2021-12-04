@@ -1252,7 +1252,7 @@ public final class ReflectUtils {
      * @return
      * @since 2.7.5
      */
-    public static <T> T getProperty(Object bean, String methodName) { //从指定bean中获取指定方法的值，方法为is、get方法
+    public static <T> T getProperty(Object bean, String methodName) { //获取属性值（执行指定bean中的指定的方法）
         Class<?> beanClass = bean.getClass();
         BeanInfo beanInfo = null;
         T propertyValue = null;
@@ -1264,7 +1264,7 @@ public final class ReflectUtils {
                     .findFirst() //取第一个方法，执行方法调用，返回对应的值
                     .map(method -> {
                         try {
-                            return method.getMethod().invoke(bean);
+                            return method.getMethod().invoke(bean); //将MethodDescriptor转换为Method，然后再调用方法，并返回值
                         } catch (Exception e) {
                             //ignore
                         }

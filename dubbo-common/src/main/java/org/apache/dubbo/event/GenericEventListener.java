@@ -46,7 +46,7 @@ import static org.apache.dubbo.common.function.ThrowableFunction.execute;
  * @see EventListener
  * @since 2.7.5
  */
-public abstract class GenericEventListener implements EventListener<Event> { //通用的事件监听器
+public abstract class GenericEventListener implements EventListener<Event> { //通用的事件监听器，Generic：一般的；普通的；通用的
 
     private final Method onEventMethod;
 

@@ -35,6 +35,15 @@ abstract class OneTimeExecutionApplicationContextEventListener implements Applic
 
     private ApplicationContext applicationContext;
 
+    /**
+     * Spring的事件机制：
+     * 1）ApplicationContext事件机制是观察者设计模式的实现，通过ApplicationEvent类和ApplicationListener接口，可以实现ApplicationContext事件处理。
+     * 2）如果容器中有一个ApplicationListener Bean，每当ApplicationContext发布ApplicationEvent时，ApplicationListener Bean将自动被触发。这种事件机制都必须需要程序显示的触发
+     * 3）其中spring有一些内置的事件，当完成某种操作时会发出某些事件动作。比如监听ContextRefreshedEvent事件，当所有的bean都初始化完成并被成功装载后会触发该事件，
+     * 实现ApplicationListener<ContextRefreshedEvent>接口可以收到监听动作，然后可以写自己的逻辑
+     * 4）同样事件可以自定义、监听也可以自定义，完全根据自己的业务逻辑来处理。
+     * https://blog.csdn.net/liyantianmin/article/details/81017960 spring事件处理，包含内置事件的描述
+     */
     public final void onApplicationEvent(ApplicationEvent event) {
         if (isOriginalEventSource(event) && event instanceof ApplicationContextEvent) {
             onApplicationContextEvent((ApplicationContextEvent) event);
@@ -50,6 +59,22 @@ abstract class OneTimeExecutionApplicationContextEventListener implements Applic
 
     /**
      * Is original {@link ApplicationContext} as the event source
+     * <p>
+     * java事件源处理：
+     * 1）事件源产生事件，事件带有事件源，监听器监听事件。事件驱动模型是观察者模式的升级版本
+     * 2）JDK提供了EventObject类和EventListener接口定义了实现观察者模式
+     * 3）在Spring中为自定义事件和自定义监听者，分别提供一个类和一个接口。
+     * ApplicationEvent类继承了EventObject，用于在Spring环境下自定义事件
+     * ApplicationListener接口继承JDK的EventListener，用于在Spring环境下自定义监听者
+     *
+     * <p>
+     * 观察者模式：
+     * 1）观察者模式(Observer Design Pattern)也被称为发布订阅模式(Publish-Subcribe Design Pattern)
+     * 2）观察者模式定义了一种一对多的依赖关系，让多个观察者对象同时监听某一个主题对象。这个主题对象在状态变化时，会通知所有观察者对象，使它们能够自动更新自己。
+     * 3）回到本质，设计模式要干的事情就是解耦。创建型模式是将创建对象和使用对象解耦，结构型模式是将不同功能代码解耦，行为型模式是将不同的行为代码解耦，具体到观察者模式，是将观察者和被观察者代码解耦。
+     *
+     * <p>
+     * EventObject
      *
      * @param event {@link ApplicationEvent}
      * @return

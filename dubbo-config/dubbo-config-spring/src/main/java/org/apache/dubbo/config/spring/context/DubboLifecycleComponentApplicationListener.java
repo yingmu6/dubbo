@@ -18,7 +18,6 @@ package org.apache.dubbo.config.spring.context;
 
 
 import org.apache.dubbo.common.context.Lifecycle;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ApplicationContextEvent;
@@ -52,9 +51,9 @@ public class DubboLifecycleComponentApplicationListener extends OneTimeExecution
 
     @Override
     protected void onApplicationContextEvent(ApplicationContextEvent event) {
-        if (event instanceof ContextRefreshedEvent) {
+        if (event instanceof ContextRefreshedEvent) { //ContextRefreshedEvent：ApplicationContext 被初始化或刷新时，该事件被发布
             onContextRefreshedEvent((ContextRefreshedEvent) event);
-        } else if (event instanceof ContextClosedEvent) {
+        } else if (event instanceof ContextClosedEvent) { //当使用ConfigurableApplicationContext接口中的close()方法关闭ApplicationContext时，该事件被发布。一个已关闭的上下文到达生命周期末端；它不能被刷新或重启。
             onContextClosedEvent((ContextClosedEvent) event);
         }
     }

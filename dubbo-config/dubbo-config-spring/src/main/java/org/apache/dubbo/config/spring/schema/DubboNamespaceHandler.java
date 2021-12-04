@@ -50,6 +50,16 @@ public class DubboNamespaceHandler extends NamespaceHandlerSupport implements Co
     /**
      * 注册自定义的bean解析器，用来解析自定义元素（在调用自定义元素前初始化）
      * （元素名是不带命名空间的，如<dubbo:application> 元素为application）
+     * <p>
+     * NamespaceHandler：命名空间处理器
+     * 1）Spring为了开放性提供了NamespaceHandler机制，这样我们就可以根据需求自己来处理我们设置的标签元素。
+     * 2）NamespaceHandler是一个处理器，该处理器负责，将该命名空间下的所有解析器进行都注册。然后根据ELement找到合适的解析器进行解析元素。具体解析交由对应的解析器来处理
+     * <p>
+     * 解析流程：
+     * 1）在init方法中，去注册解析器，然后在解析xml时，通过约定的key去map中拿到相应的解析器去解析
+     * 2）解析得到BeanDefinition，最后Spring 对相应的bean进行实例化
+     * <p>
+     * https://juejin.cn/post/6844903665262657544 NamespaceHandler使用
      */
     @Override
     public void init() { //设置父类NamespaceHandlerSupport的Map<String, BeanDefinitionParser> parsers，元素名与bean解析器的映射关系

@@ -96,7 +96,7 @@ public abstract class AbstractConfig implements Serializable {
                 break;
             }
         }
-        return StringUtils.camelToSplitName(tag, "-"); //将tag改为驼峰式写法，比如ConfigCenter为config-center
+        return StringUtils.camelToSplitName(tag, "-"); //将驼峰字符串转换为按分隔符处理，比如ConfigCenter为config-center
     }
 
     public static void appendParameters(Map<String, String> parameters, Object config) {

@@ -75,12 +75,13 @@ import static org.apache.dubbo.registry.client.metadata.ServiceInstanceMetadataU
 import static org.apache.dubbo.remoting.Constants.CLIENT_KEY;
 
 /**
- * See {@link ApplicationModel} and {@link ExtensionLoader} for why this class is designed to be singleton.
+ * See {@link ApplicationModel} and {@link ExtensionLoader} for why this class is designed to be singleton（单例模式）.
  * <p>
- * The bootstrap class of Dubbo
+ * The bootstrap（ [ˈbuːtstræp] n.引导程序, vt.启动） class of Dubbo
  * <p>
  * Get singleton instance by calling static method {@link #getInstance()}.
  * Designed as singleton because some classes inside Dubbo, such as ExtensionLoader, are designed only for one instance per process.
+ * inside（[ˌɪnˈsaɪd] n. 内部, adv. 在（或向）里面, prep. 在（或向）……内, adj. 里面的）
  *
  * @since 2.7.5
  */
@@ -484,9 +485,9 @@ public class DubboBootstrap extends GenericEventListener {
             return; //此处initialized为true时进入，表明是已经初始化过来，就不在初始化
         }
 
-        ApplicationModel.initFrameworkExts();
+        ApplicationModel.initFrameworkExts(); //初始化框架配置
 
-        startConfigCenter();
+        startConfigCenter(); //
 
         loadRemoteConfigs();
 
@@ -621,7 +622,7 @@ public class DubboBootstrap extends GenericEventListener {
 
     /**
      * For compatibility purpose(出于兼容性目的), use registry as the default config center when
-     * there's no config center specified explicitly and
+     * there's no config center specified explicitly（[ɪkˈsplɪsɪtli]：明确地） and
      * useAsConfigCenter of registryConfig is null or true
      */
     private void useRegistryAsConfigCenterIfNecessary() { //当没有指定配置中心时，默认使用注册中心做配置中心
@@ -634,10 +635,10 @@ public class DubboBootstrap extends GenericEventListener {
             return;
         }
 
-        configManager
+        configManager                                               //若xml中没有配置<dubbo:config-center/> ，则主动添加配置信息
                 .getDefaultRegistries()
                 .stream()
-                .filter(this::isUsedRegistryAsConfigCenter)
+                .filter(this::isUsedRegistryAsConfigCenter) //filer：筛选满足条件的元素
                 .map(this::registryAsConfigCenter)
                 .forEach(configManager::addConfigCenter);
     }
