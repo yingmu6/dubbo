@@ -125,7 +125,7 @@ public interface Configuration { //配置接口，可以获取各种类型的配
         return value != null ? value : defaultValue;
     }
 
-    Object getInternalProperty(String key); //此处的用途是什么？获取key对应的属性值，选择不同实例获取，比如apollo、etcd等
+    Object getInternalProperty(String key); //此处的用途是什么？获取key对应的属性值，选择不同实例获取，比如apollo、etcd等（各种配置中心，实现的接口）
 
     /**
      * Check if the configuration contains the specified key.
@@ -139,7 +139,7 @@ public interface Configuration { //配置接口，可以获取各种类型的配
     }
 
 
-    default <T> T convert(Class<T> cls, String key, T defaultValue) { //cls属性值的类型，比如String、Integer
+    default <T> T convert(Class<T> cls, String key, T defaultValue) { //从配置中获取key配置的值，并转换为对应格式
         // we only process String properties for now
         String value = (String) getProperty(key); //获取key对应的属性值，默认值为null
 

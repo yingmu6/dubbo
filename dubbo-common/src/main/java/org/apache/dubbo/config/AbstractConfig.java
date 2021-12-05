@@ -449,7 +449,7 @@ public abstract class AbstractConfig implements Serializable {
     }
 
     @Parameter(excluded = true)
-    public String getPrefix() {
+    public String getPrefix() { //若不包含
         return StringUtils.isNotEmpty(prefix) ? prefix : (CommonConstants.DUBBO + "." + getTagName(this.getClass()));
     }
 
