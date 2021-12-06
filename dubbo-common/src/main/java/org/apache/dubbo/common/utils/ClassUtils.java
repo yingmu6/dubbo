@@ -133,17 +133,17 @@ public class ClassUtils {
         try {
             cl = Thread.currentThread().getContextClassLoader();
         } catch (Throwable ex) {
-            // Cannot access thread context ClassLoader - falling back to system class loader...
+            // Cannot access thread context ClassLoader - falling back（退回） to system class loader...
         }
         if (cl == null) { //1）先获取当前线程的类加载器，2）若获取不到的话，在获取clazz对应的类加载器，3）若再获取不到，则获取系统的类加载器
             // No thread context class loader -> use class loader of this class.
             cl = clazz.getClassLoader();
             if (cl == null) {
-                // getClassLoader() returning null indicates the bootstrap ClassLoader
+                // getClassLoader() returning null indicates（[ˈɪndɪkeɪts] v. 表明，指示，显示） the bootstrap ClassLoader
                 try {
                     cl = ClassLoader.getSystemClassLoader();
                 } catch (Throwable ex) {
-                    // Cannot access system ClassLoader - oh well, maybe the caller can live with null...
+                    // Cannot access system ClassLoader - oh well, maybe（也许） the caller（调用者） can live（忍受） with null...
                 }
             }
         }
@@ -278,7 +278,7 @@ public class ClassUtils {
      * @deprecated as 2.7.6, use {@link Class#isPrimitive()} plus {@link #isSimpleType(Class)} instead
      */
     public static boolean isPrimitive(Class<?> type) {
-        return type != null && (type.isPrimitive() || isSimpleType(type));
+        return type != null && (type.isPrimitive() || isSimpleType(type)); //判断是否是Class的基本类型或是Dubbo定义的简单类型
     }
 
     /**
@@ -293,16 +293,16 @@ public class ClassUtils {
         return SIMPLE_TYPES.contains(type);
     }
 
-    public static Object convertPrimitive(Class<?> type, String value) {
+    public static Object convertPrimitive(Class<?> type, String value) { // 把字符串转换为指定类型的Object对象，比如type为java.lang.Boolean，value为"true"，转换的结果为Boolean.valueOf("true")
         if (value == null) {
             return null;
-        } else if (type == char.class || type == Character.class) {
-            return value.length() > 0 ? value.charAt(0) : '\0';
+        } else if (type == char.class || type == Character.class) { //转换为字符类型（只包含一个字符）
+            return value.length() > 0 ? value.charAt(0) : '\0'; //若
         } else if (type == boolean.class || type == Boolean.class) {
             return Boolean.valueOf(value);
         }
         try {
-            if (type == byte.class || type == Byte.class) { //基本类型转换为封装类
+            if (type == byte.class || type == Byte.class) { //数值类型，转换为对应的封装类
                 return Byte.valueOf(value);
             } else if (type == short.class || type == Short.class) {
                 return Short.valueOf(value);
@@ -315,23 +315,23 @@ public class ClassUtils {
             } else if (type == double.class || type == Double.class) {
                 return Double.valueOf(value);
             }
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException e) { //数值类型转换异常，返回null
             return null;
         }
-        return value;
+        return value; //其它类型，将字符串原样返回，不处理
     }
 
 
     /**
-     * We only check boolean value at this moment.
+     * We only check boolean value at this moment（在这一刻）.
      *
      * @param type
      * @param value
      * @return
      */
-    public static boolean isTypeMatch(Class<?> type, String value) {
+    public static boolean isTypeMatch(Class<?> type, String value) { //判断类型type与值value是否匹配
         if ((type == boolean.class || type == Boolean.class)
-                && !("true".equals(value) || "false".equals(value))) {
+                && !("true".equals(value) || "false".equals(value))) { //该方法仅仅判断值是否是boolean类型
             return false;
         }
         return true;

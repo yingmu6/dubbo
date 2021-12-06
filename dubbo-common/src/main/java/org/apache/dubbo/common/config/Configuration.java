@@ -121,11 +121,11 @@ public interface Configuration { //配置接口，可以获取各种类型的配
      * contains no mapping for this key.
      */
     default Object getProperty(String key, Object defaultValue) {
-        Object value = getInternalProperty(key); //默认方式中实现处理逻辑
+        Object value = getInternalProperty(key); //internal [ɪnˈtɜːnl] adj. 内部的，n. 内部部件
         return value != null ? value : defaultValue;
     }
 
-    Object getInternalProperty(String key); //此处的用途是什么？获取key对应的属性值，选择不同实例获取，比如apollo、etcd等（各种配置中心，实现的接口）
+    Object getInternalProperty(String key); //此处的用途是什么？获取key对应的属性值，选择不同实例获取，比如apollo、etcd等（各种配置中心，实现的接口，从具体实现类中去获取属性对应的值）
 
     /**
      * Check if the configuration contains the specified key.

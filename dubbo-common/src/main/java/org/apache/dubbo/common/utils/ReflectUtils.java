@@ -704,7 +704,7 @@ public final class ReflectUtils {
      * @param name name.
      * @return Class instance.
      */
-    private static Class<?> name2class(ClassLoader cl, String name) throws ClassNotFoundException {
+    private static Class<?> name2class(ClassLoader cl, String name) throws ClassNotFoundException { //todo @pause
         int c = 0, index = name.indexOf('[');
         if (index > 0) {
             c = (name.length() - index) / 2;
@@ -896,26 +896,26 @@ public final class ReflectUtils {
             signature += StringUtils.join(parameterTypes);
         }
         Method method = SIGNATURE_METHODS_CACHE.get(signature);
-        if (method != null) {
+        if (method != null) { //在缓存中查到，直接返回
             return method;
         }
-        if (parameterTypes == null) {
+        if (parameterTypes == null) { //方法中不包含方法参数
             List<Method> finded = new ArrayList<Method>();
             for (Method m : clazz.getMethods()) {
-                if (m.getName().equals(methodName)) {
+                if (m.getName().equals(methodName)) { //方法中不包含方法参数时，直接按方法名比较
                     finded.add(m);
                 }
             }
-            if (finded.isEmpty()) {
+            if (finded.isEmpty()) { //异常：没有查找到方法
                 throw new NoSuchMethodException("No such method " + methodName + " in class " + clazz);
             }
-            if (finded.size() > 1) {
+            if (finded.size() > 1) { //异常：查找到的方法超过一个
                 String msg = String.format("Not unique method for method name(%s) in class(%s), find %d methods.",
                         methodName, clazz.getName(), finded.size());
                 throw new IllegalStateException(msg);
             }
-            method = finded.get(0);
-        } else {
+            method = finded.get(0); //正常：只找到一个方法
+        } else {                    //方法中包含方法参数
             Class<?>[] types = new Class<?>[parameterTypes.length];
             for (int i = 0; i < parameterTypes.length; i++) {
                 types[i] = ReflectUtils.name2class(parameterTypes[i]); //依次将类型名称name转换为Class

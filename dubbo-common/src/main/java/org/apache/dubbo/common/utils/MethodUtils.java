@@ -82,9 +82,9 @@ public interface MethodUtils {
      * @param method the method to check
      * @return whether the given method is meta method
      */
-    public static boolean isMetaMethod(Method method) {
+    public static boolean isMetaMethod(Method method) { //是否是元数据方法
         String name = method.getName();
-        if (!(name.startsWith("get") || name.startsWith("is"))) {
+        if (!(name.startsWith("get") || name.startsWith("is"))) { //需要是get、is为前缀的方法
             return false;
         }
         if ("get".equals(name)) {
@@ -93,13 +93,13 @@ public interface MethodUtils {
         if ("getClass".equals(name)) {
             return false;
         }
-        if (!Modifier.isPublic(method.getModifiers())) {
+        if (!Modifier.isPublic(method.getModifiers())) { //需要是public的方法
             return false;
         }
-        if (method.getParameterTypes().length != 0) {
+        if (method.getParameterTypes().length != 0) { //不能有参数
             return false;
         }
-        if (!ClassUtils.isPrimitive(method.getReturnType())) {
+        if (!ClassUtils.isPrimitive(method.getReturnType())) { //方法的返回值是基本类型
             return false;
         }
         return true;
@@ -113,7 +113,7 @@ public interface MethodUtils {
      * @param method the method to check
      * @return whether the given method is deprecated method
      */
-    public static boolean isDeprecated(Method method) {
+    public static boolean isDeprecated(Method method) { //判断方法是否已经被弃用
         return method.getAnnotation(Deprecated.class) != null;
     }
 

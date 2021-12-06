@@ -735,7 +735,7 @@ public final class StringUtils {
             return EMPTY_STRING;
         }
         StringBuilder sb = new StringBuilder();
-        for (String s : array) {
+        for (String s : array) { //将数组中的元素，依次进行拼接
             sb.append(s);
         }
         return sb.toString();

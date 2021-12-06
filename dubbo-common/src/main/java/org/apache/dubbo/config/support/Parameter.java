@@ -16,11 +16,7 @@
  */
 package org.apache.dubbo.config.support;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * Parameter
@@ -57,6 +53,6 @@ public @interface Parameter { //作用在方法上，对方法对应的属性进
      *
      * </pre>
      */
-    boolean useKeyAsProperty() default true; //是否把key作为属性名称
+    boolean useKeyAsProperty() default true; //是否把key作为属性别名
 
 }
