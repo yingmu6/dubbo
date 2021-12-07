@@ -75,6 +75,18 @@ public class ConfigValidationUtils {
     private static final int MAX_PATH_LENGTH = 200;
 
     /**
+     * 正则表达式：
+     * 1）正则表达式，又称规则表达式（英语：Regular Expression，在代码中常简写为regex、regexp或RE）计算机科学的一个概念。
+     *    正则表达式通常被用来检索、替换那些符合某个模式(规则)的文本。许多程序设计语言都支持利用正则表达式进行字符串操作。
+     * 2）正则表达式是对字符串操作的一种逻辑公式，就是用事先定义好的一些特定字符、及这些特定字符的组合，组成一个“规则字符串”，这个“规则字符串”用来表达对字符串的一种过滤逻辑
+     * 3）正则表达式由一些普通字符和一些元字符（metacharacters）组成。普通字符包括大小写的字母和数字，而元字符则具有特殊的含义。可查看对照表
+     *
+     * 百科：https://baike.baidu.com/item/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/1700215
+     * 对照表：https://www.cnblogs.com/chenjfblog/p/7839431.html
+     * 在线测试：https://tool.oschina.net/regex/
+     */
+
+    /**
      * The rule qualification for <b>name</b>
      */
     private static final Pattern PATTERN_NAME = Pattern.compile("[\\-._0-9a-zA-Z]+");
@@ -514,22 +526,22 @@ public class ConfigValidationUtils {
         }
         for (Map.Entry<String, String> entry : parameters.entrySet()) {
             if (!entry.getKey().equals(BACKUP_KEY)) {
-                checkNameHasSymbol(entry.getKey(), entry.getValue());
+                checkNameHasSymbol(entry.getKey(), entry.getValue()); //按正则表达式，检查属性值
             }
         }
     }
 
     /**
-     * 检查属性值是否正确（值是否为空、是否超过最大长度、是否与正则表达式匹配）
+     * 检查属性值value是否正确
      */
     public static void checkProperty(String property, String value, int maxlength, Pattern pattern) {
-        if (StringUtils.isEmpty(value)) {
+        if (StringUtils.isEmpty(value)) { //检查值value是否为空
             return;
         }
-        if (value.length() > maxlength) {
+        if (value.length() > maxlength) { //检查值value是否超过最大长度
             throw new IllegalStateException("Invalid " + property + "=\"" + value + "\" is longer than " + maxlength);
         }
-        if (pattern != null) {
+        if (pattern != null) { //检查值value是否与正则表达式匹配
             Matcher matcher = pattern.matcher(value);
             if (!matcher.matches()) {
                 throw new IllegalStateException("Invalid " + property + "=\"" + value + "\" contains illegal " +

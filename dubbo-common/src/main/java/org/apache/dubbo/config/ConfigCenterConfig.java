@@ -27,11 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static org.apache.dubbo.common.constants.CommonConstants.ANYHOST_VALUE;
-import static org.apache.dubbo.common.constants.CommonConstants.CONFIG_CONFIGFILE_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.CONFIG_ENABLE_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.PATH_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.PROTOCOL_KEY;
+import static org.apache.dubbo.common.constants.CommonConstants.*;
 import static org.apache.dubbo.config.Constants.CONFIG_APP_CONFIGFILE_KEY;
 import static org.apache.dubbo.config.Constants.ZOOKEEPER_PROTOCOL;
 
@@ -39,6 +35,11 @@ import static org.apache.dubbo.config.Constants.ZOOKEEPER_PROTOCOL;
  * ConfigCenterConfig
  */
 public class ConfigCenterConfig extends AbstractConfig { //配置中心
+    public static void main(String[] args) {
+        AtomicBoolean inited = new AtomicBoolean(false);
+        System.out.println(inited.compareAndSet(false, false));
+    }
+
     private AtomicBoolean inited = new AtomicBoolean(false);
 
     private String protocol;
@@ -106,7 +107,12 @@ public class ConfigCenterConfig extends AbstractConfig { //配置中心
         return UrlUtils.parseURL(address, map);
     }
 
-    public boolean checkOrUpdateInited() {
+    public boolean checkOrUpdateInited() { //inited: 已经初始化
+        /**
+         * compareAndSet(expectedValue, newValue)：若更新成功，返回true，更新失败，返回false
+         * CAS比较：将期望值与内存中的值进行比较，若相等则执行更新操作。所以可以根据compareAndSet()返回值推断内存中的值，
+         *         也就是为true时，与内存值相等，为false是与内存值不等
+         */
         return inited.compareAndSet(false, true);
     }
 
@@ -256,12 +262,12 @@ public class ConfigCenterConfig extends AbstractConfig { //配置中心
 
     @Override
     @Parameter(excluded = true)
-    public boolean isValid() {
-        if (StringUtils.isEmpty(address)) {
+    public boolean isValid() { //判断配置中心是否有效
+        if (StringUtils.isEmpty(address)) { //地址是否为空
             return false;
         }
 
-        return address.contains("://") || StringUtils.isNotEmpty(protocol);
+        return address.contains("://") || StringUtils.isNotEmpty(protocol); //判断地址以及协议protocol
     }
 
     protected void updatePortIfAbsent(Integer value) {

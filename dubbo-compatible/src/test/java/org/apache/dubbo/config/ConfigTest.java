@@ -17,13 +17,12 @@
 
 package org.apache.dubbo.config;
 
+import com.alibaba.dubbo.config.ReferenceConfig;
+import com.alibaba.dubbo.config.ServiceConfig;
 import org.apache.dubbo.config.bootstrap.DubboBootstrap;
 import org.apache.dubbo.rpc.model.ApplicationModel;
 import org.apache.dubbo.service.DemoService;
 import org.apache.dubbo.service.DemoServiceImpl;
-
-import com.alibaba.dubbo.config.ReferenceConfig;
-import com.alibaba.dubbo.config.ServiceConfig;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -69,4 +68,6 @@ public class ConfigTest {
         String message = demoService.sayHello("dubbo");
         Assertions.assertEquals("hello dubbo", message);
     }
+
+    //todo @csy 暴露服务待编写
 }

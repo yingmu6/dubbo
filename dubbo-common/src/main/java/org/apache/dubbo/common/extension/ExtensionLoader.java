@@ -501,7 +501,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
      */
     public T getDefaultExtension() { //获取默认扩展实例（即SPI注解上声明的值）
         getExtensionClasses();
-        if (StringUtils.isBlank(cachedDefaultName) || "true".equals(cachedDefaultName)) {
+        if (StringUtils.isBlank(cachedDefaultName) || "true".equals(cachedDefaultName)) { //若没有配置，则返回null
             return null;
         }
         return getExtension(cachedDefaultName);
@@ -726,7 +726,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
         }
     }
 
-    private boolean containsExtension(String name) {
+    private boolean containsExtension(String name) { //判断扩展键值对Map中，是否包含指定的扩展名
         return getExtensionClasses().containsKey(name);
     }
 

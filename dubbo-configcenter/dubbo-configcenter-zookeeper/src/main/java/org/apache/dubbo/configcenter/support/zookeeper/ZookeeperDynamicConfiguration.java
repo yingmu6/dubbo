@@ -44,7 +44,7 @@ public class ZookeeperDynamicConfiguration extends TreePathDynamicConfiguration 
     private URL url;
 
 
-    ZookeeperDynamicConfiguration(URL url, ZookeeperTransporter zookeeperTransporter) {
+    ZookeeperDynamicConfiguration(URL url, ZookeeperTransporter zookeeperTransporter) {//todo @pause
         super(url);
         this.url = url;
         rootPath = getRootPath(url);

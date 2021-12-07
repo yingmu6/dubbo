@@ -38,9 +38,9 @@ public interface DynamicConfigurationFactory {
      * @return non-null
      * @see 2.7.4
      */
-    static DynamicConfigurationFactory getDynamicConfigurationFactory(String name) { //获取扩展名对应的配置工厂
+    static DynamicConfigurationFactory getDynamicConfigurationFactory(String name) { //通过SPI方式，获取当前接口DynamicConfigurationFactory的实例
         Class<DynamicConfigurationFactory> factoryClass = DynamicConfigurationFactory.class;
-        ExtensionLoader<DynamicConfigurationFactory> loader = getExtensionLoader(factoryClass);
+        ExtensionLoader<DynamicConfigurationFactory> loader = getExtensionLoader(factoryClass); //获取扩展加载器ExtensionLoader
         return loader.getOrDefaultExtension(name);
     }
 }

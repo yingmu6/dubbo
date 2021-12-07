@@ -43,7 +43,13 @@ import static org.apache.dubbo.common.utils.ArrayUtils.isEmpty;
 /**
  * ReflectUtils
  */
-public final class ReflectUtils {
+public final class ReflectUtils { //JVM虚拟机中的类型描述符
+    /**
+     * 类型描述符表示方法：
+     * 引用类型的描述符是L，正确描述是L+类的全名称+；如：Ljava.lang.String;
+     * 数组类型的描述符号是[, 正确描述是[+数组元素类型描述符（"["代表一维数组，"[["代表二维数组）
+     * 基本类型：按如下的简写字母表示
+     */
 
     /**
      * void(V).
@@ -92,6 +98,9 @@ public final class ReflectUtils {
 
     public static final Class<?>[] EMPTY_CLASS_ARRAY = new Class<?>[0];
 
+    /**
+     * 各种类型描述，对应的正则表达式
+     */
     public static final String JAVA_IDENT_REGEX = "(?:[_$a-zA-Z][_$a-zA-Z0-9]*)";
 
     public static final String JAVA_NAME_REGEX = "(?:" + JAVA_IDENT_REGEX + "(?:\\." + JAVA_IDENT_REGEX + ")*)";
@@ -239,16 +248,16 @@ public final class ReflectUtils {
      * @param c class.
      * @return name.
      */
-    public static String getName(Class<?> c) {
-        if (c.isArray()) {
+    public static String getName(Class<?> c) { //获取class对象对应的描述信息
+        if (c.isArray()) { //数组处理
             StringBuilder sb = new StringBuilder();
             do {
                 sb.append("[]");
                 c = c.getComponentType();
             }
-            while (c.isArray());
+            while (c.isArray()); //循环拼接数组符号，如二维数组，此处sb的值为"[][]"
 
-            return c.getName() + sb.toString();
+            return c.getName() + sb.toString(); //值如：int[][]
         }
         return c.getName();
     }
@@ -704,13 +713,13 @@ public final class ReflectUtils {
      * @param name name.
      * @return Class instance.
      */
-    private static Class<?> name2class(ClassLoader cl, String name) throws ClassNotFoundException { //todo @pause
+    private static Class<?> name2class(ClassLoader cl, String name) throws ClassNotFoundException { //将名称映射为Class类
         int c = 0, index = name.indexOf('[');
         if (index > 0) {
-            c = (name.length() - index) / 2;
-            name = name.substring(0, index);
+            c = (name.length() - index) / 2; //计算需要拼接"["的个数，因为"[]"成对出现，所以除以2，比如"boolean[][]"中即为(11-7)/2=2，最后就会拼接两个"["，比如"[[Z"
+            name = name.substring(0, index); //取传入名称的子串，去除"["后面的符号，如name为"boolean[]"，此处处理后为"boolean"
         }
-        if (c > 0) {
+        if (c > 0) { //处理数组的类型描述符
             StringBuilder sb = new StringBuilder();
             while (c-- > 0) {
                 sb.append("[");
@@ -718,7 +727,7 @@ public final class ReflectUtils {
 
             if ("void".equals(name)) {
                 sb.append(JVM_VOID);
-            } else if ("boolean".equals(name)) {
+            } else if ("boolean".equals(name)) { //此处如：[Z
                 sb.append(JVM_BOOLEAN);
             } else if ("byte".equals(name)) {
                 sb.append(JVM_BYTE);
@@ -739,7 +748,7 @@ public final class ReflectUtils {
                 sb.append('L').append(name).append(';');
             }
             name = sb.toString();
-        } else {
+        } else { //非数组类型，且为基本类型的处理
             if ("void".equals(name)) {
                 return void.class;
             }
@@ -772,10 +781,10 @@ public final class ReflectUtils {
         if (cl == null) {
             cl = ClassUtils.getClassLoader();
         }
-        Class<?> clazz = NAME_CLASS_CACHE.get(name);
-        if (clazz == null) {
-            clazz = Class.forName(name, true, cl);
-            NAME_CLASS_CACHE.put(name, clazz);
+        Class<?> clazz = NAME_CLASS_CACHE.get(name); //从缓存中获取，如name为"org.apache.dubbo.rpc.support.DemoService"
+        if (clazz == null) { //入参为boolean[]时，name为[Z
+            clazz = Class.forName(name, true, cl); //根据类名称获取Class对象
+            NAME_CLASS_CACHE.put(name, clazz); //设置到缓存中
         }
         return clazz;
     }

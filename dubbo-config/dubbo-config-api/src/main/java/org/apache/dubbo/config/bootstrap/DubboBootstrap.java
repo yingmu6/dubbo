@@ -85,7 +85,7 @@ import static org.apache.dubbo.remoting.Constants.CLIENT_KEY;
  *
  * @since 2.7.5
  */
-public class DubboBootstrap extends GenericEventListener {
+public class DubboBootstrap extends GenericEventListener { //todo @pause DubboBootstrap 整个类，初步了解
 
     public static final String DEFAULT_REGISTRY_ID = "REGISTRY#DEFAULT";
 
@@ -575,14 +575,14 @@ public class DubboBootstrap extends GenericEventListener {
         if (CollectionUtils.isEmpty(configCenters)) {
             ConfigCenterConfig configCenterConfig = new ConfigCenterConfig();
             configCenterConfig.refresh();
-            if (configCenterConfig.isValid()) {
+            if (configCenterConfig.isValid()) { //若配置为空的，创建一个配置对象加入
                 configManager.addConfigCenter(configCenterConfig);
                 configCenters = configManager.getConfigCenters();
             }
         } else {
             for (ConfigCenterConfig configCenterConfig : configCenters) {
                 configCenterConfig.refresh();
-                ConfigValidationUtils.validateConfigCenterConfig(configCenterConfig);
+                ConfigValidationUtils.validateConfigCenterConfig(configCenterConfig); //校验配置中心的数据
             }
         }
 
@@ -997,7 +997,7 @@ public class DubboBootstrap extends GenericEventListener {
 
     private DynamicConfiguration prepareEnvironment(ConfigCenterConfig configCenter) {
         if (configCenter.isValid()) {
-            if (!configCenter.checkOrUpdateInited()) {
+            if (!configCenter.checkOrUpdateInited()) { //预期值为false，当inited=true时，checkOrUpdateInited()返回false，即已经初始化了，就不再初始化处理
                 return null;
             }
             DynamicConfiguration dynamicConfiguration = getDynamicConfiguration(configCenter.toUrl());

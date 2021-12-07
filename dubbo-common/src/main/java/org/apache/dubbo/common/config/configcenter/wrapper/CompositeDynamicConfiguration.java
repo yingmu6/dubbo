@@ -28,7 +28,7 @@ import java.util.function.Function;
 /**
  * support multiple config center, simply iterating each concrete config center.
  */
-public class CompositeDynamicConfiguration implements DynamicConfiguration {
+public class CompositeDynamicConfiguration implements DynamicConfiguration { //composite  [ˈkɒmpəzɪt] adj. 合成的，复合的, n. 合成物，复合材料, v. 合成
 
     public static final String NAME = "COMPOSITE";
 
