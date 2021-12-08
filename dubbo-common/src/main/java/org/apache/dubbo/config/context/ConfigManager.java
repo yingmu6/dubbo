@@ -44,6 +44,11 @@ import static org.apache.dubbo.config.Constants.REGISTRIES_SUFFIX;
 
 public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //配置管理器，继承适配器，有选择的实现方法
 
+    /**
+     * ConfigManager存储了所有dubbo的配置对象
+     * 类似于一个本地的配置中心，如果要查询配置信息，访问ConfigManager获取对应的配置对象即可，任何配置对象修改了，都要刷新ConfigManager
+     */
+
     private static final Logger logger = LoggerFactory.getLogger(ConfigManager.class);
 
     public static final String NAME = "config";
@@ -309,7 +314,7 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
     }
 
     protected static Set<String> getSubProperties(Map<String, String> properties, String prefix) {
-        return properties.keySet().stream().filter(k -> k.contains(prefix)).map(k -> {
+        return properties.keySet().stream().filter(k -> k.contains(prefix)).map(k -> { //若key包含指定的前缀，则对key进行处理
             k = k.substring(prefix.length());
             return k.substring(0, k.indexOf(".")); //将属性map的key进行遍历，去掉前缀、再去掉点号
         }).collect(Collectors.toSet());

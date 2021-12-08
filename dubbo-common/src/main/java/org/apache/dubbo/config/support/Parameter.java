@@ -26,7 +26,7 @@ import java.lang.annotation.*;
 @Target({ElementType.METHOD})
 public @interface Parameter { //作用在方法上，对方法对应的属性进行处理
 
-    String key() default "";
+    String key() default ""; //对接的属性名称
 
     boolean required() default false;
 

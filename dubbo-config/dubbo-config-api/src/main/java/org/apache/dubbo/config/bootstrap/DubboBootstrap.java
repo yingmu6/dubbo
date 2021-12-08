@@ -85,7 +85,27 @@ import static org.apache.dubbo.remoting.Constants.CLIENT_KEY;
  *
  * @since 2.7.5
  */
-public class DubboBootstrap extends GenericEventListener { //todo @pause DubboBootstrap 整个类，初步了解
+public class DubboBootstrap extends GenericEventListener { //基于事件驱动
+
+    /**
+     * DubboBootstrap类是Dubbo中非常重要的启动类，主要功能包括：
+     * <p>
+     * 1）持有ConfigManager、Environment对象并且对其初始化，这两个对象都是与配置相关的；
+     * 2）更新配置中心配置对象ConfigCenterConfig的属性值；
+     * 3）加载元数据中心对象；
+     * 4）检查各个配置对象的属性值是否合法；
+     * 5）注册java的关闭钩子；
+     * 6）服务端服务的暴露。
+     * https://www.jianshu.com/p/6ff6aa36e343
+     * <p>
+     * DubboBootstrap的初始化流程：
+     * 流程：监听Spring的ApplicationContextEvent 事件的触发，然后进入DubboBootstrap的start()方法
+     * https://juejin.cn/post/7014080754040717342
+     * <p>
+     * 为啥会使用DubboBootStrap：（官网）
+     * 是为了向面向应用编程过渡，DubboBootStrap是提供面向应用编程的接口
+     * https://dubbo.apache.org/zh/blog/2020/05/18/2.7.5-%E5%8A%9F%E8%83%BD%E8%A7%A3%E6%9E%90/#6-bootstrap-apibeta
+     */
 
     public static final String DEFAULT_REGISTRY_ID = "REGISTRY#DEFAULT";
 
@@ -129,7 +149,7 @@ public class DubboBootstrap extends GenericEventListener { //todo @pause DubboBo
 
     private volatile boolean referAsync;
 
-    private AtomicBoolean initialized = new AtomicBoolean(false);
+    private AtomicBoolean initialized = new AtomicBoolean(false); //初始化标识
 
     private AtomicBoolean started = new AtomicBoolean(false); //启动标识
 
@@ -154,7 +174,7 @@ public class DubboBootstrap extends GenericEventListener { //todo @pause DubboBo
      */
     public static DubboBootstrap getInstance() { //获取实例：单例模式
         if (instance == null) {
-            synchronized (DubboBootstrap.class) {
+            synchronized (DubboBootstrap.class) { // synchronized ['sɪŋkrənaɪzd] adj. 同步的；同步化的,v. 使协调,同时发生
                 if (instance == null) {
                     instance = new DubboBootstrap();
                 }
@@ -164,11 +184,11 @@ public class DubboBootstrap extends GenericEventListener { //todo @pause DubboBo
     }
 
     private DubboBootstrap() {
-        configManager = ApplicationModel.getConfigManager();
-        environment = ApplicationModel.getEnvironment();
+        configManager = ApplicationModel.getConfigManager(); //config对象的本地配置
+        environment = ApplicationModel.getEnvironment();     //系统配置
 
         DubboShutdownHook.getDubboShutdownHook().register();
-        ShutdownHookCallbacks.INSTANCE.addCallback(new ShutdownHookCallback() {
+        ShutdownHookCallbacks.INSTANCE.addCallback(new ShutdownHookCallback() { //注册钩子函数，当容器停止时，对DubboBootstrap进行销毁处理
             @Override
             public void callback() throws Throwable {
                 DubboBootstrap.this.destroy();
@@ -215,7 +235,7 @@ public class DubboBootstrap extends GenericEventListener { //todo @pause DubboBo
      * @param name the name of application
      * @return current {@link DubboBootstrap} instance
      */
-    public DubboBootstrap application(String name) {
+    public DubboBootstrap application(String name) { //按应用名查找DubboBootstrap，为3.0应用维度预留
         return application(name, builder -> {
             // DO NOTHING
         });
@@ -606,7 +626,7 @@ public class DubboBootstrap extends GenericEventListener { //todo @pause DubboBo
         // FIXME, multiple metadata config support.
         Collection<MetadataReportConfig> metadataReportConfigs = configManager.getMetadataConfigs();
         if (CollectionUtils.isEmpty(metadataReportConfigs)) {
-            if (REMOTE_METADATA_STORAGE_TYPE.equals(metadataType)) {
+            if (REMOTE_METADATA_STORAGE_TYPE.equals(metadataType)) { //启用metadata=remote时，需要设置远程元数据中心地址
                 throw new IllegalStateException("No MetadataConfig found, you must specify the remote Metadata Center address when 'metadata=remote' is enabled.");
             }
             return;
@@ -1000,7 +1020,7 @@ public class DubboBootstrap extends GenericEventListener { //todo @pause DubboBo
             if (!configCenter.checkOrUpdateInited()) { //预期值为false，当inited=true时，checkOrUpdateInited()返回false，即已经初始化了，就不再初始化处理
                 return null;
             }
-            DynamicConfiguration dynamicConfiguration = getDynamicConfiguration(configCenter.toUrl());
+            DynamicConfiguration dynamicConfiguration = getDynamicConfiguration(configCenter.toUrl()); //将Config对象的内容，转换为URL
             String configContent = dynamicConfiguration.getProperties(configCenter.getConfigFile(), configCenter.getGroup());
 
             String appGroup = getApplication().getName();
@@ -1013,7 +1033,7 @@ public class DubboBootstrap extends GenericEventListener { //todo @pause DubboBo
             }
             try {
                 environment.setConfigCenterFirst(configCenter.isHighestPriority());
-                environment.updateExternalConfigurationMap(parseProperties(configContent));
+                environment.updateExternalConfigurationMap(parseProperties(configContent)); //按从配置中心拉取的配置，更新到本地缓存中
                 environment.updateAppExternalConfigurationMap(parseProperties(appConfigContent));
             } catch (IOException e) {
                 throw new IllegalStateException("Failed to parse configurations from Config Center.", e);
@@ -1305,7 +1325,7 @@ public class DubboBootstrap extends GenericEventListener { //todo @pause DubboBo
                 .orElseGet(() -> { //若缓存中，没有application配置的值，则创建应用配置对象，并返回。此处没有使用 创建一个临时对象，再设置的方式
                     ApplicationConfig applicationConfig = new ApplicationConfig();
                     configManager.setApplication(applicationConfig);
-                    return applicationConfig;
+                    return applicationConfig; //Supplier函数式接口的方法为 T get(), 即为不接收参数，返回对应的值，对应lambda表达式为 ()->{return T;}
                 });
 
         application.refresh();

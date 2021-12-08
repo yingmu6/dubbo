@@ -63,7 +63,7 @@ public class ConfigCenterConfig extends AbstractConfig { //配置中心
     private String password;
     private Long timeout = 3000L;
 
-    // If the Config Center is given the highest priority, it will override all the other configurations
+    // If the Config Center is given the highest priority, it will override（覆盖） all the other configurations
     private Boolean highestPriority = true;
 
     // Decide the behaviour when initial connection try fails, 'true' means interrupt the whole process once fail.

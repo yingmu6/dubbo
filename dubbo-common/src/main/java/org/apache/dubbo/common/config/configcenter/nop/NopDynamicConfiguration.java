@@ -24,7 +24,7 @@ import java.util.SortedSet;
 
 /**
  * The default extension of {@link DynamicConfiguration}. If user does not specify a config center, or specifies one
- * that is not a valid extension, it will default to this one.
+ * that is not a valid extension（指定无效的扩展）, it will default to this one.
  */
 @Deprecated
 public class NopDynamicConfiguration implements DynamicConfiguration {

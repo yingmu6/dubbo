@@ -106,14 +106,14 @@ public interface DynamicConfiguration extends Configuration, AutoCloseable { //�
      *
      * @param key     the key to represent a configuration
      * @param group   the group where the key belongs to
-     * @param timeout timeout value for fetching the target config
+     * @param timeout timeout value for fetching the target config（获取配置的超时时间）
      * @return target configuration mapped to the given key and the given group, IllegalStateException will be thrown
      * if timeout exceeds.
      */
     String getConfig(String key, String group, long timeout) throws IllegalStateException;
 
     /**
-     * This method are mostly used to get a compound config file with {@link #getDefaultTimeout() the default timeout},
+     * This method are mostly used to get a compound（[ˈkɒmpaʊnd] adj. 复合的，n. 混合物） config file with {@link #getDefaultTimeout() the default timeout},
      * such as a complete dubbo.properties file.
      */
     default String getProperties(String key, String group) throws IllegalStateException {
@@ -219,7 +219,7 @@ public interface DynamicConfiguration extends Configuration, AutoCloseable { //�
      * @since 2.7.5
      */
     static DynamicConfiguration getDynamicConfiguration(URL connectionURL) {
-        String protocol = connectionURL.getProtocol();
+        String protocol = connectionURL.getProtocol(); //根据<dubbo:config-center>的配置，此处的url为zookeeper://127.0.0.1:2181/ConfigCenterConfig?center-test=hh&center.test=hh&check=true&config-file=dubbo.properties&group=dubbo&highest-priority=true&include.spring.env=false&namespace=dubbo&timeout=3000
         DynamicConfigurationFactory factory = getDynamicConfigurationFactory(protocol);
         return factory.getDynamicConfiguration(connectionURL);
     }

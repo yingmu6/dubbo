@@ -36,13 +36,19 @@ import java.util.Optional;
  * https://blog.csdn.net/leisurelen/article/details/107317951
  */
 public class Environment extends LifecycleAdapter implements FrameworkExt {
+
+    /**
+     * Environment也是存储配置信息，与ConfigManager不同的是，
+     * Environment主要处理的与系统配置相关，比如Java系统配置，以及配置中心的配置。
+     */
+
     public static final String NAME = "environment";
 
-    private final PropertiesConfiguration propertiesConfiguration;
-    private final SystemConfiguration systemConfiguration;
-    private final EnvironmentConfiguration environmentConfiguration;
-    private final InmemoryConfiguration externalConfiguration;
-    private final InmemoryConfiguration appExternalConfiguration;
+    private final PropertiesConfiguration propertiesConfiguration; //装载"dubbo.properties"文件的配置信息
+    private final SystemConfiguration systemConfiguration;         //装载System的properties配置系信息
+    private final EnvironmentConfiguration environmentConfiguration;//装载JVM环境变量的配置信息
+    private final InmemoryConfiguration externalConfiguration;      //装载内部的配置信息，分为全局配置和应用级配置
+    private final InmemoryConfiguration appExternalConfiguration;   //装载配置中心的配置信息
 
     private CompositeConfiguration globalConfiguration;
 
