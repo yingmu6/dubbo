@@ -147,7 +147,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
         }
 
         if (bootstrap == null) {
-            bootstrap = DubboBootstrap.getInstance();
+            bootstrap = DubboBootstrap.getInstance(); //获取DubboBootstrap实例、并初始化
             bootstrap.initialize();
         }
 
@@ -186,7 +186,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
         configInitializers.forEach(e -> e.initServiceConfig(this));
 
         // if protocol is not injvm checkRegistry
-        if (!isOnlyInJvm()) {
+        if (!isOnlyInJvm()) { //若只暴露injvm协议，则不用检查注册中心配置
             checkRegistry();
         }
         this.refresh();
@@ -207,7 +207,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
             } catch (ClassNotFoundException e) {
                 throw new IllegalStateException(e.getMessage(), e);
             }
-            checkInterfaceAndMethods(interfaceClass, getMethods());
+            checkInterfaceAndMethods(interfaceClass, getMethods()); //todo @pause
             checkRef();
             generic = Boolean.FALSE.toString();
         }
@@ -497,7 +497,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
      *
      * @return
      */
-    private boolean isOnlyInJvm() {
+    private boolean isOnlyInJvm() { //协议指定为injvm，则不再暴露远程服务
         return getProtocols().size() == 1
                 && LOCAL_PROTOCOL.equalsIgnoreCase(getProtocols().get(0).getName());
     }

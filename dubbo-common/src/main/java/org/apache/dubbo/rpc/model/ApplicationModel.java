@@ -88,7 +88,7 @@ public class ApplicationModel { //应用模型
         return (Environment) LOADER.getExtension(Environment.NAME);
     }
 
-    public static ConfigManager getConfigManager() {
+    public static ConfigManager getConfigManager() { //通过SPI机制，获取到ConfigManager实例
         return (ConfigManager) LOADER.getExtension(ConfigManager.NAME); //config对应的扩展类为ConfigManager
     }
 

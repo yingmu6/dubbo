@@ -70,7 +70,7 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
         return ofNullable(getConfig(getTagName(ApplicationConfig.class)));
     }
 
-    public ApplicationConfig getApplicationOrElseThrow() { //若没有获取到应用配置，则抛出异常
+    public ApplicationConfig getApplicationOrElseThrow() { //若没有获取到ApplicationConfig的应用配置信息，则抛出异常
         return getApplication().orElseThrow(() -> new IllegalStateException("There's no ApplicationConfig specified."));
     }
 
@@ -389,8 +389,8 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
         return (Map<String, C>) read(() -> configsCache.getOrDefault(configType, emptyMap())); //getOrDefault()：从map中获取指定key的值，若值为空，取传入的默认值
     }
 
-    protected <C extends AbstractConfig> Collection<C> getConfigs(String configType) {
-        return (Collection<C>) read(() -> getConfigsMap(configType).values());
+    protected <C extends AbstractConfig> Collection<C> getConfigs(String configType) { //获取值的集合，比如当暴露多个服务是，configMap中的"service"就会对应多个值，所以返回的是值列表
+        return (Collection<C>) read(() -> getConfigsMap(configType).values()); //加锁读取configMap中的值，因为这个是公共资源，可能其它线程正在做写入操作，确保线程安全
     }
 
     protected <C extends AbstractConfig> C getConfig(String configType, String id) {
@@ -443,7 +443,7 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
         V value = null;
         try {
             readLock.lock(); //加锁
-            value = callable.call(); //执行线程的处理逻辑，获取执行的返回值
+            value = callable.call(); //对执行的过程进行加锁
         } catch (Throwable e) {
             throw new RuntimeException(e);
         } finally {

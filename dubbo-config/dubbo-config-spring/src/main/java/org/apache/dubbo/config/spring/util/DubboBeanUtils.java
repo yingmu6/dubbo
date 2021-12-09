@@ -20,6 +20,7 @@ import org.apache.dubbo.config.spring.beans.factory.annotation.DubboConfigAliasP
 import org.apache.dubbo.config.spring.beans.factory.annotation.ReferenceAnnotationBeanPostProcessor;
 import org.apache.dubbo.config.spring.beans.factory.config.DubboConfigDefaultPropertyValueBeanPostProcessor;
 import org.apache.dubbo.config.spring.context.DubboBootstrapApplicationListener;
+import org.apache.dubbo.config.spring.context.DubboBootstrapApplicationListenerTest;
 import org.apache.dubbo.config.spring.context.DubboLifecycleComponentApplicationListener;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 
@@ -56,9 +57,13 @@ public interface DubboBeanUtils {
         registerInfrastructureBean(registry, DubboLifecycleComponentApplicationListener.BEAN_NAME,
                 DubboLifecycleComponentApplicationListener.class);
 
-        // Since 2.7.4 Register DubboBootstrapApplicationListener as an infrastructure Bean
+        // Since 2.7.4 Register DubboBootstrapApplicationListener as an infrastructure（ [ˈɪnfrəstrʌktʃə(r)] n. 基础设施）Bean
         registerInfrastructureBean(registry, DubboBootstrapApplicationListener.BEAN_NAME,
                 DubboBootstrapApplicationListener.class);
+
+        // test bean 注册
+        registerInfrastructureBean(registry, DubboBootstrapApplicationListenerTest.BEAN_NAME,
+                DubboBootstrapApplicationListenerTest.class);
 
         // Since 2.7.6 Register DubboConfigDefaultPropertyValueBeanPostProcessor as an infrastructure Bean
         registerInfrastructureBean(registry, DubboConfigDefaultPropertyValueBeanPostProcessor.BEAN_NAME,

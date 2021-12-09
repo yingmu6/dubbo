@@ -150,13 +150,13 @@ public abstract class ServiceConfigBase<T> extends AbstractServiceConfig {
 
     public boolean shouldExport() {
         Boolean export = getExport();
-        // default value is true
+        // default value is true（默认已经服务暴露）
         return export == null ? true : export;
     }
 
     @Override
     public Boolean getExport() {
-        return (export == null && provider != null) ? provider.getExport() : export;
+        return (export == null && provider != null) ? provider.getExport() : export; //条件表达式反义：export != null || provider == null
     }
 
     public boolean shouldDelay() {
@@ -208,13 +208,13 @@ public abstract class ServiceConfigBase<T> extends AbstractServiceConfig {
         convertProtocolIdsToProtocols();
     }
 
-    public void completeCompoundConfigs() {
-        super.completeCompoundConfigs(provider);
+    public void completeCompoundConfigs() { //compound ['kɔmpaund, kəm'paund] n. 混合物，化合物, adj. 复合的，混合的, v. 合成，混合 , complete [kəmˈpliːt] adj. 完全的，全部的,v. 使完整，完成，
+        super.completeCompoundConfigs(provider); //完善父类AbstractInterfaceConfig的config属性值
         if (provider != null) {
             if (protocols == null) {
                 setProtocols(provider.getProtocols());
             }
-            if (configCenter == null) {
+            if (configCenter == null) { //configCenter属性，来自于父类AbstractInterfaceConfig
                 setConfigCenter(provider.getConfigCenter());
             }
             if (StringUtils.isEmpty(registryIds)) {
@@ -231,7 +231,7 @@ public abstract class ServiceConfigBase<T> extends AbstractServiceConfig {
         if (StringUtils.isEmpty(protocolIds)) {
             if (CollectionUtils.isEmpty(protocols)) {
                 List<ProtocolConfig> protocolConfigs = ApplicationModel.getConfigManager().getDefaultProtocols();
-                if (protocolConfigs.isEmpty()) {
+                if (protocolConfigs.isEmpty()) { //ProtocolConfig对应<dubbo:protocol>的内容
                     protocolConfigs = new ArrayList<>(1);
                     ProtocolConfig protocolConfig = new ProtocolConfig();
                     protocolConfig.setDefault(true);
@@ -413,8 +413,8 @@ public abstract class ServiceConfigBase<T> extends AbstractServiceConfig {
         return StringUtils.isEmpty(this.version) ? (provider != null ? provider.getVersion() : this.version) : this.version;
     }
 
-    private void computeValidProtocolIds() { //计算有效的协议id列表
-        if (StringUtils.isEmpty(getProtocolIds())) {
+    private void computeValidProtocolIds() { //计算有效的协议id列表  compute[kəmˈpjuːt] v. 估算，计算，n. 计算，估计
+        if (StringUtils.isEmpty(getProtocolIds())) { //protocolId列表为空时，从ProviderConfig中尝试查找
             if (getProvider() != null && StringUtils.isNotEmpty(getProvider().getProtocolIds())) {
                 setProtocolIds(getProvider().getProtocolIds());
             }

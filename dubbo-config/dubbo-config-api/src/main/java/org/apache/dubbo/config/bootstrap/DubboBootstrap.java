@@ -1079,9 +1079,9 @@ public class DubboBootstrap extends GenericEventListener { //基于事件驱动
         configManager.getServices().forEach(sc -> {
             // TODO, compatible with ServiceConfig.export()
             ServiceConfig serviceConfig = (ServiceConfig) sc;
-            serviceConfig.setBootstrap(this);
+            serviceConfig.setBootstrap(this); //设置ServiceConfig对象的bootstrap属性值
 
-            if (exportAsync) { //异步执行，使用线程池执行相关任务
+            if (exportAsync) { //异步暴露服务，使用线程池执行相关任务
                 ExecutorService executor = executorRepository.getServiceExporterExecutor();
                 Future<?> future = executor.submit(() -> {
                     sc.export();

@@ -256,7 +256,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
     }
 
     private void convertRegistryIdsToRegistries() {
-        computeValidRegistryIds();
+        computeValidRegistryIds(); //编程风格，很多方法没有直接返回值，而是直接处理属性值
         if (StringUtils.isEmpty(registryIds)) {
             if (CollectionUtils.isEmpty(registries)) {
                 List<RegistryConfig> registryConfigs = ApplicationModel.getConfigManager().getDefaultRegistries();
@@ -296,22 +296,22 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
 
     }
 
-    public void completeCompoundConfigs(AbstractInterfaceConfig interfaceConfig) { //Compound: 复合的；混合的
-        if (interfaceConfig != null) {
+    public void completeCompoundConfigs(AbstractInterfaceConfig interfaceConfig) { //Compound: 复合的；混合的，该方法目前有两个地方用到，一个为ServiceConfigBase.completeCompoundConfigs()，传入值为：ProviderConfig的实例，另一个ReferenceConfig.checkAndUpdateSubConfigs()，传入值为ConsumerConfig实例
+        if (interfaceConfig != null) { //概括：就是把本地缓存的config实例，设置到当前类的属性中（除了registries）
             if (application == null) {
-                setApplication(interfaceConfig.getApplication());
+                setApplication(interfaceConfig.getApplication()); //取出ConfigManager缓存的config对象值，设置到当前config的属性中
             }
             if (module == null) { //从传入的接口配置中获取所需值，并进行设置
                 setModule(interfaceConfig.getModule());
             }
             if (registries == null) {
-                setRegistries(interfaceConfig.getRegistries());
+                setRegistries(interfaceConfig.getRegistries()); //此处注册配置列表，没有从本地缓存中获取
             }
             if (monitor == null) {
                 setMonitor(interfaceConfig.getMonitor());
             }
         }
-        if (module != null) {
+        if (module != null) { //ModuleConfig不为空时，尝试获取registries、monitor并设置
             if (registries == null) {
                 setRegistries(module.getRegistries());
             }
@@ -319,7 +319,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
                 setMonitor(module.getMonitor());
             }
         }
-        if (application != null) {
+        if (application != null) { //ApplicationConfig不为空时，尝试获取registries、monitor并设置
             if (registries == null) {
                 setRegistries(application.getRegistries());
             }
@@ -331,8 +331,8 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
     
     protected void computeValidRegistryIds() {
         if (StringUtils.isEmpty(getRegistryIds())) {
-            if (getApplication() != null && StringUtils.isNotEmpty(getApplication().getRegistryIds())) {
-                setRegistryIds(getApplication().getRegistryIds());
+            if (getApplication() != null && StringUtils.isNotEmpty(getApplication().getRegistryIds())) { //从ApplicationConfig中获取到registryIds
+                setRegistryIds(getApplication().getRegistryIds()); //编程风格：都是用方法获取值，很少看到用临时变量接收，看上去比较简洁
             }
         }
     }
@@ -435,7 +435,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
         this.layer = layer;
     }
 
-    public ApplicationConfig getApplication() {
+    public ApplicationConfig getApplication() { //从本地缓存configCache中获取ApplicationConfig的配置，即<dubbo:application>对应的配置
         if (application != null) {
             return application;
         }
@@ -448,7 +448,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
         if (application != null) { //在调用set方法设置成员变量值时，进行逻辑判断
             ConfigManager configManager = ApplicationModel.getConfigManager();
             configManager.getApplication().orElseGet(() -> {
-                configManager.setApplication(application);
+                configManager.setApplication(application); //若configManager缓存的ApplicationConfig为空的话，回写到configManager
                 return application;
             });
         }
@@ -458,7 +458,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
         if (module != null) {
             return module;
         }
-        return ApplicationModel.getConfigManager().getModule().orElse(null);
+        return ApplicationModel.getConfigManager().getModule().orElse(null); //ModuleConfig不是必须的，所以为空也不抛出异常
     }
 
     @Deprecated
@@ -552,7 +552,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
         if (configCenter != null) {
             return configCenter;
         }
-        Collection<ConfigCenterConfig> configCenterConfigs = ApplicationModel.getConfigManager().getConfigCenters();
+        Collection<ConfigCenterConfig> configCenterConfigs = ApplicationModel.getConfigManager().getConfigCenters(); //从本地缓存中获取ConfigCenterConfig
         if (CollectionUtils.isNotEmpty(configCenterConfigs)) {
             return configCenterConfigs.iterator().next();
         }

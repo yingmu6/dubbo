@@ -124,10 +124,10 @@ public abstract class AbstractConfig implements Serializable {
                     String key;
                     if (parameter != null && parameter.key().length() > 0) { //若方法使用了@Parameter注解声明，且设置了key的值，则将该值作为参数key
                         key = parameter.key();
-                    } else {
-                        key = calculatePropertyFromGetter(name); //获取得到属性名，如getProtocol()方法的属性名为protocol(若属性名是驼峰的，则按分隔符处理，如getProtocolName(),若分隔符为"."，则最终的属性名为protocol.name)
+                    } else { //没有带@Parameter注解
+                        key = calculatePropertyFromGetter(name); //提取属性名，如getProtocol()方法的属性名为protocol(若属性名是驼峰的，则按分隔符处理，如getProtocolName(),若分隔符为"."，则最终的属性名为protocol.name)
                     }
-                    Object value = method.invoke(config); //使用反射机制，调用对象的方法，获取到方法返回的值
+                    Object value = method.invoke(config); //使用反射机制，获取config中get方法的返回值
                     String str = String.valueOf(value).trim();
                     if (value != null && str.length() > 0) {
                         if (parameter != null && parameter.escaped()) {
@@ -136,14 +136,14 @@ public abstract class AbstractConfig implements Serializable {
                         if (parameter != null && parameter.append()) { //若属性key对应的值有多个，是否要在原来的值上附加
                             String pre = parameters.get(key);
                             if (pre != null && pre.length() > 0) {
-                                str = pre + "," + str; //附加到原有的值上
+                                str = pre + "," + str; //带上分隔符，附加到原有的值value上
                             }
                         }
                         if (prefix != null && prefix.length() > 0) {
-                            key = prefix + "." + key;
+                            key = prefix + "." + key; //若有指定分隔符，附加到属性key上
                         }
-                        parameters.put(key, str);
-                    } else if (parameter != null && parameter.required()) {
+                        parameters.put(key, str); //处理好属性key、value后，写入参数Map中
+                    } else if (parameter != null && parameter.required()) { //在值value为空，且@parameter注解required声明为必须时，报出异常信息
                         throw new IllegalStateException(config.getClass().getSimpleName() + "." + key + " == null");
                     }
                 } else if (isParametersGetter(method)) { //若是getParameters()方法，则可以将该方法的返回值Map<String, String>直接设置到处理的参数map中
@@ -299,7 +299,7 @@ public abstract class AbstractConfig implements Serializable {
         return null;
     }
 
-    private static boolean isParametersGetter(Method method) { //判断是否是获取参数Map的方法
+    private static boolean isParametersGetter(Method method) { //判断是否是有效的getParameters()方法
         String name = method.getName();
         return ("getParameters".equals(name)
                 && Modifier.isPublic(method.getModifiers())
@@ -307,7 +307,7 @@ public abstract class AbstractConfig implements Serializable {
                 && method.getReturnType() == Map.class); //返回值是Map类型
     }
 
-    private static boolean isParametersSetter(Method method) { //判断是否是设置参数方法setParameters()
+    private static boolean isParametersSetter(Method method) { //判断是否是有效的setParameters()方法
         return ("setParameters".equals(method.getName())
                 && Modifier.isPublic(method.getModifiers())
                 && method.getParameterCount() == 1
@@ -332,7 +332,8 @@ public abstract class AbstractConfig implements Serializable {
             String key = entry.getKey();
             String value = entry.getValue();
             result.put(pre + key, value); //带上前缀处理
-            // For compatibility, key like "registry-type" will has a duplicate key "registry.type"
+            // For compatibility [kəmˌpætəˈbɪləti] n.兼容性 , key like "registry-type" will has a duplicate key "registry.type"
+            // (出于兼容性，若带有中划线的key，会产生带上点号的key，即会有两个key)
             if (key.contains("-")) {
                 result.put(pre + key.replace('-', '.'), value);
             }
