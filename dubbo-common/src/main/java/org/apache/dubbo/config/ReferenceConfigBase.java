@@ -38,7 +38,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.DUBBO;
  *
  * @export
  */
-public abstract class ReferenceConfigBase<T> extends AbstractReferenceConfig {
+public abstract class ReferenceConfigBase<T> extends AbstractReferenceConfig { //编码风格：面对抽象编程，公共的内容都进行抽象
 
     private static final long serialVersionUID = -5864351140409987595L;
 

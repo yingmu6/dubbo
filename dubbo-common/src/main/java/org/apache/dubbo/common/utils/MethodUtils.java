@@ -65,14 +65,14 @@ public interface MethodUtils {
      * @param method the method to check
      * @return whether the given method is getter method
      */
-    public static boolean isGetter(Method method) {
+    public static boolean isGetter(Method method) { //判断是否是符合条件的get()、is()方法
         String name = method.getName();
         return (name.startsWith("get") || name.startsWith("is"))
                 && !"get".equals(name) && !"is".equals(name)
                 && !"getClass".equals(name) && !"getObject".equals(name)
                 && Modifier.isPublic(method.getModifiers())
                 && method.getParameterTypes().length == 0
-                && ClassUtils.isPrimitive(method.getReturnType());
+                && ClassUtils.isPrimitive(method.getReturnType()); //判断返回值是否是基本类型
     }
 
     /**

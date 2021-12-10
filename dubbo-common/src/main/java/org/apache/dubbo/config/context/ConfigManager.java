@@ -380,7 +380,8 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
             return;
         }
         write(() -> { //线程执行体
-            Map<String, AbstractConfig> configsMap = configsCache.computeIfAbsent(getTagName(config.getClass()), type -> newMap()); //computeIfAbsent:判断值是否存在，不存在是则加入
+            //computeIfAbsent:判断key对应的value是否存在，不存在是则设置，computeIfAbsent()第2个参数是函数式式接口，进行函数传递；type是入参，newMap()执行方法，并返回值，此处返回new HashMap<>()
+            Map<String, AbstractConfig> configsMap = configsCache.computeIfAbsent(getTagName(config.getClass()), type -> newMap()); //configsMap的可以为新加入的config标签名，而值是new HashMap<>()，此处还没计算
             addIfAbsent(config, configsMap, unique);
         });
     }
@@ -471,7 +472,7 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
         }
 
         if (unique) { // check duplicate
-            configsMap.values().forEach(c -> {
+            configsMap.values().forEach(c -> { //判断要加入的config是否已经在缓存中，若已存在，则给出提示（warn日志，只提示不抛出异常）
                 checkDuplicate(c, config);
             });
         }
@@ -487,11 +488,11 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
                         "you can try to give each %s a different id : %s", type, type, type, type, config));
             }
         } else {
-            configsMap.put(key, config);
+            configsMap.put(key, config); //设置Map的值
         }
     }
 
-    static <C extends AbstractConfig> String getId(C config) {
+    static <C extends AbstractConfig> String getId(C config) { //取config对象的id值
         String id = config.getId();
         return isNotEmpty(id) ? id : isDefaultConfig(config) ?
                 config.getClass().getSimpleName() + "#" + DEFAULT_KEY : null;

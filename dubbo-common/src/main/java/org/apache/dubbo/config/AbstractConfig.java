@@ -544,23 +544,25 @@ public abstract class AbstractConfig implements Serializable {
 
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null || !(obj.getClass().getName().equals(this.getClass().getName()))) {
+    public boolean equals(Object obj) { //config对象比较
+        if (obj == null || !(obj.getClass().getName().equals(this.getClass().getName()))) { //判断对象是否为空或待比较的config对象与当前config对象的类名是否相等
             return false;
         }
 
+        // 依次遍历当前this.config对象的get、is方法，然后根据方法名找到待比较config对象中的方法，
+        // 依次获取返回值进行比较，只要有一个返回值不匹配，则认为不想等。只有所有get、is方法的返回值相等时，两个config对象相等
         Method[] methods = this.getClass().getMethods();
         for (Method method1 : methods) {
             if (MethodUtils.isGetter(method1)) {
                 Parameter parameter = method1.getAnnotation(Parameter.class);
-                if (parameter != null && parameter.excluded()) {
+                if (parameter != null && parameter.excluded()) { //带上@Parameter注解，且属性设置excluded=true，则跳过当前方法的处理
                     continue;
                 }
                 try {
                     Method method2 = obj.getClass().getMethod(method1.getName(), method1.getParameterTypes());
-                    Object value1 = method1.invoke(this, new Object[]{});
-                    Object value2 = method2.invoke(obj, new Object[]{});
-                    if (!Objects.equals(value1, value2)) {
+                    Object value1 = method1.invoke(this, new Object[] {});
+                    Object value2 = method2.invoke(obj, new Object[] {});
+                    if (!Objects.equals(value1, value2)) { //比较方法的返回值
                         return false;
                     }
                 } catch (Exception e) {
