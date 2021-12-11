@@ -1083,7 +1083,7 @@ public class DubboBootstrap extends GenericEventListener { //基于事件驱动
 
             if (exportAsync) { //异步暴露服务，使用线程池执行相关任务
                 ExecutorService executor = executorRepository.getServiceExporterExecutor();
-                Future<?> future = executor.submit(() -> {
+                Future<?> future = executor.submit(() -> { //将服务暴露的处理放在线程池中做异步处理
                     sc.export();
                     exportedServices.add(sc);
                 });

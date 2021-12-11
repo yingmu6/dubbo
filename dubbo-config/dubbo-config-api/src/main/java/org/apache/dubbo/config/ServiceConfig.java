@@ -142,7 +142,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
     }
 
     public synchronized void export() {
-        if (!shouldExport()) {
+        if (!shouldExport()) { //根据暴露标志export，判断是否还需暴露服务
             return;
         }
 
@@ -207,8 +207,8 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
             } catch (ClassNotFoundException e) {
                 throw new IllegalStateException(e.getMessage(), e);
             }
-            checkInterfaceAndMethods(interfaceClass, getMethods()); //todo @pause
-            checkRef();
+            checkInterfaceAndMethods(interfaceClass, getMethods()); //检查<dubbo:method>对应的方法是否在暴露的接口Class中
+            checkRef(); //检查<dubbo:ref/> 的实例对象是否正确
             generic = Boolean.FALSE.toString();
         }
         if (local != null) {

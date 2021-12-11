@@ -191,7 +191,7 @@ public class ClassUtils {
      * @see Class#forName(String, boolean, ClassLoader)
      */
     public static Class<?> forName(String name, ClassLoader classLoader)
-            throws ClassNotFoundException, LinkageError {
+            throws ClassNotFoundException, LinkageError { //根据类的名称和类加载器，获取Class对象
 
         Class<?> clazz = resolvePrimitiveClassName(name);
         if (clazz != null) {
@@ -238,13 +238,13 @@ public class ClassUtils {
      * @return the primitive class, or <code>null</code> if the name does not
      * denote a primitive class or primitive array class
      */
-    public static Class<?> resolvePrimitiveClassName(String name) {
+    public static Class<?> resolvePrimitiveClassName(String name) { //获取基本类型对应的Class对象
         Class<?> result = null;
         // Most class names will be quite long, considering that they
         // SHOULD sit in a package, so a length check is worthwhile.
         if (name != null && name.length() <= 8) {
             // Could be a primitive - likely.
-            result = (Class<?>) PRIMITIVE_TYPE_NAME_MAP.get(name);
+            result = (Class<?>) PRIMITIVE_TYPE_NAME_MAP.get(name); //从本地缓存中获取类名对应的Class对象
         }
         return result;
     }

@@ -174,7 +174,7 @@ public abstract class ServiceConfigBase<T> extends AbstractServiceConfig {
         if (ref == null) {
             throw new IllegalStateException("ref not allow null!");
         }
-        if (!interfaceClass.isInstance(ref)) {
+        if (!interfaceClass.isInstance(ref)) { //引用对象需要实现暴露的接口
             throw new IllegalStateException("The class "
                     + ref.getClass().getName() + " unimplemented interface "
                     + interfaceClass + "!");

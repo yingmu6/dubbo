@@ -33,7 +33,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.*;
  *
  * @export
  */
-public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
+public abstract class AbstractInterfaceConfig extends AbstractMethodConfig { //AbstractInterfaceConfig：对暴露的接口做抽象
 
     private static final long serialVersionUID = -1559314110797223229L;
 
@@ -189,12 +189,12 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
      * @param interfaceClass the interface of remote service
      * @param methods        the methods configured
      */
-    public void checkInterfaceAndMethods(Class<?> interfaceClass, List<MethodConfig> methods) { //检查配置的方法是否在接口中
+    public void checkInterfaceAndMethods(Class<?> interfaceClass, List<MethodConfig> methods) { //检查配置的方法是否在接口中，interfaceClass：暴露的服务接口对应的class
         // interface cannot be null
         Assert.notNull(interfaceClass, new IllegalStateException("interface not allow null!"));
 
         // to verify interfaceClass is an interface
-        if (!interfaceClass.isInterface()) {
+        if (!interfaceClass.isInterface()) { //暴露的class，需要是接口类型
             throw new IllegalStateException("The interface class " + interfaceClass + " is not a interface!");
         }
         // check if methods exist in the remote service interface
@@ -210,7 +210,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
                             "<dubbo:method name=\"\" ... /></<dubbo:reference>");
                 }
 
-                boolean hasMethod = Arrays.stream(interfaceClass.getMethods()).anyMatch(method -> method.getName().equals(methodName)); //判断方法名，是否存在于接口中
+                boolean hasMethod = Arrays.stream(interfaceClass.getMethods()).anyMatch(method -> method.getName().equals(methodName)); //判断方法名，是否存在于接口的方法列表中
                 if (!hasMethod) {
                     throw new IllegalStateException("The interface " + interfaceClass.getName()
                             + " not found method " + methodName);

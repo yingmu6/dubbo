@@ -418,7 +418,7 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
 
     private <V> V write(Callable<V> callable) {
         V value = null;
-        Lock writeLock = lock.writeLock();
+        Lock writeLock = lock.writeLock(); //加锁确保公共资源，线程安全
         try {
             writeLock.lock();
             value = callable.call();
@@ -481,7 +481,7 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
 
         C existedConfig = configsMap.get(key);
 
-        if (existedConfig != null && !config.equals(existedConfig)) {
+        if (existedConfig != null && !config.equals(existedConfig)) { //找到有多个相同的config id
             if (logger.isWarnEnabled()) {
                 String type = config.getClass().getSimpleName();
                 logger.warn(String.format("Duplicate %s found, there already has one default %s or more than two %ss have the same id, " +
