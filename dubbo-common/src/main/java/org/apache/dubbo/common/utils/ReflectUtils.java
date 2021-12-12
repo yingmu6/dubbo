@@ -1261,10 +1261,39 @@ public final class ReflectUtils { //JVM虚拟机中的类型描述符
      * @return
      * @since 2.7.5
      */
-    public static <T> T getProperty(Object bean, String methodName) { //获取属性值（执行指定bean中的指定的方法）
+    public static <T> T getProperty(Object bean, String methodName) { //获取指定方法对应的属性值
         Class<?> beanClass = bean.getClass();
         BeanInfo beanInfo = null;
         T propertyValue = null;
+
+        /**
+         * java 中的内省Introspector
+         * 内省【读xing】 (IntroSpector)：是Java语言对JavaBean类属性、事件的一种处理方法。
+         * Java中提供了一套API用来访问某个属性的getter/setter方法，不用通过反射机制来访问属性
+         * https://www.jianshu.com/p/604d411067c8
+         *
+         * 将Java的反射以及内省应用到程序设计中去可以大大的提供程序的智能化和可扩展性。
+         * https://blog.csdn.net/qq_35029061/article/details/86664795
+         *
+         * 内省与反射的区别
+         * 在计算机科学中，内省是指计算机程序在运行时（Run time）检查对象（Object）类型的一种能力，通常也可以称作运行时类型检查。
+         * 不应该将内省和反射混淆。相对于内省，反射更进一步，是指计算机程序在运行时（Run time）可以访问、检测和修改它本身状态或行为的一种能力。
+         * https://www.debugger.wiki/article/html/1615353480414538
+         *
+         * 内省常用类说明
+         * 1）Introspector： 类提供了的 getBeanInfo()方法获取BeanInfo对象，可以拿到一个 JavaBean 的所有信息
+         * 2）BeanInfo 通过getPropertyDescriptors() 方法和 getMethodDescriptors()方法可以获取到PropertyDescriptors、MethodDescriptors对象
+         * 3）MethodDescriptor 类可以获得方法的元信息，比如方法名，参数个数，参数字段类型等
+         *    a）getMethod()获取方法的Method对象
+         *    b）getParameters() 获取方法的所有参数Parameter列表
+         *    b）getParameterTypes()获取方法的参数ParameterType列表
+         * 4）PropertyDescriptor 类的主要方法
+         *    a）getPropertyType()，获得属性的Class对象
+         *    b）getReadMethod()/getWriteMethod()，获得用于读取/写入属性值的方法
+         *    c）setReadMethod(Method readMethod)/setWriteMethod(Method writeMethod)，设置用于读取/写入属性值的方法
+         *
+         * https://www.debugger.wiki/article/html/1615353480414538
+         */
 
         try {
             beanInfo = Introspector.getBeanInfo(beanClass); //beanInfo为：GenericBeanInfo

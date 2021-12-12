@@ -88,7 +88,7 @@ public abstract class AbstractConfig implements Serializable {
         return value;
     }
 
-    public static String getTagName(Class<?> cls) { //获取Config类对应的标签名
+    public static String getTagName(Class<?> cls) { //获取Config类对应的标签名，比如ConfigCenter为config-center
         String tag = cls.getSimpleName(); //如ConfigCenterConfig，tag为ConfigCenterConfig
         for (String suffix : SUFFIXES) {
             if (tag.endsWith(suffix)) { //把包含的后缀去掉，比如ConfigCenterConfig改为ConfigCenter
@@ -96,7 +96,7 @@ public abstract class AbstractConfig implements Serializable {
                 break;
             }
         }
-        return StringUtils.camelToSplitName(tag, "-"); //将驼峰字符串转换为按分隔符处理，比如ConfigCenter为config-center
+        return StringUtils.camelToSplitName(tag, "-"); //将驼峰字符串转换为按分隔符处理
     }
 
     public static void appendParameters(Map<String, String> parameters, Object config) {

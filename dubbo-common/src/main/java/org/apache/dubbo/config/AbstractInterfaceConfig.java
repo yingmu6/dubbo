@@ -271,8 +271,8 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig { //A
         } else {
             String[] ids = COMMA_SPLIT_PATTERN.split(registryIds);
             List<RegistryConfig> tmpRegistries = new ArrayList<>();
-            Consumer<String> stringConsumer = id -> {
-                if (tmpRegistries.stream().noneMatch(reg -> reg.getId().equals(id))) {
+            Consumer<String> stringConsumer = id -> { //用lambda表达式构建Consumer的实例（也是通过匿名类方式）
+                if (tmpRegistries.stream().noneMatch(reg -> reg.getId().equals(id))) { //noneMatch如果流中没有匹配的元素，返回true
                     Optional<RegistryConfig> globalRegistry = ApplicationModel.getConfigManager().getRegistry(id);
                     if (globalRegistry.isPresent()) {
                         tmpRegistries.add(globalRegistry.get());
@@ -284,7 +284,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig { //A
                     }
                 }
             };
-            Arrays.stream(ids).forEach(stringConsumer);
+            Arrays.stream(ids).forEach(stringConsumer); //forEach参数填入Consumer实例
 
             if (tmpRegistries.size() > ids.length) {
                 throw new IllegalStateException("Too much registries found, the registries assigned to this service " +

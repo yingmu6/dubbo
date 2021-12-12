@@ -55,7 +55,7 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
 
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
-    final Map<String, Map<String, AbstractConfig>> configsCache = newMap(); //配置缓存，key为标签名，如ConfigCenterConfig配置类的标签名为config-center
+    final Map<String, Map<String, AbstractConfig>> configsCache = newMap(); //配置缓存，key为标签名，如ConfigCenterConfig配置类的标签名为config-center，configsCache的值如：Map<"registry", Map<"org.apache.dubbo.config.RegistryConfig", RegistryConfig@xxx >>
 
     public ConfigManager() {
     }
@@ -499,14 +499,14 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
     }
 
     static <C extends AbstractConfig> boolean isDefaultConfig(C config) {
-        Boolean isDefault = getProperty(config, "isDefault");
+        Boolean isDefault = getProperty(config, "isDefault"); //获取config对象中isDefault()方法的对应的属性值
         return isDefault == null || TRUE.equals(isDefault); //若不包含isDefault属性或isDefault属性值为true，则为默认配置（反义：包含isDefault属性，且为false）
     }
 
     static <C extends AbstractConfig> List<C> getDefaultConfigs(Map<String, C> configsMap) { //对map中的值列表进行过滤，configsMap值如<类的全路径名：对象实例>=<"org.apache.dubbo.config.spring.ConfigCenterBean", ConfigCenterBean@3154>
         return configsMap.values()
                 .stream()
-                .filter(ConfigManager::isDefaultConfig) //Predicate: 谓语
+                .filter(ConfigManager::isDefaultConfig) //Predicate: 谓语，filter：过滤出满足条件的元素
                 .collect(Collectors.toList());
     }
 }
