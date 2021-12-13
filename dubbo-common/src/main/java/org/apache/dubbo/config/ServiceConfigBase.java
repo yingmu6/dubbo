@@ -269,11 +269,11 @@ public abstract class ServiceConfigBase<T> extends AbstractServiceConfig {
         if (interfaceClass != null) {
             return interfaceClass;
         }
-        if (ref instanceof GenericService) {
+        if (ref instanceof GenericService) { //泛化接口
             return GenericService.class;
         }
         try {
-            if (interfaceName != null && interfaceName.length() > 0) {
+            if (interfaceName != null && interfaceName.length() > 0) { //根据接口名称获取对应的接口Class
                 this.interfaceClass = Class.forName(interfaceName, true, Thread.currentThread()
                         .getContextClassLoader());
             }
@@ -399,7 +399,7 @@ public abstract class ServiceConfigBase<T> extends AbstractServiceConfig {
     }
 
     @Parameter(excluded = true)
-    public String getUniqueServiceName() { //接口名+分组+版本，组成唯一服务名
+    public String getUniqueServiceName() { //接口名+分组+版本，组成服务的唯一标识
         return URL.buildKey(interfaceName, getGroup(), getVersion());
     }
 

@@ -94,7 +94,7 @@ public class ConfigValidationUtils {
     /**
      * The rule qualification for <b>multiply name</b>
      */
-    private static final Pattern PATTERN_MULTI_NAME = Pattern.compile("[,\\-._0-9a-zA-Z]+");
+    private static final Pattern PATTERN_MULTI_NAME = Pattern.compile("[,\\-._0-9a-zA-Z]+"); //带上分隔符"," 进行匹配
 
     /**
      * The rule qualification for <b>method names</b>
@@ -128,21 +128,21 @@ public class ConfigValidationUtils {
                 if (StringUtils.isEmpty(address)) {
                     address = ANYHOST_VALUE;
                 }
-                if (!RegistryConfig.NO_AVAILABLE.equalsIgnoreCase(address)) {
+                if (!RegistryConfig.NO_AVAILABLE.equalsIgnoreCase(address)) { //address值为"N/A"，表明不可使用
                     Map<String, String> map = new HashMap<String, String>();
-                    AbstractConfig.appendParameters(map, application); //依次添加application、config参数
-                    AbstractConfig.appendParameters(map, config);
-                    map.put(PATH_KEY, RegistryService.class.getName());
+                    AbstractConfig.appendParameters(map, application); //将ApplicationConfig中的属性值，设置到参数Map中
+                    AbstractConfig.appendParameters(map, config); //将RegistryConfig中的属性值，设置到参数Map中
+                    map.put(PATH_KEY, RegistryService.class.getName()); //path对应接口名，如：path -> org.apache.dubbo.registry.RegistryService
                     AbstractInterfaceConfig.appendRuntimeParameters(map);
-                    if (!map.containsKey(PROTOCOL_KEY)) {
+                    if (!map.containsKey(PROTOCOL_KEY)) { //未指定协议时，默认设置为dubbo协议
                         map.put(PROTOCOL_KEY, DUBBO_PROTOCOL);
                     }
-                    List<URL> urls = UrlUtils.parseURLs(address, map);
+                    List<URL> urls = UrlUtils.parseURLs(address, map); //构建注册中心对应的URL实例
 
                     for (URL url : urls) {
 
                         url = URLBuilder.from(url)
-                                .addParameter(REGISTRY_KEY, url.getProtocol())
+                                .addParameter(REGISTRY_KEY, url.getProtocol()) //todo @pause
                                 .setProtocol(extractRegistryType(url))
                                 .build();
                         if ((provider && url.getParameter(REGISTER_KEY, true))
@@ -259,13 +259,13 @@ public class ConfigValidationUtils {
         }
     }
 
-    public static void validateServiceConfig(ServiceConfig config) {
+    public static void validateServiceConfig(ServiceConfig config) { //对ServiceConfig属性的名称、长度、扩展接口等按正则表达式进行校验
         checkKey(VERSION_KEY, config.getVersion());
         checkKey(GROUP_KEY, config.getGroup());
         checkName(TOKEN_KEY, config.getToken());
         checkPathName(PATH_KEY, config.getPath());
 
-        checkMultiExtension(ExporterListener.class, "listener", config.getListener());
+        checkMultiExtension(ExporterListener.class, "listener", config.getListener()); //校验属性"listener"，对应的多个扩展是否存在
 
         validateAbstractInterfaceConfig(config);
 
@@ -390,7 +390,7 @@ public class ConfigValidationUtils {
             checkPathName("contextpath", config.getContextpath());
 
 
-            if (DUBBO_PROTOCOL.equals(name)) {
+            if (DUBBO_PROTOCOL.equals(name)) { //检查dubbo协议关联的扩展接口是否正确
                 checkMultiExtension(Codec.class, CODEC_KEY, config.getCodec());
                 checkMultiExtension(Serialization.class, SERIALIZATION_KEY, config.getSerialization());
                 checkMultiExtension(Transporter.class, SERVER_KEY, config.getServer());
@@ -439,7 +439,7 @@ public class ConfigValidationUtils {
         checkMethodName("name", config.getName());
 
         String mock = config.getMock();
-        if (StringUtils.isNotEmpty(mock)) {
+        if (StringUtils.isNotEmpty(mock)) { //对Mock配置信息进行校验
             if (mock.startsWith(RETURN_PREFIX) || mock.startsWith(THROW_PREFIX + " ")) {
                 checkLength(MOCK_KEY, mock);
             } else if (mock.startsWith(FAIL_PREFIX) || mock.startsWith(FORCE_PREFIX)) {
@@ -473,7 +473,7 @@ public class ConfigValidationUtils {
     public static void checkMultiExtension(Class<?> type, String property, String value) {
         checkMultiName(property, value);
         if (StringUtils.isNotEmpty(value)) {
-            String[] values = value.split("\\s*[,]+\\s*");
+            String[] values = value.split("\\s*[,]+\\s*"); //按分隔符拆分出多个扩展名
             for (String v : values) {
                 if (v.startsWith(REMOVE_VALUE_PREFIX)) {
                     v = v.substring(1);
@@ -481,7 +481,7 @@ public class ConfigValidationUtils {
                 if (DEFAULT_KEY.equals(v)) {
                     continue;
                 }
-                if (!ExtensionLoader.getExtensionLoader(type).hasExtension(v)) {
+                if (!ExtensionLoader.getExtensionLoader(type).hasExtension(v)) { //依次判断扩展名是否有对应的扩展
                     throw new IllegalStateException("No such extension " + v + " for " + property + "/" + type.getName());
                 }
             }
@@ -535,7 +535,7 @@ public class ConfigValidationUtils {
      * 检查属性值value是否正确
      */
     public static void checkProperty(String property, String value, int maxlength, Pattern pattern) {
-        if (StringUtils.isEmpty(value)) { //检查值value是否为空
+        if (StringUtils.isEmpty(value)) { //若值为空，则不做校验
             return;
         }
         if (value.length() > maxlength) { //检查值value是否超过最大长度

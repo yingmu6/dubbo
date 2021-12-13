@@ -104,7 +104,7 @@ public abstract class AbstractConfig implements Serializable {
     }
 
     @SuppressWarnings("unchecked")
-    public static void appendParameters(Map<String, String> parameters, Object config, String prefix) {
+    public static void appendParameters(Map<String, String> parameters, Object config, String prefix) { //将Config对象中的属性值进行筛选处理，并添加的参数Map中
         /**
          * @csy-004 待调试，parameters都用途是啥？是指把config中的属性值写到参数map中吗？
          * 解：该方法的作用就是，将Config配置对象中的属性值进行筛选，按键值对写到参数map中，而参数map用于后续通讯的数据传输

@@ -241,7 +241,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
         }
         checkStubAndLocal(interfaceClass);
         ConfigValidationUtils.checkMock(interfaceClass, this); //检查mock信息
-        ConfigValidationUtils.validateServiceConfig(this);
+        ConfigValidationUtils.validateServiceConfig(this); //校验ServiceConfig属性信息
         postProcessConfig();
     }
 

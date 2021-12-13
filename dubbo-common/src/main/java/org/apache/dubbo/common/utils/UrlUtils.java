@@ -19,43 +19,13 @@ package org.apache.dubbo.common.utils;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.constants.RemotingConstants;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyMap;
-import static org.apache.dubbo.common.constants.CommonConstants.ANY_VALUE;
-import static org.apache.dubbo.common.constants.CommonConstants.CLASSIFIER_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.COMMA_SPLIT_PATTERN;
-import static org.apache.dubbo.common.constants.CommonConstants.DUBBO_PROTOCOL;
-import static org.apache.dubbo.common.constants.CommonConstants.ENABLED_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.GROUP_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.HOST_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.INTERFACE_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.PASSWORD_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.PATH_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.PORT_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.PROTOCOL_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.REGISTRY_SPLIT_PATTERN;
-import static org.apache.dubbo.common.constants.CommonConstants.REMOVE_VALUE_PREFIX;
-import static org.apache.dubbo.common.constants.CommonConstants.USERNAME_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.VERSION_KEY;
-import static org.apache.dubbo.common.constants.RegistryConstants.CATEGORY_KEY;
-import static org.apache.dubbo.common.constants.RegistryConstants.CONFIGURATORS_CATEGORY;
-import static org.apache.dubbo.common.constants.RegistryConstants.DEFAULT_CATEGORY;
-import static org.apache.dubbo.common.constants.RegistryConstants.EMPTY_PROTOCOL;
-import static org.apache.dubbo.common.constants.RegistryConstants.OVERRIDE_PROTOCOL;
-import static org.apache.dubbo.common.constants.RegistryConstants.PROVIDERS_CATEGORY;
-import static org.apache.dubbo.common.constants.RegistryConstants.REGISTRY_PROTOCOL;
-import static org.apache.dubbo.common.constants.RegistryConstants.REGISTRY_TYPE_KEY;
-import static org.apache.dubbo.common.constants.RegistryConstants.ROUTERS_CATEGORY;
-import static org.apache.dubbo.common.constants.RegistryConstants.ROUTE_PROTOCOL;
-import static org.apache.dubbo.common.constants.RegistryConstants.SERVICE_REGISTRY_PROTOCOL;
-import static org.apache.dubbo.common.constants.RegistryConstants.SERVICE_REGISTRY_TYPE;
+import static org.apache.dubbo.common.constants.CommonConstants.*;
+import static org.apache.dubbo.common.constants.RegistryConstants.*;
 
 public class UrlUtils {
 
@@ -64,7 +34,7 @@ public class UrlUtils {
      */
     private final static String URL_PARAM_STARTING_SYMBOL = "?";
 
-    public static URL parseURL(String address, Map<String, String> defaults) {
+    public static URL parseURL(String address, Map<String, String> defaults) { //通过访问地址和参数Map，构建URL实例
         if (address == null || address.length() == 0) {
             return null;
         }
@@ -86,7 +56,7 @@ public class UrlUtils {
             }
         }
         String defaultProtocol = defaults == null ? null : defaults.get(PROTOCOL_KEY);
-        if (defaultProtocol == null || defaultProtocol.length() == 0) {
+        if (defaultProtocol == null || defaultProtocol.length() == 0) { //使用dubbo作为默认协议
             defaultProtocol = DUBBO_PROTOCOL;
         }
         String defaultUsername = defaults == null ? null : defaults.get(USERNAME_KEY);
@@ -165,7 +135,7 @@ public class UrlUtils {
         if (address == null || address.length() == 0) {
             return null;
         }
-        String[] addresses = REGISTRY_SPLIT_PATTERN.split(address);
+        String[] addresses = REGISTRY_SPLIT_PATTERN.split(address); //可能有多个注册地址，按分隔符进行分隔
         if (addresses == null || addresses.length == 0) {
             return null; //here won't be empty
         }
