@@ -130,15 +130,15 @@ public final class URLBuilder { //URL的构造器
         }
         port = port < 0 ? 0 : port;
         // trim the leading "/"
-        int firstNonSlash = 0;
+        int firstNonSlash = 0; //Slash: [slæʃ] 斜杠
         if (path != null) {
             while (firstNonSlash < path.length() && path.charAt(firstNonSlash) == '/') {
-                firstNonSlash++;
+                firstNonSlash++; //找到斜杠的位置，并且加1
             }
             if (firstNonSlash >= path.length()) {
                 path = "";
             } else if (firstNonSlash > 0) {
-                path = path.substring(firstNonSlash);
+                path = path.substring(firstNonSlash); //获取去除斜杠后的子串
             }
         }
         if (CollectionUtils.isEmptyMap(methodParameters)) {
