@@ -67,7 +67,7 @@ public class ServiceRepository extends LifecycleAdapter implements FrameworkExt 
     /**
      * See {@link #registerService(Class)}
      * <p>
-     * we assume:
+     * we assume: （ [əˈsjuːm] v. 假定，假设）
      * 1. services with different interfaces are not allowed to have the same path.
      * 2. services share the same interface but has different group/version can share the same path.
      * 3. path's default value is the name of the interface.
