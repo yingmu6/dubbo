@@ -61,7 +61,7 @@ public class ServiceRepository extends LifecycleAdapter implements FrameworkExt 
 
     public ServiceDescriptor registerService(Class<?> interfaceClazz) { //注册服务：把类与服务描述信息写到本地缓存中
          return services.computeIfAbsent(interfaceClazz.getName(), //interfaceClazz.getName()的值如："org.apache.dubbo.rpc.service.EchoService"
-                _k -> new ServiceDescriptor(interfaceClazz));
+                 _k -> new ServiceDescriptor(interfaceClazz)); //函数式接口可以用lambda表示式表示
     }
 
     /**
@@ -70,7 +70,7 @@ public class ServiceRepository extends LifecycleAdapter implements FrameworkExt 
      * we assume: （ [əˈsjuːm] v. 假定，假设）
      * 1. services with different interfaces are not allowed to have the same path.
      * 2. services share the same interface but has different group/version can share the same path.
-     * 3. path's default value is the name of the interface.
+     * 3. path's default value is the name of the interface. （Path唯一标识一个服务，由接口+分组+版本唯一确定）
      *
      * @param path
      * @param interfaceClass

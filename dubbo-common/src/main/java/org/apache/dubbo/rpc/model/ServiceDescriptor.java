@@ -34,7 +34,7 @@ public class ServiceDescriptor { //服务的描述信息
     private final Map<String, Map<String, MethodDescriptor>> descToMethods = new HashMap<>();
 
     public ServiceDescriptor(Class<?> interfaceClass) {
-        this.serviceInterfaceClass = interfaceClass;
+        this.serviceInterfaceClass = interfaceClass; //接口对应的class对象
         this.serviceName = interfaceClass.getName();
         initMethods();
     }
