@@ -887,7 +887,7 @@ public class DubboBootstrap extends GenericEventListener { //基于事件驱动
                 logger.info(NAME + " is starting...");
             }
             // 1. export Dubbo Services
-            exportServices();
+            exportServices(); //flag
 
             // Not only provider register
             if (!isOnlyRegisterProvider() || hasExportedServices()) {
