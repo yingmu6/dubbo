@@ -24,11 +24,7 @@ import org.apache.dubbo.common.utils.StringUtils;
 import java.io.IOException;
 import java.net.URL;
 import java.security.CodeSource;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -174,6 +170,17 @@ public final class Version {
                 }
             }
 
+            /**
+             * CodeSource 代码源：这个类扩展了代码库的概念,不仅封装了位置(URL),还封装了用于验证源自该位置的签名代码的证书（Certificate）链。
+             *             保存着URL与证书的关系
+             *
+             * ProtectionDomain 保护域：当类装载器将类型装入Java虚拟机时，它们将为每个类型指派一个保护域。保护域定义了授予一段特定代码的所有权限。
+             *      （一个保护域对应策略文件中的一个或多个Grant子句。）装载入Java虚拟机的每一个类型都属于一个且仅属于一个保护域。
+             *
+             * Policy：策略，就是用来读取策略文件的一个单例对象，通过传入的CodeSource对象(由于codeSource对象里包含了签名者和代码来源)所以他通过读取grant段，
+             *         取出一个个的Perssiom然后返回一个PerssiomCollection。
+             * https://blog.csdn.net/yfqnihao/article/details/8271415
+             */
             // guess version from jar file name if nothing's found from MANIFEST.MF
             CodeSource codeSource = cls.getProtectionDomain().getCodeSource();
             if (codeSource == null) {

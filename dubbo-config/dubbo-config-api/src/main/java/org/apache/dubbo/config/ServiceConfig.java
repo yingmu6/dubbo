@@ -280,14 +280,14 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
                     .map(p -> p + "/" + path) //对路径进行拼接
                     .orElse(path), group, version);
             // In case user specified path, register service one more time to map it to path.
-            repository.registerService(pathKey, interfaceClass);
+            repository.registerService(pathKey, interfaceClass); //将服务的路径key（path如；group/path:version）与暴露的服务类Class注册到内容Map中
             // TODO, uncomment this line once service key is unified
             serviceMetadata.setServiceKey(pathKey);
             doExportUrlsFor1Protocol(protocolConfig, registryURLs);
         }
     }
 
-    private void doExportUrlsFor1Protocol(ProtocolConfig protocolConfig, List<URL> registryURLs) { //todo @csy pause 待调试
+    private void doExportUrlsFor1Protocol(ProtocolConfig protocolConfig, List<URL> registryURLs) {
         String name = protocolConfig.getName();
         if (StringUtils.isEmpty(name)) {
             name = DUBBO;
@@ -298,7 +298,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
 
         ServiceConfig.appendRuntimeParameters(map);
         AbstractConfig.appendParameters(map, getMetrics());
-        AbstractConfig.appendParameters(map, getApplication());
+        AbstractConfig.appendParameters(map, getApplication()); //将Config对象中的属性值，设备到参数Map中
         AbstractConfig.appendParameters(map, getModule());
         // remove 'default.' prefix for configs from ProviderConfig
         // appendParameters(map, provider, Constants.DEFAULT_KEY);
@@ -309,7 +309,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
         if (metadataReportConfig != null && metadataReportConfig.isValid()) {
             map.putIfAbsent(METADATA_KEY, REMOTE_METADATA_STORAGE_TYPE);
         }
-        if (CollectionUtils.isNotEmpty(getMethods())) {
+        if (CollectionUtils.isNotEmpty(getMethods())) { //MethodConfig对应<dubbo:method>标签
             for (MethodConfig method : getMethods()) {
                 AbstractConfig.appendParameters(map, method, method.getName());
                 String retryKey = method.getName() + ".retry";
@@ -320,7 +320,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
                     }
                 }
                 List<ArgumentConfig> arguments = method.getArguments();
-                if (CollectionUtils.isNotEmpty(arguments)) {
+                if (CollectionUtils.isNotEmpty(arguments)) { //ArgumentConfig对应<dubbo:argument>标签
                     for (ArgumentConfig argument : arguments) {
                         // convert argument type
                         if (argument.getType() != null && argument.getType().length() > 0) {
@@ -515,7 +515,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
      */
     private String findConfigedHosts(ProtocolConfig protocolConfig,
                                      List<URL> registryURLs,
-                                     Map<String, String> map) {
+                                     Map<String, String> map) { //todo @csy pause 获取主机，待调试
         boolean anyhost = false;
 
         String hostToBind = getValueFromConfig(protocolConfig, DUBBO_IP_TO_BIND);
@@ -589,7 +589,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
      */
     private Integer findConfigedPorts(ProtocolConfig protocolConfig,
                                       String name,
-                                      Map<String, String> map) {
+                                      Map<String, String> map) { //todo @csy 待调试
         Integer portToBind = null;
 
         // parse bind port from environment

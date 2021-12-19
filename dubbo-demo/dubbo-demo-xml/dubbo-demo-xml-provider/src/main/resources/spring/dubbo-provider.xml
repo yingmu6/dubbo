@@ -47,7 +47,11 @@
                 <dubbo:argument index="0" callback="false"/> <!-- 对方法参数的特征进行描述-->
             </dubbo:method>
         </dubbo:service>
-        <dubbo:service interface="org.apache.dubbo.demo.GreetingService" ref="greetingService"/>
+        <dubbo:service interface="org.apache.dubbo.demo.GreetingService" ref="greetingService">
+            <dubbo:method name="hello" timeout="3000">
+                <dubbo:argument index="0" callback="false"/>
+            </dubbo:method>
+        </dubbo:service>
     </dubbo:provider>
 
 <!--    <bean id="actives" class="org.apache.dubbo.demo.provider.DemoServiceImqqp"/>-->

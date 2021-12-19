@@ -26,19 +26,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static org.apache.dubbo.common.constants.CommonConstants.ANYHOST_VALUE;
-import static org.apache.dubbo.common.constants.CommonConstants.ANY_VALUE;
-import static org.apache.dubbo.common.constants.CommonConstants.APPLICATION_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.CONSUMER;
-import static org.apache.dubbo.common.constants.CommonConstants.ENABLED_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.GROUP_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.INTERFACES;
-import static org.apache.dubbo.common.constants.CommonConstants.PROVIDER;
-import static org.apache.dubbo.common.constants.CommonConstants.SIDE_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.VERSION_KEY;
-import static org.apache.dubbo.common.constants.RegistryConstants.CATEGORY_KEY;
-import static org.apache.dubbo.common.constants.RegistryConstants.COMPATIBLE_CONFIG_KEY;
-import static org.apache.dubbo.common.constants.RegistryConstants.DYNAMIC_KEY;
+import static org.apache.dubbo.common.constants.CommonConstants.*;
+import static org.apache.dubbo.common.constants.RegistryConstants.*;
 import static org.apache.dubbo.rpc.cluster.Constants.CONFIG_VERSION_KEY;
 import static org.apache.dubbo.rpc.cluster.Constants.OVERRIDE_PROVIDERS_KEY;
 
@@ -62,7 +51,7 @@ public abstract class AbstractConfigurator implements Configurator {
     }
 
     @Override
-    public URL configure(URL url) {
+    public URL configure(URL url) { //todo @csy 配置的逻辑是怎样的？
         // If override url is not enabled or is invalid, just return.
         if (!configuratorUrl.getParameter(ENABLED_KEY, true) || configuratorUrl.getHost() == null || url == null || url.getHost() == null) {
             return url;

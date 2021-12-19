@@ -112,7 +112,7 @@ public abstract class Wrapper { //包装类
         return WRAPPER_MAP.computeIfAbsent(c, key -> makeWrapper(key)); //构建封装类，并设置到缓存中，key的值与c相同
     }
 
-    private static Wrapper makeWrapper(Class<?> c) { //为指定class构建Wrapper封装类的实例
+    private static Wrapper makeWrapper(Class<?> c) { //为指定class构建Wrapper封装类的实例 todo @pause 待调试
         if (c.isPrimitive()) { //基本类型不能创建封装类
             throw new IllegalArgumentException("Can not create wrapper for primitive type: " + c);
         }
