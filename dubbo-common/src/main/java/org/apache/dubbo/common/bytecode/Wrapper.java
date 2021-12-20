@@ -112,7 +112,7 @@ public abstract class Wrapper { //包装类
         return WRAPPER_MAP.computeIfAbsent(c, key -> makeWrapper(key)); //构建封装类，并设置到缓存中，key的值与c相同
     }
 
-    private static Wrapper makeWrapper(Class<?> c) { //为指定class构建Wrapper封装类的实例 todo @pause 待调试
+    private static Wrapper makeWrapper(Class<?> c) { //为指定class构建Wrapper封装类的实例
         if (c.isPrimitive()) { //基本类型不能创建封装类
             throw new IllegalArgumentException("Can not create wrapper for primitive type: " + c);
         }
@@ -121,7 +121,7 @@ public abstract class Wrapper { //包装类
         ClassLoader cl = ClassUtils.getClassLoader(c);
 
         // 拼接类代码对应的字符串 (对应Wrapper类中的抽象方法)
-        StringBuilder c1 = new StringBuilder("public void setPropertyValue(Object o, String n, Object v){ ");
+        StringBuilder c1 = new StringBuilder("public void setPropertyValue(Object o, String n, Object v){ "); //构建当前类中的setPropertyValue()抽象方法
         StringBuilder c2 = new StringBuilder("public Object getPropertyValue(Object o, String n){ ");
         StringBuilder c3 = new StringBuilder("public Object invokeMethod(Object o, String n, Class[] p, Object[] v) throws " + InvocationTargetException.class.getName() + "{ ");
 
@@ -130,8 +130,8 @@ public abstract class Wrapper { //包装类
         c3.append(name).append(" w; try{ w = ((").append(name).append(")$1); }catch(Throwable e){ throw new IllegalArgumentException(e); }");
 
         Map<String, Class<?>> pts = new HashMap<>(); // <property name, property types>
-        Map<String, Method> ms = new LinkedHashMap<>(); // <method desc, Method instance>
-        List<String> mns = new ArrayList<>(); // method names.
+        Map<String, Method> ms = new LinkedHashMap<>(); // <method desc, Method instance> 方法名与方法实例的映射Map
+        List<String> mns = new ArrayList<>(); // method names. 方法名列表
         List<String> dmns = new ArrayList<>(); // declaring method names.
 
         // get all public field.
@@ -153,27 +153,27 @@ public abstract class Wrapper { //包装类
         if (hasMethod) { //存在方法时处理
             c3.append(" try{");
             for (Method m : methods) {
-                //ignore Object's method.
+                //ignore Object's method.（忽略Object对象中的方法）
                 if (m.getDeclaringClass() == Object.class) {
                     continue;
                 }
 
                 String mn = m.getName();
-                c3.append(" if( \"").append(mn).append("\".equals( $2 ) ");
+                c3.append(" if( \"").append(mn).append("\".equals( $2 ) "); //$2指当前类中的invokeMethod()的第二个参数（比较方法名）
                 int len = m.getParameterTypes().length;
-                c3.append(" && ").append(" $3.length == ").append(len);
+                c3.append(" && ").append(" $3.length == ").append(len);// 比较方法参数个数
 
                 boolean override = false;
-                for (Method m2 : methods) { //判断是否重写
+                for (Method m2 : methods) { //按方法名，判断是否重写
                     if (m != m2 && m.getName().equals(m2.getName())) {
                         override = true;
                         break;
                     }
                 }
-                if (override) {
-                    if (len > 0) {
+                if (override) { //若有重写的方法
+                    if (len > 0) { //方法参数个数
                         for (int l = 0; l < len; l++) {
-                            c3.append(" && ").append(" $3[").append(l).append("].getName().equals(\"")
+                            c3.append(" && ").append(" $3[").append(l).append("].getName().equals(\"") //比较方法参数类型
                                     .append(m.getParameterTypes()[l].getName()).append("\")");
                         }
                     }
@@ -209,9 +209,9 @@ public abstract class Wrapper { //包装类
         // deal with get/set method.
         Matcher matcher;
         for (Map.Entry<String, Method> entry : ms.entrySet()) {
-            String md = entry.getKey();
+            String md = entry.getKey(); //暴露接口中的方法描述信息，如hello(Lorg/apache/dubbo/demo/FruitEnum;)Ljava/lang/String;
             Method method = entry.getValue();
-            if ((matcher = ReflectUtils.GETTER_METHOD_DESC_PATTERN.matcher(md)).matches()) { //匹配get方法
+            if ((matcher = ReflectUtils.GETTER_METHOD_DESC_PATTERN.matcher(md)).matches()) { //判断是否匹配get方法对应的描述信息
                 String pn = propertyName(matcher.group(1));
                 c2.append(" if( $2.equals(\"").append(pn).append("\") ){ return ($w)w.").append(method.getName()).append("(); }");
                 pts.put(pn, method.getReturnType());
@@ -232,7 +232,7 @@ public abstract class Wrapper { //包装类
         // make class（构建Class对象）
         long id = WRAPPER_CLASS_COUNTER.getAndIncrement();
         ClassGenerator cc = ClassGenerator.newInstance(cl);
-        cc.setClassName((Modifier.isPublic(c.getModifiers()) ? Wrapper.class.getName() : c.getName() + "$sw") + id); //org.apache.dubbo.common.bytecode.Wrapper0
+        cc.setClassName((Modifier.isPublic(c.getModifiers()) ? Wrapper.class.getName() : c.getName() + "$sw") + id); //org.apache.dubbo.common.bytecode.Wrapper0，判断类是否是public，然后进行类名拼接
         cc.setSuperClass(Wrapper.class); //将Wrapper指定为父类
 
         cc.addDefaultConstructor();
@@ -249,9 +249,9 @@ public abstract class Wrapper { //包装类
         cc.addMethod("public Class getPropertyType(String n){ return (Class)pts.get($1); }");
         cc.addMethod("public String[] getMethodNames(){ return mns; }");
         cc.addMethod("public String[] getDeclaredMethodNames(){ return dmns; }");
-        cc.addMethod(c1.toString());
-        cc.addMethod(c2.toString());
-        cc.addMethod(c3.toString());
+        cc.addMethod(c1.toString()); //处理setPropertyValue()方法
+        cc.addMethod(c2.toString()); //处理getPropertyValue()方法
+        cc.addMethod(c3.toString()); //处理invokeMethod()方法
 
         try {
             Class<?> wc = cc.toClass(); //将CtClass转换为Class
@@ -264,7 +264,7 @@ public abstract class Wrapper { //包装类
             for (Method m : ms.values()) {
                 wc.getField("mts" + ix++).set(null, m.getParameterTypes());
             }
-            return (Wrapper) wc.newInstance();
+            return (Wrapper) wc.newInstance(); //使用Class对象创建实例，并强转为Wrapper类型
         } catch (RuntimeException e) {
             throw e;
         } catch (Throwable e) {
@@ -305,7 +305,7 @@ public abstract class Wrapper { //包装类
             }
             throw new RuntimeException("Unknown primitive type: " + cl.getName());
         }
-        return "(" + ReflectUtils.getName(cl) + ")" + name;
+        return "(" + ReflectUtils.getName(cl) + ")" + name; //不是基本类型，做强制转换，如 (org.apache.dubbo.demo.FruitEnum)$4[0]
     }
 
     private static String args(Class<?>[] cs, String name) {
@@ -323,7 +323,7 @@ public abstract class Wrapper { //包装类
         return sb.toString();
     }
 
-    private static String propertyName(String pn) {
+    private static String propertyName(String pn) {//获取属性名称
         return pn.length() == 1 || Character.isLowerCase(pn.charAt(1)) ? Character.toLowerCase(pn.charAt(0)) + pn.substring(1) : pn;
     }
 

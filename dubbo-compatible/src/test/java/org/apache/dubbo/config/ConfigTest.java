@@ -68,6 +68,4 @@ public class ConfigTest {
         String message = demoService.sayHello("dubbo");
         Assertions.assertEquals("hello dubbo", message);
     }
-
-    //todo @csy 暴露服务待编写
 }

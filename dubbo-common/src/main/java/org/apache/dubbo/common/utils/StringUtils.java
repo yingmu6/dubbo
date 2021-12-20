@@ -798,7 +798,7 @@ public final class StringUtils {
             }
             sb.append(s);
         }
-        return sb.toString();
+        return sb.toString(); //拼接内容如：getMsg,hello,setMsg
     }
 
     /**

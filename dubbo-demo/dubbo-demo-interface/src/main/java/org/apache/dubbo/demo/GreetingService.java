@@ -20,6 +20,14 @@ package org.apache.dubbo.demo;
  *
  */
 public interface GreetingService {
+    String msg = "";
+
+    int age = 0;
+
+    void setMsg(String msg);
+
+    String getMsg();
+
     String hello();
 
     String hello(String msg);

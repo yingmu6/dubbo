@@ -374,7 +374,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
                 map.put(REVISION_KEY, revision);
             }
 
-            String[] methods = Wrapper.getWrapper(interfaceClass).getMethodNames();
+            String[] methods = Wrapper.getWrapper(interfaceClass).getMethodNames(); //为暴露的接口创建封装类
             if (methods.length == 0) {
                 logger.warn("No method found in service interface " + interfaceClass.getName());
                 map.put(METHODS_KEY, ANY_VALUE);
@@ -392,7 +392,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
 
         if (!ConfigUtils.isEmpty(token)) {
             if (ConfigUtils.isDefault(token)) {
-                map.put(TOKEN_KEY, UUID.randomUUID().toString());
+                map.put(TOKEN_KEY, UUID.randomUUID().toString()); //默认产生的token是uuid值
             } else {
                 map.put(TOKEN_KEY, token);
             }
@@ -515,11 +515,11 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
      */
     private String findConfigedHosts(ProtocolConfig protocolConfig,
                                      List<URL> registryURLs,
-                                     Map<String, String> map) { //todo @csy pause 获取主机，待调试
+                                     Map<String, String> map) { //获取主机，待调试
         boolean anyhost = false;
 
         String hostToBind = getValueFromConfig(protocolConfig, DUBBO_IP_TO_BIND);
-        if (hostToBind != null && hostToBind.length() > 0 && isInvalidLocalHost(hostToBind)) {
+        if (hostToBind != null && hostToBind.length() > 0 && isInvalidLocalHost(hostToBind)) { //若配置了host时，校验是否是本地无效的host
             throw new IllegalArgumentException("Specified invalid bind ip from property:" + DUBBO_IP_TO_BIND + ", value:" + hostToBind);
         }
 
@@ -547,7 +547,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
                             try (Socket socket = new Socket()) {
                                 SocketAddress addr = new InetSocketAddress(registryURL.getHost(), registryURL.getPort());
                                 socket.connect(addr, 1000);
-                                hostToBind = socket.getLocalAddress().getHostAddress();
+                                hostToBind = socket.getLocalAddress().getHostAddress(); //todo @pause
                                 break;
                             } catch (Exception e) {
                                 logger.warn(e.getMessage(), e);
@@ -645,7 +645,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
     }
 
     private String getValueFromConfig(ProtocolConfig protocolConfig, String key) {
-        String protocolPrefix = protocolConfig.getName().toUpperCase() + "_";
+        String protocolPrefix = protocolConfig.getName().toUpperCase() + "_"; //protocolPrefix如："DUBBO_"
         String value = ConfigUtils.getSystemProperty(protocolPrefix + key);
         if (StringUtils.isEmpty(value)) {
             value = ConfigUtils.getSystemProperty(key);

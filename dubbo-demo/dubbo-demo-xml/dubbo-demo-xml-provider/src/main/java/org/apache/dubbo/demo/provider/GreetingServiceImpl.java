@@ -10,6 +10,16 @@ import org.apache.dubbo.demo.GreetingService;
  */
 public class GreetingServiceImpl implements GreetingService {
     @Override
+    public void setMsg(String msg) {
+
+    }
+
+    @Override
+    public String getMsg() {
+        return null;
+    }
+
+    @Override
     public String hello() {
         System.out.println("你好 Greeting!");
         return "hello GreetingServiceImpl";
