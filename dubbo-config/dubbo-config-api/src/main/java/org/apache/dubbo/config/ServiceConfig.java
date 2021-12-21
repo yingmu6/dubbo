@@ -540,21 +540,21 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
                 if (isInvalidLocalHost(hostToBind)) {
                     if (CollectionUtils.isNotEmpty(registryURLs)) {
                         for (URL registryURL : registryURLs) {
-                            if (MULTICAST.equalsIgnoreCase(registryURL.getParameter("registry"))) {
+                            if (MULTICAST.equalsIgnoreCase(registryURL.getParameter("registry"))) { //多播的注册地址，不处理
                                 // skip multicast registry since we cannot connect to it via Socket
                                 continue;
                             }
-                            try (Socket socket = new Socket()) {
+                            try (Socket socket = new Socket()) { //尝试用注册中心地址，去连接注册中心，若连接上，则取出的host
                                 SocketAddress addr = new InetSocketAddress(registryURL.getHost(), registryURL.getPort());
                                 socket.connect(addr, 1000);
-                                hostToBind = socket.getLocalAddress().getHostAddress(); //todo @pause
+                                hostToBind = socket.getLocalAddress().getHostAddress(); //此处的如：注册地址为"zookeeper://127.0.0.1:2181", hostToBind的取值为127.0.0.1
                                 break;
                             } catch (Exception e) {
                                 logger.warn(e.getMessage(), e);
                             }
                         }
                     }
-                    if (isInvalidLocalHost(hostToBind)) {
+                    if (isInvalidLocalHost(hostToBind)) { //若还没有取到本机地址，则尝试读取网卡的地址
                         hostToBind = getLocalHost();
                     }
                 }
@@ -644,7 +644,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
         return port;
     }
 
-    private String getValueFromConfig(ProtocolConfig protocolConfig, String key) {
+    private String getValueFromConfig(ProtocolConfig protocolConfig, String key) { //从系统属性中获取指定key的值
         String protocolPrefix = protocolConfig.getName().toUpperCase() + "_"; //protocolPrefix如："DUBBO_"
         String value = ConfigUtils.getSystemProperty(protocolPrefix + key);
         if (StringUtils.isEmpty(value)) {

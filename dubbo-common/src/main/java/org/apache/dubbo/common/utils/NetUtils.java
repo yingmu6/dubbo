@@ -178,7 +178,7 @@ public class NetUtils {
 
     private static volatile String HOST_ADDRESS;
 
-    public static String getLocalHost() {
+    public static String getLocalHost() { //todo @pause
         if (HOST_ADDRESS != null) {
             return HOST_ADDRESS;
         }
