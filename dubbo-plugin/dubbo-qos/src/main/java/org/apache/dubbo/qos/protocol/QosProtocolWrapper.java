@@ -22,28 +22,21 @@ import org.apache.dubbo.common.logger.LoggerFactory;
 import org.apache.dubbo.common.utils.UrlUtils;
 import org.apache.dubbo.qos.common.QosConstants;
 import org.apache.dubbo.qos.server.Server;
-import org.apache.dubbo.rpc.Exporter;
-import org.apache.dubbo.rpc.Invoker;
-import org.apache.dubbo.rpc.Protocol;
-import org.apache.dubbo.rpc.ProtocolServer;
-import org.apache.dubbo.rpc.RpcException;
+import org.apache.dubbo.rpc.*;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static org.apache.dubbo.common.constants.QosConstants.ACCEPT_FOREIGN_IP;
-import static org.apache.dubbo.common.constants.QosConstants.QOS_ENABLE;
-import static org.apache.dubbo.common.constants.QosConstants.QOS_HOST;
-import static org.apache.dubbo.common.constants.QosConstants.QOS_PORT;
+import static org.apache.dubbo.common.constants.QosConstants.*;
 
 
-public class QosProtocolWrapper implements Protocol {
+public class QosProtocolWrapper implements Protocol { //todo @csy QosProtocolWrapper的功能用途是什么？
 
     private final Logger logger = LoggerFactory.getLogger(QosProtocolWrapper.class);
 
     private static AtomicBoolean hasStarted = new AtomicBoolean(false);
 
-    private Protocol protocol;
+    private Protocol protocol; //持有ProtocolFilterWrapper实例
 
     public QosProtocolWrapper(Protocol protocol) { //封装类：构造函数中包含扩展接口
         if (protocol == null) {

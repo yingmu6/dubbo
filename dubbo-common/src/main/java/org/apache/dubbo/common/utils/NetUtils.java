@@ -72,7 +72,7 @@ public class NetUtils {
     public static int getAvailablePort() {
         try (ServerSocket ss = new ServerSocket()) {
             ss.bind(null);
-            return ss.getLocalPort();
+            return ss.getLocalPort(); //取出socket连接中的本地端口
         } catch (IOException e) {
             return getRandomPort();
         }
@@ -83,7 +83,7 @@ public class NetUtils {
             return getAvailablePort();
         }
         for (int i = port; i < MAX_PORT; i++) {
-            try (ServerSocket ignored = new ServerSocket(i)) {
+            try (ServerSocket ignored = new ServerSocket(i)) { //放在try中，可以做到资源释放
                 return i;
             } catch (IOException e) {
                 // continue
@@ -92,7 +92,7 @@ public class NetUtils {
         return port;
     }
 
-    public static boolean isInvalidPort(int port) {
+    public static boolean isInvalidPort(int port) { //端口号在0 ~ 65535之间
         return port <= MIN_PORT || port > MAX_PORT;
     }
 
@@ -113,8 +113,8 @@ public class NetUtils {
     public static boolean isInvalidLocalHost(String host) {
         return host == null
                 || host.length() == 0
-                || host.equalsIgnoreCase(LOCALHOST_KEY)
-                || host.equals(ANYHOST_VALUE)
+                || host.equalsIgnoreCase(LOCALHOST_KEY) //"localhost" 为无效地址
+                || host.equals(ANYHOST_VALUE) //"0.0.0.0" 也为无效地址
                 || host.startsWith("127.");
     }
 
@@ -162,7 +162,7 @@ public class NetUtils {
      * @param address the input address
      * @return the normalized address, with scope id converted to int
      */
-    static InetAddress normalizeV6Address(Inet6Address address) {
+    static InetAddress normalizeV6Address(Inet6Address address) { //将IPV6的地址标准化
         String addr = address.getHostAddress();
         int i = addr.lastIndexOf('%');
         if (i > 0) {
@@ -176,9 +176,9 @@ public class NetUtils {
         return address;
     }
 
-    private static volatile String HOST_ADDRESS;
+    private static volatile String HOST_ADDRESS; //静态变量：本地缓存
 
-    public static String getLocalHost() { //todo @pause
+    public static String getLocalHost() {
         if (HOST_ADDRESS != null) {
             return HOST_ADDRESS;
         }
@@ -242,7 +242,7 @@ public class NetUtils {
                 return Optional.ofNullable(normalizeV6Address(v6Address));
             }
         }
-        if (isValidV4Address(address)) {
+        if (isValidV4Address(address)) { //若为有效的ipv4地址，直接返回
             return Optional.of(address);
         }
         return Optional.empty();
@@ -283,7 +283,7 @@ public class NetUtils {
         }
 
         try {
-            localAddress = InetAddress.getLocalHost();
+            localAddress = InetAddress.getLocalHost(); //若还没找到，则取本机的IP地址
             Optional<InetAddress> addressOp = toValidAddress(localAddress);
             if (addressOp.isPresent()) {
                 return addressOp.get();
@@ -302,11 +302,11 @@ public class NetUtils {
      * @throws SocketException SocketException if an I/O error occurs.
      * @since 2.7.6
      */
-    private static boolean ignoreNetworkInterface(NetworkInterface networkInterface) throws SocketException { //是否是需要忽略的网络接口
-        return networkInterface == null
-                || networkInterface.isLoopback()
-                || networkInterface.isVirtual()
-                || !networkInterface.isUp();
+    private static boolean ignoreNetworkInterface(NetworkInterface networkInterface) throws SocketException {
+        return networkInterface == null  //满足如下条件的接口，都需要忽略
+                || networkInterface.isLoopback() //回路接口判断
+                || networkInterface.isVirtual() //虚拟接口：也被叫做子接口
+                || !networkInterface.isUp(); //接口是否正在启动或运行
     }
 
     /**
@@ -337,9 +337,9 @@ public class NetUtils {
      * the property value from {@link CommonConstants#DUBBO_PREFERRED_NETWORK_INTERFACE}, return <code>true</code>,
      * or <code>false</code>
      */
-    public static boolean isPreferredNetworkInterface(NetworkInterface networkInterface) { //判断是否是系统环境中设置的首选接口
-        String preferredNetworkInterface = System.getProperty(DUBBO_PREFERRED_NETWORK_INTERFACE); //若系统属性中没设置，则返回null，即不会与哪个网络接口匹配
-        return Objects.equals(networkInterface.getDisplayName(), preferredNetworkInterface); //根据网络接口显示名称做判断
+    public static boolean isPreferredNetworkInterface(NetworkInterface networkInterface) { //判断是否是首选的NetworkInterface
+        String preferredNetworkInterface = System.getProperty(DUBBO_PREFERRED_NETWORK_INTERFACE);
+        return Objects.equals(networkInterface.getDisplayName(), preferredNetworkInterface); //将指定的NetworkInterface与系统属性中的名称进行比较
     }
 
     /**
@@ -348,7 +348,7 @@ public class NetUtils {
      * @return If no {@link NetworkInterface} is available , return <code>null</code>
      * @since 2.7.6
      */
-    public static NetworkInterface findNetworkInterface() {
+    public static NetworkInterface findNetworkInterface() { //找到适合的NetworkInterface，接口就如Mac电脑上输入ifconfig，看到的内容
 
         List<NetworkInterface> validNetworkInterfaces = emptyList();
         try {
@@ -374,7 +374,7 @@ public class NetUtils {
                     Optional<InetAddress> addressOp = toValidAddress(addresses.nextElement());
                     if (addressOp.isPresent()) {
                         try {
-                            if (addressOp.get().isReachable(100)) { //测试网络地址是否在指定时间是可达的isReachable
+                            if (addressOp.get().isReachable(100)) { //测试网络地址是否在指定时间是可达的isReachable（底层是native方法）
                                 result = networkInterface;
                                 break; //只要找到一个有效IP地址，则结束循环
                             }

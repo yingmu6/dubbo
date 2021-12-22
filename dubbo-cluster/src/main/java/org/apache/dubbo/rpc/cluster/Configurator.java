@@ -20,12 +20,7 @@ import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.extension.ExtensionLoader;
 import org.apache.dubbo.common.utils.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static org.apache.dubbo.common.constants.CommonConstants.ANYHOST_KEY;
 import static org.apache.dubbo.common.constants.RegistryConstants.EMPTY_PROTOCOL;
@@ -33,9 +28,8 @@ import static org.apache.dubbo.rpc.cluster.Constants.PRIORITY_KEY;
 
 /**
  * Configurator. (SPI, Prototype, ThreadSafe)
- *
  */
-public interface Configurator extends Comparable<Configurator> {
+public interface Configurator extends Comparable<Configurator> { //todo @csy Configurator的功能用途是什么？
 
     /**
      * Get the configurator url.

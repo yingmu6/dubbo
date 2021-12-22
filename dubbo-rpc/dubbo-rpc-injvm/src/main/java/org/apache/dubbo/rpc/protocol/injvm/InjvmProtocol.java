@@ -34,7 +34,7 @@ import static org.apache.dubbo.rpc.Constants.*;
 /**
  * InjvmProtocol
  */
-public class InjvmProtocol extends AbstractProtocol implements Protocol {
+public class InjvmProtocol extends AbstractProtocol implements Protocol { //todo @csy injvm是怎么进入过滤链的？
 
     public static final String NAME = LOCAL_PROTOCOL;
 
@@ -84,7 +84,7 @@ public class InjvmProtocol extends AbstractProtocol implements Protocol {
     }
 
     @Override
-    public <T> Exporter<T> export(Invoker<T> invoker) throws RpcException {
+    public <T> Exporter<T> export(Invoker<T> invoker) throws RpcException { //没有发起远程调用，没有打开端口
         return new InjvmExporter<T>(invoker, invoker.getUrl().getServiceKey(), exporterMap);
     }
 

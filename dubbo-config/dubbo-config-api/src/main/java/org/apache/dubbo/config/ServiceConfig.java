@@ -403,7 +403,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
         // export service
         String host = findConfigedHosts(protocolConfig, registryURLs, map);
         Integer port = findConfigedPorts(protocolConfig, name, map);
-        URL url = new URL(name, host, port, getContextPath(protocolConfig).map(p -> p + "/" + path).orElse(path), map);
+        URL url = new URL(name, host, port, getContextPath(protocolConfig).map(p -> p + "/" + path).orElse(path), map); //构建URL
 
         // You can customize Configurator to append extra parameters
         if (ExtensionLoader.getExtensionLoader(ConfiguratorFactory.class)
@@ -417,7 +417,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
         if (!SCOPE_NONE.equalsIgnoreCase(scope)) { //服务暴露范围为none时，不处理
 
             // export to local if the config is not remote (export to remote only when config is remote)
-            if (!SCOPE_REMOTE.equalsIgnoreCase(scope)) { //暴露本地服务
+            if (!SCOPE_REMOTE.equalsIgnoreCase(scope)) { //暴露本地服务（没设置暴露的范围时scope，默认是会暴露本地服务的）
                 exportLocal(url);
             }
             // export to remote if the config is not local (export to local only when config is local)
@@ -482,12 +482,12 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
      */
     private void exportLocal(URL url) {
         URL local = URLBuilder.from(url)
-                .setProtocol(LOCAL_PROTOCOL)
+                .setProtocol(LOCAL_PROTOCOL) //本地暴露的协议为injvm
                 .setHost(LOCALHOST_VALUE)
                 .setPort(0)
                 .build();
         Exporter<?> exporter = PROTOCOL.export(
-                PROXY_FACTORY.getInvoker(ref, (Class) interfaceClass, local));
+                PROXY_FACTORY.getInvoker(ref, (Class) interfaceClass, local)); //方法中会选择具体实例，执行对应的方法，本处是InjvmProtocol实例，会执行对应的export()方法
         exporters.add(exporter);
         logger.info("Export dubbo service " + interfaceClass.getName() + " to local registry url : " + local);
     }
@@ -516,7 +516,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
     private String findConfigedHosts(ProtocolConfig protocolConfig,
                                      List<URL> registryURLs,
                                      Map<String, String> map) { //获取主机，待调试
-        boolean anyhost = false;
+        boolean anyhost = false; //配置中未指定时，查找的主机号是任意的，不确定的
 
         String hostToBind = getValueFromConfig(protocolConfig, DUBBO_IP_TO_BIND);
         if (hostToBind != null && hostToBind.length() > 0 && isInvalidLocalHost(hostToBind)) { //若配置了host时，校验是否是本地无效的host
@@ -555,7 +555,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
                         }
                     }
                     if (isInvalidLocalHost(hostToBind)) { //若还没有取到本机地址，则尝试读取网卡的地址
-                        hostToBind = getLocalHost();
+                        hostToBind = getLocalHost(); //获取的值如：192.168.1.111
                     }
                 }
             }
@@ -589,7 +589,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
      */
     private Integer findConfigedPorts(ProtocolConfig protocolConfig,
                                       String name,
-                                      Map<String, String> map) { //todo @csy 待调试
+                                      Map<String, String> map) {
         Integer portToBind = null;
 
         // parse bind port from environment
@@ -602,15 +602,15 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
             if (provider != null && (portToBind == null || portToBind == 0)) {
                 portToBind = provider.getPort();
             }
-            final int defaultPort = ExtensionLoader.getExtensionLoader(Protocol.class).getExtension(name).getDefaultPort();
+            final int defaultPort = ExtensionLoader.getExtensionLoader(Protocol.class).getExtension(name).getDefaultPort(); //获取指定协议的默认端口，比如dubbo的默认端口为20880
             if (portToBind == null || portToBind == 0) {
                 portToBind = defaultPort;
             }
             if (portToBind <= 0) {
-                portToBind = getRandomPort(name);
+                portToBind = getRandomPort(name); //从缓存中获取指定协议对应的端口
                 if (portToBind == null || portToBind < 0) {
                     portToBind = getAvailablePort(defaultPort);
-                    putRandomPort(name, portToBind);
+                    putRandomPort(name, portToBind); //将协议名与端口缓存起来
                 }
             }
         }
@@ -628,7 +628,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
         return portToRegistry;
     }
 
-    private Integer parsePort(String configPort) {
+    private Integer parsePort(String configPort) { //解析出端口号
         Integer port = null;
         if (configPort != null && configPort.length() > 0) {
             try {
@@ -646,9 +646,9 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
 
     private String getValueFromConfig(ProtocolConfig protocolConfig, String key) { //从系统属性中获取指定key的值
         String protocolPrefix = protocolConfig.getName().toUpperCase() + "_"; //protocolPrefix如："DUBBO_"
-        String value = ConfigUtils.getSystemProperty(protocolPrefix + key);
+        String value = ConfigUtils.getSystemProperty(protocolPrefix + key); //key加上前缀
         if (StringUtils.isEmpty(value)) {
-            value = ConfigUtils.getSystemProperty(key);
+            value = ConfigUtils.getSystemProperty(key); //key不加前缀
         }
         return value;
     }

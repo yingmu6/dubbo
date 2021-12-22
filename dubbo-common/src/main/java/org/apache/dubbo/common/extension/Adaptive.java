@@ -18,11 +18,7 @@ package org.apache.dubbo.common.extension;
 
 import org.apache.dubbo.common.URL;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * Provide helpful information for {@link ExtensionLoader} to inject dependency extension instance.
@@ -33,7 +29,7 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
-public @interface Adaptive {
+public @interface Adaptive { //todo @csy Adaptive注解解析器了解
     /**
      * @csy-011 方法描述的含义是什么？
      * 解：描述的是方法中使用@Adaptive时，获取扩展名的方式
@@ -62,6 +58,6 @@ public @interface Adaptive {
      *
      * @return parameter names in URL
      */
-    String[] value() default {};
+    String[] value() default {}; //生成自适应扩展类，然后在方法中选择具体的实例，执行具体实例的方法
 
 }

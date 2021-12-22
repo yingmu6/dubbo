@@ -32,10 +32,10 @@ class InjvmExporter<T> extends AbstractExporter<T> {
     private final Map<String, Exporter<?>> exporterMap;
 
     InjvmExporter(Invoker<T> invoker, String key, Map<String, Exporter<?>> exporterMap) {
-        super(invoker);
+        super(invoker); //执行父类构造函数，做一些赋值以及校验
         this.key = key;
         this.exporterMap = exporterMap;
-        exporterMap.put(key, this);
+        exporterMap.put(key, this); //将服务key与当前实例，进行缓存，比如key为：org.apache.dubbo.demo.GreetingService
     }
 
     @Override

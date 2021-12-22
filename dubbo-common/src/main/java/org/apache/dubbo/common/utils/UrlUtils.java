@@ -459,7 +459,7 @@ public class UrlUtils {
                 PROVIDERS_CATEGORY.equals(url.getParameter(CATEGORY_KEY, PROVIDERS_CATEGORY));
     }
 
-    public static boolean isRegistry(URL url) {
+    public static boolean isRegistry(URL url) { //判断是否是注册协议
         return REGISTRY_PROTOCOL.equals(url.getProtocol()) || SERVICE_REGISTRY_PROTOCOL.equalsIgnoreCase(url.getProtocol());
     }
 

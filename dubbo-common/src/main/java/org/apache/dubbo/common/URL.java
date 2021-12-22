@@ -199,7 +199,7 @@ class URL implements Serializable {
         } else {
             parameters = new HashMap<>(parameters);
         }
-        this.parameters = Collections.unmodifiableMap(parameters); //unmodifiableMap:不可修改的视图，只读不可修改
+        this.parameters = Collections.unmodifiableMap(parameters); //unmodifiableMap:不可修改的Map，（内部维护者用final修饰的Map，只读不可修修改 put、remove等）
         this.methodParameters = Collections.unmodifiableMap(methodParameters);
     }
 

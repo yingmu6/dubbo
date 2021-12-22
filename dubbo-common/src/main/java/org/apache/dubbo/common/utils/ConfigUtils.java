@@ -188,9 +188,9 @@ public class ConfigUtils {
      * @return value
      */
     public static String getSystemProperty(String key) {
-        String value = System.getenv(key);
+        String value = System.getenv(key); //从进程环境变量中取
         if (StringUtils.isEmpty(value)) {
-            value = System.getProperty(key);
+            value = System.getProperty(key); //从系统属性中取
         }
         return value;
     }

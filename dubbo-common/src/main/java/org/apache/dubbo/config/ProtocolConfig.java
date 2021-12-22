@@ -52,7 +52,7 @@ public class ProtocolConfig extends AbstractConfig {
     /**
      * Context path
      */
-    private String contextpath;
+    private String contextpath; //todo @csy 上下文路径是在什么场景下设置的？
 
     /**
      * Thread pool

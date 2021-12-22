@@ -20,13 +20,7 @@ import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.extension.Activate;
 import org.apache.dubbo.common.extension.ExtensionLoader;
 import org.apache.dubbo.common.utils.UrlUtils;
-import org.apache.dubbo.rpc.Exporter;
-import org.apache.dubbo.rpc.ExporterListener;
-import org.apache.dubbo.rpc.Invoker;
-import org.apache.dubbo.rpc.InvokerListener;
-import org.apache.dubbo.rpc.Protocol;
-import org.apache.dubbo.rpc.ProtocolServer;
-import org.apache.dubbo.rpc.RpcException;
+import org.apache.dubbo.rpc.*;
 import org.apache.dubbo.rpc.listener.ListenerExporterWrapper;
 import org.apache.dubbo.rpc.listener.ListenerInvokerWrapper;
 
@@ -42,7 +36,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.INVOKER_LISTENER
 @Activate(order = 200)
 public class ProtocolListenerWrapper implements Protocol {
 
-    private final Protocol protocol;
+    private final Protocol protocol; //持有具体协议的实例，比如InjvmProtocol
 
     public ProtocolListenerWrapper(Protocol protocol) {
         if (protocol == null) {
@@ -57,7 +51,7 @@ public class ProtocolListenerWrapper implements Protocol {
     }
 
     @Override
-    public <T> Exporter<T> export(Invoker<T> invoker) throws RpcException {
+    public <T> Exporter<T> export(Invoker<T> invoker) throws RpcException { //todo @csy 为什么会执行封装类？
         if (UrlUtils.isRegistry(invoker.getUrl())) {
             return protocol.export(invoker);
         }

@@ -34,7 +34,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.SERVICE_FILTER_K
 @Activate(order = 100)
 public class ProtocolFilterWrapper implements Protocol {
 
-    private final Protocol protocol;
+    private final Protocol protocol; //持有ProtocolListenerWrapper实例
 
     public ProtocolFilterWrapper(Protocol protocol) { //对Protocol进行封装
         if (protocol == null) {
