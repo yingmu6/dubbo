@@ -27,12 +27,7 @@ import org.apache.dubbo.registry.NotifyListener;
 import org.apache.dubbo.registry.client.event.ServiceInstancesChangedEvent;
 import org.apache.dubbo.registry.client.event.listener.ServiceInstancesChangedListener;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static java.util.Collections.unmodifiableList;
@@ -45,7 +40,7 @@ import static org.apache.dubbo.event.EventDispatcher.getDefaultExtension;
  * @since 2.7.5
  */
 @SPI("zookeeper")
-public interface ServiceDiscovery extends Prioritized {
+public interface ServiceDiscovery extends Prioritized { //服务发现处理接口
 
     // ==================================== Lifecycle ==================================== //
 

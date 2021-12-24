@@ -468,7 +468,7 @@ public abstract class AbstractConfig implements Serializable {
             for (Method method : methods) { //遍历当前配置对象的方法，从配置中心获取值，通过set()方法或setParameters()方法设置到XxxConfig对象中
                 if (MethodUtils.isSetter(method)) { //是否是setXXX()方法
                     try {
-                        String value = StringUtils.trim(compositeConfiguration.getString(extractPropertyName(getClass(), method))); //从配置中心获取属性对应的值
+                        String value = StringUtils.trim(compositeConfiguration.getString(extractPropertyName(getClass(), method))); //从配置中心获取属性对应的值，发起了远程调用
                         // isTypeMatch() is called to avoid duplicate and incorrect update, for example, we have two 'setGeneric' methods in ReferenceConfig.
                         if (StringUtils.isNotEmpty(value) && ClassUtils.isTypeMatch(method.getParameterTypes()[0], value)) { //若值不为空，且参数类型与参数值能够匹配，则执行invoke调用
                             method.invoke(this, ClassUtils.convertPrimitive(method.getParameterTypes()[0], value)); //将参数转换为指定类型的Object对象，然后再执行invoke调用

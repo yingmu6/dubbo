@@ -20,5 +20,10 @@ import org.apache.dubbo.common.extension.SPI;
 
 @SPI
 public interface FrameworkExt extends Lifecycle { //FrameworkExt:框架，框架的生命周期，（SPI接口，按扩展名查找对应实例）
-
+    /**
+     * FrameworkExt的三个实现类：
+     * 1）ConfigManager：维护dubbo标签名与Config对象的缓存映射关系
+     * 2）Environment：通过加载属性文件，生成属性对象管理对象的生命周期
+     * 3）ServiceRepository：维护接口key与ConsumerModel、ProviderModel模型的映射
+     */
 }

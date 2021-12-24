@@ -277,7 +277,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
 
         for (ProtocolConfig protocolConfig : protocols) {
             String pathKey = URL.buildKey(getContextPath(protocolConfig)
-                    .map(p -> p + "/" + path) //对路径进行拼接
+                    .map(p -> p + "/" + path) //对路径进行拼接，若没有指定上下文路径，则直接取路径名，如：path为：org.apache.dubbo.demo.GreetingService
                     .orElse(path), group, version);
             // In case user specified path, register service one more time to map it to path.
             repository.registerService(pathKey, interfaceClass); //将服务的路径key（path如；group/path:version）与暴露的服务类Class注册到内容Map中

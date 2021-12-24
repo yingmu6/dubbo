@@ -65,7 +65,7 @@ public abstract class AbstractEventDispatcher implements EventDispatcher {
     @Override
     public void addEventListener(EventListener<?> listener) throws NullPointerException, IllegalArgumentException {
         Listenable.assertListener(listener);
-        doInListener(listener, listeners -> {
+        doInListener(listener, listeners -> { //将事件监听器添加到监听器列表中
             addIfAbsent(listeners, listener);
         });
     }

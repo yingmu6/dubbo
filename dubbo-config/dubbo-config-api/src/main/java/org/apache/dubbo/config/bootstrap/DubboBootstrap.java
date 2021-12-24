@@ -1224,7 +1224,7 @@ public class DubboBootstrap extends GenericEventListener { //基于事件驱动
 
     private void unregisterServiceInstance() {
         if (serviceInstance != null) {
-            getServiceDiscoveries().forEach(serviceDiscovery -> {
+            getServiceDiscoveries().forEach(serviceDiscovery -> { //将注册的所有服务取消注册
                 serviceDiscovery.unregister(serviceInstance);
             });
         }
@@ -1244,9 +1244,9 @@ public class DubboBootstrap extends GenericEventListener { //基于事件驱动
                 if (started.compareAndSet(true, false)
                         && destroyed.compareAndSet(false, true)) {
 
-                    unregisterServiceInstance();
+                    unregisterServiceInstance(); //会发起远程调用，取消注册的服务，比如若注册中心为zookeeper，则会通过curator，取消注册的服务
                     unexportMetadataService();
-                    unexportServices();
+                    unexportServices(); //从ConfigMananer移除暴露的服务缓存
                     unreferServices();
 
                     destroyRegistries();
@@ -1298,7 +1298,7 @@ public class DubboBootstrap extends GenericEventListener { //基于事件驱动
                 if (logger.isInfoEnabled()) {
                     logger.info(NAME + " is about to shutdown...");
                 }
-                condition.signalAll();
+                condition.signalAll(); //唤醒所有线程，将该执行的任务执行完，然后再做释放处理
             }
         });
     }

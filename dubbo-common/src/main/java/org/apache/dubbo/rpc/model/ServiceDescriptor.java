@@ -39,7 +39,7 @@ public class ServiceDescriptor { //服务的描述信息
         initMethods();
     }
 
-    private void initMethods() {
+    private void initMethods() { //遍历暴露接口中Class的Method列表，一一构建为MethodDescriptor对象
         Method[] methodsToExport = this.serviceInterfaceClass.getMethods();
         for (Method method : methodsToExport) {
             method.setAccessible(true);
