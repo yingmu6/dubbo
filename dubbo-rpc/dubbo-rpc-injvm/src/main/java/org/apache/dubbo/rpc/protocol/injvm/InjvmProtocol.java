@@ -93,7 +93,7 @@ public class InjvmProtocol extends AbstractProtocol implements Protocol { //todo
         return new InjvmInvoker<T>(serviceType, url, url.getServiceKey(), exporterMap);
     }
 
-    public boolean isInjvmRefer(URL url) {
+    public boolean isInjvmRefer(URL url) { //根据设置的范围scope，判断是否是injvm方式引用
         String scope = url.getParameter(SCOPE_KEY);
         // Since injvm protocol is configured explicitly, we don't need to set any extra flag, use normal refer process.
         if (SCOPE_LOCAL.equals(scope) || (url.getParameter(LOCAL_PROTOCOL, false))) {

@@ -422,7 +422,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
             }
             // export to remote if the config is not local (export to local only when config is local)
             if (!SCOPE_LOCAL.equalsIgnoreCase(scope)) { //暴露远程服务
-                if (CollectionUtils.isNotEmpty(registryURLs)) {
+                if (CollectionUtils.isNotEmpty(registryURLs)) { //处理注册协议
                     for (URL registryURL : registryURLs) {
                         //if protocol is only injvm ,not register
                         if (LOCAL_PROTOCOL.equalsIgnoreCase(url.getProtocol())) {

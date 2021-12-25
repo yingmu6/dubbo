@@ -217,7 +217,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
         map.put(SIDE_KEY, CONSUMER_SIDE);
 
         ReferenceConfigBase.appendRuntimeParameters(map);
-        if (!ProtocolUtils.isGeneric(generic)) {
+        if (!ProtocolUtils.isGeneric(generic)) { //不是泛化调用时，对应处理
             String revision = Version.getVersion(interfaceClass, version);
             if (revision != null && revision.length() > 0) {
                 map.put(REVISION_KEY, revision);
@@ -290,7 +290,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes", "deprecation"})
-    private T createProxy(Map<String, String> map) {
+    private T createProxy(Map<String, String> map) { //为需要调用的invoker创建代理
         if (shouldJvmRefer(map)) {
             URL url = new URL(LOCAL_PROTOCOL, LOCALHOST_VALUE, 0, interfaceClass.getName()).addParameters(map);
             invoker = REF_PROTOCOL.refer(interfaceClass, url);

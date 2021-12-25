@@ -312,7 +312,7 @@ public class RegistryProtocol implements Protocol {
         URL registryUrl = originInvoker.getUrl();
         if (REGISTRY_PROTOCOL.equals(registryUrl.getProtocol())) {
             String protocol = registryUrl.getParameter(REGISTRY_KEY, DEFAULT_REGISTRY);
-            registryUrl = registryUrl.setProtocol(protocol).removeParameter(REGISTRY_KEY);
+            registryUrl = registryUrl.setProtocol(protocol).removeParameter(REGISTRY_KEY); //将注册协议替换为具体协议，如registry://替换为zookeeper
         }
         return registryUrl;
     }
@@ -366,7 +366,7 @@ public class RegistryProtocol implements Protocol {
      * @param originInvoker
      * @return
      */
-    private URL getProviderUrl(final Invoker<?> originInvoker) {
+    private URL getProviderUrl(final Invoker<?> originInvoker) { //取出服务提供者的url，比如registry://xxx?xx&export=dubbo://192.168.1.105:20881/org.apache.dubbo.demo.GreetingService/xxx
         String export = originInvoker.getUrl().getParameterAndDecoded(EXPORT_KEY);
         if (export == null || export.length() == 0) {
             throw new IllegalArgumentException("The registry export url is null! registry: " + originInvoker.getUrl());
@@ -382,7 +382,7 @@ public class RegistryProtocol implements Protocol {
      */
     private String getCacheKey(final Invoker<?> originInvoker) {
         URL providerUrl = getProviderUrl(originInvoker);
-        String key = providerUrl.removeParameters("dynamic", "enabled").toFullString();
+        String key = providerUrl.removeParameters("dynamic", "enabled").toFullString(); //url参数Map中移除"dynamic", "enabled"参数
         return key;
     }
 
