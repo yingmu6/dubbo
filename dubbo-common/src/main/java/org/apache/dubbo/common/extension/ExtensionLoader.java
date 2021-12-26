@@ -692,7 +692,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
             //注入依赖的扩展实例
             injectExtension(instance);
 
-            //注入封装类的实例（若需要封装的话，会将封装类的实例，覆盖扩展指定的实现类）
+            //注入封装类的实例（若需要封装的话，将扩展实例通过封装类列表，进行层层封装）
             if (wrap) {
 
                 List<Class<?>> wrapperClassesList = new ArrayList<>();

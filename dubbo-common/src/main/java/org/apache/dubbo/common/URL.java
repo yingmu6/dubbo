@@ -575,7 +575,7 @@ class URL implements Serializable {
         return getParameterAndDecoded(key, null);
     }
 
-    public String getParameterAndDecoded(String key, String defaultValue) {
+    public String getParameterAndDecoded(String key, String defaultValue) { //获取参数值，并对值进行解码
         return decode(getParameter(key, defaultValue));
     }
 

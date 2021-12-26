@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 /**
  * Router chain
  */
-public class RouterChain<T> {
+public class RouterChain<T> { //todo @csy 路由链是怎么使用的？
 
     // full list of addresses from registry, classified by method name.
     private List<Invoker<T>> invokers = Collections.emptyList();

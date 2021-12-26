@@ -389,7 +389,7 @@ public class RegistryProtocol implements Protocol {
     @Override
     @SuppressWarnings("unchecked")
     public <T> Invoker<T> refer(Class<T> type, URL url) throws RpcException {
-        url = getRegistryUrl(url);
+        url = getRegistryUrl(url); //做协议转化，将registry://xxx协议转换为具体协议，如:zookeeper://xxx
         Registry registry = registryFactory.getRegistry(url);
         if (RegistryService.class.equals(type)) {
             return proxyFactory.getInvoker((T) registry, type, url);
