@@ -33,6 +33,9 @@ import java.util.concurrent.ConcurrentMap;
 import static org.apache.dubbo.common.BaseServiceMetadata.interfaceFromServiceKey;
 import static org.apache.dubbo.common.BaseServiceMetadata.versionFromServiceKey;
 
+/**
+ * todo @csy ServiceRepository 功能用途是什么？
+ */
 public class ServiceRepository extends LifecycleAdapter implements FrameworkExt { //服务仓库：管理服务与ConsumerModel、ProviderModel模型的关系（将数据与行为封装在一个类型，满足类的封装性）
 
     public static final String NAME = "repository"; //对应的SPI实例repository=org.apache.dubbo.rpc.model.ServiceRepository
@@ -60,8 +63,8 @@ public class ServiceRepository extends LifecycleAdapter implements FrameworkExt 
     }
 
     public ServiceDescriptor registerService(Class<?> interfaceClazz) { //注册服务：把类与服务描述信息写到本地缓存中
-         return services.computeIfAbsent(interfaceClazz.getName(), //interfaceClazz.getName()的值如："org.apache.dubbo.rpc.service.EchoService"
-                 _k -> new ServiceDescriptor(interfaceClazz)); //函数式接口可以用lambda表示式表示
+        return services.computeIfAbsent(interfaceClazz.getName(), //interfaceClazz.getName()的值如："org.apache.dubbo.rpc.service.EchoService"
+                _k -> new ServiceDescriptor(interfaceClazz)); //函数式接口可以用lambda表示式表示
     }
 
     /**

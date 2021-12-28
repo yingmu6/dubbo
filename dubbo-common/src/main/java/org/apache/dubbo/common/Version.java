@@ -153,6 +153,9 @@ public final class Version {
         return "";
     }
 
+    /**
+     * todo @csy 此处是怎么获取版本的？与Package又有什么关系？
+     */
     public static String getVersion(Class<?> cls, String defaultVersion) {
         try {
             // find version info from MANIFEST.MF first

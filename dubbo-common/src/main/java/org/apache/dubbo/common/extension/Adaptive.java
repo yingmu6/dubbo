@@ -60,4 +60,7 @@ public @interface Adaptive { //todo @csy Adaptive注解解析器了解
      */
     String[] value() default {}; //生成自适应扩展类，然后在方法中选择具体的实例，执行具体实例的方法
 
+    /**
+     * todo @csy @Adaptive中的value是不是指的是url的参数？
+     */
 }

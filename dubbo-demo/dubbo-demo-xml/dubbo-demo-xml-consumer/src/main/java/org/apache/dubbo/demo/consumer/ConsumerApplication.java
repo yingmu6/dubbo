@@ -16,8 +16,9 @@
  */
 package org.apache.dubbo.demo.consumer;
 
-import org.apache.dubbo.demo.BasicInfo;
+import com.alibaba.fastjson.JSON;
 import org.apache.dubbo.demo.DemoService;
+import org.apache.dubbo.rpc.service.GenericService;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class ConsumerApplication {
@@ -31,13 +32,22 @@ public class ConsumerApplication {
         DemoService demoService = context.getBean("demoService", DemoService.class);
 //        CompletableFuture<String> hello = demoService.sayHelloAsync("world");
         String response = demoService.sayHello2("how are you?");
-        System.out.println("demoService result: " + response);
+        System.out.println("demoService 结果: " + response);
 
-        Class cls = demoService.getClass();
-        System.out.println("是否有注解：" + cls.isAnnotationPresent(BasicInfo.class));
-        if (cls.isAnnotationPresent(BasicInfo.class)) {
+        // 泛化调用
+        GenericService genericService = (GenericService) context.getBean("demoService");
+        String[] parameterTypes = new String[1];
+        parameterTypes[0] = "java.lang.String";
+        Object[] argValues = new Object[1];
+        argValues[0] = "fff";
+        Object obj = genericService.$invoke("sayHello", parameterTypes, argValues);
+        System.out.println(JSON.toJSONString(obj));
 
-        }
+//        Class cls = demoService.getClass();
+//        System.out.println("是否有注解：" + cls.isAnnotationPresent(BasicInfo.class));
+//        if (cls.isAnnotationPresent(BasicInfo.class)) {
+//
+//        }
 //        BasicInfo basicInfo = (BasicInfo) cls.getAnnotation(BasicInfo.class);
 //        System.out.println(basicInfo.age() + ";;;" + basicInfo.username());
 

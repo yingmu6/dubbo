@@ -265,7 +265,7 @@ public abstract class ServiceConfigBase<T> extends AbstractServiceConfig {
         }
     }
 
-    public Class<?> getInterfaceClass() {
+    public Class<?> getInterfaceClass() { //todo @csy 此处的interfaceClass是暴露的服务接口吗
         if (interfaceClass != null) {
             return interfaceClass;
         }

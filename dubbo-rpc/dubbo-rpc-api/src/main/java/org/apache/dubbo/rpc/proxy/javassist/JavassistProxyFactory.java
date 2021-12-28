@@ -49,7 +49,7 @@ public class JavassistProxyFactory extends AbstractProxyFactory {
             protected Object doInvoke(T proxy, String methodName,
                                       Class<?>[] parameterTypes,
                                       Object[] arguments) throws Throwable {
-                return wrapper.invokeMethod(proxy, methodName, parameterTypes, arguments);
+                return wrapper.invokeMethod(proxy, methodName, parameterTypes, arguments); //todo @csy 此处是怎么将封装类与代理类结合使用的？
             }
         };
     }

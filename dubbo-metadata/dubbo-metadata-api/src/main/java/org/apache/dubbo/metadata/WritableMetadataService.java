@@ -31,6 +31,10 @@ import static org.apache.dubbo.rpc.model.ApplicationModel.getName;
  *
  * @since 2.7.5
  */
+
+/**
+ * todo @csy 此类的功能用途是什么？
+ */
 @SPI(DEFAULT_METADATA_STORAGE_TYPE)
 public interface WritableMetadataService extends MetadataService { //本地的元数据
 

@@ -189,7 +189,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
         if (!isOnlyInJvm()) { //若只暴露injvm协议，则不用检查注册中心配置
             checkRegistry();
         }
-        this.refresh();
+        this.refresh(); //从远程配置中获取值刷新本地缓存值
 
         if (StringUtils.isEmpty(interfaceName)) {
             throw new IllegalStateException("<dubbo:service interface=\"\" /> interface not allow null!");
@@ -273,7 +273,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
                 serviceMetadata
         );
 
-        List<URL> registryURLs = ConfigValidationUtils.loadRegistries(this, true);
+        List<URL> registryURLs = ConfigValidationUtils.loadRegistries(this, true); //todo @csy 会发起远程调用吗？
 
         for (ProtocolConfig protocolConfig : protocols) {
             String pathKey = URL.buildKey(getContextPath(protocolConfig)
@@ -287,6 +287,9 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
         }
     }
 
+    /**
+     * 为协议准备暴露的URL
+     */
     private void doExportUrlsFor1Protocol(ProtocolConfig protocolConfig, List<URL> registryURLs) {
         String name = protocolConfig.getName();
         if (StringUtils.isEmpty(name)) {
@@ -333,7 +336,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
                                     if (methodName.equals(method.getName())) {
                                         Class<?>[] argtypes = methods[i].getParameterTypes();
                                         // one callback in the method
-                                        if (argument.getIndex() != -1) {
+                                        if (argument.getIndex() != -1) { //todo @csy 回调是怎么使用的？
                                             if (argtypes[argument.getIndex()].getName().equals(argument.getType())) {
                                                 AbstractConfig.appendParameters(map, argument, method.getName() + "." + argument.getIndex());
                                             } else {
@@ -341,7 +344,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
                                             }
                                         } else {
                                             // multiple callbacks in the method
-                                            for (int j = 0; j < argtypes.length; j++) {
+                                            for (int j = 0; j < argtypes.length; j++) { //todo @csy 多个回调是哪种场景，怎么使用的？
                                                 Class<?> argclazz = argtypes[j];
                                                 if (argclazz.getName().equals(argument.getType())) {
                                                     AbstractConfig.appendParameters(map, argument, method.getName() + "." + j);
@@ -354,7 +357,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
                                     }
                                 }
                             }
-                        } else if (argument.getIndex() != -1) {
+                        } else if (argument.getIndex() != -1) { //todo @csy 此处判断的含义是什么？
                             AbstractConfig.appendParameters(map, argument, method.getName() + "." + argument.getIndex());
                         } else {
                             throw new IllegalArgumentException("Argument config must set index or type attribute.eg: <dubbo:argument index='0' .../> or <dubbo:argument type=xxx .../>");
@@ -678,7 +681,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
      * @param event an {@link Event event}
      * @since 2.7.5
      */
-    private void dispatch(Event event) {
+    private void dispatch(Event event) { //todo @csy 此处的调度派发的用途是什么？
         EventDispatcher.getDefaultExtension().dispatch(event);
     }
 

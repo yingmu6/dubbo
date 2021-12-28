@@ -244,7 +244,7 @@ public class DubboProtocol extends AbstractProtocol {
         DubboExporter<T> exporter = new DubboExporter<T>(invoker, key, exporterMap);
         exporterMap.put(key, exporter);
 
-        //export an stub service for dispatching event
+        //export an stub service for dispatching event（todo @csy 此处的含义是什么？）
         Boolean isStubSupportEvent = url.getParameter(STUB_EVENT_KEY, DEFAULT_STUB_EVENT);
         Boolean isCallbackservice = url.getParameter(IS_CALLBACK_SERVICE, false);
         if (isStubSupportEvent && !isCallbackservice) {
@@ -280,7 +280,7 @@ public class DubboProtocol extends AbstractProtocol {
                 }
             } else {
                 // server supports reset, use together with override
-                server.reset(url);
+                server.reset(url); //todo @csy 此处为什么要reset()
             }
         }
     }
@@ -333,12 +333,12 @@ public class DubboProtocol extends AbstractProtocol {
 
             SerializationOptimizer optimizer = (SerializationOptimizer) clazz.newInstance();
 
-            if (optimizer.getSerializableClasses() == null) {
+            if (optimizer.getSerializableClasses() == null) { //目前SerializationOptimizer没有实现类，按道理都是null
                 return;
             }
 
             for (Class c : optimizer.getSerializableClasses()) {
-                SerializableClassRegistry.registerClass(c);
+                SerializableClassRegistry.registerClass(c); //todo @csy 此处的用途是什么？
             }
 
             optimizers.add(className);

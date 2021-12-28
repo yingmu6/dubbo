@@ -24,7 +24,7 @@ import org.apache.dubbo.event.Event;
  *
  * @since 2.7.5
  */
-public class ServiceConfigExportedEvent extends Event {
+public class ServiceConfigExportedEvent extends Event { //todo @csy 该事件什么情况下会监听
 
     public ServiceConfigExportedEvent(ServiceConfig source) {
         super(source);

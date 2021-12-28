@@ -38,7 +38,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.READONLY_EVENT;
 /**
  * ExchangeReceiver
  */
-public class HeaderExchangeHandler implements ChannelHandlerDelegate {
+public class HeaderExchangeHandler implements ChannelHandlerDelegate { //todo @csy 头交换处理器，是指交换协议头吗？
 
     protected static final Logger logger = LoggerFactory.getLogger(HeaderExchangeHandler.class);
 

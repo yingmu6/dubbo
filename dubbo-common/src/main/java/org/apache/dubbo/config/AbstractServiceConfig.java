@@ -80,7 +80,7 @@ public abstract class AbstractServiceConfig extends AbstractInterfaceConfig {
     /**
      * Whether to use token
      */
-    protected String token;
+    protected String token; //todo @csy 令牌token是怎么使用的？以及具体原理是怎样的？
 
     /**
      * Whether to export access logs to logs

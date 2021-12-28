@@ -43,10 +43,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.apache.dubbo.common.URL.buildKey;
-import static org.apache.dubbo.common.constants.CommonConstants.DUBBO_VERSION_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.GROUP_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.PATH_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.VERSION_KEY;
+import static org.apache.dubbo.common.constants.CommonConstants.*;
 import static org.apache.dubbo.rpc.protocol.dubbo.CallbackServiceCodec.decodeInvocationArgument;
 
 public class DecodeableRpcInvocation extends RpcInvocation implements Codec, Decodeable { //解码调用信息
@@ -99,7 +96,7 @@ public class DecodeableRpcInvocation extends RpcInvocation implements Codec, Dec
     }
 
     @Override
-    public Object decode(Channel channel, InputStream input) throws IOException {
+    public Object decode(Channel channel, InputStream input) throws IOException { //todo @csy 解码的主要逻辑是怎样的？
         ObjectInput in = CodecSupport.getSerialization(channel.getUrl(), serializationType)
                 .deserialize(channel.getUrl(), input);
 

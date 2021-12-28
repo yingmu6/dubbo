@@ -19,7 +19,7 @@ package org.apache.dubbo.common.serialize.support;
 import java.util.Collection;
 
 /**
- * Interface defining serialization optimizer, there are nothing implementations for now.
+ * Interface defining serialization optimizer, there are nothing implementations for now.（目前没有实现类）
  */
 public interface SerializationOptimizer {
 

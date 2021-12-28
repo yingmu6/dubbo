@@ -24,8 +24,12 @@ import org.apache.dubbo.rpc.Result;
 import org.apache.dubbo.rpc.RpcException;
 
 /**
- *
  * A Invoker wrapper that wrap the invoker and all the metadata (ServiceConfig)
+ */
+
+/**
+ * todo @csy 此类的功能用途是什么？
+ * Delegate： [ˈdelɪɡət] n. 代表，v. 授权，把……委托给
  */
 public class DelegateProviderMetaDataInvoker<T> implements Invoker {
     protected final Invoker<T> invoker;

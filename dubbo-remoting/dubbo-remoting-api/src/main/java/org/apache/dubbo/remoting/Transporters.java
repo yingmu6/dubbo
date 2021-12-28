@@ -53,7 +53,7 @@ public class Transporters { //是网络传输层的门面类，它统一了网�
         } else {
             handler = new ChannelHandlerDispatcher(handlers);
         }
-        return getTransporter().bind(url, handler);
+        return getTransporter().bind(url, handler); //todo @pause read
     }
 
     public static Client connect(String url, ChannelHandler... handler) throws RemotingException {

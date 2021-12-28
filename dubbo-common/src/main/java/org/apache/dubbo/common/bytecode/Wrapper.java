@@ -31,10 +31,10 @@ import java.util.regex.Matcher;
 /**
  * Wrapper.
  */
-public abstract class Wrapper { //包装类
+public abstract class Wrapper { //包装类，todo @csy 封装类的创建以及使用点是怎样的？
     private static final Map<Class<?>, Wrapper> WRAPPER_MAP = new ConcurrentHashMap<Class<?>, Wrapper>(); //class wrapper map
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
-    private static final String[] OBJECT_METHODS = new String[]{"getClass", "hashCode", "toString", "equals"};
+    private static final String[] OBJECT_METHODS = new String[] {"getClass", "hashCode", "toString", "equals"};
     private static final Wrapper OBJECT_WRAPPER = new Wrapper() { //类加载时创建Wrapper实例
         @Override
         public String[] getMethodNames() { //匿名内部类，对应实现抽象方法

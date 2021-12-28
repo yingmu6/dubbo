@@ -30,7 +30,7 @@ import org.apache.dubbo.remoting.exchange.support.header.HeaderExchanger;
  * <a href="http://en.wikipedia.org/wiki/Request-response">Request-Response</a>
  */
 @SPI(HeaderExchanger.NAME)
-public interface Exchanger {
+public interface Exchanger { //Exchanger [ɪksˈtʃeɪndʒə(r)] n. 交换器； todo @csy 都做了哪些交换？
 
     /**
      * bind.
