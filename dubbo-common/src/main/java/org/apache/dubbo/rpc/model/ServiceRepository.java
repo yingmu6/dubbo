@@ -34,7 +34,13 @@ import static org.apache.dubbo.common.BaseServiceMetadata.interfaceFromServiceKe
 import static org.apache.dubbo.common.BaseServiceMetadata.versionFromServiceKey;
 
 /**
- * todo @csy ServiceRepository 功能用途是什么？
+ * ServiceRepository 功能用途是什么？（服务仓库：管理消费端、提供端的元数据模型）
+ * <p>
+ * 1）2.7.5 引入了Servicerepository的概念，在服务注册阶段提前生成ServiceDescriptor和MethodDescriptor，以减少RPC调用阶段计算Service原信息带来的资源消耗。 https://dubbo.apache.org/zh/docs/advanced/consumer-threadpool/（官网）
+ * 2）服务元数据静态化，减少链路计算，consumer端缓存ConsumerModel，provider端缓存ProviderModel，ServiceRepository是服务仓库，它封装了服务相关的元数据、consumer端的元数据模型ConsumerModel以及provider端的元数据模型ProviderModel，
+ * ConsumerModel和ProviderModel两个模型，分别封装了consumer端和provider端的配置
+ * 3）ServiceRepository是存储了所有服务端发布的服务、客户端需要访问的服务，通过ServiceRepository可以获取所有本dubbo实例发布的服务和引用的服务。
+ * ServiceRepository是通过ApplicationModel.getServiceRepository方法创建或者获取的
  */
 public class ServiceRepository extends LifecycleAdapter implements FrameworkExt { //服务仓库：管理服务与ConsumerModel、ProviderModel模型的关系（将数据与行为封装在一个类型，满足类的封装性）
 

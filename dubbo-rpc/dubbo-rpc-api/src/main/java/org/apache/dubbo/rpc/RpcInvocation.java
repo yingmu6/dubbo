@@ -52,7 +52,7 @@ public class RpcInvocation implements Invocation, Serializable {
 
     private transient Class<?>[] parameterTypes;
     private String parameterTypesDesc;
-    private String[] compatibleParamSignatures;
+    private String[] compatibleParamSignatures; //todo @csy 此处属性的值是怎样的？
 
     private Object[] arguments;
 

@@ -19,14 +19,7 @@ package org.apache.dubbo.rpc.proxy;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
-import org.apache.dubbo.rpc.AppResponse;
-import org.apache.dubbo.rpc.AsyncContextImpl;
-import org.apache.dubbo.rpc.AsyncRpcResult;
-import org.apache.dubbo.rpc.Invocation;
-import org.apache.dubbo.rpc.Invoker;
-import org.apache.dubbo.rpc.Result;
-import org.apache.dubbo.rpc.RpcContext;
-import org.apache.dubbo.rpc.RpcException;
+import org.apache.dubbo.rpc.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.CompletableFuture;
@@ -38,9 +31,9 @@ import java.util.concurrent.CompletionException;
 public abstract class AbstractProxyInvoker<T> implements Invoker<T> {
     Logger logger = LoggerFactory.getLogger(AbstractProxyInvoker.class);
 
-    private final T proxy;
+    private final T proxy; //被代理的实例对象
 
-    private final Class<T> type;
+    private final Class<T> type; //被代理的接口Class
 
     private final URL url;
 
@@ -85,7 +78,7 @@ public abstract class AbstractProxyInvoker<T> implements Invoker<T> {
 			CompletableFuture<Object> future = wrapWithFuture(value); //对调用返回的值，按异步进行封装
             CompletableFuture<AppResponse> appResponseFuture = future.handle((obj, t) -> {
                 AppResponse result = new AppResponse();
-                if (t != null) {
+                if (t != null) { //异常对象不为空
                     if (t instanceof CompletionException) {
                         result.setException(t.getCause());
                     } else {
@@ -96,7 +89,7 @@ public abstract class AbstractProxyInvoker<T> implements Invoker<T> {
                 }
                 return result;
             });
-            return new AsyncRpcResult(appResponseFuture, invocation);
+            return new AsyncRpcResult(appResponseFuture, invocation); //构建异步的调用结果
         } catch (InvocationTargetException e) {
             if (RpcContext.getContext().isAsyncStarted() && !RpcContext.getContext().stopAsync()) {
                 logger.error("Provider async started, but got an exception from the original method, cannot write the exception back to consumer because an async result may have returned the new thread.", e);
@@ -113,7 +106,7 @@ public abstract class AbstractProxyInvoker<T> implements Invoker<T> {
         } else if (value instanceof CompletableFuture) {
             return (CompletableFuture<Object>) value;
         }
-        return CompletableFuture.completedFuture(value);
+        return CompletableFuture.completedFuture(value); //todo @csy 此处为啥要用异步处理，是哪里处理比较耗时？
     }
 
     // 调用某个实例的某个方法

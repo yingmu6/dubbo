@@ -20,12 +20,7 @@ import org.apache.dubbo.common.Experimental;
 
 import java.io.Serializable;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -44,7 +39,7 @@ import java.util.function.Function;
  * @see org.apache.dubbo.rpc.Invoker#invoke(Invocation)
  * @see AppResponse
  */
-public interface Result extends Serializable {
+public interface Result extends Serializable { //todo @csy Result的几个实现类，各有什么用途？做下比较
 
     /**
      * Get invoke result.

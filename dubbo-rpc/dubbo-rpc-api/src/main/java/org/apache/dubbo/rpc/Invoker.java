@@ -26,6 +26,11 @@ import org.apache.dubbo.common.Node;
  * @see org.apache.dubbo.rpc.protocol.AbstractInvoker
  */
 public interface Invoker<T> extends Node {
+    /**
+     * Invoker是提供者、消费者都会用到的吗？最终的执行都是Invoker执行的吗？
+     * 解：Invoker是实体域，它是Dubbo的核心模型，其它模型都向它靠扰，或转换成它，它代表一个可执行体，可向它发起invoke调用，
+     * 它有可能是一个本地的实现，也可能是一个远程的实现，也可能一个集群实现。（官网描述）
+     */
 
     /**
      * get service interface.（获取服务接口）

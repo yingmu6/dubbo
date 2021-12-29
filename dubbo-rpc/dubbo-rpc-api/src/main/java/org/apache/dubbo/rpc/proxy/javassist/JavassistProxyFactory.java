@@ -43,13 +43,13 @@ public class JavassistProxyFactory extends AbstractProxyFactory {
     @Override
     public <T> Invoker<T> getInvoker(T proxy, Class<T> type, URL url) { //proxy：被代理的实例类，如GreetingServiceImpl@xxx，type：被代理的接口class，如GreetingService
         // TODO Wrapper cannot handle this scenario correctly（在当前场景中不能正常处理）: the classname contains '$'
-        final Wrapper wrapper = Wrapper.getWrapper(proxy.getClass().getName().indexOf('$') < 0 ? proxy.getClass() : type); //若被代理的实例类不包含"$"符合，则取被代理实例类的class对象，否则取被代理接口的class对象
-        return new AbstractProxyInvoker<T>(proxy, type, url) { //todo @pause 获取封装类，待调试
+        final Wrapper wrapper = Wrapper.getWrapper(proxy.getClass().getName().indexOf('$') < 0 ? proxy.getClass() : type); //若被代理的实例类若不包含"$"符号，则取被代理实例类的class对象，否则取被代理接口的class对象
+        return new AbstractProxyInvoker<T>(proxy, type, url) { //匿名类
             @Override
             protected Object doInvoke(T proxy, String methodName,
                                       Class<?>[] parameterTypes,
                                       Object[] arguments) throws Throwable {
-                return wrapper.invokeMethod(proxy, methodName, parameterTypes, arguments); //todo @csy 此处是怎么将封装类与代理类结合使用的？
+                return wrapper.invokeMethod(proxy, methodName, parameterTypes, arguments); //调用Wrapper的invokeMethod方法，invokeMethod最终会调用目标方法
             }
         };
     }

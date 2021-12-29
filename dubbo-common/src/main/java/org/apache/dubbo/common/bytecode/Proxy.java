@@ -33,7 +33,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.MAX_PROXY_COUNT;
  * Proxy.
  */
 
-public abstract class Proxy { //代理抽象类
+public abstract class Proxy { //代理抽象类 todo @csy 代理类的产生逻辑待了解？
     /**
      * InvocationHandler每个代理类都会有与之关联的处理类InvocationHandler，当代理类中的方法被调用时，会回调InvocationHandler中的invoke方法
      * https://blog.csdn.net/yaomingyang/article/details/80981004
@@ -79,7 +79,7 @@ public abstract class Proxy { //代理抽象类
      * @param ics interface class array.
      * @return Proxy instance.
      */
-    public static Proxy getProxy(ClassLoader cl, Class<?>... ics) { //创建代理具体的实现逻辑
+    public static Proxy getProxy(ClassLoader cl, Class<?>... ics) { //创建代理具体的实现逻辑（通过javassist字节码操作，创建代理对象）
         if (ics.length > MAX_PROXY_COUNT) {
             throw new IllegalArgumentException("interface limit exceeded");
         }

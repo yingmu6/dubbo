@@ -31,8 +31,15 @@ import java.util.regex.Matcher;
 /**
  * Wrapper.
  */
-public abstract class Wrapper { //包装类，todo @csy 封装类的创建以及使用点是怎样的？
-    private static final Map<Class<?>, Wrapper> WRAPPER_MAP = new ConcurrentHashMap<Class<?>, Wrapper>(); //class wrapper map
+public abstract class Wrapper {
+    /**
+     * 包装类，封装类的创建以及使用点是怎样的？
+     * 解：Wrapper用于“包裹”目标类，Wrapper是一个抽象类，仅可通过 getWrapper(Class) 方法创建子类。在创建Wrapper子类的过程中，
+     * 子类代码生成逻辑会对getWrapper方法传入的Class对象进行解析，拿到诸如类方法，类成员变量等信息。以及生成 invokeMethod
+     * 方法代码和其他一些方法代码。代码生成完毕后，通过 Javassist 生成 Class 对象，最后再通过反射创建Wrapper实例
+     * https://dubbo.apache.org/zh/docs/v2.7/dev/source/export-service/（官网描述）
+     */
+    private static final Map<Class<?>, Wrapper> WRAPPER_MAP = new ConcurrentHashMap<Class<?>, Wrapper>(); //class wrapper map：类与Wrapper的缓存，当需要执行调用时，根据Class即可找到Wrapper，然后通过Wrapper调用目标对象中方法，减少反射调用
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
     private static final String[] OBJECT_METHODS = new String[] {"getClass", "hashCode", "toString", "equals"};
     private static final Wrapper OBJECT_WRAPPER = new Wrapper() { //类加载时创建Wrapper实例
@@ -102,16 +109,21 @@ public abstract class Wrapper { //包装类，todo @csy 封装类的创建以及
     public static Wrapper getWrapper(Class<?> c) {
         while (ClassGenerator.isDynamicClass(c)) // can not wrapper on dynamic class.
         {
-            c = c.getSuperclass();
+            c = c.getSuperclass(); //不能封装动态类，动态类取它的父类进行封装
         }
 
-        if (c == Object.class) {
+        if (c == Object.class) { //Object 返回默认的对象封装类
             return OBJECT_WRAPPER;
         }
 
         return WRAPPER_MAP.computeIfAbsent(c, key -> makeWrapper(key)); //构建封装类，并设置到缓存中，key的值与c相同
     }
 
+    /**
+     * todo @csy 创建封装类的问题点
+     * 1）创建的封装类，做了哪些功能增强，还是说只是为了减少反射调用，只实现了目标类的方法调用？
+     * 2）本地方法调用，底层原理是怎样的？是不是class的invoke方法
+     */
     private static Wrapper makeWrapper(Class<?> c) { //为指定class构建Wrapper封装类的实例
         if (c.isPrimitive()) { //基本类型不能创建封装类
             throw new IllegalArgumentException("Can not create wrapper for primitive type: " + c);
@@ -135,7 +147,7 @@ public abstract class Wrapper { //包装类，todo @csy 封装类的创建以及
         List<String> dmns = new ArrayList<>(); // declaring method names.
 
         // get all public field.
-        for (Field f : c.getFields()) {
+        for (Field f : c.getFields()) { //处理被封装类的所有public字段
             String fn = f.getName();
             Class<?> ft = f.getType();
             if (Modifier.isStatic(f.getModifiers()) || Modifier.isTransient(f.getModifiers())) { //static、transient修饰的字段不处理
@@ -149,7 +161,7 @@ public abstract class Wrapper { //包装类，todo @csy 封装类的创建以及
 
         Method[] methods = c.getMethods();
         // get all public method.
-        boolean hasMethod = hasMethods(methods);
+        boolean hasMethod = hasMethods(methods); //处理被封装类的所有public方法
         if (hasMethod) { //存在方法时处理
             c3.append(" try{");
             for (Method m : methods) {
@@ -212,13 +224,13 @@ public abstract class Wrapper { //包装类，todo @csy 封装类的创建以及
             String md = entry.getKey(); //暴露接口中的方法描述信息，如hello(Lorg/apache/dubbo/demo/FruitEnum;)Ljava/lang/String;
             Method method = entry.getValue();
             if ((matcher = ReflectUtils.GETTER_METHOD_DESC_PATTERN.matcher(md)).matches()) { //判断是否匹配get方法对应的描述信息
-                String pn = propertyName(matcher.group(1));
+                String pn = propertyName(matcher.group(1)); //todo @csy matcher的group()功能用途是怎样的？
                 c2.append(" if( $2.equals(\"").append(pn).append("\") ){ return ($w)w.").append(method.getName()).append("(); }");
                 pts.put(pn, method.getReturnType());
             } else if ((matcher = ReflectUtils.IS_HAS_CAN_METHOD_DESC_PATTERN.matcher(md)).matches()) { //匹配is、has、can方法
                 String pn = propertyName(matcher.group(1));
                 c2.append(" if( $2.equals(\"").append(pn).append("\") ){ return ($w)w.").append(method.getName()).append("(); }");
-                pts.put(pn, method.getReturnType());
+                pts.put(pn, method.getReturnType()); //todo @csy 按道理set、get方法都会对应一个属性，此处都会取值，相当于键pn是相同的，会不会被覆盖？
             } else if ((matcher = ReflectUtils.SETTER_METHOD_DESC_PATTERN.matcher(md)).matches()) { //匹配set方法
                 Class<?> pt = method.getParameterTypes()[0];
                 String pn = propertyName(matcher.group(1));
@@ -264,6 +276,7 @@ public abstract class Wrapper { //包装类，todo @csy 封装类的创建以及
             for (Method m : ms.values()) {
                 wc.getField("mts" + ix++).set(null, m.getParameterTypes());
             }
+            // todo @csy 使用工具arthas，把封装类的代码，打印出来
             return (Wrapper) wc.newInstance(); //使用Class对象创建实例，并强转为Wrapper类型
         } catch (RuntimeException e) {
             throw e;

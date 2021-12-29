@@ -23,7 +23,7 @@ package org.apache.dubbo.rpc;
  * The demo is {@see com.alibaba.dubbo.examples.async.AsyncConsumer}
  * and {@see com.alibaba.dubbo.examples.async.AsyncProvider}
  */
-public interface AsyncContext {
+public interface AsyncContext { //todo @csy 异步上下文，是指啥？
 
     /**
      * write value and complete the async context.

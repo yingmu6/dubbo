@@ -29,12 +29,17 @@ import java.lang.reflect.Method;
 
 /**
  * InvokerHandler
+ * 1）代理模式：通过代理间接的调用被代理对象的方法
+ * 2）Java的反射包提供了一个Porxy类和InvokationHandler接口。它们结合在一起后可以创建动态代理类。Porxy类基于传递的参数创建动态代理类。
+ * InvokationHandler则用于激发动态代理类的方法。这个过程是在程序执行过程中动态生成与处理的，所以叫动态代理
+ * 3）动态代理就是Proxy的class文件在程序运行前是不存在，其字节码是在运行的时候自动生成的。
+ * https://www.jianshu.com/p/4df6e4d7eb46
  */
 public class InvokerInvocationHandler implements InvocationHandler {
     // InvocationHandler：每一个代理实例都与一个调用处理类关联，当代理实例上的方法被调用时，会调用InvocationHandler的invoke方法（方法回调）
     private static final Logger logger = LoggerFactory.getLogger(InvokerInvocationHandler.class);
     private final Invoker<?> invoker;
-    private ConsumerModel consumerModel;
+    private ConsumerModel consumerModel; //todo @csy 此处为啥只有消费者模型，不用维护提供者模型吗？
 
     public InvokerInvocationHandler(Invoker<?> handler) { //构造invoker对应的处理类
         this.invoker = handler;
@@ -45,7 +50,7 @@ public class InvokerInvocationHandler implements InvocationHandler {
     }
 
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable { //todo @csy 该方法的功能用途是什么？
         if (method.getDeclaringClass() == Object.class) {
             return method.invoke(invoker, args);
         }
@@ -63,7 +68,7 @@ public class InvokerInvocationHandler implements InvocationHandler {
         } else if (parameterTypes.length == 1 && "equals".equals(methodName)) {
             return invoker.equals(args[0]);
         }
-        RpcInvocation rpcInvocation = new RpcInvocation(method, invoker.getInterface().getName(), args);
+        RpcInvocation rpcInvocation = new RpcInvocation(method, invoker.getInterface().getName(), args); //todo @pause
         String serviceKey = invoker.getUrl().getServiceKey();
         rpcInvocation.setTargetServiceUniqueName(serviceKey);
       

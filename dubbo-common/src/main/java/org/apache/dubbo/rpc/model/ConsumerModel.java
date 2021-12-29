@@ -21,18 +21,12 @@ import org.apache.dubbo.common.utils.Assert;
 import org.apache.dubbo.config.ReferenceConfigBase;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 /**
  * This model is bound to your reference's configuration, for example, group, version or method level configuration.
  */
-public class ConsumerModel {
+public class ConsumerModel { //todo @csy 数据模型的功能用途是什么？
     private String serviceKey;
     private final ServiceDescriptor serviceModel;
     private final ReferenceConfigBase<?> referenceConfig;
