@@ -86,7 +86,7 @@ public class RegistryProtocol implements Protocol {
     private final ProviderConfigurationListener providerConfigurationListener = new ProviderConfigurationListener();
     //To solve the problem of RMI repeated exposure port conflicts, the services that have been exposed are no longer exposed.
     //providerurl <--> exporter
-    private final ConcurrentMap<String, ExporterChangeableWrapper<?>> bounds = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, ExporterChangeableWrapper<?>> bounds = new ConcurrentHashMap<>(); //todo @csy bounds 数据内容是怎样的？
     private Protocol protocol;
     private RegistryFactory registryFactory;
     private ProxyFactory proxyFactory;
@@ -127,7 +127,7 @@ public class RegistryProtocol implements Protocol {
         return overrideListeners;
     }
 
-    private void register(URL registryUrl, URL registeredProviderUrl) {
+    private void register(URL registryUrl, URL registeredProviderUrl) { //todo @csy 待了解功能用途
         Registry registry = registryFactory.getRegistry(registryUrl);
         registry.register(registeredProviderUrl);
     }
@@ -149,17 +149,17 @@ public class RegistryProtocol implements Protocol {
         // Subscribe the override data
         // FIXME When the provider subscribes, it will affect the scene : a certain JVM exposes the service and call
         //  the same service. Because the subscribed is cached key with the name of the service, it causes the
-        //  subscription information to cover.
+        //  subscription information to cover. （todo @csy 描述的含义是什么？）
         final URL overrideSubscribeUrl = getSubscribedOverrideUrl(providerUrl);
         final OverrideListener overrideSubscribeListener = new OverrideListener(overrideSubscribeUrl, originInvoker);
         overrideListeners.put(overrideSubscribeUrl, overrideSubscribeListener);
 
-        providerUrl = overrideUrlWithConfig(providerUrl, overrideSubscribeListener);
+        providerUrl = overrideUrlWithConfig(providerUrl, overrideSubscribeListener); //todo @csy 此处的功能用途是什么？
         //export invoker
         final ExporterChangeableWrapper<T> exporter = doLocalExport(originInvoker, providerUrl);
 
         // url to registry
-        final Registry registry = getRegistry(originInvoker);
+        final Registry registry = getRegistry(originInvoker); //创建注册实例
         final URL registeredProviderUrl = getUrlToRegistry(providerUrl, registryUrl);
 
         // decide if we need to delay publish
@@ -188,7 +188,7 @@ public class RegistryProtocol implements Protocol {
                 .getActivateExtension(exporter.getOriginInvoker().getUrl(), "registry.protocol.listener");
         if (CollectionUtils.isNotEmpty(listeners)) {
             for (RegistryProtocolListener listener : listeners) {
-                listener.onExport(this, exporter);
+                listener.onExport(this, exporter); //todo @csy 此处是怎么做通知处理的？
             }
         }
     }
@@ -204,7 +204,7 @@ public class RegistryProtocol implements Protocol {
     private <T> ExporterChangeableWrapper<T> doLocalExport(final Invoker<T> originInvoker, URL providerUrl) {
         String key = getCacheKey(originInvoker);
 
-        return (ExporterChangeableWrapper<T>) bounds.computeIfAbsent(key, s -> {
+        return (ExporterChangeableWrapper<T>) bounds.computeIfAbsent(key, s -> { //若缓存中没有查到值，则对应创建ExporterChangeableWrapper
             Invoker<?> invokerDelegate = new InvokerDelegate<>(originInvoker, providerUrl);
             return new ExporterChangeableWrapper<>((Exporter<T>) protocol.export(invokerDelegate), originInvoker);
         });
@@ -311,7 +311,7 @@ public class RegistryProtocol implements Protocol {
     protected URL getRegistryUrl(Invoker<?> originInvoker) {
         URL registryUrl = originInvoker.getUrl();
         if (REGISTRY_PROTOCOL.equals(registryUrl.getProtocol())) {
-            String protocol = registryUrl.getParameter(REGISTRY_KEY, DEFAULT_REGISTRY);
+            String protocol = registryUrl.getParameter(REGISTRY_KEY, DEFAULT_REGISTRY); //todo @csy 若使用默认的dubbo协议，也能做注册协议吗？创建的节点放哪里？
             registryUrl = registryUrl.setProtocol(protocol).removeParameter(REGISTRY_KEY); //将注册协议替换为具体协议，如registry://替换为zookeeper
         }
         return registryUrl;
@@ -331,7 +331,7 @@ public class RegistryProtocol implements Protocol {
      * @param providerUrl
      * @return url to registry.
      */
-    private URL getUrlToRegistry(final URL providerUrl, final URL registryUrl) {
+    private URL getUrlToRegistry(final URL providerUrl, final URL registryUrl) { //todo @csy 该方法的功能用途是啥？
         //The address you see at the registry
         if (!registryUrl.getParameter(SIMPLIFIED_KEY, false)) {
             return providerUrl.removeParameters(getFilteredKeys(providerUrl)).removeParameters(
@@ -554,7 +554,7 @@ public class RegistryProtocol implements Protocol {
      * 2.No need to re-register to the registry after notify
      * 3.The invoker passed by the export method , would better to be the invoker of exporter
      */
-    private class OverrideListener implements NotifyListener {
+    private class OverrideListener implements NotifyListener { //todo @csy 该监听器的功能用途是怎样的？
         private final URL subscribeUrl;
         private final Invoker originInvoker;
 
@@ -589,7 +589,7 @@ public class RegistryProtocol implements Protocol {
             doOverrideIfNecessary();
         }
 
-        public synchronized void doOverrideIfNecessary() {
+        public synchronized void doOverrideIfNecessary() { //todo @csy 此方法的功能用途是怎样的？
             final Invoker<?> invoker;
             if (originInvoker instanceof InvokerDelegate) {
                 invoker = ((InvokerDelegate<?>) originInvoker).getInvoker();
@@ -685,7 +685,7 @@ public class RegistryProtocol implements Protocol {
      *
      * @param <T>
      */
-    private class ExporterChangeableWrapper<T> implements Exporter<T> {
+    private class ExporterChangeableWrapper<T> implements Exporter<T> { //todo @csy 此类的功能用途是什么？
 
         private final ExecutorService executor = newSingleThreadExecutor(new NamedThreadFactory("Exporter-Unexport", true));
 

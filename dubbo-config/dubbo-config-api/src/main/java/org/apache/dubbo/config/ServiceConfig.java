@@ -263,7 +263,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void doExportUrls() {
-        ServiceRepository repository = ApplicationModel.getServiceRepository();
+        ServiceRepository repository = ApplicationModel.getServiceRepository(); //获取服务仓库
         ServiceDescriptor serviceDescriptor = repository.registerService(getInterfaceClass());
         repository.registerProvider(
                 getUniqueServiceName(),
@@ -297,7 +297,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
         }
 
         Map<String, String> map = new HashMap<String, String>();
-        map.put(SIDE_KEY, PROVIDER_SIDE);
+        map.put(SIDE_KEY, PROVIDER_SIDE); //设置所在端：此处side为提供端
 
         ServiceConfig.appendRuntimeParameters(map);
         AbstractConfig.appendParameters(map, getMetrics());
@@ -318,7 +318,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
                 String retryKey = method.getName() + ".retry";
                 if (map.containsKey(retryKey)) {
                     String retryValue = map.remove(retryKey);
-                    if ("false".equals(retryValue)) { // 对重试参数进行转换处理
+                    if ("false".equals(retryValue)) { // 对重试参数retry进行转换处理
                         map.put(method.getName() + ".retries", "0");
                     }
                 }
@@ -377,7 +377,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
                 map.put(REVISION_KEY, revision);
             }
 
-            String[] methods = Wrapper.getWrapper(interfaceClass).getMethodNames(); //为暴露的接口创建封装类
+            String[] methods = Wrapper.getWrapper(interfaceClass).getMethodNames(); //为暴露的接口创建封装类，且获取到方法名列表
             if (methods.length == 0) {
                 logger.warn("No method found in service interface " + interfaceClass.getName());
                 map.put(METHODS_KEY, ANY_VALUE);
@@ -393,7 +393,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
             token = provider.getToken();
         }
 
-        if (!ConfigUtils.isEmpty(token)) {
+        if (!ConfigUtils.isEmpty(token)) { //todo @csy token的功能用途是怎样的？
             if (ConfigUtils.isDefault(token)) {
                 map.put(TOKEN_KEY, UUID.randomUUID().toString()); //默认产生的token是uuid值
             } else {
@@ -406,7 +406,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
         // export service
         String host = findConfigedHosts(protocolConfig, registryURLs, map);
         Integer port = findConfigedPorts(protocolConfig, name, map);
-        URL url = new URL(name, host, port, getContextPath(protocolConfig).map(p -> p + "/" + path).orElse(path), map); //构建URL
+        URL url = new URL(name, host, port, getContextPath(protocolConfig).map(p -> p + "/" + path).orElse(path), map); //构建URL，todo @csy 此处的URL内容会是怎样的？
 
         // You can customize Configurator to append extra parameters
         if (ExtensionLoader.getExtensionLoader(ConfiguratorFactory.class)
@@ -428,9 +428,10 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
                 if (CollectionUtils.isNotEmpty(registryURLs)) { //处理注册协议
                     for (URL registryURL : registryURLs) {
                         //if protocol is only injvm ,not register
-                        if (LOCAL_PROTOCOL.equalsIgnoreCase(url.getProtocol())) {
+                        if (LOCAL_PROTOCOL.equalsIgnoreCase(url.getProtocol())) { //结合范围score以及协议头protocol，来判断暴露远程还是本地服务
                             continue;
                         }
+                        //DYNAMIC_KEY：表示注册中心的节点是否是动态的，值为true：动态的，对应临时节点，否则为永久节点
                         url = url.addParameterIfAbsent(DYNAMIC_KEY, registryURL.getParameter(DYNAMIC_KEY));
                         URL monitorUrl = ConfigValidationUtils.loadMonitor(this, registryURL);
                         if (monitorUrl != null) {
@@ -445,7 +446,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
                         }
 
                         // For providers, this is used to enable custom proxy to generate invoker
-                        String proxy = url.getParameter(PROXY_KEY);
+                        String proxy = url.getParameter(PROXY_KEY); //todo @csy 这里的值，具体会是什么？
                         if (StringUtils.isNotEmpty(proxy)) {
                             registryURL = registryURL.addParameter(PROXY_KEY, proxy);
                         }
@@ -456,7 +457,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
                         Exporter<?> exporter = PROTOCOL.export(wrapperInvoker);
                         exporters.add(exporter);
                     }
-                } else {
+                } else { //todo @csy registryURLs 什么情况下会为空？
                     if (logger.isInfoEnabled()) {
                         logger.info("Export dubbo service " + interfaceClass.getName() + " to url " + url);
                     }
@@ -487,7 +488,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
         URL local = URLBuilder.from(url)
                 .setProtocol(LOCAL_PROTOCOL) //本地暴露的协议为injvm
                 .setHost(LOCALHOST_VALUE)
-                .setPort(0)
+                .setPort(0) //本地服务：不开启端口
                 .build();
         Exporter<?> exporter = PROTOCOL.export(
                 PROXY_FACTORY.getInvoker(ref, (Class) interfaceClass, local)); //方法中会选择具体实例，执行对应的方法，本处是InjvmProtocol实例，会执行对应的export()方法

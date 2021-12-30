@@ -28,7 +28,7 @@ import java.util.stream.Stream;
  * @see org.apache.dubbo.rpc.Invoker#invoke(Invocation)
  * @see org.apache.dubbo.rpc.RpcInvocation
  */
-public interface Invocation { //调用信息
+public interface Invocation { //会话域：包含调用信息
 
     String getTargetServiceUniqueName();
 
@@ -131,7 +131,7 @@ public interface Invocation { //调用信息
      */
     Invoker<?> getInvoker();
 
-    Object put(Object key, Object value);
+    Object put(Object key, Object value); //设置属性值，如RpcInvocation中的Map<Object, Object> attributes
 
     Object get(Object key);
 

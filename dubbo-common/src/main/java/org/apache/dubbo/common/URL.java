@@ -1207,7 +1207,7 @@ class URL implements Serializable {
         return new URL(protocol, username, password, host, port, path, map);
     }
 
-    public URL addParameters(String... pairs) {
+    public URL addParameters(String... pairs) { //将多个参数以数组形式传入，格式如key1,value1,key2,value2
         if (pairs == null || pairs.length == 0) {
             return this;
         }
@@ -1499,7 +1499,7 @@ class URL implements Serializable {
         return BaseServiceMetadata.buildServiceKey(path, group, version);
     }
 
-    public String toServiceStringWithoutResolving() {
+    public String toServiceStringWithoutResolving() { //todo @csy WithoutResolving 是指啥？
         return buildString(true, false, false, true);
     }
 

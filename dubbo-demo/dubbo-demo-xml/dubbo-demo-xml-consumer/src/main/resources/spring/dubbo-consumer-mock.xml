@@ -26,12 +26,12 @@
     <dubbo:registry address="zookeeper://127.0.0.1:2181"/>
 
     <!-- 方法级别的mock -->
-    <dubbo:reference id="demoService"
-                     check="false"
-                     interface="org.apache.dubbo.demo.DemoService"
-                     timeout="20000">
-       <dubbo:parameter key="sayHello2.mock" value="return hhlll"/>
-    </dubbo:reference>
+<!--    <dubbo:reference id="demoService"-->
+<!--                     check="false"-->
+<!--                     interface="org.apache.dubbo.demo.DemoService"-->
+<!--                     timeout="20000">-->
+<!--       <dubbo:parameter key="sayHello2.mock" value="return hhlll"/>-->
+<!--    </dubbo:reference>-->
 
     <!-- 抛出异常 -->
 <!--    <dubbo:reference id="demoService"-->

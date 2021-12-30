@@ -611,7 +611,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig { //A
         }
         Collection<MetadataReportConfig> metadataReportConfigs = ApplicationModel.getConfigManager().getMetadataConfigs();
         if (CollectionUtils.isNotEmpty(metadataReportConfigs)) {
-            return metadataReportConfigs.iterator().next();
+            return metadataReportConfigs.iterator().next(); //取列表中的其中一个
         }
         return null;
     }

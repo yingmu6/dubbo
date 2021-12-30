@@ -26,7 +26,7 @@ import org.apache.dubbo.rpc.Invoker;
  * of RegistryProtocol. For example: re-export or re-refer on the fly when certain condition meets.
  */
 @SPI
-public interface RegistryProtocolListener {
+public interface RegistryProtocolListener { //todo @csy 为啥没有实现类？是怎么调用的？
     /**
      * Notify RegistryProtocol's listeners when a service is registered
      *

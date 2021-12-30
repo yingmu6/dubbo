@@ -41,7 +41,14 @@ import static org.apache.dubbo.rpc.Constants.TOKEN_KEY;
  *
  * @serial Don't change the class name and properties.
  */
-public class RpcInvocation implements Invocation, Serializable {
+
+/**
+ * Dubbo 的核心领域模型中：
+ * 1）Protocol：语义上：是"协议"，领域模型上：是"服务域"，它是Invoker暴露和引用的主功能入口，它负责Invoker的生命周期管理。
+ * 2）Invoker 语义上：是"调用者"，领域模型上：是"实体域"，它是Dubbo的核心模型，其它模型都向它靠扰，或转换成它，它代表一个可执行体，可向它发起 invoke 调用，它有可能是一个本地的实现，也可能是一个远程的实现，也可能一个集群实现。
+ * 3）Invocation 语义上：是"调用者"，领域模型上：是"会话域"，它持有调用过程中的变量，比如方法名，参数等。
+ */
+public class RpcInvocation implements Invocation, Serializable { //RpcInvocation的功能用途是什么？解：用来存储每次调用的信息
 
     private static final long serialVersionUID = -4355285085441097045L;
 
@@ -52,7 +59,7 @@ public class RpcInvocation implements Invocation, Serializable {
 
     private transient Class<?>[] parameterTypes;
     private String parameterTypesDesc;
-    private String[] compatibleParamSignatures; //todo @csy 此处属性的值是怎样的？
+    private String[] compatibleParamSignatures; //此处属性的值是怎样的？解：值为参数的class名称，如"java.lang.String"
 
     private Object[] arguments;
 
@@ -62,7 +69,7 @@ public class RpcInvocation implements Invocation, Serializable {
     private Map<String, Object> attachments;
 
     /**
-     * Only used on the caller side, will not appear on the wire.
+     * Only used on the caller side, will not appear on the wire（导线）.
      */
     private Map<Object, Object> attributes = new HashMap<Object, Object>();
 
@@ -72,7 +79,7 @@ public class RpcInvocation implements Invocation, Serializable {
 
     private transient Type[] returnTypes;
 
-    private transient InvokeMode invokeMode;
+    private transient InvokeMode invokeMode; //调用模式
 
     public RpcInvocation() {
     }
@@ -158,7 +165,7 @@ public class RpcInvocation implements Invocation, Serializable {
         }
 
         if (parameterTypesDesc == null) { //若serviceName为空或没有找到MethodDescriptor、methodDescriptor信息，则取当前成员变量进行处理
-            this.parameterTypesDesc = ReflectUtils.getDesc(this.getParameterTypes());
+            this.parameterTypesDesc = ReflectUtils.getDesc(this.getParameterTypes()); //获取参数的类型描述信息，如Ljava/lang/String;
             this.compatibleParamSignatures = Stream.of(this.parameterTypes).map(Class::getName).toArray(String[]::new);
             this.returnTypes = RpcUtils.getReturnTypes(this);
         }

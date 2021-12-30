@@ -23,7 +23,7 @@ package org.apache.dubbo.rpc;
  * @see org.apache.dubbo.rpc.ExporterListener
  * @see org.apache.dubbo.rpc.protocol.AbstractExporter
  */
-public interface Exporter<T> {
+public interface Exporter<T> { //todo @csy Exporter应该怎么称谓？是不是管理Invoker生命周期的？
 
     /**
      * get invoker.

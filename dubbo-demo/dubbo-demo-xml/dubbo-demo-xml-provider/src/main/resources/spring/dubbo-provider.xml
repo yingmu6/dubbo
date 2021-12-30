@@ -37,22 +37,24 @@
     <dubbo:protocol name="dubbo" port="20881" status="server"/>
 
 <!--    <dubbo:parameter key="prompt" value="csy22"/> 错误的配置 -->
+<!--    <bean id="demoService" class="org.apache.dubbo.demo.provider.DemoServiceImqqp"/>-->
 
-    <bean id="demoService" class="org.apache.dubbo.demo.provider.DemoServiceImqqp"/>
     <bean id="greetingService" class="org.apache.dubbo.demo.provider.GreetingServiceImpl"/>
-    <dubbo:provider>
-        <dubbo:service interface="org.apache.dubbo.demo.DemoService" ref="demoService">
-            <dubbo:method name="sayHello" timeout="3000">
-                <!--            <dubbo:parameter key="name" value="haha"/> &lt;!&ndash; 配置自定义参数 &ndash;&gt;-->
-                <dubbo:argument index="0" callback="false"/> <!-- 对方法参数的特征进行描述-->
-            </dubbo:method>
-        </dubbo:service>
-        <dubbo:service interface="org.apache.dubbo.demo.GreetingService" ref="greetingService">
-            <dubbo:method name="hello" timeout="3000">
-                <dubbo:argument index="0" callback="false"/>
-            </dubbo:method>
-        </dubbo:service>
-    </dubbo:provider>
+    <dubbo:service interface="org.apache.dubbo.demo.GreetingService" ref="greetingService" token="true"/>
+
+<!--    <dubbo:provider>-->
+<!--        <dubbo:service interface="org.apache.dubbo.demo.DemoService" ref="demoService" token="123456">-->
+<!--            <dubbo:method name="sayHello" timeout="3000">-->
+<!--                &lt;!&ndash;            <dubbo:parameter key="name" value="haha"/> &lt;!&ndash; 配置自定义参数 &ndash;&gt;&ndash;&gt;-->
+<!--                <dubbo:argument index="0" callback="false"/> &lt;!&ndash; 对方法参数的特征进行描述&ndash;&gt;-->
+<!--            </dubbo:method>-->
+<!--        </dubbo:service>-->
+<!--        <dubbo:service interface="org.apache.dubbo.demo.GreetingService" ref="greetingService">-->
+<!--            <dubbo:method name="hello" timeout="3000">-->
+<!--                <dubbo:argument index="0" callback="false"/>-->
+<!--            </dubbo:method>-->
+<!--        </dubbo:service>-->
+<!--    </dubbo:provider>-->
 
 <!--    <bean id="actives" class="org.apache.dubbo.demo.provider.DemoServiceImqqp"/>-->
 <!--    <bean id="greetingService" class="org.apache.dubbo.demo.provider.GreetingServiceImpl">-->

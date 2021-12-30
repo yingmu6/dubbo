@@ -31,7 +31,7 @@ import java.lang.reflect.Method;
  * InvokerHandler
  * 1）代理模式：通过代理间接的调用被代理对象的方法
  * 2）Java的反射包提供了一个Porxy类和InvokationHandler接口。它们结合在一起后可以创建动态代理类。Porxy类基于传递的参数创建动态代理类。
- * InvokationHandler则用于激发动态代理类的方法。这个过程是在程序执行过程中动态生成与处理的，所以叫动态代理
+ * InvocationHandler则用于激发动态代理类的方法。这个过程是在程序执行过程中动态生成与处理的，所以叫动态代理
  * 3）动态代理就是Proxy的class文件在程序运行前是不存在，其字节码是在运行的时候自动生成的。
  * https://www.jianshu.com/p/4df6e4d7eb46
  */
@@ -68,7 +68,7 @@ public class InvokerInvocationHandler implements InvocationHandler {
         } else if (parameterTypes.length == 1 && "equals".equals(methodName)) {
             return invoker.equals(args[0]);
         }
-        RpcInvocation rpcInvocation = new RpcInvocation(method, invoker.getInterface().getName(), args); //todo @pause
+        RpcInvocation rpcInvocation = new RpcInvocation(method, invoker.getInterface().getName(), args);
         String serviceKey = invoker.getUrl().getServiceKey();
         rpcInvocation.setTargetServiceUniqueName(serviceKey);
       

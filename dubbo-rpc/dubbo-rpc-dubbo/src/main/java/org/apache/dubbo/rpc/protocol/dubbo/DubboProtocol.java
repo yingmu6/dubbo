@@ -66,7 +66,7 @@ public class DubboProtocol extends AbstractProtocol {
     private ExchangeHandler requestHandler = new ExchangeHandlerAdapter() {
 
         @Override
-        public CompletableFuture<Object> reply(ExchangeChannel channel, Object message) throws RemotingException {
+        public CompletableFuture<Object> reply(ExchangeChannel channel, Object message) throws RemotingException { //回复响应，todo @csy 此处只能是提供端回复消费端吗？
 
             if (!(message instanceof Invocation)) {
                 throw new RemotingException(channel, "Unsupported request: "
@@ -77,7 +77,7 @@ public class DubboProtocol extends AbstractProtocol {
             Invocation inv = (Invocation) message;
             Invoker<?> invoker = getInvoker(channel, inv);
             // need to consider backward-compatibility if it's a callback
-            if (Boolean.TRUE.toString().equals(inv.getObjectAttachments().get(IS_CALLBACK_SERVICE_INVOKE))) {
+            if (Boolean.TRUE.toString().equals(inv.getObjectAttachments().get(IS_CALLBACK_SERVICE_INVOKE))) { //todo @csy 回调服务指的是啥？
                 String methodsStr = invoker.getUrl().getParameters().get("methods");
                 boolean hasMethod = false;
                 if (methodsStr == null || !methodsStr.contains(",")) {
@@ -100,12 +100,12 @@ public class DubboProtocol extends AbstractProtocol {
                 }
             }
             RpcContext.getContext().setRemoteAddress(channel.getRemoteAddress());
-            Result result = invoker.invoke(inv);
+            Result result = invoker.invoke(inv); //执行具体的调用
             return result.thenApply(Function.identity());
         }
 
         @Override
-        public void received(Channel channel, Object message) throws RemotingException {
+        public void received(Channel channel, Object message) throws RemotingException { //todo @csy 什么时候会调用该方法的？
             if (message instanceof Invocation) {
                 reply((ExchangeChannel) channel, message);
 
@@ -183,7 +183,7 @@ public class DubboProtocol extends AbstractProtocol {
         return Collections.unmodifiableCollection(exporterMap.values());
     }
 
-    private boolean isClientSide(Channel channel) {
+    private boolean isClientSide(Channel channel) { //判断是否是客户端
         InetSocketAddress address = channel.getRemoteAddress();
         URL url = channel.getUrl();
         return url.getPort() == address.getPort() &&
@@ -223,7 +223,7 @@ public class DubboProtocol extends AbstractProtocol {
                     ", channel: consumer: " + channel.getRemoteAddress() + " --> provider: " + channel.getLocalAddress() + ", message:" + getInvocationWithoutData(inv));
         }
 
-        return exporter.getInvoker();
+        return exporter.getInvoker(); //从Exporter中查询到Invoker信息
     }
 
     public Collection<Invoker<?>> getInvokers() {
@@ -269,7 +269,7 @@ public class DubboProtocol extends AbstractProtocol {
         String key = url.getAddress();
         //client can export a service which's only for server to invoke
         boolean isServer = url.getParameter(IS_SERVER_KEY, true);
-        if (isServer) {
+        if (isServer) { //服务端才进行处理
             ProtocolServer server = serverMap.get(key);
             if (server == null) {
                 synchronized (this) {

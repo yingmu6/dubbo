@@ -84,7 +84,7 @@ public class InjvmProtocol extends AbstractProtocol implements Protocol { //todo
     }
 
     @Override
-    public <T> Exporter<T> export(Invoker<T> invoker) throws RpcException { //没有发起远程调用，没有打开端口
+    public <T> Exporter<T> export(Invoker<T> invoker) throws RpcException { //没有发起远程调用，没有打开端口，只是构建了InjvmExporter对象，并做了初始化
         return new InjvmExporter<T>(invoker, invoker.getUrl().getServiceKey(), exporterMap);
     }
 

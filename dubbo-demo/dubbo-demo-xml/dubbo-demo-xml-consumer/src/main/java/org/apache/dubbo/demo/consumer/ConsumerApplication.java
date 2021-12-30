@@ -16,9 +16,7 @@
  */
 package org.apache.dubbo.demo.consumer;
 
-import com.alibaba.fastjson.JSON;
-import org.apache.dubbo.demo.DemoService;
-import org.apache.dubbo.rpc.service.GenericService;
+import org.apache.dubbo.demo.GreetingService;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class ConsumerApplication {
@@ -29,19 +27,22 @@ public class ConsumerApplication {
     public static void main(String[] args) throws Exception {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("spring/dubbo-consumer.xml");
         context.start();
-        DemoService demoService = context.getBean("demoService", DemoService.class);
-//        CompletableFuture<String> hello = demoService.sayHelloAsync("world");
-        String response = demoService.sayHello2("how are you?");
-        System.out.println("demoService 结果: " + response);
+//        DemoService demoService = context.getBean("demoService", DemoService.class);
+////        CompletableFuture<String> hello = demoService.sayHelloAsync("world");
+//        String response = demoService.sayHello2("how are you?");
+//        System.out.println("demoService 结果: " + response);
+
+        GreetingService greetingService = context.getBean("greetingService", GreetingService.class);
+        System.out.println(greetingService.hello("GreetingService: 你好！"));
 
         // 泛化调用
-        GenericService genericService = (GenericService) context.getBean("demoService");
-        String[] parameterTypes = new String[1];
-        parameterTypes[0] = "java.lang.String";
-        Object[] argValues = new Object[1];
-        argValues[0] = "fff";
-        Object obj = genericService.$invoke("sayHello", parameterTypes, argValues);
-        System.out.println(JSON.toJSONString(obj));
+//        GenericService genericService = (GenericService) context.getBean("demoService");
+//        String[] parameterTypes = new String[1];
+//        parameterTypes[0] = "java.lang.String";
+//        Object[] argValues = new Object[1];
+//        argValues[0] = "fff";
+//        Object obj = genericService.$invoke("sayHello", parameterTypes, argValues);
+//        System.out.println(JSON.toJSONString(obj));
 
 //        Class cls = demoService.getClass();
 //        System.out.println("是否有注解：" + cls.isAnnotationPresent(BasicInfo.class));

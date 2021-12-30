@@ -29,7 +29,7 @@ public interface RegistryConstants {
 
     String PROVIDERS_CATEGORY = "providers";
 
-    String CONSUMERS_CATEGORY = "consumers";
+    String CONSUMERS_CATEGORY = "consumers"; //todo @csy 注册中心的这些目录都管理了哪些内容？
 
     String ROUTERS_CATEGORY = "routers";
 

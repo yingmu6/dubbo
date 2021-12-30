@@ -81,7 +81,7 @@ public class ProviderModel {
         this.urls.add(url);
     }
 
-    public static class RegisterStatedURL {
+    public static class RegisterStatedURL { //todo @csy 注册状态url是指啥？
         private volatile URL registryUrl;
         private volatile URL providerUrl;
         private volatile boolean registered;

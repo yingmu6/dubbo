@@ -94,7 +94,7 @@ public class NettyServer extends AbstractServer implements RemotingServer {
                 .option(ChannelOption.SO_REUSEADDR, Boolean.TRUE)
                 .childOption(ChannelOption.TCP_NODELAY, Boolean.TRUE)
                 .childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
-                .childHandler(new ChannelInitializer<SocketChannel>() {
+                .childHandler(new ChannelInitializer<SocketChannel>() { //todo @csy dubbo都定义了哪些处理器
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
                         // FIXME: should we use getTimeout()?
@@ -114,7 +114,7 @@ public class NettyServer extends AbstractServer implements RemotingServer {
         // bind
         ChannelFuture channelFuture = bootstrap.bind(getBindAddress());
         channelFuture.syncUninterruptibly();
-        channel = channelFuture.channel();
+        channel = channelFuture.channel(); //todo @csy netty的创建使用待了解
 
     }
 

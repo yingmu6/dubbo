@@ -105,7 +105,7 @@ public abstract class AbstractRegistryFactory implements RegistryFactory {
                 .addParameter(INTERFACE_KEY, RegistryService.class.getName())
                 .removeParameters(EXPORT_KEY, REFER_KEY)
                 .build();
-        String key = createRegistryCacheKey(url);
+        String key = createRegistryCacheKey(url); //todo @csy key的值是怎样的？
         // Lock the registry access process to ensure a single instance of the registry
         LOCK.lock();
         try {

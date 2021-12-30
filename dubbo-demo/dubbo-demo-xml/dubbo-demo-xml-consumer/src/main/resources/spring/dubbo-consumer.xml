@@ -23,14 +23,14 @@
 
     <dubbo:application name="demo-consumer"/>
 
-    <dubbo:registry address="zookeeper://127.0.0.1:2181"/>
+<!--    <dubbo:registry address="zookeeper://127.0.0.1:2181"/>-->
 
-    <dubbo:reference id="demoService"
-                     check="false"
-                     interface="org.apache.dubbo.demo.DemoService"
-                     timeout="20000"/>
+<!--    <dubbo:reference id="demoService"-->
+<!--                     check="false"-->
+<!--                     interface="org.apache.dubbo.demo.DemoService"-->
+<!--                     timeout="20000"/>-->
 
     <dubbo:consumer>
-        <dubbo:reference id= "greetingService" check="false" interface="org.apache.dubbo.demo.GreetingService"/>
+        <dubbo:reference id= "greetingService" check="false" interface="org.apache.dubbo.demo.GreetingService" url="dubbo://192.168.1.107:20881"/>
     </dubbo:consumer>
 </beans>

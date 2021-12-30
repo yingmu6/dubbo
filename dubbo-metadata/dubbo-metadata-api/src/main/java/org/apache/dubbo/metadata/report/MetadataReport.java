@@ -17,6 +17,7 @@
 package org.apache.dubbo.metadata.report;
 
 
+import com.google.gson.Gson;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.utils.StringUtils;
 import org.apache.dubbo.metadata.URLRevisionResolver;
@@ -25,13 +26,7 @@ import org.apache.dubbo.metadata.report.identifier.MetadataIdentifier;
 import org.apache.dubbo.metadata.report.identifier.ServiceMetadataIdentifier;
 import org.apache.dubbo.metadata.report.identifier.SubscriberMetadataIdentifier;
 
-import com.google.gson.Gson;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySortedSet;
@@ -41,6 +36,10 @@ import static org.apache.dubbo.rpc.model.ApplicationModel.getName;
  * The interface to report the metadata（上报元数据的接口）
  *
  * @see AutoCloseable since 2.7.8
+ */
+
+/**
+ * todo @csy 哪些组件可以作为元数据中心？具体搭建环境实践下
  */
 public interface MetadataReport extends AutoCloseable {//元数据值怎么上报的？解：接口中没看到上报方法，而是存储store、保存save元数据接口
 

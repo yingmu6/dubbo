@@ -69,7 +69,7 @@ public class RemoteWritableMetadataService extends AbstractAbstractWritableMetad
                         providerURL.getParameters());
                 getMetadataReport().storeProviderMetadata(new MetadataIdentifier(providerURL.getServiceInterface(),
                         providerURL.getParameter(VERSION_KEY), providerURL.getParameter(GROUP_KEY),
-                        PROVIDER_SIDE, providerURL.getParameter(APPLICATION_KEY)), fullServiceDefinition);
+                        PROVIDER_SIDE, providerURL.getParameter(APPLICATION_KEY)), fullServiceDefinition); //todo @csy 该类是远程云数据中心，那么有发起远程调用吗？
                 return;
             }
             logger.error("publishProvider interfaceName is empty . url: " + providerURL.toFullString());

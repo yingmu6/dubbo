@@ -16,6 +16,8 @@
  */
 package org.apache.dubbo.metadata.report.support;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
@@ -30,53 +32,20 @@ import org.apache.dubbo.metadata.report.identifier.MetadataIdentifier;
 import org.apache.dubbo.metadata.report.identifier.ServiceMetadataIdentifier;
 import org.apache.dubbo.metadata.report.identifier.SubscriberMetadataIdentifier;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.lang.reflect.Type;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static java.util.concurrent.Executors.newScheduledThreadPool;
-import static java.util.concurrent.Executors.newSingleThreadExecutor;
-import static java.util.concurrent.Executors.newSingleThreadScheduledExecutor;
-import static org.apache.dubbo.common.constants.CommonConstants.APPLICATION_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.CONSUMER_SIDE;
-import static org.apache.dubbo.common.constants.CommonConstants.FILE_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.PROVIDER_SIDE;
-import static org.apache.dubbo.common.constants.CommonConstants.SIDE_KEY;
+import static java.util.concurrent.Executors.*;
+import static org.apache.dubbo.common.constants.CommonConstants.*;
 import static org.apache.dubbo.common.utils.StringUtils.replace;
-import static org.apache.dubbo.metadata.report.support.Constants.CYCLE_REPORT_KEY;
-import static org.apache.dubbo.metadata.report.support.Constants.DEFAULT_METADATA_REPORT_CYCLE_REPORT;
-import static org.apache.dubbo.metadata.report.support.Constants.DEFAULT_METADATA_REPORT_RETRY_PERIOD;
-import static org.apache.dubbo.metadata.report.support.Constants.DEFAULT_METADATA_REPORT_RETRY_TIMES;
-import static org.apache.dubbo.metadata.report.support.Constants.RETRY_PERIOD_KEY;
-import static org.apache.dubbo.metadata.report.support.Constants.RETRY_TIMES_KEY;
-import static org.apache.dubbo.metadata.report.support.Constants.SYNC_REPORT_KEY;
+import static org.apache.dubbo.metadata.report.support.Constants.*;
 
 /**
  *
@@ -122,10 +91,10 @@ public abstract class AbstractMetadataReport implements MetadataReport {
         metadataReportRetry = new MetadataReportRetry(reportServerURL.getParameter(RETRY_TIMES_KEY, DEFAULT_METADATA_REPORT_RETRY_TIMES),
                 reportServerURL.getParameter(RETRY_PERIOD_KEY, DEFAULT_METADATA_REPORT_RETRY_PERIOD));
         this.reportCacheExecutor = newSingleThreadExecutor(new NamedThreadFactory("DubboSaveMetadataReport", true));
-        this.cycleReportExecutor = newSingleThreadScheduledExecutor(new NamedThreadFactory("DubboMetadataReportTimer", true));
+        this.cycleReportExecutor = newSingleThreadScheduledExecutor(new NamedThreadFactory("DubboMetadataReportTimer", true)); //todo @csy 了解下线程池的集中创建方式
         // cycle report the data switch
         if (reportServerURL.getParameter(CYCLE_REPORT_KEY, DEFAULT_METADATA_REPORT_CYCLE_REPORT)) {
-            cycleReportExecutor.scheduleAtFixedRate(this::publishAll, calculateStartTime(), ONE_DAY_IN_MILLISECONDS, TimeUnit.MILLISECONDS);
+            cycleReportExecutor.scheduleAtFixedRate(this::publishAll, calculateStartTime(), ONE_DAY_IN_MILLISECONDS, TimeUnit.MILLISECONDS); //todo @csy scheduleAtFixedRate 的功能用途是什么？
         }
     }
 
@@ -138,7 +107,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
                 ".cache";
         String filename = reportServerURL.getParameter(FILE_KEY, defaultFilename);
         File file = null;
-        if (ConfigUtils.isNotEmpty(filename)) {
+        if (ConfigUtils.isNotEmpty(filename)) { //todo @csy 文件中都存储了什么内容？
             file = new File(filename);
             if (!file.exists() && file.getParentFile() != null && !file.getParentFile().exists()) {
                 if (!file.getParentFile().mkdirs()) {
@@ -164,7 +133,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
         this.reportURL = url;
     }
 
-    private void doSaveProperties(long version) {
+    private void doSaveProperties(long version) { //todo @csy 此处都是怎样保存的？保存在属性文件中吗
         if (version < lastCacheChanged.get()) {
             return;
         }
@@ -178,7 +147,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
                 lockfile.createNewFile();
             }
             try (RandomAccessFile raf = new RandomAccessFile(lockfile, "rw");
-                 FileChannel channel = raf.getChannel()) {
+                 FileChannel channel = raf.getChannel()) { //文件通道FileChannel、FileLock待了解
                 FileLock lock = channel.tryLock();
                 if (lock == null) {
                     throw new IOException("Can not lock the metadataReport cache file " + localCacheFile.getAbsolutePath() + ", ignore and retry later, maybe multi java process use the file, please config: dubbo.metadata.file=xxx.properties");
@@ -277,7 +246,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
             failedReports.remove(providerMetadataIdentifier);
             Gson gson = new Gson();
             String data = gson.toJson(serviceDefinition);
-            doStoreProviderMetadata(providerMetadataIdentifier, data);
+            doStoreProviderMetadata(providerMetadataIdentifier, data); //todo @csy 是怎样保存到元数据中心的？
             saveProperties(providerMetadataIdentifier, data, true, !syncReport);
         } catch (Exception e) {
             // retry again. If failed again, throw exception.
@@ -436,7 +405,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
                     if (retryScheduledFuture == null) {
                         retryScheduledFuture = retryExecutor.scheduleWithFixedDelay(new Runnable() {
                             @Override
-                            public void run() {
+                            public void run() { //todo @csy 重试任务都做了啥？
                                 // Check and connect to the metadata
                                 try {
                                     int times = retryCounter.incrementAndGet();

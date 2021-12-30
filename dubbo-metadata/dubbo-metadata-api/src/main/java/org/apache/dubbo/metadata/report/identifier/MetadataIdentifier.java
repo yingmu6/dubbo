@@ -18,10 +18,7 @@ package org.apache.dubbo.metadata.report.identifier;
 
 import org.apache.dubbo.common.URL;
 
-import static org.apache.dubbo.common.constants.CommonConstants.APPLICATION_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.GROUP_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.SIDE_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.VERSION_KEY;
+import static org.apache.dubbo.common.constants.CommonConstants.*;
 
 /**
  * The MetadataIdentifier is used to store method descriptor（存储方法的描述）.
@@ -31,7 +28,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.VERSION_KEY;
  * <p>
  * 2018/10/25
  */
-public class MetadataIdentifier extends BaseServiceMetadataIdentifier implements BaseMetadataIdentifier {
+public class MetadataIdentifier extends BaseServiceMetadataIdentifier implements BaseMetadataIdentifier { //todo @csy 元数据之间的继承关系是怎样的？都有哪些元数据？
 
     private String application;
 

@@ -16,7 +16,7 @@ public class DubboBootstrapApplicationListenerTest extends OneTimeExecutionAppli
     @Override  //继承OneTimeExecutionApplicationContextEventListener方式
     protected void onApplicationContextEvent(ApplicationContextEvent event) {
         if (event instanceof ContextRefreshedEvent) {
-            System.out.println("测试spring监听器");
+//            System.out.println("测试spring监听器");
         }
     }
 

@@ -124,7 +124,7 @@ public class ServiceRepository extends LifecycleAdapter implements FrameworkExt 
                                  Object serviceInstance,
                                  ServiceDescriptor serviceModel,
                                  ServiceConfigBase<?> serviceConfig,
-                                 ServiceMetadata serviceMetadata) { //注册提供者信息
+                                 ServiceMetadata serviceMetadata) { //向服务仓库注册提供者的数据模型
         ProviderModel providerModel = new ProviderModel(serviceKey, serviceInstance, serviceModel, serviceConfig,
                 serviceMetadata);
         providers.putIfAbsent(serviceKey, providerModel);
@@ -167,7 +167,7 @@ public class ServiceRepository extends LifecycleAdapter implements FrameworkExt 
         return Collections.unmodifiableList(new ArrayList<>(providers.values()));
     }
 
-    public ProviderModel lookupExportedService(String serviceKey) {
+    public ProviderModel lookupExportedService(String serviceKey) { //根据服务key查看暴露的服务
         return providers.get(serviceKey);
     }
 

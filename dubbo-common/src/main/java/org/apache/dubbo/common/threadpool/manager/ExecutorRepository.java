@@ -26,7 +26,7 @@ import java.util.concurrent.ScheduledExecutorService;
  *
  */
 @SPI("default")
-public interface ExecutorRepository {
+public interface ExecutorRepository { //todo @csy 线程池仓库是指啥？
 
     /**
      * Called by both Client and Server. TODO, consider separate these two parts.

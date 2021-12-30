@@ -198,7 +198,7 @@ public class AsyncRpcResult implements Result {
 
     @Override
     public <U> CompletableFuture<U> thenApply(Function<Result, ? extends U> fn) {
-        return this.responseFuture.thenApply(fn);
+        return this.responseFuture.thenApply(fn); //todo @csy thenApply 的含义是指啥？
     }
 
     @Override

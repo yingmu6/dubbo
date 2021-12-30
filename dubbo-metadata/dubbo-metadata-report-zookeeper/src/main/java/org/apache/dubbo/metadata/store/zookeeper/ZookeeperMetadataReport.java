@@ -21,11 +21,7 @@ import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
 import org.apache.dubbo.common.utils.PathUtils;
 import org.apache.dubbo.common.utils.StringUtils;
-import org.apache.dubbo.metadata.report.identifier.BaseMetadataIdentifier;
-import org.apache.dubbo.metadata.report.identifier.KeyTypeEnum;
-import org.apache.dubbo.metadata.report.identifier.MetadataIdentifier;
-import org.apache.dubbo.metadata.report.identifier.ServiceMetadataIdentifier;
-import org.apache.dubbo.metadata.report.identifier.SubscriberMetadataIdentifier;
+import org.apache.dubbo.metadata.report.identifier.*;
 import org.apache.dubbo.metadata.report.support.AbstractMetadataReport;
 import org.apache.dubbo.metadata.report.support.ConfigCenterBasedMetadataReport;
 import org.apache.dubbo.remoting.zookeeper.ZookeeperClient;
@@ -119,7 +115,7 @@ public class ZookeeperMetadataReport extends AbstractMetadataReport {
         return zkClient.getContent(getNodePath(metadataIdentifier));
     }
 
-    private void storeMetadata(MetadataIdentifier metadataIdentifier, String v) {
+    private void storeMetadata(MetadataIdentifier metadataIdentifier, String v) { //todo @csy 是怎样创建元数据的？
         zkClient.create(getNodePath(metadataIdentifier), v, false);
     }
 
