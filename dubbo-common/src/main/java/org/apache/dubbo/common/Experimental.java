@@ -33,6 +33,6 @@ import java.lang.annotation.Target;
         ElementType.METHOD,
         ElementType.PACKAGE,
         ElementType.TYPE})
-public @interface Experimental { //Experimental：试验的
+public @interface Experimental { //Experimental [ɪkˌsperɪˈmentl]：试验的
     String value();
 }

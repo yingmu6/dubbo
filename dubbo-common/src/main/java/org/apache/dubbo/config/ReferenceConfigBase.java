@@ -59,6 +59,10 @@ public abstract class ReferenceConfigBase<T> extends AbstractReferenceConfig { /
 
     /**
      * The url for peer-to-peer invocation
+     * <p>
+     * todo @csy pause 问题点：
+     * 1）直连方法的处理逻辑是怎样的？
+     * 2）怎样检测执行的服务是否可用？
      */
     protected String url;
 

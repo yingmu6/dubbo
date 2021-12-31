@@ -16,11 +16,6 @@
  */
 package org.apache.dubbo.qos.server;
 
-import org.apache.dubbo.common.logger.Logger;
-import org.apache.dubbo.common.logger.LoggerFactory;
-import org.apache.dubbo.common.utils.StringUtils;
-import org.apache.dubbo.qos.server.handler.QosProcessHandler;
-
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
@@ -29,18 +24,23 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.util.concurrent.DefaultThreadFactory;
+import org.apache.dubbo.common.logger.Logger;
+import org.apache.dubbo.common.logger.LoggerFactory;
+import org.apache.dubbo.common.utils.StringUtils;
+import org.apache.dubbo.qos.server.handler.QosProcessHandler;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A server serves for both telnet access and http access
+ * （服务端类于处理telnet访问和http访问）
  * <ul>
  * <li>static initialize server</li>
  * <li>start server and bind port</li>
  * <li>close server</li>
  * </ul>
  */
-public class Server {
+public class Server { //服务端类
 
     private static final Logger logger = LoggerFactory.getLogger(Server.class);
     private static final Server INSTANCE = new Server();
@@ -80,6 +80,7 @@ public class Server {
 
     /**
      * start server, bind port
+     * （启动服务，绑定端口）
      */
     public void start() throws Throwable {
         if (!started.compareAndSet(false, true)) {
@@ -90,18 +91,18 @@ public class Server {
         ServerBootstrap serverBootstrap = new ServerBootstrap();
         serverBootstrap.group(boss, worker);
         serverBootstrap.channel(NioServerSocketChannel.class);
-        serverBootstrap.option(ChannelOption.SO_REUSEADDR, true);
+        serverBootstrap.option(ChannelOption.SO_REUSEADDR, true); //todo @csy ServerBootstrap 相关的属性待了解
         serverBootstrap.childOption(ChannelOption.TCP_NODELAY, true);
         serverBootstrap.childHandler(new ChannelInitializer<Channel>() {
 
             @Override
             protected void initChannel(Channel ch) throws Exception {
-                ch.pipeline().addLast(new QosProcessHandler(welcome, acceptForeignIp));
+                ch.pipeline().addLast(new QosProcessHandler(welcome, acceptForeignIp)); //添加QosProcessHandler处理器
             }
         });
         try {
             if (StringUtils.isBlank(host)) {
-                serverBootstrap.bind(port).sync();
+                serverBootstrap.bind(port).sync(); //若没有host，则按本地host进行处理
             } else {
                 serverBootstrap.bind(host, port).sync();
             }

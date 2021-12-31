@@ -19,6 +19,6 @@ package org.apache.dubbo.qos.command;
 import org.apache.dubbo.common.extension.SPI;
 
 @SPI
-public interface BaseCommand {
-    String execute(CommandContext commandContext,String[] args);
+public interface BaseCommand { //todo @csy 该命令的用途是啥？都有哪些的？
+    String execute(CommandContext commandContext, String[] args);
 }

@@ -64,12 +64,12 @@ public class RemoteWritableMetadataService extends AbstractAbstractWritableMetad
         try {
             String interfaceName = providerURL.getParameter(INTERFACE_KEY);
             if (StringUtils.isNotEmpty(interfaceName)) {
-                Class interfaceClass = Class.forName(interfaceName);
+                Class interfaceClass = Class.forName(interfaceName); //根据接口名，创建接口对应的Class
                 FullServiceDefinition fullServiceDefinition = ServiceDefinitionBuilder.buildFullDefinition(interfaceClass,
                         providerURL.getParameters());
                 getMetadataReport().storeProviderMetadata(new MetadataIdentifier(providerURL.getServiceInterface(),
                         providerURL.getParameter(VERSION_KEY), providerURL.getParameter(GROUP_KEY),
-                        PROVIDER_SIDE, providerURL.getParameter(APPLICATION_KEY)), fullServiceDefinition); //todo @csy 该类是远程云数据中心，那么有发起远程调用吗？
+                        PROVIDER_SIDE, providerURL.getParameter(APPLICATION_KEY)), fullServiceDefinition); //该类是远程元数据中心，那么有发起远程调用吗？解：有发起远程调用，若元数据用到的组件是zk，就会在zk中创建对应节点
                 return;
             }
             logger.error("publishProvider interfaceName is empty . url: " + providerURL.toFullString());

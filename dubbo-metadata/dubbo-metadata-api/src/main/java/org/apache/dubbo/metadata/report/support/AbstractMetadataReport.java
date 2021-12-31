@@ -246,7 +246,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
             failedReports.remove(providerMetadataIdentifier);
             Gson gson = new Gson();
             String data = gson.toJson(serviceDefinition);
-            doStoreProviderMetadata(providerMetadataIdentifier, data); //todo @csy 是怎样保存到元数据中心的？
+            doStoreProviderMetadata(providerMetadataIdentifier, data); //todo @csy 是怎样保存到元数据中心的？此处的抽象类是怎么选择实例的？
             saveProperties(providerMetadataIdentifier, data, true, !syncReport);
         } catch (Exception e) {
             // retry again. If failed again, throw exception.

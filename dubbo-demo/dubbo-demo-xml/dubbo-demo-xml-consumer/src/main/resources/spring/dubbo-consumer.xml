@@ -23,14 +23,21 @@
 
     <dubbo:application name="demo-consumer"/>
 
-<!--    <dubbo:registry address="zookeeper://127.0.0.1:2181"/>-->
+    <dubbo:registry address="zookeeper://127.0.0.1:2181"/>
 
 <!--    <dubbo:reference id="demoService"-->
 <!--                     check="false"-->
 <!--                     interface="org.apache.dubbo.demo.DemoService"-->
 <!--                     timeout="20000"/>-->
 
-    <dubbo:consumer>
-        <dubbo:reference id= "greetingService" check="false" interface="org.apache.dubbo.demo.GreetingService" url="dubbo://192.168.1.107:20881"/>
-    </dubbo:consumer>
+<!--    <dubbo:consumer>-->
+<!--        使用host，ip方式直联 -->
+<!--        <dubbo:reference id= "greetingService" check="true" interface="org.apache.dubbo.demo.GreetingService" url="dubbo://192.168.1.107:20881"/>-->
+
+<!--   非直连方式，会检查注册中心，需要<dubbo:registry />   -->
+<!--        <dubbo:reference id= "greetingService" check="true" interface="org.apache.dubbo.demo.GreetingService"/>-->
+<!--    </dubbo:consumer>-->
+
+    <dubbo:reference id= "greetingService" check="true" interface="org.apache.dubbo.demo.GreetingService"/>
+
 </beans>

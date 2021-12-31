@@ -16,15 +16,6 @@
  */
 package org.apache.dubbo.remoting.zookeeper.curator;
 
-import org.apache.dubbo.common.URL;
-import org.apache.dubbo.common.logger.Logger;
-import org.apache.dubbo.common.logger.LoggerFactory;
-import org.apache.dubbo.remoting.zookeeper.ChildListener;
-import org.apache.dubbo.remoting.zookeeper.DataListener;
-import org.apache.dubbo.remoting.zookeeper.EventType;
-import org.apache.dubbo.remoting.zookeeper.StateListener;
-import org.apache.dubbo.remoting.zookeeper.support.AbstractZookeeperClient;
-
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.api.CuratorWatcher;
@@ -34,6 +25,14 @@ import org.apache.curator.framework.recipes.cache.TreeCacheListener;
 import org.apache.curator.framework.state.ConnectionState;
 import org.apache.curator.framework.state.ConnectionStateListener;
 import org.apache.curator.retry.RetryNTimes;
+import org.apache.dubbo.common.URL;
+import org.apache.dubbo.common.logger.Logger;
+import org.apache.dubbo.common.logger.LoggerFactory;
+import org.apache.dubbo.remoting.zookeeper.ChildListener;
+import org.apache.dubbo.remoting.zookeeper.DataListener;
+import org.apache.dubbo.remoting.zookeeper.EventType;
+import org.apache.dubbo.remoting.zookeeper.StateListener;
+import org.apache.dubbo.remoting.zookeeper.support.AbstractZookeeperClient;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException.NoNodeException;
 import org.apache.zookeeper.KeeperException.NodeExistsException;
@@ -118,11 +117,11 @@ public class CuratorZookeeperClient extends AbstractZookeeperClient<CuratorZooke
             client.create().forPath(path, dataBytes);
         } catch (NodeExistsException e) {
             try {
-                client.setData().forPath(path, dataBytes);
+                client.setData().forPath(path, dataBytes); //此处是为路径写数据吗？怎么查看到数据？解：是为指定的路径写数据，有看到节点的数据，zk命令中使用get path就可以看到
             } catch (Exception e1) {
                 throw new IllegalStateException(e.getMessage(), e1);
             }
-        } catch (Exception e) {
+        } catch (Exception e) { //todo @csy org.apache.zookeeper.KeeperException$SessionExpiredException 此处调试的时候会出现session过期，那么Zookeeper的Client与Server是怎样保持会话的？
             throw new IllegalStateException(e.getMessage(), e);
         }
     }
@@ -131,7 +130,7 @@ public class CuratorZookeeperClient extends AbstractZookeeperClient<CuratorZooke
     protected void createEphemeral(String path, String data) {
         byte[] dataBytes = data.getBytes(CHARSET);
         try {
-            client.create().withMode(CreateMode.EPHEMERAL).forPath(path, dataBytes);
+            client.create().withMode(CreateMode.EPHEMERAL).forPath(path, dataBytes); //按临时节点往节点中写数据
         } catch (NodeExistsException e) {
             logger.warn("ZNode " + path + " already exists, since we will only try to recreate a node on a session expiration" +
                     ", this duplication might be caused by a delete delay from the zk server, which means the old expired session" +
@@ -145,7 +144,7 @@ public class CuratorZookeeperClient extends AbstractZookeeperClient<CuratorZooke
     }
 
     @Override
-    protected void deletePath(String path) {
+    protected void deletePath(String path) { //删除路径
         try {
             client.delete().deletingChildrenIfNeeded().forPath(path);
         } catch (NoNodeException e) {
@@ -166,7 +165,7 @@ public class CuratorZookeeperClient extends AbstractZookeeperClient<CuratorZooke
     }
 
     @Override
-    public boolean checkExists(String path) {
+    public boolean checkExists(String path) { //检查路径在注册中心是否存在
         try {
             if (client.checkExists().forPath(path) != null) {
                 return true;

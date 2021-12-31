@@ -63,6 +63,9 @@ import static org.apache.dubbo.rpc.Constants.*;
 import static org.apache.dubbo.rpc.cluster.Constants.EXPORT_KEY;
 
 public class ServiceConfig<T> extends ServiceConfigBase<T> {
+    /**
+     * todo @csy 直连方式 <dubbo:service url="dubbo://host:post...."> 为啥不会检查注册中心，从哪里做判断？checkRegistry()
+     */
 
     public static final Logger logger = LoggerFactory.getLogger(ServiceConfig.class);
 

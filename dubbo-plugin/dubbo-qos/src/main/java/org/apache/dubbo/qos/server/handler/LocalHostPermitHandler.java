@@ -16,13 +16,12 @@
  */
 package org.apache.dubbo.qos.server.handler;
 
-import org.apache.dubbo.qos.common.QosConstants;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
+import org.apache.dubbo.qos.common.QosConstants;
 
 import java.net.InetSocketAddress;
 
@@ -41,7 +40,7 @@ public class LocalHostPermitHandler extends ChannelHandlerAdapter {
             if (!((InetSocketAddress) ctx.channel().remoteAddress()).getAddress().isLoopbackAddress()) {
                 ByteBuf cb = Unpooled.wrappedBuffer((QosConstants.BR_STR + "Foreign Ip Not Permitted."
                         + QosConstants.BR_STR).getBytes());
-                ctx.writeAndFlush(cb).addListener(ChannelFutureListener.CLOSE);
+                ctx.writeAndFlush(cb).addListener(ChannelFutureListener.CLOSE); //todo @csy 此处的监听器ChannelFutureListener用途是怎样的？
             }
         }
     }

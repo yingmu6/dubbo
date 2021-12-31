@@ -80,7 +80,14 @@ public abstract class AbstractServiceConfig extends AbstractInterfaceConfig {
     /**
      * Whether to use token
      */
-    protected String token; //todo @csy pause 令牌token是怎么使用的？以及具体原理是怎样的？
+    /**
+     * 令牌token是怎么使用的？以及具体原理是怎样的？消费端是怎么获取token值的
+     * 解：令牌验证主要是避免消费者绕过注册中心去直连提供者（如<dubbo:reference url="dubbo://host:ip">）
+     * 1）提供端，可在<dubbo:provider/>或<dubbo:service/> 配置token属性，token可以自定义，如token="123"，也可以系统按uuid生成：如token="true"
+     * 2）消费端，若提供端配置token值，就需要配置注册中心<dubbo:registry/>，不能使用直连方式
+     * 3）具体原理是：使用TokenFilter进行拦截校验，将远端配置配置的token信息，与本地进行比较
+     */
+    protected String token;
 
     /**
      * Whether to export access logs to logs

@@ -39,7 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * AbstractGroup
  */
-public abstract class AbstractExchangeGroup implements ExchangeGroup {
+public abstract class AbstractExchangeGroup implements ExchangeGroup { //todo @csy 交换组的功能用途是怎样的？
 
     // log  output
     protected static final Logger logger = LoggerFactory.getLogger(AbstractExchangeGroup.class);

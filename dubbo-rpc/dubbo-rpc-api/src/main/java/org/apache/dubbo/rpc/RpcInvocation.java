@@ -64,9 +64,9 @@ public class RpcInvocation implements Invocation, Serializable { //RpcInvocation
     private Object[] arguments;
 
     /**
-     * Passed to the remote server during RPC call
+     * Passed to（传递给） the remote server during RPC call
      */
-    private Map<String, Object> attachments;
+    private Map<String, Object> attachments; //在RPC调用期间传递到远程服务器
 
     /**
      * Only used on the caller side, will not appear on the wire（导线）.

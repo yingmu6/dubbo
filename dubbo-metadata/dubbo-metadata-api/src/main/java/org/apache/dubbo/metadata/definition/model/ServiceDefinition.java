@@ -24,7 +24,7 @@ import java.util.Objects;
 /**
  * 2015/1/27.
  */
-public class ServiceDefinition implements Serializable { //服务定义
+public class ServiceDefinition implements Serializable { //服务定义 ，todo @csy 服务定义、方法定义、类型定义用途以及含义是什么？
 
     private String canonicalName; //canonical:简洁的
     private String codeSource;
@@ -87,7 +87,7 @@ public class ServiceDefinition implements Serializable { //服务定义
         if (!(o instanceof ServiceDefinition)) {
             return false;
         }
-        ServiceDefinition that = (ServiceDefinition) o; //比较对象中的属性
+        ServiceDefinition that = (ServiceDefinition) o; //比较对象中的属性是否相等
         return Objects.equals(getCanonicalName(), that.getCanonicalName()) &&
                 Objects.equals(getCodeSource(), that.getCodeSource()) &&
                 Objects.equals(getMethods(), that.getMethods()) &&

@@ -40,7 +40,7 @@
 <!--    <bean id="demoService" class="org.apache.dubbo.demo.provider.DemoServiceImqqp"/>-->
 
     <bean id="greetingService" class="org.apache.dubbo.demo.provider.GreetingServiceImpl"/>
-    <dubbo:service interface="org.apache.dubbo.demo.GreetingService" ref="greetingService" token="true"/>
+    <dubbo:service interface="org.apache.dubbo.demo.GreetingService" ref="greetingService" token="12345"/>
 
 <!--    <dubbo:provider>-->
 <!--        <dubbo:service interface="org.apache.dubbo.demo.DemoService" ref="demoService" token="123456">-->

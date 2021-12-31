@@ -26,7 +26,7 @@ import java.util.concurrent.ConcurrentMap;
  * If you do not want to share Listener instance between RPC calls. You can use ListenableFilter
  * to keep a 'one Listener each RPC call' model.
  */
-public abstract class ListenableFilter implements Filter {
+public abstract class ListenableFilter implements Filter { //todo @csy 此类的功能用途是什么？
 
     protected Listener listener = null;
     protected final ConcurrentMap<Invocation, Listener> listeners = new ConcurrentHashMap<>();

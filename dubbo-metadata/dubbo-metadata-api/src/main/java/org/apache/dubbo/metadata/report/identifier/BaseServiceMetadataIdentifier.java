@@ -29,17 +29,17 @@ import static org.apache.dubbo.metadata.MetadataConstants.KEY_SEPARATOR;
  * <p>
  * 2019-08-09
  */
-public class BaseServiceMetadataIdentifier {//基础服务元数据标识符
+public class BaseServiceMetadataIdentifier {//基础服务元数据标识符 ，todo @csy 标识符指定是啥？
     String serviceInterface;
     String version;
     String group;
     String side;
 
-    String getUniqueKey(KeyTypeEnum keyType, String... params) {
+    String getUniqueKey(KeyTypeEnum keyType, String... params) { //todo @csy pause
         if (keyType == KeyTypeEnum.PATH) {
             return getFilePathKey(params);
         }
-        return getIdentifierKey(params);
+        return getIdentifierKey(params); //todo @csy 是怎样拼接唯一key的？
     }
 
     String getIdentifierKey(String... params) {
@@ -56,7 +56,7 @@ public class BaseServiceMetadataIdentifier {//基础服务元数据标识符
             return "";
         }
         StringBuilder sb = new StringBuilder();
-        for (String param : params) {
+        for (String param : params) { //遍历参数，依次将分隔符与参数进行拼接
             if (param == null) {
                 continue;
             }

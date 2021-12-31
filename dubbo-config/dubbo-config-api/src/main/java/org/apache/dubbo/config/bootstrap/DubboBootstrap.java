@@ -916,7 +916,7 @@ public class DubboBootstrap extends GenericEventListener { //基于事件驱动
                     logger.info(NAME + " is ready.");
                 }
             }
-            if (logger.isInfoEnabled()) {
+            if (logger.isInfoEnabled()) { //dubbo启动完成的日志
                 logger.info(NAME + " has started.");
             }
         }

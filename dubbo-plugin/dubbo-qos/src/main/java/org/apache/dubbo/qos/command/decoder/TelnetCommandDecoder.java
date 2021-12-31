@@ -25,7 +25,7 @@ public class TelnetCommandDecoder {
     public static final CommandContext decode(String str) {
         CommandContext commandContext = null;
         if (!StringUtils.isBlank(str)) {
-            String[] array = str.split("(?<![\\\\]) ");
+            String[] array = str.split("(?<![\\\\]) "); //todo @csy 此处的str待调试，分隔的内容是啥？
             if (array.length > 0) {
                 String name = array[0];
                 String[] targetArgs = new String[array.length - 1];

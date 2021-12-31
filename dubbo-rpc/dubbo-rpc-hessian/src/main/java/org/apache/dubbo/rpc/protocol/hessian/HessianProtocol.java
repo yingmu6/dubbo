@@ -55,6 +55,10 @@ import static org.apache.dubbo.rpc.protocol.hessian.Constants.*;
  */
 public class HessianProtocol extends AbstractProxyProtocol {
 
+    /**
+     * todo @csy hessian基本概念了解
+     */
+
     private final Map<String, HessianSkeleton> skeletonMap = new ConcurrentHashMap<String, HessianSkeleton>();
 
     private HttpBinder httpBinder;

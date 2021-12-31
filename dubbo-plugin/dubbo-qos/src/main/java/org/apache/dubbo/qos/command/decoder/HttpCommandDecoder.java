@@ -16,22 +16,21 @@
  */
 package org.apache.dubbo.qos.command.decoder;
 
-import org.apache.dubbo.qos.command.CommandContext;
-import org.apache.dubbo.qos.command.CommandContextFactory;
-
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import io.netty.handler.codec.http.multipart.Attribute;
 import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
 import io.netty.handler.codec.http.multipart.InterfaceHttpData;
+import org.apache.dubbo.qos.command.CommandContext;
+import org.apache.dubbo.qos.command.CommandContextFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class HttpCommandDecoder {
-    public static CommandContext decode(HttpRequest request) {
+    public static CommandContext decode(HttpRequest request) { //todo @csy 哪种方式可以发起http请求？HttpRequest具体内容是啥？
         CommandContext commandContext = null;
         if (request != null) {
             QueryStringDecoder queryStringDecoder = new QueryStringDecoder(request.getUri());
@@ -45,17 +44,17 @@ public class HttpCommandDecoder {
                     if (queryStringDecoder.parameters().isEmpty()) {
                         commandContext = CommandContextFactory.newInstance(name);
                         commandContext.setHttp(true);
-                    } else {
+                    } else { //todo @csy 内容是怎么解析的？
                         List<String> valueList = new ArrayList<String>();
                         for (List<String> values : queryStringDecoder.parameters().values()) {
                             valueList.addAll(values);
                         }
-                        commandContext = CommandContextFactory.newInstance(name, valueList.toArray(new String[]{}),true);
+                        commandContext = CommandContextFactory.newInstance(name, valueList.toArray(new String[] {}), true);
                     }
                 } else if (request.getMethod() == HttpMethod.POST) {
                     HttpPostRequestDecoder httpPostRequestDecoder = new HttpPostRequestDecoder(request);
                     List<String> valueList = new ArrayList<String>();
-                    for (InterfaceHttpData interfaceHttpData : httpPostRequestDecoder.getBodyHttpDatas()) {
+                    for (InterfaceHttpData interfaceHttpData : httpPostRequestDecoder.getBodyHttpDatas()) { //todo @csy netty对http的请求待了解？
                         if (interfaceHttpData.getHttpDataType() == InterfaceHttpData.HttpDataType.Attribute) {
                             Attribute attribute = (Attribute) interfaceHttpData;
                             try {

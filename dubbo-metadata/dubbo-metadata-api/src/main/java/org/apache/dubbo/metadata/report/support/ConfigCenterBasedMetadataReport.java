@@ -20,11 +20,7 @@ import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.config.configcenter.DynamicConfiguration;
 import org.apache.dubbo.common.config.configcenter.DynamicConfigurationFactory;
 import org.apache.dubbo.metadata.report.MetadataReport;
-import org.apache.dubbo.metadata.report.identifier.BaseMetadataIdentifier;
-import org.apache.dubbo.metadata.report.identifier.KeyTypeEnum;
-import org.apache.dubbo.metadata.report.identifier.MetadataIdentifier;
-import org.apache.dubbo.metadata.report.identifier.ServiceMetadataIdentifier;
-import org.apache.dubbo.metadata.report.identifier.SubscriberMetadataIdentifier;
+import org.apache.dubbo.metadata.report.identifier.*;
 
 import java.util.List;
 
@@ -119,7 +115,7 @@ public class ConfigCenterBasedMetadataReport extends AbstractMetadataReport {
     }
 
     protected void saveMetadata(MetadataIdentifier metadataIdentifier, String value) {
-        String key = getKey(metadataIdentifier);
+        String key = getKey(metadataIdentifier); //key的值如：metadata/org.apache.dubbo.demo.GreetingService/provider/zhangsan
         dynamicConfiguration.publishConfig(key, group, value);
     }
 

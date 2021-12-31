@@ -53,7 +53,7 @@ public class QosProtocolWrapper implements Protocol { //todo @csy QosProtocolWra
     @Override
     public <T> Exporter<T> export(Invoker<T> invoker) throws RpcException {
         if (UrlUtils.isRegistry(invoker.getUrl())) {
-            startQosServer(invoker.getUrl());
+            startQosServer(invoker.getUrl()); //开启Qos处理服务
             return protocol.export(invoker);
         }
         return protocol.export(invoker);
@@ -85,7 +85,7 @@ public class QosProtocolWrapper implements Protocol { //todo @csy QosProtocolWra
                 return; //已经启动过，就不再启动
             }
 
-            boolean qosEnable = url.getParameter(QOS_ENABLE, true);
+            boolean qosEnable = url.getParameter(QOS_ENABLE, true); //todo @csy 在哪里、通过什么属性配置Qos功能的？
             if (!qosEnable) { //若设置不启用，则不做处理
                 logger.info("qos won't be started because it is disabled. " +
                         "Please check dubbo.application.qos.enable is configured either in system property, " +

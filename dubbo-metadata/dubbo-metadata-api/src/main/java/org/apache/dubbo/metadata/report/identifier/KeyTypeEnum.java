@@ -25,7 +25,7 @@ import static org.apache.dubbo.metadata.MetadataConstants.KEY_SEPARATOR;
 /**
  * 2019-08-15
  */
-public enum KeyTypeEnum {
+public enum KeyTypeEnum { //enum除了没有public构造函数外，可以按照普通类来处理
 
     PATH(PATH_SEPARATOR) {
         public String build(String one, String... others) {
@@ -34,7 +34,7 @@ public enum KeyTypeEnum {
     },
 
     UNIQUE_KEY(KEY_SEPARATOR) {
-        public String build(String one, String... others) {
+        public String build(String one, String... others) { //实现枚举类中的抽象方法
             StringBuilder keyBuilder = new StringBuilder(one);
             for (String other : others) {
                 keyBuilder.append(separator).append(isBlank(other) ? EMPTY_STRING : other);
@@ -43,7 +43,7 @@ public enum KeyTypeEnum {
         }
     };
 
-    final String separator;
+    final String separator; //分隔符
 
     KeyTypeEnum(String separator) {
         this.separator = separator;
@@ -57,6 +57,6 @@ public enum KeyTypeEnum {
      * @return
      * @since 2.7.8
      */
-    public abstract String build(String one, String... others);
+    public abstract String build(String one, String... others); //枚举类中定义抽象方法
 
 }

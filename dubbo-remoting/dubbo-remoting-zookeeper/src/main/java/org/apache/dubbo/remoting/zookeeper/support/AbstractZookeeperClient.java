@@ -34,6 +34,9 @@ import java.util.concurrent.Executor;
 
 public abstract class AbstractZookeeperClient<TargetDataListener, TargetChildListener> implements ZookeeperClient {
 
+    /**
+     * todo @csy zookeeper 临时节点、永久节点了解？以及客户端连接方式了解
+     */
     protected static final Logger logger = LoggerFactory.getLogger(AbstractZookeeperClient.class);
 
     protected int DEFAULT_CONNECTION_TIMEOUT_MS = 5 * 1000;
@@ -167,17 +170,17 @@ public abstract class AbstractZookeeperClient<TargetDataListener, TargetChildLis
 
     @Override
     public void create(String path, String content, boolean ephemeral) {
-        if (checkExists(path)) {
-            delete(path);
+        if (checkExists(path)) { //path的值如：/dubbo/config/mapping/org.apache.dubbo.demo.GreetingService/zhangsan
+            delete(path); //如路径存在，则进行删除
         }
-        int i = path.lastIndexOf('/');
+        int i = path.lastIndexOf('/'); //找到最后一个"/"
         if (i > 0) {
-            create(path.substring(0, i), false);
+            create(path.substring(0, i), false); // 最后一个斜杠"/" 之前都创建永久节点
         }
-        if (ephemeral) {
-            createEphemeral(path, content);
+        if (ephemeral) { //ephemeral：[ɪˈfemərəl] adj. 短暂的
+            createEphemeral(path, content);  //创建临时节点
         } else {
-            createPersistent(path, content);
+            createPersistent(path, content); //创建永久节点
         }
     }
 
