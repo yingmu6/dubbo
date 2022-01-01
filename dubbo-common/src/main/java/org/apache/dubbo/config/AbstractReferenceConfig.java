@@ -36,11 +36,12 @@ public abstract class AbstractReferenceConfig extends AbstractInterfaceConfig {
 
     /**
      * Check if service provider exists, if not exists, it will be fast fail（服务不存在，会快速失败）
-     * todo @csy 相关问题点
+     * todo @pause 相关问题点
      * 1）服务检查会在哪里使用到的，是怎么做失败处理的？
      * 解答：
      * <p>
-     * 2）check的默认值为什么是true？
+     * 2）check的默认值为什么是true？java哪种情况下，会对变量设置默认值
+     * 解：ReferenceConfigBase#shouldCheck()此方法中会对check设置默认值；java会对静态变量设置默认值
      * <p>
      * 3）怎么判断服务是否可用的？为啥直连方式时，check设置没有生效？
      * 4）目前观察到的情况是，服务引用是check=true时，只要不进行服务调用，就不会报错，启动是不报错，那为啥叫启动时做检查，
@@ -66,7 +67,7 @@ public abstract class AbstractReferenceConfig extends AbstractInterfaceConfig {
     /**
      * Lazy create connection
      */
-    protected Boolean lazy;
+    protected Boolean lazy; //todo @csy 此处的Lazy延迟加载，在哪些地方会用到？缺省值是怎样的？
 
     protected String reconnect;
 

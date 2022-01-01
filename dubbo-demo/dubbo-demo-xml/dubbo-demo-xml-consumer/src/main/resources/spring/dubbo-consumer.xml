@@ -38,6 +38,6 @@
 <!--        <dubbo:reference id= "greetingService" check="true" interface="org.apache.dubbo.demo.GreetingService"/>-->
 <!--    </dubbo:consumer>-->
 
-    <dubbo:reference id= "greetingService" check="true" interface="org.apache.dubbo.demo.GreetingService"/>
+    <dubbo:reference id= "greetingService" check="true" interface="org.apache.dubbo.demo.GreetingService" lazy="true"/>
 
 </beans>

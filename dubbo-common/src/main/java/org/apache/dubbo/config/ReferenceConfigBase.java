@@ -68,8 +68,9 @@ public abstract class ReferenceConfigBase<T> extends AbstractReferenceConfig { /
 
     /**
      * The consumer config (default)
+     * todo @csy 若没有设置<dubbo:consumer/>，系统会默认生成一个吗
      */
-    protected ConsumerConfig consumer;
+    protected ConsumerConfig consumer; //<dubbo:consumer/>与<dubbo:reference/> 是一对多的关系
 
     /**
      * Only the service provider of the specified protocol is invoked, and other protocols are ignored.
@@ -92,10 +93,10 @@ public abstract class ReferenceConfigBase<T> extends AbstractReferenceConfig { /
 
     public boolean shouldCheck() {
         Boolean shouldCheck = isCheck();
-        if (shouldCheck == null && getConsumer() != null) {
+        if (shouldCheck == null && getConsumer() != null) { //若<dubbo:reference/> 没有设置check属性值，则取查找<dubbo:consumer/>
             shouldCheck = getConsumer().isCheck();
         }
-        if (shouldCheck == null) {
+        if (shouldCheck == null) { //若都没有查到，则默认设置为true
             // default true
             shouldCheck = true;
         }
@@ -107,7 +108,7 @@ public abstract class ReferenceConfigBase<T> extends AbstractReferenceConfig { /
         if (shouldInit == null && getConsumer() != null) {
             shouldInit = getConsumer().isInit();
         }
-        if (shouldInit == null) {
+        if (shouldInit == null) { //默认是需要初始化的，若init=false，Spring会使用懒加载
             // default is true, spring will still init lazily by setting init's default value to false,
             // the def default setting happens in {@link ReferenceBean#afterPropertiesSet}.
             return true;

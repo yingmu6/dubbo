@@ -101,7 +101,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
     /**
      * The invoker of the reference service
      */
-    private transient volatile Invoker<?> invoker;
+    private transient volatile Invoker<?> invoker; //todo @csy 此处的invoker是在哪里设置值的？
 
     /**
      * The flag whether the ReferenceConfig has been initialized
@@ -283,7 +283,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
 
         initialized = true;
 
-        checkInvokerAvailable();
+        checkInvokerAvailable(); //检查invoker是否有效
 
         // dispatch a ReferenceConfigInitializedEvent since 2.7.4
         dispatch(new ReferenceConfigInitializedEvent(this, invoker));
@@ -377,7 +377,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
     }
 
     private void checkInvokerAvailable() throws IllegalStateException {
-        if (shouldCheck() && !invoker.isAvailable()) {
+        if (shouldCheck() && !invoker.isAvailable()) { //todo @csy invoker 此处的实例为什么是MockClusterInvoker？
             invoker.destroy();
             throw new IllegalStateException("Failed to check the status of the service "
                     + interfaceName

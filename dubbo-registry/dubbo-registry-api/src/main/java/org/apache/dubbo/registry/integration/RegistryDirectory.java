@@ -88,7 +88,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
      */
     private volatile List<Configurator> configurators; // The initial value is null and the midway may be assigned to null, please use the local variable reference
 
-    // Map<url, Invoker> cache service url to invoker mapping.
+    // Map<url, Invoker> cache service url to invoker mapping.  todo @csy urlInvokerMap值是什么时候设置的？
     private volatile Map<String, Invoker<T>> urlInvokerMap; // The initial value is null and the midway may be assigned to null, please use the local variable reference
     private volatile List<Invoker<T>> invokers;
 
@@ -617,7 +617,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
         Map<String, Invoker<T>> localUrlInvokerMap = urlInvokerMap;
         if (localUrlInvokerMap != null && localUrlInvokerMap.size() > 0) {
             for (Invoker<T> invoker : new ArrayList<>(localUrlInvokerMap.values())) {
-                if (invoker.isAvailable()) {
+                if (invoker.isAvailable()) { //todo @csy 此处Invoker为啥是InvokerDelegate
                     return true;
                 }
             }
