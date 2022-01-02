@@ -20,11 +20,7 @@ import org.apache.dubbo.common.Version;
 import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
 import org.apache.dubbo.common.utils.NetUtils;
-import org.apache.dubbo.rpc.Invocation;
-import org.apache.dubbo.rpc.Invoker;
-import org.apache.dubbo.rpc.Result;
-import org.apache.dubbo.rpc.RpcContext;
-import org.apache.dubbo.rpc.RpcException;
+import org.apache.dubbo.rpc.*;
 import org.apache.dubbo.rpc.cluster.Directory;
 import org.apache.dubbo.rpc.cluster.LoadBalance;
 import org.apache.dubbo.rpc.support.RpcUtils;
@@ -58,7 +54,7 @@ public class FailoverClusterInvoker<T> extends AbstractClusterInvoker<T> { //调
         List<Invoker<T>> copyInvokers = invokers;
         checkInvokers(copyInvokers, invocation);
         String methodName = RpcUtils.getMethodName(invocation);
-        int len = getUrl().getMethodParameter(methodName, RETRIES_KEY, DEFAULT_RETRIES) + 1;
+        int len = getUrl().getMethodParameter(methodName, RETRIES_KEY, DEFAULT_RETRIES) + 1; //调用次数=重试次数+1
         if (len <= 0) {
             len = 1;
         }

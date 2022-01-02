@@ -30,7 +30,7 @@ public interface GreetingService {
 
     String hello();
 
-    String hello(String msg);
+    String hello(String msg) throws InterruptedException;
 
     String hello(Integer num);
 
