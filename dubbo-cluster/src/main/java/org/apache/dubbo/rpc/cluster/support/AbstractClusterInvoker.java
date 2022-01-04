@@ -24,12 +24,7 @@ import org.apache.dubbo.common.logger.LoggerFactory;
 import org.apache.dubbo.common.utils.CollectionUtils;
 import org.apache.dubbo.common.utils.NetUtils;
 import org.apache.dubbo.common.utils.StringUtils;
-import org.apache.dubbo.rpc.Invocation;
-import org.apache.dubbo.rpc.Invoker;
-import org.apache.dubbo.rpc.Result;
-import org.apache.dubbo.rpc.RpcContext;
-import org.apache.dubbo.rpc.RpcException;
-import org.apache.dubbo.rpc.RpcInvocation;
+import org.apache.dubbo.rpc.*;
 import org.apache.dubbo.rpc.cluster.ClusterInvoker;
 import org.apache.dubbo.rpc.cluster.Directory;
 import org.apache.dubbo.rpc.cluster.LoadBalance;
@@ -42,10 +37,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.apache.dubbo.common.constants.CommonConstants.DEFAULT_LOADBALANCE;
 import static org.apache.dubbo.common.constants.CommonConstants.LOADBALANCE_KEY;
-import static org.apache.dubbo.rpc.cluster.Constants.CLUSTER_AVAILABLE_CHECK_KEY;
-import static org.apache.dubbo.rpc.cluster.Constants.CLUSTER_STICKY_KEY;
-import static org.apache.dubbo.rpc.cluster.Constants.DEFAULT_CLUSTER_AVAILABLE_CHECK;
-import static org.apache.dubbo.rpc.cluster.Constants.DEFAULT_CLUSTER_STICKY;
+import static org.apache.dubbo.rpc.cluster.Constants.*;
 
 /**
  * AbstractClusterInvoker
@@ -58,7 +50,7 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> {
 
     protected boolean availablecheck;
 
-    private AtomicBoolean destroyed = new AtomicBoolean(false);
+    private AtomicBoolean destroyed = new AtomicBoolean(false); //todo @csy 是哪里设置值的？怎样判断是否销毁的？
 
     private volatile Invoker<T> stickyInvoker = null;
 
@@ -274,7 +266,7 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> {
     }
 
     protected void checkInvokers(List<Invoker<T>> invokers, Invocation invocation) {
-        if (CollectionUtils.isEmpty(invokers)) {
+        if (CollectionUtils.isEmpty(invokers)) { //没有可执行的invoker列表
             throw new RpcException(RpcException.NO_INVOKER_AVAILABLE_AFTER_FILTER, "Failed to invoke the method "
                     + invocation.getMethodName() + " in the service " + getInterface().getName()
                     + ". No provider available for the service " + directory.getConsumerUrl().getServiceKey()

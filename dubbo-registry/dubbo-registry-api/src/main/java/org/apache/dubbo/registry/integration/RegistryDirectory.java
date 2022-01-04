@@ -565,7 +565,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
                     ", please check status of providers(disabled, not registered or in blacklist).");
         }
 
-        if (multiGroup) {
+        if (multiGroup) { //todo @csy multiGroup 是指什么？处理逻辑是怎样的？
             return this.invokers == null ? Collections.emptyList() : this.invokers;
         }
 
