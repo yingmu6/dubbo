@@ -175,7 +175,7 @@ public class DubboBootstrap extends GenericEventListener { //基于事件驱动
     public static DubboBootstrap getInstance() { //获取实例：单例模式
         if (instance == null) {
             synchronized (DubboBootstrap.class) { // synchronized ['sɪŋkrənaɪzd] adj. 同步的；同步化的,v. 使协调,同时发生
-                if (instance == null) {
+                if (instance == null) { //synchronized + 双重检查，线程安全且缩小锁的范围
                     instance = new DubboBootstrap();
                 }
             }
@@ -500,7 +500,7 @@ public class DubboBootstrap extends GenericEventListener { //基于事件驱动
     /**
      * Initialize
      */
-    public void initialize() { //服务暴露前，做初始化工作
+    public void initialize() { //服务暴露或引用前，做初始化工作
         if (!initialized.compareAndSet(false, true)) { //compareAndSet返回false，表明实际值与预期值不相等
             return; //此处initialized为true时进入，表明是已经初始化过来，就不在初始化
         }

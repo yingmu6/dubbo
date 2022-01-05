@@ -227,7 +227,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig { //A
      * @param interfaceClass for provider side, it is the {@link Class} of the service that will be exported; for consumer
      *                       side, it is the {@link Class} of the remote service interface
      */
-    public void checkStubAndLocal(Class<?> interfaceClass) {
+    public void checkStubAndLocal(Class<?> interfaceClass) { //todo @csy Local与Stub的功能用途是什么？
         verifyStubAndLocal(local, "Local", interfaceClass);
         verifyStubAndLocal(stub, "Stub", interfaceClass);
     }

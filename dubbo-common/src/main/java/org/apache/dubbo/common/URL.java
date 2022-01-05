@@ -98,7 +98,7 @@ class URL implements Serializable {
 
     private volatile transient Map<String, Number> numbers;
 
-    private volatile transient Map<String, Map<String, Number>> methodNumbers; //key为方法名
+    private volatile transient Map<String, Map<String, Number>> methodNumbers; //key为方法名，todo @csy 都存储了哪些内容？
 
     private volatile transient Map<String, URL> urls;
 

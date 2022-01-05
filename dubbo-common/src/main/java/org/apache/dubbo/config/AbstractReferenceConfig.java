@@ -60,7 +60,7 @@ public abstract class AbstractReferenceConfig extends AbstractInterfaceConfig {
     protected String generic;
 
     /**
-     * Whether to find reference's instance from the current JVM
+     * Whether to find reference's instance from the current JVM （当前JVM）
      */
     protected Boolean injvm;
 
@@ -145,7 +145,7 @@ public abstract class AbstractReferenceConfig extends AbstractInterfaceConfig {
      * @deprecated instead, use the parameter <b>scope</> to judge if it's in jvm, scope=local
      */
     @Deprecated
-    public Boolean isInjvm() {
+    public Boolean isInjvm() { //用范围scope代替
         return injvm;
     }
 

@@ -101,10 +101,10 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
     /**
      * The invoker of the reference service
      */
-    private transient volatile Invoker<?> invoker; //todo @csy 此处的invoker是在哪里设置值的？
+    private transient volatile Invoker<?> invoker; //此处的invoker是在哪里设置值的？ 解：构建Invoker对象，在许多地方有使用，如org.apache.dubbo.config.ReferenceConfig#createProxy中
 
     /**
-     * The flag whether the ReferenceConfig has been initialized
+     * The flag whether the ReferenceConfig has been initialized （ [ɪˈnɪʃəlaɪzd] 初始化）
      */
     private transient volatile boolean initialized;
 
@@ -172,7 +172,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
         if (destroyed) {
             throw new IllegalStateException("The invoker of ReferenceConfig(" + url + ") has already destroyed!");
         }
-        if (ref == null) {
+        if (ref == null) { //若引用的实例为空，则进行初始化
             init();
         }
         return ref;
@@ -199,13 +199,13 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
     }
 
     public synchronized void init() {
-        if (initialized) {
+        if (initialized) { //todo @csy 会不会有initialized=true，ref=null的情况吗？
             return;
         }
 
         if (bootstrap == null) {
             bootstrap = DubboBootstrap.getInstance();
-            bootstrap.init();
+            bootstrap.init(); //服务引用前，做初始化处理
         }
 
         checkAndUpdateSubConfigs();
@@ -273,9 +273,9 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
 
         serviceMetadata.getAttachments().putAll(map);
 
-        ref = createProxy(map);
+        ref = createProxy(map); //todo @csy 为啥是给map创建代理，而不是给接口创建代理？
 
-        serviceMetadata.setTarget(ref);
+        serviceMetadata.setTarget(ref); //todo @pause
         serviceMetadata.addAttribute(PROXY_CLASS_REF, ref);
         ConsumerModel consumerModel = repository.lookupReferredService(serviceMetadata.getServiceKey());
         consumerModel.setProxyObject(ref);
@@ -291,17 +291,17 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
 
     @SuppressWarnings({"unchecked", "rawtypes", "deprecation"})
     private T createProxy(Map<String, String> map) { //为需要调用的invoker创建代理
-        if (shouldJvmRefer(map)) {
+        if (shouldJvmRefer(map)) { //本地JVM引用
             URL url = new URL(LOCAL_PROTOCOL, LOCALHOST_VALUE, 0, interfaceClass.getName()).addParameters(map);
-            invoker = REF_PROTOCOL.refer(interfaceClass, url);
+            invoker = REF_PROTOCOL.refer(interfaceClass, url); //
             if (logger.isInfoEnabled()) {
                 logger.info("Using injvm service " + interfaceClass.getName());
             }
-        } else {
+        } else { //远程引用
             urls.clear();
             if (url != null && url.length() > 0) { // user specified URL, could be peer-to-peer address, or register center's address.
                 String[] us = SEMICOLON_SPLIT_PATTERN.split(url);
-                if (us != null && us.length > 0) {
+                if (us != null && us.length > 0) { //todo @csy 此处是特定url，点对点通信吗？  @pause
                     for (String u : us) {
                         URL url = URL.valueOf(u);
                         if (StringUtils.isEmpty(url.getPath())) {
@@ -396,7 +396,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
      * This method should be called right after the creation of this class's instance, before any property in other config modules is used.
      * Check each config modules are created properly and override their properties if necessary.
      */
-    public void checkAndUpdateSubConfigs() {
+    public void checkAndUpdateSubConfigs() { //todo @csy 该方法的主要含义是什么？
         if (StringUtils.isEmpty(interfaceName)) {
             throw new IllegalStateException("<dubbo:reference interface=\"\" /> interface not allow null!");
         }
@@ -457,9 +457,9 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
      * call, which is the default behavior
      */
     protected boolean shouldJvmRefer(Map<String, String> map) {
-        URL tmpUrl = new URL("temp", "localhost", 0, map);
+        URL tmpUrl = new URL("temp", "localhost", 0, map); //根据url参数构建temp临时协议（没有用到协议头temp，只是组装URL用于传递）
         boolean isJvmRefer;
-        if (isInjvm() == null) {
+        if (isInjvm() == null) { //成员变量injvm没有设置值
             // if a url is specified, don't do local reference
             if (url != null && url.length() > 0) {
                 isJvmRefer = false;

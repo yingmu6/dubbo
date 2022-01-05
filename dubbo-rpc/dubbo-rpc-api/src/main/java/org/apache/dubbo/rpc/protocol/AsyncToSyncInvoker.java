@@ -19,12 +19,7 @@ package org.apache.dubbo.rpc.protocol;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.remoting.RemotingException;
 import org.apache.dubbo.remoting.TimeoutException;
-import org.apache.dubbo.rpc.Invocation;
-import org.apache.dubbo.rpc.InvokeMode;
-import org.apache.dubbo.rpc.Invoker;
-import org.apache.dubbo.rpc.Result;
-import org.apache.dubbo.rpc.RpcException;
-import org.apache.dubbo.rpc.RpcInvocation;
+import org.apache.dubbo.rpc.*;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -34,7 +29,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @param <T>
  */
-public class AsyncToSyncInvoker<T> implements Invoker<T> {
+public class AsyncToSyncInvoker<T> implements Invoker<T> { //todo @csy 该类是异步转同步吗？具体是怎样转换的？
 
     private Invoker<T> invoker;
 

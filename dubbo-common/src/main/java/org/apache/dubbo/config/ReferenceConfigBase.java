@@ -48,7 +48,7 @@ public abstract class ReferenceConfigBase<T> extends AbstractReferenceConfig { /
     protected String interfaceName;
 
     /**
-     * The interface class of the reference service
+     * The interface class of the reference service （引用服务对应的接口）
      */
     protected Class<?> interfaceClass;
 
@@ -108,7 +108,7 @@ public abstract class ReferenceConfigBase<T> extends AbstractReferenceConfig { /
         if (shouldInit == null && getConsumer() != null) {
             shouldInit = getConsumer().isInit();
         }
-        if (shouldInit == null) { //默认是需要初始化的，若init=false，Spring会使用懒加载
+        if (shouldInit == null) { //默认是需要初始化的init=true，若init=false，Spring会使用懒加载
             // default is true, spring will still init lazily by setting init's default value to false,
             // the def default setting happens in {@link ReferenceBean#afterPropertiesSet}.
             return true;

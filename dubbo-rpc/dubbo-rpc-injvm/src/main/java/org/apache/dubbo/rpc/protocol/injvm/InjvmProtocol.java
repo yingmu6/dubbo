@@ -103,10 +103,10 @@ public class InjvmProtocol extends AbstractProtocol implements Protocol { //todo
         } else if (SCOPE_REMOTE.equals(scope)) {
             // it's declared as remote reference
             return false;
-        } else if (url.getParameter(GENERIC_KEY, false)) {
+        } else if (url.getParameter(GENERIC_KEY, false)) { //泛化调用，属于远程调用，而不是本地调用
             // generic invocation is not local reference
             return false;
-        } else if (getExporter(exporterMap, url) != null) {
+        } else if (getExporter(exporterMap, url) != null) { //todo @csy 待调试下，看下exporterMap的数据是啥？
             // by default, go through local reference if there's the service exposed locally
             return true;
         } else {

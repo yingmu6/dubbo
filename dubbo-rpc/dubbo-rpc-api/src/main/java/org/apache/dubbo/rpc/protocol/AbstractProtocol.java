@@ -98,7 +98,7 @@ public abstract class AbstractProtocol implements Protocol {
         return new AsyncToSyncInvoker<>(protocolBindingRefer(type, url));
     }
 
-    protected abstract <T> Invoker<T> protocolBindingRefer(Class<T> type, URL url) throws RpcException;
+    protected abstract <T> Invoker<T> protocolBindingRefer(Class<T> type, URL url) throws RpcException; //todo @csy 协议绑定引用是指什么？
 
     public Map<String, Exporter<?>> getExporterMap() {
         return exporterMap;
