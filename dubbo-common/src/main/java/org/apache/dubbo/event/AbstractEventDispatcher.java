@@ -109,14 +109,14 @@ public abstract class AbstractEventDispatcher implements EventDispatcher {
     }
 
     @Override
-    public void dispatch(Event event) { //
+    public void dispatch(Event event) {
 
         Executor executor = getExecutor();
 
         // execute in sequential or parallel execution model
         executor.execute(() -> {
             sortedListeners(entry -> entry.getKey().isAssignableFrom(event.getClass()))
-                    .forEach(listener -> {
+                    .forEach(listener -> {//todo @csy 此处的逻辑是什么？
                         if (listener instanceof ConditionalEventListener) {
                             ConditionalEventListener predicateEventListener = (ConditionalEventListener) listener;
                             if (!predicateEventListener.accept(event)) { // No accept

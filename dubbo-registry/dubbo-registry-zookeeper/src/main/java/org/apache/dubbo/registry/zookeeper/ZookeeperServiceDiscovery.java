@@ -16,6 +16,8 @@
  */
 package org.apache.dubbo.registry.zookeeper;
 
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.api.CuratorWatcher;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.function.ThrowableConsumer;
 import org.apache.dubbo.common.function.ThrowableFunction;
@@ -29,24 +31,14 @@ import org.apache.dubbo.registry.client.ServiceDiscovery;
 import org.apache.dubbo.registry.client.ServiceInstance;
 import org.apache.dubbo.registry.client.event.ServiceInstancesChangedEvent;
 import org.apache.dubbo.registry.client.event.listener.ServiceInstancesChangedListener;
-
-import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.api.CuratorWatcher;
 import org.apache.zookeeper.KeeperException;
 
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.apache.dubbo.common.function.ThrowableFunction.execute;
 import static org.apache.dubbo.registry.zookeeper.util.CuratorFrameworkParams.ROOT_PATH;
-import static org.apache.dubbo.registry.zookeeper.util.CuratorFrameworkUtils.build;
-import static org.apache.dubbo.registry.zookeeper.util.CuratorFrameworkUtils.buildCuratorFramework;
-import static org.apache.dubbo.registry.zookeeper.util.CuratorFrameworkUtils.buildServiceDiscovery;
+import static org.apache.dubbo.registry.zookeeper.util.CuratorFrameworkUtils.*;
 
 /**
  * Zookeeper {@link ServiceDiscovery} implementation based on
@@ -60,7 +52,7 @@ public class ZookeeperServiceDiscovery implements ServiceDiscovery, EventListene
 
     private CuratorFramework curatorFramework;
 
-    private String rootPath;
+    private String rootPath; //todo @csy 根目录的值会是什么？
 
     private org.apache.curator.x.discovery.ServiceDiscovery<ZookeeperInstance> serviceDiscovery;
 
@@ -163,7 +155,7 @@ public class ZookeeperServiceDiscovery implements ServiceDiscovery, EventListene
     protected void registerServiceWatcher(String serviceName) {
         String path = buildServicePath(serviceName);
         CuratorWatcher watcher = watcherCaches.computeIfAbsent(path, key ->
-                new ZookeeperServiceDiscoveryChangeWatcher(this, serviceName));
+                new ZookeeperServiceDiscoveryChangeWatcher(this, serviceName)); //todo @csy CuratorWatcher 待了解使用
         try {
             curatorFramework.getChildren().usingWatcher(watcher).forPath(path);
         } catch (KeeperException.NoNodeException e) {

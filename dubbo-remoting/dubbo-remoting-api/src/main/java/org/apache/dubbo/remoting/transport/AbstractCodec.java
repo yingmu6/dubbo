@@ -16,9 +16,6 @@
  */
 package org.apache.dubbo.remoting.transport;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
@@ -27,6 +24,9 @@ import org.apache.dubbo.common.utils.NetUtils;
 import org.apache.dubbo.remoting.Channel;
 import org.apache.dubbo.remoting.Codec2;
 import org.apache.dubbo.remoting.Constants;
+
+import java.io.IOException;
+import java.net.InetSocketAddress;
 
 import static org.apache.dubbo.common.constants.CommonConstants.SIDE_KEY;
 
@@ -58,8 +58,8 @@ public abstract class AbstractCodec implements Codec2 {
         return CodecSupport.getSerialization(channel.getUrl());
     }
 
-    protected boolean isClientSide(Channel channel) {
-        String side = (String)channel.getAttribute(SIDE_KEY);
+    protected boolean isClientSide(Channel channel) { //判断是否是客户端
+        String side = (String) channel.getAttribute(SIDE_KEY);
         if (CLIENT_SIDE.equals(side)) { //判断通道中属性SIDE_KEY的缓存值
             return true;
         } else if (SERVER_SIDE.equals(side)) {
@@ -68,9 +68,9 @@ public abstract class AbstractCodec implements Codec2 {
             InetSocketAddress address = channel.getRemoteAddress();
             URL url = channel.getUrl();
             boolean isClient = url.getPort() == address.getPort()
-                && NetUtils.filterLocalHost(url.getIp()).equals(
-                NetUtils.filterLocalHost(address.getAddress()
-                    .getHostAddress()));
+                    && NetUtils.filterLocalHost(url.getIp()).equals(
+                    NetUtils.filterLocalHost(address.getAddress()
+                            .getHostAddress())); //todo @csy 此处的判断逻辑，待了解
             channel.setAttribute(SIDE_KEY, isClient ? CLIENT_SIDE
                 : SERVER_SIDE);
             return isClient;

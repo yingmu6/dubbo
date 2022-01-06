@@ -136,9 +136,9 @@ public class ConsumerModel { //todo @csy 数据模型的功能用途是什么？
         if (proxyObject == null) {
             interfaceList = new Class[]{referenceConfig.getActualInterface()};
         } else {
-            interfaceList = proxyObject.getClass().getInterfaces();
+            interfaceList = proxyObject.getClass().getInterfaces(); //获取代理对象实现的接口列表
         }
-        for (Class interfaceClass : interfaceList) {
+        for (Class interfaceClass : interfaceList) { //将接口中的方法Method依次设置到缓存中methodModels
             for (Method method : interfaceClass.getMethods()) {
                 methodModels.put(method, new ConsumerMethodModel(method));
             }

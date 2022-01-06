@@ -33,7 +33,7 @@ import java.io.OutputStream;
  * </pre>
  */
 @SPI("hessian2")
-public interface Serialization {
+public interface Serialization { //todo @csy 都有哪些序列化方式？
 
     /**
      * Get content type unique id, recommended that custom implementations use values different with

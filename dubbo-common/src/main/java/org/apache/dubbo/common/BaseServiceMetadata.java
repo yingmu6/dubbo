@@ -21,7 +21,7 @@ import org.apache.dubbo.common.utils.StringUtils;
 /**
  * 2019-10-10
  */
-public class BaseServiceMetadata {
+public class BaseServiceMetadata { //todo @csy 了解下存入的数据类型
     public static final char COLON_SEPERATOR = ':';
 
     protected String serviceKey;

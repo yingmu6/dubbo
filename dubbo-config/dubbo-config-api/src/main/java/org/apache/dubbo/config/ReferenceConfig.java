@@ -275,9 +275,9 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
 
         ref = createProxy(map); //todo @csy 为啥是给map创建代理，而不是给接口创建代理？
 
-        serviceMetadata.setTarget(ref); //todo @pause
+        serviceMetadata.setTarget(ref);
         serviceMetadata.addAttribute(PROXY_CLASS_REF, ref);
-        ConsumerModel consumerModel = repository.lookupReferredService(serviceMetadata.getServiceKey());
+        ConsumerModel consumerModel = repository.lookupReferredService(serviceMetadata.getServiceKey()); //从服务仓库中，根据服务key查找到消费模型ConsumerModel
         consumerModel.setProxyObject(ref);
         consumerModel.init(attributes);
 
@@ -301,7 +301,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
             urls.clear();
             if (url != null && url.length() > 0) { // user specified URL, could be peer-to-peer address, or register center's address.
                 String[] us = SEMICOLON_SPLIT_PATTERN.split(url);
-                if (us != null && us.length > 0) { //todo @csy 此处是特定url，点对点通信吗？  @pause
+                if (us != null && us.length > 0) { //todo @csy 此处是特定url，点对点通信吗？
                     for (String u : us) {
                         URL url = URL.valueOf(u);
                         if (StringUtils.isEmpty(url.getPath())) {
