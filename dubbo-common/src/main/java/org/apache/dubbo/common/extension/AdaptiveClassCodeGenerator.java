@@ -107,6 +107,8 @@ public class AdaptiveClassCodeGenerator { //自适应代码产生器
         if (logger.isDebugEnabled()) {
             logger.debug(code.toString());
         }
+
+        logger.info("产生的@Adaptive对应的自适应代码, code = " + code.toString());
         return code.toString();
     }
 

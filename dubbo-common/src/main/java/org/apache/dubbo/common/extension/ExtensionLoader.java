@@ -46,7 +46,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.*;
  * at present designed to be singleton or static (by itself totally static or uses some static fields).
  * So the instances returned from them are of process or classloader scope. If you want to support
  * multiple dubbo servers in a single process, you may need to refactor these three classes.
- * （ApplicationModel、DubboBootstrap、ExtensionLoader被设计为单例模式，若想支持多服务的，就需要重构这三个类了）
+ * （ApplicationModel、DubboBootstrap、ExtensionLoader被设计为单例模式，若想支持多实例的，就需要重构这三个类了）
  * <p>
  * Load dubbo extensions（加载dubbo的扩展信息）
  * <ul>

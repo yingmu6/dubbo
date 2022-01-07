@@ -28,7 +28,6 @@ import org.apache.dubbo.common.extension.ext5.NoAdaptiveMethodExt;
 import org.apache.dubbo.common.extension.ext6_inject.Ext6;
 import org.apache.dubbo.common.extension.ext6_inject.impl.Ext6Impl2;
 import org.apache.dubbo.common.utils.LogUtil;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -38,10 +37,7 @@ import java.util.Map;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ExtensionLoader_Adaptive_Test {
 
@@ -78,18 +74,29 @@ public class ExtensionLoader_Adaptive_Test {
 
     @Test
     public void test_getAdaptiveExtension_customizeAdaptiveKey() throws Exception {
+        // 生成自适应类 SimpleExt$Adaptive
         SimpleExt ext = ExtensionLoader.getExtensionLoader(SimpleExt.class).getAdaptiveExtension();
 
         Map<String, String> map = new HashMap<String, String>();
         map.put("key2", "impl2");
         URL url = new URL("p1", "1.2.3.4", 1010, "path1", map);
 
+        // 查找扩展名：@Adaptive({"key1", "key2"})
         String echo = ext.yell(url, "haha");
         assertEquals("Ext1Impl2-yell", echo);
 
+        // 此处会调用SimpleExtImpl3中的yell()方法
         url = url.addParameter("key1", "impl3"); // note: URL is value's type
         echo = ext.yell(url, "haha");
         assertEquals("Ext1Impl3-yell", echo);
+
+        // 此处会调用SimpleExtImpl1中的echo()方法
+        echo = ext.echo(url, "haha");
+        assertEquals("Ext1Impl1-echo", echo);
+
+        // 此处会抛出异常：java.lang.UnsupportedOperationException
+//        echo = ext.bang(url, 0);
+//        assertEquals("bang1", echo);
     }
 
     @Test

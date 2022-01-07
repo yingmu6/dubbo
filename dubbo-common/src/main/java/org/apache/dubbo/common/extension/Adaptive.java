@@ -29,7 +29,18 @@ import java.lang.annotation.*;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
-public @interface Adaptive { //todo @csy Adaptive注解解析器了解
+public @interface Adaptive {
+    /**
+     * Adaptive注解解析器了解？
+     * 解：1）在ExtensionLoader#cacheAdaptiveClass()中将@Adaptive对应的Class缓存起来
+     *     if (clazz.isAnnotationPresent(Adaptive.class)) {
+     *          cacheAdaptiveClass(clazz, overridden);
+     *     }
+     *    2）在ExtensionLoader#createAdaptiveExtensionClass()中产生自适应代码
+     *    3）在Compiler#compile()对产生的自适应代码进行编译，生成对应的Class对象
+     *    4）最后通过Class的newInstance()方法，创建自适应代码的实例对象
+     */
+
     /**
      * @csy-011 方法描述的含义是什么？
      * 解：描述的是方法中使用@Adaptive时，获取扩展名的方式
@@ -61,6 +72,14 @@ public @interface Adaptive { //todo @csy Adaptive注解解析器了解
     String[] value() default {}; //生成自适应扩展类，然后在方法中选择具体的实例，执行具体实例的方法
 
     /**
-     * todo @csy @Adaptive中的value是不是指的是url的参数？
+     * @Adaptive中的value是不是指的是url的参数？
+     * 解：参考org.apache.dubbo.common.extension.ext1.SimpleExt$Adaptive 自适应代码的处理逻辑
+     * 1）去查找扩展名
+     *    a）从参数中获取URL，可以是URL参数，也可以是Invoker等对象，最终获取到URL对象
+     *    b）取@Adaptive注解中设置的参数值，如@Adaptive({"key1", "key2"})，从左到右，依次尝试获取url中对应的参数值
+     *       若没有从url获取到对应值，去@SPI上声明的扩展名，若还没找到扩展名，则抛出Failed to get extensio
+     *       获取扩展名的方式，如：String extName = url.getParameter("key1", url.getParameter("key2", "impl1"));
+     * 2）根据扩展名获取扩展实例 ExtensionLoader.getExtensionLoader(xxx.SimpleExt.class).getExtension(extName)
+     * 3）执行扩展实例的对应方法 extension.xxx()
      */
 }

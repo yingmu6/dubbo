@@ -39,7 +39,7 @@ public class JavassistCompiler extends AbstractCompiler {
     private static final Pattern FIELD_PATTERN = Pattern.compile("[^\n]+=[^\n]+;");
 
     @Override
-    public Class<?> doCompile(String name, String source) throws Throwable {
+    public Class<?> doCompile(String name, String source) throws Throwable { //todo @csy 编译的逻辑是怎样的？如何使用javassist进行编译的？
         CtClassBuilder builder = new CtClassBuilder();
         builder.setClassName(name);
 
@@ -78,7 +78,7 @@ public class JavassistCompiler extends AbstractCompiler {
 
         // compile
         ClassLoader classLoader = org.apache.dubbo.common.utils.ClassUtils.getCallerClassLoader(getClass());
-        CtClass cls = builder.build(classLoader);
+        CtClass cls = builder.build(classLoader); //使用javassist 编译
         return cls.toClass(classLoader, JavassistCompiler.class.getProtectionDomain());
     }
 
