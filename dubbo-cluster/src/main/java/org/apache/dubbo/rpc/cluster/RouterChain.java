@@ -95,7 +95,7 @@ public class RouterChain<T> { //todo @csy 路由链是怎么使用的？
      */
     public List<Invoker<T>> route(URL url, Invocation invocation) {
         List<Invoker<T>> finalInvokers = invokers;
-        for (Router router : routers) {
+        for (Router router : routers) { //todo @csy Router的实例是在哪里选择的？
             finalInvokers = router.route(finalInvokers, url, invocation); //todo @csy Router是如何选择invoker列表的？
         }
         return finalInvokers;

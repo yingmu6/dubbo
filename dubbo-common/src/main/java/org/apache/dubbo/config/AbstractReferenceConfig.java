@@ -36,7 +36,7 @@ public abstract class AbstractReferenceConfig extends AbstractInterfaceConfig {
 
     /**
      * Check if service provider exists, if not exists, it will be fast fail（服务不存在，会快速失败）
-     * todo @pause 相关问题点
+     * 相关问题点
      * 1）服务检查会在哪里使用到的，是怎么做失败处理的？
      * 解答：
      * <p>

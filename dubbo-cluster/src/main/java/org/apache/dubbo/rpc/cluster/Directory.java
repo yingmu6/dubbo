@@ -31,7 +31,7 @@ import java.util.List;
  *
  * @see org.apache.dubbo.rpc.cluster.Cluster#join(Directory)
  */
-public interface Directory<T> extends Node {
+public interface Directory<T> extends Node { //节点的目录：用来管理多个节点
 
     /**
      * get service type.

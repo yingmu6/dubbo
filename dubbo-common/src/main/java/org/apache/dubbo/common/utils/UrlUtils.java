@@ -399,7 +399,7 @@ public class UrlUtils {
         return isMatchGlobPattern(pattern, value);
     }
 
-    public static boolean isMatchGlobPattern(String pattern, String value) {
+    public static boolean isMatchGlobPattern(String pattern, String value) { //todo @csy 该方法的比较逻辑，已经用途是什么？
         if ("*".equals(pattern)) {
             return true;
         }

@@ -29,24 +29,12 @@ import org.apache.dubbo.rpc.RpcException;
 import org.apache.dubbo.rpc.cluster.router.AbstractRouter;
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.apache.dubbo.common.constants.CommonConstants.ENABLED_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.HOST_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.METHODS_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.METHOD_KEY;
-import static org.apache.dubbo.rpc.cluster.Constants.ADDRESS_KEY;
-import static org.apache.dubbo.rpc.cluster.Constants.FORCE_KEY;
-import static org.apache.dubbo.rpc.cluster.Constants.PRIORITY_KEY;
-import static org.apache.dubbo.rpc.cluster.Constants.RULE_KEY;
-import static org.apache.dubbo.rpc.cluster.Constants.RUNTIME_KEY;
+import static org.apache.dubbo.common.constants.CommonConstants.*;
+import static org.apache.dubbo.rpc.cluster.Constants.*;
 
 /**
  * ConditionRouter
@@ -167,7 +155,7 @@ public class ConditionRouter extends AbstractRouter {
 
     @Override
     public <T> List<Invoker<T>> route(List<Invoker<T>> invokers, URL url, Invocation invocation)
-            throws RpcException {
+            throws RpcException { //todo @csy 条件路由待了解以及使用
         if (!enabled) {
             return invokers;
         }
@@ -185,7 +173,7 @@ public class ConditionRouter extends AbstractRouter {
                 return result;
             }
             for (Invoker<T> invoker : invokers) {
-                if (matchThen(invoker.getUrl(), url)) {
+                if (matchThen(invoker.getUrl(), url)) { //拿URL进行比较，筛选出符合条件的Invoker
                     result.add(invoker);
                 }
             }
@@ -240,7 +228,7 @@ public class ConditionRouter extends AbstractRouter {
                     sampleValue = sample.get(key);
                 }
             }
-            if (sampleValue != null) {
+            if (sampleValue != null) { //todo @csy 此处的比较逻辑是什么？
                 if (!matchPair.getValue().isMatch(sampleValue, param)) {
                     return false;
                 } else {
@@ -259,8 +247,8 @@ public class ConditionRouter extends AbstractRouter {
     }
 
     protected static final class MatchPair {
-        final Set<String> matches = new HashSet<String>();
-        final Set<String> mismatches = new HashSet<String>();
+        final Set<String> matches = new HashSet<String>(); //匹配的列表
+        final Set<String> mismatches = new HashSet<String>(); //不匹配的列表
 
         private boolean isMatch(String value, URL param) {
             if (!matches.isEmpty() && mismatches.isEmpty()) {

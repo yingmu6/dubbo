@@ -24,7 +24,7 @@ public class SimpleExt$Adaptive implements org.apache.dubbo.common.extension.ext
     }
 
     public java.lang.String echo(org.apache.dubbo.common.URL arg0, java.lang.String arg1) {
-        if (arg0 == null) { //flag4
+        if (arg0 == null) {
             throw new IllegalArgumentException("url == null");
         }
         org.apache.dubbo.common.URL url = arg0;
