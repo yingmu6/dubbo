@@ -39,7 +39,8 @@ import static org.apache.dubbo.rpc.model.ApplicationModel.getName;
  */
 
 /**
- * todo @csy 哪些组件可以作为元数据中心？具体搭建环境实践下
+ * 哪些组件可以作为元数据中心？具体搭建环境实践下
+ * 解：zk、nacos等。该接口用于元数据信息与元数据中心的交互（用于元数据上报）
  */
 public interface MetadataReport extends AutoCloseable {//元数据值怎么上报的？解：接口中没看到上报方法，而是存储store、保存save元数据接口
 

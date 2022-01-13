@@ -20,7 +20,7 @@ package org.apache.dubbo.common.threadlocal;
 /**
  * InternalThread
  */
-public class InternalThread extends Thread {
+public class InternalThread extends Thread { //内部使用的线程（对线程进行封装）
 
     private InternalThreadLocalMap threadLocalMap;
 

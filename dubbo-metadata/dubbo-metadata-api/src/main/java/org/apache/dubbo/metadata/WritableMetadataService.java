@@ -33,10 +33,15 @@ import static org.apache.dubbo.rpc.model.ApplicationModel.getName;
  */
 
 /**
- * todo @csy 此类的功能用途是什么？
+ * 此类的功能用途是什么？
+ * 解：定义元数据的存储方式，如暴露url、订阅url等
+ * 具体实现包含本地存储InMemoryWritableMetadataService、远程存储RemoteWritableMetadataService
+ * <p>
+ * https://blog.csdn.net/weixin_38308374/article/details/105984050  详解元数据中心MetadataReport
+ * https://blog.csdn.net/weixin_38308374/article/details/105984085  详解MetadataService
  */
 @SPI(DEFAULT_METADATA_STORAGE_TYPE)
-public interface WritableMetadataService extends MetadataService { //本地的元数据
+public interface WritableMetadataService extends MetadataService {
 
     /**
      * Gets the current Dubbo Service name

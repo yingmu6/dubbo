@@ -30,8 +30,29 @@ import java.util.Set;
  * table, and it is useful when accessed frequently.
  * <p></p>
  * This design is learning from {@see io.netty.util.concurrent.FastThreadLocal} which is in Netty.
+ * <p>
+ * <p>
+ * <p>
+ * InternalThreadLocal
+ * 解答：
+ * 1）对ThreadLocal的封装处理，内部使用的数据结构是数组，而ThreadLocal是使用hashCode来计算处理的，
+ * 多了一步计算，还得解决hash冲突，所以InternalThreadLocal的访问性能更高
+ * 2）原理来自于Netty的FastThreadLocal
+ * 3）相关参考资料
+ * a）https://www.cnblogs.com/thisiswhy/p/13839741.html（非常有趣的讲解）
+ * b）https://blog.csdn.net/dbqb007/article/details/95243660
+ * c）https://icode9.com/content-4-1054690.html
  */
-public class InternalThreadLocal<V> { //todo @csy 是怎么对ThreadLocal进行封装的？
+public class InternalThreadLocal<V> { //是怎么对ThreadLocal进行封装的？解：在InternalThreadLocalMap中维护ThreadLocal的数据
+
+
+    /**
+     * 在Java中，ThreadLocal是实现线程安全的一种手段，它的作用是对于同一个ThreadLocal变量，在每一个线程中都有一个副本，当修改任何一个线程的变量时，不会影响到其他线程。
+     * 它通过在每一个Thread中存储一个类似于map的结构，以ThreadLocal变量为key，变量值为value。
+     * <p>
+     * Dubbo在RPC调用的上下文中，需要借助ThreadLocal保存上下文。通过ThreadLocal，可用于传递参数
+     * InternalThreadLocal 是 ThreadLocal 的增强版，所以他们的用途都是一样的，一言蔽之就是：传递信息。
+     */
 
     private static final int VARIABLES_TO_REMOVE_INDEX = InternalThreadLocalMap.nextVariableIndex();
 

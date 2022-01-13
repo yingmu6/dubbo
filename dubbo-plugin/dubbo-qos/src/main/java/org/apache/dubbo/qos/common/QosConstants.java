@@ -18,7 +18,7 @@ package org.apache.dubbo.qos.common;
 
 public interface QosConstants {
 
-    int DEFAULT_PORT = 22222;
+    int DEFAULT_PORT = 22222; //默认端口
 
     String BR_STR = "\r\n";
     String CLOSE = "close!";

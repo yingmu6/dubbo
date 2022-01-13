@@ -50,8 +50,8 @@ public class Help implements BaseCommand {
 
         Class<?> clazz = CommandHelper.getCommandClass(commandName);
 
-        final Cmd cmd = clazz.getAnnotation(Cmd.class);
-        final TTable tTable = new TTable(new TTable.ColumnDefine[]{
+        final Cmd cmd = clazz.getAnnotation(Cmd.class); //获取注解，并进行解析
+        final TTable tTable = new TTable(new TTable.ColumnDefine[] {
                 new TTable.ColumnDefine(TTable.Align.RIGHT),
                 new TTable.ColumnDefine(80, false, TTable.Align.LEFT)
         });

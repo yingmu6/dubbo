@@ -19,6 +19,20 @@ package org.apache.dubbo.qos.command;
 import org.apache.dubbo.common.extension.SPI;
 
 @SPI
-public interface BaseCommand { //todo @csy 该命令的用途是啥？都有哪些的？
+public interface BaseCommand { //该命令的用途是啥？都有哪些的？什么是QOS？ 解答：QOS命令用于在线运维
+    /**
+     * QoS的英文全称为"Quality [ˈkwɒləti] of Service",中文名为"服务质量"。在dubbo2.5.8新版本增加了QOS模块，提供了新的telnet命令支持。
+     * Dubbo管它叫在线运维命令，我们可以通过它能够看到服务提供者状态，服务调用者状态，现在dubbo提供了ls， online，offline，help ，quit命令
+     * <p>
+     * Telnet命令也可以对服务治理的，https://dubbo.apache.org/zh/docs/references/telnet/ telnet官网使用
+     * <p>
+     * https://blog.csdn.net/yuanshangshenghuo/article/details/107563319  解析dubbo在线运维Qos
+     * https://dubbo.apache.org/zh/docs/references/qos/ 官网使用手册
+     */
     String execute(CommandContext commandContext, String[] args);
+
+    /**
+     * todo @csy QOS问题点
+     * 1）当提供者关闭时，控制台会抛出"Connection closed by foreign host." ，这个信息是哪里打出来的？通道关闭事件，是哪里监听的？
+     */
 }

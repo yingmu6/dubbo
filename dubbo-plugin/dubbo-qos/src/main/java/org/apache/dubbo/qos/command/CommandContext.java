@@ -18,9 +18,9 @@ package org.apache.dubbo.qos.command;
 
 import io.netty.channel.Channel;
 
-public class CommandContext {
+public class CommandContext { //命令上下文
 
-    private String commandName;
+    private String commandName; //todo @csy 上下文中的内容，是在哪里解析的？
     private String[] args;
     private Channel remote;
     private boolean isHttp;

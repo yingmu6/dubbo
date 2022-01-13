@@ -60,7 +60,7 @@ public class TelnetCodec extends TransportCodec {
             new byte[]{-1, -12, -1, -3, 6} /* Linux Ctrl+C */,
             new byte[]{-1, -19, -1, -3, 6} /* Linux Pause */);
 
-    private static Charset getCharset(Channel channel) {
+    private static Charset getCharset(Channel channel) { //todo @csy 此处是怎么获取到字符集的？
         if (channel != null) {
             Object attribute = channel.getAttribute(CHARSET_KEY);
             if (attribute instanceof String) { //判断是String类型还是Charset类型

@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static org.apache.dubbo.common.constants.QosConstants.*;
 
 
-public class QosProtocolWrapper implements Protocol { //todo @csy QosProtocolWrapper的功能用途是什么？
+public class QosProtocolWrapper implements Protocol { //QosProtocolWrapper的功能用途是什么？解：启动QOS服务端，打开端口，接收QOS命令的在线运维
 
     private final Logger logger = LoggerFactory.getLogger(QosProtocolWrapper.class);
 
@@ -85,7 +85,7 @@ public class QosProtocolWrapper implements Protocol { //todo @csy QosProtocolWra
                 return; //已经启动过，就不再启动
             }
 
-            boolean qosEnable = url.getParameter(QOS_ENABLE, true); //todo @csy 在哪里、通过什么属性配置Qos功能的？
+            boolean qosEnable = url.getParameter(QOS_ENABLE, true); //在哪里、通过什么属性配置Qos功能的？解：有多种方式配置，比如属性文件、XML文件等，可参考官方使用文档：https://dubbo.apache.org/zh/docs/references/qos/
             if (!qosEnable) { //若设置不启用，则不做处理
                 logger.info("qos won't be started because it is disabled. " +
                         "Please check dubbo.application.qos.enable is configured either in system property, " +

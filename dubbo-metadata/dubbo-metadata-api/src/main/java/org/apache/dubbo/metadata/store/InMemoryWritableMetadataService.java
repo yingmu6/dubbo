@@ -55,7 +55,7 @@ public class InMemoryWritableMetadataService extends AbstractAbstractWritableMet
      * All exported {@link URL urls} {@link Map} whose key is the return value of {@link URL#getServiceKey()} method
      * and value is the {@link SortedSet sorted set} of the {@link URL URLs}
      */
-    private final ConcurrentNavigableMap<String, SortedSet<URL>> exportedServiceURLs = new ConcurrentSkipListMap<>();
+    private final ConcurrentNavigableMap<String, SortedSet<URL>> exportedServiceURLs = new ConcurrentSkipListMap<>(); //todo @csy 待查看数据内容
 
     // ==================================================================================== //
 
@@ -65,6 +65,10 @@ public class InMemoryWritableMetadataService extends AbstractAbstractWritableMet
      * The subscribed {@link URL urls} {@link Map} of {@link MetadataService},
      * whose key is the return value of {@link URL#getServiceKey()} method and value is
      * the {@link SortedSet sorted set} of the {@link URL URLs}
+     */
+    /**
+     * ConcurrentNavigableMap接口是ConcurrentMap接口的子接口，并且支持NavigableMap操作，并且对其可导航子映射和近似匹配进行递归。
+     * NavigableMap扩展了SortedMap，具有了针对给定搜索目标返回最接近匹配项的导航方法。如"获取大于/等于某对象的键值对"、“获取小于/等于某对象的键值对”等等
      */
     private final ConcurrentNavigableMap<String, SortedSet<URL>> subscribedServiceURLs = new ConcurrentSkipListMap<>();
 
@@ -119,7 +123,7 @@ public class InMemoryWritableMetadataService extends AbstractAbstractWritableMet
     }
 
     @Override
-    public boolean unsubscribeURL(URL url) {
+    public boolean unsubscribeURL(URL url) { //取消订阅URL：将url从订阅的集合中移除
         return removeURL(subscribedServiceURLs, url);
     }
 
