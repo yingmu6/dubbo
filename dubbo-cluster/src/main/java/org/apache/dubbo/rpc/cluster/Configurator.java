@@ -29,7 +29,16 @@ import static org.apache.dubbo.rpc.cluster.Constants.PRIORITY_KEY;
 /**
  * Configurator. (SPI, Prototype, ThreadSafe)
  */
-public interface Configurator extends Comparable<Configurator> { //todo @csy Configurator的功能用途是什么？
+public interface Configurator extends Comparable<Configurator> {
+    /**
+     * todo @csy Configurator问题点
+     * 1）Configurator的功能用途是什么？
+     * 解答：向注册中心写入动态配置覆盖规则，可以实现无需重启应用的情况下，动态调整RPC调用行为的一种能力。对应override://协议
+     * 文档：https://dubbo.apache.org/zh/docs/v2.7/user/examples/config-rule/
+     *
+     * 2）新老版本，环境搭建，实践操作
+     * 3）覆盖的原理是什么？
+     */
 
     /**
      * Get the configurator url.
@@ -48,8 +57,8 @@ public interface Configurator extends Comparable<Configurator> { //todo @csy Con
 
 
     /**
-     * Convert override urls to map for use when re-refer. Send all rules every time, the urls will be reassembled and
-     * calculated
+     * Convert override urls to map for use when re-refer. Send all rules every time, the urls will be reassembled （[ˌriːəˈsembld] 重新组装（reassemble 的过去式和过去分词））and
+     * calculated [ˈkælkjuleɪtɪd] v. 计算
      *
      * URL contract:
      * <ol>
@@ -95,7 +104,7 @@ public interface Configurator extends Comparable<Configurator> { //todo @csy Con
      * 2. if two url has the same host, compare by priority value；
      */
     @Override
-    default int compareTo(Configurator o) {
+    default int compareTo(Configurator o) { //实现比较逻辑
         if (o == null) {
             return -1;
         }
