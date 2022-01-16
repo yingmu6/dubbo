@@ -40,7 +40,7 @@ public class RouterChain<T> { //todo @csy pause 路由链是怎么使用的？
 
     // Fixed router instances: ConfigConditionRouter, TagRouter, e.g., the rule for each instance may change but the
     // instance will never delete or recreate.
-    private List<Router> builtinRouters = Collections.emptyList(); //flag
+    private List<Router> builtinRouters = Collections.emptyList(); //flag5
 
     public static <T> RouterChain<T> buildChain(URL url) {
         return new RouterChain<>(url);
