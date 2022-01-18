@@ -57,6 +57,15 @@ import static org.apache.dubbo.rpc.cluster.Constants.ROUTER_KEY;
  * RegistryDirectory
  */
 public class RegistryDirectory<T> extends AbstractDirectory<T> implements NotifyListener {
+    /**
+     * RegistryDirectory的数据结构以及用途待了解
+     * 解答 ：
+     * 1）通过服务目录，服务消费者可获取到服务提供者的信息，比如 ip、端口、服务协议等。通过这些信息，服务消费者就可通过 Netty 等客户端进行远程调用。
+     * 2）服务目录在获取注册中心的服务配置信息后，会为每条配置信息生成一个 Invoker 对象，并把这个 Invoker 对象存储起来，这个 Invoker 才是服务目录最终持有的对象。
+     * 3）服务目录可以看做是Invoker集合，且这个集合中的元素会随注册中心的变化而进行动态调整。
+     * <p>
+     * https://dubbo.apache.org/zh/docsv2.7/dev/source/directory/  服务目录（官网）
+     */
 
     private static final Logger logger = LoggerFactory.getLogger(RegistryDirectory.class);
 
@@ -88,7 +97,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
      */
     private volatile List<Configurator> configurators; // The initial value is null and the midway may be assigned to null, please use the local variable reference
 
-    // Map<url, Invoker> cache service url to invoker mapping.  todo @csy urlInvokerMap值是什么时候设置的？
+    // Map<url, Invoker> cache service url to invoker mapping. urlInvokerMap值是什么时候设置的？解：设置的方法有许多，比如toInvokers()方法中，destroyAllInvokers()方法等
     private volatile Map<String, Invoker<T>> urlInvokerMap; // The initial value is null and the midway may be assigned to null, please use the local variable reference
     private volatile List<Invoker<T>> invokers;
 

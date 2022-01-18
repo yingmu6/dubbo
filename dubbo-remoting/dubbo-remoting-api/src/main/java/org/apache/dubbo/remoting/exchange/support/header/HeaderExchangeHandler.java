@@ -38,7 +38,19 @@ import static org.apache.dubbo.common.constants.CommonConstants.READONLY_EVENT;
 /**
  * ExchangeReceiver
  */
-public class HeaderExchangeHandler implements ChannelHandlerDelegate { //todo @csy 头交换处理器，是指交换协议头吗？
+public class HeaderExchangeHandler implements ChannelHandlerDelegate {
+    /**
+     * Exchange层的功能用途是什么？头交换处理器，是指交换协议头吗？
+     * 解答：
+     * 1） Exchange层，属于信息交换层，是对Request和Response的抽象。
+     * 2）为什么要单独抽象出一个Exchange层，而不是在Protocol层直接对Netty或者Mina引用？这个问题其实不难理解，Netty或者Mina对外接口和调用方式都不一样，如果在Protocol层直接对Mina做引用，
+     * 对于Protocol层来讲，就依赖了具体而不是抽象，过几天想要换成Netty，就需要对Protocol层做大量的修改。这样不符合开闭原则
+     * 3）Dubbo使用的是TCP长连接，与我们开发常见到的HTTP协议（HTTP本身与TCP也不在同一层）不同 。TCP本身没有Request和Response的概念。只有发送和接收。
+     * HTTP协议中的Request和Response是由Http服务器或者Servlet容器来实现的。
+     * 4）Dubbo要使用TCP长连接，就得自己实现Request和Response的抽象概念，这样客户端与服务端之间的交互才能有去有回。 https://www.cnblogs.com/nizuimeiabc1/p/14855857.html
+     * <p>
+     * 5）todo @csy 头交换处理器，是指交换协议头吗？
+     */
 
     protected static final Logger logger = LoggerFactory.getLogger(HeaderExchangeHandler.class);
 

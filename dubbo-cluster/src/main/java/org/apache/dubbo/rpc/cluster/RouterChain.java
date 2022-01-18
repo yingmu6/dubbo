@@ -30,25 +30,34 @@ import java.util.stream.Collectors;
 /**
  * Router chain
  */
-public class RouterChain<T> { //todo @csy pause 路由链是怎么使用的？
+public class RouterChain<T> {
+    /**
+     * 路由规则是什么？路由链是怎么使用的？
+     * 解答：1）通过Dubbo中的路由规则可以做服务治理，路由规则在发起一次RPC调用前起到过滤目标服务器地址的作用，过滤后的地址列表，将作为消费端最终发起RPC调用的备选地址。
+     * 2）可分为条件路由和标签路由。条件路由：支持以服务或Consumer应用为粒度配置路由规则。标签路由。以Provider应用为粒度配置路由规则
+     * <p>
+     * https://dubbo.apache.org/zh/docs/v2.7/user/examples/routing-rule/#m-zhdocsv27userexamplesrouting-rule 官方文档
+     * https://blog.csdn.net/anLA_/article/details/101233619 博客文档
+     * 3）在RegistryProtocol#doRefer中会使用路由链
+     */
 
     // full list of addresses from registry, classified by method name.
-    private List<Invoker<T>> invokers = Collections.emptyList();
+    private List<Invoker<T>> invokers = Collections.emptyList(); //维护着从注册中心获取的invoker列表
 
     // containing all routers, reconstruct every time 'route://' urls change.
-    private volatile List<Router> routers = Collections.emptyList();
+    private volatile List<Router> routers = Collections.emptyList(); //维护着所有的路由规则列表
 
     // Fixed router instances: ConfigConditionRouter, TagRouter, e.g., the rule for each instance may change but the
     // instance will never delete or recreate.
-    private List<Router> builtinRouters = Collections.emptyList(); //flag6
+    private List<Router> builtinRouters = Collections.emptyList(); //内置的路由实例
 
-    public static <T> RouterChain<T> buildChain(URL url) {
+    public static <T> RouterChain<T> buildChain(URL url) { //构建路由链RouterChain
         return new RouterChain<>(url);
     }
 
     private RouterChain(URL url) {
         List<RouterFactory> extensionFactories = ExtensionLoader.getExtensionLoader(RouterFactory.class)
-                .getActivateExtension(url, "router");
+                .getActivateExtension(url, "router"); //获取满足条件的扩展实例列表
 
         List<Router> routers = extensionFactories.stream()
                 .map(factory -> factory.getRouter(url))
@@ -95,8 +104,8 @@ public class RouterChain<T> { //todo @csy pause 路由链是怎么使用的？
      */
     public List<Invoker<T>> route(URL url, Invocation invocation) {
         List<Invoker<T>> finalInvokers = invokers;
-        for (Router router : routers) { //todo @csy Router的实例是在哪里选择的？
-            finalInvokers = router.route(finalInvokers, url, invocation); //todo @csy Router是如何选择invoker列表的？
+        for (Router router : routers) { //Router的实例是在哪里选择的？解：在RegistryDirectory#notify中会调用addRouters()方法添加路由列表
+            finalInvokers = router.route(finalInvokers, url, invocation); //Router是如何选择invoker列表的？解：按照路由规则，比如条件路由等，进入筛选匹配获取的
         }
         return finalInvokers;
     }

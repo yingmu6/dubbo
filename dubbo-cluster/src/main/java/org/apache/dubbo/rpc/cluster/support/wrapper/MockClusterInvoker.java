@@ -35,7 +35,7 @@ public class MockClusterInvoker<T> implements ClusterInvoker<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(MockClusterInvoker.class);
 
-    private final Directory<T> directory;
+    private final Directory<T> directory; //编码风格：比较多的用成员变量、成员方法，比较少用方法返回值
 
     private final Invoker<T> invoker;
 
@@ -60,7 +60,7 @@ public class MockClusterInvoker<T> implements ClusterInvoker<T> {
 
     @Override
     public boolean isAvailable() {
-        return directory.isAvailable(); //todo @csy 为啥此处directory的实例是RegistryDirectory
+        return directory.isAvailable(); //为啥此处directory的实例是RegistryDirectory？ 解答：要看成员变量，是哪里写入的，比如DubboRegistryFactory.createRegistry()传入的就是RegistryDirectory
     }
 
     @Override

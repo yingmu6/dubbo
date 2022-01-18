@@ -26,7 +26,15 @@ import java.util.concurrent.ScheduledExecutorService;
  *
  */
 @SPI("default")
-public interface ExecutorRepository { //todo @csy 线程池仓库是指啥？
+public interface ExecutorRepository {
+    /**
+     * 线程池仓库是指啥？
+     * 解答：
+     * 1）负责创建并管理Dubbo中的线程池。会根据URL复用同一个线程，这解决了每个连接（连接同一个节点上服务）都启动一个线程池问题。
+     * 2）对2.7.5版本之前的Dubbo应用，在WrappedChannelHandler中会为每个客户端连接启动一个线程池，因为不会根据URL复用线程池，这意味着每个消费端都浪费着一定的资源。
+     *
+     * https://gentryhuang.com/posts/13d5a11a/index.html
+     */
 
     /**
      * Called by both Client and Server. TODO, consider separate these two parts.

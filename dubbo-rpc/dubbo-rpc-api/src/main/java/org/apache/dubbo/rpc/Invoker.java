@@ -27,7 +27,7 @@ import org.apache.dubbo.common.Node;
  */
 public interface Invoker<T> extends Node { //todo @csy Invoker的相关继承图，整理下
     /**
-     * Invoker是提供者、消费者都会用到的吗？最终的执行都是Invoker执行的吗？
+     * Invoker是提供者、消费者都会用到的吗？最终的执行都是Invoker执行的吗？（Invoker：具有远程调用功能的对象，参见：https://dubbo.apache.org/zh/docsv2.7/dev/source/directory/ 官网）
      * 解：Invoker是实体域，它是Dubbo的核心模型，其它模型都向它靠扰，或转换成它，它代表一个可执行体，可向它发起invoke调用，
      * 它有可能是一个本地的实现，也可能是一个远程的实现，也可能一个集群实现。（官网描述）【对于消费者，invoker里的信息，就是提供者的信息，相反也是类似】
      */

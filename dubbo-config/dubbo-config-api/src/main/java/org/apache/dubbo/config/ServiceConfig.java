@@ -64,7 +64,11 @@ import static org.apache.dubbo.rpc.cluster.Constants.EXPORT_KEY;
 
 public class ServiceConfig<T> extends ServiceConfigBase<T> {
     /**
-     * todo @csy 直连方式 <dubbo:service url="dubbo://host:post...."> 为啥不会检查注册中心，从哪里做判断？checkRegistry()
+     * 直连方式 <dubbo:service url="dubbo://host:post...."> 为啥不会检查注册中心，从哪里做判断？checkRegistry()
+     * 解答：
+     * 1）在开发及测试环境下，经常需要绕过注册中心，只测试指定服务提供者，这时候可能需要点对点直连，点对点直连方式，将以服务接口为单位，忽略注册中心的提供者列表，A接口配置点对点，不影响B接口从注册中心获取列表。
+     * 2）https://dubbo.apache.org/zh/docs/advanced/explicit-target/ 官方使用文档
+     * 3）todo @csy 直连方式的逻辑在哪里？原理是啥？
      */
 
     public static final Logger logger = LoggerFactory.getLogger(ServiceConfig.class);

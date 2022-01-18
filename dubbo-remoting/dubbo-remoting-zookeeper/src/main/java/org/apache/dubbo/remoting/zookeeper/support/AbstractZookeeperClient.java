@@ -35,7 +35,16 @@ import java.util.concurrent.Executor;
 public abstract class AbstractZookeeperClient<TargetDataListener, TargetChildListener> implements ZookeeperClient {
 
     /**
-     * todo @csy zookeeper 临时节点、永久节点了解？以及客户端连接方式了解
+     * zookeeper 临时节点、永久节点了解？以及客户端连接方式了解
+     * 解答：
+     * 1）临时节点：生命周期和客户端会话绑定，会话失效，相关的临时节点被移除
+     * 2）Zookeeper四种节点：
+     * a）Persistent是永久节点
+     * b）Persistent_sequential是永久有序节点。如00000、000001.....
+     * c）Ephemeral是临时节点、
+     * d）Ephemeral_sequential是临时有序节点。
+     * <p>
+     * 2）Zookeeper客户端Curator使用详解 https://www.jianshu.com/p/70151fc0ef5d
      */
     protected static final Logger logger = LoggerFactory.getLogger(AbstractZookeeperClient.class);
 

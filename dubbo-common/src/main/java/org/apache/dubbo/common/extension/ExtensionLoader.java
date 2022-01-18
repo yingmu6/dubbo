@@ -274,7 +274,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
      */
 
     /**
-     * 获取满足匹配条件的Activate对应的扩展类列表
+     * 获取满足匹配条件的Activate对应的扩展类列表  todo @csy 获取Activate扩展实例，待实践测试
      */
     public List<T> getActivateExtension(URL url, String[] values, String group) { //将URL中配置的参数与@Activate配置的内容进行比较
         List<T> activateExtensions = new ArrayList<>();

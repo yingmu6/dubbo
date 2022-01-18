@@ -29,10 +29,14 @@ import org.apache.dubbo.rpc.cluster.support.FailoverCluster;
  * <p>
  * <a href="http://en.wikipedia.org/wiki/Computer_cluster">Cluster</a>
  * <a href="http://en.wikipedia.org/wiki/Fault-tolerant_system">Fault-Tolerant</a>
- *
  */
 @SPI(Cluster.DEFAULT)
-public interface Cluster { //test
+public interface Cluster {
+
+    /**
+     * todo @csy Cluster功能用途是啥？join()功能方法是啥？
+     */
+
     String DEFAULT = FailoverCluster.NAME;
 
     /**
