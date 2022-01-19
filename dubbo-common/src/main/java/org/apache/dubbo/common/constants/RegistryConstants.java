@@ -19,6 +19,17 @@ package org.apache.dubbo.common.constants;
 
 public interface RegistryConstants {
 
+    /**
+     * 注册中心的这些目录都管理了哪些内容？
+     * 解：管理着提供者、消费者等信息
+     * 1）注册中心是其核心组件之一。Dubbo通过注册中心实现了分布式环境中各服务之间的注册与发现，是各个分布式节点之间的纽带。
+     * 注明：主要功能有：动态加入、动态发现、动态调整、统一配置
+     * 2）ZooKeeper是树形结构的注册中心。Dubbo使用ZooKeeper作为注册中心时，只会创建持久节点和临时节点两种，对创建的顺序并没有要求。
+     * 3）发布：ZooKeeper发布代码非常简单，只是调用了ZooKeeper的客户端库在注册中心上创建一个目录
+     * 订阅：订阅通常有pull和push两种方式，一种是客户端定时轮询注册中心拉取配置，另一种是注册中心主动推送数据给客户端。这两种方式各有利弊，
+     * 目前Dubbo采用的是第一次启动拉取方式，后续接收事件重新拉取数据。
+     */
+
     String REGISTRY_KEY = "registry";
 
     String REGISTRY_PROTOCOL = "registry";
@@ -29,7 +40,7 @@ public interface RegistryConstants {
 
     String PROVIDERS_CATEGORY = "providers";
 
-    String CONSUMERS_CATEGORY = "consumers"; //todo @csy 注册中心的这些目录都管理了哪些内容？
+    String CONSUMERS_CATEGORY = "consumers";
 
     String ROUTERS_CATEGORY = "routers";
 

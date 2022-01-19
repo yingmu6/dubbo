@@ -20,7 +20,7 @@ import io.netty.channel.Channel;
 
 public class CommandContext { //命令上下文
 
-    private String commandName; //todo @csy 上下文中的内容，是在哪里解析的？
+    private String commandName; //上下文中的内容，是在哪里解析的？解：此处指命令的名称，是解析输入字符串获取到的
     private String[] args;
     private Channel remote;
     private boolean isHttp;

@@ -25,12 +25,12 @@ public class TelnetCommandDecoder {
     public static final CommandContext decode(String str) {
         CommandContext commandContext = null;
         if (!StringUtils.isBlank(str)) {
-            String[] array = str.split("(?<![\\\\]) "); //todo @csy 此处的str待调试，分隔的内容是啥？
+            String[] array = str.split("(?<![\\\\]) "); //此处的str待调试，分隔的内容是啥？解：按空格分隔，如test a b 分隔为[test] [a] [b]
             if (array.length > 0) {
-                String name = array[0];
+                String name = array[0]; //命令的名称
                 String[] targetArgs = new String[array.length - 1];
-                System.arraycopy(array, 1, targetArgs, 0, array.length - 1);
-                commandContext = CommandContextFactory.newInstance( name, targetArgs,false);
+                System.arraycopy(array, 1, targetArgs, 0, array.length - 1); //将命令后面截取的内容，作为参数列表（进行数组拷贝）
+                commandContext = CommandContextFactory.newInstance(name, targetArgs, false);
                 commandContext.setOriginRequest(str);
             }
         }
