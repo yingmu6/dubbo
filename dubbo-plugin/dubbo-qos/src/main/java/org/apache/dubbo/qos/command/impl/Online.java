@@ -44,8 +44,8 @@ public class Online implements BaseCommand {
     @Override
     public String execute(CommandContext commandContext, String[] args) {
         logger.info("receive online command");
-        String servicePattern = ".*";
-        if (ArrayUtils.isNotEmpty(args)) {
+        String servicePattern = ".*"; //默认匹配所有的服务 *
+        if (ArrayUtils.isNotEmpty(args)) { //若有输入的参数，则按输入参数匹配
             servicePattern = "" + args[0];
         }
 
@@ -60,16 +60,16 @@ public class Online implements BaseCommand {
     public static boolean online(String servicePattern) {
         boolean hasService = false;
 
-        Collection<ProviderModel> providerModelList = serviceRepository.getExportedServices();
+        Collection<ProviderModel> providerModelList = serviceRepository.getExportedServices(); //获取服务仓库暴露的服务
         for (ProviderModel providerModel : providerModelList) {
-            if (providerModel.getServiceMetadata().getDisplayServiceKey().matches(servicePattern)) {
+            if (providerModel.getServiceMetadata().getDisplayServiceKey().matches(servicePattern)) { //进行服务匹配
                 hasService = true;
                 List<ProviderModel.RegisterStatedURL> statedUrls = providerModel.getStatedUrl();
                 for (ProviderModel.RegisterStatedURL statedURL : statedUrls) {
-                    if (!statedURL.isRegistered()) {
+                    if (!statedURL.isRegistered()) { //若没有注册，则将提供者url往注册中心注册
                         Registry registry = registryFactory.getRegistry(statedURL.getRegistryUrl());
                         registry.register(statedURL.getProviderUrl());
-                        statedURL.setRegistered(true);
+                        statedURL.setRegistered(true); //注册好后，设置注册状态
                     }
                 }
             }

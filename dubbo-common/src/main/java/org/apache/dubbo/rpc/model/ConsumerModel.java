@@ -26,8 +26,8 @@ import java.util.*;
 /**
  * This model is bound to your reference's configuration, for example, group, version or method level configuration.
  */
-public class ConsumerModel { //todo @csy 数据模型的功能用途是什么？
-    private String serviceKey;
+public class ConsumerModel { //数据模型的功能用途是什么？解：从描述上看，消费者模型绑定着引用实例的配置
+    private String serviceKey; //需引用的方法名，如"org.apache.dubbo.config.api.DemoService"
     private final ServiceDescriptor serviceModel;
     private final ReferenceConfigBase<?> referenceConfig;
 
@@ -36,11 +36,12 @@ public class ConsumerModel { //todo @csy 数据模型的功能用途是什么？
     private Map<String, AsyncMethodInfo> methodConfigs = new HashMap<>();
 
     /**
-     *  This constructor create an instance of ConsumerModel and passed objects should not be null.
-     *  If service name, service instance, proxy object,methods should not be null. If these are null
-     *  then this constructor will throw {@link IllegalArgumentException}
-     * @param serviceKey Name of the service.
-     * @param proxyObject  Proxy object.
+     * This constructor create an instance of ConsumerModel and passed objects should not be null.
+     * If service name, service instance, proxy object,methods should not be null. If these are null
+     * then this constructor will throw {@link IllegalArgumentException}
+     *
+     * @param serviceKey  Name of the service.  服务名称
+     * @param proxyObject Proxy object. 代理对象
      */
     public ConsumerModel(String serviceKey
             , Object proxyObject

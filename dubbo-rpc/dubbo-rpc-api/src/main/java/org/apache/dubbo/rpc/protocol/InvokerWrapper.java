@@ -48,7 +48,7 @@ public class InvokerWrapper<T> implements Invoker<T> {
 
     @Override
     public boolean isAvailable() {
-        return invoker.isAvailable(); //todo @csy 此处的实例为什么是ProtocolFilterWrapper$1@4464
+        return invoker.isAvailable(); //此处的实例为什么是ProtocolFilterWrapper$1@4464 ？解：应该是看错了，因为ProtocolFilterWrapper并不是Invoker的实例
     }
 
     @Override

@@ -68,8 +68,8 @@ public class Offline implements BaseCommand {
                 for (ProviderModel.RegisterStatedURL statedURL : statedUrls) {
                     if (statedURL.isRegistered()) {
                         Registry registry = registryFactory.getRegistry(statedURL.getRegistryUrl());
-                        registry.unregister(statedURL.getProviderUrl());
-                        statedURL.setRegistered(false);
+                        registry.unregister(statedURL.getProviderUrl()); //取消注册
+                        statedURL.setRegistered(false); //注册状态为false
                     }
                 }
             }

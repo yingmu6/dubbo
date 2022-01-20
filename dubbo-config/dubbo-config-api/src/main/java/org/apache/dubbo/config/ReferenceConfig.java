@@ -440,7 +440,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
                 serviceDescriptor,
                 this,
                 null,
-                serviceMetadata);
+                serviceMetadata); //注册消费者模型ConsumerModel
 
         resolveFile();
         ConfigValidationUtils.validateReferenceConfig(this);

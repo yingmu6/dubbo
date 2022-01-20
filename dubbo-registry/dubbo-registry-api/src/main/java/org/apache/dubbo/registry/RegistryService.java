@@ -40,7 +40,7 @@ public interface RegistryService { //todo @csy 了解下注册服务的契约都
      *
      * @param url  Registration information , is not allowed to be empty, e.g: dubbo://10.20.153.10/org.apache.dubbo.foo.BarService?version=1.0.0&application=kylin
      */
-    void register(URL url);
+    void register(URL url); //todo @csy 此处是否会发起远程注册中心的注册链接的？ 还是本地缓存处理？
 
     /**
      * Unregister

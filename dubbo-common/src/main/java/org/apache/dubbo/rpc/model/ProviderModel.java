@@ -81,10 +81,10 @@ public class ProviderModel {
         this.urls.add(url);
     }
 
-    public static class RegisterStatedURL { //todo @csy 注册状态url是指啥？
+    public static class RegisterStatedURL { //注册状态url是指啥？解：指的带有注册状态的url（在QOS上下线等地方会用到）
         private volatile URL registryUrl;
         private volatile URL providerUrl;
-        private volatile boolean registered;
+        private volatile boolean registered; //是否已经将providerUrl注册到注册中心
 
         public RegisterStatedURL(URL providerUrl,
                                  URL registryUrl,

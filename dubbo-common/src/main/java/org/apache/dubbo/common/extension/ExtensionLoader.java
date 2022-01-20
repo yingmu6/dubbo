@@ -985,6 +985,8 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
     /**
      * 加载配置文件中的内容，并设置到不同类型的缓存中，比如cachedAdaptiveClass、cachedWrapperClasses、extensionClasses、cachedActivates等
      * （对配置文件中对应的Class进行判断，设置到对应类型的缓存中）
+     * <p>
+     * clazz：是从配置文件加载的Class类，如filter=org.apache.dubbo.rpc.protocol.ProtocolFilterWrapper，此处的clazz就是ProtocolFilterWrapper对应的class类
      */
     private void loadClass(Map<String, Class<?>> extensionClasses, java.net.URL resourceURL, Class<?> clazz, String name,
                            boolean overridden) throws NoSuchMethodException {

@@ -32,7 +32,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.SERVICE_FILTER_K
  * ListenerProtocol
  */
 @Activate(order = 100)
-public class ProtocolFilterWrapper implements Protocol {
+public class ProtocolFilterWrapper implements Protocol { //org.apache.dubbo.rpc.protocol.ProtocolFilterWrapper 在org.apache.dubbo.rpc.Protocol文件中配置了
 
     private final Protocol protocol; //持有ProtocolListenerWrapper实例
 

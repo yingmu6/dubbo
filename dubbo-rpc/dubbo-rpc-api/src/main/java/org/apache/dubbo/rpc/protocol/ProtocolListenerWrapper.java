@@ -50,8 +50,13 @@ public class ProtocolListenerWrapper implements Protocol {
         return protocol.getDefaultPort();
     }
 
+    /**
+     * 为什么会执行封装类？
+     * 解：ProtocolListenerWrapper是Protocol的封装类，根据SPI获取扩展实例，
+     * 默认会使用封装类封装扩展实例的，做功能增强，层层调用的
+     */
     @Override
-    public <T> Exporter<T> export(Invoker<T> invoker) throws RpcException { //todo @csy 为什么会执行封装类？
+    public <T> Exporter<T> export(Invoker<T> invoker) throws RpcException {
         if (UrlUtils.isRegistry(invoker.getUrl())) {
             return protocol.export(invoker);
         }
