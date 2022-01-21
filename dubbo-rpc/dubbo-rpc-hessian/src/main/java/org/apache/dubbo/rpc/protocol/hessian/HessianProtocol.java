@@ -56,7 +56,18 @@ import static org.apache.dubbo.rpc.protocol.hessian.Constants.*;
 public class HessianProtocol extends AbstractProxyProtocol {
 
     /**
-     * todo @csy hessian基本概念了解
+     * hessian基本概念了解（基于二进制的RPC协议，实现远程通讯）
+     * 解答：
+     * 1）Hessian协议用于集成Hessian的服务，Hessian底层采用Http通讯，采用Servlet暴露服务，Dubbo缺省内嵌Jetty 作为服务器实现。
+     * 2）Dubbo的Hessian协议可以和原生Hessian服务互操作，即：
+     * ---a）提供者用Dubbo的Hessian协议暴露服务，消费者直接用标准Hessian接口调用
+     * ---b）或者提供方用标准Hessian暴露服务，消费方用Dubbo的Hessian协议调用
+     * 3）Hessian是Caucho开源的一个RPC框架，其通讯效率高于WebService和Java自带的序列化
+     * 4）特性：Hessian二进制序列化，传入传出参数数据包较大，提供者比消费者个数多，提供者压力较大，可传文件
+     * 5）采用的是二进制RPC协议，因为采用的是二进制协议，所以它很适合于发送二进制数据
+     * <p>
+     * https://dubbo.apache.org/zh/docs/references/protocols/hessian/ dubbo使用hession文档
+     * http://hessian.caucho.com/ hession官网
      */
 
     private final Map<String, HessianSkeleton> skeletonMap = new ConcurrentHashMap<String, HessianSkeleton>();

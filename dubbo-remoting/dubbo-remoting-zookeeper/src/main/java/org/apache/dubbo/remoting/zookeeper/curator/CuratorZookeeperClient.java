@@ -121,9 +121,14 @@ public class CuratorZookeeperClient extends AbstractZookeeperClient<CuratorZooke
             } catch (Exception e1) {
                 throw new IllegalStateException(e.getMessage(), e1);
             }
-        } catch (Exception e) { //todo @csy org.apache.zookeeper.KeeperException$SessionExpiredException 此处调试的时候会出现session过期，那么Zookeeper的Client与Server是怎样保持会话的？
+        } catch (Exception e) {
             throw new IllegalStateException(e.getMessage(), e);
         }
+
+        /**
+         * todo @csy org.apache.zookeeper.KeeperException$SessionExpiredException 此处调试的时候会出现session过期，那么Zookeeper的Client与Server是怎样保持会话的？
+         * https://zhuanlan.zhihu.com/p/87008001
+         */
     }
 
     @Override
