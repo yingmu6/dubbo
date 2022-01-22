@@ -64,7 +64,7 @@ public class ConsumerApi {
 
         Map<Integer, String> map = new HashMap<>();
         map.put(1, "aa");
-        map.put(2, "cc");
+        map.put(2, "cc"); //flag
         ICollectionParamService collectionParamService = ReferenceConfigCache.getCache().get(reference2);
         String message2 = collectionParamService.getValWithMapParam(map);
         System.out.println("map调用：" + message2);
