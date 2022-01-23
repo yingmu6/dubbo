@@ -39,7 +39,28 @@ import java.util.function.Function;
  * @see org.apache.dubbo.rpc.Invoker#invoke(Invocation)
  * @see AppResponse
  */
-public interface Result extends Serializable { //todo @csy Result的几个实现类，各有什么用途？做下比较
+public interface Result extends Serializable {
+
+    /**
+     * Result的几个实现类，各有什么用途？做下比较
+     * 解答：主要有AsyncRpcResult、AppResponse
+     *
+     * 把RpcResult替换为AppResponse的原因：
+     * 为了更好的支持异步回调。RpcResult被替换成了AppResponse，而Filter链路上传递的对象变成了AsyncRpcResult，
+     * 这个修改其实是需要用户明确理解的（主要是对扩展Filter的用户），所以选择删除RpcResult其中一个重要的目的也是为了让升级者明确的感知到以上变化的存在，防止误用
+     *
+     * Dubbo2.7.x异步改造是对Dubbo2.6.x异步功能的增强，引入的 CompletableFuture既支持Future又支持Callback的调用方式，使用方可以根据需要自行选择。
+     * https://gentryhuang.com/posts/c812f120/index.html
+     *
+     *
+     * Dubbo 的远程调用中大致可以分为以上 4 种调用方式：
+     * oneway: 客户端发送消息后，不需要接收响应。对于不需要关心服务响应结果的请求适合 oneway 通信。
+     * sync: Dubbo 默认的通信方式，即同步调用。
+     * async: 异步调用范畴，使用 Future 的方式获取结果。
+     * future: 异步调用范畴，使用 CompletableFuture 获取结果，也支持通过 Future 的方式获取结果。
+     *
+     */
+
 
     /**
      * Get invoke result.

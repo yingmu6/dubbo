@@ -46,6 +46,14 @@ public class AsyncRpcResult implements Result {
     private static final Logger logger = LoggerFactory.getLogger(AsyncRpcResult.class);
 
     /**
+     * AsyncRpcResult：表示的是一个异步的、未完成的RPC调用，是在调用链中实际传递的对象。
+     * AppResponse：表示的是服务端返回的具体响应，相当于 Dubbo 2.6.x 中的 RpcResult 。其子类是 DecodeableRpcResult。
+     * CompletableFuture：表示的是服务端返回的结果，由调用端创建，用于封装 AppResponse 对象。其中 DefaultFuture 继承该类。
+     *
+     * 三者关系：AppResponse -> CompletableFuture -> AsyncRpcResult
+     */
+
+    /**
      * RpcContext may already have been changed when callback happens, it happens when the same thread is used to execute another RPC call.
      * So we should keep the reference of current RpcContext instance and restore it before callback being executed.
      */
@@ -55,7 +63,7 @@ public class AsyncRpcResult implements Result {
 
     private Invocation invocation;
 
-    private CompletableFuture<AppResponse> responseFuture;
+    private CompletableFuture<AppResponse> responseFuture; //包含异步响应的结果
 
     public AsyncRpcResult(CompletableFuture<AppResponse> future, Invocation invocation) {
         this.responseFuture = future;
@@ -174,7 +182,7 @@ public class AsyncRpcResult implements Result {
             ThreadlessExecutor threadlessExecutor = (ThreadlessExecutor) executor;
             threadlessExecutor.waitAndDrain();
         }
-        return responseFuture.get(timeout, unit);
+        return responseFuture.get(timeout, unit); //异步获取结果
     }
 
     @Override

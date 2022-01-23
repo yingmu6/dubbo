@@ -72,7 +72,7 @@ public class AppResponse implements Result {
             // fix issue#619
             try {
                 // get Throwable class
-                Class clazz = exception.getClass();
+                Class clazz = exception.getClass(); //获取异常类
                 while (!clazz.getName().equals(Throwable.class.getName())) {
                     clazz = clazz.getSuperclass();
                 }
@@ -81,7 +81,7 @@ public class AppResponse implements Result {
                 stackTraceField.setAccessible(true);
                 Object stackTrace = stackTraceField.get(exception);
                 if (stackTrace == null) {
-                    exception.setStackTrace(new StackTraceElement[0]);
+                    exception.setStackTrace(new StackTraceElement[0]); //设置异常栈
                 }
             } catch (Exception e) {
                 // ignore
