@@ -16,20 +16,7 @@
  */
 package org.apache.dubbo.common.utils;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.Writer;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -177,7 +164,7 @@ public class IOUtils {
         List<String> lines = new ArrayList<String>();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
             String line;
-            while ((line = reader.readLine()) != null) {
+            while ((line = reader.readLine()) != null) { //逐行读取文件中的每一行内容
                 lines.add(line);
             }
             return lines.toArray(new String[0]);

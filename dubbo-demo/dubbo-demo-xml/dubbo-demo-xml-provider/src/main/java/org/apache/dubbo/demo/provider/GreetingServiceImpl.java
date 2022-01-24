@@ -27,11 +27,11 @@ public class GreetingServiceImpl implements GreetingService {
 
     @Override
     public String hello(String msg) throws InterruptedException {
-        try {
-            Thread.sleep(3000);
-        } catch (Exception e) {
-            System.out.println("异常：" + e.getMessage());
-        }
+//        try {
+//            Thread.sleep(3000);
+//        } catch (Exception e) {
+//            System.out.println("异常：" + e.getMessage());
+//        }
         return "hello " + msg;
     }
 

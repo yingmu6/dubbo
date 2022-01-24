@@ -27,7 +27,7 @@ import org.apache.dubbo.remoting.p2p.Group;
 public interface ExchangeGroup extends Group {
 
     /**
-     * join.
+     * join.（创建服务实例ExchangeServer，并写入缓存）
      *
      * @param url
      */

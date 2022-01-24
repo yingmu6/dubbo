@@ -39,14 +39,21 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * AbstractGroup
  */
-public abstract class AbstractExchangeGroup implements ExchangeGroup { //todo @csy pause 交换组的功能用途是怎样的？
+public abstract class AbstractExchangeGroup implements ExchangeGroup {
+    /**
+     * 交换组的功能用途是怎样的？
+     * 解答：
+     * 1）Exchange层是对Transport层更高层次的封装。Transport更关注比如Netty等具体实现，而上层应用不需要关心底层实现
+     * 只需要知道对应的Request、Response，所以使用Exchange封装了请求/响应模式
+     * 2）缓存调用的url与服务端实例、客户端实例的映射关系
+     */
 
     // log  output
     protected static final Logger logger = LoggerFactory.getLogger(AbstractExchangeGroup.class);
 
-    protected final URL url;
+    protected final URL url; //值待了解，解：值如"multicast://224.5.6.7:1234"（看具体的实现类）
 
-    protected final Map<URL, ExchangeServer> servers = new ConcurrentHashMap<URL, ExchangeServer>();
+    protected final Map<URL, ExchangeServer> servers = new ConcurrentHashMap<URL, ExchangeServer>(); //缓存的值待调试了解？ 解：值如<"dubbo://0.0.0.0:60098", HeaderExchangeServer@3919>，调用方的url与创建的服务实例Server的缓存
 
     protected final Map<URL, ExchangeClient> clients = new ConcurrentHashMap<URL, ExchangeClient>();
 
@@ -91,7 +98,7 @@ public abstract class AbstractExchangeGroup implements ExchangeGroup { //todo @c
     public ExchangePeer join(URL url, ExchangeHandler handler) throws RemotingException {
         ExchangeServer server = servers.get(url);
         if (server == null) { // TODO exist concurrent gap
-            server = Exchangers.bind(url, handler);
+            server = Exchangers.bind(url, handler); //若缓存中没有ExchangeServer，则进行创建，并设置到缓存Map中
             servers.put(url, server);
             dispatcher.addChannelHandler(handler);
         }
@@ -100,9 +107,9 @@ public abstract class AbstractExchangeGroup implements ExchangeGroup { //todo @c
 
     @Override
     public void leave(URL url) throws RemotingException {
-        RemotingServer server = servers.remove(url);
+        RemotingServer server = servers.remove(url); //从缓存Map中移除对应的key
         if (server != null) {
-            server.close();
+            server.close(); //关闭远程服务
         }
     }
 

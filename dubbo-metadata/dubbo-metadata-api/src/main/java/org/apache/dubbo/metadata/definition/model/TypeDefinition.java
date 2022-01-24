@@ -24,7 +24,7 @@ import java.util.*;
 /**
  * 2015/1/27.
  */
-public class TypeDefinition implements Serializable { //类型定义
+public class TypeDefinition implements Serializable { //类型定义，todo @csy 待查看成员属性的值？
 
     private String id;
     private String type;

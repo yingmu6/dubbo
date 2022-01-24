@@ -36,10 +36,10 @@ public class MetadataIdentifier extends BaseServiceMetadataIdentifier implements
     }
 
     public MetadataIdentifier(String serviceInterface, String version, String group, String side, String application) {
-        this.serviceInterface = serviceInterface;
-        this.version = version;
+        this.serviceInterface = serviceInterface; //服务接口，如org.apache.dubbo.rpc.service.EchoService
+        this.version = version; //服务版本
         this.group = group;
-        this.side = side;
+        this.side = side; //服务提供方，如"provider"
         this.application = application;
     }
 

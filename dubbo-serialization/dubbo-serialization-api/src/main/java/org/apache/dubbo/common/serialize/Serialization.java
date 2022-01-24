@@ -33,7 +33,11 @@ import java.io.OutputStream;
  * </pre>
  */
 @SPI("hessian2")
-public interface Serialization { //todo @csy 都有哪些序列化方式？
+public interface Serialization { //都有哪些序列化方式？ 可以看具体的序列化策略，比如protobuf、fastJson、hessian2等
+
+    /**
+     * todo @csy 主要使用的序列化方式各有什么优缺点？待比较罗列
+     */
 
     /**
      * Get content type unique id, recommended that custom implementations use values different with

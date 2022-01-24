@@ -16,17 +16,12 @@
  */
 package org.apache.dubbo.common.serialize.fastjson;
 
-import org.apache.dubbo.common.serialize.ObjectOutput;
-
 import com.alibaba.fastjson.serializer.JSONSerializer;
 import com.alibaba.fastjson.serializer.SerializeWriter;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import org.apache.dubbo.common.serialize.ObjectOutput;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.Writer;
+import java.io.*;
 
 /**
  * FastJson object output implementation
@@ -94,7 +89,7 @@ public class FastJsonObjectOutput implements ObjectOutput {
     }
 
     @Override
-    public void writeObject(Object obj) throws IOException {
+    public void writeObject(Object obj) throws IOException { //todo @csy PrintWriter、SerializeWriter是怎么关联的？为啥不直接序列化输出
         SerializeWriter out = new SerializeWriter();
         JSONSerializer serializer = new JSONSerializer(out);
         serializer.config(SerializerFeature.WriteEnumUsingToString, true);

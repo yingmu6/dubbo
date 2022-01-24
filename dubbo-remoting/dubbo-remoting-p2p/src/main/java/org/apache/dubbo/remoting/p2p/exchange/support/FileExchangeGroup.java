@@ -38,9 +38,9 @@ import java.util.concurrent.TimeUnit;
 /**
  * FileGroup
  */
-public class FileExchangeGroup extends AbstractExchangeGroup {
+public class FileExchangeGroup extends AbstractExchangeGroup { //功能用途是什么？解答：把要通信的url放在文件中
 
-    private final File file;
+    private final File file; //此处的文件用途是什么？解答：存储url的文件
     // scheduled executor service
     private final ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(3, new NamedThreadFactory("FileGroupModifiedChecker", true));
     // Reconnect the timer to check whether the connection is available at a time, and when unavailable, an infinite reconnection
@@ -59,7 +59,7 @@ public class FileExchangeGroup extends AbstractExchangeGroup {
             public void run() {
                 // check the file change
                 try {
-                    check();
+                    check(); //检查文件变更
                 } catch (Throwable t) { // Defensive fault tolerance
                     logger.error("Unexpected error occur at reconnect, cause: " + t.getMessage(), t);
                 }
@@ -79,7 +79,7 @@ public class FileExchangeGroup extends AbstractExchangeGroup {
 
     private void check() throws RemotingException {
         long modified = file.lastModified();
-        if (modified > last) {
+        if (modified > last) { //将时间尽心比较，判断是否有变更
             last = modified;
             changed();
         }
@@ -87,7 +87,7 @@ public class FileExchangeGroup extends AbstractExchangeGroup {
 
     private void changed() throws RemotingException {
         try {
-            String[] lines = IOUtils.readLines(file);
+            String[] lines = IOUtils.readLines(file); //文件中的具体内容是什么？解：从上下文来看，文件中存储的url字符串
             for (String line : lines) {
                 connect(URL.valueOf(line));
             }
@@ -106,7 +106,7 @@ public class FileExchangeGroup extends AbstractExchangeGroup {
                     return peer;
                 }
             }
-            IOUtils.appendLines(file, new String[]{full});
+            IOUtils.appendLines(file, new String[] {full}); //若新加入的url，在文件中不存在，则加入到文件中
         } catch (IOException e) {
             throw new RemotingException(new InetSocketAddress(NetUtils.getLocalHost(), 0), getUrl().toInetSocketAddress(), e.getMessage(), e);
         }
@@ -126,7 +126,7 @@ public class FileExchangeGroup extends AbstractExchangeGroup {
                 }
                 saves.add(line);
             }
-            IOUtils.appendLines(file, saves.toArray(new String[0]));
+            IOUtils.appendLines(file, saves.toArray(new String[0])); //todo @csy 为啥在做移除url时，也会往文件中加内容？
         } catch (IOException e) {
             throw new RemotingException(new InetSocketAddress(NetUtils.getLocalHost(), 0), getUrl().toInetSocketAddress(), e.getMessage(), e);
         }

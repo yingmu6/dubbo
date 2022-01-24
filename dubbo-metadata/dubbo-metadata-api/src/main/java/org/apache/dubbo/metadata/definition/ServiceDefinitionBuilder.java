@@ -61,7 +61,7 @@ public final class ServiceDefinitionBuilder {
         sd.setCanonicalName(interfaceClass.getCanonicalName());
         sd.setCodeSource(ClassUtils.getCodeSource(interfaceClass));
 
-        TypeDefinitionBuilder builder = new TypeDefinitionBuilder();
+        TypeDefinitionBuilder builder = new TypeDefinitionBuilder(); //todo @csy pause
         List<Method> methods = ClassUtils.getPublicNonStaticMethods(interfaceClass);
         for (Method method : methods) {
             MethodDefinition md = new MethodDefinition();

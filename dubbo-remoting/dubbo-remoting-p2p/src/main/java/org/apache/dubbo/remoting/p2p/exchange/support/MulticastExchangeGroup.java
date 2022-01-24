@@ -41,7 +41,7 @@ public class MulticastExchangeGroup extends AbstractExchangeGroup {
 
     private MulticastSocket mutilcastSocket;
 
-    public MulticastExchangeGroup(URL url) {
+    public MulticastExchangeGroup(URL url) { //url的值，如：multicast://224.5.6.7:1234
         super(url);
         if (!NetUtils.isMulticastAddress(url.getHost())) {
             throw new IllegalArgumentException("Invalid multicast address " + url.getHost() + ", scope: 224.0.0.0 - 239.255.255.255");
@@ -51,7 +51,7 @@ public class MulticastExchangeGroup extends AbstractExchangeGroup {
             mutilcastSocket = new MulticastSocket(url.getPort());
             mutilcastSocket.setLoopbackMode(false);
             mutilcastSocket.joinGroup(mutilcastAddress);
-            Thread thread = new Thread(new Runnable() {
+            Thread thread = new Thread(new Runnable() { //创建接收多播数据包的线程
                 @Override
                 public void run() {
                     byte[] buf = new byte[1024];
@@ -59,7 +59,7 @@ public class MulticastExchangeGroup extends AbstractExchangeGroup {
                     while (true) {
                         try {
                             mutilcastSocket.receive(recv);
-                            MulticastExchangeGroup.this.receive(new String(recv.getData()).trim(), (InetSocketAddress) recv.getSocketAddress());
+                            MulticastExchangeGroup.this.receive(new String(recv.getData()).trim(), (InetSocketAddress) recv.getSocketAddress()); //解析收到的数据包内容，并进行处理
                         } catch (Exception e) {
                             logger.error(e.getMessage(), e);
                         }
@@ -82,7 +82,7 @@ public class MulticastExchangeGroup extends AbstractExchangeGroup {
         }
     }
 
-    private void receive(String msg, InetSocketAddress remoteAddress) throws RemotingException {
+    private void receive(String msg, InetSocketAddress remoteAddress) throws RemotingException { //msg 内容会是怎样的？解：数据格式如："join dubbo://0.0.0.0:56823"
         if (msg.startsWith(JOIN)) {
             String url = msg.substring(JOIN.length()).trim();
             connect(URL.valueOf(url));
@@ -95,7 +95,7 @@ public class MulticastExchangeGroup extends AbstractExchangeGroup {
     @Override
     public ExchangePeer join(URL url, ExchangeHandler handler) throws RemotingException {
         ExchangePeer peer = super.join(url, handler);
-        send(JOIN + " " + url.toFullString());
+        send(JOIN + " " + url.toFullString()); //数据格式如："join dubbo://0.0.0.0:56823"
         return peer;
     }
 

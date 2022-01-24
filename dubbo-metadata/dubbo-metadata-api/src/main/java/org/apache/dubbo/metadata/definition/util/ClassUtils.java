@@ -36,7 +36,7 @@ public final class ClassUtils {
      * @param clazz
      * @return Jar file name or class path.
      */
-    public static String getCodeSource(Class<?> clazz) {// 获取类Class对应的类路径
+    public static String getCodeSource(Class<?> clazz) {// 获取类Class对应的类路径，如：org.apache.dubbo.rpc.service.EchoService
         ProtectionDomain protectionDomain = clazz.getProtectionDomain();
         if (protectionDomain == null || protectionDomain.getCodeSource() == null) {
             return null;
@@ -48,7 +48,7 @@ public final class ClassUtils {
             return null;
         }
 
-        String path = codeSource.getLocation().toExternalForm();
+        String path = codeSource.getLocation().toExternalForm(); // 值如："file:/Users/chenshengyong/self-db/dubbo/dubbo-common/target/classes/"
 
         if (path.endsWith(".jar") && path.contains("/")) {
             return path.substring(path.lastIndexOf('/') + 1);

@@ -16,6 +16,7 @@
  */
 package org.apache.dubbo.metadata.report.support;
 
+import com.google.gson.Gson;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.config.ApplicationConfig;
 import org.apache.dubbo.metadata.URLRevisionResolver;
@@ -28,17 +29,11 @@ import org.apache.dubbo.metadata.report.identifier.SubscriberMetadataIdentifier;
 import org.apache.dubbo.metadata.report.support.file.FileSystemMetadataReportFactory;
 import org.apache.dubbo.rpc.model.ApplicationModel;
 import org.apache.dubbo.rpc.service.EchoService;
-
-import com.google.gson.Gson;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 import static java.util.Collections.singleton;
 import static java.util.stream.Collectors.toSet;
@@ -90,7 +85,7 @@ public class ConfigCenterBasedMetadataReportTest {
      * {@link MetadataReport#getServiceDefinition(MetadataIdentifier)}
      */
     @Test
-    public void testStoreProviderMetadataAndGetServiceDefinition() {
+    public void testStoreProviderMetadataAndGetServiceDefinition() { //todo @csy pause
         MetadataIdentifier metadataIdentifier = new MetadataIdentifier(BASE_URL);
         ServiceDefinition serviceDefinition = ServiceDefinitionBuilder.buildFullDefinition(INTERFACE_CLASS, BASE_URL.getParameters());
         metadataReport.storeProviderMetadata(metadataIdentifier, serviceDefinition);

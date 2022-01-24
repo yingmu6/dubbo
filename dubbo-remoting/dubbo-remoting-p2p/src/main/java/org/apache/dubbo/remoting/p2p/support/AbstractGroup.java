@@ -19,11 +19,7 @@ package org.apache.dubbo.remoting.p2p.support;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
-import org.apache.dubbo.remoting.ChannelHandler;
-import org.apache.dubbo.remoting.Client;
-import org.apache.dubbo.remoting.RemotingException;
-import org.apache.dubbo.remoting.RemotingServer;
-import org.apache.dubbo.remoting.Transporters;
+import org.apache.dubbo.remoting.*;
 import org.apache.dubbo.remoting.p2p.Group;
 import org.apache.dubbo.remoting.p2p.Peer;
 import org.apache.dubbo.remoting.transport.ChannelHandlerDispatcher;
@@ -42,7 +38,7 @@ public abstract class AbstractGroup implements Group {
 
     protected final URL url;
 
-    protected final Map<URL, RemotingServer> servers = new ConcurrentHashMap<URL, RemotingServer>();
+    protected final Map<URL, RemotingServer> servers = new ConcurrentHashMap<URL, RemotingServer>(); //缓存URL与Server的映射
 
     protected final Map<URL, Client> clients = new ConcurrentHashMap<URL, Client>();
 

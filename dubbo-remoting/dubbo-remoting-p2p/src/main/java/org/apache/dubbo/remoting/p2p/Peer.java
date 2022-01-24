@@ -24,7 +24,7 @@ import org.apache.dubbo.remoting.RemotingServer;
  * <p>
  * <a href="http://en.wikipedia.org/wiki/Peer-to-peer">Peer-to-peer</a>
  */
-public interface Peer extends RemotingServer {
+public interface Peer extends RemotingServer { //todo @csy Peer的功能用途是什么
 
     /**
      * leave.

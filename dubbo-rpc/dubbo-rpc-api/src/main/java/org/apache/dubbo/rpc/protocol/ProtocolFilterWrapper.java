@@ -51,7 +51,7 @@ public class ProtocolFilterWrapper implements Protocol { //org.apache.dubbo.rpc.
             for (int i = filters.size() - 1; i >= 0; i--) { //从后往前遍历，最后一个就是头结点
                 final Filter filter = filters.get(i);
                 final Invoker<T> next = last;
-                last = new Invoker<T>() { //将filter封装为invoker
+                last = new Invoker<T>() { //将filter封装为invoker（使用匿名类创建）
 
                     @Override
                     public Class<T> getInterface() {
@@ -73,7 +73,13 @@ public class ProtocolFilterWrapper implements Protocol { //org.apache.dubbo.rpc.
                         Result asyncResult;
                         try {
                             asyncResult = filter.invoke(next, invocation);
-                        } catch (Exception e) { //todo @csy 此处为什么会出现异常？都有哪些异常的？出现异常的处理逻辑是怎样的？
+                        } catch (Exception e) {
+                            /**
+                             * 此处为什么会出现异常？都有哪些异常的？出现异常的处理逻辑是怎样的？
+                             * 解答：从方法org.apache.dubbo.rpc.Filter#invoke声明上看，是会抛出RpcException异常的
+                             * 具体的异常，看具体的实现类，如GenericFilter#invoke
+                             */
+
                             if (filter instanceof ListenableFilter) {
                                 ListenableFilter listenableFilter = ((ListenableFilter) filter);
                                 try {
@@ -92,7 +98,7 @@ public class ProtocolFilterWrapper implements Protocol { //org.apache.dubbo.rpc.
                         } finally {
 
                         }
-                        return asyncResult.whenCompleteWithContext((r, t) -> { //todo @csy 此处的处理逻辑是怎样的？
+                        return asyncResult.whenCompleteWithContext((r, t) -> { //此处的处理逻辑是怎样的？解答：添加回调方法，在RPC完成调用时，对响应的内容进行处理
                             if (filter instanceof ListenableFilter) {
                                 ListenableFilter listenableFilter = ((ListenableFilter) filter);
                                 Filter.Listener listener = listenableFilter.listener(invocation);
