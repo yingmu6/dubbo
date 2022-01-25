@@ -61,9 +61,9 @@ public final class ServiceDefinitionBuilder {
         sd.setCanonicalName(interfaceClass.getCanonicalName());
         sd.setCodeSource(ClassUtils.getCodeSource(interfaceClass));
 
-        TypeDefinitionBuilder builder = new TypeDefinitionBuilder(); //todo @csy pause
+        TypeDefinitionBuilder builder = new TypeDefinitionBuilder();
         List<Method> methods = ClassUtils.getPublicNonStaticMethods(interfaceClass);
-        for (Method method : methods) {
+        for (Method method : methods) { //遍历暴露接口的所有公有且非静态的方法，提取Method的属性值，并设置到方法模型中MethodDefinition
             MethodDefinition md = new MethodDefinition();
             md.setName(method.getName());
 

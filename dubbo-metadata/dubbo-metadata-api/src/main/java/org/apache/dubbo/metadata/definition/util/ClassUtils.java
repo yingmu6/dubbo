@@ -36,7 +36,7 @@ public final class ClassUtils {
      * @param clazz
      * @return Jar file name or class path.
      */
-    public static String getCodeSource(Class<?> clazz) {// 获取类Class对应的类路径，如：org.apache.dubbo.rpc.service.EchoService
+    public static String getCodeSource(Class<?> clazz) {// 获取文件路径或类路径，如：org.apache.dubbo.rpc.service.EchoService
         ProtectionDomain protectionDomain = clazz.getProtectionDomain();
         if (protectionDomain == null || protectionDomain.getCodeSource() == null) {
             return null;
@@ -88,13 +88,12 @@ public final class ClassUtils {
 
     /**
      * Get all public, non-static methods of the Class passed in.
-     * （获取传入类的所有公共、非静态方法）
      * <p>
      *
      * @param clazz Class to parse.
      * @return methods list
      */
-    public static List<Method> getPublicNonStaticMethods(final Class<?> clazz) {
+    public static List<Method> getPublicNonStaticMethods(final Class<?> clazz) { // 获取指定类的所有公共非静态方法
         List<Method> result = new ArrayList<Method>();
 
         Method[] methods = clazz.getMethods();

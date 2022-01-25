@@ -62,14 +62,14 @@ public abstract class ConfigCenterBasedMetadataReportFactory implements Metadata
 
     @Override
     public ConfigCenterBasedMetadataReport getMetadataReport(URL url) {
-        url = url.setPath(URL_PATH);
+        url = url.setPath(URL_PATH); //设置url的路径，path值为："org.apache.dubbo.metadata.report.MetadataReport"
         final URL actualURL = resolveURLParameters(url);
         String key = actualURL.toServiceString();
         // Lock the metadata access process to ensure a single instance of the metadata instance
         return metadataReportCache.computeIfAbsent(key, k -> new ConfigCenterBasedMetadataReport(actualURL, keyType));
     }
 
-    private URL resolveURLParameters(URL url) {
+    private URL resolveURLParameters(URL url) { //todo @csy pause
         URL resolvedURL = url.removeParameters(EXPORT_KEY, REFER_KEY);
         if (PATH.equals(getKeyType())) { // Only handles for "PATH" type
             if (isBlank(resolvedURL.getParameter(CONFIG_ROOT_PATH_PARAM_NAME))) {

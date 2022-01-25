@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * 2018/10/25
  */
-public class FullServiceDefinition extends ServiceDefinition { //完整的服务定义
+public class FullServiceDefinition extends ServiceDefinition { //完整的服务定义（多了参数Map）
 
     private Map<String, String> parameters; //参数键值对
 

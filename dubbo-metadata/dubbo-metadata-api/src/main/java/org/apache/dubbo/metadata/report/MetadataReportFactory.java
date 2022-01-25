@@ -21,9 +21,10 @@ import org.apache.dubbo.common.extension.Adaptive;
 import org.apache.dubbo.common.extension.SPI;
 
 /**
+ *
  */
 @SPI("redis")
-public interface MetadataReportFactory {
+public interface MetadataReportFactory { //todo @csy 工厂设计模式待了解？都有什么优点的？
 
     @Adaptive({"protocol"})
     MetadataReport getMetadataReport(URL url);

@@ -1243,7 +1243,7 @@ class URL implements Serializable {
         return removeParameters(keys.toArray(new String[0]));
     }
 
-    public URL removeParameters(String... keys) {
+    public URL removeParameters(String... keys) { //从url中移除指定key对应的参数
         if (keys == null || keys.length == 0) {
             return this;
         }

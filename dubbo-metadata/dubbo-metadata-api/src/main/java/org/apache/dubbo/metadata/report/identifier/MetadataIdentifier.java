@@ -29,7 +29,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.*;
  * 2018/10/25
  */
 public class MetadataIdentifier extends BaseServiceMetadataIdentifier implements BaseMetadataIdentifier { //todo @csy 元数据之间的继承关系是怎样的？都有哪些元数据？
-
+    // identifier：[aɪˈdentɪfaɪə(r)] n. 标识符
     private String application;
 
     public MetadataIdentifier() {

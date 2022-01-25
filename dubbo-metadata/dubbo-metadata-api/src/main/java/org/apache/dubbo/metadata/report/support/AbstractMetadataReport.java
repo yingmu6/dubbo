@@ -61,9 +61,9 @@ public abstract class AbstractMetadataReport implements MetadataReport {
 
     private final AtomicBoolean initialized = new AtomicBoolean(false);
 
-    final Map<MetadataIdentifier, Object> allMetadataReports = new ConcurrentHashMap<>(4);
+    final Map<MetadataIdentifier, Object> allMetadataReports = new ConcurrentHashMap<>(4); //所有的元数据Map
 
-    final Map<MetadataIdentifier, Object> failedReports = new ConcurrentHashMap<>(4);
+    final Map<MetadataIdentifier, Object> failedReports = new ConcurrentHashMap<>(4); //失败的元数据Map
 
     private URL reportURL;
     boolean syncReport;
@@ -133,8 +133,8 @@ public abstract class AbstractMetadataReport implements MetadataReport {
         this.reportURL = url;
     }
 
-    private void doSaveProperties(long version) { //todo @csy 此处都是怎样保存的？保存在属性文件中吗
-        if (version < lastCacheChanged.get()) {
+    private void doSaveProperties(long version) { //此处都是怎样保存的？保存在属性文件中吗？ 解答：此处的功能是将属性对象Properties，保存到文件中
+        if (version < lastCacheChanged.get()) { //使用版本号，进行乐观锁处理并发问题
             return;
         }
         if (localCacheFile == null) {
@@ -142,12 +142,12 @@ public abstract class AbstractMetadataReport implements MetadataReport {
         }
         // Save
         try {
-            File lockfile = new File(localCacheFile.getAbsolutePath() + ".lock");
-            if (!lockfile.exists()) {
+            File lockfile = new File(localCacheFile.getAbsolutePath() + ".lock"); //创建本地文件，文件路径如：/Users/chenshengyong/.dubbo/dubbo-metadata-test-null.cache.lock
+            if (!lockfile.exists()) { //文件不存在，则创建文件
                 lockfile.createNewFile();
             }
             try (RandomAccessFile raf = new RandomAccessFile(lockfile, "rw");
-                 FileChannel channel = raf.getChannel()) { //文件通道FileChannel、FileLock待了解
+                 FileChannel channel = raf.getChannel()) { //把资源处理，放在try里面，就可以不用手动关闭资源
                 FileLock lock = channel.tryLock();
                 if (lock == null) {
                     throw new IOException("Can not lock the metadataReport cache file " + localCacheFile.getAbsolutePath() + ", ignore and retry later, maybe multi java process use the file, please config: dubbo.metadata.file=xxx.properties");
@@ -188,18 +188,18 @@ public abstract class AbstractMetadataReport implements MetadataReport {
     }
 
     private void saveProperties(MetadataIdentifier metadataIdentifier, String value, boolean add, boolean sync) {
-        if (localCacheFile == null) {
+        if (localCacheFile == null) { //localCacheFile值如："/Users/chenshengyong/.dubbo/dubbo-metadata-test-null.cache"
             return;
         }
 
         try {
-            if (add) {
+            if (add) { //先把内容写到Properties属性对象中
                 properties.setProperty(metadataIdentifier.getUniqueKey(KeyTypeEnum.UNIQUE_KEY), value);
             } else {
                 properties.remove(metadataIdentifier.getUniqueKey(KeyTypeEnum.UNIQUE_KEY));
             }
             long version = lastCacheChanged.incrementAndGet();
-            if (sync) {
+            if (sync) { //然后把属性对象写到文件中
                 new SaveProperties(version).run();
             } else {
                 reportCacheExecutor.execute(new SaveProperties(version));
@@ -215,7 +215,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
         return getUrl().toString();
     }
 
-    private class SaveProperties implements Runnable {
+    private class SaveProperties implements Runnable { //保存属性对象Properties的线程
         private long version;
 
         private SaveProperties(long version) {
@@ -237,7 +237,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
         }
     }
 
-    private void storeProviderMetadataTask(MetadataIdentifier providerMetadataIdentifier, ServiceDefinition serviceDefinition) {
+    private void storeProviderMetadataTask(MetadataIdentifier providerMetadataIdentifier, ServiceDefinition serviceDefinition) { //上报提供者的元数据
         try {
             if (logger.isInfoEnabled()) {
                 logger.info("store provider metadata. Identifier : " + providerMetadataIdentifier + "; definition: " + serviceDefinition);
@@ -245,9 +245,9 @@ public abstract class AbstractMetadataReport implements MetadataReport {
             allMetadataReports.put(providerMetadataIdentifier, serviceDefinition);
             failedReports.remove(providerMetadataIdentifier);
             Gson gson = new Gson();
-            String data = gson.toJson(serviceDefinition);
+            String data = gson.toJson(serviceDefinition); //JSON字符串，data数据如：{"parameters":{"application":"test-service","side":"provider"},"canonicalName":"org.apache.dubbo.rpc.service.EchoService","codeSource":"file:/Users/chenshengyong/self-db/dubbo/dubbo-common/target/classes/","methods":[{"name":"$echo","parameterTypes":["java.lang.Object"],"returnType":"java.lang.Object"}],"types":[{"type":"java.lang.Object","typeBuilderName":"org.apache.dubbo.metadata.definition.builder.DefaultTypeBuilder"}]}
             doStoreProviderMetadata(providerMetadataIdentifier, data); //todo @csy 是怎样保存到元数据中心的？此处的抽象类是怎么选择实例的？
-            saveProperties(providerMetadataIdentifier, data, true, !syncReport);
+            saveProperties(providerMetadataIdentifier, data, true, !syncReport); //元数据上报到元数据中心后，也会存储一份到本地文件中
         } catch (Exception e) {
             // retry again. If failed again, throw exception.
             failedReports.put(providerMetadataIdentifier, serviceDefinition);
