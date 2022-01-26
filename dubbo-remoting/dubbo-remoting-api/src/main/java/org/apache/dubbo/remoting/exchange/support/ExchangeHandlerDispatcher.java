@@ -30,7 +30,23 @@ import java.util.concurrent.CompletableFuture;
 /**
  * ExchangeHandlerDispatcher
  */
-public class ExchangeHandlerDispatcher implements ExchangeHandler { //todo @csy 派发器的具体执行流程是怎样的？
+public class ExchangeHandlerDispatcher implements ExchangeHandler {
+    /**
+     * 派发器的具体执行流程是怎样的？
+     * 解答：ExchangeHandlerDispatcher继承了ExchangeHandler，持有了处理分发器ChannelHandlerDispatcher的对象，
+     * 当调用send方法时会去调用分发器的send方法，触发ChannelHandler对象列表的sent方法，遍历列表去执行，同理比如连接/断开都会逐一调用。
+     * 处理器集合会在调用HeaderExchanger的connect/bind的时候进行初始化。
+     */
+
+    /**
+     * 事件派发器模式
+     * 1）在项目开发中，会遇到自己的服务订阅、接收来自消息队列或者客户端的事件和请求，基于不同的事件采取对应的行动，这种情况下适合应用派发器模式
+     * 2）XXXEventDispatcher类：核心类，维护事件类型（EventType）到处理器（handler）的映射（存放在ConcurrentHashMap中）；这个类在启动时，
+     * 会通过XXXEventHandlerInitializer初始化这个map数据结构；在启动时，需要订阅或监听来自消息队列的事件；当对应的事件到达时，
+     * 该类的dispatch方法会负责将事件分发到具体的处理器方法中进行处理。
+     * <p>
+     * https://segmentfault.com/a/1190000007403661
+     */
 
     private final ReplierDispatcher replierDispatcher;
 
@@ -38,6 +54,9 @@ public class ExchangeHandlerDispatcher implements ExchangeHandler { //todo @csy 
 
     private final TelnetHandler telnetHandler;
 
+    /**
+     * 提供多种构造方法
+     */
     public ExchangeHandlerDispatcher() {
         replierDispatcher = new ReplierDispatcher();
         handlerDispatcher = new ChannelHandlerDispatcher();

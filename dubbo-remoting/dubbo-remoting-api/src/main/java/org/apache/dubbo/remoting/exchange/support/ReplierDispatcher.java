@@ -25,11 +25,14 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * ReplierDispatcher
  */
-public class ReplierDispatcher implements Replier<Object> { //todo @csy 此类的功能用途是什么？
-
+public class ReplierDispatcher implements Replier<Object> {
+    /**
+     * 此类的功能用途是什么？
+     * 解：响应功能的派发器
+     */
     private final Replier<?> defaultReplier;
 
-    private final Map<Class<?>, Replier<?>> repliers = new ConcurrentHashMap<Class<?>, Replier<?>>();
+    private final Map<Class<?>, Replier<?>> repliers = new ConcurrentHashMap<Class<?>, Replier<?>>(); //维护着事件类型（EventType）到处理器（handler）的映射
 
     public ReplierDispatcher() {
         this(null, null);
@@ -46,7 +49,7 @@ public class ReplierDispatcher implements Replier<Object> { //todo @csy 此类�
         }
     }
 
-    public <T> ReplierDispatcher addReplier(Class<T> type, Replier<T> replier) {
+    public <T> ReplierDispatcher addReplier(Class<T> type, Replier<T> replier) { //添加事件类型与处理器的映射
         repliers.put(type, replier);
         return this;
     }
@@ -70,7 +73,7 @@ public class ReplierDispatcher implements Replier<Object> { //todo @csy 此类�
 
     @Override
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public Object reply(ExchangeChannel channel, Object request) throws RemotingException {
+    public Object reply(ExchangeChannel channel, Object request) throws RemotingException { //根据不同的请求类型Class，做不同的响应回复reply
         return ((Replier) getReplier(request.getClass())).reply(channel, request);
     }
 
