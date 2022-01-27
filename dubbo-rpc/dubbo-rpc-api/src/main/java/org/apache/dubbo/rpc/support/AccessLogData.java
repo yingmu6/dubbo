@@ -31,10 +31,10 @@ import java.util.Map;
  * AccessLogData is a container for log event data（保存日志事件数据的容器）. In internally（内部的） uses map and store each filed of log as value. It
  * does not generate any dynamic value e.g. time stamp, local jmv machine host address etc. It does not allow any null
  * or empty key.
- *
+ * <p>
  * Note: since its date formatter is a singleton, make sure to run it in single thread only（确保单线程使用AccessLogData）.
  */
-public final class AccessLogData {
+public final class AccessLogData { //todo @csy 本地存储的日志路径以及内容待了解
 
     private static final String MESSAGE_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     private static final DateFormat MESSAGE_DATE_FORMATTER = new SimpleDateFormat(MESSAGE_DATE_FORMAT);
@@ -54,7 +54,7 @@ public final class AccessLogData {
     /**
      * This is used to store log data in key val format. （用于存储日志的key、value数据）
      */
-    private Map<String, Object> data;
+    private Map<String, Object> data; //todo @csy 此处的数据待调试？只维护该类中定义的static final成员变量吗？
 
     /**
      * Default constructor.
@@ -195,7 +195,7 @@ public final class AccessLogData {
 
         // 取出本地缓存的日志数据，进行拼接
         sn.append("[")
-                .append(MESSAGE_DATE_FORMATTER.format(getInvocationTime()))
+                .append(MESSAGE_DATE_FORMATTER.format(getInvocationTime())) //对调用的时间进行格式化
                 .append("] ")
                 .append(get(REMOTE_HOST))
                 .append(":")

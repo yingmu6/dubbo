@@ -72,7 +72,7 @@ public class AccessLogFilter implements Filter {
     // It's safe to declare it as singleton since it runs on single thread only
     private static final DateFormat FILE_NAME_FORMATTER = new SimpleDateFormat(FILE_DATE_FORMAT);
 
-    private static final Map<String, Set<AccessLogData>> LOG_ENTRIES = new ConcurrentHashMap<>();
+    private static final Map<String, Set<AccessLogData>> LOG_ENTRIES = new ConcurrentHashMap<>(); //todo @csy 数据内容是怎样的？
 
     /**
      * ScheduledExecutorService使用以及了解？（定时调度机制）
@@ -143,7 +143,7 @@ public class AccessLogFilter implements Filter {
     // 把日志到文件中
     private void writeLogSetToFile(String accessLog, Set<AccessLogData> logSet) {
         try {
-            if (ConfigUtils.isDefault(accessLog)) { //设置了默认值
+            if (ConfigUtils.isDefault(accessLog)) { //设置了默认值 todo @csy 此处的判断是指什么？
                 processWithServiceLogger(logSet);
             } else {
                 File file = new File(accessLog);
@@ -193,7 +193,7 @@ public class AccessLogFilter implements Filter {
         return logData;
     }
 
-    private void processWithServiceLogger(Set<AccessLogData> logSet) {
+    private void processWithServiceLogger(Set<AccessLogData> logSet) { //todo @csy 此处打印的日志会放在哪里？控制台吗？
         //此处是for循环什么语法？解：http://c.biancheng.net/view/747.html
         for (Iterator<AccessLogData> iterator = logSet.iterator(); //赋值语句，循环结构的初始部分，为循环变量赋初值
              iterator.hasNext();                                   //条件语句，循环结构的循环条件
