@@ -29,7 +29,7 @@ import java.util.Collection;
 /**
  * ExchangeServerDelegate
  */
-public class ExchangeServerDelegate implements ExchangeServer {
+public class ExchangeServerDelegate implements ExchangeServer { //todo @csy 委派模式是怎样的？此处是怎么使用的？
 
     private transient ExchangeServer server;
 

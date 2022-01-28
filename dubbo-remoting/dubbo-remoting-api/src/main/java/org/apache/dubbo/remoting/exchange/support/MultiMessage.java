@@ -24,7 +24,7 @@ import java.util.*;
  */
 public final class MultiMessage implements Iterable { //包含多个消息
 
-    private final List messages = new ArrayList();
+    private final List messages = new ArrayList(); //todo @csy 多消息是指什么？有什么用途？
 
     private MultiMessage() {
     }

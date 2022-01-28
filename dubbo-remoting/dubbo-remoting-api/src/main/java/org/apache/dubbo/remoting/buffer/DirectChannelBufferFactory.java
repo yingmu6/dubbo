@@ -19,7 +19,7 @@ package org.apache.dubbo.remoting.buffer;
 
 import java.nio.ByteBuffer;
 
-public class DirectChannelBufferFactory implements ChannelBufferFactory {
+public class DirectChannelBufferFactory implements ChannelBufferFactory { //todo @csy-01-28 与java的堆外存、堆内存有什么区别吗？
 
     private static final DirectChannelBufferFactory INSTANCE = new DirectChannelBufferFactory();
 

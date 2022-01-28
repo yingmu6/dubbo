@@ -22,8 +22,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
-public abstract class AbstractChannelBuffer implements ChannelBuffer {
+public abstract class AbstractChannelBuffer implements ChannelBuffer { //todo @csy-01-28 几个实现类都有
 
+    /**
+     * 维护几个游标
+     * todo @csy-22/01/28 明确几个游标的关系？
+     */
     private int readerIndex;
 
     private int writerIndex;

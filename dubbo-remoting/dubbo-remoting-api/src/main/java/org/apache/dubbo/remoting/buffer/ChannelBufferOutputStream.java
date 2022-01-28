@@ -43,7 +43,7 @@ public class ChannelBufferOutputStream extends OutputStream {
             return;
         }
 
-        buffer.writeBytes(b, off, len);
+        buffer.writeBytes(b, off, len); //todo @csy-01-28 是怎么写数据的？
     }
 
     @Override

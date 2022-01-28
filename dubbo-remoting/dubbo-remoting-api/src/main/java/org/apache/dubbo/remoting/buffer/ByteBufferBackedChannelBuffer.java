@@ -22,9 +22,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
-public class ByteBufferBackedChannelBuffer extends AbstractChannelBuffer {
+public class ByteBufferBackedChannelBuffer extends AbstractChannelBuffer { //java方式实现的ChannelBuffer
 
-    private final ByteBuffer buffer;
+    private final ByteBuffer buffer; //java中的ByteBuffer
 
     private final int capacity;
 
@@ -34,7 +34,7 @@ public class ByteBufferBackedChannelBuffer extends AbstractChannelBuffer {
         }
 
         this.buffer = buffer.slice();
-        capacity = buffer.remaining();
+        capacity = buffer.remaining(); //todo @csy-01-28 java中的ByteBuffer的功能待了解
         writerIndex(capacity);
     }
 
@@ -200,7 +200,7 @@ public class ByteBufferBackedChannelBuffer extends AbstractChannelBuffer {
 
 
     @Override
-    public int setBytes(int index, InputStream in, int length) throws IOException {
+    public int setBytes(int index, InputStream in, int length) throws IOException { //todo @csy 该处的逻辑是什么？
         int readBytes = 0;
 
         if (buffer.hasArray()) {

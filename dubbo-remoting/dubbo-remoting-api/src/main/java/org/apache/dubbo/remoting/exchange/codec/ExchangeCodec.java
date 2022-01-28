@@ -44,7 +44,7 @@ import java.io.InputStream;
 /**
  * ExchangeCodec.
  */
-public class ExchangeCodec extends TelnetCodec {
+public class ExchangeCodec extends TelnetCodec { //todo @csy-01-28 交互层编解码，是指对request、response处理吗？
 
     // header length.
     protected static final int HEADER_LENGTH = 16;
@@ -284,14 +284,14 @@ public class ExchangeCodec extends TelnetCodec {
             // set request id.
             Bytes.long2bytes(res.getId(), header, 4);
 
-            buffer.writerIndex(savedWriteIndex + HEADER_LENGTH);
+            buffer.writerIndex(savedWriteIndex + HEADER_LENGTH); //传输内容的大小：协议头 + 协议体
             ChannelBufferOutputStream bos = new ChannelBufferOutputStream(buffer);
             ObjectOutput out = serialization.serialize(channel.getUrl(), bos);
             // encode response data or error message.
             if (status == Response.OK) {
-                if (res.isHeartbeat()) {
+                if (res.isHeartbeat()) { //心跳事件处理
                     encodeEventData(channel, out, res.getResult());
-                } else {
+                } else {                 //响应数据处理
                     encodeResponseData(channel, out, res.getResult(), res.getVersion());
                 }
             } else {
@@ -305,13 +305,13 @@ public class ExchangeCodec extends TelnetCodec {
             bos.close();
 
             int len = bos.writtenBytes();
-            checkPayload(channel, len);
+            checkPayload(channel, len); //检查传输内容的大小
             Bytes.int2bytes(len, header, 12);
             // write
             buffer.writerIndex(savedWriteIndex);
             buffer.writeBytes(header); // write header.
             buffer.writerIndex(savedWriteIndex + HEADER_LENGTH + len);
-        } catch (Throwable t) {
+        } catch (Throwable t) { //todo @csy-01-28 什么情况下会有异常？
             // clear buffer
             buffer.writerIndex(savedWriteIndex);
             // send error message to Consumer, otherwise, Consumer will wait till timeout.

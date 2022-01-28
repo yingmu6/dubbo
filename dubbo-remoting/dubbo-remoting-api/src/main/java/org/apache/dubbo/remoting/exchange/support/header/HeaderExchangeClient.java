@@ -34,16 +34,14 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static org.apache.dubbo.remoting.Constants.HEARTBEAT_CHECK_TICK;
-import static org.apache.dubbo.remoting.Constants.LEAST_HEARTBEAT_DURATION;
-import static org.apache.dubbo.remoting.Constants.TICKS_PER_WHEEL;
+import static org.apache.dubbo.remoting.Constants.*;
 import static org.apache.dubbo.remoting.utils.UrlUtils.getHeartbeat;
 import static org.apache.dubbo.remoting.utils.UrlUtils.getIdleTimeout;
 
 /**
  * DefaultMessageClient
  */
-public class HeaderExchangeClient implements ExchangeClient {
+public class HeaderExchangeClient implements ExchangeClient { //todo @csy header包下的主要功能是什么？
 
     private final Client client;
     private final ExchangeChannel channel;
@@ -196,7 +194,7 @@ public class HeaderExchangeClient implements ExchangeClient {
         }
     }
 
-    private void startReconnectTask(URL url) {
+    private void startReconnectTask(URL url) { //todo @csy-01-28 都在什么场景下会调用的？
         if (shouldReconnect(url)) {
             AbstractTimerTask.ChannelProvider cp = () -> Collections.singletonList(HeaderExchangeClient.this);
             int idleTimeout = getIdleTimeout(url);

@@ -17,16 +17,12 @@
 package org.apache.dubbo.remoting.transport;
 
 import org.apache.dubbo.common.URL;
-import org.apache.dubbo.remoting.Channel;
-import org.apache.dubbo.remoting.ChannelHandler;
-import org.apache.dubbo.remoting.Constants;
-import org.apache.dubbo.remoting.Endpoint;
-import org.apache.dubbo.remoting.RemotingException;
+import org.apache.dubbo.remoting.*;
 
 /**
  * AbstractPeer
  */
-public abstract class AbstractPeer implements Endpoint, ChannelHandler {
+public abstract class AbstractPeer implements Endpoint, ChannelHandler { //todo @csy-01-28 怎么理解该类，peer指啥？
 
     private final ChannelHandler handler;
 

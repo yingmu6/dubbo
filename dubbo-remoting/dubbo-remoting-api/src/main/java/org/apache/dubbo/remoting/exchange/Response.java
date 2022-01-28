@@ -19,7 +19,7 @@ package org.apache.dubbo.remoting.exchange;
 import static org.apache.dubbo.common.constants.CommonConstants.HEARTBEAT_EVENT;
 
 /**
- * Response（包含响应状态、响应id、版本version、响应结果request等）
+ * Response（响应内容：包含响应状态、响应id、版本version、响应结果等）
  */
 public class Response {
 

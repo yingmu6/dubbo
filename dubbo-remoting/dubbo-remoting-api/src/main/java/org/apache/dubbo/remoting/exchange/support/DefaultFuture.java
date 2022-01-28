@@ -44,7 +44,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.TIMEOUT_KEY;
 /**
  * DefaultFuture.
  */
-public class DefaultFuture extends CompletableFuture<Object> {
+public class DefaultFuture extends CompletableFuture<Object> { //todo @csy-01-28 都做了哪些封装的？
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultFuture.class);
 
@@ -200,7 +200,7 @@ public class DefaultFuture extends CompletableFuture<Object> {
         this.cancel(true);
     }
 
-    private void doReceived(Response res) {
+    private void doReceived(Response res) { //todo @csy 是怎么接收消息的？
         if (res == null) {
             throw new IllegalStateException("response cannot be null");
         }
@@ -266,7 +266,7 @@ public class DefaultFuture extends CompletableFuture<Object> {
         return newRequest;
     }
 
-    private static class TimeoutCheckTask implements TimerTask {
+    private static class TimeoutCheckTask implements TimerTask { //todo @csy-01-28 这个定时任务都做了啥？
 
         private final Long requestID;
 
