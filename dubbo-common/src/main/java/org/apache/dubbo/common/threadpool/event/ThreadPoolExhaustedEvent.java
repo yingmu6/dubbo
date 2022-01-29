@@ -19,11 +19,11 @@ package org.apache.dubbo.common.threadpool.event;
 import org.apache.dubbo.event.Event;
 
 /**
- * An {@link Event Dubbo event} when the Dubbo thread pool is exhausted.
+ * An {@link Event Dubbo event} when the Dubbo thread pool is exhausted.（ [ɪɡˈzɔːstɪd]：耗尽）
  *
  * @see Event
  */
-public class ThreadPoolExhaustedEvent extends Event {
+public class ThreadPoolExhaustedEvent extends Event { //todo @csy-01-29 此处是怎么实现事件功能的？
 
     final String msg;
 

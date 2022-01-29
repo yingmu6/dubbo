@@ -34,7 +34,7 @@ public class ScheduledCompletableFuture {
         executor.schedule(
                 () -> {
                     try {
-                        return completableFuture.complete(task.get());
+                        return completableFuture.complete(task.get()); //todo @csy-01-29 此处的执行的内容是啥？
                     } catch (Throwable t) {
                         return completableFuture.completeExceptionally(t);
                     }
@@ -45,9 +45,9 @@ public class ScheduledCompletableFuture {
         return completableFuture;
     }
 
-    public static <T> CompletableFuture<T> submit(
-            ScheduledExecutorService executor,
-            Supplier<T> task
+    public static <T> CompletableFuture<T> submit( //todo @csy-01-29 schedule()与submit()有什么差异？
+                                                   ScheduledExecutorService executor,
+                                                   Supplier<T> task
     ) {
         CompletableFuture<T> completableFuture = new CompletableFuture<>();
         executor.submit(

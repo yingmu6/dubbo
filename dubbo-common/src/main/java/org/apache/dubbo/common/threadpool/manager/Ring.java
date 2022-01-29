@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class Ring<T> {
+public class Ring<T> { //todo @csy-01-29 此处的功能用途是什么？
 
     AtomicInteger count = new AtomicInteger();
 

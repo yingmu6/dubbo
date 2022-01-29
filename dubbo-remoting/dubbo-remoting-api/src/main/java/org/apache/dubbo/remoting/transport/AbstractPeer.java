@@ -22,16 +22,25 @@ import org.apache.dubbo.remoting.*;
 /**
  * AbstractPeer
  */
-public abstract class AbstractPeer implements Endpoint, ChannelHandler { //todo @csy-01-28 怎么理解该类，peer指啥？
+public abstract class AbstractPeer implements Endpoint, ChannelHandler {
+    /**
+     * @csy-01-28 怎么理解该类，peer指啥？
+     * 解：peer/对等，peer-to-peer：点对点
+     * 该类做了装饰模式中的装饰角色，这样做可以对装饰对象灵活的增强功能，在Endpoint接口，只是维护了通道的正在关闭和关闭完成两个状态。
+     * <p>
+     * https://segmentfault.com/a/1190000017390253
+     */
 
     private final ChannelHandler handler;
 
     private volatile URL url;
 
     // closing closed means the process is being closed and close is finished
-    private volatile boolean closing;
+    private volatile boolean closing; //是否正在关闭
 
-    private volatile boolean closed;
+    private volatile boolean closed; //是否已经关闭
+
+    // @csy-01-29 closed、closing有何区别？解：从上面的描述来看，表明已经被关闭或正在关闭
 
     public AbstractPeer(URL url, ChannelHandler handler) {
         if (url == null) {
@@ -101,7 +110,7 @@ public abstract class AbstractPeer implements Endpoint, ChannelHandler { //todo 
      *
      * @return ChannelHandler
      */
-    public ChannelHandler getDelegateHandler() {
+    public ChannelHandler getDelegateHandler() { //Delegate:委派，授权
         return handler;
     }
 
