@@ -34,7 +34,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.*;
 public class DefaultExecutorRepository implements ExecutorRepository {
     private static final Logger logger = LoggerFactory.getLogger(DefaultExecutorRepository.class);
 
-    private int DEFAULT_SCHEDULER_SIZE = Runtime.getRuntime().availableProcessors();
+    private int DEFAULT_SCHEDULER_SIZE = Runtime.getRuntime().availableProcessors(); //可使用的进程数
 
     private final ExecutorService SHARED_EXECUTOR = Executors.newCachedThreadPool(new NamedThreadFactory("DubboSharedHandler", true));
 
@@ -69,12 +69,12 @@ public class DefaultExecutorRepository implements ExecutorRepository {
         }
         Map<Integer, ExecutorService> executors = data.computeIfAbsent(componentKey, k -> new ConcurrentHashMap<>());
         Integer portKey = url.getPort();
-        ExecutorService executor = executors.computeIfAbsent(portKey, k -> createExecutor(url));
+        ExecutorService executor = executors.computeIfAbsent(portKey, k -> createExecutor(url)); //在线程池不存在时，进行创建
         // If executor has been shut down, create a new one
         if (executor.isShutdown() || executor.isTerminated()) {
             executors.remove(portKey);
-            executor = createExecutor(url); //在线程池已经停止或终止时，重新创建线程池
-            executors.put(portKey, executor);
+            executor = createExecutor(url); //若线程池已经被终止了，则重新创建线程池
+            executors.put(portKey, executor); //设置端口号与线程池的映射
         }
         return executor;
     }
@@ -90,7 +90,7 @@ public class DefaultExecutorRepository implements ExecutorRepository {
          * It's guaranteed that this method is called after {@link #createExecutorIfAbsent(URL)}, so data should already
          * have Executor instances generated and stored.
          */
-        if (executors == null) {
+        if (executors == null) { //executors为null是不正常的情况
             logger.warn("No available executors, this is not expected, framework should call createExecutorIfAbsent first " +
                     "before coming to here.");
             return null;
@@ -100,18 +100,18 @@ public class DefaultExecutorRepository implements ExecutorRepository {
         ExecutorService executor = executors.get(portKey);
         if (executor != null) {
             if (executor.isShutdown() || executor.isTerminated()) {
-                executors.remove(portKey);
+                executors.remove(portKey); //先做移除操作
                 executor = createExecutor(url);
-                executors.put(portKey, executor);
+                executors.put(portKey, executor); //再做添加操作
             }
         }
         return executor;
     }
 
     @Override
-    public void updateThreadpool(URL url, ExecutorService executor) {
+    public void updateThreadpool(URL url, ExecutorService executor) { //更新线程池参数
         try {
-            if (url.hasParameter(THREADS_KEY)
+            if (url.hasParameter(THREADS_KEY) //在url参数中设置了线程池参数threads且线程没有被终止时进行处理
                     && executor instanceof ThreadPoolExecutor && !executor.isShutdown()) {
                 ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) executor;
                 int threads = url.getParameter(THREADS_KEY, 0);

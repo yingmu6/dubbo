@@ -44,7 +44,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.TIMEOUT_KEY;
 /**
  * DefaultFuture.
  */
-public class DefaultFuture extends CompletableFuture<Object> { //todo @csy-01-28 都做了哪些封装的？
+public class DefaultFuture extends CompletableFuture<Object> { //todo @csy 都做了哪些封装的？
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultFuture.class);
 
@@ -266,7 +266,7 @@ public class DefaultFuture extends CompletableFuture<Object> { //todo @csy-01-28
         return newRequest;
     }
 
-    private static class TimeoutCheckTask implements TimerTask { //todo @csy-01-28 这个定时任务都做了啥？
+    private static class TimeoutCheckTask implements TimerTask { //todo @csy 这个定时任务都做了啥？
 
         private final Long requestID;
 

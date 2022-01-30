@@ -34,7 +34,7 @@ public class ByteBufferBackedChannelBuffer extends AbstractChannelBuffer { //jav
         }
 
         this.buffer = buffer.slice();
-        capacity = buffer.remaining(); //todo @csy-01-28 java中的ByteBuffer的功能待了解
+        capacity = buffer.remaining(); //todo @csy java中的ByteBuffer的功能待了解
         writerIndex(capacity);
     }
 

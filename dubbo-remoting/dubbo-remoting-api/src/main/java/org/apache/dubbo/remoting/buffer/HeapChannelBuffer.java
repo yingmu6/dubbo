@@ -25,7 +25,7 @@ import java.nio.channels.ClosedChannelException;
 import java.nio.channels.GatheringByteChannel;
 import java.nio.channels.ScatteringByteChannel;
 
-public class HeapChannelBuffer extends AbstractChannelBuffer { //todo @csy-01-28 堆处理是指啥？
+public class HeapChannelBuffer extends AbstractChannelBuffer { //todo @csy 堆处理是指啥？
 
     /**
      * The underlying heap byte array that this buffer is wrapping.

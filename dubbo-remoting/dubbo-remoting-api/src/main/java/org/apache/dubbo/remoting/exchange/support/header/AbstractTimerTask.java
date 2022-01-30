@@ -49,7 +49,7 @@ public abstract class AbstractTimerTask implements TimerTask {
     }
 
     static Long lastWrite(Channel channel) {
-        return (Long) channel.getAttribute(HeartbeatHandler.KEY_WRITE_TIMESTAMP); //todo @csy-01-28 什么情况下，值是会覆盖的？
+        return (Long) channel.getAttribute(HeartbeatHandler.KEY_WRITE_TIMESTAMP); //todo @csy 什么情况下，值是会覆盖的？
     }
 
     static Long now() {

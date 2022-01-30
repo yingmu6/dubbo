@@ -44,7 +44,7 @@ import java.io.InputStream;
 /**
  * ExchangeCodec.
  */
-public class ExchangeCodec extends TelnetCodec { //todo @csy-01-28 交互层编解码，是指对request、response处理吗？
+public class ExchangeCodec extends TelnetCodec { //todo @csy 交互层编解码，是指对request、response处理吗？
 
     // header length.
     protected static final int HEADER_LENGTH = 16;
@@ -311,7 +311,7 @@ public class ExchangeCodec extends TelnetCodec { //todo @csy-01-28 交互层编�
             buffer.writerIndex(savedWriteIndex);
             buffer.writeBytes(header); // write header.
             buffer.writerIndex(savedWriteIndex + HEADER_LENGTH + len);
-        } catch (Throwable t) { //todo @csy-01-28 什么情况下会有异常？
+        } catch (Throwable t) { //todo @csy 什么情况下会有异常？
             // clear buffer
             buffer.writerIndex(savedWriteIndex);
             // send error message to Consumer, otherwise, Consumer will wait till timeout.

@@ -35,7 +35,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.DUMP_DIRECTORY;
  * Abort Policy.(线程池终止策略)
  * Log warn info when abort.
  */
-public class AbortPolicyWithReport extends ThreadPoolExecutor.AbortPolicy {
+public class AbortPolicyWithReport extends ThreadPoolExecutor.AbortPolicy { //todo @csy 什么情况会触发线程池的受拒策略
 
     protected static final Logger logger = LoggerFactory.getLogger(AbortPolicyWithReport.class);
 
@@ -117,7 +117,7 @@ public class AbortPolicyWithReport extends ThreadPoolExecutor.AbortPolicy {
             //try-with-resources
             try (FileOutputStream jStackStream = new FileOutputStream(
                 new File(dumpPath, "Dubbo_JStack.log" + "." + dateStr))) {
-                JVMUtil.jstack(jStackStream);
+                JVMUtil.jstack(jStackStream);//下载栈Stack信息
             } catch (Throwable t) {
                 logger.error("dump jStack error", t);
             } finally {

@@ -17,11 +17,7 @@
 package org.apache.dubbo.common.utils;
 
 import java.io.OutputStream;
-import java.lang.management.LockInfo;
-import java.lang.management.ManagementFactory;
-import java.lang.management.MonitorInfo;
-import java.lang.management.ThreadInfo;
-import java.lang.management.ThreadMXBean;
+import java.lang.management.*;
 
 public class JVMUtil {
     public static void jstack(OutputStream stream) throws Exception {
@@ -31,7 +27,7 @@ public class JVMUtil {
         }
     }
 
-    private static String getThreadDumpString(ThreadInfo threadInfo) {
+    private static String getThreadDumpString(ThreadInfo threadInfo) { //todo @csy 待调试了解，看下都有啥数据信息
         StringBuilder sb = new StringBuilder("\"" + threadInfo.getThreadName() + "\"" +
                 " Id=" + threadInfo.getThreadId() + " " +
                 threadInfo.getThreadState());

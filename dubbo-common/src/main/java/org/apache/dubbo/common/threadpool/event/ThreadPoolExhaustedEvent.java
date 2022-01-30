@@ -23,7 +23,7 @@ import org.apache.dubbo.event.Event;
  *
  * @see Event
  */
-public class ThreadPoolExhaustedEvent extends Event { //todo @csy-01-29 此处是怎么实现事件功能的？
+public class ThreadPoolExhaustedEvent extends Event { //todo @csy 此处是怎么实现事件功能的？
 
     final String msg;
 

@@ -194,7 +194,7 @@ public class HeaderExchangeClient implements ExchangeClient { //todo @csy header
         }
     }
 
-    private void startReconnectTask(URL url) { //todo @csy-01-28 都在什么场景下会调用的？
+    private void startReconnectTask(URL url) { //todo @csy 都在什么场景下会调用的？
         if (shouldReconnect(url)) {
             AbstractTimerTask.ChannelProvider cp = () -> Collections.singletonList(HeaderExchangeClient.this);
             int idleTimeout = getIdleTimeout(url);

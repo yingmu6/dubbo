@@ -22,23 +22,12 @@ import org.apache.dubbo.common.threadlocal.NamedInternalThreadFactory;
 import org.apache.dubbo.common.threadpool.ThreadPool;
 import org.apache.dubbo.common.threadpool.support.AbortPolicyWithReport;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
-import static org.apache.dubbo.common.constants.CommonConstants.CORE_THREADS_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.DEFAULT_CORE_THREADS;
-import static org.apache.dubbo.common.constants.CommonConstants.DEFAULT_QUEUES;
-import static org.apache.dubbo.common.constants.CommonConstants.DEFAULT_THREADS;
-import static org.apache.dubbo.common.constants.CommonConstants.DEFAULT_THREAD_NAME;
-import static org.apache.dubbo.common.constants.CommonConstants.QUEUES_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.THREADS_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.THREAD_NAME_KEY;
+import static org.apache.dubbo.common.constants.CommonConstants.*;
 
 /**
- * Creates a thread pool that creates new threads as needed until limits reaches. This thread pool will not shrink
+ * Creates a thread pool that creates new threads as needed until limits reaches. This thread pool will not shrink（收缩）
  * automatically.
  */
 public class LimitedThreadPool implements ThreadPool {

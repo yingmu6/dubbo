@@ -39,7 +39,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.TIMEOUT_KEY;
 /**
  * ExchangeReceiver
  */
-final class HeaderExchangeChannel implements ExchangeChannel { //todo @csy-01-28 与HeaderExchangeClient有何差异？
+final class HeaderExchangeChannel implements ExchangeChannel { //todo @csy 与HeaderExchangeClient有何差异？
 
     private static final Logger logger = LoggerFactory.getLogger(HeaderExchangeChannel.class);
 
@@ -101,7 +101,7 @@ final class HeaderExchangeChannel implements ExchangeChannel { //todo @csy-01-28
             request.setVersion(Version.getProtocolVersion());
             request.setTwoWay(false);
             request.setData(message);
-            channel.send(request, sent); //todo @csy-01-28 底层是怎么发送消息的？
+            channel.send(request, sent); //todo @csy 底层是怎么发送消息的？
         }
     }
 
