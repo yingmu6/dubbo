@@ -25,12 +25,17 @@ import java.nio.channels.ClosedChannelException;
 import java.nio.channels.GatheringByteChannel;
 import java.nio.channels.ScatteringByteChannel;
 
-public class HeapChannelBuffer extends AbstractChannelBuffer { //todo @csy 堆处理是指啥？
+public class HeapChannelBuffer extends AbstractChannelBuffer {
+    /**
+     * @csy 堆处理是指啥？
+     * 解：HeapChannelBuffer是基于字节数组的ChannelBuffer实现类，
+     * 数据的存储都是放在array字节数组中。读取和写入都是调用System.arraycopy()方法完成操作的。
+     */
 
     /**
      * The underlying heap byte array that this buffer is wrapping.
      */
-    protected final byte[] array;
+    protected final byte[] array; //基于字节数据处理
 
     /**
      * Creates a new heap buffer with a newly allocated byte array.

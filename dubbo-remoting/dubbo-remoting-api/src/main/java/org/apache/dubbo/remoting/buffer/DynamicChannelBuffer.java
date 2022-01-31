@@ -23,12 +23,17 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
 public class DynamicChannelBuffer extends AbstractChannelBuffer {
+    /**
+     * @csy 为啥称之为动态ChannelBuffer？莫非可以扩容吗？
+     * 解：DynamicChannelBuffer可以认为是其他ChannelBuffer的装饰器，
+     * 它可以为其他ChannelBuffer添加动态扩展容量的功能
+     */
 
     private final ChannelBufferFactory factory;
 
     private ChannelBuffer buffer;
 
-    public DynamicChannelBuffer(int estimatedLength) {
+    public DynamicChannelBuffer(int estimatedLength) { //estimated：[ˈestɪmeɪtɪd] 估计的、预估的
         this(estimatedLength, HeapChannelBufferFactory.getInstance());
     }
 
@@ -40,7 +45,7 @@ public class DynamicChannelBuffer extends AbstractChannelBuffer {
             throw new NullPointerException("factory");
         }
         this.factory = factory;
-        buffer = factory.getBuffer(estimatedLength);
+        buffer = factory.getBuffer(estimatedLength); //通过工厂方式获取具体实例
     }
 
     @Override
@@ -57,11 +62,11 @@ public class DynamicChannelBuffer extends AbstractChannelBuffer {
         }
         int minNewCapacity = writerIndex() + minWritableBytes;
         while (newCapacity < minNewCapacity) {
-            newCapacity <<= 1;
+            newCapacity <<= 1; //将容量扩容
         }
 
         ChannelBuffer newBuffer = factory().getBuffer(newCapacity);
-        newBuffer.writeBytes(buffer, 0, writerIndex());
+        newBuffer.writeBytes(buffer, 0, writerIndex());  //进行数据拷贝
         buffer = newBuffer;
     }
 

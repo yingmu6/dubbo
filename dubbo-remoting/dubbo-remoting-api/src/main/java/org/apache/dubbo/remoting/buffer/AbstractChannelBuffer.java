@@ -22,11 +22,20 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
-public abstract class AbstractChannelBuffer implements ChannelBuffer { //todo @csy 几个实现类都有
+public abstract class AbstractChannelBuffer implements ChannelBuffer {
+    /**
+     * @csy 几个实现类都有？解：功能具体如下
+     * ByteBufferBackedChannelBuffer：使用java 的ByteBuffer方式实现
+     * DynamicChannelBuffer：其他ChannelBuffer的装饰器，可以动态添加容量
+     * HeapChannelBuffer：基于数组处理的
+     *
+     * https://www.jianshu.com/p/4dd7aa8a8731  Dubbo Buffer缓冲区
+     */
 
     /**
-     * 维护几个游标
-     * todo @csy 明确几个游标的关系？
+     * @csy 明确几个游标的关系？
+     * 解：维护几个重要的游标，关系为
+     * 0 <= readerIndex <= writerIndex <= capacity
      */
     private int readerIndex;
 
