@@ -183,7 +183,7 @@ public class NettyServer extends AbstractServer implements RemotingServer {
     }
 
     @Override
-    public boolean isBound() {
+    public boolean isBound() { //判断通道channel是否是绑定着的，即通道channel是否处于激活状态
         return channel.isActive();
     }
 
