@@ -23,7 +23,6 @@ import java.net.InetSocketAddress;
 /**
  * Endpoint. (API/SPI, Prototype, ThreadSafe)
  *
- *
  * @see org.apache.dubbo.remoting.Channel
  * @see org.apache.dubbo.remoting.Client
  * @see RemotingServer
@@ -42,7 +41,7 @@ public interface Endpoint { //节点
      *
      * @return channel handler
      */
-    ChannelHandler getChannelHandler();
+    ChannelHandler getChannelHandler(); //通过通道处理器
 
     /**
      * get local address.

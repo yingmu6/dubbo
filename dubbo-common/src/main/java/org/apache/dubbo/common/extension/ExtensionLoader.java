@@ -259,8 +259,8 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
      * @see #getActivateExtension(org.apache.dubbo.common.URL, String[], String)
      */
     public List<T> getActivateExtension(URL url, String key, String group) { //如：获取filter列表时，key：service.filter，group：provider
-        String value = url.getParameter(key); //从url中获取配置的扩展名列表
-        return getActivateExtension(url, StringUtils.isEmpty(value) ? null : COMMA_SPLIT_PATTERN.split(value), group);
+        String value = url.getParameter(key); //从url参数Map中获取key对应的值
+        return getActivateExtension(url, StringUtils.isEmpty(value) ? null : COMMA_SPLIT_PATTERN.split(value), group); //按分隔符拆分参数值并设置到数组中，如"order1,default,order4"，拆分映射为数组
     }
 
     /**
@@ -274,21 +274,21 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
      */
 
     /**
-     * 获取满足匹配条件的Activate对应的扩展类列表  todo @csy 获取Activate扩展实例，待实践测试
+     * 获取满足匹配条件的Activate对应的扩展类列表  ，获取Activate扩展实例，待实践测试？解：已单元测试
      */
     public List<T> getActivateExtension(URL url, String[] values, String group) { //将URL中配置的参数与@Activate配置的内容进行比较
         List<T> activateExtensions = new ArrayList<>();
         List<String> names = values == null ? new ArrayList<>(0) : asList(values);
         /**
          * 在扩展名列表不包含-default时进行处理
-         * @csy-007 此处-default是指什么？去除默认扩展吗？
+         * @csy-007 此处-default是指什么？去除默认扩展吗？todo @csy 待用例验证"-default"场景
          * 是的，"-"表式剔除的含义
          *
          * 如果Filter中不带有"-default"字段，就会加载系统扩展Filter对象。（系统的Filter对象）
          */
-        if (!names.contains(REMOVE_VALUE_PREFIX + DEFAULT_KEY)) { //处理带上@Activate的扩展类，将url上设置的值与注解上设置的值进行比较（在输入的value列表不包含"-default"处理）
+        if (!names.contains(REMOVE_VALUE_PREFIX + DEFAULT_KEY)) { // URL参数值列表不包含"-default"处理
             getExtensionClasses(); //此处没有用到方法的返回值，主要使用方法中的loadExtensionClasses()，若缓存中没有对应的值，则对应加载并设置到缓存中
-            for (Map.Entry<String, Object> entry : cachedActivates.entrySet()) { //将缓存中自动激活的class集合进行遍历处理
+            for (Map.Entry<String, Object> entry : cachedActivates.entrySet()) { //将成员变量cachedActivates的值进行遍历处理
                 String name = entry.getKey(); //扩展名
                 Object activate = entry.getValue(); // @Active对象
 

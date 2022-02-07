@@ -36,6 +36,13 @@ public interface LoadingStrategy extends Prioritized { //加载策略：加载�
      * @return if supports, return <code>true</code>, or <code>false</code>
      * @since 2.7.7
      */
+
+    /**
+     * 为什么会进行覆盖操作？
+     * 三个加载策略是在迭代时是按照优先级从小到大顺序进行的，所以只要当前的LoadingStrategy
+     * 允许覆盖之前策略创建的扩展实现，那么这里overridden就为true（也就是值为true时，会按优先级进行覆盖）
+     * todo @csy 待测试用例验证？
+     */
     default boolean overridden() {
         return false;
     }

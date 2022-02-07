@@ -21,10 +21,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
-import static org.apache.dubbo.common.utils.StringUtils.QUESTION_MASK;
-import static org.apache.dubbo.common.utils.StringUtils.SLASH;
-import static org.apache.dubbo.common.utils.StringUtils.isEmpty;
-import static org.apache.dubbo.common.utils.StringUtils.replace;
+import static org.apache.dubbo.common.utils.StringUtils.*;
 
 /**
  * Path Utilities class
@@ -41,7 +38,7 @@ public interface PathUtils { //路径处理工具类
 
         return normalize(paths.stream()
                 .filter(StringUtils::isNotEmpty)
-                .collect(Collectors.joining(SLASH)));
+                .collect(Collectors.joining(SLASH))); //依次将路径按斜杠"/"进行拼接
     }
 
     /**
@@ -54,14 +51,14 @@ public interface PathUtils { //路径处理工具类
      * @param path path to be normalized
      * @return a normalized path if required
      */
-    static String normalize(String path) {
+    static String normalize(String path) { //输入值如："/A//B/C"，输出"/A/B/C"
         if (isEmpty(path)) {//路径为空时，返回斜线SLASH
             return SLASH;
         }
         String normalizedPath = path;
-        int index = normalizedPath.indexOf(QUESTION_MASK);
+        int index = normalizedPath.indexOf(QUESTION_MASK); //查找查询标志"?"
         if (index > -1) { //若存在查询参数，则将查询参数进行移除
-            normalizedPath = normalizedPath.substring(0, index);
+            normalizedPath = normalizedPath.substring(0, index); //取"?"之前的字符串
         }
 
         while (normalizedPath.contains("//")) { //若存在双斜线，则替换后单斜线

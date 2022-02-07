@@ -69,8 +69,8 @@ public abstract class ConfigCenterBasedMetadataReportFactory implements Metadata
         return metadataReportCache.computeIfAbsent(key, k -> new ConfigCenterBasedMetadataReport(actualURL, keyType));
     }
 
-    private URL resolveURLParameters(URL url) { //todo @csy pause
-        URL resolvedURL = url.removeParameters(EXPORT_KEY, REFER_KEY);
+    private URL resolveURLParameters(URL url) {
+        URL resolvedURL = url.removeParameters(EXPORT_KEY, REFER_KEY); //移除URL中参数export, refer
         if (PATH.equals(getKeyType())) { // Only handles for "PATH" type
             if (isBlank(resolvedURL.getParameter(CONFIG_ROOT_PATH_PARAM_NAME))) {
                 resolvedURL = resolvedURL.addParameter(CONFIG_ROOT_PATH_PARAM_NAME, SLASH);

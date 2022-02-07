@@ -29,7 +29,7 @@ public enum KeyTypeEnum { //enum除了没有public构造函数外，可以按照
 
     PATH(PATH_SEPARATOR) {
         public String build(String one, String... others) {
-            return buildPath(one, others);
+            return buildPath(one, others); //按路径方式进行拼接
         }
     },
 

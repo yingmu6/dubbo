@@ -46,6 +46,8 @@ public interface MetadataService {
     /**
      * 功能用途是啥？Metadata是指啥？元数据指啥？会暴露dubbo服务？是用来管理注册的数据的吗？
      * 解：用来管理服务分组、服务版本、服务名、方法列表、方法参数列表、超时时间等数据，以key-value形式持久化存储
+     * 许多配置项都是provider、consumer自己使用，不需要进入注册中心，不然会导致注册中心数据量膨胀，增大网络开销、性能降低
+     * <p>
      * https://lexburner.github.io/dubbo-metadata/
      * https://dubbo.apache.org/zh/docs/v2.7/user/references/metadata/
      */

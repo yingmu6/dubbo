@@ -39,6 +39,9 @@ public @interface Adaptive {
      *    2）在ExtensionLoader#createAdaptiveExtensionClass()中产生自适应代码
      *    3）在Compiler#compile()对产生的自适应代码进行编译，生成对应的Class对象
      *    4）最后通过Class的newInstance()方法，创建自适应代码的实例对象
+     *
+     * ExtensionLoader 注入的依赖扩展点是一个 Adaptive 实例，直到扩展点方法执行时才决定调用是哪一个扩展点实现。
+     * https://dubbo.apache.org/zh/docs/v2.7/dev/spi/  Dubbo官网
      */
 
     /**

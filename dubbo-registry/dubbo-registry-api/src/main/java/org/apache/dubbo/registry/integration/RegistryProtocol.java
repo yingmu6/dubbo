@@ -423,11 +423,13 @@ public class RegistryProtocol implements Protocol {
         directory.subscribe(toSubscribeUrl(subscribeUrl));
 
         Invoker<T> invoker = cluster.join(directory);
+        // 查找注册协议监听器（RegistryProtocolListener：SPI接口）
         List<RegistryProtocolListener> listeners = findRegistryProtocolListeners(url);
         if (CollectionUtils.isEmpty(listeners)) {
             return invoker;
         }
 
+        // 如果有其监听器进行监听器onRefer()调用，并返回RegistryInvokerWrapper封装类型。
         RegistryInvokerWrapper<T> registryInvokerWrapper = new RegistryInvokerWrapper<>(directory, cluster, invoker);
         for (RegistryProtocolListener listener : listeners) {
             listener.onRefer(this, registryInvokerWrapper);
