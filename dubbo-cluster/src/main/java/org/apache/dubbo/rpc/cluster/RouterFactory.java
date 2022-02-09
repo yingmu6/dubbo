@@ -33,7 +33,7 @@ import org.apache.dubbo.common.extension.SPI;
  * the Router instances are loaded.
  */
 @SPI
-public interface RouterFactory {
+public interface RouterFactory { //路由工厂
 
     /**
      * Create router.

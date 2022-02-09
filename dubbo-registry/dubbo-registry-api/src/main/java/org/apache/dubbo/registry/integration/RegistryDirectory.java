@@ -56,7 +56,7 @@ import static org.apache.dubbo.rpc.cluster.Constants.ROUTER_KEY;
 /**
  * RegistryDirectory
  */
-public class RegistryDirectory<T> extends AbstractDirectory<T> implements NotifyListener {
+public class RegistryDirectory<T> extends AbstractDirectory<T> implements NotifyListener { //todo @csy pause
     /**
      * RegistryDirectory的数据结构以及用途待了解
      * 解答 ：
@@ -82,8 +82,8 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
     private Protocol protocol; // Initialization at the time of injection, the assertion is not null
     private Registry registry; // Initialization at the time of injection, the assertion is not null
     private volatile boolean forbidden = false;
-    private boolean shouldRegister;
-    private boolean shouldSimplified;
+    private boolean shouldRegister; //todo @csy 同下问题？
+    private boolean shouldSimplified; //todo @csy 该属性的功能用途是什么？
 
     private volatile URL overrideDirectoryUrl; // Initialization at construction time, assertion not null, and always assign non null value
 
@@ -91,7 +91,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
 
     /**
      * override rules
-     * Priority: override>-D>consumer>provider
+     * Priority: override>-D>consumer>provider 规则覆盖的优先级
      * Rule one: for a certain provider <ip:port,timeout=100>
      * Rule two: for all providers <* ,timeout=5000>
      */
@@ -733,10 +733,12 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
             this.initWith(ApplicationModel.getApplication() + CONFIGURATORS_SUFFIX);
         }
 
+        // 添加监听器
         void addNotifyListener(RegistryDirectory listener) {
             this.listeners.add(listener);
         }
 
+        // 移除监听器
         void removeNotifyListener(RegistryDirectory listener) {
             this.listeners.remove(listener);
         }

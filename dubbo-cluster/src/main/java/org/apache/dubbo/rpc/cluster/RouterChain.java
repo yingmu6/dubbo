@@ -55,13 +55,13 @@ public class RouterChain<T> {
         return new RouterChain<>(url);
     }
 
-    private RouterChain(URL url) {
+    private RouterChain(URL url) { //构建路由链
         List<RouterFactory> extensionFactories = ExtensionLoader.getExtensionLoader(RouterFactory.class)
-                .getActivateExtension(url, "router"); //获取满足条件的扩展实例列表
+                .getActivateExtension(url, "router"); //获取满足条件的路由工厂列表
 
         List<Router> routers = extensionFactories.stream()
                 .map(factory -> factory.getRouter(url))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()); //依次通过路由工厂创建路由实例
 
         initWithRouters(routers);
     }

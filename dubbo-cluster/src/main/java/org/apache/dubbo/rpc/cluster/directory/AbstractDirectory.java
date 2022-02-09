@@ -62,7 +62,7 @@ public abstract class AbstractDirectory<T> implements Directory<T> {
         this.url = url.removeParameter(REFER_KEY).removeParameter(MONITOR_KEY);
         this.consumerUrl = this.url.addParameters(StringUtils.parseQueryString(url.getParameterAndDecoded(REFER_KEY)));
 
-        setRouterChain(routerChain);
+        setRouterChain(routerChain); //设置路由链
     }
 
     @Override

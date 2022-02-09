@@ -41,7 +41,7 @@ public interface Directory<T> extends Node { //节点的目录：用来管理多
     Class<T> getInterface();
 
     /**
-     * list invokers.
+     * list invokers.（获取满足Invocation条件的Invoker列表）
      *
      * @return invokers
      */

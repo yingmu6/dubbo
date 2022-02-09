@@ -49,6 +49,7 @@ public class StaticDirectory<T> extends AbstractDirectory<T> {
     }
 
     public StaticDirectory(URL url, List<Invoker<T>> invokers, RouterChain<T> routerChain) {
+        // 调用父类AbstractDirectory的构造方法，对父类成员变量进行赋值
         super(url == null && CollectionUtils.isNotEmpty(invokers) ? invokers.get(0).getUrl() : url, routerChain);
         if (CollectionUtils.isEmpty(invokers)) {
             throw new IllegalArgumentException("invokers == null");
@@ -72,7 +73,7 @@ public class StaticDirectory<T> extends AbstractDirectory<T> {
             return false;
         }
         for (Invoker<T> invoker : invokers) {
-            if (invoker.isAvailable()) {
+            if (invoker.isAvailable()) { //只要有一个Invoker是可用的，Directory即为可用的
                 return true;
             }
         }
@@ -84,7 +85,7 @@ public class StaticDirectory<T> extends AbstractDirectory<T> {
         if (isDestroyed()) {
             return;
         }
-        super.destroy();
+        super.destroy(); //设置销毁标志destroyed
         for (Invoker<T> invoker : invokers) {
             invoker.destroy();
         }
