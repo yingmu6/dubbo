@@ -56,7 +56,7 @@ import static org.apache.dubbo.rpc.cluster.Constants.ROUTER_KEY;
 /**
  * RegistryDirectory
  */
-public class RegistryDirectory<T> extends AbstractDirectory<T> implements NotifyListener { //todo @csy pause
+public class RegistryDirectory<T> extends AbstractDirectory<T> implements NotifyListener {
     /**
      * RegistryDirectory的数据结构以及用途待了解
      * 解答 ：

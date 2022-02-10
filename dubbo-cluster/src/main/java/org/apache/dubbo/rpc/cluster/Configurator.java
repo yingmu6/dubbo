@@ -29,7 +29,7 @@ import static org.apache.dubbo.rpc.cluster.Constants.PRIORITY_KEY;
 /**
  * Configurator. (SPI, Prototype, ThreadSafe)
  */
-public interface Configurator extends Comparable<Configurator> {
+public interface Configurator extends Comparable<Configurator> { //todo @pause
     /**
      * todo @csy Configurator问题点
      * 1）Configurator的功能用途是什么？
@@ -111,7 +111,7 @@ public interface Configurator extends Comparable<Configurator> {
 
         int ipCompare = getUrl().getHost().compareTo(o.getUrl().getHost());
         // host is the same, sort by priority
-        if (ipCompare == 0) {
+        if (ipCompare == 0) { //主机号相同时，比较url参数中的优先级priority的值
             int i = getUrl().getParameter(PRIORITY_KEY, 0);
             int j = o.getUrl().getParameter(PRIORITY_KEY, 0);
             return Integer.compare(i, j);
@@ -119,4 +119,22 @@ public interface Configurator extends Comparable<Configurator> {
             return ipCompare;
         }
     }
+
+    /**
+     * JAVA——接口中的静态方法和默认方法
+     * https://www.cnblogs.com/weiyining/p/13073715.html
+     *
+     * 接口中的静态方法 static修饰
+     * 1）不能被子接口继承
+     * 2）不能被实现该接口的类继承
+     * 3）调用形式：接口名.静态方法名()
+     *
+     * 接口中的默认方法 default修饰
+     * 1）可以被子接口继承
+     * 2）可以被实现该接口的类继承
+     * 3）子接口中如有同名默认方法，父接口中的默认方法会被覆盖
+     * 4）不能通过接口名调用
+     * 5）需要通过接口实现类的实例进行访问
+     * 6）调用形式：对象名.默认方法名()
+     */
 }

@@ -36,7 +36,7 @@ import static org.apache.dubbo.rpc.cluster.Constants.OVERRIDE_PROVIDERS_KEY;
  */
 public abstract class AbstractConfigurator implements Configurator {
 
-    private final URL configuratorUrl;
+    private final URL configuratorUrl; //url内容如：override://192.168.1.106/com.foo.BarService?timeout=200
 
     public AbstractConfigurator(URL url) {
         if (url == null) {

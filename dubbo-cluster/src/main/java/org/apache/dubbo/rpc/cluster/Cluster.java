@@ -37,7 +37,7 @@ public interface Cluster {
      * todo @csy Cluster功能用途是啥？join()功能方法是啥？
      */
 
-    String DEFAULT = FailoverCluster.NAME;
+    String DEFAULT = FailoverCluster.NAME; //默认策略：失败重试
 
     /**
      * Merge the directory invokers to a virtual invoker.

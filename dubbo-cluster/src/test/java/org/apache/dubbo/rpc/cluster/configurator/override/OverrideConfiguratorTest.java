@@ -20,7 +20,6 @@ import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.utils.NetUtils;
 import org.apache.dubbo.rpc.cluster.configurator.absent.AbsentConfigurator;
 import org.apache.dubbo.rpc.cluster.configurator.consts.UrlConstant;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -47,8 +46,8 @@ public class OverrideConfiguratorTest {
     }
 
     @Test
-    public void testOverride_Host() {
-        OverrideConfigurator configurator = new OverrideConfigurator(URL.valueOf("override://" + NetUtils.getLocalHost() + "/com.foo.BarService?timeout=200"));
+    public void testOverride_Host() { //todo @csy pause
+        OverrideConfigurator configurator = new OverrideConfigurator(URL.valueOf("override://" + NetUtils.getLocalHost() + "/com.foo.BarService?timeout=200")); //url的内容如：override://192.168.1.106/com.foo.BarService?timeout=200
 
         URL url = configurator.configure(URL.valueOf(UrlConstant.URL_CONSUMER));
         Assertions.assertEquals("200", url.getParameter("timeout"));

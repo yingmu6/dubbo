@@ -216,8 +216,8 @@ class URL implements Serializable {
      * @return URL instance
      * @see URL
      */
-    public static URL valueOf(String url) { //通过URL字符串构建为URL对象。 如输入字符串为：zookeeper://127.0.0.1:2181?name=test
-        if (url == null || (url = url.trim()).length() == 0) {
+    public static URL valueOf(String url) { //解析URL字符串，并构建URL对象。 如输入字符串为：zookeeper://127.0.0.1:2181?name=test
+        if (url == null || (url = url.trim()).length() == 0) { //URL语法格式：protocol://username:password@host:port/path?key1=value1&key2=value2
             throw new IllegalArgumentException("url == null");
         }
         String protocol = null;
@@ -229,7 +229,7 @@ class URL implements Serializable {
         Map<String, String> parameters = null;
         int i = url.indexOf('?'); // separator between body and parameters
         if (i >= 0) { //判断是否包含参数
-            String[] parts = url.substring(i + 1).split("&"); //分隔参数
+            String[] parts = url.substring(i + 1).split("&"); //按&符号分隔参数
             parameters = new HashMap<>();
             for (String part : parts) { //参数的元素值，如name=test
                 part = part.trim();
@@ -271,7 +271,7 @@ class URL implements Serializable {
 
         i = url.indexOf('/'); //资源路径，如127.0.0.1:2181/all的 path为all
         if (i >= 0) {
-            path = url.substring(i + 1);
+            path = url.substring(i + 1); //接口路径，即接口路径，如com.foo.BarService
             url = url.substring(0, i);
         }
         i = url.lastIndexOf('@'); //根据@解析用户名、密码
@@ -286,12 +286,12 @@ class URL implements Serializable {
         }
         i = url.lastIndexOf(':'); //url如：127.0.0.1:2181
         if (i >= 0 && i < url.length() - 1) {  //解析host、ip
-            if (url.lastIndexOf('%') > i) {
+            if (url.lastIndexOf('%') > i) { //ipv6 忽略不处理
                 // ipv6 address with scope id
                 // e.g. fe80:0:0:0:894:aeec:f37d:23e1%en0
                 // see https://howdoesinternetwork.com/2013/ipv6-zone-id
                 // ignore
-            } else {
+            } else { //ipv4 处理
                 port = Integer.parseInt(url.substring(i + 1));
                 url = url.substring(0, i);
             }
@@ -300,7 +300,7 @@ class URL implements Serializable {
             host = url;
         }
 
-        return new URL(protocol, username, password, host, port, path, parameters);
+        return new URL(protocol, username, password, host, port, path, parameters); //构建URL对象
     }
 
     public static Map<String, Map<String, String>> toMethodParameters(Map<String, String> parameters) {
