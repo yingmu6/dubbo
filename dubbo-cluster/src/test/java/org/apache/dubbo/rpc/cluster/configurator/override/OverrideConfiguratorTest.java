@@ -46,7 +46,7 @@ public class OverrideConfiguratorTest {
     }
 
     @Test
-    public void testOverride_Host() { //todo @csy pause
+    public void testOverride_Host() {
         OverrideConfigurator configurator = new OverrideConfigurator(URL.valueOf("override://" + NetUtils.getLocalHost() + "/com.foo.BarService?timeout=200")); //url的内容如：override://192.168.1.106/com.foo.BarService?timeout=200
 
         URL url = configurator.configure(URL.valueOf(UrlConstant.URL_CONSUMER));
