@@ -51,7 +51,7 @@ public abstract class AbstractConfigurator implements Configurator {
     }
 
     @Override
-    public URL configure(URL url) { //todo @csy 配置的逻辑是怎样的？
+    public URL configure(URL url) { //配置的逻辑是怎样的？解：configuratorUrl包含配置规则的url，url待实现配置的url
         // If override url is not enabled or is invalid, just return.
         if (!configuratorUrl.getParameter(ENABLED_KEY, true) || configuratorUrl.getHost() == null || url == null || url.getHost() == null) {
             return url;
@@ -64,15 +64,15 @@ public abstract class AbstractConfigurator implements Configurator {
             String currentSide = url.getParameter(SIDE_KEY);
             String configuratorSide = configuratorUrl.getParameter(SIDE_KEY);
             if (currentSide.equals(configuratorSide) && CONSUMER.equals(configuratorSide) && 0 == configuratorUrl.getPort()) {
-                url = configureIfMatch(NetUtils.getLocalHost(), url);
+                url = configureIfMatch(NetUtils.getLocalHost(), url); //消费端的url覆盖
             } else if (currentSide.equals(configuratorSide) && PROVIDER.equals(configuratorSide) && url.getPort() == configuratorUrl.getPort()) {
-                url = configureIfMatch(url.getHost(), url);
+                url = configureIfMatch(url.getHost(), url);          //服务端的url覆盖
             }
         }
         /*
          * This else branch is deprecated and is left only to keep compatibility with versions before 2.7.0
          */
-        else {
+        else { //仅仅适配2.7.0 之前的版本
             url = configureDeprecated(url);
         }
         return url;
@@ -102,7 +102,7 @@ public abstract class AbstractConfigurator implements Configurator {
         return url;
     }
 
-    private URL configureIfMatch(String host, URL url) {
+    private URL configureIfMatch(String host, URL url) { //todo @csy 待实践
         if (ANYHOST_VALUE.equals(configuratorUrl.getHost()) || host.equals(configuratorUrl.getHost())) {
             // TODO, to support wildcards
             String providers = configuratorUrl.getParameter(OVERRIDE_PROVIDERS_KEY);
@@ -111,7 +111,7 @@ public abstract class AbstractConfigurator implements Configurator {
                         configuratorUrl.getUsername());
                 String currentApplication = url.getParameter(APPLICATION_KEY, url.getUsername());
                 if (configApplication == null || ANY_VALUE.equals(configApplication)
-                        || configApplication.equals(currentApplication)) {
+                        || configApplication.equals(currentApplication)) { //判断配置url中的application参数
                     Set<String> conditionKeys = new HashSet<String>();
                     conditionKeys.add(CATEGORY_KEY);
                     conditionKeys.add(Constants.CHECK_KEY);
@@ -135,7 +135,7 @@ public abstract class AbstractConfigurator implements Configurator {
                             }
                         }
                     }
-                    return doConfigure(url, configuratorUrl.removeParameters(conditionKeys));
+                    return doConfigure(url, configuratorUrl.removeParameters(conditionKeys)); //满足匹配条件了，就将配置url的参数替换指定url的参数
                 }
             }
         }

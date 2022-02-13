@@ -216,7 +216,7 @@ class URL implements Serializable {
      * @return URL instance
      * @see URL
      */
-    public static URL valueOf(String url) { //解析URL字符串，并构建URL对象。 如输入字符串为：zookeeper://127.0.0.1:2181?name=test
+    public static URL valueOf(String url) { //按URL语法规则进行解析，并构建URL对象。 如输入字符串为：zookeeper://127.0.0.1:2181?name=test
         if (url == null || (url = url.trim()).length() == 0) { //URL语法格式：protocol://username:password@host:port/path?key1=value1&key2=value2
             throw new IllegalArgumentException("url == null");
         }
@@ -1182,7 +1182,7 @@ class URL implements Serializable {
                     break;
                 }
             } else {
-                if (!value.equals(entry.getValue())) {
+                if (!value.equals(entry.getValue())) { //若存在键key，判断值value是否相等
                     hasAndEqual = false;
                     break;
                 }
@@ -1194,7 +1194,7 @@ class URL implements Serializable {
         }
 
         Map<String, String> map = new HashMap<>(getParameters());
-        map.putAll(parameters);
+        map.putAll(parameters); //若存在有相同key，且value不同，会被覆盖
         return new URL(protocol, username, password, host, port, path, map);
     }
 
