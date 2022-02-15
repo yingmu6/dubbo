@@ -27,13 +27,14 @@ import org.apache.dubbo.demo.ICollectionParamService;
 import java.util.concurrent.CountDownLatch;
 
 public class ProviderApi {
-    public static void main(String[] args) throws Exception {
-        if (isClassic(args)) {
-            startWithExport();
-        } else {
-            startWithBootstrap();
-        }
-    }
+    //打包时，注释main()方法
+//    public static void main(String[] args) throws Exception {
+//        if (isClassic(args)) {
+//            startWithExport();
+//        } else {
+//            startWithBootstrap();
+//        }
+//    }
 
     private static boolean isClassic(String[] args) {
         return args.length > 0 && "classic".equalsIgnoreCase(args[0]);

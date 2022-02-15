@@ -16,22 +16,28 @@
  */
 package org.apache.dubbo.demo.consumer;
 
-import org.apache.dubbo.demo.DemoService;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
 public class ConsumerMockApplication {
     /**
      * In order to make sure multicast registry works, need to specify '-Djava.net.preferIPv4Stack=true' before
      * launch the application
      */
-    public static void main(String[] args) throws Exception {
-        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("spring/dubbo-consumer-mock.xml");
-        context.start();
-        DemoService demoService = context.getBean("demoService", DemoService.class);
-        String response = demoService.sayHello2("mock test!");
-        System.out.println("mock result: " + response);
+//    public static void main(String[] args) throws Exception {
+//        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("spring/dubbo-consumer-mock.xml");
+//        context.start();
+//        DemoService demoService = context.getBean("demoService", DemoService.class);
+//        String response = demoService.sayHello2("mock test!");
+//        System.out.println("mock result: " + response);
+//
+//        System.out.println(demoService.sayHello("ddds"));
+//        System.in.read();
+//    }
 
-        System.out.println(demoService.sayHello("ddds"));
-        System.in.read();
-    }
+
+    /**
+     * 同一个包下，如果有两个包含main方法的入口类，会报出
+     * Execution default of goal org.springframework.boot:spring-boot-maven-plugin:2.1.4.RELEASE:repackage failed: Unable to find a single main class from the following candidates [org.apache.dubbo.demo.consumer.ConsumerApplication,
+     * org.apache.dubbo.demo.consumer.ConsumerMockApplication]
+     *
+     * 所以打包时，可以将一个main()方法去掉
+     */
 }

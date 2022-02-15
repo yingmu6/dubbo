@@ -37,7 +37,8 @@
     <dubbo:protocol name="dubbo" port="20881" status="server"/>
 
 <!--    <dubbo:parameter key="prompt" value="csy22"/> 错误的配置 -->
-<!--    <bean id="demoService" class="org.apache.dubbo.demo.provider.DemoServiceImqqp"/>-->
+    <bean id="demoService" class="org.apache.dubbo.demo.provider.DemoServiceImqqp"/>
+    <dubbo:service interface="org.apache.dubbo.demo.DemoService" ref="demoService"/>
 
     <bean id="greetingService" class="org.apache.dubbo.demo.provider.GreetingServiceImpl"/>
     <dubbo:service interface="org.apache.dubbo.demo.GreetingService" ref="greetingService"/>
@@ -61,7 +62,7 @@
 <!--        <dubbo:parameter key="greet" value="hello"/>-->   <!-- 此处为普通的spring bean，嵌套元素不能是dubbo元素，不然会报配置错误 -->
 <!--    </bean>-->
 
-<!--    <dubbo:service interface="org.apache.dubbo.demo.DemoService" ref="demoService" executes="1" generic="true">-->
+<!--    <dubbo:service interface="org.apache.dubbo.demo.DemoService" ref="demoService">-->
 <!--&lt;!&ndash;        <dubbo:parameter key="prompt" value="csy4>"/>&ndash;&gt; &lt;!&ndash; 设置telnet命令行的提示语 &ndash;&gt;-->
 <!--        <dubbo:method name="sayHello2" timeout="3000">-->
 <!--            &lt;!&ndash; <dubbo:method> 的子标签，通过index与type找到参数, 如果为callback，服务提供方将生成反向代理，可以从服务提供方反向调用消费方，通常用于事件推送. &ndash;&gt;-->
@@ -74,7 +75,7 @@
 <!--    <dubbo:service interface="org.apache.dubbo.demo.GreetingService" ref="greetingService" protocol="http">-->
 <!--        <dubbo:parameter key="prompt" value="csy3>"/>-->
 <!--&lt;!&ndash;        <dubbo:parameter key="telnet" value="ls,ts"/>&ndash;&gt;-->
-<!--    </dubbo:service>-->
+<!--    </dubbo:service>-->˚
 
 
 <!--    <dubbo:service interface="org.apache.dubbo.demo.DemoService" class="org.apache.dubbo.demo.DemoService" ref="demoService" filter="" executes=""> &lt;!&ndash; executes并发限制数 &ndash;&gt;-->

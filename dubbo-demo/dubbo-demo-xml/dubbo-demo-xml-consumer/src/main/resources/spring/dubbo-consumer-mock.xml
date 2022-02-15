@@ -42,12 +42,12 @@
 <!--    />-->
 
     <!-- mock中return返回 JSON字符串-->
-<!--    <dubbo:reference id="demoService"-->
-<!--                     check="false"-->
-<!--                     interface="org.apache.dubbo.demo.DemoService"-->
-<!--                     timeout="20000"-->
-<!--                     mock="return {'name':'zhangsan'}"-->
-<!--    />-->
+    <dubbo:reference id="demoService"
+                     check="false"
+                     interface="org.apache.dubbo.demo.DemoService"
+                     timeout="20000"
+                     mock="return {'name':'zhangsan'}"
+    />
 
     <!-- mock中return返回 JSON数组-->
 <!--    <dubbo:reference id="demoService"-->
