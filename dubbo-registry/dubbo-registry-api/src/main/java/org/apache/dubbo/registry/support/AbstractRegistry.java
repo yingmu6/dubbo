@@ -481,7 +481,7 @@ public abstract class AbstractRegistry implements Registry {
         }
 
         return Arrays.stream(COMMA_SPLIT_PATTERN.split(pattern))
-                .anyMatch(p -> p.equalsIgnoreCase(urlToRegistry.getProtocol()));
+                .anyMatch(p -> p.equalsIgnoreCase(urlToRegistry.getProtocol())); //如果设置了accepts参数，则匹配配置的协议是否在可接受的范围内
     }
 
     @Override

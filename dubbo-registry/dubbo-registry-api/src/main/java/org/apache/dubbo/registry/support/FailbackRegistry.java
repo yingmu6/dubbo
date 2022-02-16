@@ -21,26 +21,16 @@ import org.apache.dubbo.common.timer.HashedWheelTimer;
 import org.apache.dubbo.common.utils.CollectionUtils;
 import org.apache.dubbo.common.utils.NamedThreadFactory;
 import org.apache.dubbo.registry.NotifyListener;
-import org.apache.dubbo.registry.retry.FailedNotifiedTask;
-import org.apache.dubbo.registry.retry.FailedRegisteredTask;
-import org.apache.dubbo.registry.retry.FailedSubscribedTask;
-import org.apache.dubbo.registry.retry.FailedUnregisteredTask;
-import org.apache.dubbo.registry.retry.FailedUnsubscribedTask;
+import org.apache.dubbo.registry.retry.*;
 import org.apache.dubbo.remoting.Constants;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 import static org.apache.dubbo.common.constants.CommonConstants.FILE_KEY;
-import static org.apache.dubbo.registry.Constants.CONSUMER_PROTOCOL;
-import static org.apache.dubbo.registry.Constants.DEFAULT_REGISTRY_RETRY_PERIOD;
-import static org.apache.dubbo.registry.Constants.REGISTRY_RETRY_PERIOD_KEY;
+import static org.apache.dubbo.registry.Constants.*;
 
 /**
  * FailbackRegistry. (SPI, Prototype, ThreadSafe)
@@ -262,16 +252,16 @@ public abstract class FailbackRegistry extends AbstractRegistry {
 
     @Override
     public void reExportRegister(URL url) {
-        if (!acceptable(url)) {
+        if (!acceptable(url)) { //判断协议类型是否支持
             logger.info("URL " + url + " will not be registered to Registry. Registry " + url + " does not accept service of this protocol type.");
             return;
         }
         super.register(url);
-        removeFailedRegistered(url);
-        removeFailedUnregistered(url);
+        removeFailedRegistered(url); //移除失败注册的任务
+        removeFailedUnregistered(url); //移除失败的取消注册任务
         try {
             // Sending a registration request to the server side
-            doRegister(url);
+            doRegister(url); //将url注册到注册中心
         } catch (Exception e) {
             if (!(e instanceof SkipFailbackWrapperException)) {
                 throw new IllegalStateException("Failed to register (re-export) " + url + " to registry " + getUrl().getAddress() + ", cause: " + e.getMessage(), e);
