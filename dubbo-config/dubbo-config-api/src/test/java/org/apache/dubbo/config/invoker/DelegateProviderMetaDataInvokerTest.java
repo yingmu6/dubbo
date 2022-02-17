@@ -21,7 +21,6 @@ import org.apache.dubbo.config.ServiceConfig;
 import org.apache.dubbo.config.api.Greeting;
 import org.apache.dubbo.rpc.Invocation;
 import org.apache.dubbo.rpc.Invoker;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -35,7 +34,7 @@ public class DelegateProviderMetaDataInvokerTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        service = Mockito.mock(ServiceConfig.class);
+        service = Mockito.mock(ServiceConfig.class); //创建mock对象
         invoker = Mockito.mock(Invoker.class);
     }
 
@@ -45,6 +44,7 @@ public class DelegateProviderMetaDataInvokerTest {
                 new DelegateProviderMetaDataInvoker<Greeting>(invoker, service);
         delegate.getInterface();
         Mockito.verify(invoker).getInterface();
+
         delegate.getUrl();
         Mockito.verify(invoker).getUrl();
         delegate.isAvailable();
