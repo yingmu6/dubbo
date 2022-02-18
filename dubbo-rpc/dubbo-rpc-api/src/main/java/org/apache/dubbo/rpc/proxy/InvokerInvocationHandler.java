@@ -39,7 +39,7 @@ public class InvokerInvocationHandler implements InvocationHandler {
     // InvocationHandler：每一个代理实例都与一个调用处理类关联，当代理实例上的方法被调用时，会调用InvocationHandler的invoke方法（方法回调）
     private static final Logger logger = LoggerFactory.getLogger(InvokerInvocationHandler.class);
     private final Invoker<?> invoker;
-    private ConsumerModel consumerModel; //todo @csy 此处为啥只有消费者模型，不用维护提供者模型吗？
+    private ConsumerModel consumerModel; //@csy 此处为啥只有消费者模型，不用维护提供者模型吗？解：此处是由消费端发起的请求调用，所以不用维护提供者模型
 
     public InvokerInvocationHandler(Invoker<?> handler) { //构造invoker对应的处理类
         this.invoker = handler;
@@ -50,13 +50,18 @@ public class InvokerInvocationHandler implements InvocationHandler {
     }
 
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable { //todo @csy 该方法的功能用途是什么？
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        /**
+         *  @csy 该方法的功能用途是什么？
+         *  执行远程方法的调用
+         */
+
         if (method.getDeclaringClass() == Object.class) {
             return method.invoke(invoker, args);
         }
         String methodName = method.getName();
         Class<?>[] parameterTypes = method.getParameterTypes();
-        if (parameterTypes.length == 0) {
+        if (parameterTypes.length == 0) { //调用无参的指定方法
             if ("toString".equals(methodName)) {
                 return invoker.toString();
             } else if ("$destroy".equals(methodName)) {
@@ -65,14 +70,16 @@ public class InvokerInvocationHandler implements InvocationHandler {
             } else if ("hashCode".equals(methodName)) {
                 return invoker.hashCode();
             }
-        } else if (parameterTypes.length == 1 && "equals".equals(methodName)) {
+        } else if (parameterTypes.length == 1 && "equals".equals(methodName)) { //调用equals方法
             return invoker.equals(args[0]);
         }
+
+        // 调用包含多个参数的方法
         RpcInvocation rpcInvocation = new RpcInvocation(method, invoker.getInterface().getName(), args);
         String serviceKey = invoker.getUrl().getServiceKey();
         rpcInvocation.setTargetServiceUniqueName(serviceKey);
-      
-        if (consumerModel != null) {
+
+        if (consumerModel != null) { //将消费模型数据，设置到调用的RpcInvocation信息中
             rpcInvocation.put(Constants.CONSUMER_MODEL, consumerModel);
             rpcInvocation.put(Constants.METHOD_MODEL, consumerModel.getMethodModel(method));
         }

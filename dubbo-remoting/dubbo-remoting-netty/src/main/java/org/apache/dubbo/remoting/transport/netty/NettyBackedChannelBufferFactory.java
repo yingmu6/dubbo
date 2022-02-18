@@ -18,7 +18,6 @@ package org.apache.dubbo.remoting.transport.netty;
 
 import org.apache.dubbo.remoting.buffer.ChannelBuffer;
 import org.apache.dubbo.remoting.buffer.ChannelBufferFactory;
-
 import org.jboss.netty.buffer.ChannelBuffers;
 
 import java.nio.ByteBuffer;
@@ -41,8 +40,14 @@ public class NettyBackedChannelBufferFactory implements ChannelBufferFactory {
     }
 
 
+    /**
+     * netty的DynamicChannelBuffer：相比于HeapChannelBuffer，DynamicChannelBuffer可动态自适应大小。
+     * 对于在DecodeHandler中的写数据操作，在数据大小未知的情况下，通常使用DynamicChannelBuffer。
+     * <p>
+     * netty之channelbuffer https://codeantenna.com/a/K1OxMKrJue
+     */
     @Override
-    public ChannelBuffer getBuffer(byte[] array, int offset, int length) {
+    public ChannelBuffer getBuffer(byte[] array, int offset, int length) { //使用netty方式分配buffer
         org.jboss.netty.buffer.ChannelBuffer buffer = ChannelBuffers.dynamicBuffer(length);
         buffer.writeBytes(array, offset, length);
         return new NettyBackedChannelBuffer(buffer);

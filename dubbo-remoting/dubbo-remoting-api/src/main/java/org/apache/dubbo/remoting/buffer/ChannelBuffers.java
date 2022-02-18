@@ -85,7 +85,7 @@ public final class ChannelBuffers {
         }
 
         ChannelBuffer buffer = new ByteBufferBackedChannelBuffer(
-                ByteBuffer.allocateDirect(capacity));
+                ByteBuffer.allocateDirect(capacity)); //分配指定容量的直接堆的Buffer
         buffer.clear();
         return buffer;
     }
