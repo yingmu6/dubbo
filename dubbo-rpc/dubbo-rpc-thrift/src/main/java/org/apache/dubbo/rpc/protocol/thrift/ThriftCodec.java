@@ -29,7 +29,6 @@ import org.apache.dubbo.rpc.AppResponse;
 import org.apache.dubbo.rpc.RpcException;
 import org.apache.dubbo.rpc.RpcInvocation;
 import org.apache.dubbo.rpc.protocol.thrift.io.RandomAccessByteArrayOutputStream;
-
 import org.apache.thrift.TApplicationException;
 import org.apache.thrift.TBase;
 import org.apache.thrift.TException;
@@ -79,6 +78,11 @@ import static org.apache.dubbo.common.constants.CommonConstants.PATH_KEY;
  */
 @Deprecated
 public class ThriftCodec implements Codec2 {
+
+    /**
+     * Dubbo 继承thrift协议
+     * https://www.shangmayuan.com/a/dd7e39fd71fe4b6b8922ac84.html
+     */
 
     public static final int MESSAGE_LENGTH_INDEX = 2;
     public static final int MESSAGE_HEADER_LENGTH_INDEX = 6;
