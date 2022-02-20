@@ -83,7 +83,7 @@ public class NettyClient extends AbstractClient {
      * @throws Throwable
      */
     @Override
-    protected void doOpen() throws Throwable {
+    protected void doOpen() throws Throwable { //todo @csy-001 消费端发起连接都做了什么？
         final NettyClientHandler nettyClientHandler = new NettyClientHandler(getUrl(), this);
         bootstrap = new Bootstrap();
         bootstrap.group(NIO_EVENT_LOOP_GROUP)
@@ -94,7 +94,7 @@ public class NettyClient extends AbstractClient {
                 .channel(socketChannelClass());
 
         bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, Math.max(3000, getConnectTimeout()));
-        bootstrap.handler(new ChannelInitializer<SocketChannel>() { //todo @csy 客户端创建，都有哪些处理器
+        bootstrap.handler(new ChannelInitializer<SocketChannel>() { //todo @csy-001 客户端创建，都有哪些处理器
 
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
@@ -106,8 +106,8 @@ public class NettyClient extends AbstractClient {
 
                 NettyCodecAdapter adapter = new NettyCodecAdapter(getCodec(), getUrl(), NettyClient.this);
                 ch.pipeline()//.addLast("logging",new LoggingHandler(LogLevel.INFO))//for debug
-                        .addLast("decoder", adapter.getDecoder())
-                        .addLast("encoder", adapter.getEncoder())
+                        .addLast("decoder", adapter.getDecoder()) //添加编码器
+                        .addLast("encoder", adapter.getEncoder()) //添加解码器
                         .addLast("client-idle-handler", new IdleStateHandler(heartbeatInterval, 0, 0, MILLISECONDS))
                         .addLast("handler", nettyClientHandler);
 

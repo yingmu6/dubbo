@@ -347,7 +347,7 @@ public abstract class AbstractChannelBuffer implements ChannelBuffer {
     }
 
     protected void checkReadableBytes(int minimumReadableBytes) {
-        if (readableBytes() < minimumReadableBytes) {
+        if (readableBytes() < minimumReadableBytes) { //minimum:最小的
             throw new IndexOutOfBoundsException();
         }
     }

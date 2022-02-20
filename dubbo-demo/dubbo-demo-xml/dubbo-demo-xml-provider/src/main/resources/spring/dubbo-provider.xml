@@ -33,76 +33,11 @@
     </dubbo:config-center>
 
     <dubbo:registry address="zookeeper://127.0.0.1:2181/all?default.name=test" simplified="true"/>
-
     <dubbo:protocol name="dubbo" port="20881" status="server"/>
 
-<!--    <dubbo:parameter key="prompt" value="csy22"/> 错误的配置 -->
     <bean id="demoService" class="org.apache.dubbo.demo.provider.DemoServiceImqqp"/>
     <dubbo:service interface="org.apache.dubbo.demo.DemoService" ref="demoService"/>
 
     <bean id="greetingService" class="org.apache.dubbo.demo.provider.GreetingServiceImpl"/>
     <dubbo:service interface="org.apache.dubbo.demo.GreetingService" ref="greetingService"/>
-
-<!--    <dubbo:provider>-->
-<!--        <dubbo:service interface="org.apache.dubbo.demo.DemoService" ref="demoService" token="123456">-->
-<!--            <dubbo:method name="sayHello" timeout="3000">-->
-<!--                &lt;!&ndash;            <dubbo:parameter key="name" value="haha"/> &lt;!&ndash; 配置自定义参数 &ndash;&gt;&ndash;&gt;-->
-<!--                <dubbo:argument index="0" callback="false"/> &lt;!&ndash; 对方法参数的特征进行描述&ndash;&gt;-->
-<!--            </dubbo:method>-->
-<!--        </dubbo:service>-->
-<!--        <dubbo:service interface="org.apache.dubbo.demo.GreetingService" ref="greetingService">-->
-<!--            <dubbo:method name="hello" timeout="3000">-->
-<!--                <dubbo:argument index="0" callback="false"/>-->
-<!--            </dubbo:method>-->
-<!--        </dubbo:service>-->
-<!--    </dubbo:provider>-->
-
-<!--    <bean id="actives" class="org.apache.dubbo.demo.provider.DemoServiceImqqp"/>-->
-<!--    <bean id="greetingService" class="org.apache.dubbo.demo.provider.GreetingServiceImpl">-->
-<!--        <dubbo:parameter key="greet" value="hello"/>-->   <!-- 此处为普通的spring bean，嵌套元素不能是dubbo元素，不然会报配置错误 -->
-<!--    </bean>-->
-
-<!--    <dubbo:service interface="org.apache.dubbo.demo.DemoService" ref="demoService">-->
-<!--&lt;!&ndash;        <dubbo:parameter key="prompt" value="csy4>"/>&ndash;&gt; &lt;!&ndash; 设置telnet命令行的提示语 &ndash;&gt;-->
-<!--        <dubbo:method name="sayHello2" timeout="3000">-->
-<!--            &lt;!&ndash; <dubbo:method> 的子标签，通过index与type找到参数, 如果为callback，服务提供方将生成反向代理，可以从服务提供方反向调用消费方，通常用于事件推送. &ndash;&gt;-->
-<!--&lt;!&ndash;            <dubbo:argument index="0" type="String" callback="false"/>&ndash;&gt;-->
-<!--&lt;!&ndash;            <dubbo:parameter key="aa" value="cc"/> &lt;!&ndash; 方法级别的参数配置 &ndash;&gt;&ndash;&gt;-->
-<!--        </dubbo:method>-->
-<!--    </dubbo:service>-->
-
-    <!-- 如何暴露多协议服务，此处的设置是否生效？如设置为http协议，DubboProtocol.getDubboProtocol().getExporters()是否还能获取到http暴露的服务 -->
-<!--    <dubbo:service interface="org.apache.dubbo.demo.GreetingService" ref="greetingService" protocol="http">-->
-<!--        <dubbo:parameter key="prompt" value="csy3>"/>-->
-<!--&lt;!&ndash;        <dubbo:parameter key="telnet" value="ls,ts"/>&ndash;&gt;-->
-<!--    </dubbo:service>-->˚
-
-
-<!--    <dubbo:service interface="org.apache.dubbo.demo.DemoService" class="org.apache.dubbo.demo.DemoService" ref="demoService" filter="" executes=""> &lt;!&ndash; executes并发限制数 &ndash;&gt;-->
-<!--         <dubbo:method name="sayHello2" timeout="1000" async="true" return="false"> &lt;!&ndash; 方法级别配置，并不是说展示哪个方法，就暴露哪个方法，与暴露没关 &ndash;&gt;-->
-<!--&lt;!&ndash;           <dubbo:argument index="0" type="java.lang.String" callback="true"/>&ndash;&gt;  &lt;!&ndash; 若设置回调，type就需要接口类型&ndash;&gt;-->
-<!--         </dubbo:method>-->
-<!--         <property name="actives" value="12"/>-->
-<!--         <property name="ref" ref="actives"/>-->
-<!--         <dubbo:parameter key="prompt" value="csy2>"/>-->
-<!--    </dubbo:service>-->
-    <!--
-      方法级别的设置，设值后url的值，会对应为，如timeout="1000"，<methodName>.timeout
-      onreturn等方法，如果设置为false，则请求发送成功后直接返回Null
-    -->
-
-    <!-- <dubbo:service> 可以单独配置，也可以放在<dubbo:provider>中配置  -->
-<!--    <dubbo:provider timeout="2000" xml:base="dubbo-provider.xml" id="test">-->
-<!--        <dubbo:parameter key="name" value="zhang"/>-->
-<!--        <dubbo:parameter key="name" value="lisi"/> &lt;!&ndash; 相同的key，会被后一个值覆盖 &ndash;&gt;-->
-<!--        <dubbo:parameter key="prompt" value="csy>"/> &lt;!&ndash; 暴露服务中对应url中的参数 url parameter &ndash;&gt;-->
-<!--        <dubbo:service interface="org.apache.dubbo.demo.GreetingService" ref="greetingService"/>-->
-<!--    </dubbo:provider>-->
-
-    <!--
-        <dubbo:parameter>
-        同时该标签为<dubbo:protocol>或<dubbo:service>
-        或<dubbo:provider>或<dubbo:reference>或<dubbo:consumer>的子标签，用于配置自定义参数，
-        该配置项将作为扩展点设置自定义参数使用
-    -->
 </beans>

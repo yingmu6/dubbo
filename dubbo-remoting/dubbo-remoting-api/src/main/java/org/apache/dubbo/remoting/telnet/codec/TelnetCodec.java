@@ -39,7 +39,7 @@ import static org.apache.dubbo.remoting.Constants.DEFAULT_CHARSET;
 /**
  * TelnetCodec
  */
-public class TelnetCodec extends TransportCodec {
+public class TelnetCodec extends TransportCodec { //todo @csy-001 该类的编解码是telnet命令时使用到的吗？
 
     private static final Logger logger = LoggerFactory.getLogger(TelnetCodec.class);
 

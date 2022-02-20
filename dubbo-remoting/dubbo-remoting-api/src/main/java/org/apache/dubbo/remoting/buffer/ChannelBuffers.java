@@ -19,7 +19,7 @@ package org.apache.dubbo.remoting.buffer;
 
 import java.nio.ByteBuffer;
 
-public final class ChannelBuffers {
+public final class ChannelBuffers { //ChannelBuffer的工具处理类，提供静态方法使用
 
     public static final ChannelBuffer EMPTY_BUFFER = new HeapChannelBuffer(0);
 

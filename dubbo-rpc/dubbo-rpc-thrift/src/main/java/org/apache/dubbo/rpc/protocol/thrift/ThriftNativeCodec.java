@@ -25,11 +25,7 @@ import org.apache.dubbo.remoting.exchange.Request;
 import org.apache.dubbo.remoting.exchange.Response;
 import org.apache.dubbo.rpc.Invocation;
 import org.apache.thrift.TException;
-import org.apache.thrift.protocol.TBinaryProtocol;
-import org.apache.thrift.protocol.TMessage;
-import org.apache.thrift.protocol.TMessageType;
-import org.apache.thrift.protocol.TProtocol;
-import org.apache.thrift.protocol.TStruct;
+import org.apache.thrift.protocol.*;
 import org.apache.thrift.transport.TIOStreamTransport;
 
 import java.io.IOException;
@@ -42,7 +38,7 @@ public class ThriftNativeCodec implements Codec2 {
 
     private final AtomicInteger thriftSeq = new AtomicInteger(0);
 
-    protected static TProtocol newProtocol(URL url, ChannelBuffer buffer) throws IOException {
+    protected static TProtocol newProtocol(URL url, ChannelBuffer buffer) throws IOException { //todo @csy-001 TProtocol待了解
         String protocol = url.getParameter(ThriftConstants.THRIFT_PROTOCOL_KEY,
                 ThriftConstants.DEFAULT_PROTOCOL);
         if (ThriftConstants.BINARY_THRIFT_PROTOCOL.equals(protocol)) {

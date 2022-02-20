@@ -44,7 +44,7 @@ import java.io.InputStream;
 /**
  * ExchangeCodec.
  */
-public class ExchangeCodec extends TelnetCodec { //todo @csy 交互层编解码，是指对request、response处理吗？
+public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是指对request、response处理吗？解：交互层编码器，其他具体协议的基础类，可以看出是业务协议的模板类
 
     // header length.
     protected static final int HEADER_LENGTH = 16;

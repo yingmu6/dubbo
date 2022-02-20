@@ -26,7 +26,7 @@ import java.io.IOException;
 public interface Codec2 {
 
     /**
-     * todo @csy-02-19 编解码问题点
+     * todo @csy-001 编解码问题点
      * 1）为啥需要编解码
      * <p>
      * 2）Codec2的继承关系是怎样的？

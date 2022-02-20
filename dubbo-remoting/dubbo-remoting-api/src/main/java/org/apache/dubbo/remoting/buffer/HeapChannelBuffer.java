@@ -51,8 +51,8 @@ public class HeapChannelBuffer extends AbstractChannelBuffer {
      *
      * @param array the byte array to wrap
      */
-    public HeapChannelBuffer(byte[] array) {
-        this(array, 0, array.length);
+    public HeapChannelBuffer(byte[] array) { //带着字节数组创建HeapChannelBuffer
+        this(array, 0, array.length); //创建Buffer时，readerInder为0，writerIndex为array.length
     }
 
     /**
@@ -67,7 +67,7 @@ public class HeapChannelBuffer extends AbstractChannelBuffer {
             throw new NullPointerException("array");
         }
         this.array = array;
-        setIndex(readerIndex, writerIndex);
+        setIndex(readerIndex, writerIndex); //设置读、写游标
     }
 
     @Override
@@ -111,7 +111,7 @@ public class HeapChannelBuffer extends AbstractChannelBuffer {
 
     @Override
     public void getBytes(int index, byte[] dst, int dstIndex, int length) {
-        System.arraycopy(array, index, dst, dstIndex, length);
+        System.arraycopy(array, index, dst, dstIndex, length); //进行数组拷贝
     }
 
     @Override

@@ -25,7 +25,7 @@ import java.net.InetSocketAddress;
  * @see RemotingServer#getChannels()
  * @see RemotingServer#getChannel(InetSocketAddress)
  */
-public interface Channel extends Endpoint { //通道
+public interface Channel extends Endpoint { //通道（Dubbo网络通道的抽象，底层实现有NettyChannel、MinaChannel等）
 
     /**
      * get remote address.

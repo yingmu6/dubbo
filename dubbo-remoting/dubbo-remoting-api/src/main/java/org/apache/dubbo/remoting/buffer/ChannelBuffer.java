@@ -201,7 +201,13 @@ import java.nio.ByteBuffer;
  *
  *
  */
-public interface ChannelBuffer extends Comparable<ChannelBuffer> { //todo @csy 通道channel是怎么与通道数据channelBuffer进行关联的？
+public interface ChannelBuffer extends Comparable<ChannelBuffer> {
+    /**
+     * @csy 通道channel是怎么与通道数据channelBuffer进行关联的？
+     * Buffer缓冲区，也是一种字节容器，在Netty等NIO框架中都有类似的设计，例如，Java NIO中的ByteBuffer、Netty4 中的 ByteBuf。
+     * Dubbo抽象出了，ChannelBuffer 接口对底层 NIO 框架中的 Buffer 设计进行统一
+     *
+     */
 
     /**
      * Returns the number of bytes (octets) this buffer can contain.
@@ -307,7 +313,7 @@ public interface ChannelBuffer extends Comparable<ChannelBuffer> { //todo @csy �
     void getBytes(int index, byte[] dst);
 
     /**
-     * Transfers this buffer's data to the specified destination starting at the
+     * Transfers（传输） this buffer's data to the specified destination starting at the
      * specified absolute {@code index}. This method does not modify {@code
      * readerIndex} or {@code writerIndex} of this buffer.
      *
@@ -321,7 +327,7 @@ public interface ChannelBuffer extends Comparable<ChannelBuffer> { //todo @csy �
      *                                   dstIndex + length} is greater than
      *                                   {@code dst.length}
      */
-    void getBytes(int index, byte[] dst, int dstIndex, int length);
+    void getBytes(int index, byte[] dst, int dstIndex, int length); //将缓冲区ChannelBuffer的数据拷贝到目标数组中
 
     /**
      * Transfers this buffer's data to the specified destination starting at the
@@ -437,7 +443,7 @@ public interface ChannelBuffer extends Comparable<ChannelBuffer> { //todo @csy �
      * Returns the number of readable bytes which is equal to {@code
      * (this.writerIndex - this.readerIndex)}.
      */
-    int readableBytes();
+    int readableBytes(); //可读取的字节数
 
     /**
      * Gets a byte at the current {@code readerIndex} and increases the {@code
@@ -625,7 +631,7 @@ public interface ChannelBuffer extends Comparable<ChannelBuffer> { //todo @csy �
      *                                   srcIndex + length} is greater than
      *                                   {@code src.length}
      */
-    void setBytes(int index, byte[] src, int srcIndex, int length);
+    void setBytes(int index, byte[] src, int srcIndex, int length); //将数组中的数据拷贝到缓冲区ChannelBuffer
 
     /**
      * Transfers the specified source buffer's data to this buffer starting at

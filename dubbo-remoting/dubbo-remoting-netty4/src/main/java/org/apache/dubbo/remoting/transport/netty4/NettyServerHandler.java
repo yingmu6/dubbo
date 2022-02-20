@@ -36,7 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * NettyServerHandler.
  */
 @io.netty.channel.ChannelHandler.Sharable
-public class NettyServerHandler extends ChannelDuplexHandler {
+public class NettyServerHandler extends ChannelDuplexHandler { //todo @csy-001 NettyServerHandler、ChannelDuplexHandler的功能用途是什么？
     private static final Logger logger = LoggerFactory.getLogger(NettyServerHandler.class);
     /**
      * the cache for alive worker channel.
