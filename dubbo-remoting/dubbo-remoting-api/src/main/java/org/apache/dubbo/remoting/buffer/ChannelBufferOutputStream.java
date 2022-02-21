@@ -22,6 +22,9 @@ import java.io.OutputStream;
 
 public class ChannelBufferOutputStream extends OutputStream {
 
+    /**
+     * 维护的数据结构
+     */
     private final ChannelBuffer buffer;
     private final int startIndex;
 

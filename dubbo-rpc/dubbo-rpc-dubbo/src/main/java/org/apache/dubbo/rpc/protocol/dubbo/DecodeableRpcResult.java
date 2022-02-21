@@ -71,7 +71,7 @@ public class DecodeableRpcResult extends AppResponse implements Codec, Decodeabl
     }
 
     @Override
-    public Object decode(Channel channel, InputStream input) throws IOException {
+    public Object decode(Channel channel, InputStream input) throws IOException { //todo @csy-002 对result是如何解码的？
         if (log.isDebugEnabled()) {
             Thread thread = Thread.currentThread();
             log.debug("Decoding in thread -- [" + thread.getName() + "#" + thread.getId() + "]");

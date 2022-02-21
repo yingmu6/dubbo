@@ -31,9 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import static org.apache.dubbo.common.serialize.Constants.COMPACTED_JAVA_SERIALIZATION_ID;
-import static org.apache.dubbo.common.serialize.Constants.JAVA_SERIALIZATION_ID;
-import static org.apache.dubbo.common.serialize.Constants.NATIVE_JAVA_SERIALIZATION_ID;
+import static org.apache.dubbo.common.serialize.Constants.*;
 
 public class CodecSupport {
 
@@ -71,7 +69,7 @@ public class CodecSupport {
         return SERIALIZATIONNAME_ID_MAP.get(name);
     }
 
-    public static Serialization getSerialization(URL url) { //根据url中设置的序列化方式获取到序列化实例
+    public static Serialization getSerialization(URL url) { //通过SPI方式获取序列化实例
         return ExtensionLoader.getExtensionLoader(Serialization.class).getExtension(
                 url.getParameter(Constants.SERIALIZATION_KEY, Constants.DEFAULT_REMOTING_SERIALIZATION));
     }

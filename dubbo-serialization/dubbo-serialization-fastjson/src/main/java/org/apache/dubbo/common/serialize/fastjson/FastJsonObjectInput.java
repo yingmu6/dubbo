@@ -95,7 +95,7 @@ public class FastJsonObjectInput implements ObjectInput {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T readObject(Class<T> cls, Type type) throws IOException, ClassNotFoundException {
+    public <T> T readObject(Class<T> cls, Type type) throws IOException, ClassNotFoundException { //todo @csy-002 此处是如何读取内容的？
         String json = readLine();
         return (T) JSON.parseObject(json, type);
     }

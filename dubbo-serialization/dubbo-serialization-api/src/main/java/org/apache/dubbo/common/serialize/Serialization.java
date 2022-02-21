@@ -58,13 +58,13 @@ public interface Serialization { //都有哪些序列化方式？ 可以看具�
     /**
      * Get a serialization implementation instance
      *
-     * @param url URL address for the remote service
+     * @param url    URL address for the remote service
      * @param output the underlying output stream
      * @return serializer
      * @throws IOException
      */
     @Adaptive
-    ObjectOutput serialize(URL url, OutputStream output) throws IOException;
+    ObjectOutput serialize(URL url, OutputStream output) throws IOException; //todo @csy-002 哪种序列化方式会用到参数URL，用到里面的什么数据？
 
     /**
      * Get a deserialization implementation instance

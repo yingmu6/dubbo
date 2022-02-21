@@ -36,6 +36,8 @@ public abstract class AbstractChannelBuffer implements ChannelBuffer {
      * @csy 明确几个游标的关系？
      * 解：维护几个重要的游标，关系为
      * 0 <= readerIndex <= writerIndex <= capacity
+     *
+     * 只能抽象游标，不能抽象出存放的数据，因为数据有放在堆内、堆外的，具有差异性
      */
     private int readerIndex;
 

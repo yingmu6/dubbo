@@ -102,7 +102,7 @@ public class FastJsonObjectOutput implements ObjectOutput {
 
     @Override
     public void flushBuffer() throws IOException {
-        writer.flush();
+        writer.flush(); //todo @csy-002 刷新流是什么？
     }
 
 }

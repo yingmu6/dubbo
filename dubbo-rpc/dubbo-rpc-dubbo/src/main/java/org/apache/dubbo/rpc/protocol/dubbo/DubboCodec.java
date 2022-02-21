@@ -77,7 +77,7 @@ public class DubboCodec extends ExchangeCodec {
                     Object data;
                     if (res.isEvent()) { //若是事件的话，按事件进行解析
                         ObjectInput in = CodecSupport.deserialize(channel.getUrl(), is, proto);
-                        data = decodeEventData(channel, in);
+                        data = decodeEventData(channel, in); //todo @csy-002 都有哪些事件的？
                     } else {
                         DecodeableRpcResult result;
                         if (channel.getUrl().getParameter(DECODE_IN_IO_THREAD_KEY, DEFAULT_DECODE_IN_IO_THREAD)) {
