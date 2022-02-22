@@ -53,7 +53,7 @@ public class AppResponse implements Result {
 
     private Throwable exception;
 
-    private Map<String, Object> attachments = new HashMap<>();
+    private Map<String, Object> attachments = new HashMap<>(); //todo @csy-02-22 该Map中都会是什么值？
 
     public AppResponse() {
     }
@@ -86,7 +86,7 @@ public class AppResponse implements Result {
             } catch (Exception e) {
                 // ignore
             }
-            throw exception;
+            throw exception; //抛出异常
         }
         return result;
     }

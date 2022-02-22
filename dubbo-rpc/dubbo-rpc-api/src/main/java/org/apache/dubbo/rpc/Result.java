@@ -101,7 +101,7 @@ public interface Result extends Serializable {
      * @return result.
      * @throws if has exception throw it.
      */
-    Object recreate() throws Throwable;
+    Object recreate() throws Throwable; //@csy-02-22 重新创建是怎样的逻辑？解：若有异常则设置异常栈并抛出，否则返回维护的result值
 
     /**
      * get attachments.
@@ -197,9 +197,9 @@ public interface Result extends Serializable {
      * @param fn
      * @return
      */
-    Result whenCompleteWithContext(BiConsumer<Result, Throwable> fn);
+    Result whenCompleteWithContext(BiConsumer<Result, Throwable> fn); //该异步方法，在AsyncRpcResult中被实现
 
-    <U> CompletableFuture<U> thenApply(Function<Result, ? extends U> fn);
+    <U> CompletableFuture<U> thenApply(Function<Result, ? extends U> fn); //在AsyncRpcResult中被实现
 
     Result get() throws InterruptedException, ExecutionException;
 

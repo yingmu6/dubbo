@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 
 /**
  * Indicating unstable API, may get removed or changed in the next release.
- * （表明是不稳定的api，也许会有提高和改变在一个正式版本上）
+ * （表明是不稳定的api，也许在下一个正式版本上移除或改变）
  */
 @Retention(RetentionPolicy.CLASS)
 @Target({

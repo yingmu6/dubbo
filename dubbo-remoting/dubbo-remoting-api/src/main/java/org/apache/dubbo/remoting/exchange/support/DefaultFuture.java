@@ -137,7 +137,7 @@ public class DefaultFuture extends CompletableFuture<Object> { //todo @csy 都�
      *
      * @param channel channel to close
      */
-    public static void closeChannel(Channel channel) {
+    public static void closeChannel(Channel channel) { //todo @csy 都关闭通道哪些信息的？
         for (Map.Entry<Long, Channel> entry : CHANNELS.entrySet()) {
             if (channel.equals(entry.getValue())) {
                 DefaultFuture future = getFuture(entry.getKey());
