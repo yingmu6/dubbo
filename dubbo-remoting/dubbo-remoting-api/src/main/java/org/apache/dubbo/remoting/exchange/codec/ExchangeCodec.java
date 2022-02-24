@@ -153,7 +153,7 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
                 if (status == Response.OK) {
                     Object data;
                     if (res.isHeartbeat()) {
-                        data = decodeHeartbeatData(channel, in);
+                        data = decodeHeartbeatData(channel, in); //todo @csy 此处的心跳事件是怎么处理的？
                     } else if (res.isEvent()) {
                         data = decodeEventData(channel, in);
                     } else {
