@@ -55,7 +55,9 @@ public interface Codec2 {
     void encode(Channel channel, ChannelBuffer buffer, Object message) throws IOException;
 
     @Adaptive({Constants.CODEC_KEY})
-    Object decode(Channel channel, ChannelBuffer buffer) throws IOException;
+    Object decode(Channel channel, ChannelBuffer buffer) throws IOException; //todo @csy-02-25 哪里进入编解码逻辑的？
+
+    // todo @csy-02-25 解码响应的结果要回执到哪里的？
 
 
     enum DecodeResult { //解码枚举

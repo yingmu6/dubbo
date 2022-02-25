@@ -87,7 +87,7 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
     protected Object decode(Channel channel, ChannelBuffer buffer, int readable, byte[] header) throws IOException {
         // check magic number.
         if (readable > 0 && header[0] != MAGIC_HIGH
-                || readable > 1 && header[1] != MAGIC_LOW) {
+                || readable > 1 && header[1] != MAGIC_LOW) { //todo @csy-02-25 此处为啥要判断魔法数？逻辑处理是怎样的？
             int length = header.length;
             if (header.length < readable) {
                 header = Bytes.copyOf(header, readable);
@@ -136,7 +136,7 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
     }
 
     protected Object decodeBody(Channel channel, InputStream is, byte[] header) throws IOException {
-        byte flag = header[2], proto = (byte) (flag & SERIALIZATION_MASK);
+        byte flag = header[2], proto = (byte) (flag & SERIALIZATION_MASK); //todo @csy-02-25 此处是如何进行运算的，序列化标记对应协议中的哪个字节，哪个位？
         // get request id.
         long id = Bytes.bytes2long(header, 4);
         if ((flag & FLAG_REQUEST) == 0) {
@@ -149,12 +149,12 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
             byte status = header[3];
             res.setStatus(status);
             try {
-                ObjectInput in = CodecSupport.deserialize(channel.getUrl(), is, proto);
+                ObjectInput in = CodecSupport.deserialize(channel.getUrl(), is, proto); //模型转换，将输入流转换为Dubbo的输入流模型
                 if (status == Response.OK) {
                     Object data;
                     if (res.isHeartbeat()) {
                         data = decodeHeartbeatData(channel, in); //todo @csy 此处的心跳事件是怎么处理的？
-                    } else if (res.isEvent()) {
+                    } else if (res.isEvent()) { //todo @csy-02-25 事件除了心跳事件外，还有哪些事件？
                         data = decodeEventData(channel, in);
                     } else {
                         data = decodeResponseData(channel, in, getRequestData(id));
@@ -184,7 +184,7 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
                 } else if (req.isEvent()) {
                     data = decodeEventData(channel, in);
                 } else {
-                    data = decodeRequestData(channel, in);
+                    data = decodeRequestData(channel, in); //todo @csy-02-25 与decodeResponseData的实现有何区别？
                 }
                 req.setData(data);
             } catch (Throwable t) {
@@ -241,7 +241,7 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
 
         // encode request data.
         int savedWriteIndex = buffer.writerIndex();
-        buffer.writerIndex(savedWriteIndex + HEADER_LENGTH);
+        buffer.writerIndex(savedWriteIndex + HEADER_LENGTH); //todo @csy-02-25 此处为何要设置writerIndex游标？
         ChannelBufferOutputStream bos = new ChannelBufferOutputStream(buffer);
         ObjectOutput out = serialization.serialize(channel.getUrl(), bos);
         if (req.isEvent()) {
@@ -259,7 +259,7 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
         checkPayload(channel, len);
         Bytes.int2bytes(len, header, 12);
 
-        // write
+        // write todo @csy-02-25 此处ChannelBuffer写的逻辑是怎样的？
         buffer.writerIndex(savedWriteIndex);
         buffer.writeBytes(header); // write header.
         buffer.writerIndex(savedWriteIndex + HEADER_LENGTH + len);
@@ -311,7 +311,7 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
             buffer.writerIndex(savedWriteIndex);
             buffer.writeBytes(header); // write header.
             buffer.writerIndex(savedWriteIndex + HEADER_LENGTH + len);
-        } catch (Throwable t) { //todo @csy 什么情况下会有异常？
+        } catch (Throwable t) { //todo @csy 什么情况下会有异常？此处的处理是怎样的？
             // clear buffer
             buffer.writerIndex(savedWriteIndex);
             // send error message to Consumer, otherwise, Consumer will wait till timeout.
@@ -323,7 +323,7 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
                     logger.warn(t.getMessage(), t);
                     try {
                         r.setErrorMessage(t.getMessage());
-                        channel.send(r);
+                        channel.send(r); //发送异常信息
                         return;
                     } catch (RemotingException e) {
                         logger.warn("Failed to send bad_response info back: " + t.getMessage() + ", cause: " + e.getMessage(), e);
@@ -454,7 +454,7 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
         encodeResponseData(out, data);
     }
 
-    protected void encodeRequestData(Channel channel, ObjectOutput out, Object data, String version) throws IOException {
+    protected void encodeRequestData(Channel channel, ObjectOutput out, Object data, String version) throws IOException { //todo @csy-02-25 version字段没有使用到？是为了后续使用预留的吗？
         encodeRequestData(out, data);
     }
 

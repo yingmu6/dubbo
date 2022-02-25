@@ -27,7 +27,7 @@ import java.lang.reflect.Type;
  */
 public class FastJsonObjectInput implements ObjectInput {
 
-    private final BufferedReader reader;
+    private final BufferedReader reader; //todo @csy-02-25 什么情况下用字符流，什么情况有用字节流处理JavaObjectInput？
 
     public FastJsonObjectInput(InputStream in) {
         this(new InputStreamReader(in));

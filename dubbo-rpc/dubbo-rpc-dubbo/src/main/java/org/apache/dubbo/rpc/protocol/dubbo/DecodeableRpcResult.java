@@ -38,7 +38,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Type;
 
-public class DecodeableRpcResult extends AppResponse implements Codec, Decodeable {
+public class DecodeableRpcResult extends AppResponse implements Codec, Decodeable { //todo @csy-02-25 DecodeableRpcResult的功能用途是什么？为啥会与code、decode关联的？
 
     private static final Logger log = LoggerFactory.getLogger(DecodeableRpcResult.class);
 
@@ -127,7 +127,7 @@ public class DecodeableRpcResult extends AppResponse implements Codec, Decodeabl
         }
     }
 
-    private void handleValue(ObjectInput in) throws IOException {
+    private void handleValue(ObjectInput in) throws IOException { //todo @csy-02-25 此处处理的是什么值？为啥与返回类型关联的？
         try {
             Type[] returnTypes;
             if (invocation instanceof RpcInvocation) {

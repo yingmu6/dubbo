@@ -18,33 +18,15 @@ package org.apache.dubbo.common.utils;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.Arrays.asList;
-import static org.apache.dubbo.common.constants.CommonConstants.GROUP_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.INTERFACE_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.VERSION_KEY;
+import static org.apache.dubbo.common.constants.CommonConstants.*;
 import static org.apache.dubbo.common.utils.CollectionUtils.ofSet;
-import static org.apache.dubbo.common.utils.StringUtils.splitToList;
-import static org.apache.dubbo.common.utils.StringUtils.splitToSet;
-import static org.apache.dubbo.common.utils.StringUtils.toCommaDelimitedString;
+import static org.apache.dubbo.common.utils.StringUtils.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class StringUtilsTest {
     @Test
@@ -54,7 +36,7 @@ public class StringUtilsTest {
     }
 
     @Test
-    public void testRepeat() throws Exception {
+    public void testRepeat() throws Exception { //todo @csy-02-25 待调试StringUtils功能
         assertThat(StringUtils.repeat(null, 2), nullValue());
         assertThat(StringUtils.repeat("", 0), equalTo(""));
         assertThat(StringUtils.repeat("", 2), equalTo(""));

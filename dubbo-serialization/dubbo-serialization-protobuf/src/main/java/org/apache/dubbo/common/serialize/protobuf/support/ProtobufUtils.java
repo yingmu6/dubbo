@@ -16,28 +16,14 @@
  */
 package org.apache.dubbo.common.serialize.protobuf.support;
 
+import com.google.common.base.Strings;
+import com.google.protobuf.*;
+import com.google.protobuf.GeneratedMessageV3.Builder;
+import com.google.protobuf.util.JsonFormat;
+import com.google.protobuf.util.JsonFormat.Printer;
 import org.apache.dubbo.common.serialize.protobuf.support.wrapper.MapValue;
 import org.apache.dubbo.common.serialize.protobuf.support.wrapper.ThrowablePB.StackTraceElementProto;
 import org.apache.dubbo.common.serialize.protobuf.support.wrapper.ThrowablePB.ThrowableProto;
-
-import com.google.common.base.Strings;
-import com.google.protobuf.BoolValue;
-import com.google.protobuf.BytesValue;
-import com.google.protobuf.CodedInputStream;
-import com.google.protobuf.DoubleValue;
-import com.google.protobuf.Empty;
-import com.google.protobuf.ExtensionRegistryLite;
-import com.google.protobuf.FloatValue;
-import com.google.protobuf.GeneratedMessageV3.Builder;
-import com.google.protobuf.Int32Value;
-import com.google.protobuf.Int64Value;
-import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.protobuf.MessageLite;
-import com.google.protobuf.MessageOrBuilder;
-import com.google.protobuf.Parser;
-import com.google.protobuf.StringValue;
-import com.google.protobuf.util.JsonFormat;
-import com.google.protobuf.util.JsonFormat.Printer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -77,7 +63,7 @@ public class ProtobufUtils {
         return printer.print((MessageOrBuilder) value);
     }
 
-    private static Builder getMessageBuilder(Class<?> requestType) throws Exception {
+    private static Builder getMessageBuilder(Class<?> requestType) throws Exception { //todo @csy-02-25 protobuf 基本功能是怎样的？相比其它序列化有何优势？Dubbo里面又是怎样封装的？
         Method method = requestType.getMethod("newBuilder");
         return (Builder) method.invoke(null, null);
     }

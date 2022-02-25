@@ -46,7 +46,7 @@ import static org.apache.dubbo.common.URL.buildKey;
 import static org.apache.dubbo.common.constants.CommonConstants.*;
 import static org.apache.dubbo.rpc.protocol.dubbo.CallbackServiceCodec.decodeInvocationArgument;
 
-public class DecodeableRpcInvocation extends RpcInvocation implements Codec, Decodeable { //解码调用信息
+public class DecodeableRpcInvocation extends RpcInvocation implements Codec, Decodeable { //解码调用信息，todo @csy-02-25 该类的功能用途是什么？
 
     private static final Logger log = LoggerFactory.getLogger(DecodeableRpcInvocation.class);
 

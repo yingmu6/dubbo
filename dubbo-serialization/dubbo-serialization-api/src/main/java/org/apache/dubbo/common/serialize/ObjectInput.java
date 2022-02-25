@@ -23,20 +23,20 @@ import java.util.Map;
 /**
  * Object input interface.
  */
-public interface ObjectInput extends DataInput {
+public interface ObjectInput extends DataInput { //todo @csy-02-25 相比BufferedReader、InputStream原生输入流，都做了哪些封装，有什么好处？
 
     /**
      * Consider use {@link #readObject(Class)} or {@link #readObject(Class, Type)} where possible
      *
      * @return object
-     * @throws IOException if an I/O error occurs
+     * @throws IOException            if an I/O error occurs
      * @throws ClassNotFoundException if an ClassNotFoundException occurs
      */
     @Deprecated
     Object readObject() throws IOException, ClassNotFoundException;
 
     /**
-     * read object
+     * read object （从输入流中读取内容，并转换为指定类型的对象）
      *
      * @param cls object class
      * @return object

@@ -201,7 +201,7 @@ import java.nio.ByteBuffer;
  *
  *
  */
-public interface ChannelBuffer extends Comparable<ChannelBuffer> {
+public interface ChannelBuffer extends Comparable<ChannelBuffer> { //todo @csy-02-25 ChannelBuffer类图以及功能用途是怎样的？
     /**
      * @csy 通道channel是怎么与通道数据channelBuffer进行关联的？
      * Buffer缓冲区，也是一种字节容器，在Netty等NIO框架中都有类似的设计，例如，Java NIO中的ByteBuffer、Netty4 中的 ByteBuf。

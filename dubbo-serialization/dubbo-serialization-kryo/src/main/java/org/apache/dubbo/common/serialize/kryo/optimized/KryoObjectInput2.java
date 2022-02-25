@@ -16,13 +16,12 @@
  */
 package org.apache.dubbo.common.serialize.kryo.optimized;
 
-import org.apache.dubbo.common.serialize.Cleanable;
-import org.apache.dubbo.common.serialize.ObjectInput;
-import org.apache.dubbo.common.serialize.kryo.utils.KryoUtils;
-
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.KryoException;
 import com.esotericsoftware.kryo.io.Input;
+import org.apache.dubbo.common.serialize.Cleanable;
+import org.apache.dubbo.common.serialize.ObjectInput;
+import org.apache.dubbo.common.serialize.kryo.utils.KryoUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,7 +32,7 @@ import java.lang.reflect.Type;
  */
 public class KryoObjectInput2 implements ObjectInput, Cleanable {
 
-    private Kryo kryo;
+    private Kryo kryo; //todo @csy-02-25 Kryo的功能用途是什么？
     private Input input;
 
     public KryoObjectInput2(InputStream inputStream) {

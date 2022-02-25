@@ -35,6 +35,6 @@ public class PooledKryoFactory extends AbstractKryoFactory {
 
     @Override
     public void returnKryo(Kryo kryo) {
-        pool.release(kryo);
+        pool.release(kryo); //从池子中释放指定对象
     }
 }

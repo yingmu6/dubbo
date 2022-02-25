@@ -61,7 +61,7 @@ public class CodecSupport {
     private CodecSupport() {
     }
 
-    public static Serialization getSerializationById(Byte id) {
+    public static Serialization getSerializationById(Byte id) { //根据序列化id从缓存Map中获取到Serialization实例
         return ID_SERIALIZATION_MAP.get(id);
     }
 

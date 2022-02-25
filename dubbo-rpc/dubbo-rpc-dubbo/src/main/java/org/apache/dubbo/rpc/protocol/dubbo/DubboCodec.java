@@ -84,7 +84,7 @@ public class DubboCodec extends ExchangeCodec {
                             result = new DecodeableRpcResult(channel, res, is,
                                     (Invocation) getRequestData(id), proto);
                             result.decode();
-                        } else {
+                        } else { //todo @csy-02-25 此处为啥会处理DecodeableRpcResult？
                             result = new DecodeableRpcResult(channel, res,
                                     new UnsafeByteArrayInputStream(readMessageData(is)),
                                     (Invocation) getRequestData(id), proto);
@@ -122,7 +122,7 @@ public class DubboCodec extends ExchangeCodec {
                     if (channel.getUrl().getParameter(DECODE_IN_IO_THREAD_KEY, DEFAULT_DECODE_IN_IO_THREAD)) {
                         inv = new DecodeableRpcInvocation(channel, req, is, proto);
                         inv.decode();
-                    } else {
+                    } else { //todo @csy-02-25 此处为啥会处理DecodeableRpcInvocation，用途是什么？
                         inv = new DecodeableRpcInvocation(channel, req,
                                 new UnsafeByteArrayInputStream(readMessageData(is)), proto);
                     }

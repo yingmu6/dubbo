@@ -56,7 +56,7 @@ public interface Endpoint { //节点
      * @param message
      * @throws RemotingException
      */
-    void send(Object message) throws RemotingException;
+    void send(Object message) throws RemotingException; //todo @csy-02-25 是怎么通过发送消息的？不同的实现，有怎样的不同？
 
     /**
      * send message.
