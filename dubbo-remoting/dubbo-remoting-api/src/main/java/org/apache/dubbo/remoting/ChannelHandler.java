@@ -28,6 +28,7 @@ import org.apache.dubbo.common.extension.SPI;
 @SPI
 public interface ChannelHandler { //通道的事件处理器，包含连接、发送、接收等事件处理
 
+    //todo @csy-02-26 通道处理器的类图是怎样的？都有哪些实现类？
     /**
      * on channel connected.
      *
@@ -48,7 +49,7 @@ public interface ChannelHandler { //通道的事件处理器，包含连接、�
      * @param channel channel.
      * @param message message.
      */
-    void sent(Channel channel, Object message) throws RemotingException;
+    void sent(Channel channel, Object message) throws RemotingException; //todo @csy-02-26 往通道中发送消息，会发起远程调用吗？
 
     /**
      * on message received.
@@ -56,7 +57,7 @@ public interface ChannelHandler { //通道的事件处理器，包含连接、�
      * @param channel channel.
      * @param message message.
      */
-    void received(Channel channel, Object message) throws RemotingException;
+    void received(Channel channel, Object message) throws RemotingException; //todo @csy-02-26 为啥接收消息，还要传递消息对象？是为了指定消息类型吗？
 
     /**
      * on exception caught.

@@ -21,7 +21,7 @@ import org.apache.dubbo.common.logger.LoggerFactory;
 import org.apache.dubbo.remoting.Channel;
 import org.apache.dubbo.remoting.ChannelHandler;
 
-public class ChannelEventRunnable implements Runnable {
+public class ChannelEventRunnable implements Runnable { //todo @csy-02-26 此处的功能用途是什么？哪种场景会用到
     private static final Logger logger = LoggerFactory.getLogger(ChannelEventRunnable.class);
 
     private final ChannelHandler handler;
@@ -51,7 +51,7 @@ public class ChannelEventRunnable implements Runnable {
     }
 
     @Override
-    public void run() {
+    public void run() { //线程体执行内容
         if (state == ChannelState.RECEIVED) {
             try {
                 handler.received(channel, message);
@@ -60,17 +60,17 @@ public class ChannelEventRunnable implements Runnable {
                         + ", message is " + message, e);
             }
         } else {
-            switch (state) {
-            case CONNECTED:
-                try {
-                    handler.connected(channel);
-                } catch (Exception e) {
-                    logger.warn("ChannelEventRunnable handle " + state + " operation error, channel is " + channel, e);
-                }
-                break;
-            case DISCONNECTED:
-                try {
-                    handler.disconnected(channel);
+            switch (state) { //根据事件状态，执行相应的事件
+                case CONNECTED:
+                    try {
+                        handler.connected(channel);
+                    } catch (Exception e) {
+                        logger.warn("ChannelEventRunnable handle " + state + " operation error, channel is " + channel, e);
+                    }
+                    break;
+                case DISCONNECTED:
+                    try {
+                        handler.disconnected(channel);
                 } catch (Exception e) {
                     logger.warn("ChannelEventRunnable handle " + state + " operation error, channel is " + channel, e);
                 }

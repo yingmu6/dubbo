@@ -73,7 +73,7 @@ public class WrappedChannelHandler implements ChannelHandlerDelegate {
         handler.caught(channel, exception);
     }
 
-    protected void sendFeedback(Channel channel, Request request, Throwable t) throws RemotingException {
+    protected void sendFeedback(Channel channel, Request request, Throwable t) throws RemotingException { //feedback：反馈意见，将异常信息返回给客户端
         if (request.isTwoWay()) {
             String msg = "Server side(" + url.getIp() + "," + url.getPort()
                     + ") thread pool is exhausted, detail msg:" + t.getMessage();
@@ -106,7 +106,7 @@ public class WrappedChannelHandler implements ChannelHandlerDelegate {
      * @param msg
      * @return
      */
-    public ExecutorService getPreferredExecutorService(Object msg) {
+    public ExecutorService getPreferredExecutorService(Object msg) { //todo @csy-02-26 该方法的功能用途是什么？
         if (msg instanceof Response) {
             Response response = (Response) msg;
             DefaultFuture responseFuture = DefaultFuture.getFuture(response.getId());
@@ -130,7 +130,7 @@ public class WrappedChannelHandler implements ChannelHandlerDelegate {
      *
      * @return
      */
-    public ExecutorService getSharedExecutorService() {
+    public ExecutorService getSharedExecutorService() { //todo @csy-02-26 什么是共享线程池？
         ExecutorRepository executorRepository =
                 ExtensionLoader.getExtensionLoader(ExecutorRepository.class).getDefaultExtension();
         ExecutorService executor = executorRepository.getExecutor(url);

@@ -29,7 +29,7 @@ import java.util.concurrent.CompletableFuture;
 public abstract class ExchangeHandlerAdapter extends TelnetHandlerAdapter implements ExchangeHandler {
 
     @Override
-    public CompletableFuture<Object> reply(ExchangeChannel channel, Object msg) throws RemotingException {
+    public CompletableFuture<Object> reply(ExchangeChannel channel, Object msg) throws RemotingException { //具体业务交由子类实现
         return null;
     }
 

@@ -28,19 +28,13 @@ import org.apache.dubbo.remoting.transport.dispatcher.ChannelEventRunnable;
 import org.apache.dubbo.remoting.transport.dispatcher.ChannelEventRunnable.ChannelState;
 import org.apache.dubbo.remoting.transport.dispatcher.WrappedChannelHandler;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
-import static org.apache.dubbo.common.constants.CommonConstants.THREAD_NAME_KEY;
 import static org.apache.dubbo.common.constants.CommonConstants.DEFAULT_THREAD_NAME;
-import static org.apache.dubbo.remoting.Constants.CONNECT_QUEUE_CAPACITY;
-import static org.apache.dubbo.remoting.Constants.CONNECT_QUEUE_WARNING_SIZE;
-import static org.apache.dubbo.remoting.Constants.DEFAULT_CONNECT_QUEUE_WARNING_SIZE;
+import static org.apache.dubbo.common.constants.CommonConstants.THREAD_NAME_KEY;
+import static org.apache.dubbo.remoting.Constants.*;
 
-public class ConnectionOrderedChannelHandler extends WrappedChannelHandler {
+public class ConnectionOrderedChannelHandler extends WrappedChannelHandler { //todo @csy-02-26 该处理类的功能用途是什么？
 
     protected final ThreadPoolExecutor connectionExecutor;
     private final int queuewarninglimit;

@@ -85,7 +85,7 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
 
     void handleRequest(final ExchangeChannel channel, Request req) throws RemotingException {
         Response res = new Response(req.getId(), req.getVersion());
-        if (req.isBroken()) {
+        if (req.isBroken()) { //broken：损坏的、终止的
             Object data = req.getData();
 
             String msg;
@@ -106,12 +106,12 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
         Object msg = req.getData();
         try {
             CompletionStage<Object> future = handler.reply(channel, msg);
-            future.whenComplete((appResult, t) -> {
+            future.whenComplete((appResult, t) -> { //todo @csy-02-26 此处的功能用途是什么？
                 try {
                     if (t == null) {
                         res.setStatus(Response.OK);
                         res.setResult(appResult);
-                    } else {
+                    } else { //存在异常信息
                         res.setStatus(Response.SERVICE_ERROR);
                         res.setErrorMessage(StringUtils.toString(t));
                     }

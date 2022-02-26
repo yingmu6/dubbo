@@ -25,7 +25,7 @@ import org.apache.dubbo.remoting.transport.dispatcher.all.AllDispatcher;
  * ChannelHandlerWrapper (SPI, Singleton, ThreadSafe)
  */
 @SPI(AllDispatcher.NAME)
-public interface Dispatcher {
+public interface Dispatcher { //todo @csy-02-26 派发器是怎样与事件处理器关联起来的？都有哪些模式的？
 
     /**
      * dispatch the message to threadpool.

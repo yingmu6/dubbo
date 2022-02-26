@@ -146,13 +146,13 @@ public class TelnetCodec extends TransportCodec { //todo @csy-001 该类的编�
 
     @Override
     public void encode(Channel channel, ChannelBuffer buffer, Object message) throws IOException { //响应请求内容时编码
-        if (message instanceof String) {
+        if (message instanceof String) { //字符串类型处理
             if (isClientSide(channel)) {
                 message = message + "\r\n";
             }
-            byte[] msgData = ((String) message).getBytes(getCharset(channel).name());
+            byte[] msgData = ((String) message).getBytes(getCharset(channel).name()); //若是字符串，直接根据字符集获取字节数组
             buffer.writeBytes(msgData);
-        } else {
+        } else { //对象类型处理
             super.encode(channel, buffer, message);
         }
     }

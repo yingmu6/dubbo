@@ -42,7 +42,7 @@ public class ChannelHandlers {
         INSTANCE = instance;
     }
 
-    protected ChannelHandler wrapInternal(ChannelHandler handler, URL url) {
+    protected ChannelHandler wrapInternal(ChannelHandler handler, URL url) { //todo @csy-02-26 此处为啥要封装心跳处理器？
         return new MultiMessageHandler(new HeartbeatHandler(ExtensionLoader.getExtensionLoader(Dispatcher.class)
                 .getAdaptiveExtension().dispatch(handler, url)));
     }

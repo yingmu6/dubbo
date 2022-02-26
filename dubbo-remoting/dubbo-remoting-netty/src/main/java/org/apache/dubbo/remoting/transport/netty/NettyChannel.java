@@ -23,7 +23,6 @@ import org.apache.dubbo.remoting.ChannelHandler;
 import org.apache.dubbo.remoting.RemotingException;
 import org.apache.dubbo.remoting.transport.AbstractChannel;
 import org.apache.dubbo.remoting.utils.PayloadDropper;
-
 import org.jboss.netty.channel.ChannelFuture;
 
 import java.net.InetSocketAddress;
@@ -37,7 +36,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.TIMEOUT_KEY;
 /**
  * NettyChannel.
  */
-final class NettyChannel extends AbstractChannel {
+final class NettyChannel extends AbstractChannel { //todo @csy-02-26 netty与netty4有何差异？
 
     private static final Logger logger = LoggerFactory.getLogger(NettyChannel.class);
 
@@ -100,7 +99,7 @@ final class NettyChannel extends AbstractChannel {
         boolean success = true;
         int timeout = 0;
         try {
-            ChannelFuture future = channel.write(message);
+            ChannelFuture future = channel.write(message); //与netty4 调用的方法不同
             if (sent) {
                 timeout = getUrl().getPositiveParameter(TIMEOUT_KEY, DEFAULT_TIMEOUT);
                 success = future.await(timeout);

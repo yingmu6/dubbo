@@ -34,7 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 2.7.0, use https://github.com/dubbo/dubbo-rpc-native-thrift instead
  */
 @Deprecated
-public class ThriftNativeCodec implements Codec2 {
+public class ThriftNativeCodec implements Codec2 { //todo @csy-02-26 该类的用途是什么？与ThriftCodec有何不同？
 
     private final AtomicInteger thriftSeq = new AtomicInteger(0);
 
