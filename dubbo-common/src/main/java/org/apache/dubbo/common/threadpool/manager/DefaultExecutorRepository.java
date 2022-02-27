@@ -44,6 +44,7 @@ public class DefaultExecutorRepository implements ExecutorRepository { //todo @c
 
     private ScheduledExecutorService reconnectScheduledExecutor;
 
+    // 缓存线程池相关缓存
     private ConcurrentMap<String, ConcurrentMap<Integer, ExecutorService>> data = new ConcurrentHashMap<>();
 
     public DefaultExecutorRepository() {
@@ -67,11 +68,13 @@ public class DefaultExecutorRepository implements ExecutorRepository { //todo @c
         if (CONSUMER_SIDE.equalsIgnoreCase(url.getParameter(SIDE_KEY))) {
             componentKey = CONSUMER_SIDE;
         }
+
+        // 缓存中不存在线程池，则创建，否则使用缓存中的值
         Map<Integer, ExecutorService> executors = data.computeIfAbsent(componentKey, k -> new ConcurrentHashMap<>());
         Integer portKey = url.getPort();
         ExecutorService executor = executors.computeIfAbsent(portKey, k -> createExecutor(url)); //在线程池不存在时，进行创建
         // If executor has been shut down, create a new one
-        if (executor.isShutdown() || executor.isTerminated()) {
+        if (executor.isShutdown() || executor.isTerminated()) { //对线程池的状态进行判断
             executors.remove(portKey);
             executor = createExecutor(url); //若线程池已经被终止了，则重新创建线程池
             executors.put(portKey, executor); //设置端口号与线程池的映射

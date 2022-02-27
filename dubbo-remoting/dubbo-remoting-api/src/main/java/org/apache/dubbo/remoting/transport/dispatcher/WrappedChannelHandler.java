@@ -35,9 +35,9 @@ public class WrappedChannelHandler implements ChannelHandlerDelegate {
 
     protected static final Logger logger = LoggerFactory.getLogger(WrappedChannelHandler.class);
 
-    protected final ChannelHandler handler;
+    protected final ChannelHandler handler; //封装事件处理类，持有ChannelHandler的引用（对什么类封装，即持有什么类的引用，类似于代理思想）
 
-    protected final URL url;
+    protected final URL url; //用于查找调用信息，以及关联的线程池等
 
     public WrappedChannelHandler(ChannelHandler handler, URL url) {
         this.handler = handler;
@@ -49,7 +49,7 @@ public class WrappedChannelHandler implements ChannelHandlerDelegate {
     }
 
     @Override
-    public void connected(Channel channel) throws RemotingException {
+    public void connected(Channel channel) throws RemotingException { //调用持有类对应的方法，实现封装代理功能
         handler.connected(channel);
     }
 
@@ -87,7 +87,7 @@ public class WrappedChannelHandler implements ChannelHandlerDelegate {
 
     @Override
     public ChannelHandler getHandler() {
-        if (handler instanceof ChannelHandlerDelegate) {
+        if (handler instanceof ChannelHandlerDelegate) { //通过委派处理类获取ChannelHandler
             return ((ChannelHandlerDelegate) handler).getHandler();
         } else {
             return handler;
@@ -106,7 +106,7 @@ public class WrappedChannelHandler implements ChannelHandlerDelegate {
      * @param msg
      * @return
      */
-    public ExecutorService getPreferredExecutorService(Object msg) { //todo @csy-02-26 该方法的功能用途是什么？
+    public ExecutorService getPreferredExecutorService(Object msg) { //@csy-02-26 该方法的功能用途是什么？解：Preferred（更合意的，优先考虑的），
         if (msg instanceof Response) {
             Response response = (Response) msg;
             DefaultFuture responseFuture = DefaultFuture.getFuture(response.getId());
@@ -130,7 +130,7 @@ public class WrappedChannelHandler implements ChannelHandlerDelegate {
      *
      * @return
      */
-    public ExecutorService getSharedExecutorService() { //todo @csy-02-26 什么是共享线程池？
+    public ExecutorService getSharedExecutorService() { //@csy-02-26 什么是共享线程池？解：使用Map将线程池缓存起来，判断缓存中是否存在，若存在则不再创建
         ExecutorRepository executorRepository =
                 ExtensionLoader.getExtensionLoader(ExecutorRepository.class).getDefaultExtension();
         ExecutorService executor = executorRepository.getExecutor(url);
