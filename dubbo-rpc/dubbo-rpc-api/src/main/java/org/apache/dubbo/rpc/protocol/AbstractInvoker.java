@@ -40,7 +40,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * AbstractInvoker.
  */
-public abstract class AbstractInvoker<T> implements Invoker<T> { //
+public abstract class AbstractInvoker<T> implements Invoker<T> { //todo @pause-02-28
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -79,7 +79,7 @@ public abstract class AbstractInvoker<T> implements Invoker<T> { //
             return null;
         }
         Map<String, Object> attachment = new HashMap<>();
-        for (String key : keys) {
+        for (String key : keys) { //依次从url获取到key对应的value，并设置到attachment附加参数Map中
             String value = url.getParameter(key);
             if (value != null && value.length() > 0) {
                 attachment.put(key, value); //将url中已经配置的参数，设置到附加参数Map中
@@ -148,7 +148,7 @@ public abstract class AbstractInvoker<T> implements Invoker<T> { //
             invocation.addObjectAttachments(contextAttachments);
         }
 
-        invocation.setInvokeMode(RpcUtils.getInvokeMode(url, invocation));
+        invocation.setInvokeMode(RpcUtils.getInvokeMode(url, invocation)); //设置调用模式
         RpcUtils.attachInvocationIdIfAsync(getUrl(), invocation);
 
         AsyncRpcResult asyncResult;

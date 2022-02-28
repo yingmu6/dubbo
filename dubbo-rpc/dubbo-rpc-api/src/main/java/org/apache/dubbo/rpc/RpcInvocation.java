@@ -48,7 +48,7 @@ import static org.apache.dubbo.rpc.Constants.TOKEN_KEY;
  * 2）Invoker 语义上：是"调用者"，领域模型上：是"实体域"，它是Dubbo的核心模型，其它模型都向它靠扰，或转换成它，它代表一个可执行体，可向它发起 invoke 调用，它有可能是一个本地的实现，也可能是一个远程的实现，也可能一个集群实现。
  * 3）Invocation 语义上：是"调用者"，领域模型上：是"会话域"，它持有调用过程中的变量，比如方法名，参数等。
  */
-public class RpcInvocation implements Invocation, Serializable { //RpcInvocation的功能用途是什么？解：用来存储每次调用的信息
+public class RpcInvocation implements Invocation, Serializable { //RpcInvocation的功能用途是什么？解：用来存储每次调用的信息，todo @csy-02-28 待画出数据结构和类图
 
     private static final long serialVersionUID = -4355285085441097045L;
 
@@ -343,7 +343,7 @@ public class RpcInvocation implements Invocation, Serializable { //RpcInvocation
         }
     }
 
-    public void addObjectAttachmentsIfAbsent(Map<String, Object> attachments) {
+    public void addObjectAttachmentsIfAbsent(Map<String, Object> attachments) { //添加附加参数（在key不存在时设置，相同的key不做覆盖）
         if (attachments == null) {
             return;
         }

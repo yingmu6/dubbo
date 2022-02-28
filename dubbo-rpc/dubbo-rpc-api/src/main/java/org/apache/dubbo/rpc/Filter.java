@@ -30,7 +30,7 @@ import org.apache.dubbo.common.extension.SPI;
  *          invoker.invoke(invocation) //filter work in a filter implementation class
  *          ...code after filter ...
  *    </b>
- *    Caching is implemented in dubbo using filter approach. If cache is configured for invocation then before
+ *    Caching is implemented in dubbo using filter approach. If cache is configured for invocation then before //todo @csy-02-28 filter也会用上缓存吗？在什么地方会用到？
  *    remote call configured caching type's (e.g. Thread Local, JCache etc) implementation invoke method gets called.
  * </pre>
  * Filter. (SPI, Singleton, ThreadSafe)
@@ -41,17 +41,17 @@ import org.apache.dubbo.common.extension.SPI;
  * @see org.apache.dubbo.rpc.filter.TpsLimitFilter
  */
 @SPI
-public interface Filter {
+public interface Filter { //过滤器（过多使用时，需要考虑性能影响）
     /**
      * Make sure call invoker.invoke() in your implementation.
      */
-    Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException;
+    Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException; //需要确保能正常的invoke调用，filter过滤拦截是在invoke调用前、后进行逻辑处理
 
     /**
      * 什么地方会引用？解：实现类可以选择是否实现，如ActiveLimitFilter实现了Filter.Listener但AccessLogFilter没实现
      * 相比2.5.6，多了信息响应以及异常处理
      */
-    interface Listener {
+    interface Listener { //todo @csy-02-28 为啥提供内部接口？功能用途是什么？待画出Filter的类图
         void onResponse(Result appResponse, Invoker<?> invoker, Invocation invocation);
 
         void onError(Throwable t, Invoker<?> invoker, Invocation invocation);

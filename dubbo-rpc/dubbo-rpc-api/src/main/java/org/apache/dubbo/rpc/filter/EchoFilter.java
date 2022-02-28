@@ -31,7 +31,7 @@ public class EchoFilter implements Filter { //Echo 服务用来判断服务提�
     @Override
     public Result invoke(Invoker<?> invoker, Invocation inv) throws RpcException {
         if (inv.getMethodName().equals($ECHO) && inv.getArguments() != null && inv.getArguments().length == 1) {
-            return AsyncRpcResult.newDefaultAsyncResult(inv.getArguments()[0], inv);
+            return AsyncRpcResult.newDefaultAsyncResult(inv.getArguments()[0], inv); //todo @csy-02-28 此处为什么不invoke调用？
         }
         return invoker.invoke(inv);
     }

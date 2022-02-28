@@ -40,7 +40,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * <li>close server</li>
  * </ul>
  */
-public class Server { //服务端类
+public class Server { //服务端类，todo @csu-02-28 待画出数据结构及类图
 
     private static final Logger logger = LoggerFactory.getLogger(Server.class);
     private static final Server INSTANCE = new Server();

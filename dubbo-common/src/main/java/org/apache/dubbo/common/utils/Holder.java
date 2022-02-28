@@ -21,6 +21,9 @@ package org.apache.dubbo.common.utils;
  */
 public class Holder<T> {
 
+    /**
+     * todo @csy-02-28 Holder应该怎样理解？与Map方式缓存有何不同？
+     */
     private volatile T value;
 
     public void set(T value) {

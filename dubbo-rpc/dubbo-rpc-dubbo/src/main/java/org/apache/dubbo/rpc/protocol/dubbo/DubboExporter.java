@@ -29,6 +29,7 @@ public class DubboExporter<T> extends AbstractExporter<T> {
 
     private final String key;
 
+    // 将serviceKey与Exporter缓存起来
     private final Map<String, Exporter<?>> exporterMap;
 
     public DubboExporter(Invoker<T> invoker, String key, Map<String, Exporter<?>> exporterMap) {

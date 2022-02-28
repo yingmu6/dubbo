@@ -29,6 +29,10 @@ import org.apache.dubbo.common.extension.SPI;
 public interface ExporterListener { //暴露监听器是怎么被使用的？解：对Exporter事件进行监听，包含暴露和取消暴露（当有服务暴露时，触发该事件。）
 
     /**
+     * todo @csy-02-28 InvokerListener与ExporterListener的关联是怎样的？怎样联合使用？
+     */
+
+    /**
      * The exporter exported.
      *
      * @param exporter

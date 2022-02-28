@@ -34,7 +34,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.SERVICE_FILTER_K
 @Activate(order = 100)
 public class ProtocolFilterWrapper implements Protocol { //org.apache.dubbo.rpc.protocol.ProtocolFilterWrapper 在org.apache.dubbo.rpc.Protocol文件中配置了
 
-    private final Protocol protocol; //持有ProtocolListenerWrapper实例
+    private final Protocol protocol; //对协议Protocol进行封装（持有ProtocolListenerWrapper实例）
 
     public ProtocolFilterWrapper(Protocol protocol) { //对Protocol进行封装
         if (protocol == null) {
@@ -47,7 +47,7 @@ public class ProtocolFilterWrapper implements Protocol { //org.apache.dubbo.rpc.
         Invoker<T> last = invoker;
         List<Filter> filters = ExtensionLoader.getExtensionLoader(Filter.class).getActivateExtension(invoker.getUrl(), key, group);
 
-        if (!filters.isEmpty()) {
+        if (!filters.isEmpty()) { //todo @csy-02-28 是采用头插法还是尾插法？怎样串联链表的
             for (int i = filters.size() - 1; i >= 0; i--) { //从后往前遍历，最后一个就是头结点
                 final Filter filter = filters.get(i);
                 final Invoker<T> next = last;

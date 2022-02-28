@@ -40,7 +40,7 @@ import static org.apache.dubbo.rpc.Constants.*;
 public class RpcUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(RpcUtils.class);
-    private static final AtomicLong INVOKE_ID = new AtomicLong(0);
+    private static final AtomicLong INVOKE_ID = new AtomicLong(0); //todo @csy-02-28 调用id是什么时候产生、使用的？
 
     public static Class<?> getReturnType(Invocation invocation) {
         try {

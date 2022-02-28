@@ -29,7 +29,7 @@ import static org.apache.dubbo.rpc.cluster.Constants.PRIORITY_KEY;
 /**
  * Configurator. (SPI, Prototype, ThreadSafe)
  */
-public interface Configurator extends Comparable<Configurator> { //todo @pause
+public interface Configurator extends Comparable<Configurator> {
     /**
      * todo @csy Configurator问题点
      * 1）Configurator的功能用途是什么？

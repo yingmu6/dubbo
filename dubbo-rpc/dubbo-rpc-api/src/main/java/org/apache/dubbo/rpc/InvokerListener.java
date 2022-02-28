@@ -25,13 +25,20 @@ import org.apache.dubbo.common.extension.SPI;
 public interface InvokerListener { //功能用途是怎样的？解：对Invoker事件进行监听，包含引用、销毁事件（当有服务引用时，触发该事件）
 
     /**
+     * todo @csy-02-28
+     * 1）监听器在哪些地方会使用到的？怎样与事件关联起来的？都有哪些事件
+     * 2）该接口是SPI接口，都会有哪些实现类？
+     * 3）监听器对应的设计模式角色是怎样的？
+     */
+
+    /**
      * The invoker referred
      *
      * @param invoker
      * @throws RpcException
      * @see org.apache.dubbo.rpc.Protocol#refer(Class, org.apache.dubbo.common.URL)
      */
-    void referred(Invoker<?> invoker) throws RpcException;
+    void referred(Invoker<?> invoker) throws RpcException; //todo @csy-02-28 此类的功能用途是怎样的？
 
     /**
      * The invoker destroyed.

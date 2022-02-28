@@ -93,7 +93,7 @@ public interface Result extends org.apache.dubbo.rpc.Result {
     }
 
     class CompatibleResult extends AbstractResult {
-        private org.apache.dubbo.rpc.Result delegate; //内部使用apache的Result做适配
+        private org.apache.dubbo.rpc.Result delegate; //内部使用apache的Result做适配，对外还能使用alibaba提供的Result功能，对内实现使用apache的Result功能
 
         public CompatibleResult(org.apache.dubbo.rpc.Result result) {
             this.delegate = result;

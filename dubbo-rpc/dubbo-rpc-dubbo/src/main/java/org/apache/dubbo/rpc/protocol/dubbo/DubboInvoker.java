@@ -39,7 +39,7 @@ import static org.apache.dubbo.rpc.Constants.TOKEN_KEY;
 /**
  * DubboInvoker
  */
-public class DubboInvoker<T> extends AbstractInvoker<T> {
+public class DubboInvoker<T> extends AbstractInvoker<T> { //todo @csy-02-28 DubboInvoker是怎样和netty关联起来的
 
     private final ExchangeClient[] clients;
 
@@ -81,12 +81,12 @@ public class DubboInvoker<T> extends AbstractInvoker<T> {
             int timeout = calculateTimeout(invocation, methodName);
             if (isOneway) {
                 boolean isSent = getUrl().getMethodParameter(methodName, Constants.SENT_KEY, false);
-                currentClient.send(inv, isSent);
+                currentClient.send(inv, isSent); //todo @csy-02-28 单方向调用时，只发送消息吗？是哪里接收消息的？
                 return AsyncRpcResult.newDefaultAsyncResult(invocation);
             } else {
                 ExecutorService executor = getCallbackExecutor(getUrl(), inv);
                 CompletableFuture<AppResponse> appResponseFuture =
-                        currentClient.request(inv, timeout, executor).thenApply(obj -> (AppResponse) obj);
+                        currentClient.request(inv, timeout, executor).thenApply(obj -> (AppResponse) obj); //todo @csy-02-28 此处的异步调用是怎样的？与提供者是怎样交互的？
                 // save for 2.6.x compatibility, for example, TraceFilter in Zipkin uses com.alibaba.xxx.FutureAdapter
                 FutureContext.getContext().setCompatibleFuture(appResponseFuture);
                 AsyncRpcResult result = new AsyncRpcResult(appResponseFuture, inv);

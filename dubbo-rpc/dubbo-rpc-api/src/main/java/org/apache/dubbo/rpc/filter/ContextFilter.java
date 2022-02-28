@@ -44,7 +44,7 @@ public class ContextFilter implements Filter, Filter.Listener {
 
     private static final Set<String> UNLOADING_KEYS;
 
-    static {
+    static { //todo @csy-02-28 该集合的功能用途是什么？
         UNLOADING_KEYS = new HashSet<>(128);
         UNLOADING_KEYS.add(PATH_KEY);
         UNLOADING_KEYS.add(INTERFACE_KEY);
@@ -62,7 +62,7 @@ public class ContextFilter implements Filter, Filter.Listener {
     }
 
     @Override
-    public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
+    public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException { //todo @csy-02-28 都设置了哪些上下文信息？
         Map<String, Object> attachments = invocation.getObjectAttachments();
         if (attachments != null) {
             Map<String, Object> newAttach = new HashMap<>(attachments.size());
@@ -125,7 +125,7 @@ public class ContextFilter implements Filter, Filter.Listener {
     }
 
     @Override
-    public void onError(Throwable t, Invoker<?> invoker, Invocation invocation) {
+    public void onError(Throwable t, Invoker<?> invoker, Invocation invocation) { //todo @csy-02-28 此处不考虑异常处理吗？
 
     }
 }

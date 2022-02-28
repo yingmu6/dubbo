@@ -24,18 +24,12 @@ import org.apache.dubbo.common.utils.NetUtils;
 import org.apache.dubbo.common.utils.StringUtils;
 
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
-import static org.apache.dubbo.common.constants.CommonConstants.CONSUMER_SIDE;
-import static org.apache.dubbo.common.constants.CommonConstants.PROVIDER_SIDE;
-import static org.apache.dubbo.common.constants.CommonConstants.SIDE_KEY;
+import static org.apache.dubbo.common.constants.CommonConstants.*;
 import static org.apache.dubbo.rpc.Constants.ASYNC_KEY;
 import static org.apache.dubbo.rpc.Constants.RETURN_KEY;
 
@@ -50,7 +44,7 @@ import static org.apache.dubbo.rpc.Constants.RETURN_KEY;
  * @export
  * @see org.apache.dubbo.rpc.filter.ContextFilter
  */
-public class RpcContext {
+public class RpcContext { //todo @csy-02-28 上下文数据结构及类图分析？
 
     /**
      * use internal thread local to improve performance
@@ -71,7 +65,7 @@ public class RpcContext {
         }
     };
 
-    protected final Map<String, Object> attachments = new HashMap<>();
+    protected final Map<String, Object> attachments = new HashMap<>(); //todo @csy-02-28 attachments、values值都存储了什么？
     private final Map<String, Object> values = new HashMap<String, Object>();
 
     private List<URL> urls;

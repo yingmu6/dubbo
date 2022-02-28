@@ -21,6 +21,9 @@ import org.apache.dubbo.common.extension.SPI;
 @SPI
 public interface BuiltinServiceDetector { //Detector:探测器，Builtin：内装式，具体的实现：包含泛型、echo、元数据、监控的实现
 
+    /**
+     * todo @csy-02-28 该类的功能用途是什么？都有哪些主要实现类？
+     */
     Class<?> getService();
 
 }
