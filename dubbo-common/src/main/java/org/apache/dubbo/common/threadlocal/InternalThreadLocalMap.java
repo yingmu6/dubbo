@@ -24,17 +24,23 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Note that this class is for internal use only. Use {@link InternalThread}
  * unless you know what you are doing.
  */
-public final class InternalThreadLocalMap { //todo @csy InternalThreadLocal、InternalThread、InternalThreadLocalMap都有啥关联关系的？
+public final class InternalThreadLocalMap { //todo @pause-03-01
+    /**
+     * todo @csy-03-01 待了解
+     * 1）InternalThreadLocal、InternalThread、InternalThreadLocalMap都有啥关联关系的？
+     * 2）为啥类的描述中建议使用InternalThread，而不是InternalThreadLocalMap？
+     * 3）当前类的数据结构是怎样的？都有怎样的功能用途？
+     */
 
-    private Object[] indexedVariables;
+    private Object[] indexedVariables; //数组实现
 
-    private static ThreadLocal<InternalThreadLocalMap> slowThreadLocalMap = new ThreadLocal<InternalThreadLocalMap>();
+    private static ThreadLocal<InternalThreadLocalMap> slowThreadLocalMap = new ThreadLocal<InternalThreadLocalMap>(); //todo @csy-03-01 为什么叫慢的Map
 
-    private static final AtomicInteger NEXT_INDEX = new AtomicInteger();
+    private static final AtomicInteger NEXT_INDEX = new AtomicInteger(); //@csy-03-01 该索引的功能用途是什么？解：记录数组下标位置
 
-    public static final Object UNSET = new Object();
+    public static final Object UNSET = new Object(); //@csy-03-02 该对象的功能用途是怎样的？解：当未取到值时，给出的默认值
 
-    public static InternalThreadLocalMap getIfSet() {
+    public static InternalThreadLocalMap getIfSet() { //从InternalThread或成员变量中获取到InternalThreadLocalMap
         Thread thread = Thread.currentThread();
         if (thread instanceof InternalThread) {
             return ((InternalThread) thread).threadLocalMap();
@@ -60,12 +66,12 @@ public final class InternalThreadLocalMap { //todo @csy InternalThreadLocal、In
     }
 
     public static void destroy() {
-        slowThreadLocalMap = null;
+        slowThreadLocalMap = null; //todo @csy-03-01 强引用是怎样进入回收状态吗？置为null吗？
     }
 
-    public static int nextVariableIndex() {
+    public static int nextVariableIndex() { //获取下一次的数组下标
         int index = NEXT_INDEX.getAndIncrement();
-        if (index < 0) {
+        if (index < 0) { //todo @csy-03-01 哪种情况下，数组下标小于0
             NEXT_INDEX.decrementAndGet();
             throw new IllegalStateException("Too many thread-local indexed variables");
         }
@@ -80,9 +86,9 @@ public final class InternalThreadLocalMap { //todo @csy InternalThreadLocal、In
         indexedVariables = newIndexedVariableTable();
     }
 
-    public Object indexedVariable(int index) {
+    public Object indexedVariable(int index) { //取数组中指定索引的值
         Object[] lookup = indexedVariables;
-        return index < lookup.length ? lookup[index] : UNSET;
+        return index < lookup.length ? lookup[index] : UNSET; //若索引越界，返回一个默认的对象值
     }
 
     /**
@@ -90,7 +96,7 @@ public final class InternalThreadLocalMap { //todo @csy InternalThreadLocal、In
      */
     public boolean setIndexedVariable(int index, Object value) {
         Object[] lookup = indexedVariables;
-        if (index < lookup.length) {
+        if (index < lookup.length) { //todo @csy-03-01 此处借助索引和数组使用的逻辑是怎样的？
             Object oldValue = lookup[index];
             lookup[index] = value;
             return oldValue == UNSET;
@@ -101,7 +107,7 @@ public final class InternalThreadLocalMap { //todo @csy InternalThreadLocal、In
     }
 
     public Object removeIndexedVariable(int index) {
-        Object[] lookup = indexedVariables;
+        Object[] lookup = indexedVariables; //使用新的数组接收成员变量的值，避免对成员变量有影响
         if (index < lookup.length) {
             Object v = lookup[index];
             lookup[index] = UNSET;
@@ -126,7 +132,7 @@ public final class InternalThreadLocalMap { //todo @csy InternalThreadLocal、In
 
     private static Object[] newIndexedVariableTable() {
         Object[] array = new Object[32];
-        Arrays.fill(array, UNSET);
+        Arrays.fill(array, UNSET); //todo @csy-03-01 此处是如何进行填充值的
         return array;
     }
 
@@ -138,7 +144,7 @@ public final class InternalThreadLocalMap { //todo @csy InternalThreadLocal、In
         return threadLocalMap;
     }
 
-    private static InternalThreadLocalMap slowGet() {
+    private static InternalThreadLocalMap slowGet() { //todo @csy-03-01 与fastGet是指快慢之分吗？从哪里体现快慢的？
         ThreadLocal<InternalThreadLocalMap> slowThreadLocalMap = InternalThreadLocalMap.slowThreadLocalMap;
         InternalThreadLocalMap ret = slowThreadLocalMap.get();
         if (ret == null) {
@@ -148,15 +154,15 @@ public final class InternalThreadLocalMap { //todo @csy InternalThreadLocal、In
         return ret;
     }
 
-    private void expandIndexedVariableTableAndSet(int index, Object value) {
+    private void expandIndexedVariableTableAndSet(int index, Object value) { //expand：扩大，todo @csy-03-01 此处是自动扩容吗？
         Object[] oldArray = indexedVariables;
         final int oldCapacity = oldArray.length;
         int newCapacity = index;
-        newCapacity |= newCapacity >>> 1;
+        newCapacity |= newCapacity >>> 1; //todo @csy-03-01 无符号右移和有符号右移，有啥区别？
         newCapacity |= newCapacity >>> 2;
         newCapacity |= newCapacity >>> 4;
         newCapacity |= newCapacity >>> 8;
-        newCapacity |= newCapacity >>> 16;
+        newCapacity |= newCapacity >>> 16; //todo @csy-03-01 此处的运算逻辑是怎样的？功能用途是怎样的？
         newCapacity++;
 
         Object[] newArray = Arrays.copyOf(oldArray, newCapacity);

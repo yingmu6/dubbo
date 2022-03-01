@@ -29,8 +29,11 @@ import java.util.stream.Stream;
  * @see org.apache.dubbo.rpc.RpcInvocation
  */
 public interface Invocation { //会话域：包含调用信息
+    /**
+     * todo @csy-03-01 都维护了哪些调用信息？数据结构和类图是怎样的？
+     */
 
-    String getTargetServiceUniqueName();
+    String getTargetServiceUniqueName(); //todo @csy-03-01 怎样保证名称唯一的？规则是怎样的？
 
     /**
      * get method name.
@@ -58,7 +61,7 @@ public interface Invocation { //会话域：包含调用信息
     /**
      * get parameter's signature, string representation of parameter types.
      *
-     * @return parameter's signature
+     * @return parameter's signature //todo @csy-03-01 参数的签名是指什么？
      */
     default String[] getCompatibleParamSignatures() {
         return Stream.of(getParameterTypes())
@@ -121,10 +124,11 @@ public interface Invocation { //会话域：包含调用信息
     String getAttachment(String key, String defaultValue);
 
     @Experimental("Experiment api for supporting Object transmission")
-    Object getObjectAttachment(String key, Object defaultValue);
+    Object getObjectAttachment(String key, Object defaultValue); //当在上下文信息中未获取到参数值时，返回指定默认值
 
     /**
      * get the invoker in current context.
+     * （在当前上下文中获取Invoker）
      *
      * @return invoker.
      * @transient

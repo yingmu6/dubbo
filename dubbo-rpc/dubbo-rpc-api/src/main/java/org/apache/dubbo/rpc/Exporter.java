@@ -30,7 +30,7 @@ public interface Exporter<T> { //todo @csy Exporter应该怎么称谓？是不�
      *
      * @return invoker
      */
-    Invoker<T> getInvoker();
+    Invoker<T> getInvoker(); //@csy-03-01 此处是怎么获取invoker的？若RpcContext上下文中获取的吗？因为没看到参数？解：在AbstractExporter维护的成员属性中
 
     /**
      * unexport.

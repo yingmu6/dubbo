@@ -29,12 +29,17 @@ import static org.apache.dubbo.common.constants.CommonConstants.$INVOKE_ASYNC;
  *
  */
 public class MethodDescriptor {//方法的描述信息
+    /**
+     * todo @csy-03-01
+     * 1）MethodDescriptor与反射机制的Method有何区别？使用自定义的数据模型，是为了减少反射的调用吗？
+     */
+
     private final Method method;
     //    private final boolean isCallBack;
 //    private final boolean isFuture;
-    private final String paramDesc;
+    private final String paramDesc; //@csy-03-01 参数描述符只是一个字符串吗？若方法参数列表有多个，需要怎么表示的？解：ReflectUtils.getDesc中遍历参数列表，将参数描述符依次拼接，最终形成一个字符串
     // duplicate filed as paramDesc, but with different format.
-    private final String[] compatibleParamSignatures;
+    private final String[] compatibleParamSignatures; //@csy-03-01 该成员变量维护的值是怎样的？解：从构造函数可以看出，是参数列表Class名称对应的数组Class::getName
     private final Class<?>[] parameterClasses;
     private final Class<?> returnClass;
     private final Type[] returnTypes;

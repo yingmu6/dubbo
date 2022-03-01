@@ -48,7 +48,11 @@ import static org.apache.dubbo.rpc.Constants.TOKEN_KEY;
  * 2）Invoker 语义上：是"调用者"，领域模型上：是"实体域"，它是Dubbo的核心模型，其它模型都向它靠扰，或转换成它，它代表一个可执行体，可向它发起 invoke 调用，它有可能是一个本地的实现，也可能是一个远程的实现，也可能一个集群实现。
  * 3）Invocation 语义上：是"调用者"，领域模型上：是"会话域"，它持有调用过程中的变量，比如方法名，参数等。
  */
-public class RpcInvocation implements Invocation, Serializable { //RpcInvocation的功能用途是什么？解：用来存储每次调用的信息，todo @csy-02-28 待画出数据结构和类图
+public class RpcInvocation implements Invocation, Serializable { //RpcInvocation的功能用途是什么？解：用来存储每次调用的信息
+    /**
+     * todo @csy-02-28 待画出数据结构和类图
+     * 1）包含的信息：调用的接口名、方法名、参数类型列表、参数值列表、返回类型列表、附加参数等信息
+     */
 
     private static final long serialVersionUID = -4355285085441097045L;
 
@@ -66,18 +70,18 @@ public class RpcInvocation implements Invocation, Serializable { //RpcInvocation
     /**
      * Passed to（传递给） the remote server during RPC call
      */
-    private Map<String, Object> attachments; //在RPC调用期间传递到远程服务器
+    private Map<String, Object> attachments; //在RPC调用期间传递到远程服务器，todo @csy-03-01 什么时候设置到URL的参数中的？
 
     /**
      * Only used on the caller side, will not appear on the wire（导线）.
      */
-    private Map<Object, Object> attributes = new HashMap<Object, Object>();
+    private Map<Object, Object> attributes = new HashMap<Object, Object>(); //仅仅用在调用方，不会传递到远端（类似元数据处理方式：核心数据发送到远端，其它数据不传，而是传到元数据中心）
 
     private transient Invoker<?> invoker; //调用的实体
 
     private transient Class<?> returnType;
 
-    private transient Type[] returnTypes;
+    private transient Type[] returnTypes; //todo @csy-03-01 为啥不包含返回值？
 
     private transient InvokeMode invokeMode; //调用模式
 
@@ -94,7 +98,7 @@ public class RpcInvocation implements Invocation, Serializable { //RpcInvocation
             if (url.hasParameter(INTERFACE_KEY)) { //参数包含接口、分组、版本、超时时间等
                 setAttachment(INTERFACE_KEY, url.getParameter(INTERFACE_KEY));
             }
-            if (url.hasParameter(GROUP_KEY)) {
+            if (url.hasParameter(GROUP_KEY)) { //若url中存在指定参数的值，则取出设置到当前RpcInvocation的attachments中
                 setAttachment(GROUP_KEY, url.getParameter(GROUP_KEY));
             }
             if (url.hasParameter(VERSION_KEY)) {
@@ -113,6 +117,7 @@ public class RpcInvocation implements Invocation, Serializable { //RpcInvocation
         this.targetServiceUniqueName = invocation.getTargetServiceUniqueName();
     }
 
+    // 提供多种构造函数，可有选择的调用
     public RpcInvocation(Invocation invocation) {
         this(invocation.getMethodName(), invocation.getServiceName(), invocation.getParameterTypes(),
                 invocation.getArguments(), invocation.getObjectAttachments(), invocation.getInvoker(), invocation.getAttributes());
@@ -153,7 +158,7 @@ public class RpcInvocation implements Invocation, Serializable { //RpcInvocation
         ServiceRepository repository = ApplicationModel.getServiceRepository();
         if (StringUtils.isNotEmpty(serviceName)) {
             // 先查询服务描述信息ServiceDescriptor，再查找方法描述信息MethodDescriptor，最后从方法信息中找到相关信息并设置到成员变量中
-            ServiceDescriptor serviceDescriptor = repository.lookupService(serviceName);
+            ServiceDescriptor serviceDescriptor = repository.lookupService(serviceName); //从ServiceRepository中的缓存Map中查找
             if (serviceDescriptor != null) {
                 MethodDescriptor methodDescriptor = serviceDescriptor.getMethod(methodName, parameterTypes);
                 if (methodDescriptor != null) {

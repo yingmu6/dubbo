@@ -94,11 +94,11 @@ public class ServiceDescriptor { //服务的描述信息
      * @return
      */
     public MethodDescriptor getMethod(String methodName, Class<?>[] paramTypes) {
-        List<MethodDescriptor> methodModels = methods.get(methodName);
+        List<MethodDescriptor> methodModels = methods.get(methodName); //可能有重载方法，所以获取到的是列表
         if (CollectionUtils.isNotEmpty(methodModels)) {
             for (int i = 0; i < methodModels.size(); i++) {
                 MethodDescriptor descriptor = methodModels.get(i);
-                if (Arrays.equals(paramTypes, descriptor.getParameterClasses())) {
+                if (Arrays.equals(paramTypes, descriptor.getParameterClasses())) { //根据参数类型列表进行比对，唯一确定一个方法签名
                     return descriptor;
                 }
             }

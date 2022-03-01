@@ -48,6 +48,7 @@ public class ServiceRepository extends LifecycleAdapter implements FrameworkExt 
      * 1）都维护了什么数据结构？都在哪些场景使用的？
      * 2）待画出类图已经依赖图
      * 3）关联的其它模型，如ServiceDescriptor、ConsumerModel、ProviderModel等，都是怎么关联的？
+     * 4）相比2.7.x之前的版本，没有*Model，那数据是放在哪里的？放在URL的attachment中的吗？
      */
 
     public static final String NAME = "repository"; //对应的SPI实例repository=org.apache.dubbo.rpc.model.ServiceRepository

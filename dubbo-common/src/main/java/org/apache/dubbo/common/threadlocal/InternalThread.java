@@ -20,15 +20,21 @@ package org.apache.dubbo.common.threadlocal;
 /**
  * InternalThread
  */
-public class InternalThread extends Thread { //内部使用的线程（对线程进行封装）
+public class InternalThread extends Thread {
+    /**
+     * InternalThread：内部使用的线程（对线程进行封装）
+     * 1）本身是一个线程，继承了Thread
+     * 2）使用InternalThreadLocalMap对ThreadLocal做了缓存
+     */
 
     private InternalThreadLocalMap threadLocalMap;
 
     public InternalThread() {
     }
 
+    // 实现Thread线程的多种构造函数
     public InternalThread(Runnable target) {
-        super(target);
+        super(target); //super：构造函数不能继承，需要主动调用，默认会在第一行调用super()，若调用带有参数的构造函数，需要显示指定
     }
 
     public InternalThread(ThreadGroup group, Runnable target) {

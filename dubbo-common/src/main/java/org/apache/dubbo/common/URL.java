@@ -816,7 +816,7 @@ class URL implements Serializable {
         return StringUtils.isEmpty(value) ? defaultValue : Boolean.parseBoolean(value);
     }
 
-    public boolean hasParameter(String key) { //判断url中是否有key
+    public boolean hasParameter(String key) { //是否包含指定的参数：即判断url的参数Map中是否有key
         String value = getParameter(key);
         return value != null && value.length() > 0;
     }

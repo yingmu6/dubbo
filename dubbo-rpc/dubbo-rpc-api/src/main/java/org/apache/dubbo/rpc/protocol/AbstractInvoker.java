@@ -40,7 +40,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * AbstractInvoker.
  */
-public abstract class AbstractInvoker<T> implements Invoker<T> { //todo @pause-02-28
+public abstract class AbstractInvoker<T> implements Invoker<T> {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -48,7 +48,7 @@ public abstract class AbstractInvoker<T> implements Invoker<T> { //todo @pause-0
 
     private final URL url; //当前invoker关联的url对象
 
-    private final Map<String, Object> attachment; //附加信息
+    private final Map<String, Object> attachment; //附加信息（url中的附加参数）
 
     private volatile boolean available = true; //是否可用
 

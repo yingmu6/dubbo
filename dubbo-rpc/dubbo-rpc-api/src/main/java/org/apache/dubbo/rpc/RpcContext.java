@@ -44,7 +44,12 @@ import static org.apache.dubbo.rpc.Constants.RETURN_KEY;
  * @export
  * @see org.apache.dubbo.rpc.filter.ContextFilter
  */
-public class RpcContext { //todo @csy-02-28 上下文数据结构及类图分析？
+public class RpcContext {
+    /**
+     * todo @csy-02-28
+     * 1）上下文数据结构及类图分析？
+     * 2）上下文的内容是何时被设置，又是何时被使用的？
+     */
 
     /**
      * use internal thread local to improve performance
