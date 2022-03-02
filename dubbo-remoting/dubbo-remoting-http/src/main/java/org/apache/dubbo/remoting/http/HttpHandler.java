@@ -24,7 +24,7 @@ import java.io.IOException;
 /**
  * http invocation handler.
  */
-public interface HttpHandler {
+public interface HttpHandler { //todo @csy-03-02 http方式待使用了解？
 
     /**
      * invoke.

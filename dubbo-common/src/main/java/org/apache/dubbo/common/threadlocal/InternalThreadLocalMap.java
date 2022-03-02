@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Note that this class is for internal use only. Use {@link InternalThread}
  * unless you know what you are doing.
  */
-public final class InternalThreadLocalMap { //todo @pause-03-01
+public final class InternalThreadLocalMap {
     /**
      * todo @csy-03-01 待了解
      * 1）InternalThreadLocal、InternalThread、InternalThreadLocalMap都有啥关联关系的？

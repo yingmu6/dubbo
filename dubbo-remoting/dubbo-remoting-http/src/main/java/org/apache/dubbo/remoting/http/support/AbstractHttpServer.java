@@ -32,6 +32,12 @@ import java.util.Collection;
  */
 public abstract class AbstractHttpServer implements HttpServer {
 
+    /**
+     * todo @csy-03-02
+     * 1）数据结构以及类图是怎样的？
+     * 2）相关的实现类Jetty、Tomcat、Servlet都是怎样处理？
+     */
+
     private final URL url;
 
     private final HttpHandler handler;

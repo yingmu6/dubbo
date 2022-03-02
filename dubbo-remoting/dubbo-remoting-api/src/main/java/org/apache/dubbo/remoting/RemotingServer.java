@@ -30,7 +30,12 @@ import java.util.Collection;
  */
 public interface RemotingServer extends Endpoint, Resetable, IdleSensible { //对应2.5.6中的Server
 
-    // todo @csy 对应的实现是怎样的？
+    /**
+     * todo @csy-02-02
+     * 1）对应的实现是怎样的？
+     * 2）都提供了哪些功能？
+     */
+
 
     /**
      * is bound.

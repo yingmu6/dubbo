@@ -163,7 +163,7 @@ public class NettyServer extends AbstractServer implements RemotingServer {
     public Collection<Channel> getChannels() {
         Collection<Channel> chs = new HashSet<Channel>();
         for (Channel channel : this.channels.values()) {
-            if (channel.isConnected()) {
+            if (channel.isConnected()) { //查找处于连接状态的channel，
                 chs.add(channel);
             } else {
                 channels.remove(NetUtils.toAddressString(channel.getRemoteAddress()));
@@ -174,7 +174,7 @@ public class NettyServer extends AbstractServer implements RemotingServer {
 
     @Override
     public Channel getChannel(InetSocketAddress remoteAddress) {
-        return channels.get(NetUtils.toAddressString(remoteAddress));
+        return channels.get(NetUtils.toAddressString(remoteAddress)); //从缓存中根据地址信息获取到Channel
     }
 
     @Override

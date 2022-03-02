@@ -27,7 +27,11 @@ import java.util.List;
  * Protocol. (API/SPI, Singleton, ThreadSafe)
  */
 @SPI("dubbo") //默认DubboProtocol
-public interface Protocol {
+public interface Protocol { //todo @pause-03-02
+    /**
+     * todo @csy-03-02 Protocol数据结构很类图待了解
+     */
+
 
     /**
      * Get default port when user doesn't config the port.
@@ -37,7 +41,7 @@ public interface Protocol {
     int getDefaultPort();
 
     /**
-     * Export service for remote invocation: <br> （暴露远程服务）
+     * Export service for remote invocation: <br> （为远程调用暴露服务）
      * 1. Protocol should record request source address after receive a request:
      * RpcContext.getContext().setRemoteAddress();<br> （在接收请求后，协议需要记录请求源地址）
      * 2. export() must be idempotent（必须保障幂等）, that is, there's no difference between invoking once and invoking twice when
