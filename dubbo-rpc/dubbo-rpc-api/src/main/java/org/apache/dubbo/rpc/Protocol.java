@@ -51,7 +51,7 @@ public interface Protocol { //todo @pause-03-02
      *
      * @param <T>     Service type
      * @param invoker Service invoker
-     * @return exporter reference for exported service, useful for unexport the service later
+     * @return exporter reference for exported service, useful for unexport（解除暴露） the service later
      * @throws RpcException thrown when error occurs during export the service, for example: port is occupied
      */
     @Adaptive
@@ -67,19 +67,19 @@ public interface Protocol { //todo @pause-03-02
      * 3. When there's check=false set in URL, the implementation must not throw exception but try to recover when
      * connection fails.
      *
-     * @param <T>  Service type
-     * @param type Service class
+     * @param <T>  Service type 服务类型
+     * @param type Service class 服务Class类
      * @param url  URL address for the remote service
-     * @return invoker service's local proxy
+     * @return invoker service's local proxy（本地代理invoker）
      * @throws RpcException when there's any error while connecting to the service provider
      */
     @Adaptive
     <T> Invoker<T> refer(Class<T> type, URL url) throws RpcException; //引用过程：获取invoker
 
     /**
-     * Destroy protocol: <br>
+     * Destroy protocol: <br> 销毁协议
      * 1. Cancel all services this protocol exports and refers <br>
-     * 2. Release all occupied resources, for example: connection, port, etc. <br>
+     * 2. Release（释放） all occupied（占据） resources, for example: connection, port, etc. <br>
      * 3. Protocol can continue to export and refer new service even after it's destroyed.
      */
     void destroy();

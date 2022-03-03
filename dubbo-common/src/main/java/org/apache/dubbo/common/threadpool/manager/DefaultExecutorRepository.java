@@ -36,6 +36,7 @@ public class DefaultExecutorRepository implements ExecutorRepository { //todo @c
 
     private int DEFAULT_SCHEDULER_SIZE = Runtime.getRuntime().availableProcessors(); //可使用的进程数
 
+    // 共享的线程池
     private final ExecutorService SHARED_EXECUTOR = Executors.newCachedThreadPool(new NamedThreadFactory("DubboSharedHandler", true));
 
     private Ring<ScheduledExecutorService> scheduledExecutors = new Ring<>();

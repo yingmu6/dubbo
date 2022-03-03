@@ -36,7 +36,14 @@ import java.util.concurrent.ConcurrentHashMap;
  * NettyServerHandler.
  */
 @io.netty.channel.ChannelHandler.Sharable
-public class NettyServerHandler extends ChannelDuplexHandler { //todo @csy-001 NettyServerHandler、ChannelDuplexHandler的功能用途是什么？
+public class NettyServerHandler extends ChannelDuplexHandler {
+    /**
+     * todo @csy-03-03
+     * 1）NettyServerHandler、ChannelDuplexHandler的功能用途是什么？
+     * 2）什么时候创建的？是不是提供者启动时，在NettyServer中启动的？
+     * 3）什么时候被使用的额？试试当有通道事件发生时，触发的？
+     */
+
     private static final Logger logger = LoggerFactory.getLogger(NettyServerHandler.class);
     /**
      * the cache for alive worker channel.
@@ -94,7 +101,7 @@ public class NettyServerHandler extends ChannelDuplexHandler { //todo @csy-001 N
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception { //从通道中读取内容
         NettyChannel channel = NettyChannel.getOrAddChannel(ctx.channel(), url, handler);
-        handler.received(channel, msg);
+        handler.received(channel, msg); //todo @csy-03-03 是怎样选择handler实例的？
     }
 
 

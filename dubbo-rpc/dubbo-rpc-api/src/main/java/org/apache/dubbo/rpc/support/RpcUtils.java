@@ -40,7 +40,7 @@ import static org.apache.dubbo.rpc.Constants.*;
 public class RpcUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(RpcUtils.class);
-    private static final AtomicLong INVOKE_ID = new AtomicLong(0); //todo @csy-02-28 调用id是什么时候产生、使用的？
+    private static final AtomicLong INVOKE_ID = new AtomicLong(0); //@csy-02-28 调用id是什么时候产生、使用的？解：初始值为0，然后attachInvocationIdIfAsync方法中使用的
 
     public static Class<?> getReturnType(Invocation invocation) {
         try {
@@ -95,7 +95,7 @@ public class RpcUtils {
         }
     }
 
-    private static boolean isAttachInvocationId(URL url, Invocation invocation) {
+    private static boolean isAttachInvocationId(URL url, Invocation invocation) { //判断是否需要设置invoke id
         String value = url.getMethodParameter(invocation.getMethodName(), AUTO_ATTACH_INVOCATIONID_KEY);
         if (value == null) {
             // add invocationid in async operation by default
@@ -180,9 +180,9 @@ public class RpcUtils {
     }
 
     public static InvokeMode getInvokeMode(URL url, Invocation inv) {
-        if (isReturnTypeFuture(inv)) {
+        if (isReturnTypeFuture(inv)) { //根据方法返回类型判断是否是Future模式
             return InvokeMode.FUTURE;
-        } else if (isAsync(url, inv)) {
+        } else if (isAsync(url, inv)) { //根据url中设置的参数值async判断
             return InvokeMode.ASYNC;
         } else {
             return InvokeMode.SYNC;
@@ -192,7 +192,7 @@ public class RpcUtils {
     public static boolean isOneway(URL url, Invocation inv) {
         boolean isOneway;
         if (Boolean.FALSE.toString().equals(inv.getAttachment(RETURN_KEY))) {
-            isOneway = true;
+            isOneway = true; //todo @csy-03-03 为啥参数RETURN_KEY的值为FALSE，isOneway的结果却为true？
         } else {
             isOneway = !url.getMethodParameter(getMethodName(inv), RETURN_KEY, true);
         }

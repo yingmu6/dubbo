@@ -152,7 +152,7 @@ final class NettyChannel extends AbstractChannel {
      * @throws RemotingException throw RemotingException if wait until timeout or any exception thrown by method body that surrounded by try-catch.
      */
     @Override
-    public void send(Object message, boolean sent) throws RemotingException {
+    public void send(Object message, boolean sent) throws RemotingException { //使用Netty的channel处理
         // whether the channel is closed
         super.send(message, sent);
 
@@ -160,7 +160,7 @@ final class NettyChannel extends AbstractChannel {
         int timeout = 0;
         try {
             //todo @csy-02-26 netty的writeAndFlush方法，待了解实践
-            ChannelFuture future = channel.writeAndFlush(message); //使用Netty的Channel进行发送消息
+            ChannelFuture future = channel.writeAndFlush(message);
             if (sent) { //若选择等待，则会等待指定的时间
                 // wait timeout ms
                 timeout = getUrl().getPositiveParameter(TIMEOUT_KEY, DEFAULT_TIMEOUT);

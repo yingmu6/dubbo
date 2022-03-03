@@ -49,7 +49,7 @@ public class DubboInvoker<T> extends AbstractInvoker<T> { //todo @csy-02-28 Dubb
 
     private final ReentrantLock destroyLock = new ReentrantLock();
 
-    private final Set<Invoker<?>> invokers;
+    private final Set<Invoker<?>> invokers; //todo @csy-03-03 为啥维护的是invoker集合？都是什么内容？
 
     public DubboInvoker(Class<T> serviceType, URL url, ExchangeClient[] clients) {
         this(serviceType, url, clients, null);
@@ -74,12 +74,12 @@ public class DubboInvoker<T> extends AbstractInvoker<T> { //todo @csy-02-28 Dubb
         if (clients.length == 1) {
             currentClient = clients[0];
         } else {
-            currentClient = clients[index.getAndIncrement() % clients.length];
+            currentClient = clients[index.getAndIncrement() % clients.length]; //todo @csy-03-01 此处为啥取模运算，调用不经过路由策略以及负载均衡吗？
         }
         try {
             boolean isOneway = RpcUtils.isOneway(getUrl(), invocation);
             int timeout = calculateTimeout(invocation, methodName);
-            if (isOneway) {
+            if (isOneway) { //todo @csy-03-03 单向和双向的区别是否只是返回结果的接收吗？
                 boolean isSent = getUrl().getMethodParameter(methodName, Constants.SENT_KEY, false);
                 currentClient.send(inv, isSent); //todo @csy-02-28 单方向调用时，只发送消息吗？是哪里接收消息的？
                 return AsyncRpcResult.newDefaultAsyncResult(invocation);
@@ -149,7 +149,7 @@ public class DubboInvoker<T> extends AbstractInvoker<T> { //todo @csy-02-28 Dubb
     private int calculateTimeout(Invocation invocation, String methodName) {
         Object countdown = RpcContext.getContext().get(TIME_COUNTDOWN_KEY);
         int timeout = DEFAULT_TIMEOUT;
-        if (countdown == null) {
+        if (countdown == null) { //todo @csy-03-03 这里的超时时间，不考虑优先级覆盖吗？
             timeout = (int) RpcUtils.getTimeout(getUrl(), methodName, RpcContext.getContext(), DEFAULT_TIMEOUT);
             if (getUrl().getParameter(ENABLE_TIMEOUT_COUNTDOWN_KEY, false)) {
                 invocation.setObjectAttachment(TIMEOUT_ATTACHMENT_KEY, timeout); // pass timeout to remote server

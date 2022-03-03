@@ -18,10 +18,11 @@ package org.apache.dubbo.common.utils;
 
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
-public class AtomicPositiveInteger extends Number {
+public class AtomicPositiveInteger extends Number { //处理原子正整数
 
     private static final long serialVersionUID = -3038533876489105940L;
 
+    //todo @csy-03-03 此处的功能用途是什么
     private static final AtomicIntegerFieldUpdater<AtomicPositiveInteger> INDEX_UPDATER =
             AtomicIntegerFieldUpdater.newUpdater(AtomicPositiveInteger.class, "index");
 
@@ -55,7 +56,7 @@ public class AtomicPositiveInteger extends Number {
         return INDEX_UPDATER.get(this) & Integer.MAX_VALUE;
     }
 
-    public final void set(int newValue) {
+    public final void set(int newValue) { //负数会抛出异常
         if (newValue < 0) {
             throw new IllegalArgumentException("new value " + newValue + " < 0");
         }

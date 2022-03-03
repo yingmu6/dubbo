@@ -96,7 +96,7 @@ final class HeaderExchangeChannel implements ExchangeChannel { //todo @csy 与He
                 || message instanceof Response
                 || message instanceof String) {
             channel.send(message, sent);
-        } else {
+        } else { //todo @csy-03-03 此处的发送的message内容是啥？
             Request request = new Request();
             request.setVersion(Version.getProtocolVersion());
             request.setTwoWay(false);

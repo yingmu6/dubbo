@@ -125,7 +125,7 @@ public abstract class AbstractInvoker<T> implements Invoker<T> {
     }
 
     @Override
-    public Result invoke(Invocation inv) throws RpcException {
+    public Result invoke(Invocation inv) throws RpcException { //todo @csy-03-03 调用时，是怎么关联到Netty的调用的？
         // if invoker is destroyed due to address refresh from registry, let's allow the current invoke to proceed
         if (destroyed.get()) { //invoker被销毁时，提示不要再调用
             logger.warn("Invoker for service " + this + " on consumer " + NetUtils.getLocalHost() + " is destroyed, "
@@ -149,7 +149,7 @@ public abstract class AbstractInvoker<T> implements Invoker<T> {
         }
 
         invocation.setInvokeMode(RpcUtils.getInvokeMode(url, invocation)); //设置调用模式
-        RpcUtils.attachInvocationIdIfAsync(getUrl(), invocation);
+        RpcUtils.attachInvocationIdIfAsync(getUrl(), invocation); //若是异步的话，设置invoke id
 
         AsyncRpcResult asyncResult;
         try {
@@ -186,6 +186,7 @@ public abstract class AbstractInvoker<T> implements Invoker<T> {
         }
     }
 
+    // 具体的调用实现，交由子类实现
     protected abstract Result doInvoke(Invocation invocation) throws Throwable;
 
 }

@@ -29,8 +29,11 @@ import java.util.concurrent.TimeUnit;
  *
  * @param <T>
  */
-public class AsyncToSyncInvoker<T> implements Invoker<T> { //todo @csy 该类是异步转同步吗？具体是怎样转换的？
-
+public class AsyncToSyncInvoker<T> implements Invoker<T> { //异步转同步调用
+    /**
+     * todo @csy-03-03
+     * 1）该类是异步转同步吗？具体是怎样转换的？
+     */
     private Invoker<T> invoker;
 
     public AsyncToSyncInvoker(Invoker<T> invoker) {
@@ -51,9 +54,9 @@ public class AsyncToSyncInvoker<T> implements Invoker<T> { //todo @csy 该类是
                 /**
                  * NOTICE!
                  * must call {@link java.util.concurrent.CompletableFuture#get(long, TimeUnit)} because
-                 * {@link java.util.concurrent.CompletableFuture#get()} was proved to have serious performance drop.
+                 * {@link java.util.concurrent.CompletableFuture#get()} was proved（证明） to have serious performance drop （被证明有严重的性能下降）.
                  */
-                asyncResult.get(Integer.MAX_VALUE, TimeUnit.MILLISECONDS);
+                asyncResult.get(Integer.MAX_VALUE, TimeUnit.MILLISECONDS); //todo @csy-03-02 怎么体现是异步转同步的？
             }
         } catch (InterruptedException e) {
             throw new RpcException("Interrupted unexpectedly while waiting for remote result to return!  method: " +

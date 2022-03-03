@@ -58,7 +58,13 @@ public interface ChannelHandler { //通道的事件处理器，包含连接、�
      * @param channel channel.
      * @param message message.
      */
-    void received(Channel channel, Object message) throws RemotingException; //todo @csy-02-26 为啥接收消息，还要传递消息对象？是为了指定消息类型吗？
+    /**
+     * todo @csy-02-26
+     * 1）为啥接收消息，还要传递消息对象？是为了指定消息类型吗？
+     * 2）是怎样接收信息的？怎么拿取到invoker，然后进行调用的？
+     */
+
+    void received(Channel channel, Object message) throws RemotingException;
 
     /**
      * on exception caught.

@@ -102,7 +102,7 @@ public interface Invocation { //会话域：包含调用信息
     void setAttachmentIfAbsent(String key, Object value);
 
     @Experimental("Experiment api for supporting Object transmission")
-    void setObjectAttachmentIfAbsent(String key, Object value);
+    void setObjectAttachmentIfAbsent(String key, Object value); //在对象已有的参数列表中没有指定key时，才能设置，避免重复的key被覆盖
 
     /**
      * get attachment by key.

@@ -96,8 +96,8 @@ public abstract class AbstractProxyProtocol extends AbstractProtocol {
 
     @Override
     protected <T> Invoker<T> protocolBindingRefer(final Class<T> type, final URL url) throws RpcException {
-        final Invoker<T> target = proxyFactory.getInvoker(doRefer(type, url), type, url);
-        Invoker<T> invoker = new AbstractInvoker<T>(type, url) {
+        final Invoker<T> target = proxyFactory.getInvoker(doRefer(type, url), type, url); //此处做了两重代理，doRefer()和getInvoker()
+        Invoker<T> invoker = new AbstractInvoker<T>(type, url) { //使用匿名方式创建对象
             @Override
             protected Result doInvoke(Invocation invocation) throws Throwable {
                 try {
@@ -105,7 +105,7 @@ public abstract class AbstractProxyProtocol extends AbstractProtocol {
                     // FIXME result is an AsyncRpcResult instance.
                     Throwable e = result.getException();
                     if (e != null) {
-                        for (Class<?> rpcException : rpcExceptions) {
+                        for (Class<?> rpcException : rpcExceptions) { //todo @csy-03-03 此处的异常rpcExceptions为啥是个列表？
                             if (rpcException.isAssignableFrom(e.getClass())) {
                                 throw getRpcException(type, url, invocation, e);
                             }

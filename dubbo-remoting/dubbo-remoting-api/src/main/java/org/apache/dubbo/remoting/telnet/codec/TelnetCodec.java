@@ -165,6 +165,12 @@ public class TelnetCodec extends TransportCodec { //todo @csy-001 该类的编�
         return decode(channel, buffer, readable, message);
     }
 
+    /**
+     * todo @csy-03-03
+     * 1）解码的总体逻辑是怎样的？
+     * 2）怎么使用魔法数来处理半包、粘包的？
+     * 3）多个包传输时，是否有先后顺序，怎么确定是同一次请求的包？
+     */
     @SuppressWarnings("unchecked")
     protected Object decode(Channel channel, ChannelBuffer buffer, int readable, byte[] message) throws IOException {
         if (isClientSide(channel)) {
@@ -176,7 +182,7 @@ public class TelnetCodec extends TransportCodec { //todo @csy-001 该类的编�
         }
 
         if (message[message.length - 1] == '\b') { // Windows backspace echo
-            try { //todo @csy-02-05 此处为啥要处理windows的字符？处理逻辑又是怎样的？
+            try { //todo @csy-02-25 此处为啥要处理windows的字符？处理逻辑又是怎样的？
                 boolean doublechar = message.length >= 3 && message[message.length - 3] < 0; // double byte char
                 channel.send(new String(doublechar ? new byte[] {32, 32, 8, 8} : new byte[] {32, 8}, getCharset(channel).name()));
             } catch (RemotingException e) {

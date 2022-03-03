@@ -56,7 +56,7 @@ public @interface Adaptive {
      * in the URL, and the parameter names are given by this method.
      * <p>
      * If the specified parameters are not found from {@link URL}, then the default extension will be used for
-     * dependency injection (specified in its interface's {@link SPI}).
+     * dependency injection (specified in its interface's {@link SPI}). 若从url中没有找到指定参数列表，则使用默认的扩展名
      * <p>
      * For example, given <code>String[] {"key1", "key2"}</code>:
      * <ol>
@@ -70,7 +70,7 @@ public @interface Adaptive {
      * dot '.', for example, for {@code org.apache.dubbo.xxx.YyyInvokerWrapper}, the generated name is
      * <code>String[] {"yyy.invoker.wrapper"}</code>.
      *
-     * @return parameter names in URL
+     * @return parameter names in URL（url中的参数名列表）
      */
     String[] value() default {}; //生成自适应扩展类，然后在方法中选择具体的实例，执行具体实例的方法
 

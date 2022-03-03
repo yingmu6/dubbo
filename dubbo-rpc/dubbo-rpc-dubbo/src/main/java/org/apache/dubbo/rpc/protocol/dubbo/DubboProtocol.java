@@ -317,7 +317,7 @@ public class DubboProtocol extends AbstractProtocol {
         return new DubboProtocolServer(server);
     }
 
-    private void optimizeSerialization(URL url) throws RpcException {
+    private void optimizeSerialization(URL url) throws RpcException { //todo @csy-03-03 optimize：优化，哪里做了优化？
         String className = url.getParameter(OPTIMIZER_KEY, "");
         if (StringUtils.isEmpty(className) || optimizers.contains(className)) {
             return;
