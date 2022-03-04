@@ -30,7 +30,9 @@ import java.util.stream.Stream;
  */
 public interface Invocation { //会话域：包含调用信息
     /**
-     * todo @csy-03-01 都维护了哪些调用信息？数据结构和类图是怎样的？
+     * todo @csy-03-01
+     * 1）都维护了哪些调用信息？
+     * 2）数据结构和类图是怎样的？解：已画图
      */
 
     String getTargetServiceUniqueName(); //todo @csy-03-01 怎样保证名称唯一的？规则是怎样的？
