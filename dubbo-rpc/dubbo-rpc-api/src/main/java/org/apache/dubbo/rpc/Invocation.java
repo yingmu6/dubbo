@@ -28,14 +28,15 @@ import java.util.stream.Stream;
  * @see org.apache.dubbo.rpc.Invoker#invoke(Invocation)
  * @see org.apache.dubbo.rpc.RpcInvocation
  */
-public interface Invocation { //会话域：包含调用信息 flag
+public interface Invocation { //会话域：包含调用信息
     /**
-     * todo @csy-03-01
-     * 1）都维护了哪些调用信息？
-     * 2）数据结构和类图是怎样的？解：已画图
+     * @csy-03-01 1）都维护了哪些调用信息？
+     * 解：维护着调用的方法名、参数列表、返回值等信息
+     * 2）数据结构和类图是怎样的？
+     * 解：已画图
      */
 
-    String getTargetServiceUniqueName(); //todo @csy-03-01 怎样保证名称唯一的？规则是怎样的？
+    String getTargetServiceUniqueName(); //@csy-03-01 怎样保证名称唯一的？规则是怎样的？解：值为serviceKey，构造规则为group/path:version，BaseServiceMetadata中buildServiceKey构造
 
     /**
      * get method name.
@@ -63,7 +64,7 @@ public interface Invocation { //会话域：包含调用信息 flag
     /**
      * get parameter's signature, string representation of parameter types.
      *
-     * @return parameter's signature //todo @csy-03-01 参数的签名是指什么？
+     * @return parameter's signature //@csy-03-01 参数的签名是指什么？解：参数Class对应的名称
      */
     default String[] getCompatibleParamSignatures() {
         return Stream.of(getParameterTypes())

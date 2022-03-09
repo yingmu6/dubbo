@@ -50,8 +50,8 @@ import static org.apache.dubbo.rpc.Constants.TOKEN_KEY;
  */
 public class RpcInvocation implements Invocation, Serializable { //RpcInvocation的功能用途是什么？解：用来存储每次调用的信息
     /**
-     * todo @csy-02-28 待画出数据结构和类图
-     * 1）包含的信息：调用的接口名、方法名、参数类型列表、参数值列表、返回类型列表、附加参数等信息
+     * @csy-02-28 待画出数据结构和类图，解：已画出
+     * 包含的信息：调用的接口名、方法名、参数类型列表、参数值列表、返回类型列表、附加参数等信息
      */
 
     private static final long serialVersionUID = -4355285085441097045L;

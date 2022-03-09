@@ -77,7 +77,7 @@ public class InvokerInvocationHandler implements InvocationHandler {
         // 调用包含多个参数的方法
         RpcInvocation rpcInvocation = new RpcInvocation(method, invoker.getInterface().getName(), args);
         String serviceKey = invoker.getUrl().getServiceKey();
-        rpcInvocation.setTargetServiceUniqueName(serviceKey);
+        rpcInvocation.setTargetServiceUniqueName(serviceKey); //设置目标服务名
 
         if (consumerModel != null) { //将消费模型数据，设置到调用的RpcInvocation信息中
             rpcInvocation.put(Constants.CONSUMER_MODEL, consumerModel);

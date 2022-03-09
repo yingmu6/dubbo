@@ -45,6 +45,10 @@ import static org.apache.dubbo.remoting.transport.netty4.NettyEventLoopFactory.s
  * NettyClient.
  */
 public class NettyClient extends AbstractClient {
+    /**
+     * todo @csy-03-09
+     * 1）消费者发起调用时，是在哪里做数据转换，以及数据发送的？怎么使用Netty传输数据的？
+     */
 
     private static final Logger logger = LoggerFactory.getLogger(NettyClient.class);
     /**
