@@ -28,6 +28,9 @@ import java.net.InetSocketAddress;
  * @see RemotingServer
  */
 public interface Endpoint { //节点
+    /**
+     * todo @csy-03-10 流程图待画出
+     */
 
     /**
      * get url.
