@@ -26,21 +26,21 @@ import java.util.List;
  * @see org.apache.dubbo.registry.Registry
  * @see org.apache.dubbo.registry.RegistryFactory#getRegistry(URL)
  */
-public interface RegistryService { //todo @csy 了解下注册服务的契约都有啥？
+public interface RegistryService { //注册、订阅时需要满足方法声明的契约
 
     /**
      * Register data, such as : provider service, consumer address, route rule, override rule and other data.
      * <p>
-     * Registering is required to support the contract:<br>
+     * Registering is required to support the contract（契约）:<br>
      * 1. When the URL sets the check=false parameter. When the registration fails, the exception is not thrown and retried in the background. Otherwise, the exception will be thrown.<br>
      * 2. When URL sets the dynamic=false parameter, it needs to be stored persistently, otherwise, it should be deleted automatically when the registrant has an abnormal exit.<br>
      * 3. When the URL sets category=routers, it means classified storage, the default category is providers, and the data can be notified by the classified section. <br>
      * 4. When the registry is restarted, network jitter, data can not be lost, including automatically deleting data from the broken line.<br>
      * 5. Allow URLs which have the same URL but different parameters to coexist,they can't cover each other.<br>
      *
-     * @param url  Registration information , is not allowed to be empty, e.g: dubbo://10.20.153.10/org.apache.dubbo.foo.BarService?version=1.0.0&application=kylin
+     * @param url Registration information , is not allowed to be empty, e.g: dubbo://10.20.153.10/org.apache.dubbo.foo.BarService?version=1.0.0&application=kylin
      */
-    void register(URL url); //todo @csy 此处是否会发起远程注册中心的注册链接的？ 还是本地缓存处理？
+    void register(URL url); //@csy 此处是否会发起远程注册中心的注册连接的？ 还是本地缓存处理？解：有发起远程调用，如Zookeeper实现方式，会在远程创建节点。 本地也有缓存，在AbstractRegistry中
 
     /**
      * Unregister

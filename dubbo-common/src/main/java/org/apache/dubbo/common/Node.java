@@ -19,7 +19,7 @@ package org.apache.dubbo.common;
 /**
  * Node. (API/SPI, Prototype, ThreadSafe)
  */
-public interface Node { //节点，todo @csy-03-10 画下类继承图
+public interface Node { //节点，@csy-03-10 画下类继承图，解：类图已画
 
     /**
      * get url. (获取节点url)
