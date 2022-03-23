@@ -28,7 +28,7 @@ public class ListenerRegistryWrapper implements Registry {
     private static final Logger logger = LoggerFactory.getLogger(ListenerRegistryWrapper.class);
 
     private final Registry registry;
-    private final List<RegistryServiceListener> listeners;
+    private final List<RegistryServiceListener> listeners; //todo @csy-03-22 此处的值是从哪里设置的？
 
 
     public ListenerRegistryWrapper(Registry registry, List<RegistryServiceListener> listeners) {
@@ -58,7 +58,7 @@ public class ListenerRegistryWrapper implements Registry {
         } finally {
             if (CollectionUtils.isNotEmpty(listeners)) {
                 RuntimeException exception = null;
-                for (RegistryServiceListener listener : listeners) {
+                for (RegistryServiceListener listener : listeners) { //todo @csy-03-22 此处是为了通知监听者吗？
                     if (listener != null) {
                         try {
                             listener.onRegister(url);
