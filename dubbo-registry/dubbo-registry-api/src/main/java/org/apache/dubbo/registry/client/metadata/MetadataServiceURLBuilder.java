@@ -28,7 +28,7 @@ import java.util.List;
  * @since 2.7.5
  */
 @SPI
-public interface MetadataServiceURLBuilder {
+public interface MetadataServiceURLBuilder { //todo @csy-03-24 此处的元数据是指啥？
 
     /**
      * Build the {@link URL URLs} from the specified {@link ServiceInstance}
