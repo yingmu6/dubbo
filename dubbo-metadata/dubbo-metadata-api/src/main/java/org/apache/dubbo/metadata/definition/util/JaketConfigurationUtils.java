@@ -24,7 +24,7 @@ import java.util.Properties;
 /**
  * 2015/1/27.
  */
-public class JaketConfigurationUtils {
+public class JaketConfigurationUtils { //todo @csy-03-25 jaket是啥？此工具的功能用途是啥？
 
     private static final String CONFIGURATION_FILE = "jaket.properties";
 

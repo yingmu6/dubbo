@@ -16,11 +16,10 @@
  */
 package org.apache.dubbo.registry.client.metadata;
 
+import com.alibaba.fastjson.JSON;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.utils.StringUtils;
 import org.apache.dubbo.registry.client.ServiceInstance;
-
-import com.alibaba.fastjson.JSON;
 
 import java.util.Collections;
 import java.util.List;
@@ -30,7 +29,7 @@ import java.util.stream.Collectors;
 import static org.apache.dubbo.registry.client.metadata.ServiceInstanceMetadataUtils.METADATA_SERVICE_URLS_PROPERTY_NAME;
 
 /**
- * Supporting interaction with Dubbo Spring Cloud at https://github.com/alibaba/spring-cloud-alibaba
+ * Supporting interaction（相互作用） with Dubbo Spring Cloud at https://github.com/alibaba/spring-cloud-alibaba
  * Dubbo Spring Cloud is a Dubbo extension that favours a per instance registry model and exposes metadata service.
  *
  * @since 2.7.5
@@ -39,7 +38,7 @@ public class SpringCloudMetadataServiceURLBuilder implements MetadataServiceURLB
     public static final String NAME = "spring-cloud";
 
     @Override
-    public List<URL> build(ServiceInstance serviceInstance) {
+    public List<URL> build(ServiceInstance serviceInstance) { //todo @csy-03-25 此处是怎么适配spring cloud的？并没有看到spring cloud相关API
         Map<String, String> metadata = serviceInstance.getMetadata();
         String dubboURLsJSON = metadata.get(METADATA_SERVICE_URLS_PROPERTY_NAME);
         if (StringUtils.isBlank(dubboURLsJSON)) {

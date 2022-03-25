@@ -42,7 +42,7 @@ import static org.apache.dubbo.common.URL.buildKey;
  * @see WritableMetadataService
  * @since 2.7.5
  */
-public interface MetadataService {
+public interface MetadataService { //todo @csy-03-25 元数据中心都存储了哪些信息？
     /**
      * 功能用途是啥？Metadata是指啥？元数据指啥？会暴露dubbo服务？是用来管理注册的数据的吗？
      * 解：用来管理服务分组、服务版本、服务名、方法列表、方法参数列表、超时时间等数据，以key-value形式持久化存储

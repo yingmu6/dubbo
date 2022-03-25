@@ -26,10 +26,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.lang.Boolean.TRUE;
-import static org.apache.dubbo.common.constants.CommonConstants.APPLICATION_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.PROTOCOL_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.PROVIDER;
-import static org.apache.dubbo.common.constants.CommonConstants.SIDE_KEY;
+import static org.apache.dubbo.common.constants.CommonConstants.*;
 import static org.apache.dubbo.registry.Constants.REGISTER_KEY;
 
 /**
@@ -40,7 +37,7 @@ import static org.apache.dubbo.registry.Constants.REGISTER_KEY;
 public class RestProtocolSubscribedURLsSynthesizer implements SubscribedURLsSynthesizer {
 
     @Override
-    public boolean supports(URL subscribedURL) {
+    public boolean supports(URL subscribedURL) { //todo @csy-03-25 此处的rest协议是指啥？在什么场景使用的？
         return "rest".equals(subscribedURL.getProtocol()) ||
                 "rest".equals(subscribedURL.getParameter(PROTOCOL_KEY));
     }

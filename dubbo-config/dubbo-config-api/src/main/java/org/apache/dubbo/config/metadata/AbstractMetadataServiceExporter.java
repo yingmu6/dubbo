@@ -66,7 +66,7 @@ public abstract class AbstractMetadataServiceExporter implements MetadataService
     }
 
     @Override
-    public final MetadataServiceExporter export() {
+    public final MetadataServiceExporter export() { //todo @csy-03-25 暴露的流程是怎样的？
         if (!isExported()) {
             try {
                 doExport();

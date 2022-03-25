@@ -19,16 +19,7 @@ package org.apache.dubbo.registry.client.event.listener;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.registry.client.FileSystemServiceDiscovery;
 import org.apache.dubbo.registry.client.ServiceDiscovery;
-import org.apache.dubbo.registry.client.event.ServiceDiscoveryDestroyedEvent;
-import org.apache.dubbo.registry.client.event.ServiceDiscoveryDestroyingEvent;
-import org.apache.dubbo.registry.client.event.ServiceDiscoveryInitializedEvent;
-import org.apache.dubbo.registry.client.event.ServiceDiscoveryInitializingEvent;
-import org.apache.dubbo.registry.client.event.ServiceInstancePreRegisteredEvent;
-import org.apache.dubbo.registry.client.event.ServiceInstancePreUnregisteredEvent;
-import org.apache.dubbo.registry.client.event.ServiceInstanceRegisteredEvent;
-import org.apache.dubbo.registry.client.event.ServiceInstanceUnregisteredEvent;
-import org.apache.dubbo.registry.client.event.ServiceInstancesChangedEvent;
-
+import org.apache.dubbo.registry.client.event.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -50,7 +41,7 @@ public class LoggingEventListenerTest {
     }
 
     @Test
-    public void testOnEvent() throws Exception {
+    public void testOnEvent() throws Exception { //todo @csy-03-25 待运行测试用例
 
         URL connectionURL = URL.valueOf("file:///Users/Home");
 

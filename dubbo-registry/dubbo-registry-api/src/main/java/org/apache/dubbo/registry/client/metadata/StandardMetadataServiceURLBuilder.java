@@ -31,7 +31,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.PORT_KEY;
 import static org.apache.dubbo.registry.client.metadata.ServiceInstanceMetadataUtils.getMetadataServiceURLsParams;
 
 /**
- * Standard Dubbo provider enabling introspection service discovery mode.
+ * Standard Dubbo provider enabling introspection（内省、自我检查） service discovery mode.
  *
  * @see MetadataService
  * @since 2.7.5
@@ -47,7 +47,7 @@ public class StandardMetadataServiceURLBuilder implements MetadataServiceURLBuil
      * @return the not-null {@link List}
      */
     @Override
-    public List<URL> build(ServiceInstance serviceInstance) {
+    public List<URL> build(ServiceInstance serviceInstance) { //todo @csy-03-25 构建的url列表是指一个服务对应的多个提供者的url吗？
 
         Map<String, Map<String, String>> paramsMap = getMetadataServiceURLsParams(serviceInstance);
 
@@ -67,7 +67,7 @@ public class StandardMetadataServiceURLBuilder implements MetadataServiceURLBuil
                     .setProtocol(protocol)
                     .setPath(MetadataService.class.getName());
 
-            // add parameters
+            // add parameters  todo @csy-03-25 Map形式的forEach待了解
             params.forEach((name, value) -> urlBuilder.addParameter(name, valueOf(value)));
 
             // add the default parameters

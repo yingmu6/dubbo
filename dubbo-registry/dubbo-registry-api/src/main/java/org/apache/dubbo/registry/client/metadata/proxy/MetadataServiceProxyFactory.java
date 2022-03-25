@@ -31,11 +31,12 @@ import static org.apache.dubbo.common.extension.ExtensionLoader.getExtensionLoad
  * @since 2.7.5
  */
 @SPI(DEFAULT_METADATA_STORAGE_TYPE)
-public interface MetadataServiceProxyFactory {
+public interface MetadataServiceProxyFactory { //MetadataService 代理工厂
 
     /**
      * Create a {@link MetadataService} proxy via the specified {@link ServiceInstance}
-     *WritableMetadataService
+     * WritableMetadataService
+     *
      * @param serviceInstance the instance of {@link ServiceInstance}
      * @return non-null
      */

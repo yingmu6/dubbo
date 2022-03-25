@@ -28,15 +28,12 @@ import org.apache.dubbo.registry.support.FailbackRegistry;
 
 import java.util.concurrent.TimeUnit;
 
-import static org.apache.dubbo.registry.Constants.DEFAULT_REGISTRY_RETRY_PERIOD;
-import static org.apache.dubbo.registry.Constants.DEFAULT_REGISTRY_RETRY_TIMES;
-import static org.apache.dubbo.registry.Constants.REGISTRY_RETRY_PERIOD_KEY;
-import static org.apache.dubbo.registry.Constants.REGISTRY_RETRY_TIMES_KEY;
+import static org.apache.dubbo.registry.Constants.*;
 
 /**
  * AbstractRetryTask
  */
-public abstract class AbstractRetryTask implements TimerTask {
+public abstract class AbstractRetryTask implements TimerTask { //todo @csy-03-25 重试任务是怎么使用的？在哪种场景使用？
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 

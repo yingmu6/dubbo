@@ -27,12 +27,12 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * The interface to synthesize the subscribed {@link URL URLs}
+ * The interface to synthesize（合成） the subscribed {@link URL URLs}
  *
  * @since 2.7.5
  */
 @SPI
-public interface SubscribedURLsSynthesizer extends Prioritized {
+public interface SubscribedURLsSynthesizer extends Prioritized { //todo @csy-03-25 该接口的用途是什么？
 
     /**
      * Supports the synthesis of the subscribed {@link URL URLs} or not

@@ -27,7 +27,7 @@ import java.util.Map;
  * 2015/1/27.
  */
 @SPI
-public interface TypeBuilder extends Prioritized { //类型构造器
+public interface TypeBuilder extends Prioritized { //类型构造器 ，todo @csy-03-25 类型构造器是怎么使用的？在哪里使用？
 
     /**
      * Whether the build accept the type or class passed in.（判断是否是可接收的类型Class，可用于匹配校验器）

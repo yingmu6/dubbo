@@ -39,6 +39,11 @@ import static org.apache.dubbo.common.constants.CommonConstants.*;
  */
 public class RemoteWritableMetadataService extends AbstractAbstractWritableMetadataService { //远程存储元数据
 
+    /**
+     * @csy-03-25 怎样进行远程存储的？是在哪里发起连接的？
+     * 解答：先获取getMetadataReport()元数据中心的实例，然后再往远端发送信息。
+     */
+
     private final InMemoryWritableMetadataService writableMetadataServiceDelegate;
 
     private final URLRevisionResolver urlRevisionResolver;
