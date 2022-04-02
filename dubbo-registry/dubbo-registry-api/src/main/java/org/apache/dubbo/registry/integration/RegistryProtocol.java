@@ -152,7 +152,7 @@ public class RegistryProtocol implements Protocol {
         //  subscription information to cover. （todo @csy 描述的含义是什么？）
         final URL overrideSubscribeUrl = getSubscribedOverrideUrl(providerUrl);
         final OverrideListener overrideSubscribeListener = new OverrideListener(overrideSubscribeUrl, originInvoker);
-        overrideListeners.put(overrideSubscribeUrl, overrideSubscribeListener);
+        overrideListeners.put(overrideSubscribeUrl, overrideSubscribeListener); //todo @csy-04-02 此处是provider监听的目录吗？provider都监听了zookeeper的哪些目录？
 
         providerUrl = overrideUrlWithConfig(providerUrl, overrideSubscribeListener); //todo @csy 此处的功能用途是什么？
         //export invoker

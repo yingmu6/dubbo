@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * InternalThreadFactory.
  */
-public class NamedThreadFactory implements ThreadFactory {
+public class NamedThreadFactory implements ThreadFactory { //内部使用的线程池工厂
 
     protected static final AtomicInteger POOL_SEQ = new AtomicInteger(1);
 
