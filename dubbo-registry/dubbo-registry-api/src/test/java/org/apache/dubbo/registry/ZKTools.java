@@ -16,19 +16,14 @@
  */
 package org.apache.dubbo.registry;
 
-import org.apache.dubbo.common.utils.NamedThreadFactory;
-import org.apache.dubbo.common.utils.StringUtils;
-
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.api.CuratorEvent;
 import org.apache.curator.framework.api.CuratorListener;
-import org.apache.curator.framework.recipes.cache.ChildData;
-import org.apache.curator.framework.recipes.cache.PathChildrenCache;
-import org.apache.curator.framework.recipes.cache.TreeCache;
-import org.apache.curator.framework.recipes.cache.TreeCacheEvent;
-import org.apache.curator.framework.recipes.cache.TreeCacheListener;
+import org.apache.curator.framework.recipes.cache.*;
 import org.apache.curator.retry.ExponentialBackoffRetry;
+import org.apache.dubbo.common.utils.NamedThreadFactory;
+import org.apache.dubbo.common.utils.StringUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -42,7 +37,7 @@ import java.util.concurrent.Executors;
  *
  */
 public class ZKTools {
-    private static CuratorFramework client;
+    private static CuratorFramework client; //todo @csy-04-03 curator使用待了解
     private static ExecutorService executor = Executors.newFixedThreadPool(1, new NamedThreadFactory("ZKTools-test", true));
 
     public static void main(String[] args) throws Exception {

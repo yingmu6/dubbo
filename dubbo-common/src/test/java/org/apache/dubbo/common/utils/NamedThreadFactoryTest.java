@@ -20,16 +20,14 @@ package org.apache.dubbo.common.utils;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NamedThreadFactoryTest {
     @Test
-    public void testNewThread() throws Exception {
+    public void testNewThread() throws Exception { //todo @csy-pause
         NamedThreadFactory factory = new NamedThreadFactory();
         Thread t = factory.newThread(Mockito.mock(Runnable.class));
         assertThat(t.getName(), allOf(containsString("pool-"), containsString("-thread-")));

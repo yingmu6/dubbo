@@ -36,7 +36,7 @@ public class RegistryFactoryWrapperTest {
         URL url = URL.valueOf("dubbo://localhost:8081/simple.service");
         registry.register(url);
 
-        Mockito.verify(listener1, Mockito.times(1)).onRegister(url);
+        Mockito.verify(listener1, Mockito.times(1)).onRegister(url); //todo @csy-04-03 此处verify的功能是啥？
         Mockito.verify(listener2, Mockito.times(1)).onRegister(url);
 
         registry.unregister(url);
