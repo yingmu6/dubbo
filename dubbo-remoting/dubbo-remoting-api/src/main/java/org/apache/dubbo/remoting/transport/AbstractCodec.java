@@ -41,7 +41,7 @@ public abstract class AbstractCodec implements Codec2 {
 
     private static final String SERVER_SIDE = "server";
 
-    protected static void checkPayload(Channel channel, long size) throws IOException { //检查负载大小，todo @csy-02-25 是否包含协议头的16字节？
+    protected static void checkPayload(Channel channel, long size) throws IOException { //检查负载大小
         int payload = Constants.DEFAULT_PAYLOAD;
         if (channel != null && channel.getUrl() != null) {
             payload = channel.getUrl().getParameter(Constants.PAYLOAD_KEY, Constants.DEFAULT_PAYLOAD);
@@ -70,7 +70,7 @@ public abstract class AbstractCodec implements Codec2 {
             boolean isClient = url.getPort() == address.getPort()
                     && NetUtils.filterLocalHost(url.getIp()).equals(
                     NetUtils.filterLocalHost(address.getAddress()
-                            .getHostAddress())); //todo @csy 此处的判断逻辑，待了解
+                            .getHostAddress()));
             channel.setAttribute(SIDE_KEY, isClient ? CLIENT_SIDE
                 : SERVER_SIDE);
             return isClient;

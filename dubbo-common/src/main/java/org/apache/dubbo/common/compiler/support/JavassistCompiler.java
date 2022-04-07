@@ -39,7 +39,7 @@ public class JavassistCompiler extends AbstractCompiler {
     private static final Pattern FIELD_PATTERN = Pattern.compile("[^\n]+=[^\n]+;");
 
     @Override
-    public Class<?> doCompile(String name, String source) throws Throwable { //todo @csy 编译的逻辑是怎样的？如何使用javassist进行编译的？
+    public Class<?> doCompile(String name, String source) throws Throwable {
         CtClassBuilder builder = new CtClassBuilder();
         builder.setClassName(name);
 

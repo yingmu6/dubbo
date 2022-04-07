@@ -37,15 +37,6 @@ public abstract class AbstractMethodConfig extends AbstractConfig {
     /**
      * The retry times
      */
-    /**
-     * 重试次数：
-     * todo @csy 问题点：
-     * 1）重试次数是哪里使用到的？
-     * 2）重试指定次数还失败，怎么处理的？
-     * 3）失败后抛出的异常，与"No Provider available"异常有何不同？
-     * 4）调用超时，是怎么计算出来的？
-     * 5）调用次数是哪里计算出来的？为什么retries=2时，调用次数为3？
-     */
     protected Integer retries;
 
     /**

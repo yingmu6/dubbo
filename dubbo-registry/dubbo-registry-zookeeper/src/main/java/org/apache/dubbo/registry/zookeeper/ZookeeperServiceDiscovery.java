@@ -52,7 +52,7 @@ public class ZookeeperServiceDiscovery implements ServiceDiscovery, EventListene
 
     private CuratorFramework curatorFramework;
 
-    private String rootPath; //todo @csy 根目录的值会是什么？
+    private String rootPath;
 
     private org.apache.curator.x.discovery.ServiceDiscovery<ZookeeperInstance> serviceDiscovery;
 
@@ -155,7 +155,7 @@ public class ZookeeperServiceDiscovery implements ServiceDiscovery, EventListene
     protected void registerServiceWatcher(String serviceName) {
         String path = buildServicePath(serviceName);
         CuratorWatcher watcher = watcherCaches.computeIfAbsent(path, key ->
-                new ZookeeperServiceDiscoveryChangeWatcher(this, serviceName)); //todo @csy CuratorWatcher 待了解使用
+                new ZookeeperServiceDiscoveryChangeWatcher(this, serviceName));
         try {
             curatorFramework.getChildren().usingWatcher(watcher).forPath(path);
         } catch (KeeperException.NoNodeException e) {

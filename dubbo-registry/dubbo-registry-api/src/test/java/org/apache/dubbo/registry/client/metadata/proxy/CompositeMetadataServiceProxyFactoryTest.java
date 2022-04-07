@@ -70,7 +70,7 @@ public class CompositeMetadataServiceProxyFactoryTest {
         MetadataReportInstance.getMetadataReport().close();
     }
 
-    private DefaultServiceInstance createServiceInstance() { //todo @csy-03-25 待测试使用
+    private DefaultServiceInstance createServiceInstance() {
         DefaultServiceInstance serviceInstance = new DefaultServiceInstance(valueOf(System.nanoTime()), "A", "127.0.0.1", 8080);
         Map<String, String> metadata = new HashMap<>();
         metadata.put(EXPORTED_SERVICES_REVISION_PROPERTY_NAME, "X");

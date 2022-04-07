@@ -71,7 +71,7 @@ public class AdaptiveClassCodeGenerator { //自适应代码产生器
 
     private String defaultExtName;
 
-    public AdaptiveClassCodeGenerator(Class<?> type, String defaultExtName) { //todo @csy 自适应扩展，若url没有对应的key，是取SPI上的值吗？
+    public AdaptiveClassCodeGenerator(Class<?> type, String defaultExtName) {
         this.type = type;
         this.defaultExtName = defaultExtName;
     }

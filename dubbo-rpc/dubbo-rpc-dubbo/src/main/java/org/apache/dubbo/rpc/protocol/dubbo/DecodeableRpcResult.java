@@ -38,7 +38,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Type;
 
-public class DecodeableRpcResult extends AppResponse implements Codec, Decodeable { //todo @csy-02-25 DecodeableRpcResult的功能用途是什么？为啥会与code、decode关联的？
+public class DecodeableRpcResult extends AppResponse implements Codec, Decodeable {
 
     private static final Logger log = LoggerFactory.getLogger(DecodeableRpcResult.class);
 
@@ -71,7 +71,7 @@ public class DecodeableRpcResult extends AppResponse implements Codec, Decodeabl
     }
 
     @Override
-    public Object decode(Channel channel, InputStream input) throws IOException { //todo @csy-002 对result是如何解码的？
+    public Object decode(Channel channel, InputStream input) throws IOException {
         if (log.isDebugEnabled()) {
             Thread thread = Thread.currentThread();
             log.debug("Decoding in thread -- [" + thread.getName() + "#" + thread.getId() + "]");
@@ -127,7 +127,7 @@ public class DecodeableRpcResult extends AppResponse implements Codec, Decodeabl
         }
     }
 
-    private void handleValue(ObjectInput in) throws IOException { //todo @csy-02-25 此处处理的是什么值？为啥与返回类型关联的？
+    private void handleValue(ObjectInput in) throws IOException {
         try {
             Type[] returnTypes;
             if (invocation instanceof RpcInvocation) {

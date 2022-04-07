@@ -44,7 +44,7 @@ public class RegistryStatusChecker implements StatusChecker {
                 buf.append(",");
             }
             buf.append(registry.getUrl().getAddress());
-            if (!registry.isAvailable()) { //判断注册实例是否可用，todo @csy-03-25 是怎么检测注册中心是否有效的？是做心跳检测吗？
+            if (!registry.isAvailable()) { //判断注册实例是否可用
                 level = Status.Level.ERROR;
                 buf.append("(disconnected)");
             } else {

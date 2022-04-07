@@ -444,7 +444,7 @@ public class ExtensionLoaderTest {
         URL url = URL.valueOf("test://localhost/test?ext=order1,default,order4");
         List<ActivateExt1> list = getExtensionLoader(ActivateExt1.class)
                 .getActivateExtension(url, "ext", "default_group");
-        Assertions.assertEquals(2, list.size()); //todo @csy 此处为啥size=3，为啥OrderActivateExtImpl4会匹配上？因为没有带上@Activate注解
+        Assertions.assertEquals(2, list.size());
         Assertions.assertSame(list.get(0).getClass(), OrderActivateExtImpl1.class);
         Assertions.assertSame(list.get(1).getClass(), ActivateExt1Impl1.class);
 

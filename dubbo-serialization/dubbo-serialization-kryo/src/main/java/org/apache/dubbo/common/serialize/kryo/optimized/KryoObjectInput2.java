@@ -32,7 +32,7 @@ import java.lang.reflect.Type;
  */
 public class KryoObjectInput2 implements ObjectInput, Cleanable {
 
-    private Kryo kryo; //todo @csy-02-25 Kryo的功能用途是什么？
+    private Kryo kryo;
     private Input input;
 
     public KryoObjectInput2(InputStream inputStream) {

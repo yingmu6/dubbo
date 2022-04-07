@@ -34,7 +34,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.DEFAULT_THREAD_N
 import static org.apache.dubbo.common.constants.CommonConstants.THREAD_NAME_KEY;
 import static org.apache.dubbo.remoting.Constants.*;
 
-public class ConnectionOrderedChannelHandler extends WrappedChannelHandler { //todo @csy-02-26 该处理类的功能用途是什么？
+public class ConnectionOrderedChannelHandler extends WrappedChannelHandler {
 
     protected final ThreadPoolExecutor connectionExecutor;
     private final int queuewarninglimit;

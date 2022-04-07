@@ -53,7 +53,7 @@ public class AppResponse implements Result {
 
     private Throwable exception;
 
-    private Map<String, Object> attachments = new HashMap<>(); //todo @csy-02-22 该Map中都会是什么值？
+    private Map<String, Object> attachments = new HashMap<>();
 
     public AppResponse() {
     }

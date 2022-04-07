@@ -56,7 +56,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.*;
  *
  * Please see http://dubbo.apache.org/zh-cn/docs/user/configuration/config-center.html for details.
  */
-public class ApolloDynamicConfiguration implements DynamicConfiguration { //todo @csy-03-25 配置中心并没有提供API接口，那内部是怎么使用的？
+public class ApolloDynamicConfiguration implements DynamicConfiguration {
     /**
      * apollo是怎么使用的？数据存储在哪里？能支持管理台和属性文件？
      * 解：Apollo（阿波罗）是携程框架部门研发的分布式配置中心，能够集中化管理应用不同环境、不同集群的配置，
@@ -80,7 +80,7 @@ public class ApolloDynamicConfiguration implements DynamicConfiguration { //todo
     private ConfigFile dubboConfigFile;
     private ConcurrentMap<String, ApolloListener> listeners = new ConcurrentHashMap<>();
 
-    ApolloDynamicConfiguration(URL url) { //todo @csy-03-25 此处都构建了什么信息？为啥有ApolloDynamicConfigurationFactory的SPI接口，在哪里使用的？
+    ApolloDynamicConfiguration(URL url) {
         this.url = url;
         // Instead of using Dubbo's configuration, I would suggest use the original configuration method Apollo provides.
         String configEnv = url.getParameter(APOLLO_ENV_KEY);

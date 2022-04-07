@@ -27,7 +27,7 @@ public class JVMUtil {
         }
     }
 
-    private static String getThreadDumpString(ThreadInfo threadInfo) { //todo @csy 待调试了解，看下都有啥数据信息
+    private static String getThreadDumpString(ThreadInfo threadInfo) {
         StringBuilder sb = new StringBuilder("\"" + threadInfo.getThreadName() + "\"" +
                 " Id=" + threadInfo.getThreadId() + " " +
                 threadInfo.getThreadState());

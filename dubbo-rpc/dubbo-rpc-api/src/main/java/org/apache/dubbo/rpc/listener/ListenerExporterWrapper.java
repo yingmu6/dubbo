@@ -33,7 +33,7 @@ public class ListenerExporterWrapper<T> implements Exporter<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(ListenerExporterWrapper.class);
 
-    private final Exporter<T> exporter; //todo @csy-02-28 此处的exporter与listeners是怎么关联的？
+    private final Exporter<T> exporter;
 
     private final List<ExporterListener> listeners;
 

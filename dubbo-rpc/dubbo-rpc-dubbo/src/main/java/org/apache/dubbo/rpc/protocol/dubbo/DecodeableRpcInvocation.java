@@ -46,7 +46,7 @@ import static org.apache.dubbo.common.URL.buildKey;
 import static org.apache.dubbo.common.constants.CommonConstants.*;
 import static org.apache.dubbo.rpc.protocol.dubbo.CallbackServiceCodec.decodeInvocationArgument;
 
-public class DecodeableRpcInvocation extends RpcInvocation implements Codec, Decodeable { //解码调用信息，todo @csy-02-25 该类的功能用途是什么？
+public class DecodeableRpcInvocation extends RpcInvocation implements Codec, Decodeable { //解码调用信息
 
     private static final Logger log = LoggerFactory.getLogger(DecodeableRpcInvocation.class);
 
@@ -96,7 +96,7 @@ public class DecodeableRpcInvocation extends RpcInvocation implements Codec, Dec
     }
 
     @Override
-    public Object decode(Channel channel, InputStream input) throws IOException { //todo @csy 解码的主要逻辑是怎样的？
+    public Object decode(Channel channel, InputStream input) throws IOException {
         ObjectInput in = CodecSupport.getSerialization(channel.getUrl(), serializationType)
                 .deserialize(channel.getUrl(), input);
 

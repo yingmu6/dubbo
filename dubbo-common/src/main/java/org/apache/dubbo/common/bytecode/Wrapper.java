@@ -120,7 +120,7 @@ public abstract class Wrapper {
     }
 
     /**
-     * todo @csy 创建封装类的问题点
+     * 创建封装类的问题点
      * 1）创建的封装类，做了哪些功能增强，还是说只是为了减少反射调用，只实现了目标类的方法调用？
      * 2）本地方法调用，底层原理是怎样的？是不是class的invoke方法
      */
@@ -224,13 +224,13 @@ public abstract class Wrapper {
             String md = entry.getKey(); //暴露接口中的方法描述信息，如hello(Lorg/apache/dubbo/demo/FruitEnum;)Ljava/lang/String;
             Method method = entry.getValue();
             if ((matcher = ReflectUtils.GETTER_METHOD_DESC_PATTERN.matcher(md)).matches()) { //判断是否匹配get方法对应的描述信息
-                String pn = propertyName(matcher.group(1)); //todo @csy matcher的group()功能用途是怎样的？
+                String pn = propertyName(matcher.group(1));
                 c2.append(" if( $2.equals(\"").append(pn).append("\") ){ return ($w)w.").append(method.getName()).append("(); }");
                 pts.put(pn, method.getReturnType());
             } else if ((matcher = ReflectUtils.IS_HAS_CAN_METHOD_DESC_PATTERN.matcher(md)).matches()) { //匹配is、has、can方法
                 String pn = propertyName(matcher.group(1));
                 c2.append(" if( $2.equals(\"").append(pn).append("\") ){ return ($w)w.").append(method.getName()).append("(); }");
-                pts.put(pn, method.getReturnType()); //todo @csy 按道理set、get方法都会对应一个属性，此处都会取值，相当于键pn是相同的，会不会被覆盖？
+                pts.put(pn, method.getReturnType());
             } else if ((matcher = ReflectUtils.SETTER_METHOD_DESC_PATTERN.matcher(md)).matches()) { //匹配set方法
                 Class<?> pt = method.getParameterTypes()[0];
                 String pn = propertyName(matcher.group(1));
@@ -276,7 +276,6 @@ public abstract class Wrapper {
             for (Method m : ms.values()) {
                 wc.getField("mts" + ix++).set(null, m.getParameterTypes());
             }
-            // todo @csy 使用工具arthas，把封装类的代码，打印出来
             return (Wrapper) wc.newInstance(); //使用Class对象创建实例，并强转为Wrapper类型
         } catch (RuntimeException e) {
             throw e;

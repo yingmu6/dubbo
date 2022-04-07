@@ -63,7 +63,7 @@ public class ProtobufUtils {
         return printer.print((MessageOrBuilder) value);
     }
 
-    private static Builder getMessageBuilder(Class<?> requestType) throws Exception { //todo @csy-02-25 protobuf 基本功能是怎样的？相比其它序列化有何优势？Dubbo里面又是怎样封装的？
+    private static Builder getMessageBuilder(Class<?> requestType) throws Exception {
         Method method = requestType.getMethod("newBuilder");
         return (Builder) method.invoke(null, null);
     }

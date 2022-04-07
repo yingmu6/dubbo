@@ -28,10 +28,7 @@ import static org.apache.dubbo.common.utils.AnnotationUtils.getAttribute;
  * The abstract {@link AnnotatedMethodParameterProcessor} implementation for Spring Web MVC's @Request*
  */
 public abstract class AbstractRequestAnnotationParameterProcessor extends AbstractAnnotatedMethodParameterProcessor {
-    /**
-     * todo @csy-03-25 此处为啥是springmvc包下，与mvc有关系吗？
-     */
-
+  
     @Override
     protected String getAnnotationValue(Annotation annotation, Parameter parameter, int parameterIndex) {
         // try to get "value" attribute first

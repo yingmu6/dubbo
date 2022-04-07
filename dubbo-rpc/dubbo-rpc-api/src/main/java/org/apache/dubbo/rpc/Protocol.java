@@ -27,11 +27,7 @@ import java.util.List;
  * Protocol. (API/SPI, Singleton, ThreadSafe)
  */
 @SPI("dubbo") //默认DubboProtocol
-public interface Protocol { //todo @pause-03-02
-    /**
-     * todo @csy-03-02 Protocol数据结构很类图待了解
-     */
-
+public interface Protocol {
 
     /**
      * Get default port when user doesn't config the port.

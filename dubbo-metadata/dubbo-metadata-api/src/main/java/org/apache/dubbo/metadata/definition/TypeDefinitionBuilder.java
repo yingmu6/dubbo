@@ -31,7 +31,7 @@ import static org.apache.dubbo.common.utils.ClassUtils.isSimpleType;
 /**
  * 2015/1/27.
  */
-public class TypeDefinitionBuilder { //todo @csy 建造者设计模式是怎样的？有什么优势？
+public class TypeDefinitionBuilder {
     private static final Logger logger = LoggerFactory.getLogger(TypeDefinitionBuilder.class);
     static final List<TypeBuilder> BUILDERS;
 

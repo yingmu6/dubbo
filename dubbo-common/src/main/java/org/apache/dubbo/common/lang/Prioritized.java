@@ -32,7 +32,7 @@ public interface Prioritized extends Comparable<Prioritized> { //比较逻辑是
     /**
      * The {@link Comparator} of {@link Prioritized}
      */
-    Comparator<Object> COMPARATOR = (one, two) -> { //对象比较器，todo @csy-02-28 该比较器的处理逻辑是怎样的？
+    Comparator<Object> COMPARATOR = (one, two) -> { //对象比较器
         boolean b1 = one instanceof Prioritized;
         boolean b2 = two instanceof Prioritized;
         if (b1 && !b2) {        // one is Prioritized, two is not

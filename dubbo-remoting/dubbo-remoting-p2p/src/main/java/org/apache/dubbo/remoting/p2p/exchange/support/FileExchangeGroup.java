@@ -126,7 +126,7 @@ public class FileExchangeGroup extends AbstractExchangeGroup { //功能用途是
                 }
                 saves.add(line);
             }
-            IOUtils.appendLines(file, saves.toArray(new String[0])); //todo @csy 为啥在做移除url时，也会往文件中加内容？
+            IOUtils.appendLines(file, saves.toArray(new String[0]));
         } catch (IOException e) {
             throw new RemotingException(new InetSocketAddress(NetUtils.getLocalHost(), 0), getUrl().toInetSocketAddress(), e.getMessage(), e);
         }

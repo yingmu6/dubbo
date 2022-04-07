@@ -22,7 +22,7 @@ import org.apache.dubbo.remoting.exchange.ExchangeChannel;
 /**
  * Replier. (API, Prototype, ThreadSafe)
  */
-public interface Replier<T> { //todo @csy-02-22 此处回复是指服务端回复客户端吗？ 哪种场景会使用到？
+public interface Replier<T> {
 
     /**
      * reply.

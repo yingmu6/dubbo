@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Cmd { //todo @csy 此注解在哪里用到，是怎么使用的，对应的注解器是怎样的？
+public @interface Cmd {
 
     /**
      * Command name

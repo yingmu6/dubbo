@@ -191,7 +191,7 @@ public interface CommonConstants {
 
     String DEFAULT_METADATA_STORAGE_TYPE = "local";
 
-    String REMOTE_METADATA_STORAGE_TYPE = "remote"; //todo @csy 元数据中心，本地与远程有何不同？
+    String REMOTE_METADATA_STORAGE_TYPE = "remote";
 
     /**
      * The composite metadata storage type includes {@link #DEFAULT_METADATA_STORAGE_TYPE "local"} and

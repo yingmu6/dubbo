@@ -30,10 +30,7 @@ import static org.apache.dubbo.registry.client.metadata.ServiceInstanceMetadataU
  * @since 2.7.5
  */
 abstract class BaseMetadataServiceProxyFactory implements MetadataServiceProxyFactory {
-    /**
-     * todo @csy-03-25 对应实现类都有哪些？各有什么差异的？
-     */
-
+   
     private final ConcurrentMap<String, MetadataService> proxiesCache = new ConcurrentHashMap<>();
 
     public final MetadataService getProxy(ServiceInstance serviceInstance) {

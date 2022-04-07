@@ -25,7 +25,7 @@ import org.apache.dubbo.remoting.Constants;
  * HttpBinder
  */
 @SPI("jetty")
-public interface HttpBinder { //todo @csy http 绑定是指啥？都有哪些具体实现类？
+public interface HttpBinder {
 
     /**
      * bind the server.

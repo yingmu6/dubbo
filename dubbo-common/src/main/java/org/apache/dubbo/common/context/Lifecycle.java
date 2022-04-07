@@ -22,10 +22,7 @@ package org.apache.dubbo.common.context;
  * @since 2.7.5
  */
 public interface Lifecycle { //dubbo组件的生命周期
-    /**
-     * todo @csy-02-28 生命周期是怎样的概念，都是怎么使用的？
-     */
-
+    
     /**
      * Initialize the component before {@link #start() start}
      * （在组件启动前进行初始化）

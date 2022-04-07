@@ -24,7 +24,7 @@ import java.util.Objects;
 /**
  * 2015/1/27.
  */
-public class ServiceDefinition implements Serializable { //服务定义 ，todo @csy 服务定义、方法定义、类型定义用途以及具体的关联关系是怎样的？
+public class ServiceDefinition implements Serializable { //服务定义
 
     private String canonicalName; //canonical:简洁的
     private String codeSource;

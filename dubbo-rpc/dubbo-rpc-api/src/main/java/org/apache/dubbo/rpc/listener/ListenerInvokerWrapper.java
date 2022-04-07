@@ -32,7 +32,7 @@ public class ListenerInvokerWrapper<T> implements Invoker<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(ListenerInvokerWrapper.class);
 
-    private final Invoker<T> invoker; //todo @csy-02-28 invoker是怎么与listeners关联起来的？
+    private final Invoker<T> invoker;
 
     private final List<InvokerListener> listeners;
 

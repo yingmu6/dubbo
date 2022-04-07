@@ -27,7 +27,7 @@ import java.lang.reflect.Type;
  */
 public class FastJsonObjectInput implements ObjectInput {
 
-    private final BufferedReader reader; //todo @csy-02-25 什么情况下用字符流，什么情况有用字节流处理JavaObjectInput？
+    private final BufferedReader reader;
 
     public FastJsonObjectInput(InputStream in) {
         this(new InputStreamReader(in));
@@ -95,7 +95,7 @@ public class FastJsonObjectInput implements ObjectInput {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T readObject(Class<T> cls, Type type) throws IOException, ClassNotFoundException { //todo @csy-002 此处是如何读取内容的？
+    public <T> T readObject(Class<T> cls, Type type) throws IOException, ClassNotFoundException {
         String json = readLine();
         return (T) JSON.parseObject(json, type);
     }

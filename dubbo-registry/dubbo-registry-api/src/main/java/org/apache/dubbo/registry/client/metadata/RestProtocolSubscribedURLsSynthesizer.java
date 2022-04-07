@@ -37,7 +37,7 @@ import static org.apache.dubbo.registry.Constants.REGISTER_KEY;
 public class RestProtocolSubscribedURLsSynthesizer implements SubscribedURLsSynthesizer {
 
     @Override
-    public boolean supports(URL subscribedURL) { //todo @csy-03-25 此处的rest协议是指啥？在什么场景使用的？
+    public boolean supports(URL subscribedURL) {
         return "rest".equals(subscribedURL.getProtocol()) ||
                 "rest".equals(subscribedURL.getParameter(PROTOCOL_KEY));
     }

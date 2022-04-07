@@ -67,7 +67,7 @@ public abstract class AbstractReferenceConfig extends AbstractInterfaceConfig {
     /**
      * Lazy create connection
      */
-    protected Boolean lazy; //todo @csy 此处的Lazy延迟加载，在哪些地方会用到？缺省值是怎样的？
+    protected Boolean lazy;
 
     protected String reconnect;
 

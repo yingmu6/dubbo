@@ -37,7 +37,7 @@ import java.util.concurrent.Executors;
  *
  */
 public class ZKTools {
-    private static CuratorFramework client; //todo @csy-04-03 curator使用待了解
+    private static CuratorFramework client;
     private static ExecutorService executor = Executors.newFixedThreadPool(1, new NamedThreadFactory("ZKTools-test", true));
 
     public static void main(String[] args) throws Exception {

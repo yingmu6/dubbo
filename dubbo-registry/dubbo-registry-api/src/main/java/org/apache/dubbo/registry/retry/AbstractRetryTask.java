@@ -33,7 +33,7 @@ import static org.apache.dubbo.registry.Constants.*;
 /**
  * AbstractRetryTask
  */
-public abstract class AbstractRetryTask implements TimerTask { //todo @csy-03-25 重试任务是怎么使用的？在哪种场景使用？
+public abstract class AbstractRetryTask implements TimerTask {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 

@@ -102,7 +102,7 @@ final class NettyChannel extends AbstractChannel {
      *
      * @param ch netty channel
      */
-    static void removeChannelIfDisconnected(Channel ch) { //todo @csy-02-26 netty是怎样表示通道是否活跃的？
+    static void removeChannelIfDisconnected(Channel ch) {
         if (ch != null && !ch.isActive()) {
             NettyChannel nettyChannel = CHANNEL_MAP.remove(ch); //移除缓存中通道的映射，并且将激活标识置为false
             if (nettyChannel != null) {
@@ -159,7 +159,6 @@ final class NettyChannel extends AbstractChannel {
         boolean success = true;
         int timeout = 0;
         try {
-            //todo @csy-02-26 netty的writeAndFlush方法，待了解实践
             ChannelFuture future = channel.writeAndFlush(message);
             if (sent) { //若选择等待，则会等待指定的时间
                 // wait timeout ms
@@ -233,7 +232,7 @@ final class NettyChannel extends AbstractChannel {
     }
 
     @Override
-    public int hashCode() { //todo @csy-02-26 为什么重写equals时，也要重写hashcode方法
+    public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((channel == null) ? 0 : channel.hashCode());

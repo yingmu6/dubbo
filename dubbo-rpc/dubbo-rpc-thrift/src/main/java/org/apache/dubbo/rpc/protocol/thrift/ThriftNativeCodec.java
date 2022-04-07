@@ -34,11 +34,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 2.7.0, use https://github.com/dubbo/dubbo-rpc-native-thrift instead
  */
 @Deprecated
-public class ThriftNativeCodec implements Codec2 { //todo @csy-02-26 该类的用途是什么？与ThriftCodec有何不同？
+public class ThriftNativeCodec implements Codec2 {
 
     private final AtomicInteger thriftSeq = new AtomicInteger(0);
 
-    protected static TProtocol newProtocol(URL url, ChannelBuffer buffer) throws IOException { //todo @csy-001 TProtocol待了解
+    protected static TProtocol newProtocol(URL url, ChannelBuffer buffer) throws IOException {
         String protocol = url.getParameter(ThriftConstants.THRIFT_PROTOCOL_KEY,
                 ThriftConstants.DEFAULT_PROTOCOL);
         if (ThriftConstants.BINARY_THRIFT_PROTOCOL.equals(protocol)) {

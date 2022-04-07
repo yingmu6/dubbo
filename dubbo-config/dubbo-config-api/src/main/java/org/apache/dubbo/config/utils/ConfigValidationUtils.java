@@ -156,7 +156,6 @@ public class ConfigValidationUtils {
         return registryList;
     }
 
-    // todo @csy 加载监控中心的处理逻辑是怎样的？
     public static URL loadMonitor(AbstractInterfaceConfig interfaceConfig, URL registryURL) { //加载监控中心
         Map<String, String> map = new HashMap<String, String>();
         map.put(INTERFACE_KEY, MonitorService.class.getName()); //MonitorService.class.getName()的值如：org.apache.dubbo.monitor.MonitorService

@@ -28,9 +28,6 @@ import static org.apache.dubbo.common.utils.StringUtils.isBlank;
  * @since 2.7.5
  */
 public abstract class ServiceInstanceMetadataCustomizer implements ServiceInstanceCustomizer {
-    /**
-     * todo @csy-03-25 该功能哪里用到的？都定制了什么功能？
-     */
 
     @Override
     public final void customize(ServiceInstance serviceInstance) {

@@ -40,8 +40,6 @@ public class Environment extends LifecycleAdapter implements FrameworkExt {
     /**
      * Environment也是存储配置信息，与ConfigManager不同的是，
      * Environment主要处理的与系统配置相关，比如Java系统配置，以及配置中心的配置。
-     * <p>
-     * todo @csy-02-28 数据结构以及类图待了解
      */
 
     public static final String NAME = "environment";

@@ -48,8 +48,6 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
      * 3）Dubbo使用的是TCP长连接，与我们开发常见到的HTTP协议（HTTP本身与TCP也不在同一层）不同 。TCP本身没有Request和Response的概念。只有发送和接收。
      * HTTP协议中的Request和Response是由Http服务器或者Servlet容器来实现的。
      * 4）Dubbo要使用TCP长连接，就得自己实现Request和Response的抽象概念，这样客户端与服务端之间的交互才能有去有回。 https://www.cnblogs.com/nizuimeiabc1/p/14855857.html
-     * <p>
-     * 5）todo @csy 头交换处理器，是指交换协议头吗？
      */
 
     protected static final Logger logger = LoggerFactory.getLogger(HeaderExchangeHandler.class);
@@ -106,7 +104,7 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
         Object msg = req.getData();
         try {
             CompletionStage<Object> future = handler.reply(channel, msg);
-            future.whenComplete((appResult, t) -> { //todo @csy-02-26 此处的功能用途是什么？
+            future.whenComplete((appResult, t) -> {
                 try {
                     if (t == null) {
                         res.setStatus(Response.OK);

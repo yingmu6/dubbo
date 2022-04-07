@@ -36,10 +36,6 @@ import java.io.OutputStream;
 public interface Serialization { //都有哪些序列化方式？ 可以看具体的序列化策略，比如protobuf、fastJson、hessian2等
 
     /**
-     * todo @csy 主要使用的序列化方式各有什么优缺点？待比较罗列
-     */
-
-    /**
      * Get content type unique id, recommended that custom implementations use values different with
      * any value of {@link Constants} and don't greater than ExchangeCodec.SERIALIZATION_MASK (31)
      * because dubbo protocol use 5 bits to record serialization ID in header.
@@ -64,7 +60,7 @@ public interface Serialization { //都有哪些序列化方式？ 可以看具�
      * @throws IOException
      */
     @Adaptive
-    ObjectOutput serialize(URL url, OutputStream output) throws IOException; //todo @csy-002 哪种序列化方式会用到参数URL，用到里面的什么数据？
+    ObjectOutput serialize(URL url, OutputStream output) throws IOException;
 
     /**
      * Get a deserialization implementation instance

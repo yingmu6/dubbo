@@ -102,7 +102,7 @@ public abstract class AbstractConfigurator implements Configurator {
         return url;
     }
 
-    private URL configureIfMatch(String host, URL url) { //todo @csy 待实践
+    private URL configureIfMatch(String host, URL url) {
         if (ANYHOST_VALUE.equals(configuratorUrl.getHost()) || host.equals(configuratorUrl.getHost())) {
             // TODO, to support wildcards
             String providers = configuratorUrl.getParameter(OVERRIDE_PROVIDERS_KEY);

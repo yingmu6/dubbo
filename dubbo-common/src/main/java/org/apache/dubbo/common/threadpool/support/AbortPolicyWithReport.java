@@ -35,7 +35,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.DUMP_DIRECTORY;
  * Abort Policy.(线程池终止策略)
  * Log warn info when abort.
  */
-public class AbortPolicyWithReport extends ThreadPoolExecutor.AbortPolicy { //todo @csy 什么情况会触发线程池的受拒策略
+public class AbortPolicyWithReport extends ThreadPoolExecutor.AbortPolicy {
 
     protected static final Logger logger = LoggerFactory.getLogger(AbortPolicyWithReport.class);
 
@@ -86,7 +86,7 @@ public class AbortPolicyWithReport extends ThreadPoolExecutor.AbortPolicy { //to
         EventDispatcher.getDefaultExtension().dispatch(new ThreadPoolExhaustedEvent(this, msg));
     }
 
-    private void dumpJStack() { //todo @csy-02-26 此处包含异常的文件会被下载到哪里？找到文件，查看下里面的内容。
+    private void dumpJStack() {
         long now = System.currentTimeMillis();
 
         //dump every 10 minutes

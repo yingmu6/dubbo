@@ -30,5 +30,5 @@ public interface TimerTask { //延时任务
      *
      * @param timeout a handle which is associated with this task
      */
-    void run(Timeout timeout) throws Exception; //todo @csy 底层的定时任务是怎样的？
+    void run(Timeout timeout) throws Exception;
 }

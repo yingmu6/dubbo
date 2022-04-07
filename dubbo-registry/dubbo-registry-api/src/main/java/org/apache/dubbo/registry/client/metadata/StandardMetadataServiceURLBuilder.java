@@ -47,7 +47,7 @@ public class StandardMetadataServiceURLBuilder implements MetadataServiceURLBuil
      * @return the not-null {@link List}
      */
     @Override
-    public List<URL> build(ServiceInstance serviceInstance) { //todo @csy-03-25 构建的url列表是指一个服务对应的多个提供者的url吗？
+    public List<URL> build(ServiceInstance serviceInstance) {
 
         Map<String, Map<String, String>> paramsMap = getMetadataServiceURLsParams(serviceInstance);
 
@@ -67,7 +67,7 @@ public class StandardMetadataServiceURLBuilder implements MetadataServiceURLBuil
                     .setProtocol(protocol)
                     .setPath(MetadataService.class.getName());
 
-            // add parameters  todo @csy-03-25 Map形式的forEach待了解
+            // add parameters
             params.forEach((name, value) -> urlBuilder.addParameter(name, valueOf(value)));
 
             // add the default parameters

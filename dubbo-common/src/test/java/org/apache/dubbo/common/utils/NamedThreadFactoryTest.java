@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class NamedThreadFactoryTest {
     @Test
-    public void testNewThread() throws Exception { //todo @csy-pause
+    public void testNewThread() throws Exception {
         NamedThreadFactory factory = new NamedThreadFactory();
         Thread t = factory.newThread(Mockito.mock(Runnable.class));
         assertThat(t.getName(), allOf(containsString("pool-"), containsString("-thread-")));

@@ -105,7 +105,7 @@ public abstract class AbstractProxyProtocol extends AbstractProtocol {
                     // FIXME result is an AsyncRpcResult instance.
                     Throwable e = result.getException();
                     if (e != null) {
-                        for (Class<?> rpcException : rpcExceptions) { //todo @csy-03-03 此处的异常rpcExceptions为啥是个列表？
+                        for (Class<?> rpcException : rpcExceptions) {
                             if (rpcException.isAssignableFrom(e.getClass())) {
                                 throw getRpcException(type, url, invocation, e);
                             }

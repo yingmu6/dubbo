@@ -120,11 +120,7 @@ public class HessianProtocol extends AbstractProxyProtocol {
             RpcContext.getContext().setAttachment(GENERIC_KEY, generic);
             url = url.setPath(url.getPath() + "/" + GENERIC_KEY);
         }
-
-        /**
-         * todo @csy-03-03
-         * hesssian相关的概念了解，如HessianProxyFactory等
-         */
+        
         HessianProxyFactory hessianProxyFactory = new HessianProxyFactory();
         boolean isHessian2Request = url.getParameter(HESSIAN2_REQUEST_KEY, DEFAULT_HESSIAN2_REQUEST);
         hessianProxyFactory.setHessian2Request(isHessian2Request);

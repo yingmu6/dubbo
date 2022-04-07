@@ -50,7 +50,7 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> {
 
     protected boolean availablecheck;
 
-    private AtomicBoolean destroyed = new AtomicBoolean(false); //todo @csy 是哪里设置值的？怎样判断是否销毁的？
+    private AtomicBoolean destroyed = new AtomicBoolean(false);
 
     private volatile Invoker<T> stickyInvoker = null;
 

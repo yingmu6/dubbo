@@ -43,14 +43,14 @@ public class TransportCodec extends AbstractCodec { //业务编码类都需要�
         ObjectOutput objectOutput = getSerialization(channel).serialize(channel.getUrl(), output);
         encodeData(channel, objectOutput, message);
         objectOutput.flushBuffer();
-        if (objectOutput instanceof Cleanable) { //todo @csy-002 什么时候会是Cleanable实例？
+        if (objectOutput instanceof Cleanable) {
             ((Cleanable) objectOutput).cleanup();
         }
     }
 
     @Override
     public Object decode(Channel channel, ChannelBuffer buffer) throws IOException {
-        InputStream input = new ChannelBufferInputStream(buffer); //todo @csy-002 输入流InputStream、输出流OutputStream待了解？
+        InputStream input = new ChannelBufferInputStream(buffer);
         ObjectInput objectInput = getSerialization(channel).deserialize(channel.getUrl(), input);
         Object object = decodeData(channel, objectInput);
         if (objectInput instanceof Cleanable) {
@@ -63,7 +63,7 @@ public class TransportCodec extends AbstractCodec { //业务编码类都需要�
         encodeData(output, message);
     }
 
-    protected Object decodeData(Channel channel, ObjectInput input) throws IOException { //todo @csy-002 编解码的数据流程流向是怎样的？ 请求对象的字节数组之间怎样转换的？
+    protected Object decodeData(Channel channel, ObjectInput input) throws IOException {
         return decodeData(input);
     }
 

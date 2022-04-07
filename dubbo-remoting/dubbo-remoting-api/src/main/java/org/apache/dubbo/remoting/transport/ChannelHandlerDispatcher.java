@@ -33,7 +33,6 @@ public class ChannelHandlerDispatcher implements ChannelHandler { //handler处�
 
     private static final Logger logger = LoggerFactory.getLogger(ChannelHandlerDispatcher.class);
 
-    //todo @csy-02-26 ChannelHandler是什么时候注册进来的？
     private final Collection<ChannelHandler> channelHandlers = new CopyOnWriteArraySet<ChannelHandler>();
 
     public ChannelHandlerDispatcher() {

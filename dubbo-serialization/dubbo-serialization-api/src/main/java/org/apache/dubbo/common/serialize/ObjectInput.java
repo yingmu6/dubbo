@@ -23,7 +23,7 @@ import java.util.Map;
 /**
  * Object input interface.
  */
-public interface ObjectInput extends DataInput { //todo @csy-02-25 相比BufferedReader、InputStream原生输入流，都做了哪些封装，有什么好处？
+public interface ObjectInput extends DataInput {
 
     /**
      * Consider use {@link #readObject(Class)} or {@link #readObject(Class, Type)} where possible

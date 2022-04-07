@@ -29,7 +29,7 @@ import java.util.List;
  * @since 2.7.5
  */
 @SPI("random")
-public interface ServiceInstanceSelector { //todo @csy-03-24 此处的选择器功能是啥？
+public interface ServiceInstanceSelector {
 
     /**
      * Select an instance of {@link ServiceInstance} by the specified {@link ServiceInstance service instances}

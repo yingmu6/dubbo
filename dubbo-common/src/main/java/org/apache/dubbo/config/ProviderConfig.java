@@ -47,7 +47,7 @@ public class ProviderConfig extends AbstractServiceConfig {
     /**
      * Context path
      */
-    private String contextpath; //todo @csy 怎样设置上下文路径的？
+    private String contextpath;
 
     /**
      * Thread pool

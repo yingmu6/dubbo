@@ -75,7 +75,7 @@ public class Bytes {
      * @param v value.
      * @param b byte array.
      */
-    public static void short2bytes(short v, byte[] b) { //todo @csy-02-25 怎样把数据放到字节数据的？
+    public static void short2bytes(short v, byte[] b) {
         short2bytes(v, b, 0);
     }
 
@@ -332,7 +332,7 @@ public class Bytes {
      * @param off offset.
      * @return long.
      */
-    public static long bytes2long(byte[] b, int off) { //todo @csy-02-25 此处的运算逻辑是怎样的？
+    public static long bytes2long(byte[] b, int off) {
         return ((b[off + 7] & 0xFFL) << 0) +
                 ((b[off + 6] & 0xFFL) << 8) +
                 ((b[off + 5] & 0xFFL) << 16) +

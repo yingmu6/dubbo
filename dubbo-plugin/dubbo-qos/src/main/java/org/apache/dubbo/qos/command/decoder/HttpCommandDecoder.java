@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HttpCommandDecoder {
-    public static CommandContext decode(HttpRequest request) { //todo @csy 哪种方式可以发起http请求？HttpRequest具体内容是啥？
+    public static CommandContext decode(HttpRequest request) {
         CommandContext commandContext = null;
         if (request != null) {
             QueryStringDecoder queryStringDecoder = new QueryStringDecoder(request.getUri());
@@ -44,7 +44,7 @@ public class HttpCommandDecoder {
                     if (queryStringDecoder.parameters().isEmpty()) {
                         commandContext = CommandContextFactory.newInstance(name);
                         commandContext.setHttp(true);
-                    } else { //todo @csy 内容是怎么解析的？
+                    } else {
                         List<String> valueList = new ArrayList<String>();
                         for (List<String> values : queryStringDecoder.parameters().values()) {
                             valueList.addAll(values);
@@ -54,7 +54,7 @@ public class HttpCommandDecoder {
                 } else if (request.getMethod() == HttpMethod.POST) {
                     HttpPostRequestDecoder httpPostRequestDecoder = new HttpPostRequestDecoder(request);
                     List<String> valueList = new ArrayList<String>();
-                    for (InterfaceHttpData interfaceHttpData : httpPostRequestDecoder.getBodyHttpDatas()) { //todo @csy netty对http的请求待了解？
+                    for (InterfaceHttpData interfaceHttpData : httpPostRequestDecoder.getBodyHttpDatas()) {
                         if (interfaceHttpData.getHttpDataType() == InterfaceHttpData.HttpDataType.Attribute) {
                             Attribute attribute = (Attribute) interfaceHttpData;
                             try {

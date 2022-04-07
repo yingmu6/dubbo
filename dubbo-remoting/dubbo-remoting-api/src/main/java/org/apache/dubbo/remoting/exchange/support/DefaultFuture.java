@@ -44,7 +44,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.TIMEOUT_KEY;
 /**
  * DefaultFuture.
  */
-public class DefaultFuture extends CompletableFuture<Object> { //todo @csy 都做了哪些封装的？
+public class DefaultFuture extends CompletableFuture<Object> {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultFuture.class);
 
@@ -137,7 +137,7 @@ public class DefaultFuture extends CompletableFuture<Object> { //todo @csy 都�
      *
      * @param channel channel to close
      */
-    public static void closeChannel(Channel channel) { //todo @csy 都关闭通道哪些信息的？
+    public static void closeChannel(Channel channel) {
         for (Map.Entry<Long, Channel> entry : CHANNELS.entrySet()) {
             if (channel.equals(entry.getValue())) {
                 DefaultFuture future = getFuture(entry.getKey());
@@ -200,7 +200,7 @@ public class DefaultFuture extends CompletableFuture<Object> { //todo @csy 都�
         this.cancel(true);
     }
 
-    private void doReceived(Response res) { //todo @csy 是怎么接收消息的？
+    private void doReceived(Response res) {
         if (res == null) {
             throw new IllegalStateException("response cannot be null");
         }
@@ -266,7 +266,7 @@ public class DefaultFuture extends CompletableFuture<Object> { //todo @csy 都�
         return newRequest;
     }
 
-    private static class TimeoutCheckTask implements TimerTask { //todo @csy 这个定时任务都做了啥？
+    private static class TimeoutCheckTask implements TimerTask {
 
         private final Long requestID;
 

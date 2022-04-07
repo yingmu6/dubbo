@@ -25,14 +25,14 @@ import java.net.InetSocketAddress;
  * @see RemotingServer#getChannels()
  * @see RemotingServer#getChannel(InetSocketAddress)
  */
-public interface Channel extends Endpoint { //通道（Dubbo网络通道的抽象，底层实现有NettyChannel、MinaChannel等），todo @csy-02-25 Channel画类图
+public interface Channel extends Endpoint { //通道（Dubbo网络通道的抽象，底层实现有NettyChannel、MinaChannel等）
 
     /**
      * get remote address.
      *
      * @return remote address.
      */
-    InetSocketAddress getRemoteAddress(); //todo @csy-02-25 通道中存的RemoteAddress是怎样的？
+    InetSocketAddress getRemoteAddress();
 
     /**
      * is connected.

@@ -64,7 +64,7 @@ public class HeartbeatHandler extends AbstractChannelHandlerDelegate {
     @Override
     public void received(Channel channel, Object message) throws RemotingException {
         setReadTimestamp(channel);
-        if (isHeartbeatRequest(message)) { //todo @csy-02-26 心跳事件都处理了什么？dubbo是怎么处理心跳的？
+        if (isHeartbeatRequest(message)) {
             Request req = (Request) message;
             if (req.isTwoWay()) {
                 Response res = new Response(req.getId(), req.getVersion());

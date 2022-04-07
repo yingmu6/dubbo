@@ -21,6 +21,6 @@ import org.apache.dubbo.remoting.Client;
 /**
  * ExchangeClient. (API/SPI, Prototype, ThreadSafe)
  */
-public interface ExchangeClient extends Client, ExchangeChannel { //todo @csy-03-03 该接口的功能用途是什么？
+public interface ExchangeClient extends Client, ExchangeChannel {
 
 }

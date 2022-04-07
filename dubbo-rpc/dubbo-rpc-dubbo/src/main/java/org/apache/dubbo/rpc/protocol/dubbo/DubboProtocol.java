@@ -66,7 +66,7 @@ public class DubboProtocol extends AbstractProtocol {
     private ExchangeHandler requestHandler = new ExchangeHandlerAdapter() {
 
         @Override
-        public CompletableFuture<Object> reply(ExchangeChannel channel, Object message) throws RemotingException { //回复响应，todo @csy 此处只能是提供端回复消费端吗？
+        public CompletableFuture<Object> reply(ExchangeChannel channel, Object message) throws RemotingException { //回复响应
 
             if (!(message instanceof Invocation)) {
                 throw new RemotingException(channel, "Unsupported request: "
@@ -77,7 +77,7 @@ public class DubboProtocol extends AbstractProtocol {
             Invocation inv = (Invocation) message;
             Invoker<?> invoker = getInvoker(channel, inv);
             // need to consider backward-compatibility if it's a callback
-            if (Boolean.TRUE.toString().equals(inv.getObjectAttachments().get(IS_CALLBACK_SERVICE_INVOKE))) { //todo @csy 回调服务指的是啥？
+            if (Boolean.TRUE.toString().equals(inv.getObjectAttachments().get(IS_CALLBACK_SERVICE_INVOKE))) {
                 String methodsStr = invoker.getUrl().getParameters().get("methods");
                 boolean hasMethod = false;
                 if (methodsStr == null || !methodsStr.contains(",")) {
@@ -105,7 +105,7 @@ public class DubboProtocol extends AbstractProtocol {
         }
 
         @Override
-        public void received(Channel channel, Object message) throws RemotingException { //todo @csy 什么时候会调用该方法的？
+        public void received(Channel channel, Object message) throws RemotingException {
             if (message instanceof Invocation) {
                 reply((ExchangeChannel) channel, message);
 
@@ -244,7 +244,7 @@ public class DubboProtocol extends AbstractProtocol {
         DubboExporter<T> exporter = new DubboExporter<T>(invoker, key, exporterMap);
         exporterMap.put(key, exporter);
 
-        //export an stub service for dispatching event（todo @csy 此处的含义是什么？）
+        //export an stub service for dispatching event
         Boolean isStubSupportEvent = url.getParameter(STUB_EVENT_KEY, DEFAULT_STUB_EVENT);
         Boolean isCallbackservice = url.getParameter(IS_CALLBACK_SERVICE, false);
         if (isStubSupportEvent && !isCallbackservice) {
@@ -280,7 +280,7 @@ public class DubboProtocol extends AbstractProtocol {
                 }
             } else {
                 // server supports reset, use together with override
-                server.reset(url); //todo @csy 此处为什么要reset()
+                server.reset(url);
             }
         }
     }
@@ -317,7 +317,7 @@ public class DubboProtocol extends AbstractProtocol {
         return new DubboProtocolServer(server);
     }
 
-    private void optimizeSerialization(URL url) throws RpcException { //todo @csy-03-03 optimize：优化，哪里做了优化？
+    private void optimizeSerialization(URL url) throws RpcException {
         String className = url.getParameter(OPTIMIZER_KEY, "");
         if (StringUtils.isEmpty(className) || optimizers.contains(className)) {
             return;
@@ -338,7 +338,7 @@ public class DubboProtocol extends AbstractProtocol {
             }
 
             for (Class c : optimizer.getSerializableClasses()) {
-                SerializableClassRegistry.registerClass(c); //todo @csy 此处的用途是什么？
+                SerializableClassRegistry.registerClass(c);
             }
 
             optimizers.add(className);

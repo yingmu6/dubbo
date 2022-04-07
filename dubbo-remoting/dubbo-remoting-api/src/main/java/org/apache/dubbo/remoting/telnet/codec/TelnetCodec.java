@@ -39,15 +39,15 @@ import static org.apache.dubbo.remoting.Constants.DEFAULT_CHARSET;
 /**
  * TelnetCodec
  */
-public class TelnetCodec extends TransportCodec { //todo @csy-001 该类的编解码是telnet命令时使用到的吗？
+public class TelnetCodec extends TransportCodec {
 
     private static final Logger logger = LoggerFactory.getLogger(TelnetCodec.class);
 
-    private static final String HISTORY_LIST_KEY = "telnet.history.list"; //todo @csy-02-25 此处的命令，能获取到历史指令吗？怎么做存储的？
+    private static final String HISTORY_LIST_KEY = "telnet.history.list";
 
     private static final String HISTORY_INDEX_KEY = "telnet.history.index";
 
-    private static final byte[] UP = new byte[] {27, 91, 65}; //todo @csy-02-05 up、down是什么指令？是指上、下切换键吗？
+    private static final byte[] UP = new byte[] {27, 91, 65};
 
     private static final byte[] DOWN = new byte[] {27, 91, 66};
 
@@ -55,12 +55,12 @@ public class TelnetCodec extends TransportCodec { //todo @csy-001 该类的编�
             new byte[] {'\r', '\n'} /* Windows Enter */,
             new byte[] {'\n'} /* Linux Enter */);
 
-    private static final List<?> EXIT = Arrays.asList( //todo @csy-02-25 这些退出键对应的ASCII值是怎样的？怎么与如下的数组中的内容对应的？
+    private static final List<?> EXIT = Arrays.asList(
             new byte[] {3} /* Windows Ctrl+C */,
             new byte[] {-1, -12, -1, -3, 6} /* Linux Ctrl+C */,
             new byte[] {-1, -19, -1, -3, 6} /* Linux Pause */);
 
-    private static Charset getCharset(Channel channel) { //todo @csy 此处是怎么获取到字符集的？
+    private static Charset getCharset(Channel channel) {
         if (channel != null) {
             Object attribute = channel.getAttribute(CHARSET_KEY); //获取配置的字符集名称
             if (attribute instanceof String) { //判断是String类型还是Charset类型
@@ -95,7 +95,7 @@ public class TelnetCodec extends TransportCodec { //todo @csy-001 该类的编�
     private static String toString(byte[] message, Charset charset) throws UnsupportedEncodingException {
         byte[] copy = new byte[message.length];
         int index = 0;
-        for (int i = 0; i < message.length; i++) { //todo @csy-02-25 此处的处理逻辑是将字节数组转换为字符串吗？为啥不能直接转换，有何种自定义场景？
+        for (int i = 0; i < message.length; i++) {
             byte b = message[i];
             if (b == '\b') { // backspace
                 if (index > 0) {
@@ -136,7 +136,7 @@ public class TelnetCodec extends TransportCodec { //todo @csy-001 该类的编�
             return false;
         }
         int offset = message.length - command.length;
-        for (int i = command.length - 1; i >= 0; i--) { //todo @csy-02-25 此处的实现逻辑是怎样的？
+        for (int i = command.length - 1; i >= 0; i--) {
             if (message[offset + i] != command[i]) {
                 return false;
             }
@@ -164,13 +164,7 @@ public class TelnetCodec extends TransportCodec { //todo @csy-001 该类的编�
         buffer.readBytes(message);
         return decode(channel, buffer, readable, message);
     }
-
-    /**
-     * todo @csy-03-03
-     * 1）解码的总体逻辑是怎样的？
-     * 2）怎么使用魔法数来处理半包、粘包的？
-     * 3）多个包传输时，是否有先后顺序，怎么确定是同一次请求的包？
-     */
+    
     @SuppressWarnings("unchecked")
     protected Object decode(Channel channel, ChannelBuffer buffer, int readable, byte[] message) throws IOException {
         if (isClientSide(channel)) {
@@ -182,7 +176,7 @@ public class TelnetCodec extends TransportCodec { //todo @csy-001 该类的编�
         }
 
         if (message[message.length - 1] == '\b') { // Windows backspace echo
-            try { //todo @csy-02-25 此处为啥要处理windows的字符？处理逻辑又是怎样的？
+            try {
                 boolean doublechar = message.length >= 3 && message[message.length - 3] < 0; // double byte char
                 channel.send(new String(doublechar ? new byte[] {32, 32, 8, 8} : new byte[] {32, 8}, getCharset(channel).name()));
             } catch (RemotingException e) {
@@ -213,7 +207,7 @@ public class TelnetCodec extends TransportCodec { //todo @csy-001 该类的编�
             if (index == null) {
                 index = history.size() - 1;
             } else {
-                if (up) { //todo @csy-02-25 待调试，了解此处的逻辑？
+                if (up) {
                     index = index - 1;
                     if (index < 0) {
                         index = history.size() - 1;
@@ -225,7 +219,7 @@ public class TelnetCodec extends TransportCodec { //todo @csy-001 该类的编�
                     }
                 }
             }
-            if (old == null || !old.equals(index)) { //todo @csy-02-25 待调试，了解处理逻辑
+            if (old == null || !old.equals(index)) {
                 channel.setAttribute(HISTORY_INDEX_KEY, index);
                 String value = history.get(index);
                 if (old != null && old >= 0 && old < history.size()) {
@@ -283,7 +277,7 @@ public class TelnetCodec extends TransportCodec { //todo @csy-001 该类的编�
             }
         }
         String result = toString(message, getCharset(channel));
-        if (result.trim().length() > 0) { //todo @csy-02-25 历史记录指令待调试分析逻辑？
+        if (result.trim().length() > 0) {
             if (history == null) {
                 history = new LinkedList<String>();
                 channel.setAttribute(HISTORY_LIST_KEY, history);

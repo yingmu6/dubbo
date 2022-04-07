@@ -40,7 +40,7 @@ public class LocalHostPermitHandler extends ChannelHandlerAdapter {
             if (!((InetSocketAddress) ctx.channel().remoteAddress()).getAddress().isLoopbackAddress()) {
                 ByteBuf cb = Unpooled.wrappedBuffer((QosConstants.BR_STR + "Foreign Ip Not Permitted."
                         + QosConstants.BR_STR).getBytes());
-                ctx.writeAndFlush(cb).addListener(ChannelFutureListener.CLOSE); //todo @csy 此处的监听器ChannelFutureListener用途是怎样的？
+                ctx.writeAndFlush(cb).addListener(ChannelFutureListener.CLOSE);
             }
         }
     }

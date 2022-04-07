@@ -36,7 +36,7 @@ public class StringUtilsTest {
     }
 
     @Test
-    public void testRepeat() throws Exception { //todo @csy-02-25 待调试StringUtils功能
+    public void testRepeat() throws Exception {
         assertThat(StringUtils.repeat(null, 2), nullValue());
         assertThat(StringUtils.repeat("", 0), equalTo(""));
         assertThat(StringUtils.repeat("", 2), equalTo(""));

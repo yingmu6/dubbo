@@ -29,10 +29,6 @@ import static org.apache.dubbo.common.constants.CommonConstants.$INVOKE_ASYNC;
  *
  */
 public class MethodDescriptor {//方法的描述信息
-    /**
-     * todo @csy-03-01
-     * 1）MethodDescriptor与反射机制的Method有何区别？使用自定义的数据模型，是为了减少反射的调用吗？
-     */
 
     private final Method method;
     //    private final boolean isCallBack;

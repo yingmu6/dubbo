@@ -39,7 +39,7 @@ public class FutureAdapter<V> extends CompletableFuture<V> {
                 }
                 this.completeExceptionally(t);
             } else {
-                if (appResponse.hasException()) { //todo @csy-02-28 此处的异常判断与t != null有啥区别？
+                if (appResponse.hasException()) {
                     this.completeExceptionally(appResponse.getException());
                 } else {
                     this.complete((V) appResponse.getValue());

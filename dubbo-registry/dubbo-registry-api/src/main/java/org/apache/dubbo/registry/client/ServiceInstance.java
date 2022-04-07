@@ -81,7 +81,7 @@ public interface ServiceInstance extends Serializable {
      *
      * @return non-null, mutable and unsorted {@link Map}
      */
-    Map<String, String> getMetadata(); //todo @csy-03-25 此处的元数据都有哪些？
+    Map<String, String> getMetadata();
 
     /**
      * Get the value of metadata by the specified name

@@ -43,7 +43,7 @@ public class TaskQueue<R extends Runnable> extends LinkedBlockingQueue<Runnable>
     }
 
     @Override
-    public boolean offer(Runnable runnable) { //todo @csy 任务的执行逻辑是怎样的？
+    public boolean offer(Runnable runnable) {
         if (executor == null) {
             throw new RejectedExecutionException("The task queue does not have executor!");
         }

@@ -32,7 +32,7 @@ import java.util.List;
  * @since 2.7.5
  */
 @SPI
-public interface SubscribedURLsSynthesizer extends Prioritized { //todo @csy-03-25 该接口的用途是什么？
+public interface SubscribedURLsSynthesizer extends Prioritized {
 
     /**
      * Supports the synthesis of the subscribed {@link URL URLs} or not

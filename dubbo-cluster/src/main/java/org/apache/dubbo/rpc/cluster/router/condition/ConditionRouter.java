@@ -155,7 +155,7 @@ public class ConditionRouter extends AbstractRouter {
 
     @Override
     public <T> List<Invoker<T>> route(List<Invoker<T>> invokers, URL url, Invocation invocation)
-            throws RpcException { //todo @csy 条件路由待了解以及使用
+            throws RpcException {
         if (!enabled) {
             return invokers;
         }
@@ -228,7 +228,7 @@ public class ConditionRouter extends AbstractRouter {
                     sampleValue = sample.get(key);
                 }
             }
-            if (sampleValue != null) { //todo @csy 此处的比较逻辑是什么？
+            if (sampleValue != null) {
                 if (!matchPair.getValue().isMatch(sampleValue, param)) {
                     return false;
                 } else {

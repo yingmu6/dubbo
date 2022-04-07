@@ -82,8 +82,8 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
     private Protocol protocol; // Initialization at the time of injection, the assertion is not null
     private Registry registry; // Initialization at the time of injection, the assertion is not null
     private volatile boolean forbidden = false;
-    private boolean shouldRegister; //todo @csy 同下问题？
-    private boolean shouldSimplified; //todo @csy 该属性的功能用途是什么？
+    private boolean shouldRegister;
+    private boolean shouldSimplified;
 
     private volatile URL overrideDirectoryUrl; // Initialization at construction time, assertion not null, and always assign non null value
 
@@ -574,14 +574,14 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
                     ", please check status of providers(disabled, not registered or in blacklist).");
         }
 
-        if (multiGroup) { //todo @csy multiGroup 是指什么？处理逻辑是怎样的？
+        if (multiGroup) {
             return this.invokers == null ? Collections.emptyList() : this.invokers;
         }
 
         List<Invoker<T>> invokers = null;
         try {
             // Get invokers from cache, only runtime routers will be executed.
-            invokers = routerChain.route(getConsumerUrl(), invocation); //todo @csy 怎么从注册中心拿到invokers列表
+            invokers = routerChain.route(getConsumerUrl(), invocation);
         } catch (Throwable t) {
             logger.error("Failed to execute router: " + getUrl() + ", cause: " + t.getMessage(), t);
         }
@@ -626,7 +626,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
         Map<String, Invoker<T>> localUrlInvokerMap = urlInvokerMap;
         if (localUrlInvokerMap != null && localUrlInvokerMap.size() > 0) {
             for (Invoker<T> invoker : new ArrayList<>(localUrlInvokerMap.values())) {
-                if (invoker.isAvailable()) { //todo @csy 此处Invoker为啥是InvokerDelegate
+                if (invoker.isAvailable()) {
                     return true;
                 }
             }

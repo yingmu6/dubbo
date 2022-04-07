@@ -32,7 +32,7 @@ import static org.apache.dubbo.common.utils.StringUtils.isEmpty;
  *
  * @export
  */
-public class MetadataReportConfig extends AbstractConfig { //todo @csy 元数据上报，是指与元数据中心交互的数据模型吗？
+public class MetadataReportConfig extends AbstractConfig {
 
     private static final long serialVersionUID = 55233L;
     /**

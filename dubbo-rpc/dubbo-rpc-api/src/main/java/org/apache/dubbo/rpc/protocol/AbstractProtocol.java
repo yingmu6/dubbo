@@ -93,18 +93,13 @@ public abstract class AbstractProtocol implements Protocol {
         }
     }
 
-    /**
-     * todo @csy-03-03
-     * 1）引用方法只是为了创建一个引用的代理对象吗？
-     * 2）什么时候才执行远程调用，是执行Invoker中的invoke时候吗？
-     */
 
     @Override
     public <T> Invoker<T> refer(Class<T> type, URL url) throws RpcException {
         return new AsyncToSyncInvoker<>(protocolBindingRefer(type, url));
     }
 
-    protected abstract <T> Invoker<T> protocolBindingRefer(Class<T> type, URL url) throws RpcException; //todo @csy 协议绑定引用是指什么？
+    protected abstract <T> Invoker<T> protocolBindingRefer(Class<T> type, URL url) throws RpcException;
 
     public Map<String, Exporter<?>> getExporterMap() {
         return exporterMap;

@@ -34,7 +34,7 @@ public class ByteBufferBackedChannelBuffer extends AbstractChannelBuffer { //jav
         }
 
         this.buffer = buffer.slice();
-        capacity = buffer.remaining(); //todo @csy java中的ByteBuffer的功能待了解
+        capacity = buffer.remaining();
         writerIndex(capacity);
     }
 
@@ -200,7 +200,7 @@ public class ByteBufferBackedChannelBuffer extends AbstractChannelBuffer { //jav
 
 
     @Override
-    public int setBytes(int index, InputStream in, int length) throws IOException { //todo @csy 该处的逻辑是什么？
+    public int setBytes(int index, InputStream in, int length) throws IOException {
         int readBytes = 0;
 
         if (buffer.hasArray()) {

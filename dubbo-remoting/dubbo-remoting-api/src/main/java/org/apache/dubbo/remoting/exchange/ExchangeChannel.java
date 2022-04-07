@@ -65,7 +65,6 @@ public interface ExchangeChannel extends Channel {
      * @return response future
      * @throws RemotingException
      */
-    // todo @csy-03-03 与Endpoint中的send方法有何区别？
     CompletableFuture<Object> request(Object request, int timeout, ExecutorService executor) throws RemotingException;
 
     /**

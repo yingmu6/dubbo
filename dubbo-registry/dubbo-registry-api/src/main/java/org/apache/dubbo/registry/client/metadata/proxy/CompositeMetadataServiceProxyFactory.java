@@ -49,12 +49,7 @@ public class CompositeMetadataServiceProxyFactory extends BaseMetadataServicePro
         );
         return metadataService;
     }
-
-    /**
-     * todo @csy-03-25
-     * 1）InvocationHandler的功能用途是啥？
-     * 2）MetadataServiceInvocationHandler的功能用途是啥？
-     */
+    
     static class MetadataServiceInvocationHandler implements InvocationHandler {
 
         private final ServiceInstance serviceInstance;

@@ -26,11 +26,6 @@ import java.util.NoSuchElementException;
 public interface Configuration { //配置接口，可以获取各种类型的配置值
 
     /**
-     * todo @csy-02-28 此处是配置中心提供的接口吗？怎么与配置中心进行关联的？类图与数据结构待整理
-     */
-
-
-    /**
      * Get a string associated with the given configuration key.
      *
      * @param key The configuration key.

@@ -77,14 +77,14 @@ public class DubboCodec extends ExchangeCodec {
                     Object data;
                     if (res.isEvent()) { //若是事件的话，按事件进行解析
                         ObjectInput in = CodecSupport.deserialize(channel.getUrl(), is, proto);
-                        data = decodeEventData(channel, in); //todo @csy-002 都有哪些事件的？
+                        data = decodeEventData(channel, in);
                     } else {
                         DecodeableRpcResult result;
                         if (channel.getUrl().getParameter(DECODE_IN_IO_THREAD_KEY, DEFAULT_DECODE_IN_IO_THREAD)) {
                             result = new DecodeableRpcResult(channel, res, is,
                                     (Invocation) getRequestData(id), proto);
                             result.decode();
-                        } else { //todo @csy-02-25 此处为啥会处理DecodeableRpcResult？
+                        } else {
                             result = new DecodeableRpcResult(channel, res,
                                     new UnsafeByteArrayInputStream(readMessageData(is)),
                                     (Invocation) getRequestData(id), proto);
@@ -122,7 +122,7 @@ public class DubboCodec extends ExchangeCodec {
                     if (channel.getUrl().getParameter(DECODE_IN_IO_THREAD_KEY, DEFAULT_DECODE_IN_IO_THREAD)) {
                         inv = new DecodeableRpcInvocation(channel, req, is, proto);
                         inv.decode();
-                    } else { //todo @csy-02-25 此处为啥会处理DecodeableRpcInvocation，用途是什么？
+                    } else {
                         inv = new DecodeableRpcInvocation(channel, req,
                                 new UnsafeByteArrayInputStream(readMessageData(is)), proto);
                     }

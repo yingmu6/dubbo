@@ -46,10 +46,6 @@ import java.util.Set;
 public class InternalThreadLocal<V> { //是怎么对ThreadLocal进行封装的？解：在InternalThreadLocalMap中维护ThreadLocal的数据
 
     /**
-     * todo @csy-03-01 比较下ThreadLocal的数据结构？理解为啥InternalThreadLocal的性能高于ThreadLocal
-     */
-
-    /**
      * 在Java中，ThreadLocal是实现线程安全的一种手段，它的作用是对于同一个ThreadLocal变量，在每一个线程中都有一个副本，当修改任何一个线程的变量时，不会影响到其他线程。
      * 它通过在每一个Thread中存储一个类似于map的结构，以ThreadLocal变量为key，变量值为value。
      * <p>
@@ -80,7 +76,7 @@ public class InternalThreadLocal<V> { //是怎么对ThreadLocal进行封装的�
         try {
             Object v = threadLocalMap.indexedVariable(VARIABLES_TO_REMOVE_INDEX);
             if (v != null && v != InternalThreadLocalMap.UNSET) {
-                Set<InternalThreadLocal<?>> variablesToRemove = (Set<InternalThreadLocal<?>>) v; //todo @csy-03-01 此处对象v怎么能转为set集合？
+                Set<InternalThreadLocal<?>> variablesToRemove = (Set<InternalThreadLocal<?>>) v;
                 InternalThreadLocal<?>[] variablesToRemoveArray =
                         variablesToRemove.toArray(new InternalThreadLocal[variablesToRemove.size()]);
                 for (InternalThreadLocal<?> tlv : variablesToRemoveArray) {

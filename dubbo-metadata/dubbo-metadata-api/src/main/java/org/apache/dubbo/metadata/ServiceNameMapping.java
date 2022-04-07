@@ -30,7 +30,7 @@ import static org.apache.dubbo.common.extension.ExtensionLoader.getExtensionLoad
  * @since 2.7.5
  */
 @SPI("default")
-public interface ServiceNameMapping extends Prioritized { //todo @csy 服务名称映射是指啥？该接口的功能用途是啥？
+public interface ServiceNameMapping extends Prioritized {
 
     /**
      * Map the specified Dubbo service interface, group, version and protocol to current Dubbo service name

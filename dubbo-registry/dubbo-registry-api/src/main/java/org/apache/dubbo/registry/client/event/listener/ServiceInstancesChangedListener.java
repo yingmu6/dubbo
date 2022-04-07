@@ -30,10 +30,6 @@ import java.util.Objects;
  */
 public abstract class ServiceInstancesChangedListener implements ConditionalEventListener<ServiceInstancesChangedEvent> {
 
-    /**
-     * todo @csy-03-25 该类的功能用途是什么？哪里使用到的？
-     */
-
     private final String serviceName;
 
     protected ServiceInstancesChangedListener(String serviceName) {

@@ -22,12 +22,7 @@ import org.apache.dubbo.common.extension.SPI;
 
 @SPI
 public interface RegistryServiceListener {
-
-    /**
-     * todo @csy-03-22 该接口有实际用到吗？为什么看到的两个实现类都是test包下的？
-     * 是不是实现类为匿名类或动态代理类？
-     */
-
+    
     default void onRegister(URL url) {
 
     }

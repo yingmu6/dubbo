@@ -39,7 +39,7 @@ import static org.apache.dubbo.rpc.Constants.TOKEN_KEY;
 /**
  * DubboInvoker
  */
-public class DubboInvoker<T> extends AbstractInvoker<T> { //todo @csy-02-28 DubboInvoker是怎样和netty关联起来的
+public class DubboInvoker<T> extends AbstractInvoker<T> {
 
     private final ExchangeClient[] clients;
 
@@ -49,7 +49,7 @@ public class DubboInvoker<T> extends AbstractInvoker<T> { //todo @csy-02-28 Dubb
 
     private final ReentrantLock destroyLock = new ReentrantLock();
 
-    private final Set<Invoker<?>> invokers; //todo @csy-03-03 为啥维护的是invoker集合？都是什么内容？
+    private final Set<Invoker<?>> invokers;
 
     public DubboInvoker(Class<T> serviceType, URL url, ExchangeClient[] clients) {
         this(serviceType, url, clients, null);
@@ -74,19 +74,19 @@ public class DubboInvoker<T> extends AbstractInvoker<T> { //todo @csy-02-28 Dubb
         if (clients.length == 1) {
             currentClient = clients[0];
         } else {
-            currentClient = clients[index.getAndIncrement() % clients.length]; //todo @csy-03-01 此处为啥取模运算，调用不经过路由策略以及负载均衡吗？
+            currentClient = clients[index.getAndIncrement() % clients.length];
         }
         try {
             boolean isOneway = RpcUtils.isOneway(getUrl(), invocation);
             int timeout = calculateTimeout(invocation, methodName);
-            if (isOneway) { //todo @csy-03-03 单向和双向的区别是否只是返回结果的接收吗？
+            if (isOneway) {
                 boolean isSent = getUrl().getMethodParameter(methodName, Constants.SENT_KEY, false);
-                currentClient.send(inv, isSent); //todo @csy-02-28 单方向调用时，只发送消息吗？是哪里接收消息的？
+                currentClient.send(inv, isSent);
                 return AsyncRpcResult.newDefaultAsyncResult(invocation);
             } else {
                 ExecutorService executor = getCallbackExecutor(getUrl(), inv);
                 CompletableFuture<AppResponse> appResponseFuture =
-                        currentClient.request(inv, timeout, executor).thenApply(obj -> (AppResponse) obj); //todo @csy-02-28 此处的异步调用是怎样的？与提供者是怎样交互的？
+                        currentClient.request(inv, timeout, executor).thenApply(obj -> (AppResponse) obj);
                 // save for 2.6.x compatibility, for example, TraceFilter in Zipkin uses com.alibaba.xxx.FutureAdapter
                 FutureContext.getContext().setCompatibleFuture(appResponseFuture);
                 AsyncRpcResult result = new AsyncRpcResult(appResponseFuture, inv);
@@ -108,7 +108,7 @@ public class DubboInvoker<T> extends AbstractInvoker<T> { //todo @csy-02-28 Dubb
         for (ExchangeClient client : clients) { //客户端是连接者的，且不是只读的
             if (client.isConnected() && !client.hasAttribute(Constants.CHANNEL_ATTRIBUTE_READONLY_KEY)) {
                 //cannot write == not Available ?
-                return true; //todo @csy 是怎样判断是否连接的？
+                return true;
             }
         }
         return false;
@@ -149,7 +149,7 @@ public class DubboInvoker<T> extends AbstractInvoker<T> { //todo @csy-02-28 Dubb
     private int calculateTimeout(Invocation invocation, String methodName) {
         Object countdown = RpcContext.getContext().get(TIME_COUNTDOWN_KEY);
         int timeout = DEFAULT_TIMEOUT;
-        if (countdown == null) { //todo @csy-03-03 这里的超时时间，不考虑优先级覆盖吗？
+        if (countdown == null) {
             timeout = (int) RpcUtils.getTimeout(getUrl(), methodName, RpcContext.getContext(), DEFAULT_TIMEOUT);
             if (getUrl().getParameter(ENABLE_TIMEOUT_COUNTDOWN_KEY, false)) {
                 invocation.setObjectAttachment(TIMEOUT_ATTACHMENT_KEY, timeout); // pass timeout to remote server

@@ -41,7 +41,7 @@ import static org.apache.dubbo.remoting.utils.UrlUtils.getIdleTimeout;
 /**
  * DefaultMessageClient
  */
-public class HeaderExchangeClient implements ExchangeClient { //todo @csy header包下的主要功能是什么？
+public class HeaderExchangeClient implements ExchangeClient {
 
     private final Client client;
     private final ExchangeChannel channel;
@@ -194,7 +194,7 @@ public class HeaderExchangeClient implements ExchangeClient { //todo @csy header
         }
     }
 
-    private void startReconnectTask(URL url) { //todo @csy 都在什么场景下会调用的？
+    private void startReconnectTask(URL url) {
         if (shouldReconnect(url)) {
             AbstractTimerTask.ChannelProvider cp = () -> Collections.singletonList(HeaderExchangeClient.this);
             int idleTimeout = getIdleTimeout(url);

@@ -28,7 +28,7 @@ import java.util.List;
  *
  * @export
  */
-public class ModuleConfig extends AbstractConfig { //todo @csy 模块配置指什么信息？
+public class ModuleConfig extends AbstractConfig {
 
     private static final long serialVersionUID = 5508512956753757169L;
 

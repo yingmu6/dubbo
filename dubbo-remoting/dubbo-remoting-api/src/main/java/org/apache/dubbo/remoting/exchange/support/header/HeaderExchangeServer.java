@@ -252,7 +252,7 @@ public class HeaderExchangeServer implements ExchangeServer {
         }
     }
 
-    private void startIdleCheckTask(URL url) { //todo @csy 启动空闲检查任务是指啥？
+    private void startIdleCheckTask(URL url) {
         if (!server.canHandleIdle()) {
             AbstractTimerTask.ChannelProvider cp = () -> unmodifiableCollection(HeaderExchangeServer.this.getChannels());
             int idleTimeout = getIdleTimeout(url);

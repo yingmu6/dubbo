@@ -42,7 +42,7 @@ import static org.apache.dubbo.rpc.protocol.dubbo.Constants.*;
 /**
  * callback service helper
  */
-class CallbackServiceCodec { //todo @csy-02-25 为啥会回调编码？
+class CallbackServiceCodec {
     private static final Logger logger = LoggerFactory.getLogger(CallbackServiceCodec.class);
 
     private static final ProxyFactory PROXY_FACTORY = ExtensionLoader.getExtensionLoader(ProxyFactory.class).getAdaptiveExtension();
@@ -69,7 +69,6 @@ class CallbackServiceCodec { //todo @csy-02-25 为啥会回调编码？
     }
 
     /**
-     * todo @csy-02-25 该方法的功能用途是什么？
      * export or unexport callback service on client side
      * （在客户端暴露或取消暴露的服务）
      *
@@ -113,7 +112,7 @@ class CallbackServiceCodec { //todo @csy-02-25 为啥会回调编码？
         // no need to generate multiple exporters for different channel in the same JVM, cache key cannot collide（冲突）.
         String cacheKey = getClientSideCallbackServiceCacheKey(instid);
         String countKey = getClientSideCountKey(clazz.getName());
-        if (export) { //todo @csy-02-25 此处暴露和取消暴露都做了啥？
+        if (export) {
             // one channel can have multiple callback instances, no need to re-export for different instance.
             if (!channel.hasAttribute(cacheKey)) {
                 if (!isInstancesOverLimit(channel, url, clazz.getName(), instid, false)) { //在没有超过实例限制数时，将服务暴露，并且增加实例数目
@@ -262,7 +261,7 @@ class CallbackServiceCodec { //todo @csy-02-25 为啥会回调编码？
         byte callbackStatus = isCallBack(url, inv.getMethodName(), paraIndex);
         Object[] args = inv.getArguments();
         Class<?>[] pts = inv.getParameterTypes();
-        switch (callbackStatus) { //todo @csy 此处处理的逻辑是怎样的？
+        switch (callbackStatus) {
             case CallbackServiceCodec.CALLBACK_CREATE:
                 inv.setAttachment(INV_ATT_CALLBACK_KEY + paraIndex, exportOrUnexportCallbackService(channel, url, pts[paraIndex], args[paraIndex], true));
                 return null;

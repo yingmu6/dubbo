@@ -72,7 +72,7 @@ public class ReferenceBean<T> extends ReferenceConfig<T> implements FactoryBean,
      * Initializes there Dubbo's Config Beans before @Reference bean autowiring
      */
     private void prepareDubboConfigBeans() {
-        beansOfTypeIncludingAncestors(applicationContext, ApplicationConfig.class); //todo @csy beansOfTypeIncludingAncestors的功能用途是什么？
+        beansOfTypeIncludingAncestors(applicationContext, ApplicationConfig.class);
         beansOfTypeIncludingAncestors(applicationContext, ModuleConfig.class);
         beansOfTypeIncludingAncestors(applicationContext, RegistryConfig.class);
         beansOfTypeIncludingAncestors(applicationContext, ProtocolConfig.class);

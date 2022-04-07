@@ -115,7 +115,7 @@ public class ZookeeperMetadataReport extends AbstractMetadataReport {
         return zkClient.getContent(getNodePath(metadataIdentifier));
     }
 
-    private void storeMetadata(MetadataIdentifier metadataIdentifier, String v) { //todo @csy 是怎样创建元数据的？
+    private void storeMetadata(MetadataIdentifier metadataIdentifier, String v) {
         zkClient.create(getNodePath(metadataIdentifier), v, false);
     }
 

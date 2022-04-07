@@ -31,12 +31,6 @@ import org.apache.dubbo.remoting.exchange.support.header.HeaderExchanger;
  */
 @SPI(HeaderExchanger.NAME)
 public interface Exchanger { //Exchanger [ɪksˈtʃeɪndʒə(r)] n. 交换器；
-    /**
-     * todo @csy-03-03
-     * 1）都做了哪些交换？
-     * 2）该类的功能用途是什么？
-     * 3）实现类HeaderExchanger，头交换是指什么？
-     */
 
     /**
      * bind.

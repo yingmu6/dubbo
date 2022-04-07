@@ -35,7 +35,7 @@ import static org.apache.dubbo.metadata.MetadataConstants.EXPORTED_URLS_TAG;
  * @see AbstractMetadataReport
  * @since 2.7.8
  */
-public class ConfigCenterBasedMetadataReport extends AbstractMetadataReport { //todo @csy-03-25 此处为啥与配置中心关联的？
+public class ConfigCenterBasedMetadataReport extends AbstractMetadataReport {
 
     private final KeyTypeEnum keyType;
 

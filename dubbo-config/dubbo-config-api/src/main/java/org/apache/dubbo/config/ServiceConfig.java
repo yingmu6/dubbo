@@ -68,7 +68,6 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
      * 解答：
      * 1）在开发及测试环境下，经常需要绕过注册中心，只测试指定服务提供者，这时候可能需要点对点直连，点对点直连方式，将以服务接口为单位，忽略注册中心的提供者列表，A接口配置点对点，不影响B接口从注册中心获取列表。
      * 2）https://dubbo.apache.org/zh/docs/advanced/explicit-target/ 官方使用文档
-     * 3）todo @csy 直连方式的逻辑在哪里？原理是啥？
      */
 
     public static final Logger logger = LoggerFactory.getLogger(ServiceConfig.class);
@@ -280,7 +279,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
                 serviceMetadata
         );
 
-        List<URL> registryURLs = ConfigValidationUtils.loadRegistries(this, true); //todo @csy 会发起远程调用吗？
+        List<URL> registryURLs = ConfigValidationUtils.loadRegistries(this, true);
 
         for (ProtocolConfig protocolConfig : protocols) {
             String pathKey = URL.buildKey(getContextPath(protocolConfig)
@@ -343,7 +342,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
                                     if (methodName.equals(method.getName())) {
                                         Class<?>[] argtypes = methods[i].getParameterTypes();
                                         // one callback in the method
-                                        if (argument.getIndex() != -1) { //todo @csy 回调是怎么使用的？
+                                        if (argument.getIndex() != -1) {
                                             if (argtypes[argument.getIndex()].getName().equals(argument.getType())) {
                                                 AbstractConfig.appendParameters(map, argument, method.getName() + "." + argument.getIndex());
                                             } else {
@@ -351,7 +350,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
                                             }
                                         } else {
                                             // multiple callbacks in the method
-                                            for (int j = 0; j < argtypes.length; j++) { //todo @csy 多个回调是哪种场景，怎么使用的？
+                                            for (int j = 0; j < argtypes.length; j++) {
                                                 Class<?> argclazz = argtypes[j];
                                                 if (argclazz.getName().equals(argument.getType())) {
                                                     AbstractConfig.appendParameters(map, argument, method.getName() + "." + j);
@@ -364,7 +363,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
                                     }
                                 }
                             }
-                        } else if (argument.getIndex() != -1) { //todo @csy 此处判断的含义是什么？
+                        } else if (argument.getIndex() != -1) {
                             AbstractConfig.appendParameters(map, argument, method.getName() + "." + argument.getIndex());
                         } else {
                             throw new IllegalArgumentException("Argument config must set index or type attribute.eg: <dubbo:argument index='0' .../> or <dubbo:argument type=xxx .../>");
@@ -400,7 +399,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
             token = provider.getToken();
         }
 
-        if (!ConfigUtils.isEmpty(token)) { //todo @csy token的功能用途是怎样的？
+        if (!ConfigUtils.isEmpty(token)) {
             if (ConfigUtils.isDefault(token)) {
                 map.put(TOKEN_KEY, UUID.randomUUID().toString()); //默认产生的token是uuid值
             } else {
@@ -413,7 +412,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
         // export service
         String host = findConfigedHosts(protocolConfig, registryURLs, map);
         Integer port = findConfigedPorts(protocolConfig, name, map);
-        URL url = new URL(name, host, port, getContextPath(protocolConfig).map(p -> p + "/" + path).orElse(path), map); //构建URL，todo @csy 此处的URL内容会是怎样的？
+        URL url = new URL(name, host, port, getContextPath(protocolConfig).map(p -> p + "/" + path).orElse(path), map); //构建URL
 
         // You can customize Configurator to append extra parameters
         if (ExtensionLoader.getExtensionLoader(ConfiguratorFactory.class)
@@ -453,7 +452,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
                         }
 
                         // For providers, this is used to enable custom proxy to generate invoker
-                        String proxy = url.getParameter(PROXY_KEY); //todo @csy 这里的值，具体会是什么？
+                        String proxy = url.getParameter(PROXY_KEY);
                         if (StringUtils.isNotEmpty(proxy)) {
                             registryURL = registryURL.addParameter(PROXY_KEY, proxy);
                         }
@@ -464,7 +463,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
                         Exporter<?> exporter = PROTOCOL.export(wrapperInvoker);
                         exporters.add(exporter);
                     }
-                } else { //todo @csy registryURLs 什么情况下会为空？
+                } else {
                     if (logger.isInfoEnabled()) {
                         logger.info("Export dubbo service " + interfaceClass.getName() + " to url " + url);
                     }
@@ -689,7 +688,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
      * @param event an {@link Event event}
      * @since 2.7.5
      */
-    private void dispatch(Event event) { //todo @csy 此处的调度派发的用途是什么？
+    private void dispatch(Event event) {
         EventDispatcher.getDefaultExtension().dispatch(event);
     }
 

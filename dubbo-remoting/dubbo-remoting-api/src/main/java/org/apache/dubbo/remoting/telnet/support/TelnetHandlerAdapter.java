@@ -62,7 +62,6 @@ public class TelnetHandlerAdapter extends ChannelHandlerAdapter implements Telne
             if (extensionLoader.hasExtension(command)) { //将命令名作为SPI的扩展名
                 if (commandEnabled(channel.getUrl(), command)) {
                     try {
-                        // todo @csy-02-26 此处是怎么进入telnet执行的地方的？
                         String result = extensionLoader.getExtension(command).telnet(channel, message); //获取指定命令的实例，并将结果写到channel
                         if (result == null) {
                             return null;

@@ -26,7 +26,7 @@ import java.io.IOException;
 public interface Codec2 {
 
     /**
-     * todo @csy-001 编解码问题点
+     * 编解码问题点
      * 1）为啥需要编解码
      * <p>
      * 2）Codec2的继承关系是怎样的？
@@ -55,10 +55,7 @@ public interface Codec2 {
     void encode(Channel channel, ChannelBuffer buffer, Object message) throws IOException;
 
     @Adaptive({Constants.CODEC_KEY})
-    Object decode(Channel channel, ChannelBuffer buffer) throws IOException; //todo @csy-02-25 哪里进入编解码逻辑的？
-
-    // todo @csy-02-25 解码响应的结果要回执到哪里的？
-
+    Object decode(Channel channel, ChannelBuffer buffer) throws IOException;
 
     enum DecodeResult { //解码枚举
         NEED_MORE_INPUT, SKIP_SOME_INPUT

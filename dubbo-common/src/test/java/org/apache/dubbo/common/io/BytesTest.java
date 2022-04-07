@@ -32,7 +32,7 @@ public class BytesTest {
     private byte[] bytes2 = {3, 12, 14, 41, 12, 2, 3, 12, 4, 67};
 
     @Test
-    public void testMain() throws Exception { //todo @csy 待调试，加深了解Bytes中的位运算？
+    public void testMain() throws Exception {
         short s = (short) 0xabcd;
         assertThat(s, is(Bytes.bytes2short(Bytes.short2bytes(s))));
 

@@ -99,7 +99,7 @@ import static java.util.Optional.of;
  * @see ServiceDiscoveryDestroyedEvent
  * @since 2.7.5
  */
-final class EventPublishingServiceDiscovery implements ServiceDiscovery { //todo @csy-03-25 是怎么进行事件发布的？
+final class EventPublishingServiceDiscovery implements ServiceDiscovery {
 
     /**
      * @see ServiceInstancePreRegisteredEvent

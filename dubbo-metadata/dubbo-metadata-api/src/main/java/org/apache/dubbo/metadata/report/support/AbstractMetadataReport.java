@@ -91,10 +91,10 @@ public abstract class AbstractMetadataReport implements MetadataReport {
         metadataReportRetry = new MetadataReportRetry(reportServerURL.getParameter(RETRY_TIMES_KEY, DEFAULT_METADATA_REPORT_RETRY_TIMES),
                 reportServerURL.getParameter(RETRY_PERIOD_KEY, DEFAULT_METADATA_REPORT_RETRY_PERIOD));
         this.reportCacheExecutor = newSingleThreadExecutor(new NamedThreadFactory("DubboSaveMetadataReport", true));
-        this.cycleReportExecutor = newSingleThreadScheduledExecutor(new NamedThreadFactory("DubboMetadataReportTimer", true)); //todo @csy 了解下线程池的集中创建方式
+        this.cycleReportExecutor = newSingleThreadScheduledExecutor(new NamedThreadFactory("DubboMetadataReportTimer", true));
         // cycle report the data switch
         if (reportServerURL.getParameter(CYCLE_REPORT_KEY, DEFAULT_METADATA_REPORT_CYCLE_REPORT)) {
-            cycleReportExecutor.scheduleAtFixedRate(this::publishAll, calculateStartTime(), ONE_DAY_IN_MILLISECONDS, TimeUnit.MILLISECONDS); //todo @csy scheduleAtFixedRate 的功能用途是什么？
+            cycleReportExecutor.scheduleAtFixedRate(this::publishAll, calculateStartTime(), ONE_DAY_IN_MILLISECONDS, TimeUnit.MILLISECONDS);
         }
     }
 
@@ -107,7 +107,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
                 ".cache";
         String filename = reportServerURL.getParameter(FILE_KEY, defaultFilename);
         File file = null;
-        if (ConfigUtils.isNotEmpty(filename)) { //todo @csy 文件中都存储了什么内容？
+        if (ConfigUtils.isNotEmpty(filename)) {
             file = new File(filename);
             if (!file.exists() && file.getParentFile() != null && !file.getParentFile().exists()) {
                 if (!file.getParentFile().mkdirs()) {
@@ -246,7 +246,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
             failedReports.remove(providerMetadataIdentifier);
             Gson gson = new Gson();
             String data = gson.toJson(serviceDefinition); //JSON字符串，data数据如：{"parameters":{"application":"test-service","side":"provider"},"canonicalName":"org.apache.dubbo.rpc.service.EchoService","codeSource":"file:/Users/chenshengyong/self-db/dubbo/dubbo-common/target/classes/","methods":[{"name":"$echo","parameterTypes":["java.lang.Object"],"returnType":"java.lang.Object"}],"types":[{"type":"java.lang.Object","typeBuilderName":"org.apache.dubbo.metadata.definition.builder.DefaultTypeBuilder"}]}
-            doStoreProviderMetadata(providerMetadataIdentifier, data); //todo @csy 是怎样保存到元数据中心的？此处的抽象类是怎么选择实例的？
+            doStoreProviderMetadata(providerMetadataIdentifier, data);
             saveProperties(providerMetadataIdentifier, data, true, !syncReport); //元数据上报到元数据中心后，也会存储一份到本地文件中
         } catch (Exception e) {
             // retry again. If failed again, throw exception.
@@ -405,7 +405,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
                     if (retryScheduledFuture == null) {
                         retryScheduledFuture = retryExecutor.scheduleWithFixedDelay(new Runnable() {
                             @Override
-                            public void run() { //todo @csy 重试任务都做了啥？
+                            public void run() {
                                 // Check and connect to the metadata
                                 try {
                                     int times = retryCounter.incrementAndGet();

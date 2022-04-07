@@ -29,10 +29,7 @@ import static org.apache.dubbo.rpc.Constants.DEPRECATED_KEY;
  */
 @Activate(DEPRECATED_KEY)
 public class DeprecatedInvokerListener extends InvokerListenerAdapter { //引用弃用服务监听
-    /**
-     * todo @csy-02-28 SPI的实现类允许继承别的类吗？如此处的继承InvokerListenerAdapter
-     */
-
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(DeprecatedInvokerListener.class);
 
     @Override

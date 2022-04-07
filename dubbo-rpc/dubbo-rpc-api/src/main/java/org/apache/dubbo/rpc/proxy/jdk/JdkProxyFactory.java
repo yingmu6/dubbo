@@ -32,7 +32,7 @@ public class JdkProxyFactory extends AbstractProxyFactory {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T getProxy(Invoker<T> invoker, Class<?>[] interfaces) { //todo @csy jdk的获取Proxy方式待了解实践
+    public <T> T getProxy(Invoker<T> invoker, Class<?>[] interfaces) {
         /**
          * jdk方式创建代理
          * 1）获取类加载器Thread.currentThread().getContextClassLoader()

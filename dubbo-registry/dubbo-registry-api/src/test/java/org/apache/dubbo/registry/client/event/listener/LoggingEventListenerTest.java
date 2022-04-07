@@ -41,7 +41,7 @@ public class LoggingEventListenerTest {
     }
 
     @Test
-    public void testOnEvent() throws Exception { //todo @csy-03-25 待运行测试用例
+    public void testOnEvent() throws Exception {
 
         URL connectionURL = URL.valueOf("file:///Users/Home");
 

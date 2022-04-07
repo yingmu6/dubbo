@@ -29,7 +29,7 @@ import org.apache.dubbo.remoting.transport.dispatcher.WrappedChannelHandler;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
 
-public class AllChannelHandler extends WrappedChannelHandler { //todo @csy-02-26 所有通道处理器，是指的通道事件都会经过该类吗？
+public class AllChannelHandler extends WrappedChannelHandler {
 
     public AllChannelHandler(ChannelHandler handler, URL url) {
         super(handler, url);

@@ -67,7 +67,7 @@ public class ProtocolListenerWrapper implements Protocol {
 
     @Override
     public <T> Invoker<T> refer(Class<T> type, URL url) throws RpcException {
-        if (UrlUtils.isRegistry(url)) { //todo @csy-02-28 为啥要区分注册协议？有什么不同之处吗？
+        if (UrlUtils.isRegistry(url)) {
             return protocol.refer(type, url);
         }
         return new ListenerInvokerWrapper<T>(protocol.refer(type, url),

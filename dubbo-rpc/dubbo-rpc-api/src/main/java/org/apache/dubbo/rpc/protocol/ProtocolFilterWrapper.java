@@ -47,7 +47,7 @@ public class ProtocolFilterWrapper implements Protocol { //org.apache.dubbo.rpc.
         Invoker<T> last = invoker;
         List<Filter> filters = ExtensionLoader.getExtensionLoader(Filter.class).getActivateExtension(invoker.getUrl(), key, group);
 
-        if (!filters.isEmpty()) { //todo @csy-02-28 是采用头插法还是尾插法？怎样串联链表的
+        if (!filters.isEmpty()) {
             for (int i = filters.size() - 1; i >= 0; i--) { //从后往前遍历，最后一个就是头结点
                 final Filter filter = filters.get(i);
                 final Invoker<T> next = last;

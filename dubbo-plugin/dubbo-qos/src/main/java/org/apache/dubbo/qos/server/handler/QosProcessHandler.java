@@ -37,10 +37,6 @@ import java.util.concurrent.TimeUnit;
 
 public class QosProcessHandler extends ByteToMessageDecoder {
 
-    /**
-     * todo @csy Netty中的ByteToMessageDecoder功能用途是什么？
-     */
-
     private ScheduledFuture<?> welcomeFuture;
 
     private String welcome;
@@ -60,8 +56,8 @@ public class QosProcessHandler extends ByteToMessageDecoder {
 
             @Override
             public void run() {
-                if (welcome != null) { //todo @csy Unpooled的使用待了解？
-                    ctx.write(Unpooled.wrappedBuffer(welcome.getBytes())); //往通道中写入欢迎语， todo @csy 怎样才能看到欢迎语
+                if (welcome != null) {
+                    ctx.write(Unpooled.wrappedBuffer(welcome.getBytes())); //往通道中写入欢迎语
                     ctx.writeAndFlush(Unpooled.wrappedBuffer(PROMPT.getBytes()));
                 }
             }
@@ -76,7 +72,7 @@ public class QosProcessHandler extends ByteToMessageDecoder {
         }
 
         // read one byte to guess protocol
-        final int magic = in.getByte(in.readerIndex()); //todo @csy 为啥通过一个字节，就能判断协议？该字节是从哪里设置的？
+        final int magic = in.getByte(in.readerIndex());
 
         ChannelPipeline p = ctx.pipeline();
         p.addLast(new LocalHostPermitHandler(acceptForeignIp));

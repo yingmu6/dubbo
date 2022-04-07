@@ -25,7 +25,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.HEARTBEAT_EVENT;
 /**
  * Request.（包含请求id、版本version、是否双向通信mTwoWay、请求数据mData等）
  */
-public class Request { //todo @csy-02-26 Request是在什么时候用到的？
+public class Request {
 
     private static final AtomicLong INVOKE_ID = new AtomicLong(0);
 
@@ -37,7 +37,7 @@ public class Request { //todo @csy-02-26 Request是在什么时候用到的？
 
     private boolean mEvent = false;
 
-    private boolean mBroken = false; //todo @csy-02-26 mBroken的功能用途是什么？
+    private boolean mBroken = false;
 
     private Object mData;
 

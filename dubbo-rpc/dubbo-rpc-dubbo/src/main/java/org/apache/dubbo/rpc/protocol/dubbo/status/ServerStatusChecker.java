@@ -39,7 +39,7 @@ public class ServerStatusChecker implements StatusChecker {
     @Override
     public Status check() {
         List<ProtocolServer> servers = DubboProtocol.getDubboProtocol().getServers();
-        if (servers == null || servers.isEmpty()) { //todo @csy 为啥工作中启动应用后，会报服务检测失败
+        if (servers == null || servers.isEmpty()) {
             return new Status(Status.Level.UNKNOWN);
         }
         Status.Level level = Status.Level.OK;

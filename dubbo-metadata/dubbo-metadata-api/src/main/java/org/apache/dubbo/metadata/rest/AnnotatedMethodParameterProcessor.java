@@ -30,7 +30,7 @@ import java.lang.reflect.Parameter;
  * @since 2.7.6
  */
 @SPI
-public interface AnnotatedMethodParameterProcessor extends Prioritized { //todo @csy-03-25 此处的处理器功能用途是啥？
+public interface AnnotatedMethodParameterProcessor extends Prioritized {
     /**
      * The string presenting the annotation type
      *

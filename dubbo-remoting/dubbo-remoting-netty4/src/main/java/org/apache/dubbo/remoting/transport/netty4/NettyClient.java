@@ -45,10 +45,6 @@ import static org.apache.dubbo.remoting.transport.netty4.NettyEventLoopFactory.s
  * NettyClient.
  */
 public class NettyClient extends AbstractClient {
-    /**
-     * todo @csy-03-09
-     * 1）消费者发起调用时，是在哪里做数据转换，以及数据发送的？怎么使用Netty传输数据的？
-     */
 
     private static final Logger logger = LoggerFactory.getLogger(NettyClient.class);
     /**
@@ -87,7 +83,7 @@ public class NettyClient extends AbstractClient {
      * @throws Throwable
      */
     @Override
-    protected void doOpen() throws Throwable { //todo @csy-001 消费端发起连接都做了什么？
+    protected void doOpen() throws Throwable {
         final NettyClientHandler nettyClientHandler = new NettyClientHandler(getUrl(), this);
         bootstrap = new Bootstrap();
         bootstrap.group(NIO_EVENT_LOOP_GROUP)
@@ -98,7 +94,7 @@ public class NettyClient extends AbstractClient {
                 .channel(socketChannelClass());
 
         bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, Math.max(3000, getConnectTimeout()));
-        bootstrap.handler(new ChannelInitializer<SocketChannel>() { //todo @csy-001 客户端创建，都有哪些处理器
+        bootstrap.handler(new ChannelInitializer<SocketChannel>() {
 
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {

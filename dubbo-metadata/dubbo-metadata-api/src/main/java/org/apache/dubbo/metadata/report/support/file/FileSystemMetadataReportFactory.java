@@ -25,7 +25,6 @@ import org.apache.dubbo.metadata.report.support.ConfigCenterBasedMetadataReportF
  * @see ConfigCenterBasedMetadataReportFactory
  * @since 2.7.8
  */
-// todo @csy-03-25 此处为啥会有file文件处理？
 public class FileSystemMetadataReportFactory extends ConfigCenterBasedMetadataReportFactory {
 
     public FileSystemMetadataReportFactory() {

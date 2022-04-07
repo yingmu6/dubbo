@@ -28,7 +28,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.THREADPOOL_KEY;
  * ThreadPool
  */
 @SPI("fixed")
-public interface ThreadPool { //todo @csy 都有哪些实现类？
+public interface ThreadPool {
 
     /**
      * Thread pool

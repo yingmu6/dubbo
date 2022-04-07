@@ -89,7 +89,7 @@ public class FastJsonObjectOutput implements ObjectOutput {
     }
 
     @Override
-    public void writeObject(Object obj) throws IOException { //todo @csy PrintWriter、SerializeWriter是怎么关联的？为啥不直接序列化输出
+    public void writeObject(Object obj) throws IOException {
         SerializeWriter out = new SerializeWriter();
         JSONSerializer serializer = new JSONSerializer(out);
         serializer.config(SerializerFeature.WriteEnumUsingToString, true);
@@ -102,7 +102,7 @@ public class FastJsonObjectOutput implements ObjectOutput {
 
     @Override
     public void flushBuffer() throws IOException {
-        writer.flush(); //todo @csy-002 刷新流是什么？
+        writer.flush();
     }
 
 }

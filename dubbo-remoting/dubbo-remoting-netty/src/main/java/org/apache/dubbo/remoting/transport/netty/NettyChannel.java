@@ -36,7 +36,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.TIMEOUT_KEY;
 /**
  * NettyChannel.
  */
-final class NettyChannel extends AbstractChannel { //todo @csy-02-26 netty与netty4有何差异？
+final class NettyChannel extends AbstractChannel {
 
     private static final Logger logger = LoggerFactory.getLogger(NettyChannel.class);
 

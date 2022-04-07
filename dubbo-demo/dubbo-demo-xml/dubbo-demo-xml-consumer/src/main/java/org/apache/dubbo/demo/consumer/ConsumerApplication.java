@@ -34,11 +34,7 @@ public class ConsumerApplication {
 
         GreetingService greetingService = context.getBean("greetingService", GreetingService.class);
         System.out.println(greetingService.hello("GreetingService: 你好！"));
-
-        /**
-         * todo @csy 关掉网络时：为什么会连到7.73.171.162:20881，是查了本地缓存文件吗》
-         * Destroy reference: dubbo://7.73.171.162:20881/org.apache.dubbo.demo.GreetingService
-         */
+        
 
         // 泛化调用
 //        GenericService genericService = (GenericService) context.getBean("demoService");

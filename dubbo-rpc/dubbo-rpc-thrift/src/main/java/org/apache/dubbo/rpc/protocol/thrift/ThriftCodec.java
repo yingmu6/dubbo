@@ -77,7 +77,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.PATH_KEY;
  * @since 2.7.0, use https://github.com/dubbo/dubbo-rpc-native-thrift instead
  */
 @Deprecated
-public class ThriftCodec implements Codec2 { //todo @csy-02-26 Thrift协议的使用场景以及用途是怎样的？
+public class ThriftCodec implements Codec2 {
 
     /**
      * Dubbo 继承thrift协议
@@ -633,7 +633,7 @@ public class ThriftCodec implements Codec2 { //todo @csy-02-26 Thrift协议的�
         int headerLength;
 
         byte[] bytes = new byte[4];
-        try { //todo @csy-02-26 此处是处理协议的？
+        try {
             // magic
             protocol.writeI16(MAGIC);
             // message length

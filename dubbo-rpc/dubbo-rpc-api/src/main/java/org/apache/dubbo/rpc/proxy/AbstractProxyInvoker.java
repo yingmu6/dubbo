@@ -106,7 +106,7 @@ public abstract class AbstractProxyInvoker<T> implements Invoker<T> {
         } else if (value instanceof CompletableFuture) {
             return (CompletableFuture<Object>) value;
         }
-        return CompletableFuture.completedFuture(value); //todo @csy 此处为啥要用异步处理，是哪里处理比较耗时？
+        return CompletableFuture.completedFuture(value);
     }
 
     // 调用某个实例的某个方法

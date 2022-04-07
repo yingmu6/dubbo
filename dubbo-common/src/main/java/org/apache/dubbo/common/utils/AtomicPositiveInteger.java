@@ -22,7 +22,6 @@ public class AtomicPositiveInteger extends Number { //处理原子正整数
 
     private static final long serialVersionUID = -3038533876489105940L;
 
-    //todo @csy-03-03 此处的功能用途是什么
     private static final AtomicIntegerFieldUpdater<AtomicPositiveInteger> INDEX_UPDATER =
             AtomicIntegerFieldUpdater.newUpdater(AtomicPositiveInteger.class, "index");
 

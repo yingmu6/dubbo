@@ -23,7 +23,7 @@ import org.apache.dubbo.rpc.cluster.Directory;
 import java.util.List;
 
 @SPI
-public interface AddressListener { //todo @csy-03-22 该监听器的功能用途是什么？
+public interface AddressListener {
 
     /**
      * processing when receiving the address list

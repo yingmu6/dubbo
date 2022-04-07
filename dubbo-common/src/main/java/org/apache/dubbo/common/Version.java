@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 /**
  * Version
  */
-public final class Version { //todo @csy-02-25 版本的功能用途是什么？会做哪些方面的限制？
+public final class Version {
     private static final Logger logger = LoggerFactory.getLogger(Version.class);
 
     private static final Pattern PREFIX_DIGITS_PATTERN = Pattern.compile("^([0-9]*).*");
@@ -152,10 +152,7 @@ public final class Version { //todo @csy-02-25 版本的功能用途是什么？
         }
         return "";
     }
-
-    /**
-     * todo @csy 此处是怎么获取版本的？与Package又有什么关系？
-     */
+    
     public static String getVersion(Class<?> cls, String defaultVersion) {
         try {
             // find version info from MANIFEST.MF first

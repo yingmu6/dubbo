@@ -33,7 +33,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.*;
 public class FixedThreadPool implements ThreadPool { //Fixed：[fɪkst] adj. 固定的
 
     @Override
-    public Executor getExecutor(URL url) { //todo @csy 具体是指固定哪里的数目？
+    public Executor getExecutor(URL url) {
         String name = url.getParameter(THREAD_NAME_KEY, DEFAULT_THREAD_NAME);
         int threads = url.getParameter(THREADS_KEY, DEFAULT_THREADS);
         int queues = url.getParameter(QUEUES_KEY, DEFAULT_QUEUES);

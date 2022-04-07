@@ -21,7 +21,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.HEARTBEAT_EVENT;
 /**
  * Response（响应内容：包含响应状态、响应id、版本version、响应结果等）
  */
-public class Response { //todo @csy-02-25 响应的内容是怎么编码到Dubbo协议中的？
+public class Response {
 
     /**
      * ok. 响应状态值

@@ -30,9 +30,4 @@ public interface BaseCommand { //该命令的用途是啥？都有哪些的？�
      * https://dubbo.apache.org/zh/docs/references/qos/ 官网使用手册
      */
     String execute(CommandContext commandContext, String[] args);
-
-    /**
-     * todo @csy QOS问题点
-     * 1）当提供者关闭时，控制台会抛出"Connection closed by foreign host." ，这个信息是哪里打出来的？通道关闭事件，是哪里监听的？
-     */
 }

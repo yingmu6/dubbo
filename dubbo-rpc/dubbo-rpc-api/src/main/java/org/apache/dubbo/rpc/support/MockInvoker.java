@@ -200,7 +200,7 @@ final public class MockInvoker<T> implements Invoker<T> {
 
 
     /**
-     * Normalize mock string: todo @csy 待使用实践
+     * Normalize mock string:
      *
      * <ol>
      * <li>return => return null</li>

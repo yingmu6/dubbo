@@ -40,7 +40,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * <li>close server</li>
  * </ul>
  */
-public class Server { //服务端类，todo @csu-02-28 待画出数据结构及类图
+public class Server { //服务端类
 
     private static final Logger logger = LoggerFactory.getLogger(Server.class);
     private static final Server INSTANCE = new Server();
@@ -91,7 +91,7 @@ public class Server { //服务端类，todo @csu-02-28 待画出数据结构及�
         ServerBootstrap serverBootstrap = new ServerBootstrap();
         serverBootstrap.group(boss, worker);
         serverBootstrap.channel(NioServerSocketChannel.class);
-        serverBootstrap.option(ChannelOption.SO_REUSEADDR, true); //todo @csy ServerBootstrap 相关的属性待了解
+        serverBootstrap.option(ChannelOption.SO_REUSEADDR, true);
         serverBootstrap.childOption(ChannelOption.TCP_NODELAY, true);
         serverBootstrap.childHandler(new ChannelInitializer<Channel>() {
 

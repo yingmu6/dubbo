@@ -70,7 +70,7 @@ public class RpcInvocation implements Invocation, Serializable { //RpcInvocation
     /**
      * Passed to（传递给） the remote server during RPC call
      */
-    private Map<String, Object> attachments; //在RPC调用期间传递到远程服务器，todo @csy-03-01 什么时候设置到URL的参数中的？
+    private Map<String, Object> attachments; //在RPC调用期间传递到远程服务器
 
     /**
      * Only used on the caller side, will not appear on the wire（导线）.
@@ -81,7 +81,7 @@ public class RpcInvocation implements Invocation, Serializable { //RpcInvocation
 
     private transient Class<?> returnType;
 
-    private transient Type[] returnTypes; //todo @csy-03-01 为啥不包含返回值？
+    private transient Type[] returnTypes;
 
     private transient InvokeMode invokeMode; //调用模式
 

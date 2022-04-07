@@ -38,7 +38,7 @@ public class SpringCloudMetadataServiceURLBuilder implements MetadataServiceURLB
     public static final String NAME = "spring-cloud";
 
     @Override
-    public List<URL> build(ServiceInstance serviceInstance) { //todo @csy-03-25 此处是怎么适配spring cloud的？并没有看到spring cloud相关API
+    public List<URL> build(ServiceInstance serviceInstance) {
         Map<String, String> metadata = serviceInstance.getMetadata();
         String dubboURLsJSON = metadata.get(METADATA_SERVICE_URLS_PROPERTY_NAME);
         if (StringUtils.isBlank(dubboURLsJSON)) {

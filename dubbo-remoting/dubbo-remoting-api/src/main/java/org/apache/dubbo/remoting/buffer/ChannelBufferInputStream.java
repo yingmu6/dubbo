@@ -20,7 +20,7 @@ package org.apache.dubbo.remoting.buffer;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class ChannelBufferInputStream extends InputStream { //todo @csy 此处的输入流功能用途是什么？
+public class ChannelBufferInputStream extends InputStream {
 
     private final ChannelBuffer buffer;
     private final int startIndex;

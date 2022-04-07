@@ -23,7 +23,7 @@ import java.util.concurrent.CompletableFuture;
  *
  * @export
  */
-public interface GenericService {//泛化服务接口 todo @csy 泛化接口如何使用的？调用逻辑是怎样的？与普通调用有何不同？
+public interface GenericService {//泛化服务接口
 
     /**
      * Generic invocation

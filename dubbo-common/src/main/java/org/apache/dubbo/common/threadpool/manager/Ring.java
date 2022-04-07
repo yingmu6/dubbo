@@ -22,10 +22,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Ring<T> {
-    /**
-     * todo @csy 此处的功能用途是什么？
-     * ring：环形物、戒指、响声
-     */
 
     AtomicInteger count = new AtomicInteger();
 

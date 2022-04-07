@@ -199,7 +199,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
     }
 
     public synchronized void init() {
-        if (initialized) { //todo @csy 会不会有initialized=true，ref=null的情况吗？
+        if (initialized) {
             return;
         }
 
@@ -273,7 +273,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
 
         serviceMetadata.getAttachments().putAll(map);
 
-        ref = createProxy(map); //todo @csy 为啥是给map创建代理，而不是给接口创建代理？
+        ref = createProxy(map);
 
         serviceMetadata.setTarget(ref);
         serviceMetadata.addAttribute(PROXY_CLASS_REF, ref);
@@ -301,7 +301,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
             urls.clear();
             if (url != null && url.length() > 0) { // user specified URL, could be peer-to-peer address, or register center's address.
                 String[] us = SEMICOLON_SPLIT_PATTERN.split(url);
-                if (us != null && us.length > 0) { //todo @csy 此处是特定url，点对点通信吗？
+                if (us != null && us.length > 0) {
                     for (String u : us) {
                         URL url = URL.valueOf(u);
                         if (StringUtils.isEmpty(url.getPath())) {
@@ -377,7 +377,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
     }
 
     private void checkInvokerAvailable() throws IllegalStateException {
-        if (shouldCheck() && !invoker.isAvailable()) { //todo @csy invoker 此处的实例为什么是MockClusterInvoker？
+        if (shouldCheck() && !invoker.isAvailable()) {
             invoker.destroy();
             throw new IllegalStateException("Failed to check the status of the service "
                     + interfaceName
@@ -396,7 +396,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
      * This method should be called right after the creation of this class's instance, before any property in other config modules is used.
      * Check each config modules are created properly and override their properties if necessary.
      */
-    public void checkAndUpdateSubConfigs() { //todo @csy 该方法的主要含义是什么？
+    public void checkAndUpdateSubConfigs() {
         if (StringUtils.isEmpty(interfaceName)) {
             throw new IllegalStateException("<dubbo:reference interface=\"\" /> interface not allow null!");
         }

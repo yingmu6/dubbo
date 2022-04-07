@@ -34,9 +34,6 @@ import static org.apache.dubbo.metadata.rest.RestMetadataConstants.JAX_RS.*;
  * @since 2.7.6
  */
 public class JAXRSServiceRestMetadataResolver extends AbstractServiceRestMetadataResolver {
-    /**
-     * todo @csy-03-25 JAX-RS是指啥？
-     */
 
     @Override
     protected boolean supports0(Class<?> serviceType) {

@@ -34,7 +34,7 @@ import static org.apache.dubbo.rpc.Constants.*;
 /**
  * InjvmProtocol
  */
-public class InjvmProtocol extends AbstractProtocol implements Protocol { //todo @csy injvm是怎么进入过滤链的？
+public class InjvmProtocol extends AbstractProtocol implements Protocol {
 
     public static final String NAME = LOCAL_PROTOCOL;
 
@@ -106,7 +106,7 @@ public class InjvmProtocol extends AbstractProtocol implements Protocol { //todo
         } else if (url.getParameter(GENERIC_KEY, false)) { //泛化调用，属于远程调用，而不是本地调用
             // generic invocation is not local reference
             return false;
-        } else if (getExporter(exporterMap, url) != null) { //todo @csy 待调试下，看下exporterMap的数据是啥？
+        } else if (getExporter(exporterMap, url) != null) {
             // by default, go through local reference if there's the service exposed locally
             return true;
         } else {

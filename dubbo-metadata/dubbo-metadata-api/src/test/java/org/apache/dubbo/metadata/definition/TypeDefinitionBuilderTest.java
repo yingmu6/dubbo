@@ -20,7 +20,7 @@ import org.apache.dubbo.metadata.definition.builder.TypeBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class TypeDefinitionBuilderTest { //todo @csy pause 待调试
+public class TypeDefinitionBuilderTest {
 
     @Test
     public void testSortTypeBuilder() {

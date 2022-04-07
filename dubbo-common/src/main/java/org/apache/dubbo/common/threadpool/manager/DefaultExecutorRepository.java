@@ -31,7 +31,8 @@ import static org.apache.dubbo.common.constants.CommonConstants.*;
 /**
  * Consider implementing {@code Licycle} to enable executors shutdown when the process stops.
  */
-public class DefaultExecutorRepository implements ExecutorRepository { //todo @csy-02-26 该类的功能用途是什么？线程池仓库都管理了什么？
+public class DefaultExecutorRepository implements ExecutorRepository {
+    
     private static final Logger logger = LoggerFactory.getLogger(DefaultExecutorRepository.class);
 
     private int DEFAULT_SCHEDULER_SIZE = Runtime.getRuntime().availableProcessors(); //可使用的进程数

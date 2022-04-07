@@ -215,7 +215,7 @@ public class ConfigUtils {
      * </ul>
      * @throws IllegalStateException not allow multi-file, but multi-file exist on class path.
      */
-    public static Properties loadProperties(String fileName, boolean allowMultiFile, boolean optional) { //todo @csy dubbo的属性文件时怎么使用的？
+    public static Properties loadProperties(String fileName, boolean allowMultiFile, boolean optional) {
         Properties properties = new Properties();
         // add scene judgement in windows environment Fix 2557
         if (checkFileNameExist(fileName)) {

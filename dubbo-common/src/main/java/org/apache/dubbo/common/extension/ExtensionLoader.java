@@ -281,7 +281,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
         List<String> names = values == null ? new ArrayList<>(0) : asList(values);
         /**
          * 在扩展名列表不包含-default时进行处理
-         * @csy-007 此处-default是指什么？去除默认扩展吗？todo @csy 待用例验证"-default"场景
+         * @csy-007 此处-default是指什么？去除默认扩展吗？
          * 是的，"-"表式剔除的含义
          *
          * 如果Filter中不带有"-default"字段，就会加载系统扩展Filter对象。（系统的Filter对象）

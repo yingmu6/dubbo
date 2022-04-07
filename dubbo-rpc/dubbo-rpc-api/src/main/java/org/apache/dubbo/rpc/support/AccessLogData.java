@@ -34,7 +34,7 @@ import java.util.Map;
  * <p>
  * Note: since its date formatter is a singleton, make sure to run it in single thread only（确保单线程使用AccessLogData）.
  */
-public final class AccessLogData { //todo @csy 本地存储的日志路径以及内容待了解
+public final class AccessLogData {
 
     private static final String MESSAGE_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     private static final DateFormat MESSAGE_DATE_FORMATTER = new SimpleDateFormat(MESSAGE_DATE_FORMAT);
@@ -54,7 +54,7 @@ public final class AccessLogData { //todo @csy 本地存储的日志路径以及
     /**
      * This is used to store log data in key val format. （用于存储日志的key、value数据）
      */
-    private Map<String, Object> data; //todo @csy 此处的数据待调试？只维护该类中定义的static final成员变量吗？
+    private Map<String, Object> data;
 
     /**
      * Default constructor.

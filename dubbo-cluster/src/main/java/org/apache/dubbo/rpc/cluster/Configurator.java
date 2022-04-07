@@ -31,7 +31,7 @@ import static org.apache.dubbo.rpc.cluster.Constants.PRIORITY_KEY;
  */
 public interface Configurator extends Comparable<Configurator> {
     /**
-     * todo @csy Configurator问题点
+     * Configurator问题点
      * 1）Configurator的功能用途是什么？
      * 解答：向注册中心写入动态配置覆盖规则，可以实现无需重启应用的情况下，动态调整RPC调用行为的一种能力。对应override://协议
      * 文档：https://dubbo.apache.org/zh/docs/v2.7/user/examples/config-rule/

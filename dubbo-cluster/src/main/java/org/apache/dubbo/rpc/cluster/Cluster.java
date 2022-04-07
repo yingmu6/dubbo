@@ -33,10 +33,6 @@ import org.apache.dubbo.rpc.cluster.support.FailoverCluster;
 @SPI(Cluster.DEFAULT)
 public interface Cluster {
 
-    /**
-     * todo @csy Cluster功能用途是啥？join()功能方法是啥？
-     */
-
     String DEFAULT = FailoverCluster.NAME; //默认策略：失败重试
 
     /**

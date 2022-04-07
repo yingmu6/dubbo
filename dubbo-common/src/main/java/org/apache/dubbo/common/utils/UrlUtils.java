@@ -34,7 +34,6 @@ public class UrlUtils {
      */
     private final static String URL_PARAM_STARTING_SYMBOL = "?";
 
-    // todo @csy 此处是如何构建URL的？
     public static URL parseURL(String address, Map<String, String> defaults) { //通过访问地址和参数Map，构建URL实例
         if (address == null || address.length() == 0) {
             return null;
@@ -399,7 +398,7 @@ public class UrlUtils {
         return isMatchGlobPattern(pattern, value);
     }
 
-    public static boolean isMatchGlobPattern(String pattern, String value) { //todo @csy 该方法的比较逻辑，已经用途是什么？
+    public static boolean isMatchGlobPattern(String pattern, String value) {
         if ("*".equals(pattern)) {
             return true;
         }
