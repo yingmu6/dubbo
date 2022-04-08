@@ -37,7 +37,7 @@ import static org.apache.dubbo.registry.Constants.*;
  */
 public abstract class FailbackRegistry extends AbstractRegistry {
 
-    /*  retry task map */
+    /*  retry task map（维护重试的任务） */
 
     private final ConcurrentMap<URL, FailedRegisteredTask> failedRegistered = new ConcurrentHashMap<URL, FailedRegisteredTask>();
 
@@ -50,7 +50,7 @@ public abstract class FailbackRegistry extends AbstractRegistry {
     private final ConcurrentMap<Holder, FailedNotifiedTask> failedNotified = new ConcurrentHashMap<Holder, FailedNotifiedTask>();
 
     /**
-     * The time in milliseconds the retryExecutor will wait
+     * The time in milliseconds the retryExecutor（重试执行器） will wait
      */
     private final int retryPeriod;
 

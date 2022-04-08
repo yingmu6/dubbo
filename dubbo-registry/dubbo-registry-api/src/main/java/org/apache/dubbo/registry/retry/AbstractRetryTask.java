@@ -33,7 +33,7 @@ import static org.apache.dubbo.registry.Constants.*;
 /**
  * AbstractRetryTask
  */
-public abstract class AbstractRetryTask implements TimerTask {
+public abstract class AbstractRetryTask implements TimerTask { //重试任务
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 

@@ -185,7 +185,7 @@ public abstract class AbstractRegistry implements Registry {
         }
     }
 
-    private void loadProperties() {
+    private void loadProperties() { //读取文件
         if (file != null && file.exists()) {
             InputStream in = null;
             try {
@@ -262,7 +262,7 @@ public abstract class AbstractRegistry implements Registry {
         if (logger.isInfoEnabled()) {
             logger.info("Register: " + url);
         }
-        registered.add(url);
+        registered.add(url); //将url注册到集合中
     }
 
     @Override
