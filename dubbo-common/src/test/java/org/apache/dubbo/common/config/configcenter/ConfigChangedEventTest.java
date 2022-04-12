@@ -45,6 +45,7 @@ public class ConfigChangedEventTest {
         assertEquals(ConfigChangeType.MODIFIED, event.getChangeType());
         assertEquals("k,g", event.getSource());
 
+        // 测试ConfigChangedEvent对象创建以及属性值获取
         event = new ConfigChangedEvent(key, group, content, ConfigChangeType.ADDED);
 
         assertEquals(key, event.getKey());
@@ -56,7 +57,7 @@ public class ConfigChangedEventTest {
 
     @Test
     public void testEqualsAndHashCode() {
-        for (ConfigChangeType type : ConfigChangeType.values()) {
+        for (ConfigChangeType type : ConfigChangeType.values()) { //junit的assertEquals()的对象比较，底层也是用Object的equals()方法，所以若重写了equals方法，则执行重写的方法
             assertEquals(new ConfigChangedEvent(key, group, content, type), new ConfigChangedEvent(key, group, content, type));
             assertEquals(new ConfigChangedEvent(key, group, content, type).hashCode(), new ConfigChangedEvent(key, group, content, type).hashCode());
             assertEquals(new ConfigChangedEvent(key, group, content, type).toString(), new ConfigChangedEvent(key, group, content, type).toString());

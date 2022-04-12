@@ -20,7 +20,7 @@ import org.apache.dubbo.common.config.configcenter.ConfigurationListener;
 import org.apache.dubbo.common.extension.SPI;
 
 @SPI("default")
-public interface GovernanceRuleRepository {
+public interface GovernanceRuleRepository { //governance：治理
 
     String DEFAULT_GROUP = "dubbo";
 

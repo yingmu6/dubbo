@@ -20,7 +20,7 @@ import java.util.EventObject;
 import java.util.Objects;
 
 /**
- * An event raised when the config changed, immutable. (当配置改变时引发的事件，不可变)
+ * An event raised（提高） when the config changed, immutable. (当配置改变时引发的事件，不可变)
  *
  * @see ConfigChangeType
  */
@@ -39,7 +39,7 @@ public class ConfigChangedEvent extends EventObject { //配置变更事件对象
     }
 
     public ConfigChangedEvent(String key, String group, String content, ConfigChangeType changeType) {
-        super(key + "," + group);
+        super(key + "," + group); //将key、group拼接，设置发生事件的对象
         this.key = key;
         this.group = group;
         this.content = content;
@@ -63,7 +63,7 @@ public class ConfigChangedEvent extends EventObject { //配置变更事件对象
     }
 
     @Override
-    public String toString() {
+    public String toString() { //重写了字符串打印
         return "ConfigChangedEvent{" +
                 "key='" + key + '\'' +
                 ", group='" + group + '\'' +
@@ -73,18 +73,22 @@ public class ConfigChangedEvent extends EventObject { //配置变更事件对象
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ConfigChangedEvent)) return false;
+    public boolean equals(Object o) { //重写了比较逻辑
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ConfigChangedEvent)) { //若比较的对象不是ConfigChangedEvent类型，则不进行处理
+            return false;
+        }
         ConfigChangedEvent that = (ConfigChangedEvent) o;
         return Objects.equals(getKey(), that.getKey()) &&
                 Objects.equals(getGroup(), that.getGroup()) &&
                 Objects.equals(getContent(), that.getContent()) &&
-                getChangeType() == that.getChangeType();
+                getChangeType() == that.getChangeType(); //重写比较方法，将key、group、content、changeType作为比较的条件
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode() { //重写hashCode()方法，按照指定的属性进行计算
         return Objects.hash(getKey(), getGroup(), getContent(), getChangeType());
     }
 }
