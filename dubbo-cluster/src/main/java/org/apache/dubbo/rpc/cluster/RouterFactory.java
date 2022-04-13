@@ -37,7 +37,7 @@ public interface RouterFactory { //路由工厂
 
     /**
      * Create router.
-     * Since 2.7.0, most of the time, we will not use @Adaptive feature, so it's kept only for compatibility.
+     * Since 2.7.0, most of the time, we will not use @Adaptive feature, so it's kept only for compatibility（兼容性）.
      *
      * @param url url
      * @return router instance

@@ -88,7 +88,7 @@ public class ApolloDynamicConfiguration implements DynamicConfiguration {
         String configCluster = url.getParameter(CLUSTER_KEY);
         String configAppId = url.getParameter(APOLLO_APPID_KEY);
         if (StringUtils.isEmpty(System.getProperty(APOLLO_ENV_KEY)) && configEnv != null) {
-            System.setProperty(APOLLO_ENV_KEY, configEnv);
+            System.setProperty(APOLLO_ENV_KEY, configEnv); //将从url提取的值，写入到系统属性中
         }
         if (StringUtils.isEmpty(System.getProperty(APOLLO_ADDR_KEY)) && !ANYHOST_VALUE.equals(url.getHost())) {
             System.setProperty(APOLLO_ADDR_KEY, configAddr);
@@ -234,12 +234,13 @@ public class ApolloDynamicConfiguration implements DynamicConfiguration {
                     return;
                 }
 
+                // 构建事件对象，并依次通过监听器处理
                 ConfigChangedEvent event = new ConfigChangedEvent(key, change.getNamespace(), change.getNewValue(), getChangeType(change));
                 listeners.forEach(listener -> listener.process(event));
             }
         }
 
-        private ConfigChangeType getChangeType(ConfigChange change) {
+        private ConfigChangeType getChangeType(ConfigChange change) { //将Apollo的变更事件转换为Dubbo内部自定义的事件类型
             if (change.getChangeType() == PropertyChangeType.DELETED) {
                 return ConfigChangeType.DELETED;
             }

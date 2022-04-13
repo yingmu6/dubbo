@@ -85,10 +85,10 @@ public class ApplicationModel { //应用模型
     }
 
     public static Environment getEnvironment() {
-        return (Environment) LOADER.getExtension(Environment.NAME);
+        return (Environment) LOADER.getExtension(Environment.NAME); //从org.apache.dubbo.common.context.FrameworkExt配置文件中找到environment对应的扩展实例
     }
 
-    public static ConfigManager getConfigManager() { //通过SPI机制，获取到ConfigManager实例
+    public static ConfigManager getConfigManager() { //通过SPI机制，获取到ConfigManager实例（提供不同的方法，获取不同的扩展实例）
         return (ConfigManager) LOADER.getExtension(ConfigManager.NAME); //config对应的扩展类为ConfigManager
     }
 

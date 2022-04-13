@@ -43,16 +43,16 @@ import static org.apache.dubbo.common.constants.CommonConstants.*;
 
 /**
  * {@link org.apache.dubbo.rpc.model.ApplicationModel}, {@code DubboBootstrap} and this class are
- * at present designed to be singleton or static (by itself totally static or uses some static fields).
+ * at present designed to be singleton or static (by itself totally（完全） static or uses some static fields).
  * So the instances returned from them are of process or classloader scope. If you want to support
  * multiple dubbo servers in a single process, you may need to refactor these three classes.
- * （ApplicationModel、DubboBootstrap、ExtensionLoader被设计为单例模式，若想支持多实例的，就需要重构这三个类了）
+ * （ApplicationModel、DubboBootstrap、ExtensionLoader 被设计为单例模式，若想支持多实例的，就需要重构这三个类了）
  * <p>
- * Load dubbo extensions（加载dubbo的扩展信息）
+ * Load dubbo extensions（ExtensionLoader用途：加载dubbo的扩展信息）
  * <ul>
- * <li>auto inject dependency extension </li> 自动注入依赖扩展
- * <li>auto wrap extension in wrapper </li>   wrapper自动封装扩展
- * <li>default extension is an adaptive instance</li> adaptive的实例是默认扩展
+ * <li>auto inject dependency extension </li> 自动注入依赖的扩展
+ * <li>auto wrap extension in wrapper </li>   自动封装扩展
+ * <li>default extension is an adaptive instance</li> 默认扩展是一个自适应实例
  * </ul>
  *
  * @see <a href="http://java.sun.com/j2se/1.5.0/docs/guide/jar/jar.html#Service%20Provider">Service Provider in Java 5</a>
@@ -72,12 +72,16 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
 
     /**
      * SPI接口Class与ExtensionLoader扩展加载类的映射
-     *   1）包含了ExtensionFactory接口与其它接口的映射
-     *   2）每一个SPI接口对应一个ExtensionLoader
+     * 1）包含了ExtensionFactory接口与其它接口的映射
+     * 2）每一个SPI接口对应一个ExtensionLoader
+     * 3）static 静态成员变量，对象之间共享
      */
     private static final ConcurrentMap<Class<?>, ExtensionLoader<?>> EXTENSION_LOADERS = new ConcurrentHashMap<>(64);
 
-    private static final ConcurrentMap<Class<?>, Object> EXTENSION_INSTANCES = new ConcurrentHashMap<>(64); //扩展类Class与扩展实例的映射
+    /**
+     * 扩展类Class与扩展实例的映射
+     */
+    private static final ConcurrentMap<Class<?>, Object> EXTENSION_INSTANCES = new ConcurrentHashMap<>(64);
 
     private final Class<?> type;
 
@@ -165,7 +169,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
      *              https://juejin.cn/post/6931972267609948167
      */
     @SuppressWarnings("unchecked")
-    public static <T> ExtensionLoader<T> getExtensionLoader(Class<T> type) { //每一个SPI接口对应一个ExtensionLoader
+    public static <T> ExtensionLoader<T> getExtensionLoader(Class<T> type) { //获取扩展加载器 ExtensionLoader
         if (type == null) {
             throw new IllegalArgumentException("Extension type == null");
         }
@@ -178,7 +182,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
         }
 
         ExtensionLoader<T> loader = (ExtensionLoader<T>) EXTENSION_LOADERS.get(type);
-        if (loader == null) {
+        if (loader == null) { //每个SPI接口，对应一个扩展加载器ExtensionLoader，若存在直接返回，否则创建ExtensionLoader
             EXTENSION_LOADERS.putIfAbsent(type, new ExtensionLoader<T>(type));
             loader = (ExtensionLoader<T>) EXTENSION_LOADERS.get(type);
         }

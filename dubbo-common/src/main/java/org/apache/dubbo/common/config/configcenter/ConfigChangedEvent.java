@@ -41,7 +41,7 @@ public class ConfigChangedEvent extends EventObject { //配置变更事件对象
     public ConfigChangedEvent(String key, String group, String content, ConfigChangeType changeType) {
         super(key + "," + group); //将key、group拼接，设置发生事件的对象
         this.key = key;
-        this.group = group;
+        this.group = group; //分组：用来隔离配置，比如使用Apollo时，设置的为namespace
         this.content = content;
         this.changeType = changeType;
     }

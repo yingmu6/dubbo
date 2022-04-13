@@ -70,7 +70,7 @@ public interface Constants {
 
     String DEFAULT_SCRIPT_TYPE_KEY = "javascript";
 
-    String PRIORITY_KEY = "priority";
+    String PRIORITY_KEY = "priority"; //priority：优先级
 
     String RULE_KEY = "rule";
 

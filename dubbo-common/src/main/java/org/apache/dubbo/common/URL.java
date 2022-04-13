@@ -1039,7 +1039,7 @@ class URL implements Serializable {
         return ANYHOST_VALUE.equals(host) || getParameter(ANYHOST_KEY, false);
     }
 
-    public URL addParameterAndEncoded(String key, String value) {
+    public URL addParameterAndEncoded(String key, String value) { //添加参数，并且的值进行编码
         if (StringUtils.isEmpty(value)) {
             return this;
         }
@@ -1109,10 +1109,10 @@ class URL implements Serializable {
             return this;
         }
 
-        Map<String, String> map = new HashMap<>(getParameters());
+        Map<String, String> map = new HashMap<>(getParameters()); //取当前URL维护的参数Map
         map.put(key, value);
 
-        return new URL(protocol, username, password, host, port, path, map);
+        return new URL(protocol, username, password, host, port, path, map); //构建新的URL对象
     }
 
     public URL addParameterIfAbsent(String key, String value) {

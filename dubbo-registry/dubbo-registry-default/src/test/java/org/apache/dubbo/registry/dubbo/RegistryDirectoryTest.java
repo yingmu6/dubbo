@@ -70,14 +70,14 @@ public class RegistryDirectoryTest {
     URL SERVICEURL3 = URL.valueOf("dubbo://127.0.0.1:9093/" + service + "?lazy=true&side=consumer&application=mockName");
     URL SERVICEURL_DUBBO_NOPATH = URL.valueOf("dubbo://127.0.0.1:9092" + "?lazy=true&side=consumer&application=mockName");
 
-    private Registry registry = Mockito.mock(Registry.class);
+    private Registry registry = Mockito.mock(Registry.class); //mock对象，不发起远程调用
 
     @BeforeEach
     public void setUp() {
         ApplicationModel.setApplication("RegistryDirectoryTest");
     }
 
-    private RegistryDirectory getRegistryDirectory(URL url) {
+    private RegistryDirectory getRegistryDirectory(URL url) { //todo @csy-pause 001
         RegistryDirectory registryDirectory = new RegistryDirectory(URL.class, url);
         registryDirectory.setProtocol(protocol);
         registryDirectory.setRegistry(registry);

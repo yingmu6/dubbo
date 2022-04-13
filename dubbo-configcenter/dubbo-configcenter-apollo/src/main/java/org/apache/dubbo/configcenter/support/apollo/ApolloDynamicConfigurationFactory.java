@@ -25,7 +25,7 @@ import org.apache.dubbo.common.config.configcenter.DynamicConfiguration;
  */
 public class ApolloDynamicConfigurationFactory extends AbstractDynamicConfigurationFactory {
     @Override
-    protected DynamicConfiguration createDynamicConfiguration(URL url) {
+    protected DynamicConfiguration createDynamicConfiguration(URL url) { //
         return new ApolloDynamicConfiguration(url);
     }
 }

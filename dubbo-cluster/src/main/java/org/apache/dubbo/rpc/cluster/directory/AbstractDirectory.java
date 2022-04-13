@@ -109,6 +109,7 @@ public abstract class AbstractDirectory<T> implements Directory<T> {
         destroyed = true;
     }
 
+    // 从目录中获取符合条件的invoker列表
     protected abstract List<Invoker<T>> doList(Invocation invocation) throws RpcException;
 
 }

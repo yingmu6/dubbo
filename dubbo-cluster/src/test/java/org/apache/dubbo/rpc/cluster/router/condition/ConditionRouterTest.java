@@ -23,7 +23,6 @@ import org.apache.dubbo.rpc.Invoker;
 import org.apache.dubbo.rpc.RpcInvocation;
 import org.apache.dubbo.rpc.cluster.Router;
 import org.apache.dubbo.rpc.cluster.router.MockInvoker;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +36,7 @@ import static org.apache.dubbo.rpc.cluster.Constants.RULE_KEY;
 
 public class ConditionRouterTest {
     private static final String LOCAL_HOST = "127.0.0.1";
-    private URL SCRIPT_URL = URL.valueOf("condition://0.0.0.0/com.foo.BarService");
+    private URL SCRIPT_URL = URL.valueOf("condition://0.0.0.0/com.foo.BarService"); //condition条件
 
     @BeforeAll
     public static void setUpBeforeClass() throws Exception {
@@ -48,11 +47,11 @@ public class ConditionRouterTest {
     }
 
     private URL getRouteUrl(String rule) {
-        return SCRIPT_URL.addParameterAndEncoded(RULE_KEY, rule);
+        return SCRIPT_URL.addParameterAndEncoded(RULE_KEY, rule); //设置路由规则
     }
 
     @Test
-    public void testRoute_matchWhen() {
+    public void testRoute_matchWhen() { //todo @csy-pause 002
         Invocation invocation = new RpcInvocation();
 
         Router router = new ConditionRouterFactory().getRouter(getRouteUrl(" => host = 1.2.3.4"));

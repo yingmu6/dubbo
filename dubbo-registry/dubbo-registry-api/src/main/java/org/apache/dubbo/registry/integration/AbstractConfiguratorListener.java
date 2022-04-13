@@ -39,7 +39,7 @@ public abstract class AbstractConfiguratorListener implements ConfigurationListe
 
     protected List<Configurator> configurators = Collections.emptyList();
     protected GovernanceRuleRepository ruleRepository = ExtensionLoader.getExtensionLoader(
-            GovernanceRuleRepository.class).getDefaultExtension();
+            GovernanceRuleRepository.class).getDefaultExtension(); //获取默认的扩展实例
 
     protected final void initWith(String key) {
         ruleRepository.addListener(key, this);
@@ -61,7 +61,7 @@ public abstract class AbstractConfiguratorListener implements ConfigurationListe
         }
 
         if (event.getChangeType().equals(ConfigChangeType.DELETED)) {
-            configurators.clear();
+            configurators.clear(); //删除事件，则将本地缓存的配置列表清除
         } else {
             if (!genConfiguratorsFromRawRule(event.getContent())) {
                 return;
