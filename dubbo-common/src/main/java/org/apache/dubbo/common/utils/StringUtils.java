@@ -802,7 +802,7 @@ public final class StringUtils {
     }
 
     /**
-     * parse key-value pair.
+     * parse key-value pair.（解析出key-value）
      *
      * @param str           string.
      * @param itemSeparator item separator.

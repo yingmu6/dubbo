@@ -57,7 +57,7 @@ import static org.apache.dubbo.rpc.cluster.Constants.*;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class RegistryDirectoryTest {
+public class RegistryDirectoryTest { //todo @csy-pause 001
 
     private static boolean isScriptUnsupported = new ScriptEngineManager().getEngineByName("javascript") == null;
     RegistryFactory registryFactory = ExtensionLoader.getExtensionLoader(RegistryFactory.class).getAdaptiveExtension();
@@ -77,7 +77,7 @@ public class RegistryDirectoryTest {
         ApplicationModel.setApplication("RegistryDirectoryTest");
     }
 
-    private RegistryDirectory getRegistryDirectory(URL url) { //todo @csy-pause 001
+    private RegistryDirectory getRegistryDirectory(URL url) {
         RegistryDirectory registryDirectory = new RegistryDirectory(URL.class, url);
         registryDirectory.setProtocol(protocol);
         registryDirectory.setRegistry(registry);
@@ -95,7 +95,7 @@ public class RegistryDirectoryTest {
     }
 
     @Test
-    public void test_Constructor_WithErrorParam() {
+    public void test_Constructor_WithErrorParam() { //在RegistryDirectory、AbstractDirectory会对serviceType、url进行非空判断
         try {
             new RegistryDirectory(null, null);
             fail();
@@ -121,13 +121,16 @@ public class RegistryDirectoryTest {
     @Test
     public void test_Constructor_CheckStatus() throws Exception {
         URL url = URL.valueOf("notsupported://10.20.30.40/" + service + "?a=b").addParameterAndEncoded(REFER_KEY,
-                "foo=bar");
+                "foo=bar&fruit=apple").addParameter(EXPORT_KEY, "test=hh");
         RegistryDirectory reg = getRegistryDirectory(url);
-        Field field = reg.getClass().getDeclaredField("queryMap");
+        Field field = reg.getClass().getDeclaredField("queryMap"); //RegistryDirectory中的queryMap成员变量值是根据url的refer参数设置的
         field.setAccessible(true);
         Map<String, String> queryMap = (Map<String, String>) field.get(reg);
         Assertions.assertEquals("bar", queryMap.get("foo"));
-        Assertions.assertEquals(url.clearParameters().addParameter("foo", "bar"), reg.getConsumerUrl());
+//        Assertions.assertEquals("test", queryMap.get("hh")); //错误的使用
+        Assertions.assertEquals("apple", queryMap.get("fruit"));
+//        Assertions.assertEquals(url.clearParameters().addParameter("foo", "bar"), reg.getConsumerUrl()); ConsumerUrl是取refer参数设置的，因为此处refer参数变更了，所以也要对应变更
+        Assertions.assertEquals(url.clearParameters().addParameter("foo", "bar").addParameter("fruit", "apple"), reg.getConsumerUrl());
     }
 
     @Test

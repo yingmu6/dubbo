@@ -98,7 +98,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
     private volatile List<Configurator> configurators; // The initial value is null and the midway may be assigned to null, please use the local variable reference
 
     // Map<url, Invoker> cache service url to invoker mapping. urlInvokerMap值是什么时候设置的？解：设置的方法有许多，比如toInvokers()方法中，destroyAllInvokers()方法等
-    private volatile Map<String, Invoker<T>> urlInvokerMap; // The initial value is null and the midway may be assigned to null, please use the local variable reference
+    private volatile Map<String, Invoker<T>> urlInvokerMap; // The initial value is null（初始值为null） and the midway（中途） may be assigned to null, please use the local variable reference
     private volatile List<Invoker<T>> invokers;
 
     // Set<invokerUrls> cache invokeUrls to invokers mapping.
@@ -121,13 +121,13 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
         }
         this.serviceType = serviceType;
         this.serviceKey = url.getServiceKey();
-        this.queryMap = StringUtils.parseQueryString(url.getParameterAndDecoded(REFER_KEY));
+        this.queryMap = StringUtils.parseQueryString(url.getParameterAndDecoded(REFER_KEY)); //只是处理引用url对应refer的参数值
         this.overrideDirectoryUrl = this.directoryUrl = turnRegistryUrlToConsumerUrl(url);
         String group = directoryUrl.getParameter(GROUP_KEY, "");
         this.multiGroup = group != null && (ANY_VALUE.equals(group) || group.contains(","));
     }
 
-    private URL turnRegistryUrlToConsumerUrl(URL url) {
+    private URL turnRegistryUrlToConsumerUrl(URL url) { //消费url，是取refer参数设置的
         return URLBuilder.from(url)
                 .setPath(url.getServiceInterface())
                 .clearParameters()
@@ -202,10 +202,10 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
     @Override
     public synchronized void notify(List<URL> urls) {
         Map<String, List<URL>> categoryUrls = urls.stream()
-                .filter(Objects::nonNull)
-                .filter(this::isValidCategory)
+                .filter(Objects::nonNull) //filter 返回满足条件的元素
+                .filter(this::isValidCategory) //按执行方法进行过滤：该方法接入一个参数，且返回boolean值
                 .filter(this::isNotCompatibleFor26x)
-                .collect(Collectors.groupingBy(this::judgeCategory));
+                .collect(Collectors.groupingBy(this::judgeCategory)); //按category分组
 
         List<URL> configuratorURLs = categoryUrls.getOrDefault(CONFIGURATORS_CATEGORY, Collections.emptyList());
         this.configurators = Configurator.toConfigurators(configuratorURLs).orElse(this.configurators);
@@ -619,7 +619,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
     }
 
     @Override
-    public boolean isAvailable() {
+    public boolean isAvailable() { //判断目录下是否存在有效的invoker
         if (isDestroyed()) {
             return false;
         }
@@ -649,8 +649,8 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
         return invokers;
     }
 
-    private boolean isValidCategory(URL url) {
-        String category = url.getParameter(CATEGORY_KEY, DEFAULT_CATEGORY);
+    private boolean isValidCategory(URL url) { //判断是否是有效分类
+        String category = url.getParameter(CATEGORY_KEY, DEFAULT_CATEGORY); //默认分类是provider
         if ((ROUTERS_CATEGORY.equals(category) || ROUTE_PROTOCOL.equals(url.getProtocol())) ||
                 PROVIDERS_CATEGORY.equals(category) ||
                 CONFIGURATORS_CATEGORY.equals(category) || DYNAMIC_CONFIGURATORS_CATEGORY.equals(category) ||

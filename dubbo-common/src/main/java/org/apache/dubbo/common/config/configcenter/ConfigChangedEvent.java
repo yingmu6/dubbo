@@ -24,7 +24,7 @@ import java.util.Objects;
  *
  * @see ConfigChangeType
  */
-public class ConfigChangedEvent extends EventObject { //配置变更事件对象
+public class ConfigChangedEvent extends EventObject { //配置变更事件对象，EventObject：所有事件对象的基类
 
     private final String key;
 

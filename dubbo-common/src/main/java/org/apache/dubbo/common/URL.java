@@ -310,7 +310,7 @@ class URL implements Serializable {
         }
 
         String methodsString = parameters.get(METHODS_KEY);
-        if (StringUtils.isNotEmpty(methodsString)) {
+        if (StringUtils.isNotEmpty(methodsString)) { //若参数Map中包含methods参数
             List<String> methods = StringUtils.splitToList(methodsString, ','); //解析出方法名列表
             for (Map.Entry<String, String> entry : parameters.entrySet()) {
                 String key = entry.getKey();
@@ -325,7 +325,7 @@ class URL implements Serializable {
                     }
                 }
             }
-        } else {
+        } else { //若参数Map中不包含methods参数，看参数key是否带上点号"."来判断
             for (Map.Entry<String, String> entry : parameters.entrySet()) {
                 String key = entry.getKey();
                 int methodSeparator = key.indexOf('.');
@@ -1099,7 +1099,7 @@ class URL implements Serializable {
         return addParameter(key, String.valueOf(value));
     }
 
-    public URL addParameter(String key, String value) {
+    public URL addParameter(String key, String value) { //返回新的对象，不会对原有的URL对象影响
         if (StringUtils.isEmpty(key)
                 || StringUtils.isEmpty(value)) {
             return this;

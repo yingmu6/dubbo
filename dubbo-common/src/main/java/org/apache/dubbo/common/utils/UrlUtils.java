@@ -443,7 +443,7 @@ public class UrlUtils {
         return urls.stream().filter(predicate).collect(Collectors.toList());
     }
 
-    public static boolean isConfigurator(URL url) {
+    public static boolean isConfigurator(URL url) { //比较协议或分类
         return OVERRIDE_PROTOCOL.equals(url.getProtocol()) ||
                 CONFIGURATORS_CATEGORY.equals(url.getParameter(CATEGORY_KEY, DEFAULT_CATEGORY));
     }

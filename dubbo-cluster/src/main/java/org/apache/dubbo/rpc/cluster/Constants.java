@@ -94,7 +94,7 @@ public interface Constants {
     /**
      * The key name for reference URL in register center
      */
-    String REFER_KEY = "refer";
+    String REFER_KEY = "refer"; //在注册中心中引用服务url对应的key名称
     /**
      * The key name for export URL in register center
      */
