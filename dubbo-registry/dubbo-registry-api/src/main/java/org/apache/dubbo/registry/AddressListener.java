@@ -23,12 +23,12 @@ import org.apache.dubbo.rpc.cluster.Directory;
 import java.util.List;
 
 @SPI
-public interface AddressListener {
+public interface AddressListener { //地址监听器
 
     /**
      * processing when receiving the address list
      *
-     * @param addresses         provider address list
+     * @param addresses         provider address list （提供者的地址列表）
      * @param consumerUrl
      * @param registryDirectory
      */

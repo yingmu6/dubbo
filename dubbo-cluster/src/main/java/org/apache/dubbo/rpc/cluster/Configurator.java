@@ -29,7 +29,7 @@ import static org.apache.dubbo.rpc.cluster.Constants.PRIORITY_KEY;
 /**
  * Configurator. (SPI, Prototype, ThreadSafe)
  */
-public interface Configurator extends Comparable<Configurator> {
+public interface Configurator extends Comparable<Configurator> { //Configurator：配置器
     /**
      * Configurator问题点
      * 1）Configurator的功能用途是什么？
@@ -92,7 +92,7 @@ public interface Configurator extends Comparable<Configurator> {
             if (CollectionUtils.isEmptyMap(override)) {
                 continue;
             }
-            configurators.add(configuratorFactory.getConfigurator(url));
+            configurators.add(configuratorFactory.getConfigurator(url)); //将满足条件的URL转化为Configurator
         }
         Collections.sort(configurators);
         return Optional.of(configurators);

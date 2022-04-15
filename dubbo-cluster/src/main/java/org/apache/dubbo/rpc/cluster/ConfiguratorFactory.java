@@ -22,10 +22,9 @@ import org.apache.dubbo.common.extension.SPI;
 
 /**
  * ConfiguratorFactory. (SPI, Singleton, ThreadSafe)
- *
  */
 @SPI
-public interface ConfiguratorFactory {
+public interface ConfiguratorFactory { //通过工厂模式获取Configurator实例
 
     /**
      * get the configurator instance.

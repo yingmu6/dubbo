@@ -267,7 +267,7 @@ public class RegistryDirectoryTest { //todo @csy-pause 001
         serviceUrls.add(SERVICEURL2.addParameter("methods", "getXXX1,getXXX2"));
 
         registryDirectory.notify(serviceUrls);
-        Assertions.assertTrue(registryDirectory.isAvailable());
+        Assertions.assertTrue(registryDirectory.isAvailable()); //目录的有效性判断
 
         invocation = new RpcInvocation();
 

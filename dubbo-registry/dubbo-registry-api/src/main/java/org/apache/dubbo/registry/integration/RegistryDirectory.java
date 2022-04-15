@@ -75,6 +75,9 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
             .getAdaptiveExtension();
 
     private final String serviceKey; // Initialization at construction time, assertion not null
+    /**
+     * serviceType的值如：
+     */
     private final Class<T> serviceType; // Initialization at construction time, assertion not null
     private final Map<String, String> queryMap; // Initialization at construction time, assertion not null
     private final URL directoryUrl; // Initialization at construction time, assertion not null, and always assign non null value
@@ -208,7 +211,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
                 .collect(Collectors.groupingBy(this::judgeCategory)); //按category分组
 
         List<URL> configuratorURLs = categoryUrls.getOrDefault(CONFIGURATORS_CATEGORY, Collections.emptyList());
-        this.configurators = Configurator.toConfigurators(configuratorURLs).orElse(this.configurators);
+        this.configurators = Configurator.toConfigurators(configuratorURLs).orElse(this.configurators); //orElse(): 若Optional维护的成员变量为空，就取输入的值
 
         List<URL> routerURLs = categoryUrls.getOrDefault(ROUTERS_CATEGORY, Collections.emptyList());
         toRouters(routerURLs).ifPresent(this::addRouters);
@@ -246,11 +249,11 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
     }
 
     /**
-     * Convert the invokerURL list to the Invoker Map. The rules of the conversion are as follows:
+     * Convert the invokerURL list to the Invoker Map. The rules of the conversion are as follows（转换规则如下）:
      * <ol>
      * <li> If URL has been converted to invoker, it is no longer re-referenced and obtained directly from the cache,
      * and notice that any parameter changes in the URL will be re-referenced.</li>
-     * <li>If the incoming invoker list is not empty, it means that it is the latest invoker list.</li>
+     * <li>If the incoming（传入的） invoker list is not empty, it means that it is the latest invoker list.</li>
      * <li>If the list of incoming invokerUrl is empty, It means that the rule is only a override rule or a route
      * rule, which needs to be re-contrasted to decide whether to re-reference.</li>
      * </ol>
@@ -357,7 +360,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
                 url = url.setProtocol(routerType);
             }
             try {
-                Router router = ROUTER_FACTORY.getRouter(url);
+                Router router = ROUTER_FACTORY.getRouter(url); //创建Router实例
                 if (!routers.contains(router)) {
                     routers.add(router);
                 }
@@ -626,7 +629,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
         Map<String, Invoker<T>> localUrlInvokerMap = urlInvokerMap;
         if (localUrlInvokerMap != null && localUrlInvokerMap.size() > 0) {
             for (Invoker<T> invoker : new ArrayList<>(localUrlInvokerMap.values())) {
-                if (invoker.isAvailable()) {
+                if (invoker.isAvailable()) { //目录下只要有一个Invoker是有效的，即目录是有效的
                     return true;
                 }
             }
