@@ -180,7 +180,7 @@ final class NettyChannel extends AbstractChannel {
     }
 
     @Override
-    public void close() {
+    public void close() { //关闭Netty的通道Channel
         try {
             super.close(); //关闭dubbo的通道（将dubbo中的通道状态置为关闭状态）
         } catch (Exception e) {

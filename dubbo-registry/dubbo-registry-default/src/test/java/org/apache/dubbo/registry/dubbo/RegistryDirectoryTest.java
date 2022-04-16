@@ -1070,7 +1070,7 @@ public class RegistryDirectoryTest { //todo @csy-pause 001
         MORGAN,
     }
 
-    private interface DemoService {
+    private interface DemoService { //内部接口
     }
 
     private static class MockRegistry implements Registry {

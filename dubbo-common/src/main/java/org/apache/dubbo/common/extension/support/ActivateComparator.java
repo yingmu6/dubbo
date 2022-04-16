@@ -27,7 +27,7 @@ import java.util.Comparator;
 /**
  * OrderComparator
  */
-public class ActivateComparator implements Comparator<Object> {
+public class ActivateComparator implements Comparator<Object> { //Activate比较器
     public static final Comparator<Object> COMPARATOR = new ActivateComparator();
 
     @Override
@@ -87,7 +87,7 @@ public class ActivateComparator implements Comparator<Object> {
             if (intf.isAnnotationPresent(SPI.class)) {
                 return intf;
             } else {
-                Class result = findSpi(intf);
+                Class result = findSpi(intf); //递归查找
                 if (result != null) {
                     return result;
                 }
@@ -97,7 +97,7 @@ public class ActivateComparator implements Comparator<Object> {
         return null;
     }
 
-    private ActivateInfo parseActivate(Class<?> clazz) {
+    private ActivateInfo parseActivate(Class<?> clazz) { //解析@Activate注解信息值
         ActivateInfo info = new ActivateInfo();
         if (clazz.isAnnotationPresent(Activate.class)) {
             Activate activate = clazz.getAnnotation(Activate.class);

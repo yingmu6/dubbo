@@ -292,7 +292,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
          */
         if (!names.contains(REMOVE_VALUE_PREFIX + DEFAULT_KEY)) { // URL参数值列表不包含"-default"处理
             getExtensionClasses(); //此处没有用到方法的返回值，主要使用方法中的loadExtensionClasses()，若缓存中没有对应的值，则对应加载并设置到缓存中
-            for (Map.Entry<String, Object> entry : cachedActivates.entrySet()) { //将成员变量cachedActivates的值进行遍历处理
+            for (Map.Entry<String, Object> entry : cachedActivates.entrySet()) { //将成员变量cachedActivates的值进行遍历处理（需要扩展接口有包含@Active注解的实现类）
                 String name = entry.getKey(); //扩展名
                 Object activate = entry.getValue(); // @Active对象
 
@@ -332,7 +332,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
          *
          * 加载用户自定义扩展Filter对象（自定义的Filter对象）
          */
-        for (int i = 0; i < names.size(); i++) { //待调试
+        for (int i = 0; i < names.size(); i++) {
             String name = names.get(i);
             // 带有排除符号"-"的Filter不加载
             if (!name.startsWith(REMOVE_VALUE_PREFIX)

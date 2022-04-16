@@ -210,6 +210,9 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
                 .filter(this::isNotCompatibleFor26x)
                 .collect(Collectors.groupingBy(this::judgeCategory)); //按category分组
 
+        /**
+         * 将分类的URL列表，依次转换为 Configurator、Router列表
+         */
         List<URL> configuratorURLs = categoryUrls.getOrDefault(CONFIGURATORS_CATEGORY, Collections.emptyList());
         this.configurators = Configurator.toConfigurators(configuratorURLs).orElse(this.configurators); //orElse(): 若Optional维护的成员变量为空，就取输入的值
 
@@ -219,13 +222,13 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
         // providers
         List<URL> providerURLs = categoryUrls.getOrDefault(PROVIDERS_CATEGORY, Collections.emptyList());
         /**
-         * 3.x added for extend URL address
+         * 3.x added for extend URL address （扩展URL地址）
          */
         ExtensionLoader<AddressListener> addressListenerExtensionLoader = ExtensionLoader.getExtensionLoader(AddressListener.class);
         List<AddressListener> supportedListeners = addressListenerExtensionLoader.getActivateExtension(getUrl(), (String[]) null);
-        if (supportedListeners != null && !supportedListeners.isEmpty()) {
+        if (supportedListeners != null && !supportedListeners.isEmpty()) { //此处AddressListener没有对应的SPI扩展实例，为3.x预留的SPI接口
             for (AddressListener addressListener : supportedListeners) {
-                providerURLs = addressListener.notify(providerURLs, getConsumerUrl(),this);
+                providerURLs = addressListener.notify(providerURLs, getConsumerUrl(), this);
             }
         }
         refreshOverrideAndInvoker(providerURLs);
@@ -281,7 +284,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
                 invokerUrls.addAll(this.cachedInvokerUrls);
             } else {
                 this.cachedInvokerUrls = new HashSet<>();
-                this.cachedInvokerUrls.addAll(invokerUrls);//Cached invoker urls, convenient for comparison
+                this.cachedInvokerUrls.addAll(invokerUrls);//Cached（缓存） invoker urls, convenient for comparison（方便比较）
             }
             if (invokerUrls.isEmpty()) {
                 return;
@@ -669,7 +672,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
         return StringUtils.isEmpty(url.getParameter(COMPATIBLE_CONFIG_KEY));
     }
 
-    private void overrideDirectoryUrl() {
+    private void overrideDirectoryUrl() { //覆盖合并DirectoryUrl参数
         // merge override parameters
         this.overrideDirectoryUrl = directoryUrl;
         List<Configurator> localConfigurators = this.configurators; // local reference
@@ -682,7 +685,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
         }
     }
 
-    private void doOverrideUrl(List<Configurator> configurators) {
+    private void doOverrideUrl(List<Configurator> configurators) { //做URL覆盖处理
         if (CollectionUtils.isNotEmpty(configurators)) {
             for (Configurator configurator : configurators) {
                 this.overrideDirectoryUrl = configurator.configure(overrideDirectoryUrl);
