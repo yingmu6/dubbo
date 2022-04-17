@@ -102,7 +102,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
 
     // Map<url, Invoker> cache service url to invoker mapping. urlInvokerMap值是什么时候设置的？解：设置的方法有许多，比如toInvokers()方法中，destroyAllInvokers()方法等
     private volatile Map<String, Invoker<T>> urlInvokerMap; // The initial value is null（初始值为null） and the midway（中途） may be assigned to null, please use the local variable reference
-    private volatile List<Invoker<T>> invokers;
+    private volatile List<Invoker<T>> invokers; //维护的invoker列表
 
     // Set<invokerUrls> cache invokeUrls to invokers mapping.
     private volatile Set<URL> cachedInvokerUrls; // The initial value is null and the midway may be assigned to null, please use the local variable reference
@@ -254,7 +254,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
     /**
      * Convert the invokerURL list to the Invoker Map. The rules of the conversion are as follows（转换规则如下）:
      * <ol>
-     * <li> If URL has been converted to invoker, it is no longer re-referenced and obtained directly from the cache,
+     * <li> If URL has been converted to invoker, it is no longer re-referenced （不再被重新引用）and obtained directly from the cache,
      * and notice that any parameter changes in the URL will be re-referenced.</li>
      * <li>If the incoming（传入的） invoker list is not empty, it means that it is the latest invoker list.</li>
      * <li>If the list of incoming invokerUrl is empty, It means that the rule is only a override rule or a route
@@ -269,7 +269,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
 
         if (invokerUrls.size() == 1
                 && invokerUrls.get(0) != null
-                && EMPTY_PROTOCOL.equals(invokerUrls.get(0).getProtocol())) {
+                && EMPTY_PROTOCOL.equals(invokerUrls.get(0).getProtocol())) { //空协议处理
             this.forbidden = true; // Forbid to access
             this.invokers = Collections.emptyList();
             routerChain.setInvokers(this.invokers);
@@ -449,12 +449,12 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
     }
 
     /**
-     * Merge url parameters. the order is: override > -D >Consumer > Provider
+     * Merge url parameters. the order（顺序） is: override > -D >Consumer > Provider
      *
      * @param providerUrl
      * @return
      */
-    private URL mergeUrl(URL providerUrl) {
+    private URL mergeUrl(URL providerUrl) { //合并URL中的参数
         providerUrl = ClusterUtils.mergeUrl(providerUrl, queryMap); // Merge the consumer side parameters
 
         providerUrl = overrideWithConfigurator(providerUrl);
@@ -526,7 +526,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
     }
 
     /**
-     * Check whether the invoker in the cache needs to be destroyed
+     * Check whether the invoker in the cache needs to be destroyed（检查缓存中的Invoker是否需要销毁）
      * If set attribute of url: refer.autodestroy=false, the invokers will only increase without decreasing,there may be a refer leak
      *
      * @param oldUrlInvokerMap

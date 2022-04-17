@@ -1257,7 +1257,7 @@ class URL implements Serializable {
         return new URL(protocol, username, password, host, port, path, map); //若参数键值对有变动，则重新构造URL
     }
 
-    public URL clearParameters() {
+    public URL clearParameters() { //清除参数Map：构建参数Map为空的URL
         return new URL(protocol, username, password, host, port, path, new HashMap<>());
     }
 
