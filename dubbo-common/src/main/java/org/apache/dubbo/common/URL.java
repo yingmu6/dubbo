@@ -1104,7 +1104,7 @@ class URL implements Serializable {
                 || StringUtils.isEmpty(value)) {
             return this;
         }
-        // if value doesn't change, return immediately
+        // if value doesn't change, return immediately （值没有变更，立即返回）
         if (value.equals(getParameters().get(key))) { // value != null
             return this;
         }
@@ -1261,8 +1261,8 @@ class URL implements Serializable {
         return new URL(protocol, username, password, host, port, path, new HashMap<>());
     }
 
-    public String getRawParameter(String key) {
-        if (PROTOCOL_KEY.equals(key)) {
+    public String getRawParameter(String key) { //获取原始参数，raw：原始
+        if (PROTOCOL_KEY.equals(key)) { //若参数是成员变量，则取对应成员变量的值；否则从参数键值对parameters获取
             return protocol;
         }
         if (USERNAME_KEY.equals(key)) {

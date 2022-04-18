@@ -23,7 +23,6 @@ import org.apache.dubbo.rpc.RpcInvocation;
 import org.apache.dubbo.rpc.cluster.Router;
 import org.apache.dubbo.rpc.cluster.router.MockInvoker;
 import org.apache.dubbo.rpc.cluster.router.condition.ConditionRouterFactory;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -44,7 +43,7 @@ public class StaticDirectoryTest {
 
     @Test
     public void testStaticDirectory() {
-        Router router = new ConditionRouterFactory().getRouter(getRouteUrl(" => " + " host = " + NetUtils.getLocalHost()));
+        Router router = new ConditionRouterFactory().getRouter(getRouteUrl(" => " + " host = " + NetUtils.getLocalHost())); //创建条件路由器
         List<Router> routers = new ArrayList<Router>();
         routers.add(router);
         List<Invoker<String>> invokers = new ArrayList<Invoker<String>>();

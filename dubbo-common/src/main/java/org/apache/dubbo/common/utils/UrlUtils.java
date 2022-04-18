@@ -391,14 +391,14 @@ public class UrlUtils {
                 && (consumerClassifier == null || ANY_VALUE.equals(consumerClassifier) || StringUtils.isEquals(consumerClassifier, providerClassifier));
     }
 
-    public static boolean isMatchGlobPattern(String pattern, String value, URL param) {
-        if (param != null && pattern.startsWith("$")) {
+    public static boolean isMatchGlobPattern(String pattern, String value, URL param) { //GlobPattern:全局模式
+        if (param != null && pattern.startsWith("$")) { //若以$开头，则先去除$符号
             pattern = param.getRawParameter(pattern.substring(1));
         }
         return isMatchGlobPattern(pattern, value);
     }
 
-    public static boolean isMatchGlobPattern(String pattern, String value) {
+    public static boolean isMatchGlobPattern(String pattern, String value) { //根据"*"号的位置，做不同的比较
         if ("*".equals(pattern)) {
             return true;
         }

@@ -105,7 +105,7 @@ public abstract class AbstractDirectory<T> implements Directory<T> {
     }
 
     @Override
-    public void destroy() {
+    public void destroy() { //销毁目录：更改销毁标志destroyed
         destroyed = true;
     }
 

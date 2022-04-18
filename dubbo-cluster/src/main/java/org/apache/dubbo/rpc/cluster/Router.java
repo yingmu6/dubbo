@@ -32,6 +32,13 @@ import java.util.List;
  * @see org.apache.dubbo.rpc.cluster.Directory#list(Invocation)
  */
 public interface Router extends Comparable<Router> {
+    /**
+     * 路由规则：官方文档
+     * https://dubbo.apache.org/zh/docs/v2.7/user/examples/routing-rule-deprecated/
+     * 1）=> 之前的为消费者匹配条件，=> 之后为提供者地址列表的过滤条件
+     * 2）如果匹配条件为空，表示对所有消费方应用，如果过滤条件为空，表示禁止访问
+     * 3）通过Dubbo中的路由规则做服务治理，路由规则在发起一次RPC调用前起到过滤目标服务器地址的作用，过滤后的地址列表，将作为消费端最终发起RPC调用的备选地址。
+     */
 
     int DEFAULT_PRIORITY = Integer.MAX_VALUE;
 
@@ -44,7 +51,7 @@ public interface Router extends Comparable<Router> {
 
     /**
      * Filter invokers with current routing rule and only return the invokers that comply with the rule.
-     * （用路由规则过滤Invoker列表）
+     * （用路由规则过滤Invoker列表，返回与路由规则匹配的invoker列表）
      *
      * @param invokers   invoker list
      * @param url        refer url
@@ -56,7 +63,7 @@ public interface Router extends Comparable<Router> {
 
 
     /**
-     * Notify the router the invoker list. Invoker list may change from time to time. This method gives the router a
+     * Notify the router the invoker list（通知路由器关联的invoker列表）. Invoker list may change from time to time（可能会是不是更改）. This method gives the router a
      * chance to prepare before {@link Router#route(List, URL, Invocation)} gets called.
      *
      * @param invokers invoker list

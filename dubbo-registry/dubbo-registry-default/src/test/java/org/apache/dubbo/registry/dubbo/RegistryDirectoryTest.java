@@ -57,7 +57,7 @@ import static org.apache.dubbo.rpc.cluster.Constants.*;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class RegistryDirectoryTest { //todo @csy-pause 001
+public class RegistryDirectoryTest {
 
     private static boolean isScriptUnsupported = new ScriptEngineManager().getEngineByName("javascript") == null;
     RegistryFactory registryFactory = ExtensionLoader.getExtensionLoader(RegistryFactory.class).getAdaptiveExtension();
@@ -95,7 +95,7 @@ public class RegistryDirectoryTest { //todo @csy-pause 001
     }
 
     @Test
-    public void test_Constructor_WithErrorParam() { //在RegistryDirectory、AbstractDirectory会对serviceType、url进行非空判断
+    public void test_Constructor_WithErrorParam() { //已测：在RegistryDirectory、AbstractDirectory会对serviceType、url进行非空判断
         try {
             new RegistryDirectory(null, null);
             fail();
@@ -119,7 +119,7 @@ public class RegistryDirectoryTest { //todo @csy-pause 001
     }
 
     @Test
-    public void test_Constructor_CheckStatus() throws Exception {
+    public void test_Constructor_CheckStatus() throws Exception { //已测
         URL url = URL.valueOf("notsupported://10.20.30.40/" + service + "?a=b").addParameterAndEncoded(REFER_KEY,
                 "foo=bar&fruit=apple").addParameter(EXPORT_KEY, "test=hh");
         RegistryDirectory reg = getRegistryDirectory(url);
@@ -134,7 +134,7 @@ public class RegistryDirectoryTest { //todo @csy-pause 001
     }
 
     @Test
-    public void testNotified_Normal() {
+    public void testNotified_Normal() { //已测
         RegistryDirectory registryDirectory = getRegistryDirectory();
         test_Notified2invokers(registryDirectory);
         test_Notified1invokers(registryDirectory);
@@ -148,11 +148,11 @@ public class RegistryDirectoryTest { //todo @csy-pause 001
      * Test push only router
      */
     @Test
-    public void testNotified_Normal_withRouters() {
+    public void testNotified_Normal_withRouters() { //已测
         LogUtil.start();
         RegistryDirectory registryDirectory = getRegistryDirectory();
         test_Notified1invokers(registryDirectory);
-        test_Notified_only_routers(registryDirectory);
+        test_Notified_only_routers(registryDirectory); //router对应的url列表有变更
         Assertions.assertTrue(registryDirectory.isAvailable());
         Assertions.assertTrue(LogUtil.checkNoError(), "notify no invoker urls ,should not error");
         LogUtil.stop();
@@ -161,26 +161,27 @@ public class RegistryDirectoryTest { //todo @csy-pause 001
     }
 
     @Test
-    public void testNotified_WithError() {
+    public void testNotified_WithError() { //已测
         RegistryDirectory registryDirectory = getRegistryDirectory();
         List<URL> serviceUrls = new ArrayList<URL>();
         // ignore error log
         URL badurl = URL.valueOf("notsupported://127.0.0.1/" + service);
         serviceUrls.add(badurl);
-        serviceUrls.add(SERVICEURL);
+        serviceUrls.add(SERVICEURL); //添加URL
 
         registryDirectory.notify(serviceUrls);
-        Assertions.assertTrue(registryDirectory.isAvailable());
+        Assertions.assertTrue(registryDirectory.isAvailable()); //isAvailable() 不同的实现，有不同的处理，比如：DubboInvoker就会判断ExchangeClient是否处于连接状态
+
         List invokers = registryDirectory.list(invocation);
         Assertions.assertEquals(1, invokers.size());
     }
 
     @Test
-    public void testNotified_WithDuplicateUrls() {
+    public void testNotified_WithDuplicateUrls() { //待确定
         List<URL> serviceUrls = new ArrayList<URL>();
         // ignore error log
         serviceUrls.add(SERVICEURL);
-        serviceUrls.add(SERVICEURL);
+        serviceUrls.add(SERVICEURL); //是在哪里去重的？
 
         RegistryDirectory registryDirectory = getRegistryDirectory();
         registryDirectory.notify(serviceUrls);
@@ -199,12 +200,12 @@ public class RegistryDirectoryTest { //todo @csy-pause 001
         try {
             registryDirectory.list(invocation);
             fail("forbid must throw RpcException");
-        } catch (RpcException e) {
+        } catch (RpcException e) { //捕获异常
             Assertions.assertEquals(RpcException.FORBIDDEN_EXCEPTION, e.getCode());
         }
     }
 
-    //The test call is independent of the path of the registry url
+    //The test call is independent（独立的） of the path of the registry url
     @Test
     public void test_NotifiedDubbo1() {
         URL errorPathUrl = URL.valueOf("notsupport:/" + "xxx" + "?refer=" + URL.encode("interface=" + service));

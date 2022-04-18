@@ -99,7 +99,7 @@ public class StaticDirectory<T> extends AbstractDirectory<T> {
     }
 
     @Override
-    protected List<Invoker<T>> doList(Invocation invocation) throws RpcException {
+    protected List<Invoker<T>> doList(Invocation invocation) throws RpcException { //静态目录中的invoker列表也要经过路由链进行路由
         List<Invoker<T>> finalInvokers = invokers;
         if (routerChain != null) {
             try {

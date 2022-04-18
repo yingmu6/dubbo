@@ -20,7 +20,7 @@ import org.apache.log4j.Level;
 
 import java.io.Serializable;
 
-public class Log implements Serializable {
+public class Log implements Serializable { //日志的数据模型
     private static final long serialVersionUID = -534113138054377073L;
     private String logName;
     private Level logLevel;

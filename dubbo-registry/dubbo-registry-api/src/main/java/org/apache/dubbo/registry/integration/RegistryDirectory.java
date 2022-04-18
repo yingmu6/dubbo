@@ -81,7 +81,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
     private final Class<T> serviceType; // Initialization at construction time, assertion not null
     private final Map<String, String> queryMap; // Initialization at construction time, assertion not null
     private final URL directoryUrl; // Initialization at construction time, assertion not null, and always assign non null value
-    private final boolean multiGroup;
+    private final boolean multiGroup; //是否包含多个组，group名称为"*"，或包含"，"
     private Protocol protocol; // Initialization at the time of injection, the assertion is not null
     private Registry registry; // Initialization at the time of injection, the assertion is not null
     private volatile boolean forbidden = false;
@@ -100,7 +100,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
      */
     private volatile List<Configurator> configurators; // The initial value is null and the midway may be assigned to null, please use the local variable reference
 
-    // Map<url, Invoker> cache service url to invoker mapping. urlInvokerMap值是什么时候设置的？解：设置的方法有许多，比如toInvokers()方法中，destroyAllInvokers()方法等
+    // Map<url, Invoker> cache service url to invoker mapping（URL与Invoker的映射）. urlInvokerMap值是什么时候设置的？解：设置的方法有许多，比如toInvokers()方法中，destroyAllInvokers()方法等
     private volatile Map<String, Invoker<T>> urlInvokerMap; // The initial value is null（初始值为null） and the midway（中途） may be assigned to null, please use the local variable reference
     private volatile List<Invoker<T>> invokers; //维护的invoker列表
 
@@ -211,7 +211,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
                 .collect(Collectors.groupingBy(this::judgeCategory)); //按category分组
 
         /**
-         * 将分类的URL列表，依次转换为 Configurator、Router列表
+         * 将分类的URL列表，依次转换为 Configurator、Router、Provider列表
          */
         List<URL> configuratorURLs = categoryUrls.getOrDefault(CONFIGURATORS_CATEGORY, Collections.emptyList());
         this.configurators = Configurator.toConfigurators(configuratorURLs).orElse(this.configurators); //orElse(): 若Optional维护的成员变量为空，就取输入的值
@@ -694,7 +694,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
     }
 
     /**
-     * The delegate class, which is mainly used to store the URL address sent by the registry,and can be reassembled on the basis of providerURL queryMap overrideMap for re-refer.
+     * The delegate class（委派类）, which is mainly used to store（存储） the URL address sent by the registry,and can be reassembled（重新组装） on the basis of providerURL queryMap overrideMap for re-refer.
      *
      * @param <T>
      */

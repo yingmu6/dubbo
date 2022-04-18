@@ -57,24 +57,27 @@ public class ConditionRouter extends AbstractRouter {
     }
 
     public ConditionRouter(URL url) {
-        this.url = url;
+        this.url = url; //url的值如：condition://0.0.0.0/com.foo.BarService?rule=+%3D%3E++host+%3D+192.168.3.16，rule对应的值是经过编码的
         this.priority = url.getParameter(PRIORITY_KEY, 0);
         this.force = url.getParameter(FORCE_KEY, false);
         this.enabled = url.getParameter(ENABLED_KEY, true);
-        init(url.getParameterAndDecoded(RULE_KEY));
+        init(url.getParameterAndDecoded(RULE_KEY)); //将url中的rule参数对应的值进行解码
     }
 
-    public void init(String rule) {
+    public void init(String rule) { //规则字符串，如： "=>  host = 192.168.3.16"
         try {
             if (rule == null || rule.trim().length() == 0) {
                 throw new IllegalArgumentException("Illegal route rule!");
             }
-            rule = rule.replace("consumer.", "").replace("provider.", "");
-            int i = rule.indexOf("=>");
-            String whenRule = i < 0 ? null : rule.substring(0, i).trim();
-            String thenRule = i < 0 ? rule.trim() : rule.substring(i + 2).trim();
-            Map<String, MatchPair> when = StringUtils.isBlank(whenRule) || "true".equals(whenRule) ? new HashMap<String, MatchPair>() : parseRule(whenRule);
-            Map<String, MatchPair> then = StringUtils.isBlank(thenRule) || "false".equals(thenRule) ? null : parseRule(thenRule);
+            rule = rule.replace("consumer.", "").replace("provider.", ""); //去除指定参数
+            int i = rule.indexOf("=>"); //找到 => 位置
+            String whenRule = i < 0 ? null : rule.substring(0, i).trim(); //取出消费者匹配的条件
+            String thenRule = i < 0 ? rule.trim() : rule.substring(i + 2).trim(); //取出提供者地址列表过滤条件
+            /**
+             * 解析路由表达式：生成
+             */
+            Map<String, MatchPair> when = StringUtils.isBlank(whenRule) || "true".equals(whenRule) ? new HashMap<String, MatchPair>() : parseRule(whenRule); //如果匹配条件为空，表示对所有消费方应用
+            Map<String, MatchPair> then = StringUtils.isBlank(thenRule) || "false".equals(thenRule) ? null : parseRule(thenRule); //如果过滤条件为空，表示禁止访问
             // NOTE: It should be determined on the business level whether the `When condition` can be empty or not.
             this.whenCondition = when;
             this.thenCondition = then;
@@ -95,7 +98,7 @@ public class ConditionRouter extends AbstractRouter {
         Set<String> values = null;
         final Matcher matcher = ROUTE_PATTERN.matcher(rule);
         while (matcher.find()) { // Try to match one by one
-            String separator = matcher.group(1);
+            String separator = matcher.group(1); //todo @pause
             String content = matcher.group(2);
             // Start part of the condition expression.
             if (StringUtils.isEmpty(separator)) {
@@ -177,7 +180,7 @@ public class ConditionRouter extends AbstractRouter {
                     result.add(invoker);
                 }
             }
-            if (!result.isEmpty()) {
+            if (!result.isEmpty()) { //若按路由条件筛选到invoker列表，则做对应返回
                 return result;
             } else if (force) {
                 logger.warn("The route result is empty and force execute. consumer: " + NetUtils.getLocalHost() + ", service: " + url.getServiceKey() + ", router: " + url.getParameterAndDecoded(RULE_KEY));
@@ -201,11 +204,11 @@ public class ConditionRouter extends AbstractRouter {
         return url;
     }
 
-    boolean matchWhen(URL url, Invocation invocation) {
+    boolean matchWhen(URL url, Invocation invocation) { //匹配消费者的匹配条件
         return CollectionUtils.isEmptyMap(whenCondition) || matchCondition(whenCondition, url, null, invocation);
     }
 
-    private boolean matchThen(URL url, URL param) {
+    private boolean matchThen(URL url, URL param) { //匹配提供者地址列表的过滤条件
         return CollectionUtils.isNotEmptyMap(thenCondition) && matchCondition(thenCondition, url, param, null);
     }
 
@@ -246,7 +249,7 @@ public class ConditionRouter extends AbstractRouter {
         return result;
     }
 
-    protected static final class MatchPair {
+    protected static final class MatchPair { //键值对：存放匹配和不匹配的条件
         final Set<String> matches = new HashSet<String>(); //匹配的列表
         final Set<String> mismatches = new HashSet<String>(); //不匹配的列表
 

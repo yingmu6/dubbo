@@ -49,7 +49,7 @@ public class RouterChain<T> {
 
     // Fixed router instances: ConfigConditionRouter, TagRouter, e.g., the rule for each instance may change but the
     // instance will never delete or recreate.
-    private List<Router> builtinRouters = Collections.emptyList(); //内置的路由实例
+    private List<Router> builtinRouters = Collections.emptyList(); //内置的路由实例，包含MockInvokersSelector、TagRouter、AppRouter、ServiceRouter等
 
     public static <T> RouterChain<T> buildChain(URL url) { //构建路由链RouterChain
         return new RouterChain<>(url);
@@ -77,14 +77,14 @@ public class RouterChain<T> {
     }
 
     /**
-     * If we use route:// protocol in version before 2.7.0, each URL will generate a Router instance, so we should
-     * keep the routers up to date, that is, each time router URLs changes, we should update the routers list, only
+     * If we use route:// protocol in version before 2.7.0, each URL will generate a Router instance（每个路由的URL会产生一个路由实例）, so we should
+     * keep the routers up to date（保持最新）, that is, each time router URLs changes, we should update the routers list, only
      * keep the builtinRouters which are available all the time and the latest notified routers which are generated
      * from URLs.
      *
      * @param routers routers from 'router://' rules in 2.6.x or before.
      */
-    public void addRouters(List<Router> routers) {
+    public void addRouters(List<Router> routers) { //添加路由器列表：包含内置的和外部的路由列表
         List<Router> newRouters = new ArrayList<>();
         newRouters.addAll(builtinRouters);
         newRouters.addAll(routers);
@@ -105,7 +105,7 @@ public class RouterChain<T> {
     public List<Invoker<T>> route(URL url, Invocation invocation) {
         List<Invoker<T>> finalInvokers = invokers;
         for (Router router : routers) { //Router的实例是在哪里选择的？解：在RegistryDirectory#notify中会调用addRouters()方法添加路由列表
-            finalInvokers = router.route(finalInvokers, url, invocation); //Router是如何选择invoker列表的？解：按照路由规则，比如条件路由等，进入筛选匹配获取的
+            finalInvokers = router.route(finalInvokers, url, invocation); //Router是如何选择invoker列表的？解：将invoker列表依次经过路由链做过滤处理
         }
         return finalInvokers;
     }
