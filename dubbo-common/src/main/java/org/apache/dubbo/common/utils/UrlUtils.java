@@ -411,7 +411,7 @@ public class UrlUtils {
 
         int i = pattern.lastIndexOf('*');
         // doesn't find "*"
-        if (i == -1) {
+        if (i == -1) { //没发现"*"时，直接将两个字符串进行equal()比较
             return value.equals(pattern);
         }
         // "*" is at the end

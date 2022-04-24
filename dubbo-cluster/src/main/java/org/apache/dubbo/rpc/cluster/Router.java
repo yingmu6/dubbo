@@ -54,7 +54,7 @@ public interface Router extends Comparable<Router> {
      * （用路由规则过滤Invoker列表，返回与路由规则匹配的invoker列表）
      *
      * @param invokers   invoker list
-     * @param url        refer url
+     * @param url        refer url 消费端引用的url，如"consumer://"
      * @param invocation invocation
      * @return routed invokers
      * @throws RpcException
