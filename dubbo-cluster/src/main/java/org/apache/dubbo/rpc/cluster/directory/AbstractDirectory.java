@@ -110,6 +110,6 @@ public abstract class AbstractDirectory<T> implements Directory<T> {
     }
 
     // 从目录中获取符合条件的invoker列表
-    protected abstract List<Invoker<T>> doList(Invocation invocation) throws RpcException;
+    protected abstract List<Invoker<T>> doList(Invocation invocation) throws RpcException; //抽象方法：具体的实现，交由子类实现
 
 }

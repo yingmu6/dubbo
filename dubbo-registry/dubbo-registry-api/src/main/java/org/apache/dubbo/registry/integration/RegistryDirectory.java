@@ -376,7 +376,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
     }
 
     /**
-     * Turn urls into invokers, and if url has been refer, will not re-reference.
+     * Turn urls into invokers, and if url has been refer, will not re-reference. （若url已经被引用，则不再引用）
      *
      * @param urls
      * @return invokers

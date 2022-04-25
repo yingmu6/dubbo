@@ -112,10 +112,10 @@ public class RouterChain<T> {
 
     /**
      * Notify router chain of the initial addresses from registry at the first time.
-     * Notify whenever addresses in registry change.
+     * Notify whenever（每当） addresses in registry change.
      */
     public void setInvokers(List<Invoker<T>> invokers) {
         this.invokers = (invokers == null ? Collections.emptyList() : invokers);
-        routers.forEach(router -> router.notify(this.invokers));
+        routers.forEach(router -> router.notify(this.invokers)); //依次通过路由器做通知
     }
 }

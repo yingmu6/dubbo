@@ -218,7 +218,7 @@ public class RegistryDirectoryTest {
 
         invocation = new RpcInvocation();
 
-        List<Invoker<DemoService>> invokers = registryDirectory.list(invocation);
+        List<Invoker<DemoService>> invokers = registryDirectory.list(invocation); //list调用过程：AbstractDirectory的list -> AbstractDirectory的doList -> 具体实例RegistryDirectory或StaticsDirectory的doList
         Assertions.assertEquals(1, invokers.size());
 
         invocation.setMethodName("getXXX");
