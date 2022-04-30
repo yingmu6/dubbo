@@ -179,7 +179,7 @@ public class RegistryProtocol implements Protocol {
         registry.subscribe(overrideSubscribeUrl, overrideSubscribeListener);
 
         notifyExport(exporter);
-        //Ensure that a new exporter instance is returned every time export
+        //Ensure（确保） that a new exporter instance（新的exporter实例） is returned every time export（每次暴露）
         return new DestroyableExporter<>(exporter);
     }
 
@@ -368,7 +368,7 @@ public class RegistryProtocol implements Protocol {
      */
     private URL getProviderUrl(final Invoker<?> originInvoker) { //取出服务提供者的url，比如registry://xxx?xx&export=dubbo://192.168.1.105:20881/org.apache.dubbo.demo.GreetingService/xxx
         String export = originInvoker.getUrl().getParameterAndDecoded(EXPORT_KEY);
-        if (export == null || export.length() == 0) {
+        if (export == null || export.length() == 0) { //注册协议中对应的url中，需要包含export参数，如registry://xxx?xx&export=xxx
             throw new IllegalArgumentException("The registry export url is null! registry: " + originInvoker.getUrl());
         }
         return URL.valueOf(export);
@@ -510,7 +510,7 @@ public class RegistryProtocol implements Protocol {
         return url;
     }
 
-    public static class InvokerDelegate<T> extends InvokerWrapper<T> {
+    public static class InvokerDelegate<T> extends InvokerWrapper<T> { //Invoker的委派类
         private final Invoker<T> invoker;
 
         /**
@@ -531,7 +531,7 @@ public class RegistryProtocol implements Protocol {
         }
     }
 
-    private static class DestroyableExporter<T> implements Exporter<T> {
+    private static class DestroyableExporter<T> implements Exporter<T> { //静态内部类
 
         private Exporter<T> exporter;
 

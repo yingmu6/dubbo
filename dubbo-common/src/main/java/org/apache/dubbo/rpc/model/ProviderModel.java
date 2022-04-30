@@ -26,9 +26,9 @@ import java.util.*;
 /**
  * ProviderModel is about published services（ProviderModel是已经发布服务的模型）
  */
-public class ProviderModel {
+public class ProviderModel { //提供者数据模型
     private String serviceKey;
-    private final Object serviceInstance;
+    private final Object serviceInstance; //暴露服务的实现类
     private final ServiceDescriptor serviceModel;
     private final ServiceConfigBase<?> serviceConfig;
     private final List<RegisterStatedURL> urls;

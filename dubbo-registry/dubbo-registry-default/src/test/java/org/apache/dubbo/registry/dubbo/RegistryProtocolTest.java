@@ -16,6 +16,7 @@
  */
 package org.apache.dubbo.registry.dubbo;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.config.ConfigurationUtils;
 import org.apache.dubbo.common.extension.ExtensionLoader;
@@ -25,18 +26,12 @@ import org.apache.dubbo.registry.RegistryService;
 import org.apache.dubbo.registry.integration.RegistryProtocol;
 import org.apache.dubbo.registry.support.AbstractRegistry;
 import org.apache.dubbo.remoting.exchange.ExchangeClient;
-import org.apache.dubbo.rpc.Exporter;
-import org.apache.dubbo.rpc.Invocation;
-import org.apache.dubbo.rpc.Invoker;
-import org.apache.dubbo.rpc.Protocol;
-import org.apache.dubbo.rpc.Result;
+import org.apache.dubbo.rpc.*;
 import org.apache.dubbo.rpc.model.ApplicationModel;
 import org.apache.dubbo.rpc.model.ServiceDescriptor;
 import org.apache.dubbo.rpc.protocol.AbstractInvoker;
 import org.apache.dubbo.rpc.protocol.dubbo.DubboInvoker;
 import org.apache.dubbo.rpc.protocol.dubbo.DubboProtocol;
-
-import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,10 +41,7 @@ import java.util.List;
 
 import static org.apache.dubbo.registry.integration.RegistryProtocol.DEFAULT_REGISTER_PROVIDER_KEYS;
 import static org.apache.dubbo.rpc.cluster.Constants.EXPORT_KEY;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * RegistryProtocolTest
@@ -76,13 +68,13 @@ public class RegistryProtocolTest {
     }
 
     @Test
-    public void testDefaultPort() {
+    public void testDefaultPort() { //已测
         RegistryProtocol registryProtocol = getRegistryProtocol();
-        assertEquals(9090, registryProtocol.getDefaultPort());
+        assertEquals(9090, registryProtocol.getDefaultPort()); //RegistryProtocol的默认端口为9090
     }
 
     @Test
-    public void testExportUrlNull() {
+    public void testExportUrlNull() { //已测
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             RegistryProtocol registryProtocol = getRegistryProtocol();
 //            registryProtocol.setCluster(new FailfastCluster());
@@ -90,13 +82,13 @@ public class RegistryProtocolTest {
             Protocol dubboProtocol = DubboProtocol.getDubboProtocol();
             registryProtocol.setProtocol(dubboProtocol);
             Invoker<DemoService> invoker = new DubboInvoker<DemoService>(DemoService.class,
-                    registryUrl, new ExchangeClient[]{new MockedClient("10.20.20.20", 2222, true)});
-            registryProtocol.export(invoker);
+                    registryUrl, new ExchangeClient[] {new MockedClient("10.20.20.20", 2222, true)});
+            registryProtocol.export(invoker); //registry对应的url中需要有export参数
         });
     }
 
     @Test
-    public void testExport() {
+    public void testExport() { //已测
         RegistryProtocol registryProtocol = getRegistryProtocol();
 //        registryProtocol.setCluster(new FailfastCluster());
         registryProtocol.setRegistryFactory(ExtensionLoader.getExtensionLoader(RegistryFactory.class).getAdaptiveExtension());
@@ -105,10 +97,16 @@ public class RegistryProtocolTest {
         registryProtocol.setProtocol(dubboProtocol);
         URL newRegistryUrl = registryUrl.addParameter(EXPORT_KEY, serviceUrl);
         DubboInvoker<DemoService> invoker = new DubboInvoker<DemoService>(DemoService.class,
-                newRegistryUrl, new ExchangeClient[]{new MockedClient("10.20.20.20", 2222, true)});
+                newRegistryUrl, new ExchangeClient[] {new MockedClient("10.20.20.20", 2222, true)});
+
+        // 需要先将服务数据模型注册到ServiceRepository，不然RegistryProtocol.registerStatedUrl会出现空指针
+        ServiceDescriptor descriptor = ApplicationModel.getServiceRepository().registerService(DemoService.class);
+        ApplicationModel.getServiceRepository().registerProvider(service, new DemoServiceImpl(), descriptor, null, null);
+
         Exporter<DemoService> exporter = registryProtocol.export(invoker);
         Exporter<DemoService> exporter2 = registryProtocol.export(invoker);
-        //The same invoker, exporter that multiple exported are different
+
+        //The same invoker, exporter that multiple exported are different（因为每次暴露都会new新的Export实例）
         Assertions.assertNotSame(exporter, exporter2);
         exporter.unexport();
         exporter2.unexport();
@@ -159,12 +157,15 @@ public class RegistryProtocolTest {
 
         Exporter<?> exporter = protocol.export(invoker);
         RegistryProtocol rprotocol = getRegistryProtocol();
+
         NotifyListener listener = getListener(rprotocol);
         List<URL> urls = new ArrayList<URL>();
         urls.add(URL.valueOf("override://0.0.0.0/org.apache.dubbo.registry.protocol.HackService?timeout=100"));
         listener.notify(urls);
-        assertTrue(exporter.getInvoker().isAvailable());
+
+        assertTrue(exporter.getInvoker().isAvailable()); //invoker为啥会是当前内部类MockInvoker？
         assertNull(exporter.getInvoker().getUrl().getParameter("timeout"));
+
         exporter.unexport();
         destroyRegistryProtocol();
     }

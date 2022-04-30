@@ -271,7 +271,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
     private void doExportUrls() {
         ServiceRepository repository = ApplicationModel.getServiceRepository(); //获取服务仓库
         ServiceDescriptor serviceDescriptor = repository.registerService(getInterfaceClass());
-        repository.registerProvider(
+        repository.registerProvider( //服务暴露时，将提供者的数据模型缓存到服务仓库中
                 getUniqueServiceName(),
                 ref,
                 serviceDescriptor,

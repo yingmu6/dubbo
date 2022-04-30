@@ -42,7 +42,7 @@ public class BaseServiceMetadata {
         return buf.toString();
     }
 
-    public static String versionFromServiceKey(String serviceKey) {
+    public static String versionFromServiceKey(String serviceKey) { //从服务key中查找版本号
         int index = serviceKey.indexOf(":");
         if (index == -1) {
             return null;
@@ -50,7 +50,7 @@ public class BaseServiceMetadata {
         return serviceKey.substring(index + 1);
     }
 
-    public static String groupFromServiceKey(String serviceKey) {
+    public static String groupFromServiceKey(String serviceKey) { //从服务key中查找分组信息
         int index = serviceKey.indexOf("/");
         if (index == -1) {
             return null;
