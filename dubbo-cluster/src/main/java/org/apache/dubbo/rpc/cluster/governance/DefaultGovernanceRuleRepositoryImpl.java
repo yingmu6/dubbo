@@ -35,6 +35,6 @@ public class DefaultGovernanceRuleRepositoryImpl implements GovernanceRuleReposi
 
     @Override
     public String getRule(String key, String group, long timeout) throws IllegalStateException {
-        return dynamicConfiguration.getConfig(key, group, timeout);
+        return dynamicConfiguration.getConfig(key, group, timeout); //
     }
 }

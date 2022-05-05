@@ -29,7 +29,7 @@ import java.util.*;
 public class ServiceDescriptor { //服务的描述信息
     private final String serviceName; //服务名，如："org.apache.dubbo.rpc.service.EchoService"
     private final Class<?> serviceInterfaceClass;
-    // to accelerate search
+    // to accelerate search（为了加速查询）
     private final Map<String, List<MethodDescriptor>> methods = new HashMap<>();
     private final Map<String, Map<String, MethodDescriptor>> descToMethods = new HashMap<>();
 

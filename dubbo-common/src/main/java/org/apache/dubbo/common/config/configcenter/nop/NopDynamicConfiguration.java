@@ -27,7 +27,7 @@ import java.util.SortedSet;
  * that is not a valid extension（指定无效的扩展）, it will default to this one.
  */
 @Deprecated
-public class NopDynamicConfiguration implements DynamicConfiguration {
+public class NopDynamicConfiguration implements DynamicConfiguration { //DynamicConfigurationFactory SPI接口的默认实现NopDynamicConfigurationFactory
     // 默认使用NopDynamicConfigurationFactory实现，这个实现就是就是空白实现，不加载任何信息，并且标记成了启用状态
 
     public NopDynamicConfiguration(URL url) {
@@ -42,16 +42,19 @@ public class NopDynamicConfiguration implements DynamicConfiguration {
     @Override
     public void addListener(String key, String group, ConfigurationListener listener) {
         // no-op
+        System.out.println("no-op addListener");
     }
 
     @Override
     public void removeListener(String key, String group, ConfigurationListener listener) {
         // no-op
+        System.out.println("no-op removeListener");
     }
 
     @Override
     public String getConfig(String key, String group, long timeout) throws IllegalStateException {
         // no-op
+        System.out.println("no-op getConfig");
         return null;
     }
 

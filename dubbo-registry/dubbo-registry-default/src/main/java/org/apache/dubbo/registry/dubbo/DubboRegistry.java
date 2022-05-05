@@ -41,7 +41,7 @@ import static org.apache.dubbo.registry.Constants.REGISTRY_RECONNECT_PERIOD_KEY;
 /**
  * DubboRegistry
  */
-public class DubboRegistry extends FailbackRegistry {
+public class DubboRegistry extends FailbackRegistry { //dubbo实现的注册协议
 
     private final static Logger logger = LoggerFactory.getLogger(DubboRegistry.class);
 

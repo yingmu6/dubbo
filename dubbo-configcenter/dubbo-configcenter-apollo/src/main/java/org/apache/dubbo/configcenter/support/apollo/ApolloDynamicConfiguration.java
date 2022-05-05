@@ -217,7 +217,7 @@ public class ApolloDynamicConfiguration implements DynamicConfiguration {
         return new ApolloListener();
     }
 
-    public class ApolloListener implements ConfigChangeListener { //监听apollo配置变更
+    public class ApolloListener implements ConfigChangeListener { //实现了apollo的ConfigChangeListener接口的onChange()，当apollo有变更时，会回调此方法
 
         private Set<ConfigurationListener> listeners = new CopyOnWriteArraySet<>();
 
@@ -234,7 +234,7 @@ public class ApolloDynamicConfiguration implements DynamicConfiguration {
                     return;
                 }
 
-                // 构建事件对象，并依次通过监听器处理
+                // 构建Dubbo的事件对象，并依次通知事件对象关联的监听器
                 ConfigChangedEvent event = new ConfigChangedEvent(key, change.getNamespace(), change.getNewValue(), getChangeType(change));
                 listeners.forEach(listener -> listener.process(event));
             }

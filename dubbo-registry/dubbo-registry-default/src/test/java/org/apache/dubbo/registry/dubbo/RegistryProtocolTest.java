@@ -148,14 +148,14 @@ public class RegistryProtocolTest {
      * Service name matching, service version number mismatch
      */
     @Test
-    public void testNotifyOverride_notmatch() throws Exception {
+    public void testNotifyOverride_notmatch() throws Exception { //已测
         URL newRegistryUrl = registryUrl.addParameter(EXPORT_KEY, serviceUrl);
-        Invoker<RegistryProtocolTest> invoker = new MockInvoker<RegistryProtocolTest>(RegistryProtocolTest.class, newRegistryUrl);
+        Invoker<RegistryProtocolTest> invoker = new MockInvoker<RegistryProtocolTest>(RegistryProtocolTest.class, newRegistryUrl); //指定接口的实现类：实现多态
 
-        ServiceDescriptor descriptor = ApplicationModel.getServiceRepository().registerService(DemoService.class);
-        ApplicationModel.getServiceRepository().registerProvider(service, new DemoServiceImpl(), descriptor, null, null);
+        ServiceDescriptor descriptor = ApplicationModel.getServiceRepository().registerService(DemoService.class); //ApplicationModel.getServiceRepository(): 获取服务仓库，ServiceRepository.registerService：注册服务
+        ApplicationModel.getServiceRepository().registerProvider(service, new DemoServiceImpl(), descriptor, null, null); //registerProvider：注册提供者信息
 
-        Exporter<?> exporter = protocol.export(invoker);
+        Exporter<?> exporter = protocol.export(invoker); //因为invoker中包含的url是registry://，所以此处的protocol.export()会执行RegistryProtocol.export()方法
         RegistryProtocol rprotocol = getRegistryProtocol();
 
         NotifyListener listener = getListener(rprotocol);
@@ -163,7 +163,7 @@ public class RegistryProtocolTest {
         urls.add(URL.valueOf("override://0.0.0.0/org.apache.dubbo.registry.protocol.HackService?timeout=100"));
         listener.notify(urls);
 
-        assertTrue(exporter.getInvoker().isAvailable()); //invoker为啥会是当前内部类MockInvoker？
+        assertTrue(exporter.getInvoker().isAvailable()); //invoker为啥会是当前内部类MockInvoker？解：前面指定了Invoker的实现类
         assertNull(exporter.getInvoker().getUrl().getParameter("timeout"));
 
         exporter.unexport();
@@ -208,7 +208,7 @@ public class RegistryProtocolTest {
 
     static class MockInvoker<T> extends AbstractInvoker<T> {
         public MockInvoker(Class<T> type, URL url) {
-            super(type, url);
+            super(type, url); //将type、url设置到父类存储
         }
 
         @Override

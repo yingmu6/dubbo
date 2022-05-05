@@ -208,7 +208,7 @@ public interface DynamicConfiguration extends Configuration, AutoCloseable { //�
         Optional<DynamicConfiguration> optional = ApplicationModel.getEnvironment().getDynamicConfiguration();
         return optional.orElseGet(() -> getExtensionLoader(DynamicConfigurationFactory.class)
                 .getDefaultExtension()
-                .getDynamicConfiguration(null));
+                .getDynamicConfiguration(null)); //若没有设置DynamicConfiguration，则取默认的扩展实例NopDynamicConfigurationFactory
     }
 
     /**

@@ -146,13 +146,13 @@ public class RegistryProtocol implements Protocol {
         // url to export locally
         URL providerUrl = getProviderUrl(originInvoker);
 
-        // Subscribe the override data
-        // FIXME When the provider subscribes, it will affect the scene : a certain JVM exposes the service and call
-        //  the same service. Because the subscribed is cached key with the name of the service, it causes the
-        //  subscription information to cover.
+        // Subscribe the override data（订阅覆盖数据）
+        // FIXME When the provider subscribes, it will affect the scene（场景） : a certain JVM exposes（暴露） the service and call
+        //  the same service. Because the subscribed is cached key（缓存键） with the name of the service, it causes the
+        //  subscription information to cover（引起订阅信息被覆盖）.
         final URL overrideSubscribeUrl = getSubscribedOverrideUrl(providerUrl);
         final OverrideListener overrideSubscribeListener = new OverrideListener(overrideSubscribeUrl, originInvoker);
-        overrideListeners.put(overrideSubscribeUrl, overrideSubscribeListener);
+        overrideListeners.put(overrideSubscribeUrl, overrideSubscribeListener); //将订阅的url与对应的监听器Listener映射并缓存起来
 
         providerUrl = overrideUrlWithConfig(providerUrl, overrideSubscribeListener);
         //export invoker
@@ -193,7 +193,7 @@ public class RegistryProtocol implements Protocol {
         }
     }
 
-    private URL overrideUrlWithConfig(URL providerUrl, OverrideListener listener) {
+    private URL overrideUrlWithConfig(URL providerUrl, OverrideListener listener) { //todo @csy pause
         providerUrl = providerConfigurationListener.overrideUrl(providerUrl);
         ServiceConfigurationListener serviceConfigurationListener = new ServiceConfigurationListener(providerUrl, listener);
         serviceConfigurationListeners.put(providerUrl.getServiceKey(), serviceConfigurationListener);
@@ -312,7 +312,7 @@ public class RegistryProtocol implements Protocol {
         URL registryUrl = originInvoker.getUrl();
         if (REGISTRY_PROTOCOL.equals(registryUrl.getProtocol())) {
             String protocol = registryUrl.getParameter(REGISTRY_KEY, DEFAULT_REGISTRY);
-            registryUrl = registryUrl.setProtocol(protocol).removeParameter(REGISTRY_KEY); //将注册协议替换为具体协议，如registry://替换为zookeeper
+            registryUrl = registryUrl.setProtocol(protocol).removeParameter(REGISTRY_KEY); //将注册协议替换为具体协议，如registry://替换为zookeeper，若url没有设置registry参数，则默认为dubbo协议
         }
         return registryUrl;
     }
@@ -355,7 +355,7 @@ public class RegistryProtocol implements Protocol {
 
     }
 
-    private URL getSubscribedOverrideUrl(URL registeredProviderUrl) {
+    private URL getSubscribedOverrideUrl(URL registeredProviderUrl) { //协议设置为：protocol://
         return registeredProviderUrl.setProtocol(PROVIDER_PROTOCOL)
                 .addParameters(CATEGORY_KEY, CONFIGURATORS_CATEGORY, CHECK_KEY, String.valueOf(false));
     }
@@ -371,7 +371,7 @@ public class RegistryProtocol implements Protocol {
         if (export == null || export.length() == 0) { //注册协议中对应的url中，需要包含export参数，如registry://xxx?xx&export=xxx
             throw new IllegalArgumentException("The registry export url is null! registry: " + originInvoker.getUrl());
         }
-        return URL.valueOf(export);
+        return URL.valueOf(export); //将url字符串构建为URL对象
     }
 
     /**
@@ -658,7 +658,7 @@ public class RegistryProtocol implements Protocol {
         }
     }
 
-    private class ProviderConfigurationListener extends AbstractConfiguratorListener {
+    private class ProviderConfigurationListener extends AbstractConfiguratorListener { //提供者配置监听器
 
         public ProviderConfigurationListener() {
             this.initWith(ApplicationModel.getApplication() + CONFIGURATORS_SUFFIX);
@@ -764,7 +764,7 @@ public class RegistryProtocol implements Protocol {
     }
 
     // for unit test
-    private static RegistryProtocol INSTANCE;
+    private static RegistryProtocol INSTANCE; //为单元测试保留的实例
 
     // for unit test
     public RegistryProtocol() {

@@ -24,8 +24,8 @@ import java.util.EventListener;
 public interface ConfigurationListener extends EventListener { //配置监听器，EventListener：事件标记接口
 
     /**
-     * Listener call back method（回调方法）. Listener gets notified by this method once there's any change happens on the config
-     * the listener listens on.
+     * Listener call back method（回调方法）. Listener gets notified（监听器收到通知） by this method once there's any change happens（任意变化发生） on the config
+     * the listener listens on（监听器监听的配置）.
      *
      * @param event config change event
      */
