@@ -348,7 +348,7 @@ public class UrlUtils {
                 + (version == null ? "" : "&" + VERSION_KEY + "=" + version));
     }
 
-    public static boolean isMatchCategory(String category, String categories) {
+    public static boolean isMatchCategory(String category, String categories) { //比对url中的Category是否匹配
         if (categories == null || categories.length() == 0) {
             return DEFAULT_CATEGORY.equals(category);
         } else if (categories.contains(ANY_VALUE)) {
@@ -360,13 +360,13 @@ public class UrlUtils {
         }
     }
 
-    public static boolean isMatch(URL consumerUrl, URL providerUrl) {
+    public static boolean isMatch(URL consumerUrl, URL providerUrl) { //判断两个url是否匹配
         String consumerInterface = consumerUrl.getServiceInterface();
         String providerInterface = providerUrl.getServiceInterface();
         //FIXME accept providerUrl with '*' as interface name, after carefully thought about all possible scenarios I think it's ok to add this condition.
         if (!(ANY_VALUE.equals(consumerInterface)
                 || ANY_VALUE.equals(providerInterface)
-                || StringUtils.isEquals(consumerInterface, providerInterface))) {
+                || StringUtils.isEquals(consumerInterface, providerInterface))) { //先判断两个url中的接口名是否相同
             return false;
         }
 
@@ -388,7 +388,7 @@ public class UrlUtils {
         String providerClassifier = providerUrl.getParameter(CLASSIFIER_KEY, ANY_VALUE);
         return (ANY_VALUE.equals(consumerGroup) || StringUtils.isEquals(consumerGroup, providerGroup) || StringUtils.isContains(consumerGroup, providerGroup))
                 && (ANY_VALUE.equals(consumerVersion) || StringUtils.isEquals(consumerVersion, providerVersion))
-                && (consumerClassifier == null || ANY_VALUE.equals(consumerClassifier) || StringUtils.isEquals(consumerClassifier, providerClassifier));
+                && (consumerClassifier == null || ANY_VALUE.equals(consumerClassifier) || StringUtils.isEquals(consumerClassifier, providerClassifier)); //比较group、version、classifier的参数值
     }
 
     public static boolean isMatchGlobPattern(String pattern, String value, URL param) { //GlobPattern:全局模式

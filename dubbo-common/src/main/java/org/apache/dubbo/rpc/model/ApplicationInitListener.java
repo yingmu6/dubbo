@@ -19,7 +19,7 @@ package org.apache.dubbo.rpc.model;
 import org.apache.dubbo.common.extension.SPI;
 
 @SPI
-public interface ApplicationInitListener {
+public interface ApplicationInitListener { //目前没有具体实现，应该是为了3.0预留
     /**
      * init the application
      */

@@ -174,9 +174,13 @@ public class RegistryProtocolTest {
      * Test destory registry, exporter can be normal by destroyed
      */
     @Test
-    public void testDestoryRegistry() { //测试销毁
+    public void testDestoryRegistry() { //
         URL newRegistryUrl = registryUrl.addParameter(EXPORT_KEY, serviceUrl);
         Invoker<RegistryProtocolTest> invoker = new MockInvoker<RegistryProtocolTest>(RegistryProtocolTest.class, newRegistryUrl);
+
+        ServiceDescriptor descriptor = ApplicationModel.getServiceRepository().registerService(DemoService.class);
+        ApplicationModel.getServiceRepository().registerProvider(service, new DemoServiceImpl(), descriptor, null, null);
+
         Exporter<?> exporter = protocol.export(invoker);
         destroyRegistryProtocol();
         try {

@@ -168,7 +168,7 @@ public class RegistryProtocol implements Protocol {
             register(registryUrl, registeredProviderUrl);
         }
 
-        // register stated url on provider model
+        // register stated（声明） url on provider model
         registerStatedUrl(registryUrl, registeredProviderUrl, register);
 
 
@@ -187,13 +187,13 @@ public class RegistryProtocol implements Protocol {
         List<RegistryProtocolListener> listeners = ExtensionLoader.getExtensionLoader(RegistryProtocolListener.class)
                 .getActivateExtension(exporter.getOriginInvoker().getUrl(), "registry.protocol.listener");
         if (CollectionUtils.isNotEmpty(listeners)) {
-            for (RegistryProtocolListener listener : listeners) {
+            for (RegistryProtocolListener listener : listeners) { //主动回调监听器的方法
                 listener.onExport(this, exporter);
             }
         }
     }
 
-    private URL overrideUrlWithConfig(URL providerUrl, OverrideListener listener) { //todo @csy pause
+    private URL overrideUrlWithConfig(URL providerUrl, OverrideListener listener) {
         providerUrl = providerConfigurationListener.overrideUrl(providerUrl);
         ServiceConfigurationListener serviceConfigurationListener = new ServiceConfigurationListener(providerUrl, listener);
         serviceConfigurationListeners.put(providerUrl.getServiceKey(), serviceConfigurationListener);
@@ -620,7 +620,7 @@ public class RegistryProtocol implements Protocol {
             }
         }
 
-        private List<URL> getMatchedUrls(List<URL> configuratorUrls, URL currentSubscribe) {
+        private List<URL> getMatchedUrls(List<URL> configuratorUrls, URL currentSubscribe) { //从配置的url列表中找到与当前订阅的url匹配的url列表
             List<URL> result = new ArrayList<URL>();
             for (URL url : configuratorUrls) {
                 URL overrideUrl = url;

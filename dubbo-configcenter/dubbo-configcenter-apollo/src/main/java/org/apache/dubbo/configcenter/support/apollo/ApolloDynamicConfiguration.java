@@ -139,7 +139,7 @@ public class ApolloDynamicConfiguration implements DynamicConfiguration {
      * ignores the group parameter.
      */
     @Override
-    public void addListener(String key, String group, ConfigurationListener listener) {
+    public void addListener(String key, String group, ConfigurationListener listener) { //添加监听器：将监听器缓存起来，且调用apollo的API接口在apollo添加监听器
         ApolloListener apolloListener = listeners.computeIfAbsent(group + key, k -> createTargetListener(key, group));
         apolloListener.addListener(listener);
         dubboConfig.addChangeListener(apolloListener, Collections.singleton(key));
