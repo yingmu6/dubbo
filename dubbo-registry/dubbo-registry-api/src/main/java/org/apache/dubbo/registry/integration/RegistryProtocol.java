@@ -85,8 +85,9 @@ public class RegistryProtocol implements Protocol {
     private final Map<String, ServiceConfigurationListener> serviceConfigurationListeners = new ConcurrentHashMap<>();
     private final ProviderConfigurationListener providerConfigurationListener = new ProviderConfigurationListener();
     //To solve the problem of RMI repeated exposure port conflicts, the services that have been exposed are no longer exposed.
+    //（解决RMI重复暴露端口冲突问题，已经暴露的服务不再暴露）
     //providerurl <--> exporter
-    private final ConcurrentMap<String, ExporterChangeableWrapper<?>> bounds = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, ExporterChangeableWrapper<?>> bounds = new ConcurrentHashMap<>(); //
     private Protocol protocol;
     private RegistryFactory registryFactory;
     private ProxyFactory proxyFactory;
@@ -476,10 +477,10 @@ public class RegistryProtocol implements Protocol {
     }
 
     @Override
-    public void destroy() {
+    public void destroy() { //注册协议销毁
         List<RegistryProtocolListener> listeners = ExtensionLoader.getExtensionLoader(RegistryProtocolListener.class)
                 .getLoadedExtensionInstances();
-        if (CollectionUtils.isNotEmpty(listeners)) {
+        if (CollectionUtils.isNotEmpty(listeners)) { //目前RegistryProtocolListener接口没有实现类，所以不进入此逻辑
             for (RegistryProtocolListener listener : listeners) {
                 listener.onDestroy();
             }
