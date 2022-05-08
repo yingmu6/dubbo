@@ -467,12 +467,12 @@ public class RegistryProtocol implements Protocol {
                 .getActivateExtension(url, "registry.protocol.listener");
     }
 
-    // available to test
-    public String[] getParamsToRegistry(String[] defaultKeys, String[] additionalParameterKeys) {
+    // available to test（可用于测试）
+    public String[] getParamsToRegistry(String[] defaultKeys, String[] additionalParameterKeys) { //将additionalParameterKeys的数组元素添加defaultKeys数组中
         int additionalLen = additionalParameterKeys.length;
         String[] registryParams = new String[defaultKeys.length + additionalLen];
         System.arraycopy(defaultKeys, 0, registryParams, 0, defaultKeys.length);
-        System.arraycopy(additionalParameterKeys, 0, registryParams, defaultKeys.length, additionalLen);
+        System.arraycopy(additionalParameterKeys, 0, registryParams, defaultKeys.length, additionalLen); //数组拷贝
         return registryParams;
     }
 

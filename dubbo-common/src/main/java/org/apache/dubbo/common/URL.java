@@ -180,7 +180,7 @@ class URL implements Serializable {
                Map<String, Map<String, String>> methodParameters) {
         if (StringUtils.isEmpty(username)
                 && StringUtils.isNotEmpty(password)) {
-            throw new IllegalArgumentException("Invalid url, password without username!");
+            throw new IllegalArgumentException("Invalid url, password without username!"); //密码与用户名要么没有，要么一起出现
         }
         this.protocol = protocol;
         this.username = username;
@@ -279,7 +279,7 @@ class URL implements Serializable {
             username = url.substring(0, i);
             int j = username.indexOf(':');
             if (j >= 0) {
-                password = username.substring(j + 1);
+                password = username.substring(j + 1); //解析出用户名、密码
                 username = username.substring(0, j);
             }
             url = url.substring(i + 1);

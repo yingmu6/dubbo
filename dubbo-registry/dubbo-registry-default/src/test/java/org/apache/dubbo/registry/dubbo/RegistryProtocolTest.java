@@ -174,7 +174,7 @@ public class RegistryProtocolTest {
      * Test destory registry, exporter can be normal by destroyed
      */
     @Test
-    public void testDestoryRegistry() { //
+    public void testDestoryRegistry() { //已测
         URL newRegistryUrl = registryUrl.addParameter(EXPORT_KEY, serviceUrl);
         Invoker<RegistryProtocolTest> invoker = new MockInvoker<RegistryProtocolTest>(RegistryProtocolTest.class, newRegistryUrl);
 
@@ -193,12 +193,12 @@ public class RegistryProtocolTest {
     }
 
     @Test
-    public void testGetParamsToRegistry() {
+    public void testGetParamsToRegistry() { //已测
         RegistryProtocol registryProtocol = getRegistryProtocol();
-        String[] additionalParams = new String[]{"key1", "key2"};
+        String[] additionalParams = new String[] {"key1", "key2"};
         String[] registryParams = registryProtocol.getParamsToRegistry(DEFAULT_REGISTER_PROVIDER_KEYS, additionalParams);
         String[] expectParams = ArrayUtils.addAll(DEFAULT_REGISTER_PROVIDER_KEYS, additionalParams);
-        Assertions.assertArrayEquals(expectParams, registryParams);
+        Assertions.assertArrayEquals(expectParams, registryParams); //getParamsToRegistry()方法的效果，等价ArrayUtils.addAll()
     }
 
     private void destroyRegistryProtocol() {
