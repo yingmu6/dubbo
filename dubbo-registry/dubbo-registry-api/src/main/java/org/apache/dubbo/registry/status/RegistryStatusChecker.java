@@ -39,11 +39,11 @@ public class RegistryStatusChecker implements StatusChecker {
         }
         Status.Level level = Status.Level.OK;
         StringBuilder buf = new StringBuilder();
-        for (Registry registry : registries) {
+        for (Registry registry : registries) { //遍历注册实例
             if (buf.length() > 0) {
                 buf.append(",");
             }
-            buf.append(registry.getUrl().getAddress());
+            buf.append(registry.getUrl().getAddress()); //连接地址
             if (!registry.isAvailable()) { //判断注册实例是否可用
                 level = Status.Level.ERROR;
                 buf.append("(disconnected)");

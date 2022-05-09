@@ -24,7 +24,6 @@ import org.apache.dubbo.registry.RegistryService;
 import org.apache.dubbo.registry.status.RegistryStatusChecker;
 import org.apache.dubbo.registry.support.AbstractRegistryFactory;
 import org.apache.dubbo.rpc.model.ApplicationModel;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,16 +51,16 @@ public class RegistryStatusCheckerTest {
     }
 
     @Test
-    public void testCheckUnknown() {
+    public void testCheckUnknown() { //已测
         assertEquals(Status.Level.UNKNOWN, new RegistryStatusChecker().check().getLevel());
     }
 
     @Test
     public void testCheckOK() {
         ApplicationModel.setApplication("testCheckOK");
-        ExtensionLoader.getExtensionLoader(RegistryFactory.class).getAdaptiveExtension().getRegistry(registryUrl);
-        ExtensionLoader.getExtensionLoader(RegistryFactory.class).getAdaptiveExtension().getRegistry(registryUrl2);
-        assertEquals(Status.Level.OK, new RegistryStatusChecker().check().getLevel());
+        ExtensionLoader.getExtensionLoader(RegistryFactory.class).getAdaptiveExtension().getRegistry(registryUrl); //getRegistry()待测试
+        ExtensionLoader.getExtensionLoader(RegistryFactory.class).getAdaptiveExtension().getRegistry(registryUrl2); //创建注册实例
+        assertEquals(Status.Level.OK, new RegistryStatusChecker().check().getLevel()); //存在注册实例时，Status为OK
         String message = new RegistryStatusChecker().check().getMessage();
         Assertions.assertTrue(message.contains(registryUrl.getAddress() + "(connected)"));
         Assertions.assertTrue(message.contains(registryUrl2.getAddress() + "(connected)"));

@@ -19,7 +19,7 @@ package org.apache.dubbo.common.status;
 /**
  * Status
  */
-public class Status {
+public class Status { //状态
 
     private final Level level;
     private final String message;
