@@ -86,7 +86,7 @@ public class DubboRegistryFactory extends AbstractRegistryFactory {
     }
 
     @Override
-    public Registry createRegistry(URL url) {
+    public Registry createRegistry(URL url) { //todo @csy pause
         url = getRegistryURL(url);
         List<URL> urls = new ArrayList<>();
         urls.add(url.removeParameter(BACKUP_KEY));

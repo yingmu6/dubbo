@@ -268,7 +268,7 @@ public class AdaptiveClassCodeGenerator { //自适应代码产生器
                         getNameCode = String.format("( url.getProtocol() == null ? \"%s\" : url.getProtocol() )", defaultExtName);
                     }
                 } else {                     //不存在默认扩展名
-                    if (!"protocol".equals(value[i])) {
+                    if (!"protocol".equals(value[i])) { //若注解中声明的value是"protocol"，则按url.getProtocol()方法获取
                         if (hasInvocation) {
                             getNameCode = String.format("url.getMethodParameter(methodName, \"%s\", \"%s\")", value[i], defaultExtName);
                         } else {

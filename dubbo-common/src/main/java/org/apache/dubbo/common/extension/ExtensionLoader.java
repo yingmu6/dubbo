@@ -628,7 +628,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
     }
 
     @SuppressWarnings("unchecked")
-    public T getAdaptiveExtension() { //获取自适应扩展实例
+    public T getAdaptiveExtension() { //获取自适应扩展实例，若不存在则创建
         Object instance = cachedAdaptiveInstance.get();
         if (instance == null) {
             if (createAdaptiveInstanceError != null) { //实例为空，且异常信息的实例不为空，表明当时创建自适应实例时，出现异常
