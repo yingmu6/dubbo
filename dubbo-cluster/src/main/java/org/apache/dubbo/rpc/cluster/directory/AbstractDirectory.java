@@ -54,7 +54,7 @@ public abstract class AbstractDirectory<T> implements Directory<T> {
         this(url, null);
     }
 
-    public AbstractDirectory(URL url, RouterChain<T> routerChain) {
+    public AbstractDirectory(URL url, RouterChain<T> routerChain) { //todo @csy pause
         if (url == null) {
             throw new IllegalArgumentException("url == null");
         }

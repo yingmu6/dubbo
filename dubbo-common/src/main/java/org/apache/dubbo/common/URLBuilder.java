@@ -62,7 +62,7 @@ public final class URLBuilder { //URL的构造器
         this(protocol, null, null, host, port, null, CollectionUtils.toStringMap(pairs));
     }
 
-    public URLBuilder(String protocol, String host, int port, Map<String, String> parameters) {
+    public URLBuilder(String protocol, String host, int port, Map<String, String> parameters) { //构建器模式：设置好成员属性后，返回this对象
         this(protocol, null, null, host, port, null, parameters);
     }
 
