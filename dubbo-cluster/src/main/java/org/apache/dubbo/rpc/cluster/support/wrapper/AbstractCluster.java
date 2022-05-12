@@ -32,13 +32,13 @@ import java.util.List;
 
 import static org.apache.dubbo.common.constants.CommonConstants.REFERENCE_INTERCEPTOR_KEY;
 
-public abstract class AbstractCluster implements Cluster {
+public abstract class AbstractCluster implements Cluster { //抽象Cluster
 
     private <T> Invoker<T> buildClusterInterceptors(AbstractClusterInvoker<T> clusterInvoker, String key) {
         AbstractClusterInvoker<T> last = clusterInvoker;
         List<ClusterInterceptor> interceptors = ExtensionLoader.getExtensionLoader(ClusterInterceptor.class).getActivateExtension(clusterInvoker.getUrl(), key);
 
-        if (!interceptors.isEmpty()) {
+        if (!interceptors.isEmpty()) { //todo @csy pause
             for (int i = interceptors.size() - 1; i >= 0; i--) {
                 final ClusterInterceptor interceptor = interceptors.get(i);
                 final AbstractClusterInvoker<T> next = last;
