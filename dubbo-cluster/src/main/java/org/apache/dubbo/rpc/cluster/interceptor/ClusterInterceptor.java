@@ -24,10 +24,10 @@ import org.apache.dubbo.rpc.RpcException;
 import org.apache.dubbo.rpc.cluster.support.AbstractClusterInvoker;
 
 /**
- * Different from {@link Filter}, ClusterInterceptor works at the outmost layer, before one specific address/invoker is picked.
+ * Different from {@link Filter}, ClusterInterceptor works at the outmost layer（最外层）, before one specific address/invoker is picked.
  */
 @SPI
-public interface ClusterInterceptor {
+public interface ClusterInterceptor { //与Filter不同
 
     void before(AbstractClusterInvoker<?> clusterInvoker, Invocation invocation);
 

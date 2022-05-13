@@ -38,7 +38,7 @@ public abstract class AbstractCluster implements Cluster { //抽象Cluster
         AbstractClusterInvoker<T> last = clusterInvoker;
         List<ClusterInterceptor> interceptors = ExtensionLoader.getExtensionLoader(ClusterInterceptor.class).getActivateExtension(clusterInvoker.getUrl(), key);
 
-        if (!interceptors.isEmpty()) { //todo @csy pause
+        if (!interceptors.isEmpty()) {
             for (int i = interceptors.size() - 1; i >= 0; i--) {
                 final ClusterInterceptor interceptor = interceptors.get(i);
                 final AbstractClusterInvoker<T> next = last;
@@ -55,7 +55,7 @@ public abstract class AbstractCluster implements Cluster { //抽象Cluster
 
     protected abstract <T> AbstractClusterInvoker<T> doJoin(Directory<T> directory) throws RpcException;
 
-    protected class InterceptorInvokerNode<T> extends AbstractClusterInvoker<T> {
+    protected class InterceptorInvokerNode<T> extends AbstractClusterInvoker<T> { //
 
         private AbstractClusterInvoker<T> clusterInvoker;
         private ClusterInterceptor interceptor;
