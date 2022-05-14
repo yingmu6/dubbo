@@ -56,10 +56,11 @@ public class RegistryStatusCheckerTest {
     }
 
     @Test
-    public void testCheckOK() {
+    public void testCheckOK() { //已测
         ApplicationModel.setApplication("testCheckOK");
         ExtensionLoader.getExtensionLoader(RegistryFactory.class).getAdaptiveExtension().getRegistry(registryUrl); //getRegistry()待测试
         ExtensionLoader.getExtensionLoader(RegistryFactory.class).getAdaptiveExtension().getRegistry(registryUrl2); //创建注册实例
+        // 注册状态与注册实例的有无以及 注册地址的有效性有关
         assertEquals(Status.Level.OK, new RegistryStatusChecker().check().getLevel()); //存在注册实例时，Status为OK
         String message = new RegistryStatusChecker().check().getMessage();
         Assertions.assertTrue(message.contains(registryUrl.getAddress() + "(connected)"));
