@@ -27,7 +27,6 @@ import org.apache.dubbo.remoting.Constants;
 import org.apache.dubbo.rpc.Invoker;
 import org.apache.dubbo.rpc.RpcInvocation;
 import org.apache.dubbo.rpc.protocol.dubbo.DubboProtocol;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -53,13 +52,13 @@ public class DubboRegistryTest {
     private RegistryService registryService;
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() { //todo @csy pause
         registryURL = new URL(REGISTRY_PROTOCOL, NetUtils.getLocalHost(), NetUtils.getAvailablePort())
                 .addParameter(Constants.CHECK_KEY, false)
                 .setServiceInterface(RegistryService.class.getName());
         serviceURL = new URL(DubboProtocol.NAME, NetUtils.getLocalHost(), NetUtils.getAvailablePort())
                 .addParameter(Constants.CHECK_KEY, false)
-                .setServiceInterface(RegistryService.class.getName());
+                .setServiceInterface(RegistryService.class.getName()); //构建service对应的url
 
         registryService = new MockDubboRegistry(registryURL);
 
