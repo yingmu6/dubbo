@@ -82,7 +82,7 @@ public class DubboRegistry extends FailbackRegistry { //dubbo实现的注册协�
         }, reconnectPeriod, reconnectPeriod, TimeUnit.MILLISECONDS);
     }
 
-    protected final void connect() {
+    protected final void connect() { //链接处理
         try {
             // Check whether or not it is connected
             if (isAvailable()) {
