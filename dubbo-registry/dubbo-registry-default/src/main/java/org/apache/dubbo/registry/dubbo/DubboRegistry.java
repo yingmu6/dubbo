@@ -113,7 +113,7 @@ public class DubboRegistry extends FailbackRegistry { //dubbo实现的注册协�
     }
 
     @Override
-    public boolean isAvailable() {
+    public boolean isAvailable() { //是否有效
         if (registryInvoker == null) {
             return false;
         }
