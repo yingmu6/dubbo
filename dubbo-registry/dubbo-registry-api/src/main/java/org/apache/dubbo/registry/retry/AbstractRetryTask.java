@@ -104,7 +104,7 @@ public abstract class AbstractRetryTask implements TimerTask { //重试任务
     }
 
     @Override
-    public void run(Timeout timeout) throws Exception {
+    public void run(Timeout timeout) throws Exception { //将通用处理逻辑封装在抽象类中
         if (timeout.isCancelled() || timeout.timer().isStop() || isCancel()) {
             // other thread cancel this timeout or stop the timer.
             return;
@@ -118,7 +118,7 @@ public abstract class AbstractRetryTask implements TimerTask { //重试任务
             logger.info(taskName + " : " + url);
         }
         try {
-            doRetry(url, registry, timeout);
+            doRetry(url, registry, timeout); //将有差异的处理逻辑，放在子类中
         } catch (Throwable t) { // Ignore all the exceptions and wait for the next retry
             logger.warn("Failed to execute task " + taskName + ", url: " + url + ", waiting for again, cause:" + t.getMessage(), t);
             // reput this task when catch exception.
@@ -126,5 +126,5 @@ public abstract class AbstractRetryTask implements TimerTask { //重试任务
         }
     }
 
-    protected abstract void doRetry(URL url, FailbackRegistry registry, Timeout timeout);
+    protected abstract void doRetry(URL url, FailbackRegistry registry, Timeout timeout); //重试的逻辑放在具体实现类：按不同的失败类型做重试，比如注册失败、订阅失败等
 }

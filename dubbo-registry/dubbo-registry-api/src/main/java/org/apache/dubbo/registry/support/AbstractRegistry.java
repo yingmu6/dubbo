@@ -61,7 +61,7 @@ public abstract class AbstractRegistry implements Registry {
     private boolean syncSaveFile;
     private final AtomicLong lastCacheChanged = new AtomicLong();
     private final AtomicInteger savePropertiesRetryTimes = new AtomicInteger();
-    private final Set<URL> registered = new ConcurrentHashSet<>();
+    private final Set<URL> registered = new ConcurrentHashSet<>(); //被注册的url列表
     private final ConcurrentMap<URL, Set<NotifyListener>> subscribed = new ConcurrentHashMap<>();
     private final ConcurrentMap<URL, Map<String, List<URL>>> notified = new ConcurrentHashMap<>();
     private URL registryUrl;
@@ -72,14 +72,14 @@ public abstract class AbstractRegistry implements Registry {
         setUrl(url);
         if (url.getParameter(REGISTRY__LOCAL_FILE_CACHE_ENABLED, true)) {
             // Start file save timer
-            syncSaveFile = url.getParameter(REGISTRY_FILESAVE_SYNC_KEY, false);
-            String defaultFilename = System.getProperty("user.home") + "/.dubbo/dubbo-registry-" + url.getParameter(APPLICATION_KEY) + "-" + url.getAddress().replaceAll(":", "-") + ".cache";
+            syncSaveFile = url.getParameter(REGISTRY_FILESAVE_SYNC_KEY, false); //是否同步保存文件，默认false：异步
+            String defaultFilename = System.getProperty("user.home") + "/.dubbo/dubbo-registry-" + url.getParameter(APPLICATION_KEY) + "-" + url.getAddress().replaceAll(":", "-") + ".cache"; //值如：/Users/chenshengyong/.dubbo/dubbo-registry-null-172.16.140.148-51198.cache
             String filename = url.getParameter(FILE_KEY, defaultFilename);
             File file = null;
             if (ConfigUtils.isNotEmpty(filename)) {
                 file = new File(filename);
                 if (!file.exists() && file.getParentFile() != null && !file.getParentFile().exists()) {
-                    if (!file.getParentFile().mkdirs()) {
+                    if (!file.getParentFile().mkdirs()) { //若文件目录不存在，则去创建
                         throw new IllegalArgumentException("Invalid registry cache file " + file + ", cause: Failed to create directory " + file.getParentFile() + "!");
                     }
                 }
@@ -190,7 +190,7 @@ public abstract class AbstractRegistry implements Registry {
             InputStream in = null;
             try {
                 in = new FileInputStream(file);
-                properties.load(in);
+                properties.load(in); //若缓存文件存在，则从文件中读取内容，写到Properties属性对象中
                 if (logger.isInfoEnabled()) {
                     logger.info("Load registry cache file " + file + ", data: " + properties);
                 }
@@ -262,7 +262,7 @@ public abstract class AbstractRegistry implements Registry {
         if (logger.isInfoEnabled()) {
             logger.info("Register: " + url);
         }
-        registered.add(url); //将url注册到集合中
+        registered.add(url); //将url添加到集合中
     }
 
     @Override
@@ -366,7 +366,7 @@ public abstract class AbstractRegistry implements Registry {
      * @param listener listener
      * @param urls     provider latest urls
      */
-    protected void notify(URL url, NotifyListener listener, List<URL> urls) {
+    protected void notify(URL url, NotifyListener listener, List<URL> urls) { //通知变更
         if (url == null) {
             throw new IllegalArgumentException("notify url == null");
         }

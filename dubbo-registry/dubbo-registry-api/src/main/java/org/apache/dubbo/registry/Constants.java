@@ -54,7 +54,7 @@ public interface Constants {
     String SIMPLIFIED_KEY = "simplified";
 
     /**
-     * To decide whether register center saves file synchronously, the default value is asynchronously
+     * To decide whether register center saves file synchronously（同步的）, the default value is asynchronously（异步的）
      */
     String REGISTRY_FILESAVE_SYNC_KEY = "save.file";
 

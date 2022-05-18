@@ -62,7 +62,7 @@ public abstract class FailbackRegistry extends AbstractRegistry {
         this.retryPeriod = url.getParameter(REGISTRY_RETRY_PERIOD_KEY, DEFAULT_REGISTRY_RETRY_PERIOD);
 
         // since the retry task will not be very much. 128 ticks is enough.
-        retryTimer = new HashedWheelTimer(new NamedThreadFactory("DubboRegistryRetryTimer", true), retryPeriod, TimeUnit.MILLISECONDS, 128);
+        retryTimer = new HashedWheelTimer(new NamedThreadFactory("DubboRegistryRetryTimer", true), retryPeriod, TimeUnit.MILLISECONDS, 128); //128毫秒的重试时间
     }
 
     public void removeFailedRegisteredTask(URL url) {
@@ -223,7 +223,7 @@ public abstract class FailbackRegistry extends AbstractRegistry {
             return;
         }
         super.register(url);
-        removeFailedRegistered(url);
+        removeFailedRegistered(url); //移除失败的注册url
         removeFailedUnregistered(url);
         try {
             // Sending a registration（注册，登记） request to the server side
@@ -232,6 +232,7 @@ public abstract class FailbackRegistry extends AbstractRegistry {
             Throwable t = e;
 
             // If the startup detection is opened, the Exception is thrown directly.
+            // （如果开启了启动检测，直接抛出Exception）
             boolean check = getUrl().getParameter(Constants.CHECK_KEY, true)
                     && url.getParameter(Constants.CHECK_KEY, true)
                     && !CONSUMER_PROTOCOL.equals(url.getProtocol());
@@ -246,7 +247,7 @@ public abstract class FailbackRegistry extends AbstractRegistry {
             }
 
             // Record a failed registration request to a failed list, retry regularly
-            addFailedRegistered(url);
+            addFailedRegistered(url); //若失败了，将url记录到失败的集合中
         }
     }
 

@@ -52,7 +52,7 @@ public class DubboRegistryTest {
     private RegistryService registryService;
 
     @BeforeEach
-    public void setUp() { //todo @csy pause
+    public void setUp() {
         registryURL = new URL(REGISTRY_PROTOCOL, NetUtils.getLocalHost(), NetUtils.getAvailablePort())
                 .addParameter(Constants.CHECK_KEY, false)
                 .setServiceInterface(RegistryService.class.getName());
@@ -62,18 +62,18 @@ public class DubboRegistryTest {
 
         registryService = new MockDubboRegistry(registryURL);
 
-        invoker = mock(Invoker.class);
-        given(invoker.getUrl()).willReturn(serviceURL);
+        invoker = mock(Invoker.class); //mock出Invoker对象
+        given(invoker.getUrl()).willReturn(serviceURL);//指定mock对象中指定方法的返回值（对mock对象的方法进行操作）
         given(invoker.getInterface()).willReturn(RegistryService.class);
         given(invoker.invoke(new RpcInvocation())).willReturn(null);
 
-        dubboRegistry = new DubboRegistry(invoker, registryService);
+        dubboRegistry = new DubboRegistry(invoker, registryService); //创建真实对象
         notifyListener = mock(NotifyListener.class);
     }
 
     @Test
     public void testRegister() {
-        dubboRegistry.register(serviceURL);
+        dubboRegistry.register(serviceURL); //注册url
         assertEquals(1, getRegisteredSize());
     }
 

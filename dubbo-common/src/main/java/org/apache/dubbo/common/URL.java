@@ -518,7 +518,7 @@ class URL implements Serializable {
         return address.toString();
     }
 
-    public List<URL> getBackupUrls() {
+    public List<URL> getBackupUrls() { //获取备份的url列表
         List<URL> urls = new ArrayList<>();
         urls.add(this);
         String[] backups = getParameter(RemotingConstants.BACKUP_KEY, new String[0]);
