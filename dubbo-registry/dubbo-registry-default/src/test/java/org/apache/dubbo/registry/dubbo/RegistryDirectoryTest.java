@@ -189,18 +189,18 @@ public class RegistryDirectoryTest {
         Assertions.assertEquals(1, invokers.size());
     }
 
-    // forbid
-    private void testforbid(RegistryDirectory registryDirectory) {
+    // forbid（禁止）
+    private void testforbid(RegistryDirectory registryDirectory) { //已测
         invocation = new RpcInvocation();
         List<URL> serviceUrls = new ArrayList<URL>();
         serviceUrls.add(new URL(EMPTY_PROTOCOL, ANYHOST_VALUE, 0, service, CATEGORY_KEY, PROVIDERS_CATEGORY));
         registryDirectory.notify(serviceUrls);
-        Assertions.assertFalse(registryDirectory.isAvailable(),
-            "invokers size=0 ,then the registry directory is not available");
+        Assertions.assertFalse(registryDirectory.isAvailable(), //此处因为所维护的：RegistryDirectory.urlInvokerMap是空的，所以目录是无效的
+                "invokers size=0 ,then the registry directory is not available");
         try {
             registryDirectory.list(invocation);
             fail("forbid must throw RpcException");
-        } catch (RpcException e) { //捕获异常
+        } catch (RpcException e) { //捕获异常，由于协议为Empty，所以此处会抛出异常
             Assertions.assertEquals(RpcException.FORBIDDEN_EXCEPTION, e.getCode());
         }
     }

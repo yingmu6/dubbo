@@ -52,7 +52,7 @@ public class DubboRegistryTest {
     private RegistryService registryService;
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() { //在测试前，mock出测试数据
         registryURL = new URL(REGISTRY_PROTOCOL, NetUtils.getLocalHost(), NetUtils.getAvailablePort())
                 .addParameter(Constants.CHECK_KEY, false)
                 .setServiceInterface(RegistryService.class.getName());
@@ -71,32 +71,37 @@ public class DubboRegistryTest {
         notifyListener = mock(NotifyListener.class);
     }
 
+    /**
+     * 相关的逻辑点
+     * 1）订阅、取消订阅等操作，都是围绕着AbstractRegistry维护的数据结构处理的
+     */
+
     @Test
-    public void testRegister() {
+    public void testRegister() { //已测
         dubboRegistry.register(serviceURL); //注册url
         assertEquals(1, getRegisteredSize());
     }
 
     @Test
-    public void testUnRegister() {
+    public void testUnRegister() { //已测
         assertEquals(0, getRegisteredSize());
-        dubboRegistry.register(serviceURL);
+        dubboRegistry.register(serviceURL); //将url加到集合中
         assertEquals(1, getRegisteredSize());
-        dubboRegistry.unregister(serviceURL);
+        dubboRegistry.unregister(serviceURL); //从已注册的集合中，将对应的url移除了，所以集合中的元素就对应减少了
         assertEquals(0, getRegisteredSize());
     }
 
     @Test
-    public void testSubscribe() {
+    public void testSubscribe() { //已测
         dubboRegistry.register(serviceURL);
         assertEquals(1, getRegisteredSize());
-        dubboRegistry.subscribe(serviceURL, notifyListener);
-        assertEquals(1, getSubscribedSize());
+        dubboRegistry.subscribe(serviceURL, notifyListener); //订阅服务
+        assertEquals(1, getSubscribedSize()); //做订阅处理
         assertEquals(1, getNotifiedListeners());
     }
 
     @Test
-    public void testUnsubscribe() {
+    public void testUnsubscribe() { // 已测
         dubboRegistry.subscribe(serviceURL, notifyListener);
         assertEquals(1, getSubscribedSize());
         assertEquals(1, getNotifiedListeners());
@@ -104,7 +109,7 @@ public class DubboRegistryTest {
         assertEquals(0, getNotifiedListeners());
     }
 
-    private class MockDubboRegistry extends FailbackRegistry {
+    private class MockDubboRegistry extends FailbackRegistry { //自定义的测试类，主要维护isAvailable状态值
 
         private volatile boolean isAvailable = false;
 

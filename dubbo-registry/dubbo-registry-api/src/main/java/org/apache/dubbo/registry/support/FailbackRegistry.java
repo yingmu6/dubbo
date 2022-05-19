@@ -247,7 +247,7 @@ public abstract class FailbackRegistry extends AbstractRegistry {
             }
 
             // Record a failed registration request to a failed list, retry regularly
-            addFailedRegistered(url); //若失败了，将url记录到失败的集合中
+            addFailedRegistered(url); //若失败了，将url记录到失败的集合中，后续做重试处理
         }
     }
 
@@ -318,7 +318,7 @@ public abstract class FailbackRegistry extends AbstractRegistry {
     @Override
     public void subscribe(URL url, NotifyListener listener) {
         super.subscribe(url, listener);
-        removeFailedSubscribed(url, listener);
+        removeFailedSubscribed(url, listener); //移除失败的订阅
         try {
             // Sending a subscription request to the server side
             doSubscribe(url, listener);
@@ -327,7 +327,7 @@ public abstract class FailbackRegistry extends AbstractRegistry {
 
             List<URL> urls = getCacheUrls(url);
             if (CollectionUtils.isNotEmpty(urls)) {
-                notify(url, listener, urls);
+                notify(url, listener, urls); //在订阅失败时，会做通知处理
                 logger.error("Failed to subscribe " + url + ", Using cached list: " + urls + " from cache file: " + getUrl().getParameter(FILE_KEY, System.getProperty("user.home") + "/dubbo-registry-" + url.getHost() + ".cache") + ", cause: " + t.getMessage(), t);
             } else {
                 // If the startup detection is opened, the Exception is thrown directly.

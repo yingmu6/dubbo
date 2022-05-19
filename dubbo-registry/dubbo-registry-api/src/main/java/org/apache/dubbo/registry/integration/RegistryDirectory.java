@@ -572,7 +572,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
 
     @Override
     public List<Invoker<T>> doList(Invocation invocation) {
-        if (forbidden) { //当没有服务提供者或服务被禁用都会抛出该异常
+        if (forbidden) { //当没有服务提供者或服务被禁用都会抛出该异常（或者由于Empty://的空协议，会认为是禁用的，在refreshInvoker()方法中设置的）
             // 1. No service provider 2. Service providers are disabled
             throw new RpcException(RpcException.FORBIDDEN_EXCEPTION, "No provider available from registry " +
                     getUrl().getAddress() + " for service " + getConsumerUrl().getServiceKey() + " on consumer " +

@@ -273,7 +273,7 @@ public abstract class AbstractRegistry implements Registry {
         if (logger.isInfoEnabled()) {
             logger.info("Unregister: " + url);
         }
-        registered.remove(url);
+        registered.remove(url); //从已经注册的集合中，移除对应的url
     }
 
     @Override
@@ -366,7 +366,7 @@ public abstract class AbstractRegistry implements Registry {
      * @param listener listener
      * @param urls     provider latest urls
      */
-    protected void notify(URL url, NotifyListener listener, List<URL> urls) { //通知变更
+    protected void notify(URL url, NotifyListener listener, List<URL> urls) { //从提供端通知变更
         if (url == null) {
             throw new IllegalArgumentException("notify url == null");
         }
@@ -474,7 +474,7 @@ public abstract class AbstractRegistry implements Registry {
         AbstractRegistryFactory.removeDestroyedRegistry(this);
     }
 
-    protected boolean acceptable(URL urlToRegistry) {
+    protected boolean acceptable(URL urlToRegistry) { //acceptable：可接受的
         String pattern = registryUrl.getParameter(ACCEPTS_KEY);
         if (StringUtils.isEmpty(pattern)) {
             return true;
