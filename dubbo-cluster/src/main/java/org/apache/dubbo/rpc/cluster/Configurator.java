@@ -53,7 +53,7 @@ public interface Configurator extends Comparable<Configurator> { //Configurator�
      * @param url - old provider url.
      * @return new provider url.
      */
-    URL configure(URL url);
+    URL configure(URL url); //对老的url进行配置，生成新的url
 
 
     /**

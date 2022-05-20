@@ -81,7 +81,7 @@ public class RegistryDirectoryTest {
         RegistryDirectory registryDirectory = new RegistryDirectory(URL.class, url);
         registryDirectory.setProtocol(protocol);
         registryDirectory.setRegistry(registry);
-        registryDirectory.setRouterChain(RouterChain.buildChain(url));
+        registryDirectory.setRouterChain(RouterChain.buildChain(url)); //构建路由链
         registryDirectory.subscribe(url);
         // asert empty
         List invokers = registryDirectory.list(invocation);
@@ -213,7 +213,7 @@ public class RegistryDirectoryTest {
         List<URL> serviceUrls = new ArrayList<URL>();
         URL Dubbo1URL = URL.valueOf("dubbo://127.0.0.1:9098?lazy=true");
         serviceUrls.add(Dubbo1URL.addParameter("methods", "getXXX"));
-        registryDirectory.notify(serviceUrls);
+        registryDirectory.notify(serviceUrls); //目录做通知时，会把url转换为Invoker对象，并且写到本地缓存中
         Assertions.assertTrue(registryDirectory.isAvailable());
 
         invocation = new RpcInvocation();

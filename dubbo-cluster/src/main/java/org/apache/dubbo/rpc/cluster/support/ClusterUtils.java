@@ -32,11 +32,11 @@ public class ClusterUtils {
     private ClusterUtils() {
     }
 
-    public static URL mergeUrl(URL remoteUrl, Map<String, String> localMap) {
+    public static URL mergeUrl(URL remoteUrl, Map<String, String> localMap) { //合并远程url对应的参数Map与本地缓存的参数Map中的部分参数值
         Map<String, String> map = new HashMap<String, String>();
-        Map<String, String> remoteMap = remoteUrl.getParameters();
+        Map<String, String> remoteMap = remoteUrl.getParameters(); //获取url对应的参数Map
 
-        if (remoteMap != null && remoteMap.size() > 0) {
+        if (remoteMap != null && remoteMap.size() > 0) { // 将参数Map中的部分参数移除
             map.putAll(remoteMap);
 
             // Remove configurations from provider, some items should be affected by provider.
@@ -86,13 +86,13 @@ public class ClusterUtils {
             String remoteFilter = remoteMap.get(REFERENCE_FILTER_KEY);
             String localFilter = copyOfLocalMap.get(REFERENCE_FILTER_KEY);
             if (remoteFilter != null && remoteFilter.length() > 0
-                    && localFilter != null && localFilter.length() > 0) {
+                    && localFilter != null && localFilter.length() > 0) { // 若远程和本地配置的过滤器都不为空，则进行拼接合并
                 map.put(REFERENCE_FILTER_KEY, remoteFilter + "," + localFilter);
             }
             String remoteListener = remoteMap.get(INVOKER_LISTENER_KEY);
             String localListener = copyOfLocalMap.get(INVOKER_LISTENER_KEY);
             if (remoteListener != null && remoteListener.length() > 0
-                    && localListener != null && localListener.length() > 0) {
+                    && localListener != null && localListener.length() > 0) { // 若远程和本地配置的监听器都不为空，则进行拼接合并
                 map.put(INVOKER_LISTENER_KEY, remoteListener + "," + localListener);
             }
         }
