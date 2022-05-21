@@ -198,7 +198,7 @@ public class RegistryDirectoryTest {
         Assertions.assertFalse(registryDirectory.isAvailable(), //此处因为所维护的：RegistryDirectory.urlInvokerMap是空的，所以目录是无效的
                 "invokers size=0 ,then the registry directory is not available");
         try {
-            registryDirectory.list(invocation);
+            registryDirectory.list(invocation); //查询列表
             fail("forbid must throw RpcException");
         } catch (RpcException e) { //捕获异常，由于协议为Empty，所以此处会抛出异常
             Assertions.assertEquals(RpcException.FORBIDDEN_EXCEPTION, e.getCode());
