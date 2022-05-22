@@ -207,7 +207,7 @@ public class RegistryDirectoryTest {
 
     //The test call is independent（独立的） of the path of the registry url
     @Test
-    public void test_NotifiedDubbo1() {
+    public void test_NotifiedDubbo1() { //test
         URL errorPathUrl = URL.valueOf("notsupport:/" + "xxx" + "?refer=" + URL.encode("interface=" + service));
         RegistryDirectory registryDirectory = getRegistryDirectory(errorPathUrl);
         List<URL> serviceUrls = new ArrayList<URL>();
