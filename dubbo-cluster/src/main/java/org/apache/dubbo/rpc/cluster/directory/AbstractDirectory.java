@@ -67,7 +67,7 @@ public abstract class AbstractDirectory<T> implements Directory<T> {
 
     @Override
     public List<Invoker<T>> list(Invocation invocation) throws RpcException {
-        if (destroyed) {
+        if (destroyed) { //若已经被销毁了，查询时抛出异常
             throw new RpcException("Directory already destroyed .url: " + getUrl());
         }
 

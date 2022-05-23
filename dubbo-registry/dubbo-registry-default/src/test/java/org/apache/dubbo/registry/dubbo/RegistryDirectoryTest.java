@@ -207,7 +207,7 @@ public class RegistryDirectoryTest {
 
     //The test call is independent（独立的） of the path of the registry url
     @Test
-    public void test_NotifiedDubbo1() { //test
+    public void test_NotifiedDubbo1() { //已测
         URL errorPathUrl = URL.valueOf("notsupport:/" + "xxx" + "?refer=" + URL.encode("interface=" + service));
         RegistryDirectory registryDirectory = getRegistryDirectory(errorPathUrl);
         List<URL> serviceUrls = new ArrayList<URL>();
@@ -218,9 +218,11 @@ public class RegistryDirectoryTest {
 
         invocation = new RpcInvocation();
 
+        // invocation是新创建的对象，没有设置调用的信息，list(Invocation)中的参数，可用于提取方法名进行匹配 Invocation.getMethodName()
         List<Invoker<DemoService>> invokers = registryDirectory.list(invocation); //list调用过程：AbstractDirectory的list -> AbstractDirectory的doList -> 具体实例RegistryDirectory或StaticsDirectory的doList
         Assertions.assertEquals(1, invokers.size());
 
+//        invocation.setMethodName("getXXX2445"); todo @csy 此处为啥设置该条件，invokers.size()也是1？
         invocation.setMethodName("getXXX");
         invokers = registryDirectory.list(invocation);
         Assertions.assertEquals(1, invokers.size());
@@ -317,7 +319,7 @@ public class RegistryDirectoryTest {
     }
 
     @Test
-    public void testParametersMerge() {
+    public void testParametersMerge() { //已测
         RegistryDirectory registryDirectory = getRegistryDirectory();
         URL regurl = noMeaningUrl.addParameter("test", "reg").addParameterAndEncoded(REFER_KEY,
                 "key=query&" + LOADBALANCE_KEY + "=" + LeastActiveLoadBalance.NAME);
@@ -327,9 +329,9 @@ public class RegistryDirectoryTest {
         registryDirectory2.setProtocol(protocol);
 
         List<URL> serviceUrls = new ArrayList<URL>();
-        // The parameters of the inspection registry need to be cleared
+        // The parameters of the inspection（检查） registry need to be cleared
         {
-            serviceUrls.clear();
+            serviceUrls.clear(); //清除掉列表再处理，避免影响后续数据
             serviceUrls.add(SERVICEURL.addParameter("methods", "getXXX1"));
             registryDirectory.notify(serviceUrls);
 
@@ -406,10 +408,10 @@ public class RegistryDirectoryTest {
     }
 
     /**
-     * When destroying, RegistryDirectory should: 1. be disconnected from Registry 2. destroy all invokers
+     * When destroying, RegistryDirectory should: 1. be disconnected from Registry（取消连接） 2. destroy all invokers（销毁所有invokers）
      */
     @Test
-    public void testDestroy() {
+    public void testDestroy() { //已测
         RegistryDirectory registryDirectory = getRegistryDirectory();
 
         List<URL> serviceUrls = new ArrayList<URL>();
@@ -422,16 +424,16 @@ public class RegistryDirectoryTest {
         Assertions.assertTrue(registryDirectory.isAvailable());
         Assertions.assertTrue(invokers.get(0).isAvailable());
 
-        registryDirectory.destroy();
-        Assertions.assertFalse(registryDirectory.isAvailable());
+        registryDirectory.destroy(); //目录销毁：会做取消注册、取消订阅、更改销毁标志、销毁Invoker等操作
+        Assertions.assertFalse(registryDirectory.isAvailable()); //销毁标志已经置为无效
         Assertions.assertFalse(invokers.get(0).isAvailable());
         registryDirectory.destroy();
 
         List<Invoker<RegistryDirectoryTest>> cachedInvokers = registryDirectory.getInvokers();
         Map<String, Invoker<RegistryDirectoryTest>> urlInvokerMap = registryDirectory.getUrlInvokerMap();
 
-        Assertions.assertNull(cachedInvokers);
-        Assertions.assertEquals(0, urlInvokerMap.size());
+        Assertions.assertNull(cachedInvokers); //销毁时：会在RegistryDirectory.destroyAllInvokers方法中奖invokers置为null
+        Assertions.assertEquals(0, urlInvokerMap.size()); //销毁时：urlInvokerMap也会被清空
         // List<U> urls = mockRegistry.getSubscribedUrls();
 
         RpcInvocation inv = new RpcInvocation();
@@ -444,24 +446,28 @@ public class RegistryDirectoryTest {
     }
 
     @Test
-    public void testDestroy_WithDestroyRegistry() {
+    public void testDestroy_WithDestroyRegistry() { //已测
         RegistryDirectory registryDirectory = getRegistryDirectory();
+        /**
+         * https://www.jianshu.com/p/128476015902
+         * CountDownLatch的作用就是等待其他的线程都执行完任务，必要时可以对各个任务的执行结果进行汇总，然后主线程才继续往下执行
+         */
         CountDownLatch latch = new CountDownLatch(1);
         registryDirectory.setRegistry(new MockRegistry(latch));
         registryDirectory.subscribe(URL.valueOf("consumer://" + NetUtils.getLocalHost() + "/DemoService?category=providers"));
         registryDirectory.destroy();
-        Assertions.assertEquals(0, latch.getCount());
+        Assertions.assertEquals(0, latch.getCount()); //todo @csy 此处为啥变为0
     }
 
     @Test
-    public void testDestroy_WithDestroyRegistry_WithError() {
+    public void testDestroy_WithDestroyRegistry_WithError() { //已测
         RegistryDirectory registryDirectory = getRegistryDirectory();
         registryDirectory.setRegistry(new MockRegistry(true));
-        registryDirectory.destroy();
+        registryDirectory.destroy(); //不抛出异常
     }
 
     @Test
-    public void testDubbo1UrlWithGenericInvocation() {
+    public void testDubbo1UrlWithGenericInvocation() { //
 
         RegistryDirectory registryDirectory = getRegistryDirectory();
 

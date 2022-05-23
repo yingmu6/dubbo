@@ -103,7 +103,7 @@ public class RouterChain<T> {
      * @return
      */
     public List<Invoker<T>> route(URL url, Invocation invocation) {
-        List<Invoker<T>> finalInvokers = invokers;
+        List<Invoker<T>> finalInvokers = invokers; //invokers值会RegistryDirectory.refreshInvoker中进行设置
         for (Router router : routers) { //Router的实例是在哪里选择的？解：在RegistryDirectory#notify中会调用addRouters()方法添加路由列表
             finalInvokers = router.route(finalInvokers, url, invocation); //Router是如何选择invoker列表的？解：将invoker列表依次经过路由链做过滤处理
         }

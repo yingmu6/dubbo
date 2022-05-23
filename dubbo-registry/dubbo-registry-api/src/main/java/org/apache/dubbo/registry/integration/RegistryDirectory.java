@@ -178,8 +178,8 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
 
         // unregister.
         try {
-            if (getRegisteredConsumerUrl() != null && registry != null && registry.isAvailable()) {
-                registry.unregister(getRegisteredConsumerUrl());
+            if (getRegisteredConsumerUrl() != null && registry != null && registry.isAvailable()) { //若注册实例以及注册的url不为空，则取消注册
+                registry.unregister(getRegisteredConsumerUrl()); //取消注册
             }
         } catch (Throwable t) {
             logger.warn("unexpected error when unregister service " + serviceKey + "from registry" + registry.getUrl(), t);
@@ -187,14 +187,14 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
         // unsubscribe.
         try {
             if (getConsumerUrl() != null && registry != null && registry.isAvailable()) {
-                registry.unsubscribe(getConsumerUrl(), this);
+                registry.unsubscribe(getConsumerUrl(), this); //取消订阅
             }
             ExtensionLoader.getExtensionLoader(GovernanceRuleRepository.class).getDefaultExtension()
-                    .removeListener(ApplicationModel.getApplication(), CONSUMER_CONFIGURATION_LISTENER);
+                    .removeListener(ApplicationModel.getApplication(), CONSUMER_CONFIGURATION_LISTENER); //移除监听器
         } catch (Throwable t) {
             logger.warn("unexpected error when unsubscribe service " + serviceKey + "from registry" + registry.getUrl(), t);
         }
-        super.destroy(); // must be executed after unsubscribing
+        super.destroy(); // must be executed after unsubscribing，更改销毁标志destroyed
         try {
             destroyAllInvokers();
         } catch (Throwable t) {
@@ -510,7 +510,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
     /**
      * Close all invokers
      */
-    private void destroyAllInvokers() {
+    private void destroyAllInvokers() { //销毁所有的Invoker
         Map<String, Invoker<T>> localUrlInvokerMap = this.urlInvokerMap; // local reference
         if (localUrlInvokerMap != null) {
             for (Invoker<T> invoker : new ArrayList<>(localUrlInvokerMap.values())) {
@@ -520,9 +520,9 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
                     logger.warn("Failed to destroy service " + serviceKey + " to provider " + invoker.getUrl(), t);
                 }
             }
-            localUrlInvokerMap.clear();
+            localUrlInvokerMap.clear(); //清理本地缓存Map，urlInvokerMap同时也会被清空
         }
-        invokers = null;
+        invokers = null; //将本地缓存的invokers置为null
     }
 
     /**

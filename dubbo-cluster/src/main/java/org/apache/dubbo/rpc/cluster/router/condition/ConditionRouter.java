@@ -219,7 +219,7 @@ public class ConditionRouter extends AbstractRouter {
             String key = matchPair.getKey();
             String sampleValue; //样品值：提供者相关比较的值
             //get real invoked method name from invocation（从调用中获取实际调用的方法名称）
-            if (invocation != null && (METHOD_KEY.equals(key) || METHODS_KEY.equals(key))) {
+            if (invocation != null && (METHOD_KEY.equals(key) || METHODS_KEY.equals(key))) { //在Invocation不为空的时候，会比较Invocation中的methodName
                 sampleValue = invocation.getMethodName();
             } else if (ADDRESS_KEY.equals(key)) {
                 sampleValue = url.getAddress();

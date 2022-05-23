@@ -42,19 +42,19 @@ public class NopDynamicConfiguration implements DynamicConfiguration { //Dynamic
     @Override
     public void addListener(String key, String group, ConfigurationListener listener) {
         // no-op
-        System.out.println("no-op addListener");
+//        System.out.println("no-op addListener");
     }
 
     @Override
     public void removeListener(String key, String group, ConfigurationListener listener) {
         // no-op
-        System.out.println("no-op removeListener");
+//        System.out.println("no-op removeListener");
     }
 
     @Override
     public String getConfig(String key, String group, long timeout) throws IllegalStateException {
         // no-op
-        System.out.println("no-op getConfig");
+//        System.out.println("no-op getConfig");
         return null;
     }
 
