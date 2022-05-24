@@ -21,7 +21,6 @@ import org.apache.dubbo.config.spring.api.HelloService;
 import org.apache.dubbo.config.spring.impl.DemoServiceImpl;
 import org.apache.dubbo.config.spring.impl.HelloServiceImpl;
 import org.apache.dubbo.rpc.Protocol;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,13 +50,13 @@ public class SpringExtensionFactoryTest {
     }
 
     @Test
-    public void testGetExtensionBySPI() {
+    public void testGetExtensionBySPI() { //已测
         Protocol protocol = springExtensionFactory.getExtension(Protocol.class, "protocol");
-        Assertions.assertNull(protocol);
+        Assertions.assertNull(protocol); //因为SpringExtensionFactory#getExtension方法中，会对SPI接口做判断，SPI接口返回null，不处理
     }
 
     @Test
-    public void testGetExtensionByName() {
+    public void testGetExtensionByName() { //todo @csy pause
         DemoService bean = springExtensionFactory.getExtension(DemoService.class, "bean1");
         Assertions.assertNotNull(bean);
         HelloService hello = springExtensionFactory.getExtension(HelloService.class, "hello");

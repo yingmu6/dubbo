@@ -37,11 +37,11 @@ import java.util.List;
 public abstract class AbstractConfiguratorListener implements ConfigurationListener {
     private static final Logger logger = LoggerFactory.getLogger(AbstractConfiguratorListener.class);
 
-    protected List<Configurator> configurators = Collections.emptyList();
+    protected List<Configurator> configurators = Collections.emptyList(); //维护着配置器列表
     protected GovernanceRuleRepository ruleRepository = ExtensionLoader.getExtensionLoader(
             GovernanceRuleRepository.class).getDefaultExtension(); //获取默认的扩展实例
 
-    protected final void initWith(String key) {
+    protected final void initWith(String key) { //初始化操作
         ruleRepository.addListener(key, this);
         String rawConfig = ruleRepository.getRule(key, DynamicConfiguration.DEFAULT_GROUP);
         if (!StringUtils.isEmpty(rawConfig)) {

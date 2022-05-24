@@ -78,17 +78,17 @@ public interface Configurator extends Comparable<Configurator> { //Configurator�
         }
 
         ConfiguratorFactory configuratorFactory = ExtensionLoader.getExtensionLoader(ConfiguratorFactory.class)
-                .getAdaptiveExtension();
+                .getAdaptiveExtension(); //获取自适应的
 
         List<Configurator> configurators = new ArrayList<>(urls.size());
         for (URL url : urls) {
             if (EMPTY_PROTOCOL.equals(url.getProtocol())) {
-                configurators.clear();
+                configurators.clear(); //若包含空协议，empty://，则清空配置器列表，并终止循环
                 break;
             }
             Map<String, String> override = new HashMap<>(url.getParameters());
-            //The anyhost parameter of override may be added automatically, it can't change the judgement of changing url
-            override.remove(ANYHOST_KEY);
+            //The anyhost parameter of override may be added automatically（anyhost参数可能会被自动添加）, it can't change the judgement of changing url
+            override.remove(ANYHOST_KEY); //anyhost不改变url的判断，所以做移除
             if (CollectionUtils.isEmptyMap(override)) {
                 continue;
             }
@@ -100,7 +100,7 @@ public interface Configurator extends Comparable<Configurator> { //Configurator�
 
     /**
      * Sort by host, then by priority
-     * 1. the url with a specific host ip should have higher priority than 0.0.0.0
+     * 1. the url with a specific host ip（特定主机号ip） should have higher priority than（高于） 0.0.0.0
      * 2. if two url has the same host, compare by priority value；
      */
     @Override

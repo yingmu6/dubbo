@@ -17,7 +17,6 @@
 package org.apache.dubbo.common.config.configcenter;
 
 import org.apache.dubbo.common.URL;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -25,20 +24,9 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import static org.apache.dubbo.common.config.configcenter.AbstractDynamicConfiguration.DEFAULT_THREAD_POOL_KEEP_ALIVE_TIME;
-import static org.apache.dubbo.common.config.configcenter.AbstractDynamicConfiguration.DEFAULT_THREAD_POOL_PREFIX;
-import static org.apache.dubbo.common.config.configcenter.AbstractDynamicConfiguration.DEFAULT_THREAD_POOL_SIZE;
-import static org.apache.dubbo.common.config.configcenter.AbstractDynamicConfiguration.GROUP_PARAM_NAME;
-import static org.apache.dubbo.common.config.configcenter.AbstractDynamicConfiguration.PARAM_NAME_PREFIX;
-import static org.apache.dubbo.common.config.configcenter.AbstractDynamicConfiguration.THREAD_POOL_KEEP_ALIVE_TIME_PARAM_NAME;
-import static org.apache.dubbo.common.config.configcenter.AbstractDynamicConfiguration.THREAD_POOL_PREFIX_PARAM_NAME;
-import static org.apache.dubbo.common.config.configcenter.AbstractDynamicConfiguration.THREAD_POOL_SIZE_PARAM_NAME;
-import static org.apache.dubbo.common.config.configcenter.AbstractDynamicConfiguration.TIMEOUT_PARAM_NAME;
+import static org.apache.dubbo.common.config.configcenter.AbstractDynamicConfiguration.*;
 import static org.apache.dubbo.common.config.configcenter.DynamicConfiguration.DEFAULT_GROUP;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * {@link AbstractDynamicConfiguration} Test
@@ -66,11 +54,12 @@ public class AbstractDynamicConfigurationTest {
             protected boolean doRemoveConfig(String key, String group) throws Exception {
                 return false;
             }
+
         };
     }
 
     @Test
-    public void testConstants() {
+    public void testConstants() { //已测，测试常量值是否符合预期
         assertEquals("dubbo.config-center.", PARAM_NAME_PREFIX);
         assertEquals("dubbo.config-center.workers", DEFAULT_THREAD_POOL_PREFIX);
         assertEquals("dubbo.config-center.thread-pool.prefix", THREAD_POOL_PREFIX_PARAM_NAME);
@@ -85,13 +74,13 @@ public class AbstractDynamicConfigurationTest {
     }
 
     @Test
-    public void testConstructor() {
+    public void testConstructor() { //已测
         URL url = URL.valueOf("default://")
                 .addParameter(THREAD_POOL_PREFIX_PARAM_NAME, "test")
                 .addParameter(THREAD_POOL_SIZE_PARAM_NAME, 10)
                 .addParameter(THREAD_POOL_KEEP_ALIVE_TIME_PARAM_NAME, 100);
 
-        AbstractDynamicConfiguration configuration = new AbstractDynamicConfiguration(url) {
+        AbstractDynamicConfiguration configuration = new AbstractDynamicConfiguration(url) { //匿名类：会从url中提取参数，进行初始化，比如创建线程池等
 
             @Override
             protected String doGetConfig(String key, String group) throws Exception {
@@ -110,11 +99,15 @@ public class AbstractDynamicConfigurationTest {
         };
 
         ThreadPoolExecutor threadPoolExecutor = configuration.getWorkersThreadPool();
+
+        //获取线程池工厂（初始化ThreadPoolExecutor时传入的是NamedThreadFactory工厂，
+        // 所以此处的线程池工厂是NamedThreadFactory，所以要看具体的实例是什么，要看这个实例是哪里设置进入的，反推到具体实例，即若是多态的话，需要推断下具体的实例）
         ThreadFactory threadFactory = threadPoolExecutor.getThreadFactory();
 
-        Thread thread = threadFactory.newThread(() -> {
+        Thread thread = threadFactory.newThread(() -> { //通过线程池工厂创建线程（）
         });
 
+        //相关的线程池参数，已经在AbstractDynamicConfiguration实例化时，从url提取参数，设置到成员变量workersThreadPool中了
         assertEquals(10, threadPoolExecutor.getCorePoolSize());
         assertEquals(10, threadPoolExecutor.getMaximumPoolSize());
         assertEquals(100, threadPoolExecutor.getKeepAliveTime(TimeUnit.MILLISECONDS));
@@ -122,8 +115,8 @@ public class AbstractDynamicConfigurationTest {
     }
 
     @Test
-    public void testPublishConfig() {
-        assertFalse(configuration.publishConfig(null, null));
+    public void testPublishConfig() { //已测
+        assertFalse(configuration.publishConfig(null, null)); //进入DynamicConfiguration#publishConfig方法，该方法返回false，若需要使用，要重写default方法
         assertFalse(configuration.publishConfig(null, null, null));
     }
 

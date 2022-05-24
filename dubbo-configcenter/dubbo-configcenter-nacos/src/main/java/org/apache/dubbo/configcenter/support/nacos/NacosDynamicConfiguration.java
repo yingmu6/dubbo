@@ -17,15 +17,6 @@
 
 package org.apache.dubbo.configcenter.support.nacos;
 
-import org.apache.dubbo.common.URL;
-import org.apache.dubbo.common.config.configcenter.ConfigChangeType;
-import org.apache.dubbo.common.config.configcenter.ConfigChangedEvent;
-import org.apache.dubbo.common.config.configcenter.ConfigurationListener;
-import org.apache.dubbo.common.config.configcenter.DynamicConfiguration;
-import org.apache.dubbo.common.logger.Logger;
-import org.apache.dubbo.common.logger.LoggerFactory;
-import org.apache.dubbo.common.utils.StringUtils;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -36,32 +27,31 @@ import com.alibaba.nacos.api.config.listener.AbstractSharedListener;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.client.config.http.HttpAgent;
 import com.alibaba.nacos.client.config.impl.HttpSimpleClient;
+import org.apache.dubbo.common.URL;
+import org.apache.dubbo.common.config.configcenter.ConfigChangeType;
+import org.apache.dubbo.common.config.configcenter.ConfigChangedEvent;
+import org.apache.dubbo.common.config.configcenter.ConfigurationListener;
+import org.apache.dubbo.common.config.configcenter.DynamicConfiguration;
+import org.apache.dubbo.common.logger.Logger;
+import org.apache.dubbo.common.logger.LoggerFactory;
+import org.apache.dubbo.common.utils.StringUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.Executor;
 import java.util.stream.Stream;
 
-import static com.alibaba.nacos.api.PropertyKeyConst.ENCODE;
-import static com.alibaba.nacos.api.PropertyKeyConst.NAMING_LOAD_CACHE_AT_START;
-import static com.alibaba.nacos.api.PropertyKeyConst.SERVER_ADDR;
+import static com.alibaba.nacos.api.PropertyKeyConst.*;
 import static com.alibaba.nacos.client.naming.utils.UtilAndComs.NACOS_NAMING_LOG_NAME;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.apache.dubbo.common.constants.RemotingConstants.BACKUP_KEY;
 import static org.apache.dubbo.common.utils.StringConstantFieldValuePredicate.of;
-import static org.apache.dubbo.common.utils.StringUtils.HYPHEN_CHAR;
-import static org.apache.dubbo.common.utils.StringUtils.SLASH_CHAR;
-import static org.apache.dubbo.common.utils.StringUtils.isBlank;
+import static org.apache.dubbo.common.utils.StringUtils.*;
 
 /**
  * The nacos implementation of {@link DynamicConfiguration}
@@ -214,7 +204,7 @@ public class NacosDynamicConfiguration implements DynamicConfiguration {
             if (StringUtils.isEmpty(resolvedGroup)) {
                 resolvedGroup = DEFAULT_GROUP;
             }
-            return configService.getConfig(key, resolvedGroup, nacosTimeout);
+            return configService.getConfig(key, resolvedGroup, nacosTimeout); //获取配置，带着超时时间
         } catch (NacosException e) {
             logger.error(e.getMessage());
         }

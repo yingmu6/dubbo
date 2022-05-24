@@ -22,11 +22,7 @@ import org.apache.dubbo.common.logger.LoggerFactory;
 import org.apache.dubbo.common.utils.NamedThreadFactory;
 import org.apache.dubbo.common.utils.StringUtils;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import static org.apache.dubbo.common.constants.CommonConstants.GROUP_KEY;
 import static org.apache.dubbo.common.constants.CommonConstants.TIMEOUT_KEY;
@@ -37,6 +33,10 @@ import static org.apache.dubbo.common.constants.CommonConstants.TIMEOUT_KEY;
  * @since 2.7.5
  */
 public abstract class AbstractDynamicConfiguration implements DynamicConfiguration {
+    /**
+     * 动态配置的具体的组件，如Apollo，会把远程的配置存在本地内存中，并且会实现本地与远程的数据同步
+     * com.ctrip.framework.apollo.internals.DefaultConfigManager
+     */
 
     public static final String PARAM_NAME_PREFIX = "dubbo.config-center.";
 
@@ -78,7 +78,7 @@ public abstract class AbstractDynamicConfiguration implements DynamicConfigurati
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
-     * The thread pool for workers who executes the tasks
+     * The thread pool for workers who executes the tasks（执行任务的工作线程池）
      */
     private final ThreadPoolExecutor workersThreadPool;
 
@@ -86,7 +86,7 @@ public abstract class AbstractDynamicConfiguration implements DynamicConfigurati
 
     private final long timeout;
 
-    public AbstractDynamicConfiguration(URL url) {
+    public AbstractDynamicConfiguration(URL url) { //从URL中提取参数值，进行初始化（部分参数的构造函数，会去查找或填写默认值，此处是从url查找所需的参数）
         this(getThreadPoolPrefixName(url), getThreadPoolSize(url), getThreadPoolKeepAliveTime(url), getGroup(url),
                 getTimeout(url));
     }
@@ -95,7 +95,7 @@ public abstract class AbstractDynamicConfiguration implements DynamicConfigurati
                                         int threadPoolSize,
                                         long keepAliveTime,
                                         String group,
-                                        long timeout) {
+                                        long timeout) { //完整参数的构造函数
         this.workersThreadPool = initWorkersThreadPool(threadPoolPrefixName, threadPoolSize, keepAliveTime);
         this.group = group;
         this.timeout = timeout;

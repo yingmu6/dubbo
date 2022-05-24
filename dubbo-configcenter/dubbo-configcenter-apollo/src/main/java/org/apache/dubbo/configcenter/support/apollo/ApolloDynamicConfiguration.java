@@ -135,8 +135,8 @@ public class ApolloDynamicConfiguration implements DynamicConfiguration {
     }
 
     /**
-     * Since all governance rules will lay under dubbo group, this method now always uses the default dubboConfig and
-     * ignores the group parameter.
+     * Since all governance rules will lay under dubbo group（因为所有的治理规则都在 dubbo 分组之下）, this method now always uses the default dubboConfig and
+     * ignores the group parameter（忽略group参数）.
      */
     @Override
     public void addListener(String key, String group, ConfigurationListener listener) { //添加监听器：将监听器缓存起来，且调用apollo的API接口在apollo添加监听器

@@ -104,7 +104,7 @@ public abstract class AbstractConfigurator implements Configurator {
 
     private URL configureIfMatch(String host, URL url) {
         if (ANYHOST_VALUE.equals(configuratorUrl.getHost()) || host.equals(configuratorUrl.getHost())) {
-            // TODO, to support wildcards
+            // TODO, to support wildcards（通配符）
             String providers = configuratorUrl.getParameter(OVERRIDE_PROVIDERS_KEY);
             if (StringUtils.isEmpty(providers) || providers.contains(url.getAddress()) || providers.contains(ANYHOST_VALUE)) {
                 String configApplication = configuratorUrl.getParameter(APPLICATION_KEY,

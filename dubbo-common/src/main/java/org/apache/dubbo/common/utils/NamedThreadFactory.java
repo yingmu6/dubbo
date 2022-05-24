@@ -30,7 +30,7 @@ public class NamedThreadFactory implements ThreadFactory { //内部使用的线�
 
     protected final String mPrefix;
 
-    protected final boolean mDaemon;
+    protected final boolean mDaemon; //默认是false，不是守护线程
 
     protected final ThreadGroup mGroup;
 

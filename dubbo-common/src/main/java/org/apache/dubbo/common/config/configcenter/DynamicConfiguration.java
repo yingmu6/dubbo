@@ -43,6 +43,9 @@ import static org.apache.dubbo.common.extension.ExtensionLoader.getExtensionLoad
  * @see AbstractDynamicConfiguration
  */
 public interface DynamicConfiguration extends Configuration, AutoCloseable { //动态配置，从配置中心获取配置值，如apollo等
+    /**
+     * Dubbo对比较好的配置管理组件进行高度抽象，可以让Dubbo使用者有选择的使用想要的组件
+     */
 
     String DEFAULT_GROUP = "dubbo";
 
@@ -105,12 +108,13 @@ public interface DynamicConfiguration extends Configuration, AutoCloseable { //�
      * configuration fails to fetch after timeout exceeds, IllegalStateException will be thrown.
      *
      * @param key     the key to represent a configuration
-     * @param group   the group where the key belongs to
+     * @param group   the group where the key belongs to（group是隔离维度，比如在apollo中就是namespace）
      * @param timeout timeout value for fetching the target config（获取配置的超时时间）
      * @return target configuration mapped to the given key and the given group, IllegalStateException will be thrown
      * if timeout exceeds.
      */
     String getConfig(String key, String group, long timeout) throws IllegalStateException;
+    //超时时间：有些配置管理的中间件有使用上，如Nacos（实现逻辑是：设置重试次数和超时时间，失败时在指定次数且不超过设置的超时时间内重试），有些没有使用上，如apollo。
 
     /**
      * This method are mostly used to get a compound（[ˈkɒmpaʊnd] adj. 复合的，n. 混合物） config file with {@link #getDefaultTimeout() the default timeout},
@@ -138,6 +142,7 @@ public interface DynamicConfiguration extends Configuration, AutoCloseable { //�
      * @throws UnsupportedOperationException If the under layer does not support
      * @since 2.7.5
      */
+    // 发布配置到远程的配置中心里，如Nacos的NacosConfigService#publishConfigInner，通过http请求，把配置发布到远程
     default boolean publishConfig(String key, String content) throws UnsupportedOperationException {
         return publishConfig(key, getDefaultGroup(), content);
     }

@@ -1163,7 +1163,7 @@ class URL implements Serializable {
     }
 
     /**
-     * Add parameters to a new url.
+     * Add parameters to a new url.（添加参数Map，生成新的url）
      *
      * @param parameters parameters in key-value pairs
      * @return A new URL
@@ -1175,26 +1175,26 @@ class URL implements Serializable {
 
         boolean hasAndEqual = true;
         for (Map.Entry<String, String> entry : parameters.entrySet()) {
-            String value = getParameters().get(entry.getKey());
+            String value = getParameters().get(entry.getKey()); //将当前URL维护的参数Map与输入的参数Map进行比较，判断是否存在变更
             if (value == null) {
-                if (entry.getValue() != null) {
+                if (entry.getValue() != null) { //若当前URL中的参数Map没有传入参数的key，判定两个Map不相等（key判断）
                     hasAndEqual = false;
                     break;
                 }
             } else {
-                if (!value.equals(entry.getValue())) { //若存在键key，判断值value是否相等
+                if (!value.equals(entry.getValue())) { //若当前URL中的参数Map存在传入参数的Map，且值不相等，判定两个Map不相等（值判断哪）
                     hasAndEqual = false;
                     break;
                 }
             }
         }
         // return immediately if there's no change
-        if (hasAndEqual) {
+        if (hasAndEqual) { //若两个Map都相等，没有变更，立即返回当前URL，不构造新的URL
             return this;
         }
 
         Map<String, String> map = new HashMap<>(getParameters());
-        map.putAll(parameters); //若存在有相同key，且value不同，会被覆盖
+        map.putAll(parameters); //若两个Map存在不同的key或相同的key有不同的值，则按新传入的参数Map构建新的URL
         return new URL(protocol, username, password, host, port, path, map);
     }
 
@@ -1442,6 +1442,7 @@ class URL implements Serializable {
 
     /**
      * The format is "{interface}:[version]:[group]"
+     * （interface：在拼接的字符串中是必出现的，version、group是按值有无进行拼接的）
      *
      * @return
      */

@@ -20,7 +20,7 @@ import org.apache.dubbo.common.config.configcenter.ConfigurationListener;
 import org.apache.dubbo.common.extension.SPI;
 
 @SPI("default")
-public interface GovernanceRuleRepository { //governance：治理
+public interface GovernanceRuleRepository { //governance [ˈɡʌvənəns]：治理，对动态配置进行治理
 
     String DEFAULT_GROUP = "dubbo";
 
@@ -47,14 +47,15 @@ public interface GovernanceRuleRepository { //governance：治理
 
     /**
      * Register a configuration listener for a specified key
-     * The listener only works for service governance purpose, so the target group would always be the value user
-     * specifies at startup or 'dubbo' by default. This method will only register listener, which means it will not
-     * trigger a notification that contains the current value.
+     * The listener only works for service governance（用于服务治理） purpose（目的）, so the target group would always be the value user
+     * specifies at startup or 'dubbo' by default. This method will only register listener（仅仅注册监听器）, which means it will not
+     * trigger a notification that contains the current value（当前值变更不会被触发）.
      *
      * @param key      the key to represent a configuration
      * @param group    the group where the key belongs to
      * @param listener configuration listener
      */
+    //内部实现：会在各个配置实现类中，如ApolloDynamicConfiguration，做key与监听器的缓存，并且调用远程接口进行监听器添加，如apollo客户端
     void addListener(String key, String group, ConfigurationListener listener);
 
     /**
@@ -73,19 +74,19 @@ public interface GovernanceRuleRepository { //governance：治理
      * @param group the group where the key belongs to
      * @return target configuration mapped to the given key and the given group
      */
-    default String getRule(String key, String group) {
+    default String getRule(String key, String group) { //默认方法：可以执行逻辑处理
         return getRule(key, group, -1L);
     }
 
     /**
-     * Get the governance rule mapped to the given key and the given group. If the
+     * Get the governance rule（获取治理规则） mapped to the given key and the given group. If the
      * rule fails to return after timeout exceeds, IllegalStateException will be thrown.
      *
      * @param key     the key to represent a configuration
-     * @param group   the group where the key belongs to
-     * @param timeout timeout value for fetching the target config
+     * @param group   the group where the key belongs to（key归属的组）
+     * @param timeout timeout value for fetching the target config（获取目标配置的超时时间）
      * @return target configuration mapped to the given key and the given group, IllegalStateException will be thrown
-     * if timeout exceeds.
+     * if timeout exceeds.（超时的时候，会抛出异常）
      */
     String getRule(String key, String group, long timeout) throws IllegalStateException;
 }
