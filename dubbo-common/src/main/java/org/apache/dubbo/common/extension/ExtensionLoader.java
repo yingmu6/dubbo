@@ -165,11 +165,13 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
      * @csy-006 ExtensionLoader加载器的概念是啥？与类加载器概念有何异同？
      * ExtensionLoader：加载dubbo的扩展类
      * ClassLoader：classloader顾名思义，即是类加载。虚拟机把描述类的数据从class字节码文件加载到内存，并对数据进行检验、转换解析和初始化，
-     *              最终形成可以被虚拟机直接使用的Java类型，这就是虚拟机的类加载机制
-     *              https://juejin.cn/post/6931972267609948167
+     * 最终形成可以被虚拟机直接使用的Java类型，这就是虚拟机的类加载机制
+     * https://juejin.cn/post/6931972267609948167
+     * <p>
+     * 注明：因为SPI的处理都集中在当前ExtensionLoader中，所以进行SPI操作，需要先获取ExtensionLoader实例，再进行相关操作
      */
     @SuppressWarnings("unchecked")
-    public static <T> ExtensionLoader<T> getExtensionLoader(Class<T> type) { //获取扩展加载器 ExtensionLoader
+    public static <T> ExtensionLoader<T> getExtensionLoader(Class<T> type) { //获取扩展加载器 ExtensionLoader（从缓存中获取，若不存在则重新创建）
         if (type == null) {
             throw new IllegalArgumentException("Extension type == null");
         }

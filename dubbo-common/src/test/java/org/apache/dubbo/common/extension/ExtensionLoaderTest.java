@@ -62,22 +62,22 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ExtensionLoaderTest {
+public class ExtensionLoaderTest { //todo @csy pause 加载不了文件，需要看下
     @Test
-    public void test_getExtensionLoader_Null() throws Exception {
+    public void test_getExtensionLoader_Null() throws Exception { //已测
         try {
-            getExtensionLoader(null);
+            getExtensionLoader(null); //扩展类不能传入null
             fail();
         } catch (IllegalArgumentException expected) {
             assertThat(expected.getMessage(),
-                    containsString("Extension type == null")); //如果实际值与预期的值不同，则会抛出异常
+                    containsString("Extension type == null")); //期待实际值与预期值相同，如果实际值与预期的值不同，则会抛出异常
         }
     }
 
     @Test
-    public void test_getExtensionLoader_NotInterface() throws Exception {
+    public void test_getExtensionLoader_NotInterface() throws Exception { //已测
         try {
-            getExtensionLoader(ExtensionLoaderTest.class);
+            getExtensionLoader(ExtensionLoaderTest.class); //扩展类型需要是一个接口
             fail();
         } catch (IllegalArgumentException expected) {
             assertThat(expected.getMessage(),
@@ -86,9 +86,9 @@ public class ExtensionLoaderTest {
     }
 
     @Test
-    public void test_getExtensionLoader_NotSpiAnnotation() throws Exception {
+    public void test_getExtensionLoader_NotSpiAnnotation() throws Exception { //已测
         try {
-            getExtensionLoader(NoSpiExt.class);
+            getExtensionLoader(NoSpiExt.class); //
             fail();
         } catch (IllegalArgumentException expected) {
             assertThat(expected.getMessage(),
@@ -99,10 +99,25 @@ public class ExtensionLoaderTest {
     }
 
     @Test
-    public void test_getDefaultExtension() throws Exception {
+    public void test_getDefaultExtension() throws Exception { //todo @csy 此处为啥加载不了文件
         ExtensionLoader<SimpleExt> extensionLoader1 = getExtensionLoader(SimpleExt.class);
+        /**
+         * 默认扩展实例的处理流程
+         * 1）ExtensionLoader#getExtensionClasses() 获取扩展名与扩展Class映射的Map（如不存在，则加载SPI配置文件，构建该Map）
+         * 2）ExtensionLoader#cacheDefaultExtensionName() 将去SPI注解声明的值，作为默认扩展名，设置到成员变量cachedDefaultName中
+         * 3）ExtensionLoader#getExtension(extensionName) 传入默认扩展名，查找的配置文件对应的扩展Class，然后java.lang.Class#newInstance()创建实例
+         *
+         */
         SimpleExt ext = extensionLoader1.getDefaultExtension();
-        assertThat(ext, instanceOf(SimpleExtImpl1.class));
+
+        /**
+         * Hamcrest 是一个书写匹配器对象时允许直接定义匹配规则的框架。有大量的匹配器是侵入式的，例如 UI 验证或者数据过滤，但是匹配对象在书写灵活的测试是最常用。
+         * （先根据匹配规则产生匹配器，然后带着匹配器去进行匹配）
+         *
+         * https://www.oschina.net/p/hamcrest?hmsr=aladdin1e1
+         * http://hamcrest.org/JavaHamcrest/javadoc/1.3/   1.3 API文档
+         */
+        assertThat(ext, instanceOf(SimpleExtImpl1.class)); //先构建IsInstanceOf的匹配，然后使用assertThat()进行匹配
 
         // 先获取扩展加载器，然后再执行相应的方法
         ExtensionLoader<UseProtocolKeyExt> extensionLoader2 = getExtensionLoader(UseProtocolKeyExt.class);
@@ -122,7 +137,7 @@ public class ExtensionLoaderTest {
     }
 
     @Test
-    public void test_getDefaultExtension_NULL() throws Exception {
+    public void test_getDefaultExtension_NULL() throws Exception { //todo @csy 为什么加载不了文件
         Ext2 ext = getExtensionLoader(Ext2.class).getDefaultExtension();
         /**
          * @csy-009 此处为啥没有获取到扩展实例，对应的配置文件有看到配置的

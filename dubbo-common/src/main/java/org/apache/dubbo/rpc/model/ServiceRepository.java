@@ -46,13 +46,13 @@ public class ServiceRepository extends LifecycleAdapter implements FrameworkExt 
 
     public static final String NAME = "repository"; //对应的SPI实例repository=org.apache.dubbo.rpc.model.ServiceRepository
 
-    // services 维护的数据结构
+    // services: 数据格式 ConcurrentMap<Path, ConsumerModel>
     private ConcurrentMap<String, ServiceDescriptor> services = new ConcurrentHashMap<>();
 
-    // consumers
+    // consumers：数据格式 ConcurrentMap<ServiceKey, ConsumerModel>
     private ConcurrentMap<String, ConsumerModel> consumers = new ConcurrentHashMap<>();
 
-    // providers
+    // providers：数据格式 ConcurrentMap<ServiceKey, ProviderModel>
     private ConcurrentMap<String, ProviderModel> providers = new ConcurrentHashMap<>();
 
     // useful to find a provider model quickly with serviceInterfaceName:version

@@ -33,6 +33,12 @@ import org.springframework.context.annotation.Configuration;
 public class SpringExtensionFactoryTest {
 
     private SpringExtensionFactory springExtensionFactory = new SpringExtensionFactory();
+    /**
+     * Standalone application context, accepting annotated classes as input - in particular
+     *
+     * @Configuration-annotated classes, but also plain @Component types
+     * （AnnotationConfigApplicationContext：独立的应用上下文，支持带有注解类的输入，比如@Configuration、@Component等）
+     */
     private AnnotationConfigApplicationContext context1;
     private AnnotationConfigApplicationContext context2;
 
@@ -40,8 +46,9 @@ public class SpringExtensionFactoryTest {
     public void init() {
         SpringExtensionFactory.clearContexts();
         context1 = new AnnotationConfigApplicationContext();
-        context1.register(getClass());
-        context1.refresh();
+        context1.register(getClass()); //往上下文中注册带有注解的类
+        context1.refresh(); //必须调用refresh()才能处理新的类，此处若不调用refresh()，当前类中的bean1、bean2、hello就不能实例
+
         context2 = new AnnotationConfigApplicationContext();
         context2.register(BeanForContext2.class);
         context2.refresh();
@@ -56,7 +63,7 @@ public class SpringExtensionFactoryTest {
     }
 
     @Test
-    public void testGetExtensionByName() { //todo @csy pause
+    public void testGetExtensionByName() { //已测，使用spring容器获取bean
         DemoService bean = springExtensionFactory.getExtension(DemoService.class, "bean1");
         Assertions.assertNotNull(bean);
         HelloService hello = springExtensionFactory.getExtension(HelloService.class, "hello");
@@ -67,9 +74,22 @@ public class SpringExtensionFactoryTest {
     public void destroy() {
         SpringExtensionFactory.clearContexts();
         context1.close();
+        /**
+         * 应用上下文关闭：会调用AbstractApplicationContext的close()方法
+         * 会做一些处理：
+         * 1）发出容器关闭事件 ContextClosedEvent
+         * 2）停止所有生命周期的相关bean（Lifecycle beans）
+         * 3）销毁所有的bean
+         * 4）关闭bean工厂，即把serializationId置为null
+         * 5）子类可以实现重写AbstractApplicationContext中的onClose()方法，实现业务逻辑处理
+         */
         context2.close();
     }
 
+    /**
+     * Indicates that a method produces a bean to be managed by the Spring container.
+     * （@Bean：由方法产生Spring管理的bean）
+     */
     @Bean("bean1")
     public DemoService bean1() {
         return new DemoServiceImpl();

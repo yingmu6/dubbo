@@ -33,10 +33,14 @@ import java.util.Set;
 public class SpringExtensionFactory implements ExtensionFactory { //通过Spring的ApplicationContext获取实例
     private static final Logger logger = LoggerFactory.getLogger(SpringExtensionFactory.class);
 
-    private static final Set<ApplicationContext> CONTEXTS = new ConcurrentHashSet<ApplicationContext>();
+    /**
+     * ConcurrentHashSet：是apache的工具类，内部是使用Java的 ConcurrentMap<E, Object>实现的
+     * 即add()的时候，将添加的元素作为Map的key，既保证Set的不重复性，也能使用ConcurrentMap的线程安全特性
+     */
+    private static final Set<ApplicationContext> CONTEXTS = new ConcurrentHashSet<ApplicationContext>(); //Concurrent: [kənˈkʌrənt] 并存的，同时发生的；
 
     /**
-     * ConfigurableApplicationContext：
+     * ConfigurableApplicationContext：（大多数应用程序上下文都将实现的SPI接口，提供了配置应用程序上下文的工具）
      * 1）ConfigurableApplicationContext 接口的作用就是设置上下文ID，设置父应用上下文，添加监听器，刷新容器，关闭，判断是否活跃等方法
      * 2）ConfigurableApplicationContext 直接继承了 ApplicationContext, Lifecycle, Closeable 接口，所以 ApplicationContext 是 ApplicationContext 的子类。
      * 3）ApplicationContext 接口就会发现里面之后get方法，没有set方法，所以子接口就提供了set方法。
@@ -76,7 +80,7 @@ public class SpringExtensionFactory implements ExtensionFactory { //通过Spring
         }
 
         for (ApplicationContext context : CONTEXTS) { //遍历应用上下文，从上下文中去获取指定name、type对应的实例bean
-            T bean = BeanFactoryUtils.getOptionalBean(context, name, type);
+            T bean = BeanFactoryUtils.getOptionalBean(context, name, type); //bean的名称会做检测：1）不能是空字符串，2）不能包含空格
             if (bean != null) {
                 return bean;
             }

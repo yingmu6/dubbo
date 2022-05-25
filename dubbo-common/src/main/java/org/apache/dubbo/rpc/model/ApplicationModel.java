@@ -33,33 +33,34 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * singleton（单例） or static（静态） (by itself totally static or uses some static fields). So the instances
  * returned from them are of process scope. If you want to support multiple dubbo servers in one
  * single process, you may need to refactor（重构） those three classes.
- *
+ * <p>
  * Represent a application which is using Dubbo and store basic metadata info for using
  * during the processing of RPC invoking.
+ * （代表一个正在使用 Dubbo 的应用程序，并存储基本的元数据信息以供在处理 RPC 调用期间使用）
  * <p>
  * ApplicationModel includes many ProviderModel which is about published services
  * and many Consumer Model which is about subscribed services.
+ * （ApplicationModel包含ProviderModel、ConsumerModel模型）
  * <p>
- *
  */
 
-public class ApplicationModel { //应用模型
+public class ApplicationModel { //应用模型，todo @csy 待与ServiceRepository结合者看
     protected static final Logger LOGGER = LoggerFactory.getLogger(ApplicationModel.class);
     public static final String NAME = "application";
 
     private static AtomicBoolean INIT_FLAG = new AtomicBoolean(false);
 
     public static void init() {
-        if (INIT_FLAG.compareAndSet(false, true)) {
+        if (INIT_FLAG.compareAndSet(false, true)) { //在未初始化时，进行初始化
             ExtensionLoader<ApplicationInitListener> extensionLoader = ExtensionLoader.getExtensionLoader(ApplicationInitListener.class);
             Set<String> listenerNames = extensionLoader.getSupportedExtensions();
             for (String listenerName : listenerNames) {
-                extensionLoader.getExtension(listenerName).init();
+                extensionLoader.getExtension(listenerName).init(); //此处的ApplicationInitListener没有实现类，应该是为3.x预留
             }
         }
     }
 
-    public static Collection<ConsumerModel> allConsumerModels() {
+    public static Collection<ConsumerModel> allConsumerModels() { //通过ServiceRepository服务仓库，来管理ProviderModel、ConsumerModel
         return getServiceRepository().getReferredServices();
     }
 
