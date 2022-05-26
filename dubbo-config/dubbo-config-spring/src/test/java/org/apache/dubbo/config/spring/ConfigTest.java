@@ -60,13 +60,12 @@ import static org.junit.matchers.JUnitMatchers.containsString;
  * ConfigTest
  */
 @Ignore
-public class ConfigTest { //todo @csy pause 待测试
+public class ConfigTest {
 
     @Test
-    public void testSpringExtensionInject() { //todo @csy 此处为啥加载不了文件
-//        ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(ConfigTest.class.getPackage().getName().replace('.', '/') + "/spring-extension-inject.xml");
+    public void testSpringExtensionInject() {
+        ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(ConfigTest.class.getPackage().getName().replace('.', '/') + "/spring-extension-inject.xml");
 
-        ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("/Users/chenshengyong/self-db/dubbo/dubbo-config/dubbo-config-spring/src/test/resources/org/apache/dubbo/config/spring/spring-extension-inject.xml");
         ctx.start();
         try {
             MockFilter filter = (MockFilter) ExtensionLoader.getExtensionLoader(Filter.class).getExtension("mymock");

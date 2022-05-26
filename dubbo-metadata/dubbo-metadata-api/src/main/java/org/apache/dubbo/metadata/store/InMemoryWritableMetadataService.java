@@ -45,7 +45,7 @@ import static org.apache.dubbo.common.utils.CollectionUtils.isEmpty;
  * @see WritableMetadataService
  * @since 2.7.5
  */
-public class InMemoryWritableMetadataService extends AbstractAbstractWritableMetadataService {
+public class InMemoryWritableMetadataService extends AbstractAbstractWritableMetadataService { //本地内存存储元数据
 
     private final Lock lock = new ReentrantLock();
 

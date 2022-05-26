@@ -44,7 +44,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * <p>
  */
 
-public class ApplicationModel { //应用模型，todo @csy 待与ServiceRepository结合者看
+public class ApplicationModel { //应用的数据模型
     protected static final Logger LOGGER = LoggerFactory.getLogger(ApplicationModel.class);
     public static final String NAME = "application";
 

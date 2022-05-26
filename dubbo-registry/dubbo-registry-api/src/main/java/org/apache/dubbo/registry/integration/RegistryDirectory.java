@@ -528,6 +528,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
     /**
      * Check whether the invoker in the cache needs to be destroyed（检查缓存中的Invoker是否需要销毁）
      * If set attribute of url: refer.autodestroy=false, the invokers will only increase without decreasing,there may be a refer leak
+     * (如果设置url的属性：refer.autodestroy=false，invokers只会增加不会减少，可能会出现refer泄漏)
      *
      * @param oldUrlInvokerMap
      * @param newUrlInvokerMap
@@ -539,7 +540,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
         }
         // check deleted invoker
         List<String> deleted = null;
-        if (oldUrlInvokerMap != null) { //todo @csy pause
+        if (oldUrlInvokerMap != null) {
             Collection<Invoker<T>> newInvokers = newUrlInvokerMap.values();
             for (Map.Entry<String, Invoker<T>> entry : oldUrlInvokerMap.entrySet()) {
                 if (!newInvokers.contains(entry.getValue())) {

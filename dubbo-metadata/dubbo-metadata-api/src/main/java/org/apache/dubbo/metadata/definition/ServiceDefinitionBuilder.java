@@ -57,6 +57,9 @@ public final class ServiceDefinitionBuilder {
         return sd;
     }
 
+    /**
+     * 通过反射机制，解析出Class类中方法名、参数类型等，并设置组装起来返回
+     */
     public static <T extends ServiceDefinition> void build(T sd, final Class<?> interfaceClass) { //构建服务定义数据ServiceDefinition
         sd.setCanonicalName(interfaceClass.getCanonicalName());
         sd.setCodeSource(ClassUtils.getCodeSource(interfaceClass));

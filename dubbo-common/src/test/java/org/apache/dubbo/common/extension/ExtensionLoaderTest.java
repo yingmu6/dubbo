@@ -62,7 +62,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ExtensionLoaderTest { //todo @csy pause 加载不了文件，需要看下
+public class ExtensionLoaderTest {
     @Test
     public void test_getExtensionLoader_Null() throws Exception { //已测
         try {
@@ -99,7 +99,7 @@ public class ExtensionLoaderTest { //todo @csy pause 加载不了文件，需要
     }
 
     @Test
-    public void test_getDefaultExtension() throws Exception { //todo @csy 此处为啥加载不了文件
+    public void test_getDefaultExtension() throws Exception {
         ExtensionLoader<SimpleExt> extensionLoader1 = getExtensionLoader(SimpleExt.class);
         /**
          * 默认扩展实例的处理流程
@@ -137,7 +137,7 @@ public class ExtensionLoaderTest { //todo @csy pause 加载不了文件，需要
     }
 
     @Test
-    public void test_getDefaultExtension_NULL() throws Exception { //todo @csy 为什么加载不了文件
+    public void test_getDefaultExtension_NULL() throws Exception {
         Ext2 ext = getExtensionLoader(Ext2.class).getDefaultExtension();
         /**
          * @csy-009 此处为啥没有获取到扩展实例，对应的配置文件有看到配置的

@@ -20,7 +20,6 @@ import org.apache.dubbo.common.URL;
 import org.apache.dubbo.config.ApplicationConfig;
 import org.apache.dubbo.metadata.store.InMemoryWritableMetadataService;
 import org.apache.dubbo.rpc.model.ApplicationModel;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,19 +31,15 @@ import java.util.TreeSet;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableSortedSet;
 import static org.apache.dubbo.common.URL.valueOf;
-import static org.apache.dubbo.common.constants.CommonConstants.GROUP_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.PROTOCOL_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.VERSION_KEY;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.apache.dubbo.common.constants.CommonConstants.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * {@link InMemoryWritableMetadataService} Test
  *
  * @since 2.7.5
  */
-public class InMemoryWritableMetadataServiceTest {
+public class InMemoryWritableMetadataServiceTest { //todo @pause
 
     private WritableMetadataService metadataService = new InMemoryWritableMetadataService();
 
@@ -68,13 +63,13 @@ public class InMemoryWritableMetadataServiceTest {
     }
 
     @Test
-    public void testServiceName() {
-        assertEquals("test", metadataService.serviceName());
+    public void testServiceName() { //已测
+        assertEquals("test", metadataService.serviceName()); //此处的Service name取的是ApplicationConfig中设置的name（元数据中存储的服务名service name就是应用名 application name）
     }
 
     @Test
-    public void testVersion() {
-        assertEquals("1.0.0", MetadataService.VERSION);
+    public void testVersion() { //已测
+        assertEquals("1.0.0", MetadataService.VERSION); //VERSION是MetadataService接口中定义的成员变量
         assertEquals("1.0.0", metadataService.version());
     }
 
