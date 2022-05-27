@@ -39,13 +39,13 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @since 2.7.5
  */
-public class InMemoryWritableMetadataServiceTest { //todo @pause
+public class InMemoryWritableMetadataServiceTest {
 
     private WritableMetadataService metadataService = new InMemoryWritableMetadataService();
 
-    private static final String TEST_SERVICE = "org.apache.dubbo.test.TestService";
+    private static final String TEST_SERVICE = "org.apache.dubbo.test.TestService"; //这部分的值，将作为url的path，也可作为url参数中interface对应的值
 
-    private static final URL BASE_URL = valueOf("dubbo://127.0.0.1:20880/" + TEST_SERVICE);
+    private static final URL BASE_URL = valueOf("dubbo://127.0.0.1:20880/" + TEST_SERVICE + "?name=hh");
     private static final URL REST_BASE_URL = valueOf("rest://127.0.0.1:20880/" + TEST_SERVICE);
     private static final URL BASE_URL_GROUP = BASE_URL.addParameter(GROUP_KEY, "test");
     private static final URL BASE_URL_GROUP_AND_VERSION = BASE_URL_GROUP.addParameter(VERSION_KEY, "1.0.0");
@@ -76,7 +76,7 @@ public class InMemoryWritableMetadataServiceTest { //todo @pause
     @Test
     public void testGetExportedURLs() {
 
-        assertTrue(metadataService.exportURL(BASE_URL));
+        assertTrue(metadataService.exportURL(BASE_URL)); //将url成功添加到InMemoryWritableMetadataService的exportedServiceURLs，即为成功
         Set<String> exportedURLs = metadataService.getExportedURLs(TEST_SERVICE);
         assertEquals(1, exportedURLs.size());
         assertEquals(asSortedSet(BASE_URL.toFullString()), exportedURLs);

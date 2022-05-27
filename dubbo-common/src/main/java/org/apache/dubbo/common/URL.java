@@ -228,7 +228,7 @@ class URL implements Serializable {
         String path = null;
         Map<String, String> parameters = null;
         int i = url.indexOf('?'); // separator between body and parameters
-        if (i >= 0) { //判断是否包含参数
+        if (i >= 0) { //判断是否包含参数，若url中包含"?"，则先把参数解析出来，把"?"后面的字符串先处理掉
             String[] parts = url.substring(i + 1).split("&"); //按&符号分隔参数
             parameters = new HashMap<>();
             for (String part : parts) { //参数的元素值，如name=test
@@ -271,7 +271,7 @@ class URL implements Serializable {
 
         i = url.indexOf('/'); //资源路径，如127.0.0.1:2181/all的 path为all
         if (i >= 0) {
-            path = url.substring(i + 1); //接口路径，即接口路径，如com.foo.BarService
+            path = url.substring(i + 1); //接口路径，即接口路径，如com.foo.BarService，path中没有"?"后面带的参数
             url = url.substring(0, i);
         }
         i = url.lastIndexOf('@'); //根据@解析用户名、密码
@@ -1496,7 +1496,7 @@ class URL implements Serializable {
         return buildKey(inf, getParameter(GROUP_KEY), getParameter(VERSION_KEY));
     }
 
-    public static String buildKey(String path, String group, String version) {
+    public static String buildKey(String path, String group, String version) { //path、group、version组合成服务的唯一标识key
         return BaseServiceMetadata.buildServiceKey(path, group, version);
     }
 

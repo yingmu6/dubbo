@@ -55,7 +55,7 @@ public class InMemoryWritableMetadataService extends AbstractAbstractWritableMet
      * All exported {@link URL urls} {@link Map} whose key is the return value of {@link URL#getServiceKey()} method
      * and value is the {@link SortedSet sorted set} of the {@link URL URLs}
      */
-    private final ConcurrentNavigableMap<String, SortedSet<URL>> exportedServiceURLs = new ConcurrentSkipListMap<>();
+    private final ConcurrentNavigableMap<String, SortedSet<URL>> exportedServiceURLs = new ConcurrentSkipListMap<>(); //navigable：[ˈnævɪɡəb(ə)l] adj. 可航行的
 
     // ==================================================================================== //
 
@@ -89,7 +89,7 @@ public class InMemoryWritableMetadataService extends AbstractAbstractWritableMet
             SortedSet<URL> urls = entry.getValue();
             if (urls != null) {
                 for (URL url : urls) {
-                    if (!MetadataService.class.getName().equals(url.getServiceInterface())) {
+                    if (!MetadataService.class.getName().equals(url.getServiceInterface())) { //若url的"interface"参数值不是MetadataService接口名，则加到集合bizURLs中
                         bizURLs.add(url);
                     }
                 }
@@ -108,8 +108,8 @@ public class InMemoryWritableMetadataService extends AbstractAbstractWritableMet
     }
 
     @Override
-    public boolean exportURL(URL url) {
-        return addURL(exportedServiceURLs, url);
+    public boolean exportURL(URL url) { //使用引用传递
+        return addURL(exportedServiceURLs, url); //此处是引用传递，方法中对exportedServiceURLs的变更，该值也要变更
     }
 
     @Override
@@ -149,11 +149,11 @@ public class InMemoryWritableMetadataService extends AbstractAbstractWritableMet
         return unmodifiableSortedMap(serviceDefinitions);
     }
 
-    boolean addURL(Map<String, SortedSet<URL>> serviceURLs, URL url) {
-        return executeMutually(() -> {
-            SortedSet<URL> urls = serviceURLs.computeIfAbsent(url.getServiceKey(), this::newSortedURLs);
+    boolean addURL(Map<String, SortedSet<URL>> serviceURLs, URL url) { //使用函数传递
+        return executeMutually(() -> { //使用线程异步设置Map值，此处是函数传递，把函数的实现用lambda写好后传递
+            SortedSet<URL> urls = serviceURLs.computeIfAbsent(url.getServiceKey(), this::newSortedURLs); //会将serviceKey作为Map的key
             // make sure the parameters of tmpUrl is variable
-            return urls.add(url);
+            return urls.add(url); //此处serviceURLs变更，当前类的exportedServiceURLs也对应变更
         });
     }
 
@@ -174,13 +174,13 @@ public class InMemoryWritableMetadataService extends AbstractAbstractWritableMet
     }
 
     private SortedSet<URL> newSortedURLs(String serviceKey) {
-        return new TreeSet<>(InMemoryWritableMetadataService.URLComparator.INSTANCE);
+        return new TreeSet<>(InMemoryWritableMetadataService.URLComparator.INSTANCE); //获取URLComparator实例，并设置到TreeSet中
     }
 
-    boolean executeMutually(Callable<Boolean> callable) {
+    boolean executeMutually(Callable<Boolean> callable) { //mutually：adv. 相互地，共同地
         boolean success = false;
         try {
-            lock.lock();
+            lock.lock(); //加锁处理
             try {
                 success = callable.call();
             } catch (Exception e) {
@@ -189,7 +189,7 @@ public class InMemoryWritableMetadataService extends AbstractAbstractWritableMet
                 }
             }
         } finally {
-            lock.unlock();
+            lock.unlock(); //释放锁处理
         }
         return success;
     }

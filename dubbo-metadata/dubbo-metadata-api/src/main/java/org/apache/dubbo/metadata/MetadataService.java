@@ -131,7 +131,7 @@ public interface MetadataService {
      * @see #toSortedStrings(Stream)
      * @see URL#toFullString()
      */
-    default SortedSet<String> getExportedURLs(String serviceInterface) {
+    default SortedSet<String> getExportedURLs(String serviceInterface) { //根据接口名查询对应的url集合
         return getExportedURLs(serviceInterface, null);
     }
 
@@ -237,7 +237,7 @@ public interface MetadataService {
      * @return the non-null read-only {@link SortedSet sorted set} of {@link URL#toFullString() strings} presenting
      * @see URL#toFullString()
      */
-    static SortedSet<String> toSortedStrings(Stream<URL> stream) {
+    static SortedSet<String> toSortedStrings(Stream<URL> stream) { //转换为排序的url
         return unmodifiableSortedSet(stream.map(URL::toFullString).collect(TreeSet::new, Set::add, Set::addAll));
     }
 }

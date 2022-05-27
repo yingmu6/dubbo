@@ -17,7 +17,6 @@
 package org.apache.dubbo.config.spring;
 
 import org.apache.dubbo.config.annotation.Service;
-
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 
@@ -35,7 +34,7 @@ public class ServiceBeanTest {
         MatcherAssert.assertThat(beanService, not(nullValue()));
     }
 
-    abstract class TestService implements Service {
+    abstract class TestService implements Service { //todo @csy 这是怎样的写法？ 注解也能继承吗
 
     }
 }
