@@ -78,7 +78,7 @@ public class InMemoryWritableMetadataServiceTest {
 
         assertTrue(metadataService.exportURL(BASE_URL)); //将url成功添加到InMemoryWritableMetadataService的exportedServiceURLs，即为成功
         Set<String> exportedURLs = metadataService.getExportedURLs(TEST_SERVICE);
-        assertEquals(1, exportedURLs.size());
+        assertEquals(1, exportedURLs.size()); //暴露的列表数
         assertEquals(asSortedSet(BASE_URL.toFullString()), exportedURLs);
         assertTrue(metadataService.unexportURL(BASE_URL));
 
