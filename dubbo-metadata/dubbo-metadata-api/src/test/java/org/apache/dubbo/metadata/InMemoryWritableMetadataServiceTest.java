@@ -82,7 +82,7 @@ public class InMemoryWritableMetadataServiceTest {
         assertEquals(asSortedSet(BASE_URL.toFullString()), exportedURLs);
         assertTrue(metadataService.unexportURL(BASE_URL));
 
-        assertTrue(metadataService.exportURL(BASE_URL)); //test
+        assertTrue(metadataService.exportURL(BASE_URL)); //test2
         assertFalse(metadataService.exportURL(BASE_URL));
 
         assertTrue(metadataService.exportURL(BASE_URL_GROUP));
