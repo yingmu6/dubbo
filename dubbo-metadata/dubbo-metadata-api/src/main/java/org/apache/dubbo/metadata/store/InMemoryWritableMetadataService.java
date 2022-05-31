@@ -153,7 +153,7 @@ public class InMemoryWritableMetadataService extends AbstractAbstractWritableMet
         return executeMutually(() -> { //使用线程异步设置Map值，此处是函数传递，把函数的实现用lambda写好后传递
             SortedSet<URL> urls = serviceURLs.computeIfAbsent(url.getServiceKey(), this::newSortedURLs); //会将serviceKey作为Map的key
             // make sure the parameters of tmpUrl is variable
-            return urls.add(url); //此处serviceURLs变更，当前类的exportedServiceURLs也对应变更
+            return urls.add(url); //此处serviceURLs变更，当前类的exportedServiceURLs也对应变更（若元素已存在，set集合的add方法就会返回false）
         });
     }
 
@@ -164,9 +164,9 @@ public class InMemoryWritableMetadataService extends AbstractAbstractWritableMet
             if (urls == null) {
                 return true;
             }
-            boolean r = urls.remove(url);
+            boolean r = urls.remove(url); //移除集合Set中值
             // if it is empty
-            if (urls.isEmpty()) {
+            if (urls.isEmpty()) { //若URL集合Set为空，则把对应的key也移除
                 serviceURLs.remove(key);
             }
             return r;

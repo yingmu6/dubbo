@@ -21,5 +21,5 @@ package org.apache.dubbo.metadata.store;
  */
 public interface InterfaceNameTestService {
 
-    public void test();
+    public void test(); //接口中的方法：都是public abstract的
 }

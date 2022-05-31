@@ -23,7 +23,7 @@ import org.apache.dubbo.metadata.report.support.AbstractMetadataReportFactory;
 /**
  * ZookeeperRegistryFactory.
  */
-public class JTestMetadataReportFactory4Test extends AbstractMetadataReportFactory {
+public class JTestMetadataReportFactory4Test extends AbstractMetadataReportFactory { //调用getMetadataReport()方法时，会调用从AbstractMetadataReportFactory继承的方法
 
     @Override
     public MetadataReport createMetadataReport(URL url) {

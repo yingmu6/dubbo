@@ -32,6 +32,7 @@ public final class ClassUtils {
 
     /**
      * Get the code source file or class path of the Class passed in.
+     * （获取传入的Class的代码源文件或类路径）
      *
      * @param clazz
      * @return Jar file name or class path.

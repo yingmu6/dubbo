@@ -262,7 +262,7 @@ public class AdaptiveClassCodeGenerator { //自适应代码产生器
                             //getMethodParameter(String method, String key, String defaultValue)
                             getNameCode = String.format("url.getMethodParameter(methodName, \"%s\", \"%s\")", value[i], defaultExtName);
                         } else {
-                            getNameCode = String.format("url.getParameter(\"%s\", \"%s\")", value[i], defaultExtName);
+                            getNameCode = String.format("url.getParameter(\"%s\", \"%s\")", value[i], defaultExtName); //value来源于@Adaptive注解声明的值
                         }
                     } else {
                         getNameCode = String.format("( url.getProtocol() == null ? \"%s\" : url.getProtocol() )", defaultExtName);

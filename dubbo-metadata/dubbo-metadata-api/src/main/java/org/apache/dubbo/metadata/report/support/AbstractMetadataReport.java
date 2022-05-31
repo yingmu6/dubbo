@@ -246,7 +246,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
             failedReports.remove(providerMetadataIdentifier);
             Gson gson = new Gson();
             String data = gson.toJson(serviceDefinition); //JSON字符串，data数据如：{"parameters":{"application":"test-service","side":"provider"},"canonicalName":"org.apache.dubbo.rpc.service.EchoService","codeSource":"file:/Users/chenshengyong/self-db/dubbo/dubbo-common/target/classes/","methods":[{"name":"$echo","parameterTypes":["java.lang.Object"],"returnType":"java.lang.Object"}],"types":[{"type":"java.lang.Object","typeBuilderName":"org.apache.dubbo.metadata.definition.builder.DefaultTypeBuilder"}]}
-            doStoreProviderMetadata(providerMetadataIdentifier, data);
+            doStoreProviderMetadata(providerMetadataIdentifier, data); //将服务定义的数据，转换为json字符串，存储到远程，如将Zookeeper作为元数据中心的话，会在Zookeeper创建对应的节点
             saveProperties(providerMetadataIdentifier, data, true, !syncReport); //元数据上报到元数据中心后，也会存储一份到本地文件中
         } catch (Exception e) {
             // retry again. If failed again, throw exception.

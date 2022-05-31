@@ -74,26 +74,30 @@ public class InMemoryWritableMetadataServiceTest {
     }
 
     @Test
-    public void testGetExportedURLs() {
+    public void testGetExportedURLs() { //已测
 
+        /**
+         * WritableMetadataService使用InMemoryWritableMetadataService实现时
+         * 存储的数据格式时Map<serviceKey, Set<URL>>
+         */
         assertTrue(metadataService.exportURL(BASE_URL)); //将url成功添加到InMemoryWritableMetadataService的exportedServiceURLs，即为成功
         Set<String> exportedURLs = metadataService.getExportedURLs(TEST_SERVICE);
         assertEquals(1, exportedURLs.size()); //暴露的列表数
         assertEquals(asSortedSet(BASE_URL.toFullString()), exportedURLs);
         assertTrue(metadataService.unexportURL(BASE_URL));
 
-        assertTrue(metadataService.exportURL(BASE_URL)); //test2
-        assertFalse(metadataService.exportURL(BASE_URL));
+        assertTrue(metadataService.exportURL(BASE_URL));
+        assertFalse(metadataService.exportURL(BASE_URL)); //因为使用的Set集合进行缓存，若元素重复，add()方法返回false
 
-        assertTrue(metadataService.exportURL(BASE_URL_GROUP));
-        assertTrue(metadataService.exportURL(BASE_URL_GROUP_AND_VERSION));
+        assertTrue(metadataService.exportURL(BASE_URL_GROUP)); //serviceKey为：test/org.apache.dubbo.test.TestService
+        assertTrue(metadataService.exportURL(BASE_URL_GROUP_AND_VERSION)); //serviceKey为：test/org.apache.dubbo.test.TestService:1.0.0
 
         exportedURLs = metadataService.getExportedURLs(TEST_SERVICE);
         assertEquals(asSortedSet(BASE_URL.toFullString()), exportedURLs);
         assertEquals(asSortedSet(
                 BASE_URL.toFullString(),
                 BASE_URL_GROUP.toFullString(),
-                BASE_URL_GROUP_AND_VERSION.toFullString()), metadataService.getExportedURLs());
+                BASE_URL_GROUP_AND_VERSION.toFullString()), metadataService.getExportedURLs()); //暴露的集合
 
         assertTrue(metadataService.exportURL(REST_BASE_URL));
         exportedURLs = metadataService.getExportedURLs(TEST_SERVICE);
@@ -107,9 +111,12 @@ public class InMemoryWritableMetadataServiceTest {
     }
 
     @Test
-    public void testGetSubscribedURLs() {
+    public void testGetSubscribedURLs() { //已测
+        /**
+         * 订阅url：会把url添加到ConcurrentNavigableMap<String, SortedSet<URL>> subscribedServiceURLs中
+         */
         assertTrue(metadataService.subscribeURL(BASE_URL));
-        assertFalse(metadataService.subscribeURL(BASE_URL));
+        assertFalse(metadataService.subscribeURL(BASE_URL)); //把url添加到subscribedServiceURLs中
 
         assertTrue(metadataService.subscribeURL(BASE_URL_GROUP));
         assertTrue(metadataService.subscribeURL(BASE_URL_GROUP_AND_VERSION));

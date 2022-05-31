@@ -23,11 +23,12 @@ import org.junit.jupiter.api.Test;
 public class TypeDefinitionBuilderTest {
 
     @Test
-    public void testSortTypeBuilder() {
-        TypeBuilder tb = TypeDefinitionBuilder.BUILDERS.get(0);
+    public void testSortTypeBuilder() { //已测
+        // TypeDefinitionBuilder.BUILDERS 会在类加载时，读取SPI文件，从扩展列表中查找到具体的扩展
+        TypeBuilder tb = TypeDefinitionBuilder.BUILDERS.get(0); //第一个元素
         Assertions.assertTrue(tb instanceof TestTypeBuilder);
 
-        tb = TypeDefinitionBuilder.BUILDERS.get(TypeDefinitionBuilder.BUILDERS.size() - 1);
+        tb = TypeDefinitionBuilder.BUILDERS.get(TypeDefinitionBuilder.BUILDERS.size() - 1); //最后一个元素
         Assertions.assertTrue(tb instanceof Test3TypeBuilder);
     }
 }

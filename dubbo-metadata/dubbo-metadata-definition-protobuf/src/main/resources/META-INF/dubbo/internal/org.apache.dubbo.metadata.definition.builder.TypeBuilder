@@ -1,1 +1,2 @@
 protobuf=org.apache.dubbo.metadata.definition.protobuf.ProtobufTypeBuilder
+protobufTest=org.apache.dubbo.metadata.definition.protobuf.ProtobufTypeBuilderTest

@@ -16,6 +16,7 @@
  */
 package org.apache.dubbo.metadata.store;
 
+import com.google.gson.Gson;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.utils.NetUtils;
 import org.apache.dubbo.metadata.definition.model.FullServiceDefinition;
@@ -25,8 +26,6 @@ import org.apache.dubbo.metadata.report.identifier.ServiceMetadataIdentifier;
 import org.apache.dubbo.metadata.report.identifier.SubscriberMetadataIdentifier;
 import org.apache.dubbo.metadata.test.JTestMetadataReport4Test;
 import org.apache.dubbo.rpc.model.ApplicationModel;
-
-import com.google.gson.Gson;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,17 +40,18 @@ public class RemoteWritableMetadataServiceTest {
     RemoteWritableMetadataService metadataReportService1;
 
     @BeforeEach
-    public void before() {
+    public void before() { //@BeforeEach 每个test方法调用时都会执行，若启动类的话，此处的方法会执行多次
         metadataReportService1 = new RemoteWritableMetadataService();
         MetadataReportInstance.init(url);
+        System.out.println("before 哈哈");
     }
 
     @Test
-    public void testPublishProviderNoInterfaceName() {
+    public void testPublishProviderNoInterfaceName() { //已测
         URL publishUrl = URL.valueOf("dubbo://" + NetUtils.getLocalAddress().getHostName() + ":4444/org.apache.dubbo.TestService?version=1.0.0&application=vicpubprovder&side=provider");
         metadataReportService1.publishServiceDefinition(publishUrl);
 
-        Assertions.assertTrue(metadataReportService1.getMetadataReport() instanceof JTestMetadataReport4Test);
+        Assertions.assertTrue(metadataReportService1.getMetadataReport() instanceof JTestMetadataReport4Test); //根据自适应获取到JTestMetadataReport4Test实例
 
         JTestMetadataReport4Test jTestMetadataReport4Test = (JTestMetadataReport4Test) metadataReportService1.getMetadataReport();
         Assertions.assertTrue(!jTestMetadataReport4Test.store.containsKey(JTestMetadataReport4Test.getProviderKey(publishUrl)));
@@ -59,7 +59,7 @@ public class RemoteWritableMetadataServiceTest {
     }
 
     @Test
-    public void testPublishProviderWrongInterface() {
+    public void testPublishProviderWrongInterface() { //已测
 
         URL publishUrl = URL.valueOf("dubbo://" + NetUtils.getLocalAddress().getHostName() + ":4444/org.apache.dubbo.TestService?version=1.0.0&application=vicpu&interface=ccc&side=provider");
         metadataReportService1.publishServiceDefinition(publishUrl);
@@ -67,7 +67,7 @@ public class RemoteWritableMetadataServiceTest {
         Assertions.assertTrue(metadataReportService1.getMetadataReport() instanceof JTestMetadataReport4Test);
 
         JTestMetadataReport4Test jTestMetadataReport4Test = (JTestMetadataReport4Test) metadataReportService1.getMetadataReport();
-        Assertions.assertTrue(!jTestMetadataReport4Test.store.containsKey(JTestMetadataReport4Test.getProviderKey(publishUrl)));
+        Assertions.assertTrue(!jTestMetadataReport4Test.store.containsKey(JTestMetadataReport4Test.getProviderKey(publishUrl))); //由于interface为ccc，反射时没有找到该Class，所以存储的store中就没有对应的值
 
     }
 

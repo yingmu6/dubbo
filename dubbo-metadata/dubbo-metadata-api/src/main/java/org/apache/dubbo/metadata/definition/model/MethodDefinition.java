@@ -85,7 +85,7 @@ public class MethodDefinition implements Serializable { //方法定义（为方�
         return Objects.equals(getName(), that.getName()) &&
                 Arrays.equals(getParameterTypes(), that.getParameterTypes()) &&
                 Objects.equals(getReturnType(), that.getReturnType()) &&
-                Objects.equals(getParameters(), that.getParameters());
+                Objects.equals(getParameters(), that.getParameters()); //成员属性都相等，对象才相等
     }
 
     @Override

@@ -16,15 +16,17 @@
  */
 package org.apache.dubbo.metadata.definition.protobuf;
 
+import org.apache.dubbo.common.extension.ExtensionLoader;
 import org.apache.dubbo.metadata.definition.ServiceDefinitionBuilder;
+import org.apache.dubbo.metadata.definition.builder.TypeBuilder;
 import org.apache.dubbo.metadata.definition.model.FullServiceDefinition;
 import org.apache.dubbo.metadata.definition.model.MethodDefinition;
 import org.apache.dubbo.metadata.definition.model.TypeDefinition;
 import org.apache.dubbo.metadata.definition.protobuf.model.ServiceInterface;
-
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
+import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -69,5 +71,13 @@ public class ProtobufTypeBuilderTest {
         assertThat(propertiesMap.get("doubleMap").getType(), equalTo("java.util.Map<java.lang.String,org.apache.dubbo.metadata.definition.protobuf.model.GooglePB$PhoneNumber>"));
         assertThat(propertiesMap.get("bytesList").getType(), equalTo("java.util.List<com.google.protobuf.ByteString>"));
         assertThat(propertiesMap.get("bytesMap").getType(), equalTo("java.util.Map<java.lang.String,com.google.protobuf.ByteString>"));
+    }
+
+    @Test
+    public void testExtensions() {
+        ExtensionLoader<TypeBuilder> extensionLoader = ExtensionLoader.getExtensionLoader(TypeBuilder.class);
+
+        Set<String> extensionNames = extensionLoader.getSupportedExtensions();
+        System.out.println(extensionNames);
     }
 }

@@ -35,19 +35,23 @@ public class MetadataReportInstance { //该类的用途是？解：用来保存M
     private static MetadataReport metadataReport;
 
     public static void init(URL metadataReportURL) {
-        if (init.get()) {
+        if (init.get()) { //若已经初始化，则不再初始化操作
             return;
         }
-        MetadataReportFactory metadataReportFactory = ExtensionLoader.getExtensionLoader(MetadataReportFactory.class).getAdaptiveExtension(); //默认是RedisMetadataReportFactory元数据工厂
-        if (METADATA_REPORT_KEY.equals(metadataReportURL.getProtocol())) {
+
+        // 获取或创建MetadataReportFactory自适应类的实例
+        MetadataReportFactory metadataReportFactory = ExtensionLoader.getExtensionLoader(MetadataReportFactory.class).getAdaptiveExtension();
+        if (METADATA_REPORT_KEY.equals(metadataReportURL.getProtocol())) { //若协议为"metadata"，则对metadataReportURL的protocol进行修改
             String protocol = metadataReportURL.getParameter(METADATA_REPORT_KEY, DEFAULT_DIRECTORY);
             metadataReportURL = URLBuilder.from(metadataReportURL)
                     .setProtocol(protocol)
                     .removeParameter(METADATA_REPORT_KEY)
                     .build();
         }
+
+        //在具体方法调用时，会获取到扩展名，执行对应扩展实例的方法，达到多态的目的，此处MetadataReportFactory的注解为@Adaptive({"protocol"})，所以会取metadataReportURL.getProtocol()的值
         metadataReport = metadataReportFactory.getMetadataReport(metadataReportURL);
-        init.set(true);
+        init.set(true); //初始化以后，更改状态值
     }
 
     public static MetadataReport getMetadataReport() {

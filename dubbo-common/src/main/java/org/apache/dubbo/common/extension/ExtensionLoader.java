@@ -528,7 +528,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
 
     public Set<T> getSupportedExtensionInstances() { //获取支持的扩展实例
         List<T> instances = new LinkedList<>();
-        Set<String> supportedExtensions = getSupportedExtensions();
+        Set<String> supportedExtensions = getSupportedExtensions(); //获取扩展名列表
         if (CollectionUtils.isNotEmpty(supportedExtensions)) {
             for (String name : supportedExtensions) { //依次遍历扩展名，然后获取对应的实例
                 instances.add(getExtension(name));
@@ -631,6 +631,10 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
 
     @SuppressWarnings("unchecked")
     public T getAdaptiveExtension() { //获取自适应扩展实例，若不存在则创建
+        /**
+         * 1）自适应扩展类，是根据字节码操作，在运行期间动态创建的，而不是声明的静态类
+         * 2）先创建自适应类的实例，然后调用类的方法时，再从url中获取@Adaptive配置的参数值，实现调用的多态，是方法中实现多态，而不是类上实现多态
+         */
         Object instance = cachedAdaptiveInstance.get();
         if (instance == null) {
             if (createAdaptiveInstanceError != null) { //实例为空，且异常信息的实例不为空，表明当时创建自适应实例时，出现异常

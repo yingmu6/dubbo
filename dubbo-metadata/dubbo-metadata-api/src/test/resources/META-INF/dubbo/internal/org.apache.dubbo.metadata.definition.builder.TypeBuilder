@@ -1,2 +1,3 @@
 test=org.apache.dubbo.metadata.definition.TestTypeBuilder
 test3=org.apache.dubbo.metadata.definition.Test3TypeBuilder
+test4=org.apache.dubbo.metadata.definition.Test4TypeBuilder

@@ -14,30 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.dubbo.metadata.definition.model;
+package org.apache.dubbo.metadata.definition;
 
+import org.apache.dubbo.metadata.definition.builder.TypeBuilder;
+import org.apache.dubbo.metadata.definition.model.TypeDefinition;
+
+import java.lang.reflect.Type;
 import java.util.Map;
 
 /**
- * 2018/10/25
+ * test for sort
  */
-public class FullServiceDefinition extends ServiceDefinition { //完整的服务定义（多了参数Map），相比ServiceDefinition多了参数键值对parameters
-
-    private Map<String, String> parameters; //参数键值对
-
-    public Map<String, String> getParameters() {
-        return parameters;
-    }
-
-    public void setParameters(Map<String, String> parameters) {
-        this.parameters = parameters;
+public class Test4TypeBuilder implements TypeBuilder { //self 添加
+    // it is smaller than the implements of TypeBuilder
+    public int getPriority() {
+        return 10;
     }
 
     @Override
-    public String toString() {
-        return "FullServiceDefinition{" +
-                "parameters=" + parameters +
-                "} " + super.toString();
+    public boolean accept(Type type, Class<?> clazz) {
+        return false;
     }
 
+    @Override
+    public TypeDefinition build(Type type, Class<?> clazz, Map<Class<?>, TypeDefinition> typeCache) {
+        return null;
+    }
 }

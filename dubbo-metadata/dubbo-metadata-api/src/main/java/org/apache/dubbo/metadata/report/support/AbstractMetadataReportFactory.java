@@ -37,16 +37,16 @@ public abstract class AbstractMetadataReportFactory implements MetadataReportFac
     @Override
     public MetadataReport getMetadataReport(URL url) {
         url = url.setPath(MetadataReport.class.getName())
-                .removeParameters(EXPORT_KEY, REFER_KEY);
-        String key = url.toServiceString();
+                .removeParameters(EXPORT_KEY, REFER_KEY); //更改path的值，值为"org.apache.dubbo.metadata.report.MetadataReport"
+        String key = url.toServiceString(); //key的值如：JTest://172.16.140.154:4444/org.apache.dubbo.metadata.report.MetadataReport:1.0.0
         // Lock the metadata access process to ensure a single instance of the metadata instance
         LOCK.lock(); // 加锁处理，确保MetadataReport保持单实例
         try {
             MetadataReport metadataReport = SERVICE_STORE_MAP.get(key);
-            if (metadataReport != null) {
+            if (metadataReport != null) { //若缓存Map中存在，则直接返回
                 return metadataReport;
             }
-            metadataReport = createMetadataReport(url);
+            metadataReport = createMetadataReport(url); //若不存在则创建，并存在缓存Map
             if (metadataReport == null) {
                 throw new IllegalStateException("Can not create metadata Report " + url);
             }

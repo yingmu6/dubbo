@@ -35,15 +35,15 @@ public class TypeDefinitionBuilder {
     private static final Logger logger = LoggerFactory.getLogger(TypeDefinitionBuilder.class);
     static final List<TypeBuilder> BUILDERS;
 
-    static {
+    static { //静态块：类加载时就会执行，
         ExtensionLoader<TypeBuilder> extensionLoader = ExtensionLoader.getExtensionLoader(TypeBuilder.class);
-        Set<TypeBuilder> tbs = extensionLoader.getSupportedExtensionInstances();
+        Set<TypeBuilder> tbs = extensionLoader.getSupportedExtensionInstances(); //TypeBuilder是SPI接口，此处会取出TypeBuilder支持的扩展实例
         BUILDERS = new ArrayList<>(tbs);
     }
 
     // 构建类型定义TypeDefinition
     public static TypeDefinition build(Type type, Class<?> clazz, Map<Class<?>, TypeDefinition> typeCache) {
-        TypeBuilder builder = getGenericTypeBuilder(type, clazz);
+        TypeBuilder builder = getGenericTypeBuilder(type, clazz); //todo @pause
         TypeDefinition td;
         if (builder != null) {
             td = builder.build(type, clazz, typeCache);

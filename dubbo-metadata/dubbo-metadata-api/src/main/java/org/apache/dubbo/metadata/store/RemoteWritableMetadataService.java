@@ -44,7 +44,7 @@ public class RemoteWritableMetadataService extends AbstractAbstractWritableMetad
      * 解答：先获取getMetadataReport()元数据中心的实例，然后再往远端发送信息。
      */
 
-    private final InMemoryWritableMetadataService writableMetadataServiceDelegate;
+    private final InMemoryWritableMetadataService writableMetadataServiceDelegate; //借助本地内存存储元数据
 
     private final URLRevisionResolver urlRevisionResolver;
 
