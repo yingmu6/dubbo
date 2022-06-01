@@ -50,7 +50,7 @@ public class MetadataReportInstance { //该类的用途是？解：用来保存M
         }
 
         //在具体方法调用时，会获取到扩展名，执行对应扩展实例的方法，达到多态的目的，此处MetadataReportFactory的注解为@Adaptive({"protocol"})，所以会取metadataReportURL.getProtocol()的值
-        metadataReport = metadataReportFactory.getMetadataReport(metadataReportURL);
+        metadataReport = metadataReportFactory.getMetadataReport(metadataReportURL); //此处若protocol为"JTest"，会进入JTestMetadataReportFactory4Test的getMetadataReport()方法
         init.set(true); //初始化以后，更改状态值
     }
 

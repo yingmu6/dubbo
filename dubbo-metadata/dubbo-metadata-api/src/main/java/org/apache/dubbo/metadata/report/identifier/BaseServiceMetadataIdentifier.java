@@ -43,7 +43,7 @@ public class BaseServiceMetadataIdentifier {//基础服务元数据标识符
         if (keyType == KeyTypeEnum.PATH) {
             return getFilePathKey(params);
         }
-        return getIdentifierKey(params); //是怎样拼接唯一key的？解：将基础信息与参数列表，按照分隔符进行拼接
+        return getIdentifierKey(params); //是怎样拼接唯一key的？解：将基础信息与参数列表，按照分隔符进行拼接，值如：org.apache.dubbo.metadata.store.InterfaceNameTestService:1.0.3::provider:vicpubp
     }
 
     String getIdentifierKey(String... params) {
@@ -74,7 +74,7 @@ public class BaseServiceMetadataIdentifier {//基础服务元数据标识符
         return getFilePathKey(DEFAULT_PATH_TAG, params);
     }
 
-    private String getFilePathKey(String pathTag, String... params) {
+    private String getFilePathKey(String pathTag, String... params) { //文件路径拼接
         return pathTag
                 + (StringUtils.isEmpty(toServicePath()) ? "" : (PATH_SEPARATOR + toServicePath()))
                 + (version == null ? "" : (PATH_SEPARATOR + version))

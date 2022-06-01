@@ -44,6 +44,7 @@ import static org.apache.dubbo.rpc.model.ApplicationModel.getName;
  */
 public interface MetadataReport extends AutoCloseable {//元数据值怎么上报的？解：接口中没看到上报方法，而是存储store、保存save元数据接口
 
+    // 数据分拆为：元数据标识符MetadataIdentifier和服务定义数据ServiceDefinition等
     void storeProviderMetadata(MetadataIdentifier providerMetadataIdentifier, ServiceDefinition serviceDefinition);
 
     // 存储消费者元数据

@@ -73,7 +73,7 @@ public interface WritableMetadataService extends MetadataService {
      * fresh Exports
      *
      * @return If success , return <code>true</code>
-     * @deprecated Recommend to use {@link MetadataServiceExporter} since 2.7.8
+     * @deprecated Recommend（推荐） to use {@link MetadataServiceExporter} since 2.7.8
      */
     @Deprecated
     default boolean refreshMetadata(String exportedRevision, String subscribedRevision) {

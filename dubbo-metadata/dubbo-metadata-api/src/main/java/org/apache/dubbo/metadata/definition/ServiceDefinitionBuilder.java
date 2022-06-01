@@ -85,7 +85,7 @@ public final class ServiceDefinitionBuilder {
             TypeDefinition td = builder.build(method.getGenericReturnType(), method.getReturnType());
             md.setReturnType(td.getType());
 
-            sd.getMethods().add(md);
+            sd.getMethods().add(md); //为ServiceDefinition添加MethodDefinition
         }
 
         sd.setTypes(builder.getTypeDefinitions());

@@ -50,7 +50,7 @@ public abstract class AbstractMetadataReportFactory implements MetadataReportFac
             if (metadataReport == null) {
                 throw new IllegalStateException("Can not create metadata Report " + url);
             }
-            SERVICE_STORE_MAP.put(key, metadataReport);
+            SERVICE_STORE_MAP.put(key, metadataReport); //将服务key与MetadataReport实例存储起来
             return metadataReport;
         } finally {
             // Release the lock

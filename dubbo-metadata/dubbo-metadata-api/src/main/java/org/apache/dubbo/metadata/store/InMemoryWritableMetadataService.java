@@ -55,6 +55,7 @@ public class InMemoryWritableMetadataService extends AbstractAbstractWritableMet
      * All exported {@link URL urls} {@link Map} whose key is the return value of {@link URL#getServiceKey()} method
      * and value is the {@link SortedSet sorted set} of the {@link URL URLs}
      */
+    // 数据格式：ConcurrentNavigableMap<serviceKey, SortedSet<URL>>
     private final ConcurrentNavigableMap<String, SortedSet<URL>> exportedServiceURLs = new ConcurrentSkipListMap<>(); //navigable：[ˈnævɪɡəb(ə)l] adj. 可航行的
 
     // ==================================================================================== //

@@ -60,7 +60,7 @@ public class JTestMetadataReport4Test extends AbstractMetadataReport {
 
     @Override
     protected void doStoreConsumerMetadata(MetadataIdentifier consumerMetadataIdentifier, String serviceParameterString) {
-        store.put(consumerMetadataIdentifier.getUniqueKey(KeyTypeEnum.UNIQUE_KEY), serviceParameterString);
+        store.put(consumerMetadataIdentifier.getUniqueKey(KeyTypeEnum.UNIQUE_KEY), serviceParameterString); //本地缓存
     }
 
     @Override
@@ -92,7 +92,7 @@ public class JTestMetadataReport4Test extends AbstractMetadataReport {
         return new MetadataIdentifier(url).getUniqueKey(KeyTypeEnum.UNIQUE_KEY);
     }
 
-    public static String getConsumerKey(URL url) {
+    public static String getConsumerKey(URL url) { //获取url对应的唯一key
         return new MetadataIdentifier(url).getUniqueKey(KeyTypeEnum.UNIQUE_KEY);
     }
 

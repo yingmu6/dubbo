@@ -43,7 +43,7 @@ public class TypeDefinitionBuilder {
 
     // 构建类型定义TypeDefinition
     public static TypeDefinition build(Type type, Class<?> clazz, Map<Class<?>, TypeDefinition> typeCache) {
-        TypeBuilder builder = getGenericTypeBuilder(type, clazz); //todo @pause
+        TypeBuilder builder = getGenericTypeBuilder(type, clazz);
         TypeDefinition td;
         if (builder != null) {
             td = builder.build(type, clazz, typeCache);

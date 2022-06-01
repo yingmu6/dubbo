@@ -28,7 +28,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.*;
  * <p>
  * 2018/10/25
  */
-public class MetadataIdentifier extends BaseServiceMetadataIdentifier implements BaseMetadataIdentifier {
+public class MetadataIdentifier extends BaseServiceMetadataIdentifier implements BaseMetadataIdentifier { //MetadataIdentifier：元数据标识符
     // identifier：[aɪˈdentɪfaɪə(r)] n. 标识符
     private String application;
 
@@ -52,7 +52,7 @@ public class MetadataIdentifier extends BaseServiceMetadataIdentifier implements
         setApplication(url.getParameter(APPLICATION_KEY));
     }
 
-    public String getUniqueKey(KeyTypeEnum keyType) {
+    public String getUniqueKey(KeyTypeEnum keyType) { //将元数据信息构建唯一标识的key，如org.apache.dubbo.TestService:1.0.x::consumer:vicpubconsumer，其中org.apache.dubbo.TestService是interface，vicpubconsumer是应用名
         return super.getUniqueKey(keyType, application);
     }
 

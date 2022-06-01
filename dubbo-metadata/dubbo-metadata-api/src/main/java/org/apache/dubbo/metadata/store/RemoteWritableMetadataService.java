@@ -48,7 +48,7 @@ public class RemoteWritableMetadataService extends AbstractAbstractWritableMetad
 
     private final URLRevisionResolver urlRevisionResolver;
 
-    public RemoteWritableMetadataService() {
+    public RemoteWritableMetadataService() { //在构造函数中进行初始化
         this.writableMetadataServiceDelegate = (InMemoryWritableMetadataService) WritableMetadataService.getDefaultExtension();
         urlRevisionResolver = URLRevisionResolver.INSTANCE;
     }
@@ -71,7 +71,7 @@ public class RemoteWritableMetadataService extends AbstractAbstractWritableMetad
             if (StringUtils.isNotEmpty(interfaceName)) {
                 Class interfaceClass = Class.forName(interfaceName); //根据接口名，创建接口对应的Class
                 FullServiceDefinition fullServiceDefinition = ServiceDefinitionBuilder.buildFullDefinition(interfaceClass,
-                        providerURL.getParameters());
+                        providerURL.getParameters()); //构建FullServiceDefinition
                 getMetadataReport().storeProviderMetadata(new MetadataIdentifier(providerURL.getServiceInterface(),
                         providerURL.getParameter(VERSION_KEY), providerURL.getParameter(GROUP_KEY),
                         PROVIDER_SIDE, providerURL.getParameter(APPLICATION_KEY)), fullServiceDefinition); //该类是远程元数据中心，那么有发起远程调用吗？解：有发起远程调用，若元数据用到的组件是zk，就会在zk中创建对应节点

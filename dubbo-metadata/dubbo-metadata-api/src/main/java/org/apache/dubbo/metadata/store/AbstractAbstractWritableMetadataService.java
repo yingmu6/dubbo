@@ -49,7 +49,7 @@ public abstract class AbstractAbstractWritableMetadataService implements Writabl
         }
 
         // Remove the useless parameters（从url中移除元数据未使用的参数）
-        url = url.removeParameters(PID_KEY, TIMESTAMP_KEY, BIND_IP_KEY, BIND_PORT_KEY, TIMESTAMP_KEY);
+        url = url.removeParameters(PID_KEY, TIMESTAMP_KEY, BIND_IP_KEY, BIND_PORT_KEY, TIMESTAMP_KEY); //去掉一些配置，因为这边配置并不需要
 
         String side = url.getParameter(SIDE_KEY);
         if (PROVIDER_SIDE.equalsIgnoreCase(side)) {

@@ -30,4 +30,9 @@ public class JTestMetadataReportFactory4Test extends AbstractMetadataReportFacto
         return new JTestMetadataReport4Test(url);
     }
 
+    @Override
+    public MetadataReport getMetadataReport(URL url) { //原本没有，自己重写（证明的内容：调用自适应类时，会在运行时根据字节码技术产生自适应类，然后在自适应类中根据url中设置的参数值，动态获取指定扩展名对应的实例来执行）
+        return super.getMetadataReport(url);
+    }
+
 }

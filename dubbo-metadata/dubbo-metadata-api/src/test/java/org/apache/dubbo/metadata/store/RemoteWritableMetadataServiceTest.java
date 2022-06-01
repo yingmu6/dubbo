@@ -72,27 +72,29 @@ public class RemoteWritableMetadataServiceTest {
     }
 
     @Test
-    public void testPublishProviderContainInterface() throws InterruptedException {
+    public void testPublishProviderContainInterface() throws InterruptedException {//已测
 
         URL publishUrl = URL.valueOf("dubbo://" + NetUtils.getLocalAddress().getHostName() + ":4444/org.apache.dubbo.TestService?version=1.0.3&application=vicpubp&interface=org.apache.dubbo.metadata.store.InterfaceNameTestService&side=provider");
         metadataReportService1.publishServiceDefinition(publishUrl);
         Thread.sleep(300);
 
+        // 因为在 before() 测试用例调用之前，已经调用MetadataReportInstance.init(url)，创建MetadataReport对应的实例，由于url配置的协议是JTest，
+        // 根据SPI机制查找到JTestMetadataReportFactory4Test工厂，产生的实例为JTestMetadataReport4Test
         Assertions.assertTrue(metadataReportService1.getMetadataReport() instanceof JTestMetadataReport4Test);
 
         JTestMetadataReport4Test jTestMetadataReport4Test = (JTestMetadataReport4Test) metadataReportService1.getMetadataReport();
         Assertions.assertTrue(jTestMetadataReport4Test.store.containsKey(JTestMetadataReport4Test.getProviderKey(publishUrl)));
 
-        String value = jTestMetadataReport4Test.store.get(JTestMetadataReport4Test.getProviderKey(publishUrl));
+        String value = jTestMetadataReport4Test.store.get(JTestMetadataReport4Test.getProviderKey(publishUrl)); //取出store存储的值，该值是FullServiceDefinition转换的JSON字符串
         FullServiceDefinition fullServiceDefinition = toServiceDefinition(value);
-        Map<String, String> map = fullServiceDefinition.getParameters();
+        Map<String, String> map = fullServiceDefinition.getParameters(); //取出FullServiceDefinition参数进行比较
         Assertions.assertEquals(map.get("application"), "vicpubp");
         Assertions.assertEquals(map.get("version"), "1.0.3");
         Assertions.assertEquals(map.get("interface"), "org.apache.dubbo.metadata.store.InterfaceNameTestService");
     }
 
     @Test
-    public void testPublishConsumer() throws InterruptedException {
+    public void testPublishConsumer() throws InterruptedException { //已测
 
         URL publishUrl = URL.valueOf("dubbo://" + NetUtils.getLocalAddress().getHostName() + ":4444/org.apache.dubbo.TestService?version=1.0.x&application=vicpubconsumer&side=consumer");
         metadataReportService1.publishServiceDefinition(publishUrl);
@@ -112,7 +114,7 @@ public class RemoteWritableMetadataServiceTest {
     }
 
     @Test
-    public void testPublishServiceDefinition() {
+    public void testPublishServiceDefinition() { //已测
         URL publishUrl = URL.valueOf("dubbo://" + NetUtils.getLocalAddress().getHostName() + ":4444/org.apache.dubbo.TestService?version=1.0.0&application=vicpubprovder&side=provider");
         metadataReportService1.publishServiceDefinition(publishUrl);
 
@@ -135,9 +137,12 @@ public class RemoteWritableMetadataServiceTest {
         metadataReportService1.exportURL(publishUrl);
         metadataReportService1.exportURL(publishUrl2);
         String exportedRevision = "9999";
+
+        metadataReportService1.publishServiceDefinition(publishUrl);
         JTestMetadataReport4Test jTestMetadataReport4Test = (JTestMetadataReport4Test) metadataReportService1.getMetadataReport();
-        int origSize = jTestMetadataReport4Test.store.size();
-        Assertions.assertTrue(metadataReportService1.refreshMetadata(exportedRevision, "1109"));
+
+        int origSize = jTestMetadataReport4Test.store.size(); //todo @pause
+        Assertions.assertTrue(metadataReportService1.refreshMetadata(exportedRevision, "1109")); //目前refreshMetadata()是default方法，没有实现类，都返回true
         Thread.sleep(200);
         int size = jTestMetadataReport4Test.store.size();
         Assertions.assertEquals(origSize, size);
@@ -182,7 +187,7 @@ public class RemoteWritableMetadataServiceTest {
 
     private FullServiceDefinition toServiceDefinition(String urlQuery) {
         Gson gson = new Gson();
-        return gson.fromJson(urlQuery, FullServiceDefinition.class);
+        return gson.fromJson(urlQuery, FullServiceDefinition.class); //将json字符串转换为指定类型的对象
     }
 
 }
