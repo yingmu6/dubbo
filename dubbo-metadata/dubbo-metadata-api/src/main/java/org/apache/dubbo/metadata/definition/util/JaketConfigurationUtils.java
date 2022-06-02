@@ -32,12 +32,12 @@ public class JaketConfigurationUtils {
     private static String[] includedTypePackages;
     private static String[] closedTypes;
 
-    static {
+    static { //类加载时就执行了，在对象方法执行前就已经处理好了
         Properties props = new Properties();
         InputStream inStream = JaketConfigurationUtils.class.getClassLoader().getResourceAsStream(CONFIGURATION_FILE);
         try {
             props.load(inStream); //把文件中的内容加载到Properties对象中
-            String value = (String) props.get("included_interface_packages");
+            String value = (String) props.get("included_interface_packages"); //待配置符合条件的文件用于测试
             if (StringUtils.isNotEmpty(value)) { //解析属性的值
                 includedInterfacePackages = value.split(",");
             }
@@ -71,7 +71,7 @@ public class JaketConfigurationUtils {
         return true;
     }
 
-    public static boolean isExcludedType(Class<?> clazz) { //判断是否是排除的类型
+    public static boolean isExcludedType(Class<?> clazz) { //判断是否是排除的类型（待构建符合条件数据，进行分析）
         if (includedTypePackages == null || includedTypePackages.length == 0) {
             return false;
         }
@@ -86,7 +86,7 @@ public class JaketConfigurationUtils {
     }
 
     public static boolean needAnalyzing(Class<?> clazz) {
-        String canonicalName = clazz.getCanonicalName();
+        String canonicalName = clazz.getCanonicalName(); //基本类型也能输出，如int
 
         if (closedTypes != null && closedTypes.length > 0) {
             for (String type : closedTypes) {

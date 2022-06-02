@@ -76,7 +76,7 @@ public interface WritableMetadataService extends MetadataService {
      * @deprecated Recommend（推荐） to use {@link MetadataServiceExporter} since 2.7.8
      */
     @Deprecated
-    default boolean refreshMetadata(String exportedRevision, String subscribedRevision) {
+    default boolean refreshMetadata(String exportedRevision, String subscribedRevision) { //default若没有子类实现，则取default的实现（目前该方法是弃用的，且没有实现的）
         return true;
     }
 

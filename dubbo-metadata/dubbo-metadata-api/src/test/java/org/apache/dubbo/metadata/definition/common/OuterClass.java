@@ -21,7 +21,7 @@ package org.apache.dubbo.metadata.definition.common;
  */
 public class OuterClass {
 
-    public static class InnerClass {
+    public static class InnerClass { //静态内部类
 
         private String name;
 

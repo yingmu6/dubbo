@@ -46,7 +46,7 @@ public class TypeDefinitionBuilder {
         TypeBuilder builder = getGenericTypeBuilder(type, clazz);
         TypeDefinition td;
         if (builder != null) {
-            td = builder.build(type, clazz, typeCache);
+            td = builder.build(type, clazz, typeCache); //传入的type为数组类型时，匹配到构建器ArrayTypeBuilder
             td.setTypeBuilderName(builder.getClass().getName());
         } else { //若没有找到构建器，则使用默认构建器
             td = DefaultTypeBuilder.build(clazz, typeCache);
@@ -58,10 +58,10 @@ public class TypeDefinitionBuilder {
         return td;
     }
 
-    private static TypeBuilder getGenericTypeBuilder(Type type, Class<?> clazz) {
-        for (TypeBuilder builder : BUILDERS) { //匹配符合条件的类型构建器
+    private static TypeBuilder getGenericTypeBuilder(Type type, Class<?> clazz) { //获取通用的类型构造器
+        for (TypeBuilder builder : BUILDERS) {
             try {
-                if (builder.accept(type, clazz)) { //根据类型匹配构建器
+                if (builder.accept(type, clazz)) { //查找符合条件的类型构建器
                     return builder;
                 }
             } catch (NoClassDefFoundError cnfe) {

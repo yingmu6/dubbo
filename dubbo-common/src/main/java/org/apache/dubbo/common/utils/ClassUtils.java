@@ -89,7 +89,7 @@ public class ClassUtils {
     private static final char PACKAGE_SEPARATOR_CHAR = '.';
 
     static {
-        PRIMITIVE_WRAPPER_TYPE_MAP.put(Boolean.class, boolean.class);
+        PRIMITIVE_WRAPPER_TYPE_MAP.put(Boolean.class, boolean.class); //封装类型与对应class的映射
         PRIMITIVE_WRAPPER_TYPE_MAP.put(Byte.class, byte.class);
         PRIMITIVE_WRAPPER_TYPE_MAP.put(Character.class, char.class);
         PRIMITIVE_WRAPPER_TYPE_MAP.put(Double.class, double.class);

@@ -47,7 +47,7 @@ public class MapTypeBuilder implements TypeBuilder {
             return new TypeDefinition(clazz.getName());
         }
 
-        ParameterizedType parameterizedType = (ParameterizedType) type;
+        ParameterizedType parameterizedType = (ParameterizedType) type; //待数据覆盖
         Type[] actualTypeArgs = parameterizedType.getActualTypeArguments();
         int actualTypeArgsLength = actualTypeArgs == null ? 0 : actualTypeArgs.length;
 

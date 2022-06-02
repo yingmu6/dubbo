@@ -38,20 +38,20 @@ public class MetadataTest {
      *
      */
     @Test
-    public void testInnerClassType() {
+    public void testInnerClassType() { //已测，测试内部类
         TypeDefinitionBuilder builder = new TypeDefinitionBuilder();
         TypeDefinition td = builder.build(OuterClass.InnerClass.class, OuterClass.InnerClass.class);
-        System.out.println(">> testInnerClassType: " + new Gson().toJson(td));
+        System.out.println(">> testInnerClassType: " + new Gson().toJson(td)); //值如：{"type":"org.apache.dubbo.metadata.definition.common.OuterClass$InnerClass","properties":{"name":{"type":"java.lang.String","typeBuilderName":"org.apache.dubbo.metadata.definition.builder.DefaultTypeBuilder"}},"typeBuilderName":"org.apache.dubbo.metadata.definition.builder.DefaultTypeBuilder"}
 
-        Assertions.assertEquals("org.apache.dubbo.metadata.definition.common.OuterClass$InnerClass", td.getType());
+        Assertions.assertEquals("org.apache.dubbo.metadata.definition.common.OuterClass$InnerClass", td.getType()); //type存储的是class类名，如
         Assertions.assertEquals(1, td.getProperties().size());
-        Assertions.assertNotNull(td.getProperties().get("name"));
-        Assertions.assertEquals(DefaultTypeBuilder.class.getName(), td.getTypeBuilderName());
-        ServiceDefinition sd = MetadataUtils.generateMetadata(TestService.class);
+        Assertions.assertNotNull(td.getProperties().get("name")); //DefaultTypeBuilder中build()方法会设置Properties值
+        Assertions.assertEquals(DefaultTypeBuilder.class.getName(), td.getTypeBuilderName()); //此处使用的是默认构建器DefaultTypeBuilder
+        ServiceDefinition sd = MetadataUtils.generateMetadata(TestService.class); // 将Class类转化为元数据ServiceDefinition类型
         System.out.println(">> testInnerClassType: " + new Gson().toJson(sd));
 
         Assertions.assertEquals(TestService.class.getName(), sd.getCanonicalName());
-        Assertions.assertEquals(TestService.class.getMethods().length, sd.getMethods().size());
+        Assertions.assertEquals(TestService.class.getMethods().length, sd.getMethods().size()); //判断构建的元数据的方法个数是否与原来的相同
         boolean containsType = false;
         for (TypeDefinition type : sd.getTypes()) {
             if (type.getType().equals("org.apache.dubbo.metadata.definition.common.OuterClass$InnerClass")) {
@@ -65,17 +65,33 @@ public class MetadataTest {
     /**
      */
     @Test
-    public void testRawMap() {
+    public void testRawMap() { //已测
+//        Map和List类型对应的TypeDefinition数据格式
+//        { 
+//            "type":"org.apache.dubbo.metadata.definition.common.ResultWithRawCollections",  // 类的名称
+//            "properties":{ //类的成员属性
+//               "list":{ //类的成员属性名称
+//                   "type":"java.util.List",  //类的属性类型
+//                    "typeBuilderName":"org.apache.dubbo.metadata.definition.builder.CollectionTypeBuilder" //类的属性使用类型构建器
+//                },
+//                "map":{
+//                   "type":"java.util.Map",
+//                   "typeBuilderName":"org.apache.dubbo.metadata.definition.builder.MapTypeBuilder"
+//            }
+//        },
+//            "typeBuilderName":"org.apache.dubbo.metadata.definition.builder.DefaultTypeBuilder" // 类使用的类型构建器
+//        }
+
         TypeDefinitionBuilder builder = new TypeDefinitionBuilder();
-        TypeDefinition td = builder.build(ResultWithRawCollections.class, ResultWithRawCollections.class);
+        TypeDefinition td = builder.build(ResultWithRawCollections.class, ResultWithRawCollections.class); //包含Map、List成员变量
         System.out.println(">> testRawMap: " + new Gson().toJson(td));
 
         Assertions.assertEquals("org.apache.dubbo.metadata.definition.common.ResultWithRawCollections", td.getType());
-        Assertions.assertEquals(2, td.getProperties().size());
+        Assertions.assertEquals(2, td.getProperties().size()); //此处的td是ResultWithRawCollections对应的TypeDefinition，所以此处的properties值的值该类中的成员属性
         Assertions.assertEquals("java.util.Map", td.getProperties().get("map").getType());
         Assertions.assertEquals(MapTypeBuilder.class.getName(), td.getProperties().get("map").getTypeBuilderName());
         Assertions.assertEquals("java.util.List", td.getProperties().get("list").getType());
-        Assertions.assertEquals(CollectionTypeBuilder.class.getName(), td.getProperties().get("list").getTypeBuilderName());
+        Assertions.assertEquals(CollectionTypeBuilder.class.getName(), td.getProperties().get("list").getTypeBuilderName()); //成员属性判断
 
         ServiceDefinition sd = MetadataUtils.generateMetadata(TestService.class);
         System.out.println(">> testRawMap: " + new Gson().toJson(sd));
@@ -93,7 +109,17 @@ public class MetadataTest {
     }
 
     @Test
-    public void testEnum() {
+    public void testEnum() { //todo @pause
+//        Enum对应的TypeDefinition数据格式
+//        {
+//            "type":"org.apache.dubbo.metadata.definition.common.ColorEnum",
+//                "enum":[
+//                     "RED",
+//                    "YELLOW",
+//                    "BLUE"
+//                     ],
+//            "typeBuilderName":"org.apache.dubbo.metadata.definition.builder.EnumTypeBuilder"
+//        }
         TypeDefinitionBuilder builder = new TypeDefinitionBuilder();
         TypeDefinition td = builder.build(ColorEnum.class, ColorEnum.class);
         System.out.println(">> testEnum: " + new Gson().toJson(td));

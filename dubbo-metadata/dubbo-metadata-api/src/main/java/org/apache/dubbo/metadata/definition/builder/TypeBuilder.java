@@ -30,13 +30,13 @@ import java.util.Map;
 public interface TypeBuilder extends Prioritized { //类型构造器
 
     /**
-     * Whether the build accept the type or class passed in.（判断是否是可接收的类型Class，可用于匹配校验器）
+     * Whether the build accept the type or class passed in.（判断是否是可接收的类型）
      */
     boolean accept(Type type, Class<?> clazz);
 
     /**
-     * Build type definition with the type or class.（用type、class构建type定义数据）
+     * Build type definition with the type or class.（构建类型定义TypeDefinition）
      */
-    TypeDefinition build(Type type, Class<?> clazz, Map<Class<?>, TypeDefinition> typeCache);
+    TypeDefinition build(Type type, Class<?> clazz, Map<Class<?>, TypeDefinition> typeCache); //typeCache：类型定义的缓存
 
 }

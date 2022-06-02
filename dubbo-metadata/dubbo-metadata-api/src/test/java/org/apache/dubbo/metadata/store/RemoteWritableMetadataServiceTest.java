@@ -131,7 +131,7 @@ public class RemoteWritableMetadataServiceTest {
     }
 
     @Test
-    public void testRefreshMetadataService() throws InterruptedException {
+    public void testRefreshMetadataService() throws InterruptedException { //已测
         URL publishUrl = URL.valueOf("dubbo://" + NetUtils.getLocalAddress().getHostName() + ":4444/org.apache.dubbo.TestRefreshMetadataService?version=1.0.8&application=vicpubprovder&side=provider");
         URL publishUrl2 = URL.valueOf("dubbo://" + NetUtils.getLocalAddress().getHostName() + ":4444/org.apache.dubbo.TestRefreshMetadata2Service?version=1.0.5&application=vicpubprovder&side=provider");
         metadataReportService1.exportURL(publishUrl);
@@ -141,7 +141,7 @@ public class RemoteWritableMetadataServiceTest {
         metadataReportService1.publishServiceDefinition(publishUrl);
         JTestMetadataReport4Test jTestMetadataReport4Test = (JTestMetadataReport4Test) metadataReportService1.getMetadataReport();
 
-        int origSize = jTestMetadataReport4Test.store.size(); //todo @pause
+        int origSize = jTestMetadataReport4Test.store.size();
         Assertions.assertTrue(metadataReportService1.refreshMetadata(exportedRevision, "1109")); //目前refreshMetadata()是default方法，没有实现类，都返回true
         Thread.sleep(200);
         int size = jTestMetadataReport4Test.store.size();
@@ -151,10 +151,10 @@ public class RemoteWritableMetadataServiceTest {
     }
 
     @Test
-    public void testRefreshMetadataSubscription() throws InterruptedException {
+    public void testRefreshMetadataSubscription() throws InterruptedException { //已测
         URL subscriberUrl1 = URL.valueOf("subscriber://" + NetUtils.getLocalAddress().getHostName() + ":4444/org.apache.dubbo.TestRefreshMetadata00Service?version=1.0.8&application=vicpubprovder&side=provider");
         URL subscriberUrl2 = URL.valueOf("subscriber://" + NetUtils.getLocalAddress().getHostName() + ":4444/org.apache.dubbo.TestRefreshMetadata09Service?version=1.0.5&application=vicpubprovder&side=provider");
-        metadataReportService1.subscribeURL(subscriberUrl1);
+        metadataReportService1.subscribeURL(subscriberUrl1); //存储订阅的url
         metadataReportService1.subscribeURL(subscriberUrl2);
         String exportedRevision = "9999";
         String subscriberRevision = "2099";

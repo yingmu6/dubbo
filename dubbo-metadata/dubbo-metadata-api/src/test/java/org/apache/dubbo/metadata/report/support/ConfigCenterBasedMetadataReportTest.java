@@ -85,7 +85,7 @@ public class ConfigCenterBasedMetadataReportTest {
      * {@link MetadataReport#getServiceDefinition(MetadataIdentifier)}
      */
     @Test
-    public void testStoreProviderMetadataAndGetServiceDefinition() { //todo @pause 待测试
+    public void testStoreProviderMetadataAndGetServiceDefinition() {
         MetadataIdentifier metadataIdentifier = new MetadataIdentifier(BASE_URL);
         ServiceDefinition serviceDefinition = ServiceDefinitionBuilder.buildFullDefinition(INTERFACE_CLASS, BASE_URL.getParameters());
         metadataReport.storeProviderMetadata(metadataIdentifier, serviceDefinition); //metadataReport实例是在当前init()方法中进行创建的

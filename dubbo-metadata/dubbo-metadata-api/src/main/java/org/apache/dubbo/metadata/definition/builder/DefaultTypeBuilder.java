@@ -47,9 +47,9 @@ public final class DefaultTypeBuilder {
         }
 
         // Custom type
-        TypeDefinition ref = new TypeDefinition(name);
+        TypeDefinition ref = new TypeDefinition(name); //
         ref.set$ref(name);
-        typeCache.put(clazz, ref);
+        typeCache.put(clazz, ref); //设置到缓存中
 
         List<Field> fields = ClassUtils.getNonStaticFields(clazz);
         for (Field field : fields) {
@@ -58,7 +58,7 @@ public final class DefaultTypeBuilder {
             Type fieldType = field.getGenericType();
 
             TypeDefinition fieldTd = TypeDefinitionBuilder.build(fieldType, fieldClass, typeCache);
-            td.getProperties().put(fieldName, fieldTd); //将字段名与字段类型进行映射
+            td.getProperties().put(fieldName, fieldTd); //将字段名与字段类型TypeDefinition进行映射
         }
 
         typeCache.put(clazz, td);

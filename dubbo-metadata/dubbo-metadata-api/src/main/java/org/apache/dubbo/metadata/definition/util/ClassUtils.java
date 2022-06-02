@@ -37,7 +37,7 @@ public final class ClassUtils {
      * @param clazz
      * @return Jar file name or class path.
      */
-    public static String getCodeSource(Class<?> clazz) {// 获取文件路径或类路径，如：org.apache.dubbo.rpc.service.EchoService
+    public static String getCodeSource(Class<?> clazz) {// 获取当前clazz类字节码所在的位置
         ProtectionDomain protectionDomain = clazz.getProtectionDomain();
         if (protectionDomain == null || protectionDomain.getCodeSource() == null) {
             return null;
@@ -74,8 +74,8 @@ public final class ClassUtils {
 
             Field[] fields = target.getDeclaredFields();
             for (Field field : fields) {
-                int modifiers = field.getModifiers();
-                if (Modifier.isStatic(modifiers) || Modifier.isTransient(modifiers)) {
+                int modifiers = field.getModifiers(); //获取修饰符对应的值
+                if (Modifier.isStatic(modifiers) || Modifier.isTransient(modifiers)) { //将修饰符对应的值进行比较
                     continue;
                 }
 

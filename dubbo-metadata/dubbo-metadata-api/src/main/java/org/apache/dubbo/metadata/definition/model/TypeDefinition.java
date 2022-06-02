@@ -24,17 +24,17 @@ import java.util.*;
 /**
  * 2015/1/27.
  */
-public class TypeDefinition implements Serializable { //类型定义
+public class TypeDefinition implements Serializable { //类型定义（不管类、参数、成员变量的类型，都可以用TypeDefinition表示）
 
     private String id;
-    private String type;
+    private String type; //设置的是指定类的类名，如class.getName()的结果有：org.apache.dubbo.metadata.definition.common.OuterClass$InnerClass
     @SerializedName("items") //@SerializedName 序列化和反序列化时字段的名称
     private List<TypeDefinition> items;
     @SerializedName("enum")
     private List<String> enums;
-    private String $ref;
+    private String $ref; //引用的类名
     private Map<String, TypeDefinition> properties;
-    private String typeBuilderName;
+    private String typeBuilderName; //使用的类型构建器名称
 
     public TypeDefinition() {
     }

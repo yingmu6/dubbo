@@ -35,13 +35,13 @@ public class MetadataUtils {
     /**
      * com.taobao.hsf.metadata.store.MetadataInfoStoreServiceRedis.publishClassInfo(ServiceMetadata) 生成元数据的代码
      */
-    public static ServiceDefinition generateMetadata(Class<?> interfaceClass) {
+    public static ServiceDefinition generateMetadata(Class<?> interfaceClass) { //为指定Class产生ServiceDefinition
         ServiceDefinition sd = new ServiceDefinition();
-        sd.setCanonicalName(interfaceClass.getCanonicalName());
-        sd.setCodeSource(ClassUtils.getCodeSource(interfaceClass));
+        sd.setCanonicalName(interfaceClass.getCanonicalName()); //CanonicalName：规范的名称
+        sd.setCodeSource(ClassUtils.getCodeSource(interfaceClass)); //codeSource：字节码对应位置，如file:/Users/chenshengyong/self-db/dubbo/dubbo-metadata/dubbo-metadata-api/target/test-classes/
 
         TypeDefinitionBuilder builder = new TypeDefinitionBuilder();
-        List<Method> methods = ClassUtils.getPublicNonStaticMethods(interfaceClass);
+        List<Method> methods = ClassUtils.getPublicNonStaticMethods(interfaceClass); //获取公有且非静态的方法列表
         for (Method method : methods) {
             MethodDefinition md = new MethodDefinition();
             md.setName(method.getName());
