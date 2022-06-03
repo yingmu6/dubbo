@@ -26,7 +26,7 @@ import java.util.Map;
  *
  * @since 2.7.5
  */
-public interface ServiceInstance extends Serializable {
+public interface ServiceInstance extends Serializable { //2.7.5以后，服务的隔离维度是按应用处理的，而不是接口维度
 
     /**
      * The id of the registered service instance.

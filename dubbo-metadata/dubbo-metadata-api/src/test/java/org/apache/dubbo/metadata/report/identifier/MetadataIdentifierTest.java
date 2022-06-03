@@ -17,8 +17,6 @@
 package org.apache.dubbo.metadata.report.identifier;
 
 import org.apache.dubbo.metadata.MetadataConstants;
-import org.apache.dubbo.metadata.report.identifier.KeyTypeEnum;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -31,18 +29,18 @@ import static org.apache.dubbo.common.constants.CommonConstants.PROVIDER_SIDE;
 public class MetadataIdentifierTest {
 
     @Test
-    public void testGetUniqueKey() {
+    public void testGetUniqueKey() { //已测，获取唯一标识符
         String interfaceName = "org.apache.dubbo.metadata.integration.InterfaceNameTestService";
         String version = "1.0.0.zk.md";
         String group = null;
         String application = "vic.zk.md";
         MetadataIdentifier providerMetadataIdentifier = new MetadataIdentifier(interfaceName, version, group, PROVIDER_SIDE, application);
-        Assertions.assertEquals(providerMetadataIdentifier.getUniqueKey(KeyTypeEnum.PATH),
+        Assertions.assertEquals(providerMetadataIdentifier.getUniqueKey(KeyTypeEnum.PATH), //按路径分隔符分隔
                 "metadata" + PATH_SEPARATOR + interfaceName + PATH_SEPARATOR +
                         (version == null ? "" : (version + PATH_SEPARATOR))
                         + (group == null ? "" : (group + PATH_SEPARATOR)) + PROVIDER_SIDE
                         + PATH_SEPARATOR + application);
-        Assertions.assertEquals(providerMetadataIdentifier.getUniqueKey(KeyTypeEnum.UNIQUE_KEY),
+        Assertions.assertEquals(providerMetadataIdentifier.getUniqueKey(KeyTypeEnum.UNIQUE_KEY), //按唯一标识key分隔
                 interfaceName + MetadataConstants.KEY_SEPARATOR +
                         (version == null ? "" : version) + MetadataConstants.KEY_SEPARATOR
                         + (group == null ? "" : group) + MetadataConstants.KEY_SEPARATOR

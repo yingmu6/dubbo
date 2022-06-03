@@ -24,12 +24,12 @@ import java.util.Objects;
 /**
  * 2015/1/27.
  */
-public class ServiceDefinition implements Serializable { //服务定义
+public class ServiceDefinition implements Serializable { //服务定义：描述一个服务接口的定义
 
-    private String canonicalName; //canonical:简洁的
-    private String codeSource;
-    private List<MethodDefinition> methods;
-    private List<TypeDefinition> types; //
+    private String canonicalName; // 接口的完全限定名称
+    private String codeSource; // 服务接口所在的完整路径；
+    private List<MethodDefinition> methods; //接口中的方法列表
+    private List<TypeDefinition> types; //缓存中的TypeDefinition，包含参数类型和返回类型
 
     public String getCanonicalName() {
         return canonicalName;
@@ -81,13 +81,13 @@ public class ServiceDefinition implements Serializable { //服务定义
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
+        if (this == o) { //引用地址相等，则认为相等
             return true;
         }
         if (!(o instanceof ServiceDefinition)) {
             return false;
         }
-        ServiceDefinition that = (ServiceDefinition) o; //比较对象中的属性是否相等
+        ServiceDefinition that = (ServiceDefinition) o; //引用地址不相等时，比较对象中的属性是否相等
         return Objects.equals(getCanonicalName(), that.getCanonicalName()) &&
                 Objects.equals(getCodeSource(), that.getCodeSource()) &&
                 Objects.equals(getMethods(), that.getMethods()) &&
@@ -95,7 +95,7 @@ public class ServiceDefinition implements Serializable { //服务定义
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode() { //取当前对象的成员属性来计算hash值
         return Objects.hash(getCanonicalName(), getCodeSource(), getMethods(), getTypes());
     }
 }

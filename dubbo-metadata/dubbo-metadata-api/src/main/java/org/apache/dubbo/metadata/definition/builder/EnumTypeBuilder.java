@@ -37,15 +37,15 @@ public class EnumTypeBuilder implements TypeBuilder {
 
     @Override
     public TypeDefinition build(Type type, Class<?> clazz, Map<Class<?>, TypeDefinition> typeCache) {
-        TypeDefinition td = new TypeDefinition(clazz.getCanonicalName());
+        TypeDefinition td = new TypeDefinition(clazz.getCanonicalName()); //取类型class的完整限定名
 
         try {
-            Method methodValues = clazz.getDeclaredMethod("values");
-            Object[] values = (Object[]) methodValues.invoke(clazz, new Object[0]);
+            Method methodValues = clazz.getDeclaredMethod("values"); //枚举是隐含values方法的，可以通过values方法获取枚举值列表
+            Object[] values = (Object[]) methodValues.invoke(clazz, new Object[0]); //通过Method的invoke调用，获取枚举值列表
             int length = values.length;
             for (int i = 0; i < length; i++) {
                 Object value = values[i];
-                td.getEnums().add(value.toString());
+                td.getEnums().add(value.toString()); //此处改变，TypeDefinition的成员属性enums也会改变
             }
         } catch (Throwable t) {
             td.setId("-1");

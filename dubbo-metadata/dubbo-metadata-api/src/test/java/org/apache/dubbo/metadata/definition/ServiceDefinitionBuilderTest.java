@@ -21,7 +21,6 @@ import org.apache.dubbo.metadata.definition.model.MethodDefinition;
 import org.apache.dubbo.metadata.definition.model.TypeDefinition;
 import org.apache.dubbo.metadata.definition.service.ComplexObject;
 import org.apache.dubbo.metadata.definition.service.DemoService;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -34,24 +33,24 @@ import java.util.List;
 public class ServiceDefinitionBuilderTest {
 
     @Test
-    public void testBuilderComplextObject() {
+    public void testBuilderComplextObject() { //已测，对复杂类型的服务对象进行构建
         FullServiceDefinition fullServiceDefinition = ServiceDefinitionBuilder.buildFullDefinition(DemoService.class);
         checkComplextObjectAsParam(fullServiceDefinition);
     }
 
 
-    void checkComplextObjectAsParam(FullServiceDefinition fullServiceDefinition) {
+    void checkComplextObjectAsParam(FullServiceDefinition fullServiceDefinition) { //Complext：复杂的
         List<MethodDefinition> methodDefinitions = fullServiceDefinition.getMethods();
         MethodDefinition complexCompute = null;
         MethodDefinition findComplexObject = null;
-        for (MethodDefinition methodDefinition : methodDefinitions) {
+        for (MethodDefinition methodDefinition : methodDefinitions) { //查找到DemoService指定的方法
             if ("complexCompute".equals(methodDefinition.getName())) {
                 complexCompute = methodDefinition;
             } else if ("findComplexObject".equals(methodDefinition.getName())) {
                 findComplexObject = methodDefinition;
             }
         }
-        Assertions.assertTrue(Arrays.equals(complexCompute.getParameterTypes(), new String[]{String.class.getName(), ComplexObject.class.getName()}));
+        Assertions.assertTrue(Arrays.equals(complexCompute.getParameterTypes(), new String[] {String.class.getName(), ComplexObject.class.getName()})); //判断MethodDefinition的参数列表是否符合预期
         Assertions.assertEquals(complexCompute.getReturnType(), String.class.getName());
 
         Assertions.assertTrue(Arrays.equals(findComplexObject.getParameterTypes(), new String[]{String.class.getName(), "int", "long",
@@ -59,13 +58,13 @@ public class ServiceDefinitionBuilderTest {
         Assertions.assertEquals(findComplexObject.getReturnType(), ComplexObject.class.getCanonicalName());
 
 
-        List<TypeDefinition> typeDefinitions = fullServiceDefinition.getTypes();
+        List<TypeDefinition> typeDefinitions = fullServiceDefinition.getTypes(); //取出服务对应的所有参数值类型、返回值类型列表
 
         TypeDefinition topTypeDefinition = null;
         TypeDefinition innerTypeDefinition = null;
         TypeDefinition inner2TypeDefinition = null;
         TypeDefinition inner3TypeDefinition = null;
-        for (TypeDefinition typeDefinition : typeDefinitions) {
+        for (TypeDefinition typeDefinition : typeDefinitions) { //处理对象类型
             if (typeDefinition.getType().equals(ComplexObject.class.getName())) {
                 topTypeDefinition = typeDefinition;
             } else if (typeDefinition.getType().equals(ComplexObject.InnerObject.class.getName())) {
@@ -76,6 +75,10 @@ public class ServiceDefinitionBuilderTest {
                 inner3TypeDefinition = typeDefinition;
             }
         }
+
+        /**
+         * 判断
+         */
         Assertions.assertEquals(topTypeDefinition.getProperties().get("v").getType(), "long");
         Assertions.assertEquals(topTypeDefinition.getProperties().get("maps").getType(), "java.util.Map<java.lang.String,java.lang.String>");
         Assertions.assertEquals(topTypeDefinition.getProperties().get("innerObject").getType(), ComplexObject.InnerObject.class.getName());

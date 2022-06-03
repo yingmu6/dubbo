@@ -38,7 +38,7 @@ public interface PathUtils { //路径处理工具类
 
         return normalize(paths.stream()
                 .filter(StringUtils::isNotEmpty)
-                .collect(Collectors.joining(SLASH))); //依次将路径按斜杠"/"进行拼接
+                .collect(Collectors.joining(SLASH))); //依次将路径按斜杠"/"拼接成字符串
     }
 
     /**
@@ -61,7 +61,7 @@ public interface PathUtils { //路径处理工具类
             normalizedPath = normalizedPath.substring(0, index); //取"?"之前的字符串
         }
 
-        while (normalizedPath.contains("//")) { //若存在双斜线，则替换后单斜线
+        while (normalizedPath.contains("//")) { //若存在双斜线，则替换后单斜线（循环检查双斜线，然后做替换）
             normalizedPath = replace(normalizedPath, "//", "/");
         }
 

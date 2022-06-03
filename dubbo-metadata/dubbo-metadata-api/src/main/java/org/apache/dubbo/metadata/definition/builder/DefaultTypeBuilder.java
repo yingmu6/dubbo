@@ -58,7 +58,7 @@ public final class DefaultTypeBuilder {
             Type fieldType = field.getGenericType();
 
             TypeDefinition fieldTd = TypeDefinitionBuilder.build(fieldType, fieldClass, typeCache);
-            td.getProperties().put(fieldName, fieldTd); //将字段名与字段类型TypeDefinition进行映射
+            td.getProperties().put(fieldName, fieldTd); //将字段名与字段类型TypeDefinition进行映射 (对象类型会使用properties)
         }
 
         typeCache.put(clazz, td);

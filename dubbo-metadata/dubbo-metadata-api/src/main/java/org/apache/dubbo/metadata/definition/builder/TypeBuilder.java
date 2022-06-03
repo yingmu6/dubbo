@@ -27,7 +27,7 @@ import java.util.Map;
  * 2015/1/27.
  */
 @SPI
-public interface TypeBuilder extends Prioritized { //类型构造器
+public interface TypeBuilder extends Prioritized { //类型构造器，继承Prioritized可以按优先级排序
 
     /**
      * Whether the build accept the type or class passed in.（判断是否是可接收的类型）

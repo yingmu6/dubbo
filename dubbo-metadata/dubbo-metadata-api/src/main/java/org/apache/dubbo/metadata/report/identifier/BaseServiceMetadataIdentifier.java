@@ -52,10 +52,10 @@ public class BaseServiceMetadataIdentifier {//基础服务元数据标识符
                 + KEY_SEPARATOR + (version == null ? "" : version)
                 + KEY_SEPARATOR + (group == null ? "" : group)
                 + KEY_SEPARATOR + (side == null ? "" : side)
-                + joinParams(KEY_SEPARATOR, params);
+                + joinParams(KEY_SEPARATOR, params); //值如：org.apache.dubbo.metadata.integration.InterfaceNameTestService:1.0.0.zk.md::provider:vic.zk.md
     }
 
-    private String joinParams(String joinChar, String... params) {
+    private String joinParams(String joinChar, String... params) { //将分隔符与参数列表进行拼接
         if (params == null || params.length == 0) {
             return "";
         }

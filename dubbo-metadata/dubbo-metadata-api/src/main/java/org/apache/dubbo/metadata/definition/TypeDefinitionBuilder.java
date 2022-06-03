@@ -47,8 +47,8 @@ public class TypeDefinitionBuilder {
         TypeDefinition td;
         if (builder != null) {
             td = builder.build(type, clazz, typeCache); //传入的type为数组类型时，匹配到构建器ArrayTypeBuilder
-            td.setTypeBuilderName(builder.getClass().getName());
-        } else { //若没有找到构建器，则使用默认构建器
+            td.setTypeBuilderName(builder.getClass().getName()); //设置类型构建器名称
+        } else { //若没有找到构建器，则使用默认构建器（对象类型会使用默认类型构建器）
             td = DefaultTypeBuilder.build(clazz, typeCache);
             td.setTypeBuilderName(DefaultTypeBuilder.class.getName());
         }
@@ -72,7 +72,7 @@ public class TypeDefinitionBuilder {
         return null;
     }
 
-    private Map<Class<?>, TypeDefinition> typeCache = new HashMap<>();
+    private Map<Class<?>, TypeDefinition> typeCache = new HashMap<>(); //将TypeDefinition进行缓存
 
     public TypeDefinition build(Type type, Class<?> clazz) {
         return build(type, clazz, typeCache);

@@ -35,7 +35,7 @@ public final class ClassUtils {
      * （获取传入的Class的代码源文件或类路径）
      *
      * @param clazz
-     * @return Jar file name or class path.
+     * @return Jar file name or class path. （返回jar文件名或类路径）
      */
     public static String getCodeSource(Class<?> clazz) {// 获取当前clazz类字节码所在的位置
         ProtectionDomain protectionDomain = clazz.getProtectionDomain();
@@ -52,7 +52,7 @@ public final class ClassUtils {
         String path = codeSource.getLocation().toExternalForm(); // 值如："file:/Users/chenshengyong/self-db/dubbo/dubbo-common/target/classes/"
 
         if (path.endsWith(".jar") && path.contains("/")) {
-            return path.substring(path.lastIndexOf('/') + 1);
+            return path.substring(path.lastIndexOf('/') + 1); //若文件是jar包，则取jar的名字
         }
         return path;
     }

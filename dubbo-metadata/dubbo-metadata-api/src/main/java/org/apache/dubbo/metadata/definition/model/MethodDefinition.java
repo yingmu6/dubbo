@@ -28,9 +28,9 @@ import java.util.Objects;
 public class MethodDefinition implements Serializable { //方法定义（为方法Method建立模型）
 
     private String name;
-    private String[] parameterTypes;
-    private String returnType;
-    private List<TypeDefinition> parameters;
+    private String[] parameterTypes; //参数类型对应的字符串数组
+    private String returnType; //返回值类型
+    private List<TypeDefinition> parameters; //方法中的参数的类型列表
 
     public String getName() {
         return name;

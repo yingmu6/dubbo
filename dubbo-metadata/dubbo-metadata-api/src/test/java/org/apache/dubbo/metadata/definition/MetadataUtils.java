@@ -50,18 +50,18 @@ public class MetadataUtils {
             Type[] genericParamTypes = method.getGenericParameterTypes();
 
             String[] parameterTypes = new String[paramTypes.length];
-            for (int i = 0; i < paramTypes.length; i++) {
+            for (int i = 0; i < paramTypes.length; i++) { //处理参数列表类型
                 try {
                     TypeDefinition td = builder.build(genericParamTypes[i], paramTypes[i]);
                     parameterTypes[i] = td.getType();
-                } catch (Exception e) {
+                } catch (Exception e) { //若构建异常，则直接取反射获取到的类型
                     parameterTypes[i] = paramTypes[i].getName();
                 }
             }
-            md.setParameterTypes(parameterTypes);
+            md.setParameterTypes(parameterTypes); //设置参数类型
             try {
-                TypeDefinition td = builder.build(method.getGenericReturnType(), method.getReturnType());
-                md.setReturnType(td.getType());
+                TypeDefinition td = builder.build(method.getGenericReturnType(), method.getReturnType()); //处理返回值类型
+                md.setReturnType(td.getType());  //设置返回类型
             } catch (Exception e) {
                 md.setReturnType(method.getReturnType().getName());
             }

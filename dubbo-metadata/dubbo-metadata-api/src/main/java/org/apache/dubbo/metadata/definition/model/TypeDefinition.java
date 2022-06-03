@@ -31,9 +31,9 @@ public class TypeDefinition implements Serializable { //类型定义（不管类
     @SerializedName("items") //@SerializedName 序列化和反序列化时字段的名称
     private List<TypeDefinition> items;
     @SerializedName("enum")
-    private List<String> enums;
-    private String $ref; //引用的类名
-    private Map<String, TypeDefinition> properties;
+    private List<String> enums; //枚举类型会填写该属性：对应的枚举值列表
+    private String $ref;
+    private Map<String, TypeDefinition> properties; //对象类型会使用该属性
     private String typeBuilderName; //使用的类型构建器名称
 
     public TypeDefinition() {

@@ -77,8 +77,8 @@ public class MetadataTest {
 //                "map":{
 //                   "type":"java.util.Map",
 //                   "typeBuilderName":"org.apache.dubbo.metadata.definition.builder.MapTypeBuilder"
-//            }
-//        },
+//               }
+//             },
 //            "typeBuilderName":"org.apache.dubbo.metadata.definition.builder.DefaultTypeBuilder" // 类使用的类型构建器
 //        }
 
@@ -109,7 +109,7 @@ public class MetadataTest {
     }
 
     @Test
-    public void testEnum() { //todo @pause
+    public void testEnum() { // 已测
 //        Enum对应的TypeDefinition数据格式
 //        {
 //            "type":"org.apache.dubbo.metadata.definition.common.ColorEnum",
@@ -121,13 +121,13 @@ public class MetadataTest {
 //            "typeBuilderName":"org.apache.dubbo.metadata.definition.builder.EnumTypeBuilder"
 //        }
         TypeDefinitionBuilder builder = new TypeDefinitionBuilder();
-        TypeDefinition td = builder.build(ColorEnum.class, ColorEnum.class);
+        TypeDefinition td = builder.build(ColorEnum.class, ColorEnum.class); //对枚举的构建：会取枚举值列表，设置到TypeDefinition的成员属性enums中
         System.out.println(">> testEnum: " + new Gson().toJson(td));
 
         Assertions.assertEquals("org.apache.dubbo.metadata.definition.common.ColorEnum", td.getType());
         Assertions.assertEquals(EnumTypeBuilder.class.getName(), td.getTypeBuilderName());
         Assertions.assertEquals(3, td.getEnums().size());
-        Assertions.assertTrue(td.getEnums().contains("RED"));
+        Assertions.assertTrue(td.getEnums().contains("RED")); //TypeDefinition中的属性enums对应的值
         Assertions.assertTrue(td.getEnums().contains("YELLOW"));
         Assertions.assertTrue(td.getEnums().contains("BLUE"));
 
@@ -147,7 +147,12 @@ public class MetadataTest {
     }
 
     @Test
-    public void testExtendsMap() {
+    public void testExtendsMap() { //已测
+//        Map对应的TypeDefinition数据格式
+//        {
+//            "type":"org.apache.dubbo.metadata.definition.common.ClassExtendsMap",
+//            "typeBuilderName":"org.apache.dubbo.metadata.definition.builder.MapTypeBuilder"
+//        }
         TypeDefinitionBuilder builder = new TypeDefinitionBuilder();
         TypeDefinition td = builder.build(ClassExtendsMap.class, ClassExtendsMap.class);
         System.out.println(">> testExtendsMap: " + new Gson().toJson(td));

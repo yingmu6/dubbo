@@ -36,7 +36,7 @@ public enum KeyTypeEnum { //enum除了没有public构造函数外，可以按照
     UNIQUE_KEY(KEY_SEPARATOR) {
         public String build(String one, String... others) { //实现枚举类中的抽象方法build()
             StringBuilder keyBuilder = new StringBuilder(one);
-            for (String other : others) {
+            for (String other : others) { //直接将输入内容与分隔符进行拼接
                 keyBuilder.append(separator).append(isBlank(other) ? EMPTY_STRING : other);
             }
             return keyBuilder.toString();

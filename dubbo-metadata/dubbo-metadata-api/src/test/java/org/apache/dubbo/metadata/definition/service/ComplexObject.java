@@ -16,13 +16,7 @@
  */
 package org.apache.dubbo.metadata.definition.service;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * for test
@@ -60,6 +54,7 @@ public class ComplexObject {
         this.maps.put(var1 + "_k2", var1 + "_v2");
     }
 
+    //复杂类型的对象，属性中包含各种类型的成员变量
     private InnerObject innerObject;
     private Set<InnerObject2> innerObject2;
     private InnerObject3[] innerObject3;
