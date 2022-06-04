@@ -36,7 +36,7 @@ import static org.apache.dubbo.common.utils.CollectionUtils.first;
 /**
  * IP and Port Helper for RPC
  */
-public class NetUtils {
+public class NetUtils { //网络工具类
 
     private static Logger logger;
 
@@ -222,7 +222,7 @@ public class NetUtils {
     }
 
     /**
-     * Find first valid IP from local network card
+     * Find first valid IP from local network card （从本地网卡中查找到第一个有效的IP地址）
      *
      * @return first valid local IP
      */
@@ -321,7 +321,7 @@ public class NetUtils {
         Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces(); //获取到当前机器的所有网络接口
         while (interfaces.hasMoreElements()) {
             NetworkInterface networkInterface = interfaces.nextElement();
-            if (ignoreNetworkInterface(networkInterface)) { // ignore
+            if (ignoreNetworkInterface(networkInterface)) { // ignore （若网络接口是需要忽略的，则不加入有效的网络接口中）
                 continue;
             }
             validNetworkInterfaces.add(networkInterface);
@@ -338,7 +338,7 @@ public class NetUtils {
      * or <code>false</code>
      */
     public static boolean isPreferredNetworkInterface(NetworkInterface networkInterface) { //判断是否是首选的NetworkInterface
-        String preferredNetworkInterface = System.getProperty(DUBBO_PREFERRED_NETWORK_INTERFACE);
+        String preferredNetworkInterface = System.getProperty(DUBBO_PREFERRED_NETWORK_INTERFACE); // 可以指定适合dubbo使用的接口
         return Objects.equals(networkInterface.getDisplayName(), preferredNetworkInterface); //将指定的NetworkInterface与系统属性中的名称进行比较
     }
 
@@ -361,7 +361,7 @@ public class NetUtils {
 
         // Try to find the preferred（首选的） one
         for (NetworkInterface networkInterface : validNetworkInterfaces) {
-            if (isPreferredNetworkInterface(networkInterface)) {
+            if (isPreferredNetworkInterface(networkInterface)) { //Preferred [prɪˈfɜːd]：adj. 更合意的；优先（考虑）的
                 result = networkInterface;
                 break;
             }

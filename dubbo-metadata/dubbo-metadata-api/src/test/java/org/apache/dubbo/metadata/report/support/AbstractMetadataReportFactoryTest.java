@@ -16,6 +16,7 @@
  */
 package org.apache.dubbo.metadata.report.support;
 
+import com.alibaba.fastjson.JSON;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.utils.NetUtils;
 import org.apache.dubbo.metadata.definition.model.ServiceDefinition;
@@ -23,8 +24,6 @@ import org.apache.dubbo.metadata.report.MetadataReport;
 import org.apache.dubbo.metadata.report.identifier.MetadataIdentifier;
 import org.apache.dubbo.metadata.report.identifier.ServiceMetadataIdentifier;
 import org.apache.dubbo.metadata.report.identifier.SubscriberMetadataIdentifier;
-
-import com.alibaba.fastjson.JSON;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -40,7 +39,7 @@ public class AbstractMetadataReportFactoryTest {
 
     private AbstractMetadataReportFactory metadataReportFactory = new AbstractMetadataReportFactory() {
         @Override
-        protected MetadataReport createMetadataReport(URL url) {
+        protected MetadataReport createMetadataReport(URL url) { //实现抽象类中的抽象方法
             return new MetadataReport() {
 
                 @Override
@@ -97,9 +96,9 @@ public class AbstractMetadataReportFactoryTest {
     };
 
     @Test
-    public void testGetOneMetadataReport() {
+    public void testGetOneMetadataReport() { //已测
         URL url = URL.valueOf("zookeeper://" + NetUtils.getLocalAddress().getHostName() + ":4444/org.apache.dubbo.TestService?version=1.0.0&application=vic");
-        MetadataReport metadataReport1 = metadataReportFactory.getMetadataReport(url);
+        MetadataReport metadataReport1 = metadataReportFactory.getMetadataReport(url); //会以url为key从缓存Map查找MetadataReport，url相同则获取的内容相同
         MetadataReport metadataReport2 = metadataReportFactory.getMetadataReport(url);
         Assertions.assertEquals(metadataReport1, metadataReport2);
     }

@@ -27,5 +27,5 @@ import org.apache.dubbo.common.extension.SPI;
 public interface MetadataReportFactory {
 
     @Adaptive({"protocol"})
-    MetadataReport getMetadataReport(URL url);
+    MetadataReport getMetadataReport(URL url); //获取url.getProtocol()对应的扩展实例
 }

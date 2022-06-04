@@ -46,7 +46,7 @@ public class BaseServiceMetadataIdentifier {//基础服务元数据标识符
         return getIdentifierKey(params); //是怎样拼接唯一key的？解：将基础信息与参数列表，按照分隔符进行拼接，值如：org.apache.dubbo.metadata.store.InterfaceNameTestService:1.0.3::provider:vicpubp
     }
 
-    String getIdentifierKey(String... params) {
+    String getIdentifierKey(String... params) { //组装元数据的标识符键
 
         return serviceInterface
                 + KEY_SEPARATOR + (version == null ? "" : version)

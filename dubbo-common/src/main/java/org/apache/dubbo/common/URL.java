@@ -1504,7 +1504,7 @@ class URL implements Serializable {
         return buildString(true, false, false, true);
     }
 
-    public String toServiceString() {
+    public String toServiceString() { //将url转换为字符串表示
         return buildString(true, false, true, true);
     }
 

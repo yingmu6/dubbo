@@ -43,7 +43,7 @@ public abstract class AbstractMetadataReportFactory implements MetadataReportFac
         LOCK.lock(); // 加锁处理，确保MetadataReport保持单实例
         try {
             MetadataReport metadataReport = SERVICE_STORE_MAP.get(key);
-            if (metadataReport != null) { //若缓存Map中存在，则直接返回
+            if (metadataReport != null) { //按url从缓存Map中查找MetadataReport，若存在则直接返回
                 return metadataReport;
             }
             metadataReport = createMetadataReport(url); //若不存在则创建，并存在缓存Map
