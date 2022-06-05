@@ -66,7 +66,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
     final Map<MetadataIdentifier, Object> failedReports = new ConcurrentHashMap<>(4); //失败的元数据Map
 
     private URL reportURL;
-    boolean syncReport;
+    boolean syncReport; //是否同步上报的标识
 
     // Local disk cache file
     File localCacheFile;
@@ -82,40 +82,40 @@ public abstract class AbstractMetadataReport implements MetadataReport {
 
     private final ScheduledExecutorService cycleReportExecutor;
 
-    public AbstractMetadataReport(URL reportServerURL) {
-        setUrl(reportServerURL);
+    public AbstractMetadataReport(URL reportServerURL) { //把构造函数应用到最极致了，所有的初始化操作都在构造方法中进行
+        setUrl(reportServerURL); //没有直接使用赋值，如:this.reportURL = reportServerURL; 是因为setUrl()方法中做了业务逻辑
 
         this.localCacheFile = initializeLocalCacheFile(reportServerURL);
-        loadProperties();
-        syncReport = reportServerURL.getParameter(SYNC_REPORT_KEY, false);
+        loadProperties(); //个人习惯上：一般后一个需要的内容，会通过参数传递，但dubbo内部更多是选择操作成员变量，如此处没有传递localCacheFile，而是方法中按成员变量操作
+        syncReport = reportServerURL.getParameter(SYNC_REPORT_KEY, false); //获取是否同步上报的标识，默认是false，即按异步来上报
         metadataReportRetry = new MetadataReportRetry(reportServerURL.getParameter(RETRY_TIMES_KEY, DEFAULT_METADATA_REPORT_RETRY_TIMES),
                 reportServerURL.getParameter(RETRY_PERIOD_KEY, DEFAULT_METADATA_REPORT_RETRY_PERIOD));
         this.reportCacheExecutor = newSingleThreadExecutor(new NamedThreadFactory("DubboSaveMetadataReport", true));
         this.cycleReportExecutor = newSingleThreadScheduledExecutor(new NamedThreadFactory("DubboMetadataReportTimer", true));
-        // cycle report the data switch
-        if (reportServerURL.getParameter(CYCLE_REPORT_KEY, DEFAULT_METADATA_REPORT_CYCLE_REPORT)) {
+        // cycle（循环，周期） report the data switch
+        if (reportServerURL.getParameter(CYCLE_REPORT_KEY, DEFAULT_METADATA_REPORT_CYCLE_REPORT)) { //默认是周期上报元数据
             cycleReportExecutor.scheduleAtFixedRate(this::publishAll, calculateStartTime(), ONE_DAY_IN_MILLISECONDS, TimeUnit.MILLISECONDS);
         }
     }
 
-    private File initializeLocalCacheFile(URL reportServerURL) {
+    private File initializeLocalCacheFile(URL reportServerURL) { //初始化本地元数据缓存文件：只是创建了文件所在的目录，并没有创建.cache文件
         // Start file save timer
         String defaultFilename = System.getProperty("user.home") +
                 "/.dubbo/dubbo-metadata-" +
                 reportServerURL.getParameter(APPLICATION_KEY) + "-" +
-                replace(reportServerURL.getAddress(), ":", "-") +
-                ".cache";
-        String filename = reportServerURL.getParameter(FILE_KEY, defaultFilename);
+                replace(reportServerURL.getAddress(), ":", "-") + //字符串替换，若url的地址为host:port，则替换为host-port
+                ".cache"; //defaultFilename的值如：/Users/chenshengyong/.dubbo/dubbo-metadata-vic-192.168.3.16-4444.cache，其中via是应用名，192.168.3.16-4444是host和port
+        String filename = reportServerURL.getParameter(FILE_KEY, defaultFilename); //从url获取设置的文件路径，若没有则取默认文件路径
         File file = null;
         if (ConfigUtils.isNotEmpty(filename)) {
             file = new File(filename);
             if (!file.exists() && file.getParentFile() != null && !file.getParentFile().exists()) {
-                if (!file.getParentFile().mkdirs()) {
+                if (!file.getParentFile().mkdirs()) { //若文件目录不存在，则进行创建
                     throw new IllegalArgumentException("Invalid service store file " + file + ", cause: Failed to create directory " + file.getParentFile() + "!");
                 }
             }
-            // if this file exist, firstly delete it.
-            if (!initialized.getAndSet(true) && file.exists()) {
+            // if this file exist, firstly delete it. (若存在文件，首先删除她)
+            if (!initialized.getAndSet(true) && file.exists()) { //AtomicBoolean中的getAndSet()，会自动设置传入的新值，并返回老的值
                 file.delete();
             }
         }
@@ -127,7 +127,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
     }
 
     protected void setUrl(URL url) {
-        if (url == null) {
+        if (url == null) { //元数据url不能为空
             throw new IllegalArgumentException("metadataReport url == null");
         }
         this.reportURL = url;
@@ -177,7 +177,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
     void loadProperties() {
         if (localCacheFile != null && localCacheFile.exists()) {
             try (InputStream in = new FileInputStream(localCacheFile)) {
-                properties.load(in);
+                properties.load(in); //在存在属性文件时，从文件中读取属性值加载到Properties中 （文件中存储的内容是key-value对）
                 if (logger.isInfoEnabled()) {
                     logger.info("Load service store file " + localCacheFile + ", data: " + properties);
                 }
@@ -243,7 +243,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
                 logger.info("store provider metadata. Identifier : " + providerMetadataIdentifier + "; definition: " + serviceDefinition);
             }
             allMetadataReports.put(providerMetadataIdentifier, serviceDefinition);
-            failedReports.remove(providerMetadataIdentifier);
+            failedReports.remove(providerMetadataIdentifier); //存储成功后，从失败Mao中移除对应的元素
             Gson gson = new Gson();
             String data = gson.toJson(serviceDefinition); //JSON字符串，data数据如：{"parameters":{"application":"test-service","side":"provider"},"canonicalName":"org.apache.dubbo.rpc.service.EchoService","codeSource":"file:/Users/chenshengyong/self-db/dubbo/dubbo-common/target/classes/","methods":[{"name":"$echo","parameterTypes":["java.lang.Object"],"returnType":"java.lang.Object"}],"types":[{"type":"java.lang.Object","typeBuilderName":"org.apache.dubbo.metadata.definition.builder.DefaultTypeBuilder"}]}
             /**
@@ -251,10 +251,10 @@ public abstract class AbstractMetadataReport implements MetadataReport {
              */
             doStoreProviderMetadata(providerMetadataIdentifier, data); //将服务定义的数据，转换为json字符串，存储到远程，如将Zookeeper作为元数据中心的话，会在Zookeeper创建对应的节点
             saveProperties(providerMetadataIdentifier, data, true, !syncReport); //元数据上报到元数据中心后，也会存储一份到本地文件中
-        } catch (Exception e) {
+        } catch (Exception e) { //若存储元数据异常，则将异常的暂存起来，然后启动重试任务进行重试
             // retry again. If failed again, throw exception.
             failedReports.put(providerMetadataIdentifier, serviceDefinition);
-            metadataReportRetry.startRetryTask();
+            metadataReportRetry.startRetryTask(); //存储元数据失败时，才会启动重试任务
             logger.error("Failed to put provider metadata " + providerMetadataIdentifier + " in  " + serviceDefinition + ", cause: " + e.getMessage(), e);
         }
     }
@@ -292,7 +292,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
     public void saveServiceMetadata(ServiceMetadataIdentifier metadataIdentifier, URL url) {
         if (syncReport) {
             doSaveMetadata(metadataIdentifier, url);
-        } else {
+        } else { //默认按异步上报
             reportCacheExecutor.execute(() -> doSaveMetadata(metadataIdentifier, url));
         }
     }
@@ -343,9 +343,9 @@ public abstract class AbstractMetadataReport implements MetadataReport {
         return doHandleMetadataCollection(failedReports);
     }
 
-    private boolean doHandleMetadataCollection(Map<MetadataIdentifier, Object> metadataMap) {
-        if (metadataMap.isEmpty()) {
-            return true;
+    private boolean doHandleMetadataCollection(Map<MetadataIdentifier, Object> metadataMap) { //此处接口设计的很应用，metadataMap：可以是成功上报的Map，也可以是失败上报的Map，只是集合不一样，执行逻辑都是一样的
+        if (metadataMap.isEmpty()) { //若数据为空，直接返回
+            return true; //返回true，表明不再重试
         }
         Iterator<Map.Entry<MetadataIdentifier, Object>> iterable = metadataMap.entrySet().iterator();
         while (iterable.hasNext()) {
@@ -357,66 +357,75 @@ public abstract class AbstractMetadataReport implements MetadataReport {
             }
 
         }
-        return false;
+        return false; //返回false，表明还需要重试，一直重试，直到超过重试次数或失败的缓存Map为空
     }
 
     /**
-     * not private. just for unittest.
+     * not private. just for unittest. （仅仅提供给单元测试）
      */
     void publishAll() {
         logger.info("start to publish all metadata.");
-        this.doHandleMetadataCollection(allMetadataReports);
+        this.doHandleMetadataCollection(allMetadataReports); //发布所有的元数据
     }
 
     /**
-     * between 2:00 am to 6:00 am, the time is random.
+     * between 2:00 am to 6:00 am, the time is random. （凌晨 2:00 至 6:00，时间随机）
      *
      * @return
      */
-    long calculateStartTime() {
-        Calendar calendar = Calendar.getInstance();
+    long calculateStartTime() { //计算开始时间对应的时间戳，算出来的值，要做为延迟任务的初次延迟时间
+        Calendar calendar = Calendar.getInstance(); //通过默认time zone和locate获取Calendar实例（查找默认时区时，会先从系统属性System.getProperty()中查找，若没有设置则从java.home中查找）
         long nowMill = calendar.getTimeInMillis();
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        long subtract = calendar.getTimeInMillis() + ONE_DAY_IN_MILLISECONDS - nowMill;
+        calendar.set(Calendar.MILLISECOND, 0); // calendar.getTimeInMillis() 是当前时间的0时0分0秒，比如此处在6月5日的值是1654358400000，对应的时间为2022-06-05 00:00:00
+        /**
+         * calculateStartTime()方法计算出来的时间，将作为延迟任务开始启动的时间
+         * 1）subtract：具体今天结束的时间
+         * 2）subtract + 2h小时间戳 + 4小时随机事件戳
+         *    a）subtract这个时间段，可以让任务到00:00:00
+         *    b）然后在subtract基础上加两个小时，即从2:00 am 凌晨2点开始
+         *    c）再在b）基础上加4个小时随机值，即从2:00 am 到6:00 am
+         * （对比：在工作中，一般回写cron表达是，就不用计算这种值了）
+         */
+        long subtract = calendar.getTimeInMillis() + ONE_DAY_IN_MILLISECONDS - nowMill; //subtract：减去，此处subtract对应的时间戳：指的是距离今天结束还剩的时间戳
         return subtract + (FOUR_HOURS_IN_MILLISECONDS / 2) + ThreadLocalRandom.current().nextInt(FOUR_HOURS_IN_MILLISECONDS);
     }
 
-    class MetadataReportRetry { //MetadataReport重试处理类
+    class MetadataReportRetry { //内部类：元数据重试上报
         protected final Logger logger = LoggerFactory.getLogger(getClass());
 
         final ScheduledExecutorService retryExecutor = newScheduledThreadPool(0, new NamedThreadFactory("DubboMetadataReportRetryTimer", true));
-        volatile ScheduledFuture retryScheduledFuture;
+        volatile ScheduledFuture retryScheduledFuture; //volatile的两个作用：1）确保内存可见性，2）防止指令重排（成员变量为引用类型时，若没有赋值，则为null）
         final AtomicInteger retryCounter = new AtomicInteger(0);
-        // retry task schedule period
-        long retryPeriod;
-        // if no failed report, wait how many times to run retry task.
+        // retry task schedule period （重试任务的时间间隔）
+        long retryPeriod; //重试周期（long类型的成员变量，初始值为0）
+        // if no failed report, wait how many times to run retry task. （在没有失败的上报时，允许的最大重试次数）
         int retryTimesIfNonFail = 600;
 
-        int retryLimit;
+        int retryLimit; //重试次数（int类型的成员变量，初始值为0）
 
-        public MetadataReportRetry(int retryTimes, int retryPeriod) {
+        public MetadataReportRetry(int retryTimes, int retryPeriod) { //进入构造函数的前，对象的成员变量已经初始化了
             this.retryPeriod = retryPeriod;
             this.retryLimit = retryTimes;
         }
 
-        void startRetryTask() {
-            if (retryScheduledFuture == null) {
-                synchronized (retryCounter) {
+        void startRetryTask() { //开启重试任务
+            if (retryScheduledFuture == null) { //双重判定 + synchronized + volatile 实现懒汉式单例的创建
+                synchronized (retryCounter) { //对retryCounter对象加锁
                     if (retryScheduledFuture == null) {
                         retryScheduledFuture = retryExecutor.scheduleWithFixedDelay(new Runnable() {
                             @Override
-                            public void run() {
+                            public void run() { //线程的执行体
                                 // Check and connect to the metadata
                                 try {
-                                    int times = retryCounter.incrementAndGet();
+                                    int times = retryCounter.incrementAndGet(); // 统计执行的次数
                                     logger.info("start to retry task for metadata report. retry times:" + times);
-                                    if (retry() && times > retryTimesIfNonFail) {
+                                    if (retry() && times > retryTimesIfNonFail) { //在失败集合为空，且超过最大重试次数时，取消重试任务
                                         cancelRetryTask();
                                     }
-                                    if (times > retryLimit) {
+                                    if (times > retryLimit) { //若实际执行的次数超过预定的次数，则取消重试任务
                                         cancelRetryTask();
                                     }
                                 } catch (Throwable t) { // Defensive fault tolerance

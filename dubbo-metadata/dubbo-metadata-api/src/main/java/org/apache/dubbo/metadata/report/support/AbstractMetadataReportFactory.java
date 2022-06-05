@@ -32,15 +32,17 @@ public abstract class AbstractMetadataReportFactory implements MetadataReportFac
     private static final ReentrantLock LOCK = new ReentrantLock();
 
     // Registry Collection Map<metadataAddress, MetadataReport>
-    private static final Map<String, MetadataReport> SERVICE_STORE_MAP = new ConcurrentHashMap<String, MetadataReport>();
+    private static final Map<String, MetadataReport> SERVICE_STORE_MAP = new ConcurrentHashMap<String, MetadataReport>(); //static成员变量：共享变量，需要加锁处理
 
     @Override
     public MetadataReport getMetadataReport(URL url) {
         url = url.setPath(MetadataReport.class.getName())
-                .removeParameters(EXPORT_KEY, REFER_KEY); //更改path的值，值为"org.apache.dubbo.metadata.report.MetadataReport"
+                .removeParameters(EXPORT_KEY, REFER_KEY);
+        // 更改url的path的值，值为"org.apache.dubbo.metadata.report.MetadataReport"，所以两个url若仅仅是path不同，
+        // 最终处理后的url是相同的，获取到的MetadataReport是相同的
         String key = url.toServiceString(); //key的值如：JTest://172.16.140.154:4444/org.apache.dubbo.metadata.report.MetadataReport:1.0.0
         // Lock the metadata access process to ensure a single instance of the metadata instance
-        LOCK.lock(); // 加锁处理，确保MetadataReport保持单实例
+        LOCK.lock(); // 加锁处理，确保MetadataReport保持单实例（不加锁的话，多个相同的url同时请求过来，就可能会都没从缓存中取到值，然后就创建了多个实例）
         try {
             MetadataReport metadataReport = SERVICE_STORE_MAP.get(key);
             if (metadataReport != null) { //按url从缓存Map中查找MetadataReport，若存在则直接返回

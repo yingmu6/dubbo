@@ -16,6 +16,7 @@
  */
 package org.apache.dubbo.metadata.report.support;
 
+import com.google.gson.Gson;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.utils.NetUtils;
 import org.apache.dubbo.config.ApplicationConfig;
@@ -27,27 +28,18 @@ import org.apache.dubbo.metadata.report.identifier.MetadataIdentifier;
 import org.apache.dubbo.metadata.report.identifier.ServiceMetadataIdentifier;
 import org.apache.dubbo.metadata.report.identifier.SubscriberMetadataIdentifier;
 import org.apache.dubbo.rpc.model.ApplicationModel;
-
-import com.google.gson.Gson;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedSet;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static java.util.Collections.emptySet;
 import static org.apache.dubbo.common.constants.CommonConstants.CONSUMER_SIDE;
 import static org.apache.dubbo.common.constants.CommonConstants.PROVIDER_SIDE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -60,7 +52,7 @@ public class AbstractMetadataReportTest {
     @BeforeEach
     public void before() {
         URL url = URL.valueOf("zookeeper://" + NetUtils.getLocalAddress().getHostName() + ":4444/org.apache.dubbo.TestService?version=1.0.0&application=vic");
-        abstractMetadataReport = new NewMetadataReport(url);
+        abstractMetadataReport = new NewMetadataReport(url); //做初始化操作，AbstractMetadataReport的数据结构比较复杂，所以需要初始化的内容比较多
         // set the simple name of current class as the application name
         ApplicationModel.getConfigManager().setApplication(new ApplicationConfig(getClass().getSimpleName()));
     }
@@ -333,12 +325,12 @@ public class AbstractMetadataReportTest {
     }
 
 
-    private static class NewMetadataReport extends AbstractMetadataReport {
+    private static class NewMetadataReport extends AbstractMetadataReport { //自定义的MetadataReport类
 
         Map<String, String> store = new ConcurrentHashMap<>();
 
         public NewMetadataReport(URL metadataReportURL) {
-            super(metadataReportURL);
+            super(metadataReportURL); //调用父类的构造函数进行初始化
         }
 
         @Override
@@ -352,7 +344,7 @@ public class AbstractMetadataReportTest {
         }
 
         @Override
-        protected void doSaveMetadata(ServiceMetadataIdentifier metadataIdentifier, URL url) {
+        protected void doSaveMetadata(ServiceMetadataIdentifier metadataIdentifier, URL url) { //未实现的方法，抛出异常
             throw new UnsupportedOperationException("This extension does not support working as a remote metadata center.");
         }
 

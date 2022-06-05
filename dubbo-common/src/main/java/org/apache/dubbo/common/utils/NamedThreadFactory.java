@@ -22,7 +22,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * InternalThreadFactory.
  */
-public class NamedThreadFactory implements ThreadFactory { //内部使用的线程池工厂
+public class NamedThreadFactory implements ThreadFactory {
+    //内部使用的线程池工厂：实现ThreadFactory，重写创建线程的方法newThread()【要实现自定义功能，就去实现相关接口的相关方法即可】
+    //线程池工厂：包含创建线程的方法
 
     protected static final AtomicInteger POOL_SEQ = new AtomicInteger(1);
 
@@ -50,7 +52,7 @@ public class NamedThreadFactory implements ThreadFactory { //内部使用的线�
     }
 
     @Override
-    public Thread newThread(Runnable runnable) {
+    public Thread newThread(Runnable runnable) { //重写了ThreadFactory的创建线程的方法，可以按自己需求创建线程池，比如线程名称的自定义命名等
         String name = mPrefix + mThreadNum.getAndIncrement();
         Thread ret = new Thread(mGroup, runnable, name, 0);
         ret.setDaemon(mDaemon);

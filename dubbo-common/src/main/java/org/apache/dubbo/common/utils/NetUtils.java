@@ -254,11 +254,13 @@ public class NetUtils { //网络工具类
          * 解：已调试，处理方式如下
          * 1）查询符合条件的网络接口NetworkInterface
          *    a）获取到机器的所有网络接口，做初步的筛选，比如排除回路地址、虚拟地址等
-         *    b）对筛选的网络接口列表进行处理，判断是否包含系统属性执行的网络接口，若有直接返回
-         *    c）对网络接口列表中的地址进行处理，先按ipv4或ipv6的标准格式进行格式化，然后判断地址是否可达，若可达直接返回
-         *    d）若都没找到，则直接找网络接口列表中的第一个处理
-         * 2）遍历网络接口中的地址，判断是否有可达的地址
-         * 3）若没查询到，则使用InetAddress.getLocalHost()查询
+         *    b）判断系统属性中是否存在为dubbo设置的网络接口DUBBO_PREFERRED_NETWORK_INTERFACE
+         *       b.1）若有则直接取设置的网络接口
+         *       b.2）若没有则遍历网络接口列表，依次判断接口中是否有可访问的IP地址，若有则取该网络接口
+         * 2）若都没找到，则直接找网络接口列表中的第一个
+         * 3）找到网络接口后，再找接口中有效的网络地址IP
+         *    a）遍历网络接口，看是否有可访问的IP，若有则取之并返回
+         *    b）若没有找到可访问的IP，直接通过InetAddress.getLocalHost()获取（兜底操作，不能保障IP能访问）
          */
         InetAddress localAddress = null;
 
@@ -268,7 +270,7 @@ public class NetUtils { //网络工具类
             Enumeration<InetAddress> addresses = networkInterface.getInetAddresses();
             while (addresses.hasMoreElements()) {
                 Optional<InetAddress> addressOp = toValidAddress(addresses.nextElement());
-                if (addressOp.isPresent()) {
+                if (addressOp.isPresent()) { //findNetworkInterface()中已经做过isReachable()可达性判断，此处再次判断，避免网络波动在前一刻不能访问，后一刻能访问的现象
                     try {
                         if (addressOp.get().isReachable(100)) {
                             return addressOp.get();

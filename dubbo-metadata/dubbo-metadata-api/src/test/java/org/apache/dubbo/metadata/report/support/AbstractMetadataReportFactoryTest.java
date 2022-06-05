@@ -27,6 +27,7 @@ import org.apache.dubbo.metadata.report.identifier.SubscriberMetadataIdentifier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.net.InetAddress;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * 2018/9/14
  */
-public class AbstractMetadataReportFactoryTest {
+public class AbstractMetadataReportFactoryTest { //测试抽象元数据工厂中方法
 
     private AbstractMetadataReportFactory metadataReportFactory = new AbstractMetadataReportFactory() {
         @Override
@@ -96,7 +97,7 @@ public class AbstractMetadataReportFactoryTest {
     };
 
     @Test
-    public void testGetOneMetadataReport() { //已测
+    public void testGetOneMetadataReport() { //已测，一个url对应一个MetadataReport实例，不管取多少次，都只返回一个实例
         URL url = URL.valueOf("zookeeper://" + NetUtils.getLocalAddress().getHostName() + ":4444/org.apache.dubbo.TestService?version=1.0.0&application=vic");
         MetadataReport metadataReport1 = metadataReportFactory.getMetadataReport(url); //会以url为key从缓存Map查找MetadataReport，url相同则获取的内容相同
         MetadataReport metadataReport2 = metadataReportFactory.getMetadataReport(url);
@@ -104,30 +105,35 @@ public class AbstractMetadataReportFactoryTest {
     }
 
     @Test
-    public void testGetOneMetadataReportForIpFormat() {
-        String hostName = NetUtils.getLocalAddress().getHostName();
+    public void testGetOneMetadataReportForIpFormat() { //已测
+        InetAddress inetAddress = NetUtils.getLocalAddress();
+        String hostName = inetAddress.getHostName(); //hostName如：192.168.3.16
         String ip = NetUtils.getIpByHost(hostName);
+        String ip2 = inetAddress.getHostAddress();
+        System.out.println("ip=" + ip + ", ip2=" + ip2); //一样的结果
         URL url1 = URL.valueOf("zookeeper://" + hostName + ":4444/org.apache.dubbo.TestService?version=1.0.0&application=vic");
         URL url2 = URL.valueOf("zookeeper://" + ip + ":4444/org.apache.dubbo.TestService?version=1.0.0&application=vic");
-        MetadataReport metadataReport1 = metadataReportFactory.getMetadataReport(url1);
+        MetadataReport metadataReport1 = metadataReportFactory.getMetadataReport(url1); //本地IP没有绑定域名，所以hostName与Ip是相同的
         MetadataReport metadataReport2 = metadataReportFactory.getMetadataReport(url2);
         Assertions.assertEquals(metadataReport1, metadataReport2);
     }
 
     @Test
-    public void testGetForDiffService() {
+    public void testGetForDiffService() { //已测
         URL url1 = URL.valueOf("zookeeper://" + NetUtils.getLocalAddress().getHostName() + ":4444/org.apache.dubbo.TestService1?version=1.0.0&application=vic");
         URL url2 = URL.valueOf("zookeeper://" + NetUtils.getLocalAddress().getHostName() + ":4444/org.apache.dubbo.TestService2?version=1.0.0&application=vic");
         MetadataReport metadataReport1 = metadataReportFactory.getMetadataReport(url1);
         MetadataReport metadataReport2 = metadataReportFactory.getMetadataReport(url2);
         Assertions.assertEquals(metadataReport1, metadataReport2);
+        // 因为url中的path都会被替换为org.apache.dubbo.metadata.report.MetadataReport，
+        // 所以上面两个url只是path不同，其它参数都相同的情况下，转换后的url是相等的，所以MetadataReport是相等的
     }
 
     @Test
-    public void testGetForDiffGroup() {
+    public void testGetForDiffGroup() { //已测
         URL url1 = URL.valueOf("zookeeper://" + NetUtils.getLocalAddress().getHostName() + ":4444/org.apache.dubbo.TestService?version=1.0.0&application=vic&group=aaa");
         URL url2 = URL.valueOf("zookeeper://" + NetUtils.getLocalAddress().getHostName() + ":4444/org.apache.dubbo.TestService?version=1.0.0&application=vic&group=bbb");
-        MetadataReport metadataReport1 = metadataReportFactory.getMetadataReport(url1);
+        MetadataReport metadataReport1 = metadataReportFactory.getMetadataReport(url1); //因为此处是group参数不一样，该参数在获取MetadataReport实例时，不会被处理，所以最终两个url不同，获取到的实例就不同
         MetadataReport metadataReport2 = metadataReportFactory.getMetadataReport(url2);
         Assertions.assertNotEquals(metadataReport1, metadataReport2);
     }

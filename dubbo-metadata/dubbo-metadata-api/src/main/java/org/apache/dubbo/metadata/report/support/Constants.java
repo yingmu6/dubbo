@@ -22,7 +22,7 @@ public interface Constants {
 
     String RETRY_TIMES_KEY = "retry.times";
 
-    Integer DEFAULT_METADATA_REPORT_RETRY_TIMES = 100;
+    Integer DEFAULT_METADATA_REPORT_RETRY_TIMES = 100; //默认元数据上报重试次数
 
     String RETRY_PERIOD_KEY = "retry.period";
 
