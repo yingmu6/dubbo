@@ -61,17 +61,19 @@ public abstract class AbstractMetadataReport implements MetadataReport {
 
     private final AtomicBoolean initialized = new AtomicBoolean(false);
 
-    final Map<MetadataIdentifier, Object> allMetadataReports = new ConcurrentHashMap<>(4); //所有的元数据Map
+    // 数据格式：Map<MetadataIdentifier, ServiceDefinition>
+    final Map<MetadataIdentifier, Object> allMetadataReports = new ConcurrentHashMap<>(4); //所有的服务元数据Map，包含成功和失败的元数据
 
-    final Map<MetadataIdentifier, Object> failedReports = new ConcurrentHashMap<>(4); //失败的元数据Map
+    // 数据格式：Map<MetadataIdentifier, ServiceDefinition>
+    final Map<MetadataIdentifier, Object> failedReports = new ConcurrentHashMap<>(4); //失败的服务元数据Map
 
     private URL reportURL;
-    boolean syncReport; //是否同步上报的标识
+    boolean syncReport; //是否同步上报元数据信息
 
     // Local disk cache file
-    File localCacheFile;
+    File localCacheFile; //创建了文件对象后，要调用File的createNewFile()方法，才能创建文件
     // Local disk cache, where the special key value.registries records the list of metadata centers, and the others are the list of notified service providers
-    final Properties properties = new Properties();
+    final Properties properties = new Properties(); //缓存的属性值
 
     private final AtomicLong lastCacheChanged = new AtomicLong();
 
@@ -134,10 +136,10 @@ public abstract class AbstractMetadataReport implements MetadataReport {
     }
 
     private void doSaveProperties(long version) { //此处都是怎样保存的？保存在属性文件中吗？ 解答：此处的功能是将属性对象Properties，保存到文件中
-        if (version < lastCacheChanged.get()) { //使用版本号，进行乐观锁处理并发问题
+        if (version < lastCacheChanged.get()) { //使用版本号，进行乐观锁处理并发问题（当前的版本号若小于最近变更的版本号，表明版本落后了，则不做处理）--递归结束条件
             return;
         }
-        if (localCacheFile == null) {
+        if (localCacheFile == null) { //若缓存文件对象为空，则不处理
             return;
         }
         // Save
@@ -149,16 +151,16 @@ public abstract class AbstractMetadataReport implements MetadataReport {
             try (RandomAccessFile raf = new RandomAccessFile(lockfile, "rw");
                  FileChannel channel = raf.getChannel()) { //把资源处理，放在try里面，就可以不用手动关闭资源
                 FileLock lock = channel.tryLock();
-                if (lock == null) {
+                if (lock == null) { //加锁失败，可能是多个java进程在使用文件
                     throw new IOException("Can not lock the metadataReport cache file " + localCacheFile.getAbsolutePath() + ", ignore and retry later, maybe multi java process use the file, please config: dubbo.metadata.file=xxx.properties");
                 }
                 // Save
                 try {
-                    if (!localCacheFile.exists()) {
+                    if (!localCacheFile.exists()) { //若本地缓存文件不存在，则创建文件
                         localCacheFile.createNewFile();
                     }
                     try (FileOutputStream outputFile = new FileOutputStream(localCacheFile)) {
-                        properties.store(outputFile, "Dubbo metadataReport Cache");
+                        properties.store(outputFile, "Dubbo metadataReport Cache"); //将属性值存储到输出流中
                     }
                 } finally {
                     lock.release();
@@ -168,6 +170,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
             if (version < lastCacheChanged.get()) {
                 return;
             } else {
+                //失败时，将版本号递增后，继承尝试保存属性。此处采用的递归调用的方式处理失败逻辑（创建SaveProperties线程时，又会调用doSaveProperties()，间接的调用自身）
                 reportCacheExecutor.execute(new SaveProperties(lastCacheChanged.incrementAndGet()));
             }
             logger.warn("Failed to save service store file, cause: " + e.getMessage(), e);
@@ -193,15 +196,15 @@ public abstract class AbstractMetadataReport implements MetadataReport {
         }
 
         try {
-            if (add) { //先把内容写到Properties属性对象中
+            if (add) { //添加操作：先把内容写到Properties属性对象中
                 properties.setProperty(metadataIdentifier.getUniqueKey(KeyTypeEnum.UNIQUE_KEY), value);
-            } else {
+            } else {  //移除操作
                 properties.remove(metadataIdentifier.getUniqueKey(KeyTypeEnum.UNIQUE_KEY));
             }
-            long version = lastCacheChanged.incrementAndGet();
-            if (sync) { //然后把属性对象写到文件中
+            long version = lastCacheChanged.incrementAndGet(); //将最近的缓存版本递增1
+            if (sync) { //同步处理：然后把属性对象写到文件中
                 new SaveProperties(version).run();
-            } else {
+            } else {    //异步处理
                 reportCacheExecutor.execute(new SaveProperties(version));
             }
 
@@ -223,7 +226,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
         }
 
         @Override
-        public void run() {
+        public void run() { //线程执行体
             doSaveProperties(version);
         }
     }
@@ -242,14 +245,17 @@ public abstract class AbstractMetadataReport implements MetadataReport {
             if (logger.isInfoEnabled()) {
                 logger.info("store provider metadata. Identifier : " + providerMetadataIdentifier + "; definition: " + serviceDefinition);
             }
-            allMetadataReports.put(providerMetadataIdentifier, serviceDefinition);
+            allMetadataReports.put(providerMetadataIdentifier, serviceDefinition); //本地缓存存储：此处服务的元数据不管成功的、失败的都会存储
             failedReports.remove(providerMetadataIdentifier); //存储成功后，从失败Mao中移除对应的元素
             Gson gson = new Gson();
             String data = gson.toJson(serviceDefinition); //JSON字符串，data数据如：{"parameters":{"application":"test-service","side":"provider"},"canonicalName":"org.apache.dubbo.rpc.service.EchoService","codeSource":"file:/Users/chenshengyong/self-db/dubbo/dubbo-common/target/classes/","methods":[{"name":"$echo","parameterTypes":["java.lang.Object"],"returnType":"java.lang.Object"}],"types":[{"type":"java.lang.Object","typeBuilderName":"org.apache.dubbo.metadata.definition.builder.DefaultTypeBuilder"}]}
             /**
              * 存储元数据的组件有：Zookeeper、Nacos、Etcd等
+             * 远程存储服务元数据，会出现异常，当出现异常时，会将服务元数据存储失败的集合，并启动重试任务进行重试
              */
             doStoreProviderMetadata(providerMetadataIdentifier, data); //将服务定义的数据，转换为json字符串，存储到远程，如将Zookeeper作为元数据中心的话，会在Zookeeper创建对应的节点
+
+            // 保存属性时，会创建文件
             saveProperties(providerMetadataIdentifier, data, true, !syncReport); //元数据上报到元数据中心后，也会存储一份到本地文件中
         } catch (Exception e) { //若存储元数据异常，则将异常的暂存起来，然后启动重试任务进行重试
             // retry again. If failed again, throw exception.
@@ -330,7 +336,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
         return new Gson().fromJson(content, setType);
     }
 
-    String getProtocol(URL url) {
+    String getProtocol(URL url) { //获取url中的side或protocol的值最为protocol
         String protocol = url.getParameter(SIDE_KEY);
         protocol = protocol == null ? url.getProtocol() : protocol;
         return protocol;
@@ -382,7 +388,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
         calendar.set(Calendar.MILLISECOND, 0); // calendar.getTimeInMillis() 是当前时间的0时0分0秒，比如此处在6月5日的值是1654358400000，对应的时间为2022-06-05 00:00:00
         /**
          * calculateStartTime()方法计算出来的时间，将作为延迟任务开始启动的时间
-         * 1）subtract：具体今天结束的时间
+         * 1）subtract：距离今天最后一刻相差的时间
          * 2）subtract + 2h小时间戳 + 4小时随机事件戳
          *    a）subtract这个时间段，可以让任务到00:00:00
          *    b）然后在subtract基础上加两个小时，即从2:00 am 凌晨2点开始
@@ -464,6 +470,9 @@ public abstract class AbstractMetadataReport implements MetadataReport {
         doClose();
     }
 
+    /**
+     * 提供者元数据存储（至于是远程存储还是本地存储、使用哪个组件，需要看当前抽象类AbstractMetadataReport的实现类对应的方法实现了）
+     */
     protected abstract void doStoreProviderMetadata(MetadataIdentifier providerMetadataIdentifier, String serviceDefinitions);
 
     protected abstract void doStoreConsumerMetadata(MetadataIdentifier consumerMetadataIdentifier, String serviceParameterString); //存储提供者、消费者数据，底层调用的接口都是一样的，都是传入MetadataIdentifier元数据，只是内容不一致而已

@@ -31,7 +31,7 @@ import static org.apache.dubbo.metadata.MetadataConstants.KEY_SEPARATOR;
  */
 public class BaseServiceMetadataIdentifier {//基础服务元数据标识符
     /**
-     * 标识符指定是啥？
+     * 标识符指定是啥？（通过元数据参数，可以唯一标识一个服务）
      * 解：包含服务接口、版本、分组、所属方等信息
      */
     String serviceInterface;
@@ -39,7 +39,7 @@ public class BaseServiceMetadataIdentifier {//基础服务元数据标识符
     String group;
     String side;
 
-    String getUniqueKey(KeyTypeEnum keyType, String... params) {
+    String getUniqueKey(KeyTypeEnum keyType, String... params) { //获取服务的唯一标识key
         if (keyType == KeyTypeEnum.PATH) {
             return getFilePathKey(params);
         }

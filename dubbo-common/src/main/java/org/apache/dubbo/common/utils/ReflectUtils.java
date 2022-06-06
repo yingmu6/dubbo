@@ -1261,7 +1261,7 @@ public final class ReflectUtils { //JVM虚拟机中的类型描述符
      * @return
      * @since 2.7.5
      */
-    public static <T> T getProperty(Object bean, String methodName) { //获取指定方法对应的属性值
+    public static <T> T getProperty(Object bean, String methodName) { //获取指定对象中指定方法对应的属性值
         Class<?> beanClass = bean.getClass();
         BeanInfo beanInfo = null;
         T propertyValue = null;
@@ -1301,7 +1301,7 @@ public final class ReflectUtils { //JVM虚拟机中的类型描述符
                     .filter(methodDescriptor -> methodName.equals(methodDescriptor.getName())) //对bean中的所有方法过滤，找出与传入方法名相同的方法
                     .findFirst() //取第一个方法，执行方法调用，返回对应的值
                     .map(method -> {
-                        try {
+                        try { //用内省提供的API找到需要执行的Method，最后通过反射机制调用
                             return method.getMethod().invoke(bean); //将MethodDescriptor转换为Method，然后再调用方法，并返回值
                         } catch (Exception e) {
                             //ignore

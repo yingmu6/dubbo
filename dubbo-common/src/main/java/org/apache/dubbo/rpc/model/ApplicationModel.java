@@ -90,7 +90,7 @@ public class ApplicationModel { //应用的数据模型
     }
 
     public static ConfigManager getConfigManager() { //通过SPI机制，获取到ConfigManager实例（提供不同的方法，获取不同的扩展实例）
-        return (ConfigManager) LOADER.getExtension(ConfigManager.NAME); //config对应的扩展类为ConfigManager
+        return (ConfigManager) LOADER.getExtension(ConfigManager.NAME); //此处由于已经明确ConfigManager.NAME扩展名对应的类是ConfigManager，所以可以类型强转
     }
 
     public static ServiceRepository getServiceRepository() {

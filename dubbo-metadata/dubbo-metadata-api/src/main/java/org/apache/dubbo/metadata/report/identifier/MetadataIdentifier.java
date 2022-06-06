@@ -28,7 +28,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.*;
  * <p>
  * 2018/10/25
  */
-public class MetadataIdentifier extends BaseServiceMetadataIdentifier implements BaseMetadataIdentifier { //MetadataIdentifier：元数据标识符
+public class MetadataIdentifier extends BaseServiceMetadataIdentifier implements BaseMetadataIdentifier { //MetadataIdentifier：元数据标识符（元数据：描述其它数据的数据，通过元数据能描述唯一的服务）
     // identifier：[aɪˈdentɪfaɪə(r)] n. 标识符
     private String application;
 

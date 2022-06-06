@@ -64,34 +64,36 @@ public class AbstractMetadataReportTest {
     }
 
     @Test
-    public void testGetProtocol() {
+    public void testGetProtocol() { //已测，获取MetadataReport的协议
         URL url = URL.valueOf("dubbo://" + NetUtils.getLocalAddress().getHostName() + ":4444/org.apache.dubbo.TestService?version=1.0.0&application=vic&side=provider");
-        String protocol = abstractMetadataReport.getProtocol(url);
-        assertEquals(protocol, "provider");
+        String protocol = abstractMetadataReport.getProtocol(url); //protocol的值会取url中side或protocol的值
+        assertEquals(protocol, "provider"); //此处side有值，且为provider
 
         URL url2 = URL.valueOf("consumer://" + NetUtils.getLocalAddress().getHostName() + ":4444/org.apache.dubbo.TestService?version=1.0.0&application=vic");
         String protocol2 = abstractMetadataReport.getProtocol(url2);
-        assertEquals(protocol2, "consumer");
+        assertEquals(protocol2, "consumer"); //此处side无值，取url.getProtocol()的值
     }
 
     @Test
-    public void testStoreProviderUsual() throws ClassNotFoundException, InterruptedException {
+    public void testStoreProviderUsual() throws ClassNotFoundException, InterruptedException { //已测，测试存储提供者元数据
         String interfaceName = "org.apache.dubbo.metadata.store.InterfaceNameTestService";
         String version = "1.0.0";
         String group = null;
         String application = "vic";
+        //abstractMetadataReport对应的实例为NewMetadataReport，NewMetadataReport中会将提供者元数据存在在缓存map中，即abstractMetadataReport.store中
         MetadataIdentifier providerMetadataIdentifier = storePrivider(abstractMetadataReport, interfaceName, version, group, application);
         Thread.sleep(1500);
-        Assertions.assertNotNull(abstractMetadataReport.store.get(providerMetadataIdentifier.getUniqueKey(KeyTypeEnum.UNIQUE_KEY)));
+        // 由于提供者元数据已存入abstractMetadataReport.store，所以按MetadataIdentifier的唯一键能够取出值
+        Assertions.assertNotNull(abstractMetadataReport.store.get(providerMetadataIdentifier.getUniqueKey(KeyTypeEnum.UNIQUE_KEY))); //
     }
 
     @Test
-    public void testStoreProviderSync() throws ClassNotFoundException, InterruptedException {
+    public void testStoreProviderSync() throws ClassNotFoundException, InterruptedException { //已测，同步方式上报元数据信息
         String interfaceName = "org.apache.dubbo.metadata.store.InterfaceNameTestService";
         String version = "1.0.0";
         String group = null;
         String application = "vic";
-        abstractMetadataReport.syncReport = true;
+        abstractMetadataReport.syncReport = true; //同步上报元数据信息
         MetadataIdentifier providerMetadataIdentifier = storePrivider(abstractMetadataReport, interfaceName, version, group, application);
         Assertions.assertNotNull(abstractMetadataReport.store.get(providerMetadataIdentifier.getUniqueKey(KeyTypeEnum.UNIQUE_KEY)));
     }
@@ -100,17 +102,18 @@ public class AbstractMetadataReportTest {
     public void testFileExistAfterPut() throws InterruptedException, ClassNotFoundException {
         //just for one method
         URL singleUrl = URL.valueOf("redis://" + NetUtils.getLocalAddress().getHostName() + ":4444/org.apache.dubbo.metadata.store.InterfaceNameTestService?version=1.0.0&application=singleTest");
-        NewMetadataReport singleMetadataReport = new NewMetadataReport(singleUrl);
+        NewMetadataReport singleMetadataReport = new NewMetadataReport(singleUrl); //构建对象时，对创建缓存文件的File对象，但还没有创建文件，在要存储元数据到本地文件中时，才创建文件。
 
-        Assertions.assertFalse(singleMetadataReport.localCacheFile.exists());
+        Assertions.assertFalse(singleMetadataReport.localCacheFile.exists()); //目前文件还不存在
 
         String interfaceName = "org.apache.dubbo.metadata.store.InterfaceNameTestService";
         String version = "1.0.0";
         String group = null;
         String application = "vic";
+        // 会在AbstractMetadataReport.doSaveProperties方法中，将属性对象的值存入缓存文件中（存储元数据后，就会创建File对象的）
         MetadataIdentifier providerMetadataIdentifier = storePrivider(singleMetadataReport, interfaceName, version, group, application);
 
-        Thread.sleep(2000);
+        Thread.sleep(2000); //暂停2s，因为写文件是异步执行的，给出足够的时间保存文件
         assertTrue(singleMetadataReport.localCacheFile.exists());
         assertTrue(singleMetadataReport.properties.containsKey(providerMetadataIdentifier.getUniqueKey(KeyTypeEnum.UNIQUE_KEY)));
     }
@@ -170,11 +173,11 @@ public class AbstractMetadataReportTest {
         URL url = URL.valueOf("xxx://" + NetUtils.getLocalAddress().getHostName() + ":4444/" + interfaceName + "?version=" + version + "&application="
                 + application + (group == null ? "" : "&group=" + group) + "&testPKey=8989");
 
-        MetadataIdentifier providerMetadataIdentifier = new MetadataIdentifier(interfaceName, version, group, PROVIDER_SIDE, application);
+        MetadataIdentifier providerMetadataIdentifier = new MetadataIdentifier(interfaceName, version, group, PROVIDER_SIDE, application); //构建MetadataIdentifier
         Class interfaceClass = Class.forName(interfaceName);
-        FullServiceDefinition fullServiceDefinition = ServiceDefinitionBuilder.buildFullDefinition(interfaceClass, url.getParameters());
+        FullServiceDefinition fullServiceDefinition = ServiceDefinitionBuilder.buildFullDefinition(interfaceClass, url.getParameters()); //构建FullServiceDefinition
 
-        abstractMetadataReport.storeProviderMetadata(providerMetadataIdentifier, fullServiceDefinition);
+        abstractMetadataReport.storeProviderMetadata(providerMetadataIdentifier, fullServiceDefinition); //当前abstractMetadataReport的实现类是NewMetadataReport，该对象是将服务元数据存储在NewMetadataReport.store缓存中的
 
         return providerMetadataIdentifier;
     }
@@ -335,7 +338,7 @@ public class AbstractMetadataReportTest {
 
         @Override
         protected void doStoreProviderMetadata(MetadataIdentifier providerMetadataIdentifier, String serviceDefinitions) {
-            store.put(providerMetadataIdentifier.getUniqueKey(KeyTypeEnum.UNIQUE_KEY), serviceDefinitions);
+            store.put(providerMetadataIdentifier.getUniqueKey(KeyTypeEnum.UNIQUE_KEY), serviceDefinitions); //做本地缓存存储，没有发起远程调用
         }
 
         @Override

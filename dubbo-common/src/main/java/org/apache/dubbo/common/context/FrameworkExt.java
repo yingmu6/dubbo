@@ -25,5 +25,7 @@ public interface FrameworkExt extends Lifecycle { //FrameworkExt:框架，框架
      * 1）ConfigManager：维护dubbo标签名与Config对象的缓存映射关系
      * 2）Environment：通过加载属性文件，生成属性对象管理对象的生命周期
      * 3）ServiceRepository：维护接口key与ConsumerModel、ProviderModel模型的映射
+     *
+     * 虽然FrameworkExt没有声明方法，但它继承了Lifecycle的其中的方法，并以SPI的方式开放出去，支持扩展
      */
 }

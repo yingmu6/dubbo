@@ -42,11 +42,13 @@ import static org.apache.dubbo.config.AbstractConfig.getTagName;
 import static org.apache.dubbo.config.Constants.PROTOCOLS_SUFFIX;
 import static org.apache.dubbo.config.Constants.REGISTRIES_SUFFIX;
 
-public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //配置管理器，继承适配器，有选择的实现方法
+public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //config对象的管理，继承适配器，有选择的实现方法
 
     /**
      * ConfigManager存储了所有dubbo的配置对象
      * 类似于一个本地的配置中心，如果要查询配置信息，访问ConfigManager获取对应的配置对象即可，任何配置对象修改了，都要刷新ConfigManager
+     * <p>
+     * ConfigManager：将config对象按标签名、id映射缓存起来（这里的config管理不是指apollo配置中心的管理，而是指config对象的管理）
      */
 
     private static final Logger logger = LoggerFactory.getLogger(ConfigManager.class);
@@ -55,9 +57,11 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
 
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
+    // configsCache数据格式：Map<getTagName(config.getClass()), Map<getId(config), config>> 即数据为：Map<config标签名, Map<config的Id, config对象>>
+    // 将config对象按标签名、id映射缓存起来
     final Map<String, Map<String, AbstractConfig>> configsCache = newMap(); //配置缓存，key为标签名，如ConfigCenterConfig配置类的标签名为config-center，configsCache的值如：Map<"registry", Map<"org.apache.dubbo.config.RegistryConfig", RegistryConfig@xxx >>
 
-    public ConfigManager() {
+    public ConfigManager() { //会调用父类构造函数初始化父类，此处会调用super()，执行父类无参的构造函数
     }
 
     // ApplicationConfig correlative methods
@@ -116,7 +120,7 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
         addConfig(configCenter);
     }
 
-    public void addConfigCenters(Iterable<ConfigCenterConfig> configCenters) {
+    public void addConfigCenters(Iterable<ConfigCenterConfig> configCenters) { //配置中心的配置也是一个config对象
         configCenters.forEach(this::addConfigCenter);
     }
 
@@ -136,13 +140,13 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
         return getConfigs(getTagName(ConfigCenterConfig.class));
     }
 
-    // MetadataReportConfig correlative methods
+    // MetadataReportConfig correlative（相关的） methods
 
     public void addMetadataReport(MetadataReportConfig metadataReportConfig) {
         addConfig(metadataReportConfig);
     }
 
-    public void addMetadataReports(Iterable<MetadataReportConfig> metadataReportConfigs) {
+    public void addMetadataReports(Iterable<MetadataReportConfig> metadataReportConfigs) { //元数据对应的config对象
         metadataReportConfigs.forEach(this::addMetadataReport);
     }
 
@@ -381,7 +385,7 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
         }
         write(() -> { //线程执行体
             //computeIfAbsent:判断key对应的value是否存在，不存在是则设置，computeIfAbsent()第2个参数是函数式式接口，进行函数传递；type是入参，newMap()执行方法，并返回值，此处返回new HashMap<>()
-            Map<String, AbstractConfig> configsMap = configsCache.computeIfAbsent(getTagName(config.getClass()), type -> newMap()); //configsMap的可以为新加入的config标签名，而值是new HashMap<>()，此处还没计算
+            Map<String, AbstractConfig> configsMap = configsCache.computeIfAbsent(getTagName(config.getClass()), type -> newMap()); //初始化标签名与config对象映射的Map（configsMap的可以为新加入的config标签名，而值是new HashMap<>()，此处还没计算）
             addIfAbsent(config, configsMap, unique);
         });
     }
@@ -454,7 +458,7 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
     }
 
     private static void checkDuplicate(AbstractConfig oldOne, AbstractConfig newOne) throws IllegalStateException {
-        if (oldOne != null && !oldOne.equals(newOne)) { //检查配置是否重复
+        if (oldOne != null && !oldOne.equals(newOne)) { //检查配置是否重复（todo @csy 此处难理解，为啥是按不等于来比较的）
             String configName = oldOne.getClass().getSimpleName();
             logger.warn("Duplicate Config found for " + configName + ", you should use only one unique " + configName + " for one application.");
         }
@@ -471,7 +475,7 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
             return;
         }
 
-        if (unique) { // check duplicate
+        if (unique) { // check duplicate （是否检查）
             configsMap.values().forEach(c -> { //判断要加入的config是否已经在缓存中，若已存在，则给出提示（warn日志，只提示不抛出异常）
                 checkDuplicate(c, config);
             });
@@ -495,7 +499,7 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
     static <C extends AbstractConfig> String getId(C config) { //取config对象的id值
         String id = config.getId();
         return isNotEmpty(id) ? id : isDefaultConfig(config) ?
-                config.getClass().getSimpleName() + "#" + DEFAULT_KEY : null;
+                config.getClass().getSimpleName() + "#" + DEFAULT_KEY : null; //判断config的id是否为空，若为空再判断是否为默认config
     }
 
     static <C extends AbstractConfig> boolean isDefaultConfig(C config) {

@@ -50,17 +50,17 @@ public final class ServiceDefinitionBuilder {
         return sd;
     }
 
-    public static FullServiceDefinition buildFullDefinition(final Class<?> interfaceClass, Map<String, String> params) {
+    public static FullServiceDefinition buildFullDefinition(final Class<?> interfaceClass, Map<String, String> params) { //为指定接口、指定参数构建FullServiceDefinition（完整的服务定义）
         FullServiceDefinition sd = new FullServiceDefinition();
-        build(sd, interfaceClass);
-        sd.setParameters(params);
+        build(sd, interfaceClass); //构建FullServiceDefinition相关的属性值
+        sd.setParameters(params); //为FullServiceDefinition设置参数
         return sd;
     }
 
     /**
      * 通过反射机制，解析出Class类中方法名、参数类型等，并设置组装起来返回
      */
-    public static <T extends ServiceDefinition> void build(T sd, final Class<?> interfaceClass) { //构建服务定义数据ServiceDefinition
+    public static <T extends ServiceDefinition> void build(T sd, final Class<?> interfaceClass) { //构建服务定义ServiceDefinition，即填充ServiceDefinition相关的属性值
         sd.setCanonicalName(interfaceClass.getCanonicalName());
         sd.setCodeSource(ClassUtils.getCodeSource(interfaceClass));
 

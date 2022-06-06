@@ -54,7 +54,7 @@ public abstract class AbstractConfig implements Serializable {
     private static final Map<String, String> LEGACY_PROPERTIES = new HashMap<String, String>();
 
     /**
-     * The suffix container
+     * The suffix（后缀） container
      */
     private static final String[] SUFFIXES = new String[]{"Config", "Bean", "ConfigBase"};
 
@@ -90,7 +90,7 @@ public abstract class AbstractConfig implements Serializable {
 
     public static String getTagName(Class<?> cls) { //获取Config类对应的标签名，比如ConfigCenter为config-center
         String tag = cls.getSimpleName(); //如ConfigCenterConfig，tag为ConfigCenterConfig
-        for (String suffix : SUFFIXES) {
+        for (String suffix : SUFFIXES) { //若类名包含指定后缀名，则先去除掉
             if (tag.endsWith(suffix)) { //把包含的后缀去掉，比如ConfigCenterConfig改为ConfigCenter
                 tag = tag.substring(0, tag.length() - suffix.length());
                 break;

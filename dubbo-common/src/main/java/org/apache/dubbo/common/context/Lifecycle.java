@@ -33,7 +33,7 @@ public interface Lifecycle { //dubbo组件的生命周期
     void initialize() throws IllegalStateException;
 
     /**
-     * Start the component
+     * Start the component（启动组件）
      *
      * @return current {@link Lifecycle}
      * @throws IllegalStateException
@@ -41,7 +41,7 @@ public interface Lifecycle { //dubbo组件的生命周期
     void start() throws IllegalStateException;
 
     /**
-     * Destroy the component
+     * Destroy the component（销毁组件）
      *
      * @throws IllegalStateException
      */
