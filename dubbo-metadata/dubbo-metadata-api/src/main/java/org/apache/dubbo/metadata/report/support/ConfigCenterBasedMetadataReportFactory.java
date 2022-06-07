@@ -41,7 +41,7 @@ import static org.apache.dubbo.rpc.cluster.Constants.REFER_KEY;
  * @see DynamicConfiguration
  * @since 2.7.8
  */
-public abstract class ConfigCenterBasedMetadataReportFactory implements MetadataReportFactory {
+public abstract class ConfigCenterBasedMetadataReportFactory implements MetadataReportFactory { //配置中心基础元数据上报工厂
 
     /**
      * org.apache.dubbo.metadata.report.MetadataReport

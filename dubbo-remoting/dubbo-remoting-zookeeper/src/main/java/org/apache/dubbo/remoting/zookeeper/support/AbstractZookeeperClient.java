@@ -203,7 +203,7 @@ public abstract class AbstractZookeeperClient<TargetDataListener, TargetChildLis
 
     protected abstract void doClose();
 
-    protected abstract void createPersistent(String path);
+    protected abstract void createPersistent(String path); //定义出抽象方法，支持不同实现类，可以实现多态
 
     protected abstract void createEphemeral(String path);
 

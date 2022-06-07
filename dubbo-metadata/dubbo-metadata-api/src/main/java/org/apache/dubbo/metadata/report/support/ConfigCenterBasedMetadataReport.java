@@ -29,13 +29,13 @@ import static org.apache.dubbo.common.constants.CommonConstants.GROUP_KEY;
 import static org.apache.dubbo.metadata.MetadataConstants.EXPORTED_URLS_TAG;
 
 /**
- * The generic implementation of {@link MetadataReport} based on {@link DynamicConfiguration
+ * The generic（通用的） implementation of {@link MetadataReport} based on {@link DynamicConfiguration
  * the config-center infrastructure}
  *
  * @see AbstractMetadataReport
  * @since 2.7.8
  */
-public class ConfigCenterBasedMetadataReport extends AbstractMetadataReport {
+public class ConfigCenterBasedMetadataReport extends AbstractMetadataReport { //配置中心元数据上报信息
 
     private final KeyTypeEnum keyType;
 
@@ -148,7 +148,7 @@ public class ConfigCenterBasedMetadataReport extends AbstractMetadataReport {
         return metadataIdentifier.getUniqueKey(keyType);
     }
 
-    protected String getKey(MetadataIdentifier metadataIdentifier) {
+    protected String getKey(MetadataIdentifier metadataIdentifier) { //产生元数据对应的唯一键
         return metadataIdentifier.getUniqueKey(keyType);
     }
 

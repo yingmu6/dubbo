@@ -162,7 +162,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
                     try (FileOutputStream outputFile = new FileOutputStream(localCacheFile)) {
                         properties.store(outputFile, "Dubbo metadataReport Cache"); //将属性值存储到输出流中
                     }
-                } finally {
+                } finally { //localCacheFile 存储的内容：properties.setProperty(metadataIdentifier.getUniqueKey(KeyTypeEnum.UNIQUE_KEY), new Gson(fullServiceDefinition))
                     lock.release();
                 }
             }
@@ -218,6 +218,11 @@ public abstract class AbstractMetadataReport implements MetadataReport {
         return getUrl().toString();
     }
 
+    /**
+     * 创建好线程后，要么调用线程的start()方法，要么提交给线程池管理
+     * 但这个只能让线程进入就绪状态，还需要等待CPU分配时间片，获取到资源后才能真正执行
+     * 所以线程的调用，并不像普通对象那样显示调用的，而是由系统执行调度的
+     */
     private class SaveProperties implements Runnable { //保存属性对象Properties的线程
         private long version;
 
@@ -226,7 +231,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
         }
 
         @Override
-        public void run() { //线程执行体
+        public void run() { //线程执行体，创建好线程后，等到
             doSaveProperties(version);
         }
     }
@@ -250,12 +255,16 @@ public abstract class AbstractMetadataReport implements MetadataReport {
             Gson gson = new Gson();
             String data = gson.toJson(serviceDefinition); //JSON字符串，data数据如：{"parameters":{"application":"test-service","side":"provider"},"canonicalName":"org.apache.dubbo.rpc.service.EchoService","codeSource":"file:/Users/chenshengyong/self-db/dubbo/dubbo-common/target/classes/","methods":[{"name":"$echo","parameterTypes":["java.lang.Object"],"returnType":"java.lang.Object"}],"types":[{"type":"java.lang.Object","typeBuilderName":"org.apache.dubbo.metadata.definition.builder.DefaultTypeBuilder"}]}
             /**
+             * 此处是抽象方法：交由具体的实现类来执行。
+             *
              * 存储元数据的组件有：Zookeeper、Nacos、Etcd等
              * 远程存储服务元数据，会出现异常，当出现异常时，会将服务元数据存储失败的集合，并启动重试任务进行重试
              */
             doStoreProviderMetadata(providerMetadataIdentifier, data); //将服务定义的数据，转换为json字符串，存储到远程，如将Zookeeper作为元数据中心的话，会在Zookeeper创建对应的节点
 
-            // 保存属性时，会创建文件
+            /**
+             * 将服务接口对应的元数据存入到本地缓存文件中
+             */
             saveProperties(providerMetadataIdentifier, data, true, !syncReport); //元数据上报到元数据中心后，也会存储一份到本地文件中
         } catch (Exception e) { //若存储元数据异常，则将异常的暂存起来，然后启动重试任务进行重试
             // retry again. If failed again, throw exception.
@@ -371,7 +380,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
      */
     void publishAll() {
         logger.info("start to publish all metadata.");
-        this.doHandleMetadataCollection(allMetadataReports); //发布所有的元数据
+        this.doHandleMetadataCollection(allMetadataReports); //发布所有的元数据（就是没有区分是发布提供者还是消费者元数据）
     }
 
     /**
@@ -379,7 +388,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
      *
      * @return
      */
-    long calculateStartTime() { //计算开始时间对应的时间戳，算出来的值，要做为延迟任务的初次延迟时间
+    long calculateStartTime() { //计算出距离凌晨2点到4点的时间间隔，算出来的值，要做为延迟任务的初次延迟时间
         Calendar calendar = Calendar.getInstance(); //通过默认time zone和locate获取Calendar实例（查找默认时区时，会先从系统属性System.getProperty()中查找，若没有设置则从java.home中查找）
         long nowMill = calendar.getTimeInMillis();
         calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -396,6 +405,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
          * （对比：在工作中，一般回写cron表达是，就不用计算这种值了）
          */
         long subtract = calendar.getTimeInMillis() + ONE_DAY_IN_MILLISECONDS - nowMill; //subtract：减去，此处subtract对应的时间戳：指的是距离今天结束还剩的时间戳
+//        System.out.println("距离凌晨0的间隔=" + subtract); //随着时间的推进，距离0点的时间间隔会越来越小
         return subtract + (FOUR_HOURS_IN_MILLISECONDS / 2) + ThreadLocalRandom.current().nextInt(FOUR_HOURS_IN_MILLISECONDS);
     }
 
@@ -403,6 +413,8 @@ public abstract class AbstractMetadataReport implements MetadataReport {
         protected final Logger logger = LoggerFactory.getLogger(getClass());
 
         final ScheduledExecutorService retryExecutor = newScheduledThreadPool(0, new NamedThreadFactory("DubboMetadataReportRetryTimer", true));
+
+        // 周期性任务ScheduledFuture：指定好执行的初次时间以及执行的周期，任务便会周期性的执行下去
         volatile ScheduledFuture retryScheduledFuture; //volatile的两个作用：1）确保内存可见性，2）防止指令重排（成员变量为引用类型时，若没有赋值，则为null）
         final AtomicInteger retryCounter = new AtomicInteger(0);
         // retry task schedule period （重试任务的时间间隔）
@@ -438,7 +450,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
                                     logger.error("Unexpected error occur at failed retry, cause: " + t.getMessage(), t);
                                 }
                             }
-                        }, 500, retryPeriod, TimeUnit.MILLISECONDS);
+                        }, 500, retryPeriod, TimeUnit.MILLISECONDS); //单位是毫秒
                     }
                 }
             }
