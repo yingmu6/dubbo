@@ -41,7 +41,7 @@ public class ConfigCenterBasedMetadataReport extends AbstractMetadataReport { //
 
     private final String group;
 
-    private final DynamicConfiguration dynamicConfiguration;
+    private final DynamicConfiguration dynamicConfiguration; //动态配置
 
     public ConfigCenterBasedMetadataReport(URL reportServerURL, KeyTypeEnum keyTypeEnum) {
         super(reportServerURL);
