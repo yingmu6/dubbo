@@ -43,7 +43,7 @@ public class ConfigCenterBasedMetadataReport extends AbstractMetadataReport { //
 
     private final DynamicConfiguration dynamicConfiguration; //动态配置
 
-    public ConfigCenterBasedMetadataReport(URL reportServerURL, KeyTypeEnum keyTypeEnum) {
+    public ConfigCenterBasedMetadataReport(URL reportServerURL, KeyTypeEnum keyTypeEnum) { //构造函数
         super(reportServerURL);
         this.keyType = keyTypeEnum;
         this.group = reportServerURL.getParameter(GROUP_KEY, DEFAULT_ROOT);
