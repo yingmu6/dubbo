@@ -16,41 +16,21 @@
  */
 package org.apache.dubbo.common.config.configcenter.file;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.dubbo.common.URL;
-import org.apache.dubbo.common.config.configcenter.ConfigChangeType;
-import org.apache.dubbo.common.config.configcenter.ConfigChangedEvent;
-import org.apache.dubbo.common.config.configcenter.ConfigurationListener;
-import org.apache.dubbo.common.config.configcenter.DynamicConfiguration;
-import org.apache.dubbo.common.config.configcenter.TreePathDynamicConfiguration;
+import org.apache.dubbo.common.config.configcenter.*;
 import org.apache.dubbo.common.function.ThrowableConsumer;
 import org.apache.dubbo.common.function.ThrowableFunction;
 import org.apache.dubbo.common.lang.ShutdownHookCallbacks;
 import org.apache.dubbo.common.utils.NamedThreadFactory;
 import org.apache.dubbo.common.utils.StringUtils;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.nio.file.WatchEvent;
-import java.nio.file.WatchKey;
-import java.nio.file.WatchService;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeSet;
+import java.nio.file.*;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -60,9 +40,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.lang.String.format;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
+import static java.nio.file.StandardWatchEventKinds.*;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -74,7 +52,11 @@ import static org.apache.commons.io.FileUtils.readFileToString;
  *
  * @since 2.7.5
  */
-public class FileSystemDynamicConfiguration extends TreePathDynamicConfiguration {
+public class FileSystemDynamicConfiguration extends TreePathDynamicConfiguration { //基于文件系统的动态配置
+
+    /**
+     * 要留意类中的静态成员变量、方法、静态块等，这些都是在类加载时就会执行的，有些初始化工作会在其中进行
+     */
 
     public static final String CONFIG_CENTER_DIR_PARAM_NAME = PARAM_NAME_PREFIX + "dir";
 
@@ -112,11 +94,11 @@ public class FileSystemDynamicConfiguration extends TreePathDynamicConfiguration
                 {
                     put(ENTRY_CREATE.name(), ConfigChangeType.ADDED);
                     put(ENTRY_DELETE.name(), ConfigChangeType.DELETED);
-                    put(ENTRY_MODIFY.name(), ConfigChangeType.MODIFIED);
+                    put(ENTRY_MODIFY.name(), ConfigChangeType.MODIFIED); //事件变更的类型
                 }
             });
 
-    private static final Optional<WatchService> watchService;
+    private static final Optional<WatchService> watchService; //WatchService：为更改和事件注册对象的监视服务。例如，文件管理器可以使用监视服务来监视目录的更改，以便在创建或删除文件时更新其文件列表的显示。
 
     /**
      * Is Pooling Based Watch Service
@@ -125,7 +107,7 @@ public class FileSystemDynamicConfiguration extends TreePathDynamicConfiguration
      */
     private static final boolean BASED_POOLING_WATCH_SERVICE;
 
-    private static final WatchEvent.Modifier[] MODIFIERS;
+    private static final WatchEvent.Modifier[] MODIFIERS; //WatchEvent：监视服务，可用于监视已注册对象的更改和事件
 
     /**
      * the delay to action in seconds. If null, execute indirectly
@@ -140,7 +122,7 @@ public class FileSystemDynamicConfiguration extends TreePathDynamicConfiguration
      */
     private static final ThreadPoolExecutor WATCH_EVENTS_LOOP_THREAD_POOL;
 
-    // static initialization
+    // static initialization：静态块，做初始化使用
     static {
         watchService = newWatchService();
         BASED_POOLING_WATCH_SERVICE = detectPoolingBasedWatchService(watchService);
@@ -566,7 +548,7 @@ public class FileSystemDynamicConfiguration extends TreePathDynamicConfiguration
         Optional<WatchService> watchService = null;
         FileSystem fileSystem = FileSystems.getDefault();
         try {
-            watchService = Optional.of(fileSystem.newWatchService());
+            watchService = Optional.of(fileSystem.newWatchService()); //newWatchService: 此方法构造一个新的监视服务，可用于监视已注册对象的更改和事件。
         } catch (IOException e) {
             if (logger.isErrorEnabled()) {
                 logger.error(e.getMessage(), e);
@@ -576,7 +558,7 @@ public class FileSystemDynamicConfiguration extends TreePathDynamicConfiguration
         return watchService;
     }
 
-    protected static File initDirectory(URL url) {
+    protected static File initDirectory(URL url) { //创建根目录对应的文件对象File
         String directoryPath = getParameter(url, CONFIG_CENTER_DIR_PARAM_NAME, url == null ? null : url.getPath());
         File rootDirectory = null;
         if (!StringUtils.isBlank(directoryPath)) {
@@ -584,17 +566,17 @@ public class FileSystemDynamicConfiguration extends TreePathDynamicConfiguration
         }
 
         if (directoryPath == null || !rootDirectory.exists()) { // If the directory does not exist
-            rootDirectory = new File(DEFAULT_CONFIG_CENTER_DIR_PATH);
+            rootDirectory = new File(DEFAULT_CONFIG_CENTER_DIR_PATH); //默认的配置中心目录
         }
 
-        if (!rootDirectory.exists() && !rootDirectory.mkdirs()) {
+        if (!rootDirectory.exists() && !rootDirectory.mkdirs()) { //创建文件目录失败
             throw new IllegalStateException(format("Dubbo config center rootDirectory[%s] can't be created!",
                     rootDirectory.getAbsolutePath()));
         }
         return rootDirectory;
     }
 
-    protected static String getEncoding(URL url) {
+    protected static String getEncoding(URL url) { //从url中获取配置中心对应的编码
         return getParameter(url, CONFIG_CENTER_ENCODING_PARAM_NAME, DEFAULT_CONFIG_CENTER_ENCODING);
     }
 

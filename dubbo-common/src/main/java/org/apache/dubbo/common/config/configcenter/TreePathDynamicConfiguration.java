@@ -33,7 +33,7 @@ import static org.apache.dubbo.common.utils.PathUtils.buildPath;
 import static org.apache.dubbo.common.utils.PathUtils.normalize;
 
 /**
- * An abstract implementation of {@link DynamicConfiguration} is like "tree-structure" path :
+ * An abstract implementation of {@link DynamicConfiguration} is like "TREE-STRUCTURE" path : //像树形结构的路径
  * <ul>
  *     <li>{@link FileSystemDynamicConfiguration "file"}</li>
  *     <li>{@link org.apache.dubbo.configcenter.support.zookeeper.ZookeeperDynamicConfiguration "zookeeper"}</li>
@@ -47,7 +47,7 @@ import static org.apache.dubbo.common.utils.PathUtils.normalize;
 public abstract class TreePathDynamicConfiguration extends AbstractDynamicConfiguration {
 
     /**
-     * The parameter name of URL for the config root path
+     * The parameter name of URL for the config root path （这个url的参数名用于配置root路径）
      */
     public static final String CONFIG_ROOT_PATH_PARAM_NAME = PARAM_NAME_PREFIX + "root-path";
 
@@ -85,9 +85,9 @@ public abstract class TreePathDynamicConfiguration extends AbstractDynamicConfig
     }
 
     @Override
-    public final boolean publishConfig(String key, String group, String content) {
-        String pathKey = buildPathKey(group, key);
-        return execute(() -> doPublishConfig(pathKey, content), getDefaultTimeout());
+    public final boolean publishConfig(String key, String group, String content) { //子类FileSystemDynamicConfiguration中没有重写该方法，所以就直接用父类，即当前publishConfig()方法
+        String pathKey = buildPathKey(group, key); //路径key如：/Users/chenshengyong/.dubbo/config-center/dubbo/metadata/org.apache.dubbo.rpc.service.EchoService/provider/test-service
+        return execute(() -> doPublishConfig(pathKey, content), getDefaultTimeout()); //todo @csy pause
     }
 
     @Override
@@ -141,7 +141,7 @@ public abstract class TreePathDynamicConfiguration extends AbstractDynamicConfig
      * @param url the specified {@link URL connection URl}
      * @return non-null
      */
-    protected String getRootPath(URL url) {
+    protected String getRootPath(URL url) { //获取根目录的路径
 
         String rootPath = url.getParameter(CONFIG_ROOT_PATH_PARAM_NAME, buildRootPath(url));
 
@@ -162,6 +162,7 @@ public abstract class TreePathDynamicConfiguration extends AbstractDynamicConfig
 
     /**
      * Get the namespace from the specified {@link URL connection URl}
+     * （从指定url中获取命名空间）
      *
      * @param url the specified {@link URL connection URl}
      * @return non-null

@@ -499,7 +499,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
      * @return non-null
      */
     public T getOrDefaultExtension(String name) {
-        return containsExtension(name) ? getExtension(name) : getDefaultExtension();
+        return containsExtension(name) ? getExtension(name) : getDefaultExtension(); //todo @csy 默认扩展名也是配置在文件中的，此处getExtension(name)与getDefaultExtension()有啥不同？
     }
 
     /**

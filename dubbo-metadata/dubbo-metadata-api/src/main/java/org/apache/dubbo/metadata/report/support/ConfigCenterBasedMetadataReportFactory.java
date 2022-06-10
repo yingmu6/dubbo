@@ -61,19 +61,19 @@ public abstract class ConfigCenterBasedMetadataReportFactory implements Metadata
     }
 
     @Override
-    public ConfigCenterBasedMetadataReport getMetadataReport(URL url) {
-        url = url.setPath(URL_PATH); //设置url的路径，path值为："org.apache.dubbo.metadata.report.MetadataReport"
+    public ConfigCenterBasedMetadataReport getMetadataReport(URL url) { //获取配置中心元数据上报实例
+        url = url.setPath(URL_PATH); //更换url的路径path，值为："org.apache.dubbo.metadata.report.MetadataReport"
         final URL actualURL = resolveURLParameters(url);
         String key = actualURL.toServiceString();
-        // Lock the metadata access process to ensure a single instance of the metadata instance
-        return metadataReportCache.computeIfAbsent(key, k -> new ConfigCenterBasedMetadataReport(actualURL, keyType));
+        // Lock the metadata access process to ensure a single instance of the metadata instance（锁定元数据访问进程，保证元数据实例的单一实例）
+        return metadataReportCache.computeIfAbsent(key, k -> new ConfigCenterBasedMetadataReport(actualURL, keyType)); //设置元数据上报缓存，会根据Map的computeIfAbsent确保key不重复，来保证单实例创建
     }
 
-    private URL resolveURLParameters(URL url) {
+    private URL resolveURLParameters(URL url) { //todo @csy 待调试
         URL resolvedURL = url.removeParameters(EXPORT_KEY, REFER_KEY); //移除URL中参数export, refer
         if (PATH.equals(getKeyType())) { // Only handles for "PATH" type
             if (isBlank(resolvedURL.getParameter(CONFIG_ROOT_PATH_PARAM_NAME))) {
-                resolvedURL = resolvedURL.addParameter(CONFIG_ROOT_PATH_PARAM_NAME, SLASH);
+                resolvedURL = resolvedURL.addParameter(CONFIG_ROOT_PATH_PARAM_NAME, SLASH); //设置url的CONFIG_ROOT_PATH_PARAM_NAME参数对应的值
             }
         }
         return resolvedURL;

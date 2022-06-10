@@ -71,7 +71,7 @@ public class ConfigCenterBasedMetadataReportTest {
     @BeforeEach
     public void init() {
         ApplicationModel.getConfigManager().setApplication(new ApplicationConfig("test-service"));
-        this.metadataReport = new FileSystemMetadataReportFactory().getMetadataReport(REPORT_SERVER_URL);
+        this.metadataReport = new FileSystemMetadataReportFactory().getMetadataReport(REPORT_SERVER_URL); //创建ConfigCenterBasedMetadataReport实例，其中也包含DynamicConfiguration实例的创建
     }
 
     @AfterEach
@@ -89,7 +89,7 @@ public class ConfigCenterBasedMetadataReportTest {
         MetadataIdentifier metadataIdentifier = new MetadataIdentifier(BASE_URL);
         ServiceDefinition serviceDefinition = ServiceDefinitionBuilder.buildFullDefinition(INTERFACE_CLASS, BASE_URL.getParameters());
         metadataReport.storeProviderMetadata(metadataIdentifier, serviceDefinition); //metadataReport实例是在当前init()方法中进行创建的
-        String serviceDefinitionJSON = metadataReport.getServiceDefinition(metadataIdentifier);
+        String serviceDefinitionJSON = metadataReport.getServiceDefinition(metadataIdentifier); //此处为啥获取到的值是JSON字符串？
         assertEquals(serviceDefinitionJSON, new Gson().toJson(serviceDefinition));
     }
 

@@ -91,12 +91,12 @@ public abstract class AbstractDynamicConfiguration implements DynamicConfigurati
                 getTimeout(url));
     }
 
-    public AbstractDynamicConfiguration(String threadPoolPrefixName,
+    public AbstractDynamicConfiguration(String threadPoolPrefixName, //构建线程池可以从url参数中获取，也可以由调用的地方显示传入
                                         int threadPoolSize,
                                         long keepAliveTime,
                                         String group,
                                         long timeout) { //完整参数的构造函数
-        this.workersThreadPool = initWorkersThreadPool(threadPoolPrefixName, threadPoolSize, keepAliveTime);
+        this.workersThreadPool = initWorkersThreadPool(threadPoolPrefixName, threadPoolSize, keepAliveTime); //初始化工作的线程池
         this.group = group;
         this.timeout = timeout;
     }
@@ -251,7 +251,7 @@ public abstract class AbstractDynamicConfiguration implements DynamicConfigurati
         return getParameter(url, THREAD_POOL_KEEP_ALIVE_TIME_PARAM_NAME, DEFAULT_THREAD_POOL_KEEP_ALIVE_TIME);
     }
 
-    protected static String getParameter(URL url, String name, String defaultValue) {
+    protected static String getParameter(URL url, String name, String defaultValue) { //从url中取参数名为name对应的值，传入url为空时，直接返回传入的默认值
         if (url != null) {
             return url.getParameter(name, defaultValue);
         }

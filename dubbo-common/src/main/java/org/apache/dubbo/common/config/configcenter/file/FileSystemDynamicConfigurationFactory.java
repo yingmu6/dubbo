@@ -29,7 +29,7 @@ import org.apache.dubbo.common.config.configcenter.DynamicConfigurationFactory;
 public class FileSystemDynamicConfigurationFactory extends AbstractDynamicConfigurationFactory {
 
     @Override
-    protected DynamicConfiguration createDynamicConfiguration(URL url) {
+    protected DynamicConfiguration createDynamicConfiguration(URL url) { //创建FileSystemDynamicConfiguration基于文件系统的动态配置实例
         return new FileSystemDynamicConfiguration(url);
     }
 }
