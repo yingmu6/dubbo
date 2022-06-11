@@ -198,7 +198,7 @@ public abstract class AbstractDynamicConfiguration implements DynamicConfigurati
      * @param task    the {@link Callable task}
      * @param timeout timeout in milliseconds
      * @param <V>     the type of computing result
-     * @return the computing result
+     * @return the computing（计算） result
      */
     protected final <V> V execute(Callable<V> task, long timeout) {
         V value = null;
@@ -206,7 +206,7 @@ public abstract class AbstractDynamicConfiguration implements DynamicConfigurati
 
             if (timeout < 1) { // less or equal 0
                 value = task.call();
-            } else {
+            } else { //若给出了等待时间，则将执行的任务提交到线程池中，并等待指定的时间后获取结果
                 Future<V> future = workersThreadPool.submit(task);
                 value = future.get(timeout, TimeUnit.MILLISECONDS);
             }

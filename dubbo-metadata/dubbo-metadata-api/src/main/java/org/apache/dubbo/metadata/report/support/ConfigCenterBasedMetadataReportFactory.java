@@ -66,7 +66,7 @@ public abstract class ConfigCenterBasedMetadataReportFactory implements Metadata
         final URL actualURL = resolveURLParameters(url);
         String key = actualURL.toServiceString();
         // Lock the metadata access process to ensure a single instance of the metadata instance（锁定元数据访问进程，保证元数据实例的单一实例）
-        return metadataReportCache.computeIfAbsent(key, k -> new ConfigCenterBasedMetadataReport(actualURL, keyType)); //设置元数据上报缓存，会根据Map的computeIfAbsent确保key不重复，来保证单实例创建
+        return metadataReportCache.computeIfAbsent(key, k -> new ConfigCenterBasedMetadataReport(actualURL, keyType)); //设置元数据上报实例的缓存，会根据Map的computeIfAbsent确保key不重复，来保证单实例创建
     }
 
     private URL resolveURLParameters(URL url) { //todo @csy 待调试

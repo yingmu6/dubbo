@@ -28,7 +28,7 @@ import java.util.function.Function;
  * @since 2.7.5
  */
 @FunctionalInterface
-public interface ThrowableFunction<T, R> {
+public interface ThrowableFunction<T, R> { //dubbo自定义的函数式接口
 
     /**
      * Applies this function to the given argument.
@@ -37,7 +37,7 @@ public interface ThrowableFunction<T, R> {
      * @return the function result
      * @throws Throwable if met with any error
      */
-    R apply(T t) throws Throwable;
+    R apply(T t) throws Throwable; //输入一个参数计算后返回值
 
     /**
      * Executes {@link ThrowableFunction}
@@ -46,7 +46,7 @@ public interface ThrowableFunction<T, R> {
      * @return the function result
      * @throws RuntimeException wrappers {@link Throwable}
      */
-    default R execute(T t) throws RuntimeException {
+    default R execute(T t) throws RuntimeException { //default默认方法
         R result = null;
         try {
             result = apply(t);
@@ -65,7 +65,7 @@ public interface ThrowableFunction<T, R> {
      * @param <R>      the return type
      * @return the result after execution
      */
-    static <T, R> R execute(T t, ThrowableFunction<T, R> function) {
+    static <T, R> R execute(T t, ThrowableFunction<T, R> function) { //static静态方法
         return function.execute(t);
     }
 }

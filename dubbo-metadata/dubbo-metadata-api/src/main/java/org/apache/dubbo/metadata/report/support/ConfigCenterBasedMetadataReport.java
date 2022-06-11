@@ -58,7 +58,7 @@ public class ConfigCenterBasedMetadataReport extends AbstractMetadataReport { //
 
     @Override
     protected void doStoreProviderMetadata(MetadataIdentifier providerMetadataIdentifier, String serviceDefinitions) {
-        saveMetadata(providerMetadataIdentifier, serviceDefinitions);
+        saveMetadata(providerMetadataIdentifier, serviceDefinitions); //保存元数据
     }
 
     @Override
@@ -119,7 +119,9 @@ public class ConfigCenterBasedMetadataReport extends AbstractMetadataReport { //
 
     protected void saveMetadata(MetadataIdentifier metadataIdentifier, String value) {
         String key = getKey(metadataIdentifier); //key的值如：metadata/org.apache.dubbo.demo.GreetingService/provider/zhangsan
-        dynamicConfiguration.publishConfig(key, group, value); //要看dynamicConfiguration在构造方法初始化时用哪个工厂创建的，比如用FileSystemDynamicConfigurationFactory创建的，那么实例就为FileSystemDynamicConfiguration
+        //要看dynamicConfiguration在构造方法初始化时用哪个工厂创建的，比如用FileSystemDynamicConfigurationFactory创建的，那么实例就为FileSystemDynamicConfiguration
+        //因为FileSystemDynamicConfiguration没有声明publishConfig()方法，而是继承父类TreePathDynamicConfiguration的，所以会调用TreePathDynamicConfiguration的publishConfig方法
+        dynamicConfiguration.publishConfig(key, group, value);
     }
 
     protected String getMetadata(ServiceMetadataIdentifier metadataIdentifier) {

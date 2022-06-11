@@ -328,7 +328,7 @@ public class FileSystemDynamicConfiguration extends TreePathDynamicConfiguration
     @Override
     protected boolean doPublishConfig(String pathKey, String content) throws Exception {
         return delay(pathKey, configFile -> {
-            FileUtils.write(configFile, content, getEncoding());
+            FileUtils.write(configFile, content, getEncoding()); //将配置内容写到配置文件中
             return true;
         });
     }
@@ -396,7 +396,7 @@ public class FileSystemDynamicConfiguration extends TreePathDynamicConfiguration
      * @param <V>            the computed value
      * @return
      */
-    protected <V> V delay(String configFilePath, ThrowableFunction<File, V> function) {
+    protected <V> V delay(String configFilePath, ThrowableFunction<File, V> function) { //可延迟写配置文件
         File configFile = new File(configFilePath);
         // Must be based on PoolingWatchService and has listeners under config file
         if (isBasedPoolingWatchService()) {
@@ -405,7 +405,7 @@ public class FileSystemDynamicConfiguration extends TreePathDynamicConfiguration
                 if (hasListeners(configFile) && isProcessing(configDirectory)) {
                     Integer delay = getDelay();
                     if (delay != null) {
-                        // wait for delay in seconds
+                        // wait for de˚lay in seconds
                         long timeout = SECONDS.toMillis(delay);
                         if (logger.isDebugEnabled()) {
                             logger.debug(format("The config[path : %s] is about to delay in %d ms.",

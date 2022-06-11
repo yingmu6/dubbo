@@ -87,7 +87,9 @@ public abstract class TreePathDynamicConfiguration extends AbstractDynamicConfig
     @Override
     public final boolean publishConfig(String key, String group, String content) { //子类FileSystemDynamicConfiguration中没有重写该方法，所以就直接用父类，即当前publishConfig()方法
         String pathKey = buildPathKey(group, key); //路径key如：/Users/chenshengyong/.dubbo/config-center/dubbo/metadata/org.apache.dubbo.rpc.service.EchoService/provider/test-service
-        return execute(() -> doPublishConfig(pathKey, content), getDefaultTimeout()); //todo @csy pause
+
+        // 异步发布配置（将元数据信息写到远端或本地）
+        return execute(() -> doPublishConfig(pathKey, content), getDefaultTimeout()); //execute(Callable<V> task, long timeout) 参数Callable是函数式接口，可以用lambda表示
     }
 
     @Override
@@ -115,6 +117,13 @@ public abstract class TreePathDynamicConfiguration extends AbstractDynamicConfig
         return isEmpty(configKeys) ? emptySortedSet() : unmodifiableSortedSet(new TreeSet<>(configKeys));
     }
 
+    /**
+     * 发布配置（在远端或本地把配置文件内容保存下来）
+     * 有不同的实现：
+     * 比如若是Zookeeper实现的ZookeeperDynamicConfiguration，就把配置在Zookeeper目录下创建一个节点
+     * 如本地文件实现的FileSystemDynamicConfiguration，就把内容写到本地文件中
+     * 或者consul实现的配置中心ConsulDynamicConfiguration，就内容以key-value形式写到远程
+     */
     protected abstract boolean doPublishConfig(String pathKey, String content) throws Exception;
 
     protected abstract String doGetConfig(String pathKey) throws Exception;
