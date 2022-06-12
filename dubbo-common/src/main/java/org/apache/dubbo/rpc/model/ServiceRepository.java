@@ -184,7 +184,7 @@ public class ServiceRepository extends LifecycleAdapter implements FrameworkExt 
     }
 
     @Override
-    public void destroy() throws IllegalStateException {
+    public void destroy() throws IllegalStateException { //服务仓库销毁，将相关缓存清除
         // currently works for unit test
         services.clear();
         consumers.clear();

@@ -119,7 +119,7 @@ public class ApplicationModel { //应用的数据模型
         ApplicationModel.application = application;
     }
 
-    // only for unit test
+    // only for unit test（此处的重置，仅仅用于单元测试使用）
     public static void reset() {
         getServiceRepository().destroy();
         getConfigManager().destroy();

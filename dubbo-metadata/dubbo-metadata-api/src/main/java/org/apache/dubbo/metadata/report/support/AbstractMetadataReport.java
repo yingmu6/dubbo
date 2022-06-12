@@ -62,7 +62,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
     private final AtomicBoolean initialized = new AtomicBoolean(false);
 
     // 数据格式：Map<MetadataIdentifier, ServiceDefinition>
-    final Map<MetadataIdentifier, Object> allMetadataReports = new ConcurrentHashMap<>(4); //所有的服务元数据Map，包含成功和失败的元数据
+    final Map<MetadataIdentifier, Object> allMetadataReports = new ConcurrentHashMap<>(4); //所有的服务元数据Map，包含成功和失败的元数据（也包含提供者、消费者的元数据）
 
     // 数据格式：Map<MetadataIdentifier, ServiceDefinition>
     final Map<MetadataIdentifier, Object> failedReports = new ConcurrentHashMap<>(4); //失败的服务元数据Map
@@ -250,7 +250,10 @@ public abstract class AbstractMetadataReport implements MetadataReport {
             if (logger.isInfoEnabled()) {
                 logger.info("store provider metadata. Identifier : " + providerMetadataIdentifier + "; definition: " + serviceDefinition);
             }
-            allMetadataReports.put(providerMetadataIdentifier, serviceDefinition); //本地缓存存储：此处服务的元数据不管成功的、失败的都会存储
+            /**
+             * 本地缓存存储：此处服务的元数据不管成功的、失败的都会存储
+             */
+            allMetadataReports.put(providerMetadataIdentifier, serviceDefinition);
             failedReports.remove(providerMetadataIdentifier); //存储成功后，从失败Mao中移除对应的元素
             Gson gson = new Gson();
             String data = gson.toJson(serviceDefinition); //JSON字符串，data数据如：{"parameters":{"application":"test-service","side":"provider"},"canonicalName":"org.apache.dubbo.rpc.service.EchoService","codeSource":"file:/Users/chenshengyong/self-db/dubbo/dubbo-common/target/classes/","methods":[{"name":"$echo","parameterTypes":["java.lang.Object"],"returnType":"java.lang.Object"}],"types":[{"type":"java.lang.Object","typeBuilderName":"org.apache.dubbo.metadata.definition.builder.DefaultTypeBuilder"}]}
@@ -292,7 +295,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
             failedReports.remove(consumerMetadataIdentifier);
 
             Gson gson = new Gson();
-            String data = gson.toJson(serviceParameterMap);
+            String data = gson.toJson(serviceParameterMap); //存储的是服务参数Map对应的json字符串
             doStoreConsumerMetadata(consumerMetadataIdentifier, data);
             saveProperties(consumerMetadataIdentifier, data, true, !syncReport);
         } catch (Exception e) {
@@ -313,7 +316,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
     }
 
     @Override
-    public void removeServiceMetadata(ServiceMetadataIdentifier metadataIdentifier) {
+    public void removeServiceMetadata(ServiceMetadataIdentifier metadataIdentifier) { //移除指定元数据标识符对应的服务元数据
         if (syncReport) {
             doRemoveMetadata(metadataIdentifier);
         } else {
@@ -476,10 +479,10 @@ public abstract class AbstractMetadataReport implements MetadataReport {
     }
 
     @Override
-    public final void close() throws Exception {
-        this.shutdownThreadPoolExecutors();
-        this.clearCache();
-        doClose();
+    public final void close() throws Exception { //关闭元数据上报
+        this.shutdownThreadPoolExecutors(); //提供定时任务以及线程池
+        this.clearCache(); //清除本地元数据缓存
+        doClose(); //关闭客户端与服务端的连接
     }
 
     /**
@@ -508,7 +511,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
 
     }
 
-    private void clearCache() {
+    private void clearCache() { //清除元数据缓存
         this.properties.clear();
         this.allMetadataReports.clear();
         this.failedReports.clear();
@@ -516,9 +519,9 @@ public abstract class AbstractMetadataReport implements MetadataReport {
     }
 
     private void shutdownThreadPoolExecutors() {
-        this.metadataReportRetry.cancelRetryTask();
+        this.metadataReportRetry.cancelRetryTask(); //取消元数据失败重试的任务
         shutdown(this.reportCacheExecutor);
-        shutdown(cycleReportExecutor);
+        shutdown(cycleReportExecutor); //停掉线程池任务
     }
 
     private static void shutdown(ExecutorService executorService) {

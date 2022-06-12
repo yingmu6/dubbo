@@ -80,7 +80,7 @@ public abstract class TreePathDynamicConfiguration extends AbstractDynamicConfig
 
     @Override
     protected final String doGetConfig(String key, String group) throws Exception {
-        String pathKey = buildPathKey(group, key);
+        String pathKey = buildPathKey(group, key); //如存储的配置文件路径：/Users/chenshengyong/.dubbo/config-center/dubbo/metadata/org.apache.dubbo.rpc.service.EchoService/provider/test-service
         return doGetConfig(pathKey);
     }
 
@@ -128,6 +128,12 @@ public abstract class TreePathDynamicConfiguration extends AbstractDynamicConfig
 
     protected abstract String doGetConfig(String pathKey) throws Exception;
 
+    /**
+     * 移除配置：
+     * 有不同的实现：
+     * 比如：本地文件实现的FileSystemDynamicConfiguration，就把指定路径的文件删除
+     * 比如：Zookeeper实现的ZookeeperDynamicConfiguration，就会删除指定路径的节点
+     */
     protected abstract boolean doRemoveConfig(String pathKey) throws Exception;
 
     protected abstract Collection<String> doGetConfigKeys(String groupPath);

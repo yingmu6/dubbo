@@ -101,7 +101,7 @@ public class FileSystemDynamicConfiguration extends TreePathDynamicConfiguration
     private static final Optional<WatchService> watchService; //WatchService：为更改和事件注册对象的监视服务。例如，文件管理器可以使用监视服务来监视目录的更改，以便在创建或删除文件时更新其文件列表的显示。
 
     /**
-     * Is Pooling Based Watch Service
+     * Is Pooling Based Watch Service （是否是基于池的监视服务）
      *
      * @see #detectPoolingBasedWatchService(Optional)
      */
@@ -147,9 +147,9 @@ public class FileSystemDynamicConfiguration extends TreePathDynamicConfiguration
      *
      * @see #initProcessingDirectories()
      */
-    private final Set<File> processingDirectories;
+    private final Set<File> processingDirectories; //正在处理的文件目录集合
 
-    private final Map<File, List<ConfigurationListener>> listenersRepository;
+    private final Map<File, List<ConfigurationListener>> listenersRepository; //配置文件对应的监听器
 
     public FileSystemDynamicConfiguration() {
         this(new File(DEFAULT_CONFIG_CENTER_DIR_PATH));
@@ -327,7 +327,7 @@ public class FileSystemDynamicConfiguration extends TreePathDynamicConfiguration
 
     @Override
     protected boolean doPublishConfig(String pathKey, String content) throws Exception {
-        return delay(pathKey, configFile -> {
+        return delay(pathKey, configFile -> { //延迟将需要发布的内容写到本地文件中
             FileUtils.write(configFile, content, getEncoding()); //将配置内容写到配置文件中
             return true;
         });
@@ -343,7 +343,7 @@ public class FileSystemDynamicConfiguration extends TreePathDynamicConfiguration
     protected boolean doRemoveConfig(String pathKey) throws Exception {
         delay(pathKey, configFile -> {
             String content = getConfig(configFile);
-            FileUtils.deleteQuietly(configFile);
+            FileUtils.deleteQuietly(configFile); //deleteQuietly()删除文件：内部已经捕获了异常不会抛出，如果检测到文件是目录，会把目录下的文件循环删除
             return content;
         });
         return true;
@@ -400,9 +400,9 @@ public class FileSystemDynamicConfiguration extends TreePathDynamicConfiguration
         File configFile = new File(configFilePath);
         // Must be based on PoolingWatchService and has listeners under config file
         if (isBasedPoolingWatchService()) {
-            File configDirectory = configFile.getParentFile();
+            File configDirectory = configFile.getParentFile(); //获取父目录
             executeMutually(configDirectory, () -> {
-                if (hasListeners(configFile) && isProcessing(configDirectory)) {
+                if (hasListeners(configFile) && isProcessing(configDirectory)) { //配置文件有监听器且
                     Integer delay = getDelay();
                     if (delay != null) {
                         // wait for de˚lay in seconds
@@ -411,10 +411,10 @@ public class FileSystemDynamicConfiguration extends TreePathDynamicConfiguration
                             logger.debug(format("The config[path : %s] is about to delay in %d ms.",
                                     configFilePath, timeout));
                         }
-                        configDirectory.wait(timeout);
+                        configDirectory.wait(timeout); //等待指定的时间
                     }
                 }
-                addProcessing(configDirectory);
+                addProcessing(configDirectory); //将配置文件所属的目录添加到processingDirectories集合中
                 return null;
             });
         }
@@ -422,7 +422,7 @@ public class FileSystemDynamicConfiguration extends TreePathDynamicConfiguration
         V value = null;
 
         try {
-            value = function.apply(configFile);
+            value = function.apply(configFile); //使用函数式接口调用，函数的执行逻辑放在调用的地方
         } catch (Throwable e) {
             if (logger.isErrorEnabled()) {
                 logger.error(e.getMessage(), e);
@@ -459,7 +459,7 @@ public class FileSystemDynamicConfiguration extends TreePathDynamicConfiguration
 
     protected String getConfig(File configFile) {
         return ThrowableFunction.execute(configFile,
-                file -> canRead(configFile) ? readFileToString(configFile, getEncoding()) : null);
+                file -> canRead(configFile) ? readFileToString(configFile, getEncoding()) : null); //readFileToString(): 读取文件中的内容，并写到字符串中
     }
 
     @Override
@@ -499,9 +499,9 @@ public class FileSystemDynamicConfiguration extends TreePathDynamicConfiguration
         return super.getWorkersThreadPool();
     }
 
-    private <V> V executeMutually(final Object mutex, Callable<V> callable) {
+    private <V> V executeMutually(final Object mutex, Callable<V> callable) { //Mutually：相互地、共同地
         V value = null;
-        synchronized (mutex) {
+        synchronized (mutex) { //加锁处理
             try {
                 value = callable.call();
             } catch (Exception e) {

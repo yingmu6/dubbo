@@ -18,9 +18,7 @@ package org.apache.dubbo.metadata.report.identifier;
 
 import org.apache.dubbo.common.URL;
 
-import static org.apache.dubbo.common.constants.CommonConstants.GROUP_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.SIDE_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.VERSION_KEY;
+import static org.apache.dubbo.common.constants.CommonConstants.*;
 import static org.apache.dubbo.metadata.MetadataConstants.KEY_REVISON_PREFIX;
 
 /**
@@ -41,7 +39,7 @@ public class ServiceMetadataIdentifier extends BaseServiceMetadataIdentifier imp
         this.serviceInterface = serviceInterface;
         this.version = version;
         this.group = group;
-        this.side = side;
+        this.side = side; //serviceInterface、version、group、side参数来自于父类BaseServiceMetadataIdentifier
         this.revision = revision;
         this.protocol = protocol;
     }

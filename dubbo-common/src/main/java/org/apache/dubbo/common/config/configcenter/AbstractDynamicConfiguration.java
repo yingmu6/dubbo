@@ -110,8 +110,8 @@ public abstract class AbstractDynamicConfiguration implements DynamicConfigurati
     }
 
     @Override
-    public final String getConfig(String key, String group, long timeout) throws IllegalStateException {
-        return execute(() -> doGetConfig(key, group), timeout);
+    public final String getConfig(String key, String group, long timeout) throws IllegalStateException { //如FileSystemDynamicConfiguration没有重新getConfig()方法，所以会调用从父类继承的getConfig的方法
+        return execute(() -> doGetConfig(key, group), timeout); //此处由于参数是函数式接口，可以按lambda传递
     }
 
     @Override
@@ -159,7 +159,7 @@ public abstract class AbstractDynamicConfiguration implements DynamicConfigurati
      * @return if found, return the content of configuration
      * @throws Exception If met with some problems
      */
-    protected abstract String doGetConfig(String key, String group) throws Exception;
+    protected abstract String doGetConfig(String key, String group) throws Exception; //如：此处的实例若是FileSystemDynamicConfiguration，因为doGetConfig是其父类TreePathDynamicConfiguration的方法，所以对应执行
 
     /**
      * Close the resources if necessary
@@ -169,7 +169,7 @@ public abstract class AbstractDynamicConfiguration implements DynamicConfigurati
     protected abstract void doClose() throws Exception;
 
     /**
-     * Remove the config in the specified key and group
+     * Remove the config in the specified key and group（移除指定key和group对应的配置）
      *
      * @param key   the key
      * @param group the group

@@ -57,7 +57,7 @@ public class ConfigCenterBasedMetadataReport extends AbstractMetadataReport { //
 
 
     @Override
-    protected void doStoreProviderMetadata(MetadataIdentifier providerMetadataIdentifier, String serviceDefinitions) {
+    protected void doStoreProviderMetadata(MetadataIdentifier providerMetadataIdentifier, String serviceDefinitions) { //存储提供者元数据和消费者元数据，只能内容不一样，操作流程是一致的
         saveMetadata(providerMetadataIdentifier, serviceDefinitions); //保存元数据
     }
 
@@ -68,7 +68,7 @@ public class ConfigCenterBasedMetadataReport extends AbstractMetadataReport { //
 
     @Override
     protected void doSaveMetadata(ServiceMetadataIdentifier metadataIdentifier, URL url) {
-        saveMetadata(metadataIdentifier, URL.encode(url.toFullString()));
+        saveMetadata(metadataIdentifier, URL.encode(url.toFullString())); //此处元数据存储的是url编码后的字符串
     }
 
     @Override
@@ -112,9 +112,9 @@ public class ConfigCenterBasedMetadataReport extends AbstractMetadataReport { //
         return keyType.build(EXPORTED_URLS_TAG, serviceName, exportedServicesRevision);
     }
 
-    protected void saveMetadata(BaseMetadataIdentifier metadataIdentifier, String value) {
-        String key = getKey(metadataIdentifier);
-        dynamicConfiguration.publishConfig(key, group, value);
+    protected void saveMetadata(BaseMetadataIdentifier metadataIdentifier, String value) { //saveMetadata()：方法重载
+        String key = getKey(metadataIdentifier); //key如：metadata/org.apache.dubbo.rpc.service.EchoService/provider/dubbo/revisionnull
+        dynamicConfiguration.publishConfig(key, group, value); //value值如：dubbo%3A%2F%2F127.0.0.1%3A20880%2Forg.apache.dubbo.rpc.service.EchoService%3Fapplication%3Dtest-service%26side%3Dprovider
     }
 
     protected void saveMetadata(MetadataIdentifier metadataIdentifier, String value) {
@@ -131,7 +131,7 @@ public class ConfigCenterBasedMetadataReport extends AbstractMetadataReport { //
 
     protected String getMetadata(MetadataIdentifier metadataIdentifier) {
         String key = getKey(metadataIdentifier);
-        return dynamicConfiguration.getConfig(key, group);
+        return dynamicConfiguration.getConfig(key, group); //如：当上报url为file://xxx时，此处的实例为FileSystemDynamicConfiguration，会根据协议取创建你工厂，再创建具体实例
     }
 
     protected String getMetadata(SubscriberMetadataIdentifier metadataIdentifier) {
@@ -153,7 +153,7 @@ public class ConfigCenterBasedMetadataReport extends AbstractMetadataReport { //
         return metadataIdentifier.getUniqueKey(keyType);
     }
 
-    protected String getKey(MetadataIdentifier metadataIdentifier) { //产生元数据对应的唯一键
+    protected String getKey(MetadataIdentifier metadataIdentifier) { //获取元数据对应的唯一键，唯一键的拼接方式按照KeyTypeEnum分为按路径"/"或按分隔符":"进行拼接
         return metadataIdentifier.getUniqueKey(keyType);
     }
 

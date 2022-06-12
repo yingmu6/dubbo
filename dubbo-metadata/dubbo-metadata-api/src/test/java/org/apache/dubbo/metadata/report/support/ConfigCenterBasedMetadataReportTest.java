@@ -69,13 +69,13 @@ public class ConfigCenterBasedMetadataReportTest {
     private ConfigCenterBasedMetadataReport metadataReport;
 
     @BeforeEach
-    public void init() {
+    public void init() { //在每个测试用例执行前，做初始化操作
         ApplicationModel.getConfigManager().setApplication(new ApplicationConfig("test-service"));
         this.metadataReport = new FileSystemMetadataReportFactory().getMetadataReport(REPORT_SERVER_URL); //创建ConfigCenterBasedMetadataReport实例，其中也包含DynamicConfiguration实例的创建
     }
 
     @AfterEach
-    public void reset() throws Exception {
+    public void reset() throws Exception { //在每个测试用例执行后，做相关销毁工作
         ApplicationModel.reset();
         this.metadataReport.close();
     }
@@ -85,11 +85,14 @@ public class ConfigCenterBasedMetadataReportTest {
      * {@link MetadataReport#getServiceDefinition(MetadataIdentifier)}
      */
     @Test
-    public void testStoreProviderMetadataAndGetServiceDefinition() { //已测，
+    public void testStoreProviderMetadataAndGetServiceDefinition() { //已测，测试本地文件存储元数据以及从本地文件中获取到元数据
         MetadataIdentifier metadataIdentifier = new MetadataIdentifier(BASE_URL);
         ServiceDefinition serviceDefinition = ServiceDefinitionBuilder.buildFullDefinition(INTERFACE_CLASS, BASE_URL.getParameters());
+        // 提供者的元数据信息最终通过FileSystemDynamicConfiguration.doPublishConfig写到本地配置文件中
         metadataReport.storeProviderMetadata(metadataIdentifier, serviceDefinition); //metadataReport实例是在当前init()方法中进行创建的
-        String serviceDefinitionJSON = metadataReport.getServiceDefinition(metadataIdentifier); //此处为啥获取到的值是JSON字符串？
+
+        // 从配置文件中去获取存储的提供者元数据信息
+        String serviceDefinitionJSON = metadataReport.getServiceDefinition(metadataIdentifier); //此处为啥获取到的值是JSON字符串？提供者元数据是按json字符串存储的
         assertEquals(serviceDefinitionJSON, new Gson().toJson(serviceDefinition));
     }
 
@@ -98,9 +101,13 @@ public class ConfigCenterBasedMetadataReportTest {
      * {@link MetadataReport#getServiceDefinition(MetadataIdentifier)}
      */
     @Test
-    public void testStoreConsumerMetadata() {
+    public void testStoreConsumerMetadata() { //已测，存储消费者元数据和获取消费者元数据（两者只是存储的元数据不同，操作逻辑是一样的）
         MetadataIdentifier metadataIdentifier = new MetadataIdentifier(BASE_URL);
+
+        // 存储url参数Map对应的json字符串
         metadataReport.storeConsumerMetadata(metadataIdentifier, BASE_URL.getParameters());
+
+        // 获取元数据标识符对应存储的内容（获取提供者、消费者的元数据，都用getServiceDefinition()方法 ）
         String parametersJSON = metadataReport.getServiceDefinition(metadataIdentifier);
         assertEquals(parametersJSON, new Gson().toJson(BASE_URL.getParameters()));
     }
@@ -110,11 +117,16 @@ public class ConfigCenterBasedMetadataReportTest {
      * {@link MetadataReport#removeServiceMetadata(ServiceMetadataIdentifier)}
      */
     @Test
-    public void testSaveServiceMetadataAndRemoveServiceMetadata() {
+    public void testSaveServiceMetadataAndRemoveServiceMetadata() { //已测，存储服务元数据（操作逻辑与存储提供者、消费者元数据相同，只是数据不一样）
         ServiceMetadataIdentifier metadataIdentifier = new ServiceMetadataIdentifier(BASE_URL);
+
+        // saveServiceMetadata中存储的内容是url编码后的字符串
         metadataReport.saveServiceMetadata(metadataIdentifier, BASE_URL);
+
         String metadata = metadataReport.getMetadata(metadataIdentifier);
         assertEquals(URL.encode(BASE_URL.toFullString()), metadata);
+
+        // 此处移除服务元数据，会把本地元数据存储文件删掉
         metadataReport.removeServiceMetadata(metadataIdentifier);
         assertNull(metadataReport.getMetadata(metadataIdentifier));
     }
