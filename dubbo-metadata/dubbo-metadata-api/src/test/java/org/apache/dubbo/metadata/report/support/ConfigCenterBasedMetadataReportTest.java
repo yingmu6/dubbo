@@ -136,11 +136,16 @@ public class ConfigCenterBasedMetadataReportTest {
      * {@link MetadataReport#getSubscribedURLs(SubscriberMetadataIdentifier)}
      */
     @Test
-    public void testSaveSubscribedDataAndGetSubscribedURLs() {
+    public void testSaveSubscribedDataAndGetSubscribedURLs() { //已测，测试订阅的元数据存储和获取
         SubscriberMetadataIdentifier metadataIdentifier = new SubscriberMetadataIdentifier(BASE_URL);
-        Set<String> urls = singleton(BASE_URL).stream().map(URL::toIdentityString).collect(toSet());
+        Set<String> urls = singleton(BASE_URL).stream().map(URL::toIdentityString).collect(toSet()); //构建带有身份信息的url集合
+
+        // 存储订阅的元数据（数据为订阅url集合对应的字符串）
         metadataReport.saveSubscribedData(metadataIdentifier, urls);
+
+        // 获取订阅的元数据（数据为订阅的url集合）
         Collection<String> subscribedURLs = metadataReport.getSubscribedURLs(metadataIdentifier);
+
         assertEquals(1, subscribedURLs.size());
         assertEquals(urls, subscribedURLs);
     }
@@ -151,8 +156,10 @@ public class ConfigCenterBasedMetadataReportTest {
      * {@link MetadataReport#getExportedURLs(String, String)}
      */
     @Test
-    public void testSaveExportedURLsAndGetExportedURLs() {
+    public void testSaveExportedURLsAndGetExportedURLs() { //已测，暴露服务url对应的元数据
         SortedSet<String> urls = singleton(BASE_URL).stream().map(URL::toIdentityString).collect(TreeSet::new, Set::add, Set::addAll);
+
+        // 存储的元数据内容，是暴露的url列表
         metadataReport.saveExportedURLs(urls);
 
         URLRevisionResolver urlRevisionResolver = URLRevisionResolver.INSTANCE;

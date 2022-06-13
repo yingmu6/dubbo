@@ -105,7 +105,7 @@ public interface MetadataReport extends AutoCloseable {//元数据值怎么上�
     /**
      * Save the exported {@link URL#toFullString() strings} presenting the {@link URL URLs} in bulk.
      *
-     * @param serviceName              the specified Dubbo service name
+     * @param serviceName              the specified Dubbo service name（此处的服务名，传入的是应用的名称）
      * @param exportedServicesRevision the revision of the exported Services
      * @param exportedURLs             the exported {@link URL urls}
      * @return If successful, return <code>true</code>, or <code>false</code>
@@ -113,7 +113,7 @@ public interface MetadataReport extends AutoCloseable {//元数据值怎么上�
      */
     default boolean saveExportedURLs(String serviceName, String exportedServicesRevision, SortedSet<String> exportedURLs) {
         Gson gson = new Gson();
-        String content = gson.toJson(exportedURLs);
+        String content = gson.toJson(exportedURLs); //将暴露的url转换为JSON字符串
         return saveExportedURLs(serviceName, exportedServicesRevision, content);
     }
 

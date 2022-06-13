@@ -25,38 +25,28 @@ import org.apache.dubbo.metadata.definition.model.MethodDefinition;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.sort;
-import static java.util.Collections.unmodifiableMap;
+import static java.util.Collections.*;
 import static org.apache.dubbo.common.extension.ExtensionLoader.getExtensionLoader;
 import static org.apache.dubbo.common.function.ThrowableFunction.execute;
 import static org.apache.dubbo.common.utils.AnnotationUtils.isAnyAnnotationPresent;
 import static org.apache.dubbo.common.utils.ClassUtils.forName;
 import static org.apache.dubbo.common.utils.ClassUtils.getAllInterfaces;
-import static org.apache.dubbo.common.utils.MethodUtils.excludedDeclaredClass;
-import static org.apache.dubbo.common.utils.MethodUtils.getAllMethods;
-import static org.apache.dubbo.common.utils.MethodUtils.overrides;
+import static org.apache.dubbo.common.utils.MethodUtils.*;
 
 /**
- * The abstract {@link ServiceRestMetadataResolver} class to provider some template methods assemble the instance of
+ * The abstract {@link ServiceRestMetadataResolver} class to provider some template methods（模板方法） assemble the instance of
  * {@link ServiceRestMetadata} will extended by the sub-classes.
  *
  * @since 2.7.6
  */
 public abstract class AbstractServiceRestMetadataResolver implements ServiceRestMetadataResolver {
+    // 数据类型：Map<getAnnotationType(), List<AnnotatedMethodParameterProcessor>> 注解对应的类名与注解处理器列表的映射
+    private final Map<String, List<AnnotatedMethodParameterProcessor>> parameterProcessorsMap; //注解类型与注解处理器的映射缓存
 
-    private final Map<String, List<AnnotatedMethodParameterProcessor>> parameterProcessorsMap;
-
-    public AbstractServiceRestMetadataResolver() {
+    public AbstractServiceRestMetadataResolver() { //会加载AnnotatedMethodParameterProcessor的所有扩展实例，并缓存到当前类Map中
         this.parameterProcessorsMap = loadAnnotatedMethodParameterProcessors();
     }
 
@@ -65,11 +55,11 @@ public abstract class AbstractServiceRestMetadataResolver implements ServiceRest
         return isImplementedInterface(serviceType) && isServiceAnnotationPresent(serviceType) && supports0(serviceType);
     }
 
-    protected final boolean isImplementedInterface(Class<?> serviceType) {
+    protected final boolean isImplementedInterface(Class<?> serviceType) { //判断指定Class的是否有实现的接口
         return !getAllInterfaces(serviceType).isEmpty();
     }
 
-    protected final boolean isServiceAnnotationPresent(Class<?> serviceType) {
+    protected final boolean isServiceAnnotationPresent(Class<?> serviceType) { //判断指定Class是否被@Service注解修饰
         return isAnyAnnotationPresent(serviceType, Service.class, com.alibaba.dubbo.config.annotation.Service.class);
     }
 
@@ -331,10 +321,10 @@ public abstract class AbstractServiceRestMetadataResolver implements ServiceRest
         Map<String, List<AnnotatedMethodParameterProcessor>> parameterProcessorsMap = new LinkedHashMap<>();
         getExtensionLoader(AnnotatedMethodParameterProcessor.class)
                 .getSupportedExtensionInstances()
-                .forEach(processor -> {
+                .forEach(processor -> { //获取AnnotatedMethodParameterProcessor支持的扩展列表，并设置到缓存Map中
                     List<AnnotatedMethodParameterProcessor> processors =
                             parameterProcessorsMap.computeIfAbsent(processor.getAnnotationType(), k -> new LinkedList<>());
-                    processors.add(processor);
+                    processors.add(processor); //此处添加到列表，会影响到parameterProcessorsMap的值吗？解：此处列表添加了parameterProcessorsMap的值对应也改变，因为两者是同一个对象
                 });
         return parameterProcessorsMap;
     }

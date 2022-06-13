@@ -20,14 +20,7 @@ package org.apache.dubbo.metadata.rest;
 import org.apache.dubbo.common.utils.CollectionUtils;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.Collections.unmodifiableMap;
 import static org.apache.dubbo.common.utils.PathUtils.normalize;
@@ -38,7 +31,7 @@ import static org.apache.dubbo.common.utils.StringUtils.isBlank;
  *
  * @since 2.7.6
  */
-public class RequestMetadata implements Serializable {
+public class RequestMetadata implements Serializable { //Rest请求的元数据
 
     private static final long serialVersionUID = -240099840085329958L;
 
@@ -46,9 +39,9 @@ public class RequestMetadata implements Serializable {
 
     private String path;
 
-    private Map<String, List<String>> params = new LinkedHashMap<>();
+    private Map<String, List<String>> params = new LinkedHashMap<>(); //请求的参数
 
-    private Map<String, List<String>> headers = new LinkedHashMap<>();
+    private Map<String, List<String>> headers = new LinkedHashMap<>(); //请求头参数
 
     private Set<String> consumes = new LinkedHashSet<>();
 

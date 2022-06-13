@@ -347,61 +347,61 @@ public class ClassUtils {
      */
     public static Set<Class<?>> getAllSuperClasses(Class<?> type, Predicate<Class<?>>... classFilters) { //函数传递
 
-        Set<Class<?>> allSuperClasses = new LinkedHashSet<>();
+        Set<Class<?>> allSuperClasses = new LinkedHashSet<>(); //type类型的所有父类
 
-        Class<?> superClass = type.getSuperclass();
-        while (superClass != null) {
+        Class<?> superClass = type.getSuperclass(); //获取父类，如org.apache.dubbo.metadata.rest.StandardRestService的父类为Object类
+        while (superClass != null) { //依次类的父类，直到最顶层Object为止。
             // add current super class
             allSuperClasses.add(superClass);
-            superClass = superClass.getSuperclass();
+            superClass = superClass.getSuperclass(); //更改循环变量的值，Object的父类为空
         }
 
         return unmodifiableSet(filterAll(allSuperClasses, classFilters));
     }
 
     /**
-     * Get all interfaces from the specified type
+     * Get all interfaces from the specified type（获取指定type实现的所有接口）
      *
      * @param type             the specified type
      * @param interfaceFilters the filters for interfaces
      * @return non-null read-only {@link Set}
      * @since 2.7.6
      */
-    public static Set<Class<?>> getAllInterfaces(Class<?> type, Predicate<Class<?>>... interfaceFilters) {
-        if (type == null || type.isPrimitive()) {
+    public static Set<Class<?>> getAllInterfaces(Class<?> type, Predicate<Class<?>>... interfaceFilters) { //interfaceFilters是可变参数，参数个数可以为0~n个
+        if (type == null || type.isPrimitive()) { //若输入type为空或为基本类型，则直接返回空集合
             return emptySet();
         }
 
-        Set<Class<?>> allInterfaces = new LinkedHashSet<>();
-        Set<Class<?>> resolved = new LinkedHashSet<>();
-        Queue<Class<?>> waitResolve = new LinkedList<>();
+        Set<Class<?>> allInterfaces = new LinkedHashSet<>(); //类实现的所有接口
+        Set<Class<?>> resolved = new LinkedHashSet<>(); //已经解决的集合
+        Queue<Class<?>> waitResolve = new LinkedList<>(); //等待解决的队列
 
         resolved.add(type);
         Class<?> clazz = type;
         while (clazz != null) {
 
-            Class<?>[] interfaces = clazz.getInterfaces();
+            Class<?>[] interfaces = clazz.getInterfaces(); //获取类实现的接口列表
 
             if (isNotEmpty(interfaces)) {
                 // add current interfaces
                 Arrays.stream(interfaces)
-                        .filter(resolved::add)
+                        .filter(resolved::add) //将接口添加到resolved集合中
                         .forEach(cls -> {
-                            allInterfaces.add(cls);
+                            allInterfaces.add(cls); //将接口设置到集合中
                             waitResolve.add(cls);
                         });
             }
 
-            // add all super classes to waitResolve
+            // add all super classes to waitResolve（将所有的父类添加到waitResolve等待队列中）
             getAllSuperClasses(clazz)
                     .stream()
                     .filter(resolved::add)
                     .forEach(waitResolve::add);
 
-            clazz = waitResolve.poll();
+            clazz = waitResolve.poll(); //将队列中的元素轮询出队列，当没有元素时返回null
         }
 
-        return filterAll(allInterfaces, interfaceFilters);
+        return filterAll(allInterfaces, interfaceFilters); //过滤出有效的接口：allInterfaces：类实现的所有接口，interfaceFilters：接口的谓词过滤器
     }
 
     /**

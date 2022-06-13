@@ -345,7 +345,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
         String content = doGetSubscribedURLs(subscriberMetadataIdentifier);
         Type setType = new TypeToken<SortedSet<String>>() {
         }.getType();
-        return new Gson().fromJson(content, setType);
+        return new Gson().fromJson(content, setType); //将存储的JSON字符串转换为Set集合
     }
 
     String getProtocol(URL url) { //获取url中的side或protocol的值最为protocol

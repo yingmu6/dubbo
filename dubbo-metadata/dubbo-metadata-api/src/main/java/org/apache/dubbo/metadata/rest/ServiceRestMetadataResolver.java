@@ -17,7 +17,7 @@
 package org.apache.dubbo.metadata.rest;
 
 /**
- * The interface to resolve the {@link ServiceRestMetadata REST metadata} from the specified
+ * The interface to resolve the {@link ServiceRestMetadata REST metadata（REST元数据）} from the specified
  * Dubbo Service interface or type.
  *
  * @since 2.7.6
@@ -30,7 +30,7 @@ public interface ServiceRestMetadataResolver {
      * @param serviceType Dubbo Service interface or type
      * @return If supports, return <code>true</code>, or <code>false</code>
      */
-    boolean supports(Class<?> serviceType);
+    boolean supports(Class<?> serviceType); //判断指定的类型是否支持Rest元数据
 
     /**
      * Resolve the {@link ServiceRestMetadata REST metadata} from the specified
@@ -39,5 +39,5 @@ public interface ServiceRestMetadataResolver {
      * @param serviceType Dubbo Service interface or type
      * @return
      */
-    ServiceRestMetadata resolve(Class<?> serviceType);
+    ServiceRestMetadata resolve(Class<?> serviceType); //解析指定类型，并产生Rest元数据
 }

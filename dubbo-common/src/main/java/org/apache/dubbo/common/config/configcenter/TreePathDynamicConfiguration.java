@@ -142,7 +142,7 @@ public abstract class TreePathDynamicConfiguration extends AbstractDynamicConfig
 
     protected abstract void doRemoveListener(String pathKey, ConfigurationListener listener);
 
-    protected String buildGroupPath(String group) {
+    protected String buildGroupPath(String group) { //构建组的路径：根路径+组
         return buildPath(rootPath, group);
     }
 

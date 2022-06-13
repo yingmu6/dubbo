@@ -30,10 +30,19 @@ import static org.apache.dubbo.metadata.rest.RestMetadataConstants.JAX_RS.*;
 
 /**
  * JAX-RS {@link ServiceRestMetadataResolver} implementation
+ * <p>
+ * JAX-RS（Java API for RESTful Web Services） Java API提供的注解可在java中开发RESTful应用程序
  *
  * @since 2.7.6
  */
-public class JAXRSServiceRestMetadataResolver extends AbstractServiceRestMetadataResolver {
+public class JAXRSServiceRestMetadataResolver extends AbstractServiceRestMetadataResolver { //Rest元数据解析器
+    /**
+     * JAX-RS是标准的Java REST API，得到了业界的广泛支持和应用，其著名的开源实现就有很多，
+     * 包括Oracle的Jersey，RedHat的RestEasy，Apache的CXF和Wink，以及restlet等等。另外，所有支持JavaEE 6.0以上规范的商用JavaEE应用服务器都对JAX-RS提供了支持。
+     * 因此，JAX-RS是一种已经非常成熟的解决方案，并且采用它没有任何所谓vendor lock-in的问题。
+     * <p>
+     * https://dubbo.apache.org/zh/docs/references/protocols/rest/
+     */
 
     @Override
     protected boolean supports0(Class<?> serviceType) {

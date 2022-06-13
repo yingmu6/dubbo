@@ -25,7 +25,7 @@ import static org.apache.dubbo.metadata.rest.RestMetadataConstants.JAX_RS.FORM_P
  *
  * @since 2.7.6
  */
-public class FormParamParameterProcessor extends ParamAnnotationParameterProcessor {
+public class FormParamParameterProcessor extends ParamAnnotationParameterProcessor { //表单参数处理器
 
     @Override
     public String getAnnotationType() {

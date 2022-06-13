@@ -25,7 +25,7 @@ import static java.util.stream.Stream.of;
  *
  * @since 2.7.5
  */
-public interface Predicates {
+public interface Predicates { //谓词的处理工具
 
     Predicate[] EMPTY_ARRAY = new Predicate[0];
 
@@ -56,8 +56,8 @@ public interface Predicates {
      * @param <T>        the type to test
      * @return non-null
      */
-    static <T> Predicate<T> and(Predicate<T>... predicates) {
-        return of(predicates).reduce((a, b) -> a.and(b)).orElseGet(Predicates::alwaysTrue);
+    static <T> Predicate<T> and(Predicate<T>... predicates) { //谓词的and处理：即所有的谓词自身处理返回true AND 两两之间处理也为true
+        return of(predicates).reduce((a, b) -> a.and(b)).orElseGet(Predicates::alwaysTrue); //若没有取到值，默认alwaysTrue返回true
     }
 
     /**

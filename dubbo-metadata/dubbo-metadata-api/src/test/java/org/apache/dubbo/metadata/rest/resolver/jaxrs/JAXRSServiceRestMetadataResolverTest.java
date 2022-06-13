@@ -16,23 +16,14 @@
  */
 package org.apache.dubbo.metadata.rest.resolver.jaxrs;
 
-import org.apache.dubbo.metadata.rest.ClassPathServiceRestMetadataReader;
-import org.apache.dubbo.metadata.rest.DefaultRestService;
-import org.apache.dubbo.metadata.rest.RestMethodMetadata;
-import org.apache.dubbo.metadata.rest.RestService;
-import org.apache.dubbo.metadata.rest.ServiceRestMetadata;
-import org.apache.dubbo.metadata.rest.SpringRestService;
-import org.apache.dubbo.metadata.rest.StandardRestService;
+import org.apache.dubbo.metadata.rest.*;
 import org.apache.dubbo.metadata.rest.jaxrs.JAXRSServiceRestMetadataResolver;
-
 import org.junit.jupiter.api.Test;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * {@link JAXRSServiceRestMetadataResolver} Test
@@ -41,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class JAXRSServiceRestMetadataResolverTest {
 
-    private JAXRSServiceRestMetadataResolver instance = new JAXRSServiceRestMetadataResolver();
+    private JAXRSServiceRestMetadataResolver instance = new JAXRSServiceRestMetadataResolver(); //服务Rest元数据解析器创建时，会通过SPI方式加载处理器的实例
 
     @Test
     public void testSupports() {

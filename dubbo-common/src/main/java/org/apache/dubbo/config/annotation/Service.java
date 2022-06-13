@@ -17,12 +17,7 @@
 package org.apache.dubbo.config.annotation;
 
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 import static org.apache.dubbo.common.constants.CommonConstants.DEFAULT_LOADBALANCE;
 import static org.apache.dubbo.common.constants.CommonConstants.DEFAULT_RETRIES;
@@ -32,7 +27,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.DEFAULT_RETRIES;
  *
  * @see DubboService
  * @since 2.7.0
- * @deprecated Recommend {@link DubboService} as the substitute
+ * @deprecated Recommend（推荐） {@link DubboService} as the substitute
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

@@ -26,6 +26,7 @@ import java.lang.reflect.Parameter;
 
 /**
  * The interface to process the annotated method parameter
+ * （处理注解方法参数的接口）
  *
  * @since 2.7.6
  */
@@ -36,7 +37,7 @@ public interface AnnotatedMethodParameterProcessor extends Prioritized {
      *
      * @return non-null
      */
-    String getAnnotationType();
+    String getAnnotationType(); //注解对应的类名，如"javax.ws.rs.FormParam"
 
     /**
      * Process the specified method {@link VariableElement parameter}

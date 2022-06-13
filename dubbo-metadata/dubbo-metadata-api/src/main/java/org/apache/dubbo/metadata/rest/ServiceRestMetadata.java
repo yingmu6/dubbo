@@ -27,7 +27,7 @@ import java.util.Set;
  *
  * @since 2.7.6
  */
-public class ServiceRestMetadata implements Serializable {
+public class ServiceRestMetadata implements Serializable { //Dubbo服务绑定的Rest元数据
 
     private static final long serialVersionUID = -4549723140727443569L;
 

@@ -101,7 +101,7 @@ public class ApplicationModel { //应用的数据模型
         return getConfigManager().getApplicationOrElseThrow();
     }
 
-    public static String getName() {
+    public static String getName() { //获取应用名
         return getApplicationConfig().getName();
     }
 

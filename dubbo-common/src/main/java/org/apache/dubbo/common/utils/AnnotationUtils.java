@@ -16,19 +16,9 @@
  */
 package org.apache.dubbo.common.utils;
 
-import java.lang.annotation.Annotation;
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 import java.lang.reflect.AnnotatedElement;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static java.util.Arrays.asList;
@@ -188,7 +178,7 @@ public interface AnnotationUtils {
      * @param annotationsToFilter the annotations to filter
      * @return non-null read-only {@link List}
      */
-    static List<Annotation> getAllDeclaredAnnotations(Class<?> type, Predicate<Annotation>... annotationsToFilter) {
+    static List<Annotation> getAllDeclaredAnnotations(Class<?> type, Predicate<Annotation>... annotationsToFilter) { //todo @csy pause
 
         if (type == null) {
             return emptyList();
@@ -271,12 +261,12 @@ public interface AnnotationUtils {
     /**
      * Find the annotation that is annotated on the specified element may be a meta-annotation
      *
-     * @param annotatedElement the annotated element
-     * @param annotationType   the type of annotation
+     * @param annotatedElement the annotated element（带有注解的元素）
+     * @param annotationType   the type of annotation（注解类型）
      * @param <A>              the required type of annotation
      * @return If found, return first matched-type {@link Annotation annotation}, or <code>null</code>
      */
-    static <A extends Annotation> A findAnnotation(AnnotatedElement annotatedElement, Class<A> annotationType) {
+    static <A extends Annotation> A findAnnotation(AnnotatedElement annotatedElement, Class<A> annotationType) { //编写特点：大部分是方法套用方法，而没有用上临时变量来接收值，比较简洁
         return (A) filterFirst(getAllDeclaredAnnotations(annotatedElement), a -> isSameType(a, annotationType));
     }
 
@@ -363,7 +353,7 @@ public interface AnnotationUtils {
      * @return If the specified annotation types are present, return <code>true</code>, or <code>false</code>
      */
     static boolean isAnnotationPresent(Class<?> type,
-                                       boolean matchAll,
+                                       boolean matchAll, //是否匹配所有的注解，true：需要被所有注解修饰，false：只要被其中一个注解修饰即可
                                        Class<? extends Annotation>... annotationTypes) {
 
         int size = annotationTypes == null ? 0 : annotationTypes.length;
@@ -374,7 +364,7 @@ public interface AnnotationUtils {
 
         int presentCount = 0;
 
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < size; i++) { //遍历注解列表
             Class<? extends Annotation> annotationType = annotationTypes[i];
             if (findAnnotation(type, annotationType) != null || findMetaAnnotation(type, annotationType) != null) {
                 presentCount++;

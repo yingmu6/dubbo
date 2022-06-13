@@ -1322,6 +1322,7 @@ class URL implements Serializable {
         if (identity != null) {
             return identity;
         }
+        // 构建带有username、password身份信息且不含附加参数的url字符串
         return identity = buildString(true, false); // only return identity message, see the method "equals" and "hashCode"
     }
 

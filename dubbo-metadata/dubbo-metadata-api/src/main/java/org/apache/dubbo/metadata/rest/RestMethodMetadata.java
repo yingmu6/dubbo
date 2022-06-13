@@ -19,12 +19,7 @@ package org.apache.dubbo.metadata.rest;
 import org.apache.dubbo.metadata.definition.model.MethodDefinition;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static java.util.Collections.emptyList;
 
@@ -34,7 +29,7 @@ import static java.util.Collections.emptyList;
  *
  * @since 2.7.6
  */
-public class RestMethodMetadata implements Serializable {
+public class RestMethodMetadata implements Serializable { //请求方法对应的元数据
 
     private static final long serialVersionUID = 2935252016200830694L;
 

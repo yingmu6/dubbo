@@ -17,18 +17,14 @@
 package org.apache.dubbo.config.annotation;
 
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 import static org.apache.dubbo.common.constants.CommonConstants.DEFAULT_LOADBALANCE;
 import static org.apache.dubbo.common.constants.CommonConstants.DEFAULT_RETRIES;
 
 /**
  * Class-level annotation used for declaring Dubbo service
+ * （用于声明 Dubbo 服务的类级别注解）
  *
  * @since 2.7.7
  */
@@ -90,18 +86,19 @@ public @interface DubboService {
 
     /**
      * Maximum concurrent executes for the service, default value is 0 - no limits
+     * （最大执行的并发数，默认是0，没有最大限制）
      */
     int executes() default 0;
 
     /**
      * Whether to register the service to register center, default value is true
      */
-    boolean register() default true;
+    boolean register() default true; //是否将服务注册到注册中心
 
     /**
      * Service weight value, default value is 0
      */
-    int weight() default 0;
+    int weight() default 0; //服务的权重值
 
     /**
      * Service doc, default value is ""
@@ -111,7 +108,7 @@ public @interface DubboService {
     /**
      * Delay time for service registration, default value is 0
      */
-    int delay() default 0;
+    int delay() default 0; //服务注册延迟时间
 
     /**
      * @see DubboService#stub()
@@ -183,7 +180,7 @@ public @interface DubboService {
     /**
      * Whether to enable async invocation, default value is false
      */
-    boolean async() default false;
+    boolean async() default false; //是否启用异步调用
 
     /**
      * Maximum active requests allowed, default value is 0

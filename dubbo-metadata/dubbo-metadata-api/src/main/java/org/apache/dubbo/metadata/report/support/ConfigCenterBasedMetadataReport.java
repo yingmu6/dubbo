@@ -98,7 +98,7 @@ public class ConfigCenterBasedMetadataReport extends AbstractMetadataReport { //
 
     @Override
     public boolean saveExportedURLs(String serviceName, String exportedServicesRevision, String exportedURLsContent) {
-        String key = buildExportedURLsMetadataKey(serviceName, exportedServicesRevision);
+        String key = buildExportedURLsMetadataKey(serviceName, exportedServicesRevision); //构建暴露的url对应的元数据key
         return dynamicConfiguration.publishConfig(key, group, exportedURLsContent);
     }
 
@@ -109,7 +109,7 @@ public class ConfigCenterBasedMetadataReport extends AbstractMetadataReport { //
     }
 
     private String buildExportedURLsMetadataKey(String serviceName, String exportedServicesRevision) {
-        return keyType.build(EXPORTED_URLS_TAG, serviceName, exportedServicesRevision);
+        return keyType.build(EXPORTED_URLS_TAG, serviceName, exportedServicesRevision); //构造元数据key，前缀为："exported-urls"
     }
 
     protected void saveMetadata(BaseMetadataIdentifier metadataIdentifier, String value) { //saveMetadata()：方法重载
