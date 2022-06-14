@@ -35,7 +35,7 @@ public class JAXRSServiceRestMetadataResolverTest {
     private JAXRSServiceRestMetadataResolver instance = new JAXRSServiceRestMetadataResolver(); //服务Rest元数据解析器创建时，会通过SPI方式加载处理器的实例
 
     @Test
-    public void testSupports() {
+    public void testSupports() { //测试支持的扩展
         // JAX-RS RestService class
         assertTrue(instance.supports(StandardRestService.class));
         // Spring MVC RestService class
