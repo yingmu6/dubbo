@@ -26,11 +26,11 @@ import org.apache.dubbo.common.URL;
  * @see org.apache.dubbo.registry.support.AbstractRegistry
  */
 public interface Registry extends Node, RegistryService {
-    default void reExportRegister(URL url) {
+    default void reExportRegister(URL url) { //再次注册
         register(url);
     }
 
-    default void reExportUnregister(URL url) {
+    default void reExportUnregister(URL url) { //再次取消注册
         unregister(url);
     }
 }

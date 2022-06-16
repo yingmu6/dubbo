@@ -518,10 +518,10 @@ class URL implements Serializable {
         return address.toString();
     }
 
-    public List<URL> getBackupUrls() { //获取备份的url列表
+    public List<URL> getBackupUrls() { //获取备份的url列表，url列表 = 自身的url + url中配置的url列表
         List<URL> urls = new ArrayList<>();
         urls.add(this);
-        String[] backups = getParameter(RemotingConstants.BACKUP_KEY, new String[0]);
+        String[] backups = getParameter(RemotingConstants.BACKUP_KEY, new String[0]); //backup中多个url会以分隔符分隔
         if (backups != null && backups.length > 0) {
             for (String backup : backups) {
                 urls.add(this.setAddress(backup));
@@ -583,17 +583,17 @@ class URL implements Serializable {
         return parameters.get(key);
     }
 
-    public String getParameter(String key, String defaultValue) { //从参数map中获取参数对应的值，若没有则返回默认值
+    public String getParameter(String key, String defaultValue) { //获取指定参数对应值，按字符串返回
         String value = getParameter(key);
         return StringUtils.isEmpty(value) ? defaultValue : value;
     }
 
-    public String[] getParameter(String key, String[] defaultValue) {
+    public String[] getParameter(String key, String[] defaultValue) { //获取指定参数对应的值，按数组返回
         String value = getParameter(key);
         return StringUtils.isEmpty(value) ? defaultValue : COMMA_SPLIT_PATTERN.split(value);
     }
 
-    public List<String> getParameter(String key, List<String> defaultValue) {
+    public List<String> getParameter(String key, List<String> defaultValue) { //获取指定参数对应的值，按列表返回
         String value = getParameter(key);
         if (StringUtils.isEmpty(value)) {
             return defaultValue;

@@ -50,7 +50,7 @@ public abstract class AbstractRegistry implements Registry {
     // URL address separated regular expression for parsing the service provider URL list in the file cache
     private static final String URL_SPLIT = "\\s+";
     // Max times to retry to save properties to local cache file
-    private static final int MAX_RETRY_TIMES_SAVE_PROPERTIES = 3;
+    private static final int MAX_RETRY_TIMES_SAVE_PROPERTIES = 3; //将属性值保存到本地缓存文件的最大重试次数
     // Log output
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     // Local disk cache, where the special key value.registries records the list of registry centers, and the others are the list of notified service providers
@@ -58,35 +58,38 @@ public abstract class AbstractRegistry implements Registry {
     // File cache timing writing
     private final ExecutorService registryCacheExecutor = Executors.newFixedThreadPool(1, new NamedThreadFactory("DubboSaveRegistryCache", true));
     // Is it synchronized to save the file
-    private boolean syncSaveFile;
-    private final AtomicLong lastCacheChanged = new AtomicLong();
+    private boolean syncSaveFile; //是否同步保存文件
+    private final AtomicLong lastCacheChanged = new AtomicLong(); //本地缓存文件，最近变更的版本，可用于乐观锁处理
     private final AtomicInteger savePropertiesRetryTimes = new AtomicInteger();
     private final Set<URL> registered = new ConcurrentHashSet<>(); //被注册的url列表
     private final ConcurrentMap<URL, Set<NotifyListener>> subscribed = new ConcurrentHashMap<>();
     private final ConcurrentMap<URL, Map<String, List<URL>>> notified = new ConcurrentHashMap<>();
-    private URL registryUrl;
+    private URL registryUrl; //注册的url
     // Local disk cache file
-    private File file;
+    private File file; //本地缓存文件
 
-    public AbstractRegistry(URL url) {
+    public AbstractRegistry(URL url) { // 构造函数中做初始化操作
         setUrl(url);
-        if (url.getParameter(REGISTRY__LOCAL_FILE_CACHE_ENABLED, true)) {
+        if (url.getParameter(REGISTRY__LOCAL_FILE_CACHE_ENABLED, true)) { //默认将注册的数据缓存到本地
             // Start file save timer
             syncSaveFile = url.getParameter(REGISTRY_FILESAVE_SYNC_KEY, false); //是否同步保存文件，默认false：异步
-            String defaultFilename = System.getProperty("user.home") + "/.dubbo/dubbo-registry-" + url.getParameter(APPLICATION_KEY) + "-" + url.getAddress().replaceAll(":", "-") + ".cache"; //值如：/Users/chenshengyong/.dubbo/dubbo-registry-null-172.16.140.148-51198.cache
-            String filename = url.getParameter(FILE_KEY, defaultFilename);
+
+            //缓存文件的完整限定名：/Users/chenshengyong/.dubbo/dubbo-registry-null-172.16.140.148-51198.cache
+            String defaultFilename = System.getProperty("user.home") + "/.dubbo/dubbo-registry-" + url.getParameter(APPLICATION_KEY) + "-" + url.getAddress().replaceAll(":", "-") + ".cache";
+            String filename = url.getParameter(FILE_KEY, defaultFilename); //可以在url中执行本地缓存文件的路径，未指定的话，去默认的值
             File file = null;
             if (ConfigUtils.isNotEmpty(filename)) {
                 file = new File(filename);
                 if (!file.exists() && file.getParentFile() != null && !file.getParentFile().exists()) {
-                    if (!file.getParentFile().mkdirs()) { //若文件目录不存在，则去创建
+                    if (!file.getParentFile().mkdirs()) { //若文件目录不存在，则去创建，创建文件目录失败，则抛出异常
                         throw new IllegalArgumentException("Invalid registry cache file " + file + ", cause: Failed to create directory " + file.getParentFile() + "!");
                     }
                 }
             }
             this.file = file;
             // When starting the subscription center,
-            // we need to read the local cache file for future Registry fault tolerance processing.
+            // we need to read the local cache file for future Registry fault tolerance processing（容错处理）
+            // （我们需要读取本地缓存文件以供以后的注册表容错处理）.
             loadProperties();
             notify(url.getBackupUrls());
         }
@@ -138,7 +141,7 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     public void doSaveProperties(long version) {
-        if (version < lastCacheChanged.get()) {
+        if (version < lastCacheChanged.get()) { //在操作前，先判断版本是否有落后，落后表明有其它线程操作过了，就不处理了
             return;
         }
         if (file == null) {
@@ -148,12 +151,12 @@ public abstract class AbstractRegistry implements Registry {
         try {
             File lockfile = new File(file.getAbsolutePath() + ".lock");
             if (!lockfile.exists()) {
-                lockfile.createNewFile();
+                lockfile.createNewFile(); //若文件不存在，则进行创建
             }
-            try (RandomAccessFile raf = new RandomAccessFile(lockfile, "rw");
+            try (RandomAccessFile raf = new RandomAccessFile(lockfile, "rw"); //随机访问文件指定为可读可写
                  FileChannel channel = raf.getChannel()) {
                 FileLock lock = channel.tryLock();
-                if (lock == null) {
+                if (lock == null) { //加锁失败后，会进行异常捕获，并进行重试操作
                     throw new IOException("Can not lock the registry cache file " + file.getAbsolutePath() + ", ignore and retry later, maybe multi java process use the file, please config: dubbo.registry.file=xxx.properties");
                 }
                 // Save
@@ -162,15 +165,16 @@ public abstract class AbstractRegistry implements Registry {
                         file.createNewFile();
                     }
                     try (FileOutputStream outputFile = new FileOutputStream(file)) {
-                        properties.store(outputFile, "Dubbo Registry Cache");
+                        //把属性对象的值，写到本地文件中， 实现内存 -》文件的数据转换
+                        properties.store(outputFile, "Dubbo Registry Cache"); // 第二个参数会作为注释内容 带上"#"写到文件中
                     }
                 } finally {
-                    lock.release();
+                    lock.release(); //释放锁
                 }
             }
         } catch (Throwable e) {
             savePropertiesRetryTimes.incrementAndGet();
-            if (savePropertiesRetryTimes.get() >= MAX_RETRY_TIMES_SAVE_PROPERTIES) {
+            if (savePropertiesRetryTimes.get() >= MAX_RETRY_TIMES_SAVE_PROPERTIES) { //超过最大重试次数，不进行后续重试操作
                 logger.warn("Failed to save registry cache file after retrying " + MAX_RETRY_TIMES_SAVE_PROPERTIES + " times, cause: " + e.getMessage(), e);
                 savePropertiesRetryTimes.set(0);
                 return;
@@ -185,7 +189,7 @@ public abstract class AbstractRegistry implements Registry {
         }
     }
 
-    private void loadProperties() { //读取文件
+    private void loadProperties() { //加载本地缓存文件，并将文件的内容写到属性对象Properties中
         if (file != null && file.exists()) {
             InputStream in = null;
             try {
