@@ -1501,11 +1501,11 @@ class URL implements Serializable {
         return BaseServiceMetadata.buildServiceKey(path, group, version);
     }
 
-    public String toServiceStringWithoutResolving() {
+    public String toServiceStringWithoutResolving() { //将url转换为指定的字符串（不使用IP作为主机号，使用Host作为主机号）
         return buildString(true, false, false, true);
     }
 
-    public String toServiceString() { //将url转换为字符串表示
+    public String toServiceString() { //将url转换为指定的字符串（使用IP作为主机号）
         return buildString(true, false, true, true);
     }
 

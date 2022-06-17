@@ -29,20 +29,20 @@ import org.apache.dubbo.common.extension.SPI;
 public interface RegistryFactory {
 
     /**
-     * Connect to the registry
+     * Connect to the registry（连接到注册中心）
      * <p>
      * Connecting the registry needs to support the contract: <br>
-     * 1. When the check=false is set, the connection is not checked, otherwise the exception is thrown when disconnection <br>
-     * 2. Support username:password authority authentication on URL.<br>
-     * 3. Support the backup=10.20.153.10 candidate registry cluster address.<br>
-     * 4. Support file=registry.cache local disk file cache.<br>
-     * 5. Support the timeout=1000 request timeout setting.<br>
-     * 6. Support session=60000 session timeout or expiration settings.<br>
+     * 1. When the check=false is set, the connection is not checked, otherwise the exception is thrown when disconnection <br>（设置检测连接）
+     * 2. Support username:password authority authentication on URL.<br>（支持用户名：密码进行授权验证）
+     * 3. Support the backup=10.20.153.10 candidate（候选） registry cluster address（注册集群地址）.<br>
+     * 4. Support file=registry.cache local disk file cache.<br>（设置注册缓存文件的地址）
+     * 5. Support the timeout=1000 request timeout setting.<br>（支持请求连接超时限制）
+     * 6. Support session=60000 session timeout or expiration settings.<br>（支持会话过期管理）
      *
      * @param url Registry address, is not allowed to be empty
      * @return Registry reference, never return empty value
      */
     @Adaptive({"protocol"})
-    Registry getRegistry(URL url);
+    Registry getRegistry(URL url); //连接到注册中心，并返回注册实例
 
 }

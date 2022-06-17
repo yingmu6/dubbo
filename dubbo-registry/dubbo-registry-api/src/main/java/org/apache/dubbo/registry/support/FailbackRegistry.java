@@ -35,7 +35,7 @@ import static org.apache.dubbo.registry.Constants.*;
 /**
  * FailbackRegistry. (SPI, Prototype, ThreadSafe)
  */
-public abstract class FailbackRegistry extends AbstractRegistry {
+public abstract class FailbackRegistry extends AbstractRegistry { //失败重新注册实例
 
     /*  retry task map（维护重试的任务） */
 

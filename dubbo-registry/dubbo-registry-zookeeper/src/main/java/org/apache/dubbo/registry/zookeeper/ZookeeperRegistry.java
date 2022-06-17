@@ -59,7 +59,7 @@ public class ZookeeperRegistry extends FailbackRegistry {
     private final ZookeeperClient zkClient;
 
     public ZookeeperRegistry(URL url, ZookeeperTransporter zookeeperTransporter) {
-        super(url);
+        super(url); //调用父类构造函数
         if (url.isAnyHost()) {
             throw new IllegalStateException("registry address == null");
         }

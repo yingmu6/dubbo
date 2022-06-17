@@ -61,13 +61,22 @@ public abstract class AbstractRegistry implements Registry {
     private boolean syncSaveFile; //是否同步保存文件
     private final AtomicLong lastCacheChanged = new AtomicLong(); //本地缓存文件，最近变更的版本，可用于乐观锁处理
     private final AtomicInteger savePropertiesRetryTimes = new AtomicInteger();
+
+    // 使用Set集合，根据Set的特性不会出现重复的元素，也就是可以反复注册同一个url，使用集合支持幂等
     private final Set<URL> registered = new ConcurrentHashSet<>(); //被注册的url列表
-    private final ConcurrentMap<URL, Set<NotifyListener>> subscribed = new ConcurrentHashMap<>();
+    // 订阅的url与关联的监听器列表的缓存（一个url的数据变更可以被多个监听器监听）
+    private final ConcurrentMap<URL, Set<NotifyListener>> subscribed = new ConcurrentHashMap<>(); //todo @csy-06-17 该数据是private，会被同步的实现类共享吗？
+    // notified数据格式：ConcurrentMap<URL, Map<category, List<URL>>>
     private final ConcurrentMap<URL, Map<String, List<URL>>> notified = new ConcurrentHashMap<>();
     private URL registryUrl; //注册的url
     // Local disk cache file
     private File file; //本地缓存文件
 
+    /**
+     * AbstractRegistry构造函数主要处理逻辑：
+     * 1）查找指定路径的缓存文件，若不存在则创建
+     * 2）
+     */
     public AbstractRegistry(URL url) { // 构造函数中做初始化操作
         setUrl(url);
         if (url.getParameter(REGISTRY__LOCAL_FILE_CACHE_ENABLED, true)) { //默认将注册的数据缓存到本地
@@ -212,14 +221,14 @@ public abstract class AbstractRegistry implements Registry {
         }
     }
 
-    public List<URL> getCacheUrls(URL url) {
-        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+    public List<URL> getCacheUrls(URL url) { //获取缓存中指定serviceKey对应的URL列表
+        for (Map.Entry<Object, Object> entry : properties.entrySet()) { //遍历Properties中的键值对
             String key = (String) entry.getKey();
             String value = (String) entry.getValue();
-            if (StringUtils.isNotEmpty(key) && key.equals(url.getServiceKey())
-                    && (Character.isLetter(key.charAt(0)) || key.charAt(0) == '_')
+            if (StringUtils.isNotEmpty(key) && key.equals(url.getServiceKey()) //匹配url的serviceKey
+                    && (Character.isLetter(key.charAt(0)) || key.charAt(0) == '_') //第一个字符是字母或为"_"
                     && StringUtils.isNotEmpty(value)) {
-                String[] arr = value.trim().split(URL_SPLIT);
+                String[] arr = value.trim().split(URL_SPLIT); //按分隔符进行分隔
                 List<URL> urls = new ArrayList<>();
                 for (String u : arr) {
                     urls.add(URL.valueOf(u));
@@ -231,10 +240,10 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     @Override
-    public List<URL> lookup(URL url) {
+    public List<URL> lookup(URL url) { //查询符合条件的注册数据
         List<URL> result = new ArrayList<>();
-        Map<String, List<URL>> notifiedUrls = getNotified().get(url);
-        if (CollectionUtils.isNotEmptyMap(notifiedUrls)) {
+        Map<String, List<URL>> notifiedUrls = getNotified().get(url); //获取需要通知的数据
+        if (CollectionUtils.isNotEmptyMap(notifiedUrls)) { //从缓存中查到数据
             for (List<URL> urls : notifiedUrls.values()) {
                 for (URL u : urls) {
                     if (!EMPTY_PROTOCOL.equals(u.getProtocol())) {
@@ -244,8 +253,8 @@ public abstract class AbstractRegistry implements Registry {
             }
         } else {
             final AtomicReference<List<URL>> reference = new AtomicReference<>();
-            NotifyListener listener = reference::set;
-            subscribe(url, listener); // Subscribe logic guarantees the first notify to return
+            NotifyListener listener = reference::set; //todo @csy-06-17 此处的用法含义是怎样的？
+            subscribe(url, listener); // Subscribe logic guarantees the first notify to return（订阅逻辑保证第一个通知返回） todo @csy-06-17 此处为啥这么处理
             List<URL> urls = reference.get();
             if (CollectionUtils.isNotEmpty(urls)) {
                 for (URL u : urls) {
@@ -281,7 +290,7 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     @Override
-    public void subscribe(URL url, NotifyListener listener) {
+    public void subscribe(URL url, NotifyListener listener) { //订阅符合条件的注册数据
         if (url == null) {
             throw new IllegalArgumentException("subscribe url == null");
         }
@@ -291,12 +300,12 @@ public abstract class AbstractRegistry implements Registry {
         if (logger.isInfoEnabled()) {
             logger.info("Subscribe: " + url);
         }
-        Set<NotifyListener> listeners = subscribed.computeIfAbsent(url, n -> new ConcurrentHashSet<>());
-        listeners.add(listener);
+        Set<NotifyListener> listeners = subscribed.computeIfAbsent(url, n -> new ConcurrentHashSet<>()); //若Map的key已存在，会返回原来的值。此处的逻辑即为，如果订阅条件url相同，会在原来的基础添加NotifyListener
+        listeners.add(listener); //将监听器添加到缓存中
     }
 
     @Override
-    public void unsubscribe(URL url, NotifyListener listener) {
+    public void unsubscribe(URL url, NotifyListener listener) { //取消订阅，并删除对应的监听器
         if (url == null) {
             throw new IllegalArgumentException("unsubscribe url == null");
         }
@@ -308,18 +317,18 @@ public abstract class AbstractRegistry implements Registry {
         }
         Set<NotifyListener> listeners = subscribed.get(url);
         if (listeners != null) {
-            listeners.remove(listener);
+            listeners.remove(listener); //此处删除的是监听器，而不是Map中对应的key，因为一个url可以被多个监听器监听，不能把别的监听器移除
         }
     }
 
-    protected void recover() throws Exception {
+    protected void recover() throws Exception { //恢复处理，recover：恢复（支持冥等操作，因为设计存储的Set集合本身就会对重复的元素处理）
         // register
         Set<URL> recoverRegistered = new HashSet<>(getRegistered());
         if (!recoverRegistered.isEmpty()) {
             if (logger.isInfoEnabled()) {
                 logger.info("Recover register url " + recoverRegistered);
             }
-            for (URL url : recoverRegistered) {
+            for (URL url : recoverRegistered) { //重新注册数据
                 register(url);
             }
         }
@@ -331,7 +340,7 @@ public abstract class AbstractRegistry implements Registry {
             }
             for (Map.Entry<URL, Set<NotifyListener>> entry : recoverSubscribed.entrySet()) {
                 URL url = entry.getKey();
-                for (NotifyListener listener : entry.getValue()) {
+                for (NotifyListener listener : entry.getValue()) { //重新订阅注册数据
                     subscribe(url, listener);
                 }
             }
@@ -346,13 +355,14 @@ public abstract class AbstractRegistry implements Registry {
         for (Map.Entry<URL, Set<NotifyListener>> entry : getSubscribed().entrySet()) {
             URL url = entry.getKey();
 
-            if (!UrlUtils.isMatch(url, urls.get(0))) {
+            // 若
+            if (!UrlUtils.isMatch(url, urls.get(0))) { //todo @csy-06-17 此处为啥总是urls.get(0)用第一个元素比较，是当前场景下的url列表只有一个吗？
                 continue;
             }
 
             Set<NotifyListener> listeners = entry.getValue();
             if (listeners != null) {
-                for (NotifyListener listener : listeners) {
+                for (NotifyListener listener : listeners) { //遍历监听器，依次做通知处理
                     try {
                         notify(url, listener, filterEmpty(url, urls));
                     } catch (Throwable t) {
@@ -370,7 +380,7 @@ public abstract class AbstractRegistry implements Registry {
      * @param listener listener
      * @param urls     provider latest urls
      */
-    protected void notify(URL url, NotifyListener listener, List<URL> urls) { //从提供端通知变更
+    protected void notify(URL url, NotifyListener listener, List<URL> urls) { //通知数据变更
         if (url == null) {
             throw new IllegalArgumentException("notify url == null");
         }
@@ -387,11 +397,11 @@ public abstract class AbstractRegistry implements Registry {
         }
         // keep every provider's category.
         Map<String, List<URL>> result = new HashMap<>();
-        for (URL u : urls) {
+        for (URL u : urls) { //将url按照category分类
             if (UrlUtils.isMatch(url, u)) {
                 String category = u.getParameter(CATEGORY_KEY, DEFAULT_CATEGORY);
                 List<URL> categoryList = result.computeIfAbsent(category, k -> new ArrayList<>());
-                categoryList.add(u);
+                categoryList.add(u); //保留提供者的分类信息
             }
         }
         if (result.size() == 0) {
@@ -401,15 +411,16 @@ public abstract class AbstractRegistry implements Registry {
         for (Map.Entry<String, List<URL>> entry : result.entrySet()) {
             String category = entry.getKey();
             List<URL> categoryList = entry.getValue();
-            categoryNotified.put(category, categoryList);
-            listener.notify(categoryList);
-            // We will update our cache file after each notification.
+            categoryNotified.put(category, categoryList); //缓存设置
+            listener.notify(categoryList); //根据传入的监听器实例，做通知处理，如RegistryDirectory#notify的处理
+            // We will update our cache file after each notification.（在每次通知后，会更新缓存文件）
             // When our Registry has a subscribe failure due to network jitter, we can return at least the existing cache URL.
-            saveProperties(url);
+            // (当我们的Registry由于网络抖动导致订阅失败时，我们至少可以返回现有的缓存URL)
+            saveProperties(url); //通知变更，并把变更的内容存在本地内容和文件
         }
     }
 
-    private void saveProperties(URL url) {
+    private void saveProperties(URL url) { //将属性对象的值写到本地缓存文件中
         if (file == null) {
             return;
         }
@@ -419,7 +430,7 @@ public abstract class AbstractRegistry implements Registry {
             Map<String, List<URL>> categoryNotified = notified.get(url);
             if (categoryNotified != null) {
                 for (List<URL> us : categoryNotified.values()) {
-                    for (URL u : us) {
+                    for (URL u : us) { //将url列表的值依次拼接
                         if (buf.length() > 0) {
                             buf.append(URL_SEPARATOR);
                         }
@@ -427,12 +438,12 @@ public abstract class AbstractRegistry implements Registry {
                     }
                 }
             }
-            properties.setProperty(url.getServiceKey(), buf.toString());
+            properties.setProperty(url.getServiceKey(), buf.toString()); //将拼接的内容存在属性对象中
             long version = lastCacheChanged.incrementAndGet();
             if (syncSaveFile) {
-                doSaveProperties(version);
+                doSaveProperties(version); //同步保存
             } else {
-                registryCacheExecutor.execute(new SaveProperties(version));
+                registryCacheExecutor.execute(new SaveProperties(version)); //异步保存
             }
         } catch (Throwable t) {
             logger.warn(t.getMessage(), t);
@@ -449,7 +460,7 @@ public abstract class AbstractRegistry implements Registry {
             for (URL url : new HashSet<>(getRegistered())) {
                 if (url.getParameter(DYNAMIC_KEY, true)) {
                     try {
-                        unregister(url);
+                        unregister(url); //取消注册
                         if (logger.isInfoEnabled()) {
                             logger.info("Destroy unregister url " + url);
                         }
@@ -465,7 +476,7 @@ public abstract class AbstractRegistry implements Registry {
                 URL url = entry.getKey();
                 for (NotifyListener listener : entry.getValue()) {
                     try {
-                        unsubscribe(url, listener);
+                        unsubscribe(url, listener); //取消订阅
                         if (logger.isInfoEnabled()) {
                             logger.info("Destroy unsubscribe url " + url);
                         }

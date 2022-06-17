@@ -383,6 +383,7 @@ public class UrlUtils {
         String consumerVersion = consumerUrl.getParameter(VERSION_KEY);
         String consumerClassifier = consumerUrl.getParameter(CLASSIFIER_KEY, ANY_VALUE);
 
+        // 比较URL中的参数
         String providerGroup = providerUrl.getParameter(GROUP_KEY);
         String providerVersion = providerUrl.getParameter(VERSION_KEY);
         String providerClassifier = providerUrl.getParameter(CLASSIFIER_KEY, ANY_VALUE);
