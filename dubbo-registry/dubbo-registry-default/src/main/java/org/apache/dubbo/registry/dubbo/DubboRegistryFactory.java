@@ -53,7 +53,7 @@ public class DubboRegistryFactory extends AbstractRegistryFactory {
     private ProxyFactory proxyFactory;
     private Cluster cluster;
 
-    private static URL getRegistryURL(URL url) {
+    private static URL getRegistryURL(URL url) { //构建注册url
         return URLBuilder.from(url)
                 .setPath(RegistryService.class.getName())
                 .removeParameter(EXPORT_KEY).removeParameter(REFER_KEY)
@@ -86,11 +86,11 @@ public class DubboRegistryFactory extends AbstractRegistryFactory {
     }
 
     @Override
-    public Registry createRegistry(URL url) {
+    public Registry createRegistry(URL url) { //创建注册实例
         url = getRegistryURL(url);
         List<URL> urls = new ArrayList<>();
         urls.add(url.removeParameter(BACKUP_KEY));
-        String backup = url.getParameter(BACKUP_KEY);
+        String backup = url.getParameter(BACKUP_KEY); //todo @csy-06-18 此处前面已经移除了参数，还能获取到值吗？
         if (backup != null && backup.length() > 0) {
             String[] addresses = COMMA_SPLIT_PATTERN.split(backup);
             for (String address : addresses) {

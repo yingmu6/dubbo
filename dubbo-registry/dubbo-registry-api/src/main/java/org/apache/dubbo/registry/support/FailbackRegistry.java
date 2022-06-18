@@ -35,10 +35,20 @@ import static org.apache.dubbo.registry.Constants.*;
 /**
  * FailbackRegistry. (SPI, Prototype, ThreadSafe)
  */
-public abstract class FailbackRegistry extends AbstractRegistry { //失败重新注册实例
+
+/**
+ * 注册服务相关操作失败处理，对注册、取消注册、订阅、取消订阅等操作失败时，
+ * 会进行异常捕获，存入失败的集合中，再有定时任务进行重试操作
+ */
+public abstract class FailbackRegistry extends AbstractRegistry {
+
+    // todo @csy-06-18 类图待整理
 
     /*  retry task map（维护重试的任务） */
 
+    /**
+     * 失败重新注册、取消注册、订阅、取消订阅都实现了AbstractRetryTask#doRetry()方法，只是内部具体执行的操作不一样
+     */
     private final ConcurrentMap<URL, FailedRegisteredTask> failedRegistered = new ConcurrentHashMap<URL, FailedRegisteredTask>();
 
     private final ConcurrentMap<URL, FailedUnregisteredTask> failedUnregistered = new ConcurrentHashMap<URL, FailedUnregisteredTask>();
@@ -47,7 +57,7 @@ public abstract class FailbackRegistry extends AbstractRegistry { //失败重新
 
     private final ConcurrentMap<Holder, FailedUnsubscribedTask> failedUnsubscribed = new ConcurrentHashMap<Holder, FailedUnsubscribedTask>();
 
-    private final ConcurrentMap<Holder, FailedNotifiedTask> failedNotified = new ConcurrentHashMap<Holder, FailedNotifiedTask>();
+    private final ConcurrentMap<Holder, FailedNotifiedTask> failedNotified = new ConcurrentHashMap<Holder, FailedNotifiedTask>(); //失败通知的缓存Map
 
     /**
      * The time in milliseconds the retryExecutor（重试执行器） will wait
@@ -55,6 +65,7 @@ public abstract class FailbackRegistry extends AbstractRegistry { //失败重新
     private final int retryPeriod;
 
     // Timer for failure retry, regular check if there is a request for failure, and if there is, an unlimited retry
+    // (失败重试定时器，定时检查是否有失败请求，有则无限重试)
     private final HashedWheelTimer retryTimer;
 
     public FailbackRegistry(URL url) {
@@ -62,14 +73,15 @@ public abstract class FailbackRegistry extends AbstractRegistry { //失败重新
         this.retryPeriod = url.getParameter(REGISTRY_RETRY_PERIOD_KEY, DEFAULT_REGISTRY_RETRY_PERIOD);
 
         // since the retry task will not be very much. 128 ticks is enough.
-        retryTimer = new HashedWheelTimer(new NamedThreadFactory("DubboRegistryRetryTimer", true), retryPeriod, TimeUnit.MILLISECONDS, 128); //128毫秒的重试时间
+        // 创建HashedWheelTimer定时器（指定线程池工厂、重试周期、轮子的大小）
+        retryTimer = new HashedWheelTimer(new NamedThreadFactory("DubboRegistryRetryTimer", true), retryPeriod, TimeUnit.MILLISECONDS, 128);
     }
 
-    public void removeFailedRegisteredTask(URL url) {
+    public void removeFailedRegisteredTask(URL url) { // 移除失败注册的关联的任务
         failedRegistered.remove(url);
     }
 
-    public void removeFailedUnregisteredTask(URL url) {
+    public void removeFailedUnregisteredTask(URL url) { // 移除失败取消注册关联的任务
         failedUnregistered.remove(url);
     }
 
@@ -216,6 +228,12 @@ public abstract class FailbackRegistry extends AbstractRegistry { //失败重新
         return failedNotified;
     }
 
+    /**
+     * 注册的主要逻辑
+     * 1）从失败注册、失败取消注册的集合中移除传入url对应的缓存
+     * 2）发送注册请求到服务端，doRegister(url)为抽象方法，交由具体实现类实现
+     * 3）注册失败时，若设置了check=true，则抛出异常，否则将注册失败的url记录到缓存任务，等待定时任务去重试执行
+     */
     @Override
     public void register(URL url) {
         if (!acceptable(url)) {
@@ -237,7 +255,7 @@ public abstract class FailbackRegistry extends AbstractRegistry { //失败重新
                     && url.getParameter(Constants.CHECK_KEY, true)
                     && !CONSUMER_PROTOCOL.equals(url.getProtocol());
             boolean skipFailback = t instanceof SkipFailbackWrapperException;
-            if (check || skipFailback) {
+            if (check || skipFailback) { //失败了，若开启了检查，则抛出异常
                 if (skipFailback) {
                     t = t.getCause();
                 }
@@ -252,7 +270,7 @@ public abstract class FailbackRegistry extends AbstractRegistry { //失败重新
     }
 
     @Override
-    public void reExportRegister(URL url) {
+    public void reExportRegister(URL url) { //再次做重试处理
         if (!acceptable(url)) { //判断协议类型是否支持
             logger.info("URL " + url + " will not be registered to Registry. Registry " + url + " does not accept service of this protocol type.");
             return;
@@ -315,9 +333,16 @@ public abstract class FailbackRegistry extends AbstractRegistry { //失败重新
         }
     }
 
+    /**
+     * 订阅主要处理逻辑：
+     * 1）做订阅处理doSubscribe(url, listener)
+     * 2）若订阅出现异常，获取url对应的缓存列表getCacheUrls(url)
+     * a）若列表不为空，则做通知处理notify(url, listener, urls)
+     * b）列表为空时，判断是否设置了检测check=true，设置了则抛出异常，否则将订阅失败的url添加到缓存中
+     */
     @Override
     public void subscribe(URL url, NotifyListener listener) {
-        super.subscribe(url, listener);
+        super.subscribe(url, listener); //执行父类AbstractRegistry的subscribe()方法，创建监听器，并添加到缓存中
         removeFailedSubscribed(url, listener); //移除失败的订阅
         try {
             // Sending a subscription request to the server side
@@ -356,7 +381,7 @@ public abstract class FailbackRegistry extends AbstractRegistry { //失败重新
         try {
             // Sending a canceling subscription request to the server side
             doUnsubscribe(url, listener);
-        } catch (Exception e) {
+        } catch (Exception e) { //异常捕获，并处理异常
             Throwable t = e;
 
             // If the startup detection is opened, the Exception is thrown directly.
@@ -399,7 +424,7 @@ public abstract class FailbackRegistry extends AbstractRegistry { //失败重新
     }
 
     @Override
-    protected void recover() throws Exception {
+    protected void recover() throws Exception { //recover：恢复
         // register
         Set<URL> recoverRegistered = new HashSet<URL>(getRegistered());
         if (!recoverRegistered.isEmpty()) {
@@ -441,7 +466,7 @@ public abstract class FailbackRegistry extends AbstractRegistry { //失败重新
 
     public abstract void doUnsubscribe(URL url, NotifyListener listener);
 
-    static class Holder {
+    static class Holder { //静态内部类，做对象缓存使用
 
         private final URL url;
 

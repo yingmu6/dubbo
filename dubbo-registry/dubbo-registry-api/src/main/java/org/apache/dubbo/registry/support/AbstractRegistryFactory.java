@@ -38,7 +38,7 @@ import static org.apache.dubbo.rpc.cluster.Constants.REFER_KEY;
  *
  * @see org.apache.dubbo.registry.RegistryFactory
  */
-public abstract class AbstractRegistryFactory implements RegistryFactory { //对RegistryFactory接口公共功能抽象
+public abstract class AbstractRegistryFactory implements RegistryFactory { //抽象注册工厂，对RegistryFactory接口公共功能抽象
 
     // Log output
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRegistryFactory.class);
@@ -78,7 +78,7 @@ public abstract class AbstractRegistryFactory implements RegistryFactory { //对
         // Lock up the registry shutdown process
         LOCK.lock();
         try {
-            for (Registry registry : getRegistries()) {
+            for (Registry registry : getRegistries()) { //遍历缓存中的所有注册实例
                 try {
                     registry.destroy(); //依次销毁注册实例
                 } catch (Throwable e) {

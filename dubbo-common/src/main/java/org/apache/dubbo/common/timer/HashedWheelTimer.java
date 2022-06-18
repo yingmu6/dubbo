@@ -20,17 +20,8 @@ import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
 import org.apache.dubbo.common.utils.ClassUtils;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Queue;
-import java.util.Set;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
@@ -54,8 +45,8 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  * <h3>Ticks per Wheel (Wheel Size)</h3>
  * <p>
- * {@link HashedWheelTimer} maintains a data structure called 'wheel'.
- * To put simply, a wheel is a hash table of {@link TimerTask}s whose hash
+ * {@link HashedWheelTimer} maintains a data structure called 'wheel'.（HashedWheelTimer维护一个名为“wheel”的数据结构）
+ * To put simply, a wheel is a hash table（hash表） of {@link TimerTask}s whose hash
  * function is 'dead line of the task'.  The default number of ticks per wheel
  * (i.e. the size of the wheel) is 512.  You could specify a larger value
  * if you are going to schedule a lot of timeouts.
@@ -77,7 +68,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * timer facility'</a>.  More comprehensive slides are located
  * <a href="http://www.cse.wustl.edu/~cdgill/courses/cs6874/TimingWheels.ppt">here</a>.
  */
-public class HashedWheelTimer implements Timer {
+public class HashedWheelTimer implements Timer { //基于Hash表实现的Timer，todo @csy-06-18 具体功能用途待了解
 
     /**
      * may be in spi?
@@ -90,7 +81,7 @@ public class HashedWheelTimer implements Timer {
     private static final AtomicBoolean WARNED_TOO_MANY_INSTANCES = new AtomicBoolean();
     private static final int INSTANCE_COUNT_LIMIT = 64;
     private static final AtomicIntegerFieldUpdater<HashedWheelTimer> WORKER_STATE_UPDATER =
-            AtomicIntegerFieldUpdater.newUpdater(HashedWheelTimer.class, "workerState");
+            AtomicIntegerFieldUpdater.newUpdater(HashedWheelTimer.class, "workerState"); // AtomicIntegerFieldUpdater可以对指定字段进行原子更新
 
     private final Worker worker = new Worker();
     private final Thread workerThread;
@@ -235,7 +226,7 @@ public class HashedWheelTimer implements Timer {
             throw new IllegalArgumentException("ticksPerWheel must be greater than 0: " + ticksPerWheel);
         }
 
-        // Normalize ticksPerWheel to power of two and initialize the wheel.
+        // Normalize ticksPerWheel to power of two and initialize the wheel.（将ticksPerWheel标准化为2的幂并初始化轮子。）
         wheel = createWheel(ticksPerWheel);
         mask = wheel.length - 1;
 
@@ -289,7 +280,7 @@ public class HashedWheelTimer implements Timer {
         return wheel;
     }
 
-    private static int normalizeTicksPerWheel(int ticksPerWheel) {
+    private static int normalizeTicksPerWheel(int ticksPerWheel) { //todo @csy-06-18 此处的计算逻辑是怎样的？
         int normalizedTicksPerWheel = ticksPerWheel - 1;
         normalizedTicksPerWheel |= normalizedTicksPerWheel >>> 1;
         normalizedTicksPerWheel |= normalizedTicksPerWheel >>> 2;
@@ -302,6 +293,7 @@ public class HashedWheelTimer implements Timer {
     /**
      * Starts the background thread explicitly.  The background thread will
      * start automatically on demand even if you did not call this method.
+     * （显式启动后台线程。即使你没有调用此方法，后台线程也会按需自动启动）
      *
      * @throws IllegalStateException if this timer has been
      *                               {@linkplain #stop() stopped} already
@@ -310,7 +302,7 @@ public class HashedWheelTimer implements Timer {
         switch (WORKER_STATE_UPDATER.get(this)) {
             case WORKER_STATE_INIT:
                 if (WORKER_STATE_UPDATER.compareAndSet(this, WORKER_STATE_INIT, WORKER_STATE_STARTED)) {
-                    workerThread.start();
+                    workerThread.start(); //启动线程
                 }
                 break;
             case WORKER_STATE_STARTED:

@@ -74,8 +74,10 @@ public abstract class AbstractRegistry implements Registry {
 
     /**
      * AbstractRegistry构造函数主要处理逻辑：
-     * 1）查找指定路径的缓存文件，若不存在则创建
-     * 2）
+     * 1）查找指定路径的缓存文件，若不存在则创建file
+     * 2）读取缓存文件file的内容，写到属性对象Properties中
+     * 3）从缓存subscribed查出指定url对应的监听器NotifyListener，依次做通知处理
+     * 并把变更的内容写到缓存文件中
      */
     public AbstractRegistry(URL url) { // 构造函数中做初始化操作
         setUrl(url);
@@ -149,6 +151,13 @@ public abstract class AbstractRegistry implements Registry {
         return lastCacheChanged;
     }
 
+    /**
+     * 将属性对象的Properties写入本地缓存文件file的主要逻辑：
+     * 1）检查版本号，判断是否有并发操作过。
+     * 2）查找file绝对路径下是否有.lock辅助文件，若没有则创建
+     * 3）尝试对.lock文件加锁，若加锁失败，表明有其它线程在操作该文件，则抛出异常进行重新保存操作
+     * 4）查找file文件，若不存在文件，则创建文件，并将属性对象Properties内容写到文件中
+     */
     public void doSaveProperties(long version) {
         if (version < lastCacheChanged.get()) { //在操作前，先判断版本是否有落后，落后表明有其它线程操作过了，就不处理了
             return;
@@ -158,7 +167,7 @@ public abstract class AbstractRegistry implements Registry {
         }
         // Save
         try {
-            File lockfile = new File(file.getAbsolutePath() + ".lock");
+            File lockfile = new File(file.getAbsolutePath() + ".lock"); //.lock文件并没有写具体内容，只是做辅助作用。用来判断是否有别的线程操作
             if (!lockfile.exists()) {
                 lockfile.createNewFile(); //若文件不存在，则进行创建
             }
@@ -173,7 +182,7 @@ public abstract class AbstractRegistry implements Registry {
                     if (!file.exists()) {
                         file.createNewFile();
                     }
-                    try (FileOutputStream outputFile = new FileOutputStream(file)) {
+                    try (FileOutputStream outputFile = new FileOutputStream(file)) { //todo @csy-06-18 写入文件内容都有什么？看到文件中"#Wed Jun 01 08:32:08 CST 2022"，是怎么写入的？
                         //把属性对象的值，写到本地文件中， 实现内存 -》文件的数据转换
                         properties.store(outputFile, "Dubbo Registry Cache"); // 第二个参数会作为注释内容 带上"#"写到文件中
                     }
@@ -181,17 +190,17 @@ public abstract class AbstractRegistry implements Registry {
                     lock.release(); //释放锁
                 }
             }
-        } catch (Throwable e) {
+        } catch (Throwable e) { //保存失败后做重试操作，todo @csy-06-18 此处重试并没有看到用for循环执行，那没执行完一次，方法结束后就会停止，是怎么做到重试的？
             savePropertiesRetryTimes.incrementAndGet();
             if (savePropertiesRetryTimes.get() >= MAX_RETRY_TIMES_SAVE_PROPERTIES) { //超过最大重试次数，不进行后续重试操作
                 logger.warn("Failed to save registry cache file after retrying " + MAX_RETRY_TIMES_SAVE_PROPERTIES + " times, cause: " + e.getMessage(), e);
-                savePropertiesRetryTimes.set(0);
+                savePropertiesRetryTimes.set(0); //不再执行时，将重试次数置为0
                 return;
             }
             if (version < lastCacheChanged.get()) {
                 savePropertiesRetryTimes.set(0);
                 return;
-            } else {
+            } else { //重新尝试保存属性到缓存文件，并把版本号+1
                 registryCacheExecutor.execute(new SaveProperties(lastCacheChanged.incrementAndGet()));
             }
             logger.warn("Failed to save registry cache file, will retry, cause: " + e.getMessage(), e);
@@ -352,10 +361,10 @@ public abstract class AbstractRegistry implements Registry {
             return;
         }
 
-        for (Map.Entry<URL, Set<NotifyListener>> entry : getSubscribed().entrySet()) {
+        for (Map.Entry<URL, Set<NotifyListener>> entry : getSubscribed().entrySet()) { //遍历订阅的缓存Map
             URL url = entry.getKey();
 
-            // 若
+            // 若缓存中url与传入的url不匹配，则不进行后续的通知处理
             if (!UrlUtils.isMatch(url, urls.get(0))) { //todo @csy-06-17 此处为啥总是urls.get(0)用第一个元素比较，是当前场景下的url列表只有一个吗？
                 continue;
             }
@@ -439,7 +448,7 @@ public abstract class AbstractRegistry implements Registry {
                 }
             }
             properties.setProperty(url.getServiceKey(), buf.toString()); //将拼接的内容存在属性对象中
-            long version = lastCacheChanged.incrementAndGet();
+            long version = lastCacheChanged.incrementAndGet(); //将版本号自动加1
             if (syncSaveFile) {
                 doSaveProperties(version); //同步保存
             } else {

@@ -25,7 +25,7 @@ import org.apache.dubbo.common.URL;
  * @see org.apache.dubbo.registry.RegistryFactory#getRegistry(URL)
  * @see org.apache.dubbo.registry.support.AbstractRegistry
  */
-public interface Registry extends Node, RegistryService { //注册实例，既有Node节点功能，也有RegistryService注册服务功能
+public interface Registry extends Node, RegistryService { //注册中心，既有Node节点功能，也有RegistryService注册服务功能
     default void reExportRegister(URL url) { //再次注册
         register(url);
     }
