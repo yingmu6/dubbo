@@ -262,7 +262,7 @@ class URL implements Serializable {
             i = url.indexOf(":/");
             if (i >= 0) {
                 if (i == 0) {
-                    throw new IllegalStateException("url missing protocol: \"" + url + "\"");
+                    throw new IllegalStateException("url missing protocol: \"" + url + "\""); //URL处理protocol是必须的，其它属性都是可选的
                 }
                 protocol = url.substring(0, i);
                 url = url.substring(i + 1);

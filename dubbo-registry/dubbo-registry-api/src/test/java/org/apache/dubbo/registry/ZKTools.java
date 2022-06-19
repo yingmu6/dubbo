@@ -36,27 +36,28 @@ import java.util.concurrent.Executors;
 /**
  *
  */
-public class ZKTools {
-    private static CuratorFramework client;
+public class ZKTools { //zookeeper客户端工具
+    private static CuratorFramework client; // CuratorFramework：Zookeeper框架式客户端，负责Zookeeper客户端的创建、删除、关闭等
     private static ExecutorService executor = Executors.newFixedThreadPool(1, new NamedThreadFactory("ZKTools-test", true));
 
     public static void main(String[] args) throws Exception {
+        // 指定连接的地址、会话保持时间、连接超时时间、重试策略等，并通过Zookeeper客户端CuratorFramework连接
         client = CuratorFrameworkFactory.newClient("127.0.0.1:2181", 60 * 1000, 60 * 1000,
                 new ExponentialBackoffRetry(1000, 3));
-        client.start();
+        client.start(); //创建Zookeeper客户端后，启动客户端
 
-        client.getCuratorListenable().addListener(new CuratorListener() {
+        client.getCuratorListenable().addListener(new CuratorListener() { //添加事件监听器，实现事件接收
             @Override
-            public void eventReceived(CuratorFramework client, CuratorEvent event) throws Exception {
+            public void eventReceived(CuratorFramework client, CuratorEvent event) throws Exception { // 接收有关错误和后台事件的通知
                 System.out.println("event notification: " + event.getPath());
                 System.out.println(event);
             }
-        }, executor);
+        }, executor); //添加的监听器，将会被指定的线程池executor执行
 
-        tesConditionRule();
+//        tesConditionRule(); //在zk指定路径存储指定值
 
 //        testStartupConfig();
-//        testProviderConfig();
+        testProviderConfig();
 //        testPathCache();
 //        testTreeCache();
 //        testCuratorListener();
@@ -168,9 +169,9 @@ public class ZKTools {
         }
     }
 
-    public static void tesConditionRule() {
+    public static void tesConditionRule() { //已测
         String serviceStr = "---\n" +
-                "scope: application\n" +
+                "scope: application22\n" + //"\n"换行处理
                 "force: true\n" +
                 "runtime: false\n" +
                 "conditions:\n" +
@@ -179,10 +180,12 @@ public class ZKTools {
                 "...";
         try {
             String servicePath = "/dubbo/config/demo-consumer/routers";
-            if (client.checkExists().forPath(servicePath) == null) {
+            if (client.checkExists().forPath(servicePath) == null) { //checkExists()：检查统计对象是否存在，forPath(path)：查找指定路径的对象
+
+                //create()：构建CreateBuilder接口的实例对象CreateBuilderImpl，creatingParentsIfNeeded()：创建尚未创建的父节点
                 client.create().creatingParentsIfNeeded().forPath(servicePath);
             }
-            setData(servicePath, serviceStr);
+            setData(servicePath, serviceStr);  //为指定路径设置指定的值（在zk的指定路径会写入指定的值，可通过zk的get命令查看内容）
         } catch (Exception e) {
             e.printStackTrace();
         }
