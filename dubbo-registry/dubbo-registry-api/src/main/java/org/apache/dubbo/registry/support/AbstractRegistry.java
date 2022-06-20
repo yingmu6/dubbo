@@ -467,7 +467,7 @@ public abstract class AbstractRegistry implements Registry {
         Set<URL> destroyRegistered = new HashSet<>(getRegistered());
         if (!destroyRegistered.isEmpty()) {
             for (URL url : new HashSet<>(getRegistered())) {
-                if (url.getParameter(DYNAMIC_KEY, true)) {
+                if (url.getParameter(DYNAMIC_KEY, true)) { //若节点设置为动态的，则做取消注册操作，从本地缓存Map中移除该节点
                     try {
                         unregister(url); //取消注册
                         if (logger.isInfoEnabled()) {

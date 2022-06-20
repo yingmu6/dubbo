@@ -69,7 +69,16 @@ public class AbstractRegistryTest { //AbstractRegistry测试
             }
         };
         // init notify listener
-        listener = urls -> notifySuccess = true;
+
+        listener = urls -> notifySuccess = true; // 1）使用lambda表示创建，与2）的执行效果一样的
+
+//        listener = new NotifyListener() { // 2) 使用匿名类创建
+//            @Override
+//            public void notify(List<URL> urls) {
+//                notifySuccess = true;
+//            }
+//        };
+
         // notify flag
         notifySuccess = false;
     }
