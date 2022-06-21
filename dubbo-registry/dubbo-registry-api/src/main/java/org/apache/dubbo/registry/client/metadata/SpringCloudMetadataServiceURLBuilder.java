@@ -34,12 +34,12 @@ import static org.apache.dubbo.registry.client.metadata.ServiceInstanceMetadataU
  *
  * @since 2.7.5
  */
-public class SpringCloudMetadataServiceURLBuilder implements MetadataServiceURLBuilder {
+public class SpringCloudMetadataServiceURLBuilder implements MetadataServiceURLBuilder { //spring cloud元数据服务的URL构建器
     public static final String NAME = "spring-cloud";
 
     @Override
     public List<URL> build(ServiceInstance serviceInstance) {
-        Map<String, String> metadata = serviceInstance.getMetadata();
+        Map<String, String> metadata = serviceInstance.getMetadata(); //从服务实例中获取元数据Map
         String dubboURLsJSON = metadata.get(METADATA_SERVICE_URLS_PROPERTY_NAME);
         if (StringUtils.isBlank(dubboURLsJSON)) {
             return Collections.emptyList();

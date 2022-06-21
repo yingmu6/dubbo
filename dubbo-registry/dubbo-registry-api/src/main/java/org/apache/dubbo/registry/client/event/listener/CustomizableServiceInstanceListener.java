@@ -23,7 +23,7 @@ import org.apache.dubbo.registry.client.ServiceInstanceCustomizer;
 import org.apache.dubbo.registry.client.event.ServiceInstancePreRegisteredEvent;
 
 /**
- * Customize the {@link ServiceInstance} before registering to Registry.
+ * Customize the {@link ServiceInstance} before registering to Registry.（在服务实例注册到注册中心前，做的监听定制处理）
  *
  * @since 2.7.5
  * @deprecated 2.7.8 Current class will be removed since 3.0.0

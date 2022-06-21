@@ -31,7 +31,7 @@ import java.util.stream.Stream;
  *
  * @since 2.7.5
  */
-public class ServiceInstancePortCustomizer implements ServiceInstanceCustomizer {
+public class ServiceInstancePortCustomizer implements ServiceInstanceCustomizer { //服务实例的端口号处理
 
     @Override
     public void customize(ServiceInstance serviceInstance) {
@@ -57,7 +57,7 @@ public class ServiceInstancePortCustomizer implements ServiceInstanceCustomizer 
         if (serviceInstance instanceof DefaultServiceInstance) {
             DefaultServiceInstance instance = (DefaultServiceInstance) serviceInstance;
             if (protocolConfig.getPort() != null) {
-                instance.setPort(protocolConfig.getPort());
+                instance.setPort(protocolConfig.getPort()); //设置服务实例的端口号
             }
         }
     }

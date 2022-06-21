@@ -23,7 +23,7 @@ package org.apache.dubbo.event;
  * @see EventListener
  * @since 2.7.5
  */
-public interface ConditionalEventListener<E extends Event> extends EventListener<E> {
+public interface ConditionalEventListener<E extends Event> extends EventListener<E> { //有条件的事件监听器
 
     /**
      * Accept the event is handled or not by current listener
@@ -31,5 +31,5 @@ public interface ConditionalEventListener<E extends Event> extends EventListener
      * @param event {@link Event event}
      * @return if handled, return <code>true</code>, or <code>false</code>
      */
-    boolean accept(E event);
+    boolean accept(E event); //监听器是否能处理输入的事件
 }

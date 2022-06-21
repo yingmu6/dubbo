@@ -36,7 +36,7 @@ import static org.apache.dubbo.registry.client.metadata.ServiceInstanceMetadataU
  *
  * @since 2.7.5
  */
-public class ProtocolPortsMetadataCustomizer implements ServiceInstanceCustomizer {
+public class ProtocolPortsMetadataCustomizer implements ServiceInstanceCustomizer { //协议与端口的元数据自定义器
 
     @Override
     public void customize(ServiceInstance serviceInstance) {
@@ -45,7 +45,7 @@ public class ProtocolPortsMetadataCustomizer implements ServiceInstanceCustomize
 
         WritableMetadataService writableMetadataService = getExtension(metadataStoredType);
 
-        Map<String, Integer> protocols = new HashMap<>();
+        Map<String, Integer> protocols = new HashMap<>(); //协议与端口的映射Map
         writableMetadataService.getExportedURLs()
                 .stream()
                 .map(URL::valueOf)

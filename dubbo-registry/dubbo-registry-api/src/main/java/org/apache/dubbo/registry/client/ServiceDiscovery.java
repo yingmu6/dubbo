@@ -35,12 +35,12 @@ import static java.util.Collections.unmodifiableMap;
 import static org.apache.dubbo.event.EventDispatcher.getDefaultExtension;
 
 /**
- * The common operations of Service Discovery
+ * The common operations of Service Discovery（服务发现常用操作）
  *
  * @since 2.7.5
  */
 @SPI("zookeeper")
-public interface ServiceDiscovery extends Prioritized { //服务发现处理接口
+public interface ServiceDiscovery extends Prioritized { //服务发现
 
     // ==================================== Lifecycle ==================================== //
 
@@ -69,7 +69,7 @@ public interface ServiceDiscovery extends Prioritized { //服务发现处理接�
      * @param serviceInstance an instance of {@link ServiceInstance} to be registered
      * @throws RuntimeException if failed
      */
-    void register(ServiceInstance serviceInstance) throws RuntimeException;
+    void register(ServiceInstance serviceInstance) throws RuntimeException; //按服务实例向注册中心注册
 
     /**
      * Updates the registered {@link ServiceInstance}.

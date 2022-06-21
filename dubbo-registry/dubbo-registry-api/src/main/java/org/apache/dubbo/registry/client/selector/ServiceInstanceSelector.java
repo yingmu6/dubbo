@@ -29,7 +29,7 @@ import java.util.List;
  * @since 2.7.5
  */
 @SPI("random")
-public interface ServiceInstanceSelector {
+public interface ServiceInstanceSelector { //服务实例选择器
 
     /**
      * Select an instance of {@link ServiceInstance} by the specified {@link ServiceInstance service instances}
@@ -39,5 +39,5 @@ public interface ServiceInstanceSelector {
      * @return an instance of {@link ServiceInstance} if available, or <code>null</code>
      */
     @Adaptive("service-instance-selector")
-    ServiceInstance select(URL registryURL, List<ServiceInstance> serviceInstances);
+    ServiceInstance select(URL registryURL, List<ServiceInstance> serviceInstances); //从ServiceInstance列表中选择符合条件的ServiceInstance
 }

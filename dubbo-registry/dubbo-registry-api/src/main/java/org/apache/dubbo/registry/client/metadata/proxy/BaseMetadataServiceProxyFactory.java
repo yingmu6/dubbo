@@ -29,11 +29,12 @@ import static org.apache.dubbo.registry.client.metadata.ServiceInstanceMetadataU
  *
  * @since 2.7.5
  */
-abstract class BaseMetadataServiceProxyFactory implements MetadataServiceProxyFactory {
-   
+abstract class BaseMetadataServiceProxyFactory implements MetadataServiceProxyFactory { //元数据代理工厂抽象类
+
+    // 数据格式：ConcurrentMap<ProxyCacheKey, MetadataService>
     private final ConcurrentMap<String, MetadataService> proxiesCache = new ConcurrentHashMap<>();
 
-    public final MetadataService getProxy(ServiceInstance serviceInstance) {
+    public final MetadataService getProxy(ServiceInstance serviceInstance) { //获取元数据代理，若不存在则创建
         return proxiesCache.computeIfAbsent(createProxyCacheKey(serviceInstance), id -> createProxy(serviceInstance));
     }
 
@@ -44,7 +45,7 @@ abstract class BaseMetadataServiceProxyFactory implements MetadataServiceProxyFa
      * @return non-null
      * @since 2.7.8
      */
-    protected String createProxyCacheKey(ServiceInstance serviceInstance) {
+    protected String createProxyCacheKey(ServiceInstance serviceInstance) { //创建代理缓存key
         return serviceInstance.getServiceName() + "#" + getExportedServicesRevision(serviceInstance);
     }
 

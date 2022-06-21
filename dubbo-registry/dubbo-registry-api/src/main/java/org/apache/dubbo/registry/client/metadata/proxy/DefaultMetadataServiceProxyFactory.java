@@ -42,9 +42,10 @@ import static org.apache.dubbo.registry.client.metadata.ServiceInstanceMetadataU
  *
  * @since 2.7.5
  */
+// MetadataServiceProxyFactory的默认实现类
 public class DefaultMetadataServiceProxyFactory extends BaseMetadataServiceProxyFactory implements MetadataServiceProxyFactory {
 
-    private ProxyFactory proxyFactory;
+    private ProxyFactory proxyFactory; //代理工厂
 
     private Protocol protocol;
 
@@ -57,7 +58,7 @@ public class DefaultMetadataServiceProxyFactory extends BaseMetadataServiceProxy
     }
 
 
-    protected MetadataService createProxy(ServiceInstance serviceInstance) {
+    protected MetadataService createProxy(ServiceInstance serviceInstance) { //创建元数据服务的代理类
         MetadataServiceURLBuilder builder = null;
         ExtensionLoader<MetadataServiceURLBuilder> loader
                 = ExtensionLoader.getExtensionLoader(MetadataServiceURLBuilder.class);
@@ -80,6 +81,6 @@ public class DefaultMetadataServiceProxyFactory extends BaseMetadataServiceProxy
         // Simply rely on the first metadata url, as stated in MetadataServiceURLBuilder.
         Invoker<MetadataService> invoker = protocol.refer(MetadataService.class, urls.get(0));
 
-        return proxyFactory.getProxy(invoker);
+        return proxyFactory.getProxy(invoker); //从代理工厂中获取Invoker对应的MetadataService实例
     }
 }

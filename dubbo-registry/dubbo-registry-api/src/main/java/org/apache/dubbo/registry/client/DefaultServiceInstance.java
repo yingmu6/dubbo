@@ -25,7 +25,9 @@ import java.util.Objects;
  *
  * @since 2.7.5
  */
-public class DefaultServiceInstance implements ServiceInstance {
+public class DefaultServiceInstance implements ServiceInstance { //服务实例接口的实现类
+
+    // todo @csy-06-21 ServiceInstance维护的数据存在哪里？有没有存在注册中心或元数据中心？
 
     private static final long serialVersionUID = 1149677083747278100L;
 
@@ -41,7 +43,7 @@ public class DefaultServiceInstance implements ServiceInstance {
 
     private boolean healthy;
 
-    private Map<String, String> metadata = new HashMap<>();
+    private Map<String, String> metadata = new HashMap<>(); //todo @csy-06-21 此处都存在什么值的？
 
     public DefaultServiceInstance() {
     }

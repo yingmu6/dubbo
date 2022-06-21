@@ -196,7 +196,7 @@ public class InMemoryWritableMetadataService extends AbstractAbstractWritableMet
     }
 
     private SortedSet<String> getServiceURLs(Map<String, SortedSet<URL>> exportedServiceURLs, String serviceKey,
-                                             String protocol) {
+                                             String protocol) { //从输入的Map中获取指定serviceKey、protocol对应的url字符串集合
 
         SortedSet<URL> serviceURLs = exportedServiceURLs.get(serviceKey);
 
@@ -207,7 +207,7 @@ public class InMemoryWritableMetadataService extends AbstractAbstractWritableMet
         return MetadataService.toSortedStrings(serviceURLs.stream().filter(url -> isAcceptableProtocol(protocol, url)));
     }
 
-    private boolean isAcceptableProtocol(String protocol, URL url) {
+    private boolean isAcceptableProtocol(String protocol, URL url) { // 判断url中设置的protocol是否可以被接受
         return protocol == null
                 || protocol.equals(url.getParameter(PROTOCOL_KEY))
                 || protocol.equals(url.getProtocol());

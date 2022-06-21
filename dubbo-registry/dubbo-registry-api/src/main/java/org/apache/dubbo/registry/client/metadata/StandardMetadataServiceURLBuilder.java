@@ -36,8 +36,8 @@ import static org.apache.dubbo.registry.client.metadata.ServiceInstanceMetadataU
  * @see MetadataService
  * @since 2.7.5
  */
-public class StandardMetadataServiceURLBuilder implements MetadataServiceURLBuilder {
-    
+public class StandardMetadataServiceURLBuilder implements MetadataServiceURLBuilder { //标准的元数据服务的URL构建器
+
     public static final String NAME = "standard";
 
     /**
@@ -47,7 +47,7 @@ public class StandardMetadataServiceURLBuilder implements MetadataServiceURLBuil
      * @return the not-null {@link List}
      */
     @Override
-    public List<URL> build(ServiceInstance serviceInstance) {
+    public List<URL> build(ServiceInstance serviceInstance) { // 构建服务实例对应的URL列表（基于服务实例与服务实例存储的元数据参数进行组装）
 
         Map<String, Map<String, String>> paramsMap = getMetadataServiceURLsParams(serviceInstance);
 

@@ -29,7 +29,7 @@ import static java.util.stream.StreamSupport.stream;
  * @see EventDispatcher
  * @since 2.7.5
  */
-public interface Listenable<E extends EventListener<?>> {
+public interface Listenable<E extends EventListener<?>> { //对EventListener事件监听器进行管理，比如新增、删除、查询
 
     /**
      * Add a {@link EventListener Dubbo event listener}
@@ -50,7 +50,7 @@ public interface Listenable<E extends EventListener<?>> {
      * @throws IllegalArgumentException if one of arguments argument is not concrete instance
      */
     default void addEventListeners(E listener, E... others) throws NullPointerException,
-            IllegalArgumentException {
+            IllegalArgumentException { //添加一个或多个dubbo事件监听器
         List<E> listeners = new ArrayList<>(1 + others.length);
         listeners.add(listener);
         listeners.addAll(Arrays.asList(others));

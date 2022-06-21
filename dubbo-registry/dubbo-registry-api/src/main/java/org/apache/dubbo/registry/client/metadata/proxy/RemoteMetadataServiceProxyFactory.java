@@ -21,11 +21,11 @@ import org.apache.dubbo.registry.client.ServiceInstance;
 
 /**
  * Works on Consumer side, useful when using remote metadata mode. Also see {@link DefaultMetadataServiceProxyFactory}
- *
+ * <p>
  * Provider will not expose the embedded {@link MetadataService}, instead, each provider register its metadata info to a
  * remote Metadata Center. So the Consumer side need to connect to the same Metadata Center to get one instance's metadata.
  */
-public class RemoteMetadataServiceProxyFactory extends BaseMetadataServiceProxyFactory implements MetadataServiceProxyFactory {
+public class RemoteMetadataServiceProxyFactory extends BaseMetadataServiceProxyFactory implements MetadataServiceProxyFactory { //远程元数据服务代理工厂
 
     @Override
     public MetadataService createProxy(ServiceInstance serviceInstance) {

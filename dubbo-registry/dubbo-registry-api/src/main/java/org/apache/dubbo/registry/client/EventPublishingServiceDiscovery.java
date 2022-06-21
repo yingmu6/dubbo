@@ -37,9 +37,9 @@ import static java.util.Optional.of;
 
 /**
  * The decorating implementation of {@link ServiceDiscovery} to published the {@link Event Dubbo event} when some actions are
- * executing, including:
- * <ul>
- * <li>Lifecycle actions:</li>
+ * executing, including:（EventPublishingServiceDiscovery是ServiceDiscovery的实现类，在一些动作被执行时，会发布dubbo事件）
+ * <ul>  下面是支持的Action
+ * <li>Lifecycle actions:</li> （Lifecycle声明周期Action）
  * <table cellpadding="0" cellspacing="0" border="1">
  * <thead>
  * <tr>
@@ -61,7 +61,7 @@ import static java.util.Optional.of;
  * </tr>
  * </tbody>
  * </table>
- * <li>Registration actions:</li>
+ * <li>Registration actions:</li> （Registration注册Action）
  * <table cellpadding="0" cellspacing="0" border="1">
  * <thead>
  * <tr>
@@ -99,7 +99,7 @@ import static java.util.Optional.of;
  * @see ServiceDiscoveryDestroyedEvent
  * @since 2.7.5
  */
-final class EventPublishingServiceDiscovery implements ServiceDiscovery {
+final class EventPublishingServiceDiscovery implements ServiceDiscovery { //服务发现的事件发布处理
 
     /**
      * @see ServiceInstancePreRegisteredEvent
@@ -123,7 +123,7 @@ final class EventPublishingServiceDiscovery implements ServiceDiscovery {
      */
     protected static final String DESTROY_ACTION = "destroy";
 
-    protected final EventDispatcher eventDispatcher = EventDispatcher.getDefaultExtension();
+    protected final EventDispatcher eventDispatcher = EventDispatcher.getDefaultExtension(); //使用默认的扩展实例，即DirectEventDispatcher
 
     protected final AtomicBoolean initialized = new AtomicBoolean(false);
 
@@ -261,17 +261,17 @@ final class EventPublishingServiceDiscovery implements ServiceDiscovery {
 
     protected final void executeWithEvents(Optional<? extends Event> beforeEvent,
                                            ThrowableAction action,
-                                           Optional<? extends Event> afterEvent) {
-        beforeEvent.ifPresent(this::dispatchEvent);
+                                           Optional<? extends Event> afterEvent) { //带着事件执行Action
+        beforeEvent.ifPresent(this::dispatchEvent); //Action执行前处理
         try {
-            action.execute();
-        } catch (Throwable e) {
+            action.execute(); //Action执行
+        } catch (Throwable e) { //执行有异常，会发布异常事件
             dispatchEvent(new ServiceDiscoveryExceptionEvent(this, serviceDiscovery, e));
         }
-        afterEvent.ifPresent(this::dispatchEvent);
+        afterEvent.ifPresent(this::dispatchEvent); //Action执行后处理
     }
 
-    private void dispatchEvent(Event event) {
+    private void dispatchEvent(Event event) { //进行事件派发，Event：是事件抽象类，根据传入的具体实例实现多态
         eventDispatcher.dispatch(event);
     }
 

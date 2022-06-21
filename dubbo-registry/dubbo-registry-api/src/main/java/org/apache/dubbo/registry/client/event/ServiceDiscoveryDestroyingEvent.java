@@ -24,7 +24,8 @@ import org.apache.dubbo.registry.client.ServiceDiscovery;
  * @see ServiceDiscovery#destroy()
  * @since 2.7.5
  */
-public class ServiceDiscoveryDestroyingEvent extends ServiceDiscoveryEvent {
+public class ServiceDiscoveryDestroyingEvent extends ServiceDiscoveryEvent { //服务发现销毁前事件
+    // 使用的地方EventPublishingServiceDiscovery#destroy()
 
     public ServiceDiscoveryDestroyingEvent(ServiceDiscovery source, ServiceDiscovery original) {
         super(source, original);

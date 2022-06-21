@@ -26,7 +26,7 @@ import org.apache.dubbo.registry.client.ServiceDiscovery;
  * @see ServiceDiscovery
  * @since 2.7.5
  */
-public abstract class ServiceDiscoveryEvent extends Event {
+public abstract class ServiceDiscoveryEvent extends Event { //服务发现事件
 
     private final ServiceDiscovery original;
 

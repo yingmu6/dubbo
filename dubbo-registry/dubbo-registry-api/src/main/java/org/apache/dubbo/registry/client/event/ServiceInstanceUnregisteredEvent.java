@@ -27,7 +27,7 @@ import org.apache.dubbo.registry.client.ServiceInstance;
  * @see ServiceInstanceEvent
  * @since 2.7.5
  */
-public class ServiceInstanceUnregisteredEvent extends ServiceInstanceEvent {
+public class ServiceInstanceUnregisteredEvent extends ServiceInstanceEvent { //服务实例在注册中心取消注册后的事件
 
     public ServiceInstanceUnregisteredEvent(Object source, ServiceInstance serviceInstance) {
         super(source, serviceInstance);

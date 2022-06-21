@@ -24,8 +24,15 @@ import org.apache.dubbo.registry.client.ServiceInstance;
  *
  * @since 2.7.5
  */
-public abstract class ServiceInstanceEvent extends Event {
+public abstract class ServiceInstanceEvent extends Event { //服务实例事件
 
+    /**
+     * ServiceInstanceEvent的实现类有：
+     * 1）ServiceInstancePreRegisteredEvent：服务实例在注册中心注册前的事件
+     * 2）ServiceInstancePreUnregisteredEvent：服务实例在注册中心取消注册前的事件
+     * 3）ServiceInstanceRegisteredEvent：服务实例在注册中心注册后的事件
+     * 4）ServiceInstanceUnregisteredEvent：服务实例在注册中心取消注册后的事件
+     */
     private final ServiceInstance serviceInstance;
 
     /**

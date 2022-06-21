@@ -34,10 +34,10 @@ import static org.apache.dubbo.registry.Constants.REGISTER_KEY;
  *
  * @since 2.7.5
  */
-public class RestProtocolSubscribedURLsSynthesizer implements SubscribedURLsSynthesizer {
+public class RestProtocolSubscribedURLsSynthesizer implements SubscribedURLsSynthesizer { //Rest协议中订阅url与服务实例的合成器
 
     @Override
-    public boolean supports(URL subscribedURL) {
+    public boolean supports(URL subscribedURL) { //判断协议是否为"rest"
         return "rest".equals(subscribedURL.getProtocol()) ||
                 "rest".equals(subscribedURL.getParameter(PROTOCOL_KEY));
     }
@@ -48,7 +48,7 @@ public class RestProtocolSubscribedURLsSynthesizer implements SubscribedURLsSynt
         String protocol = subscribedURL.getParameter(PROTOCOL_KEY);
 
         return serviceInstances.stream().map(serviceInstance -> {
-            URLBuilder urlBuilder = new URLBuilder()
+            URLBuilder urlBuilder = new URLBuilder() //将订阅的URL与服务实例组合新的URL
                     .setProtocol(protocol)
                     .setHost(serviceInstance.getHost())
                     .setPort(serviceInstance.getPort())

@@ -20,15 +20,7 @@ import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
 import org.apache.dubbo.event.Event;
 import org.apache.dubbo.event.GenericEventListener;
-import org.apache.dubbo.registry.client.event.ServiceDiscoveryDestroyedEvent;
-import org.apache.dubbo.registry.client.event.ServiceDiscoveryDestroyingEvent;
-import org.apache.dubbo.registry.client.event.ServiceDiscoveryInitializedEvent;
-import org.apache.dubbo.registry.client.event.ServiceDiscoveryInitializingEvent;
-import org.apache.dubbo.registry.client.event.ServiceInstancePreRegisteredEvent;
-import org.apache.dubbo.registry.client.event.ServiceInstancePreUnregisteredEvent;
-import org.apache.dubbo.registry.client.event.ServiceInstanceRegisteredEvent;
-import org.apache.dubbo.registry.client.event.ServiceInstanceUnregisteredEvent;
-import org.apache.dubbo.registry.client.event.ServiceInstancesChangedEvent;
+import org.apache.dubbo.registry.client.event.*;
 
 import static java.lang.String.format;
 
@@ -37,7 +29,7 @@ import static java.lang.String.format;
  *
  * @since 2.7.5
  */
-public class LoggingEventListener extends GenericEventListener {
+public class LoggingEventListener extends GenericEventListener { //事件的日志监听器
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 

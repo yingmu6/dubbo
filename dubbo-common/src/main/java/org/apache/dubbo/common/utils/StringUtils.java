@@ -657,7 +657,7 @@ public final class StringUtils {
         return splitToList0(str, ch).toArray(EMPTY_STRING_ARRAY);
     }
 
-    private static List<String> splitToList0(String str, char ch) {
+    private static List<String> splitToList0(String str, char ch) { //按指定符号对字符串进行分隔
         List<String> result = new ArrayList<>();
         int ix = 0, len = str.length();
         for (int i = 0; i < len; i++) {

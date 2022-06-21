@@ -27,7 +27,7 @@ import static org.apache.dubbo.common.utils.ReflectUtils.findParameterizedTypes;
 
 /**
  * The {@link Event Dubbo Event} Listener that is based on Java standard {@link java.util.EventListener} interface supports
- * the generic {@link Event}.
+ * the generic（通用的） {@link Event}.
  * <p>
  * The {@link #onEvent(Event) handle method} will be notified when the matched-type {@link Event Dubbo Event} is
  * published, whose priority could be changed by {@link #getPriority()} method.
@@ -39,8 +39,10 @@ import static org.apache.dubbo.common.utils.ReflectUtils.findParameterizedTypes;
  */
 @SPI
 @FunctionalInterface
-public interface EventListener<E extends Event> extends java.util.EventListener, Prioritized { //java中EventListener：所有事件监听器接口都必须扩展的标记接口
+public interface EventListener<E extends Event> extends java.util.EventListener, Prioritized { //事件监听器（是SPI接口，也是函数式接口，通过事件监听器处理事件，类似Handle处理类）
     /**
+     * java中EventListener：所有事件监听器接口都必须扩展的标记接口
+     *
      * java.util.EventListener：java事件监听器
      * A tagging interface that all event listener interfaces must extend
      * （EventListener：是所有事件监听器必须继承的标记接口）
@@ -52,7 +54,7 @@ public interface EventListener<E extends Event> extends java.util.EventListener,
      *
      * @param event a {@link Event Dubbo Event}
      */
-    void onEvent(E event);
+    void onEvent(E event); //当前函数式接口的核心方法，可以用lambda表达式处理调用
 
     /**
      * The priority of {@link EventListener current listener}.
@@ -71,7 +73,7 @@ public interface EventListener<E extends Event> extends java.util.EventListener,
      * @param listener the {@link Class class} of {@link EventListener Dubbo event listener}
      * @return <code>null</code> if not found
      */
-    static Class<? extends Event> findEventType(EventListener<?> listener) {
+    static Class<? extends Event> findEventType(EventListener<?> listener) { //查找事件监听器对应的事件类型
         return findEventType(listener.getClass());
     }
 

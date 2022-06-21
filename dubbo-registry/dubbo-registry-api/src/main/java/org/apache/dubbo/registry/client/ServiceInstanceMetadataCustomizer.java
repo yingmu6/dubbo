@@ -30,15 +30,17 @@ import static org.apache.dubbo.common.utils.StringUtils.isBlank;
 public abstract class ServiceInstanceMetadataCustomizer implements ServiceInstanceCustomizer {
 
     @Override
-    public final void customize(ServiceInstance serviceInstance) {
+    public final void customize(ServiceInstance serviceInstance) { //对服务实例的元数据进行处理
 
         Map<String, String> metadata = serviceInstance.getMetadata();
 
-        String propertyName = resolveMetadataPropertyName(serviceInstance);
+        // 元数据信息：比如提供者存储的数据为ServiceDefinition对应的字符串，消费者存储的是Map<String, Object>参数Map对应的字符串
+        String propertyName = resolveMetadataPropertyName(serviceInstance); //交由具体实现类处理
         String propertyValue = resolveMetadataPropertyValue(serviceInstance);
 
         if (!isBlank(propertyName) && !isBlank(propertyValue)) {
             String existedValue = metadata.get(propertyName);
+            // 若元数据中对应的propertyName值为空，且允许值覆盖时，设置解析的元数据值
             boolean put = existedValue == null || isOverride();
             if (put) {
                 metadata.put(propertyName, propertyValue);
@@ -47,7 +49,7 @@ public abstract class ServiceInstanceMetadataCustomizer implements ServiceInstan
     }
 
     /**
-     * Resolve the property name of metadata
+     * Resolve the property name of metadata（解析ServiceInstance对应的元数据属性名）
      *
      * @param serviceInstance the instance of {@link ServiceInstance}
      * @return non-null key
@@ -55,7 +57,7 @@ public abstract class ServiceInstanceMetadataCustomizer implements ServiceInstan
     protected abstract String resolveMetadataPropertyName(ServiceInstance serviceInstance);
 
     /**
-     * Resolve the property value of metadata
+     * Resolve the property value of metadata（解析ServiceInstance对应的元数据属性值）
      *
      * @param serviceInstance the instance of {@link ServiceInstance}
      * @return non-null value

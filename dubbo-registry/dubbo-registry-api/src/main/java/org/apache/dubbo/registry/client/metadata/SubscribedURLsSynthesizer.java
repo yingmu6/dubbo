@@ -32,7 +32,7 @@ import java.util.List;
  * @since 2.7.5
  */
 @SPI
-public interface SubscribedURLsSynthesizer extends Prioritized {
+public interface SubscribedURLsSynthesizer extends Prioritized { //订阅URL的合成器
 
     /**
      * Supports the synthesis of the subscribed {@link URL URLs} or not
@@ -45,6 +45,7 @@ public interface SubscribedURLsSynthesizer extends Prioritized {
 
     /**
      * synthesize the subscribed {@link URL URLs}
+     * （对订阅URL进行合成）
      *
      * @param subscribedURL    the original subscribed {@link URL} from the execution of`
      *                         {@link Registry#subscribe(URL, NotifyListener)} method

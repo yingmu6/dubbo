@@ -28,7 +28,7 @@ import java.util.Objects;
  * @see ServiceInstancesChangedEvent
  * @since 2.7.5
  */
-public abstract class ServiceInstancesChangedListener implements ConditionalEventListener<ServiceInstancesChangedEvent> {
+public abstract class ServiceInstancesChangedListener implements ConditionalEventListener<ServiceInstancesChangedEvent> { //服务更改事件监听器
 
     private final String serviceName;
 

@@ -86,7 +86,7 @@ public interface WritableMetadataService extends MetadataService {
      * @param url a {@link URL}
      * @return If success , return <code>true</code>
      */
-    boolean subscribeURL(URL url);
+    boolean subscribeURL(URL url); //不同的实现类，只是内部功能实现逻辑不一样，但是接口功能以及需要满足的契约是一样的
 
     /**
      * Unsubscribes a {@link URL}

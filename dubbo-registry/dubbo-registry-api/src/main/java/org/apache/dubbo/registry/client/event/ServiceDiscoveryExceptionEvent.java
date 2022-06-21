@@ -25,9 +25,9 @@ import org.apache.dubbo.registry.client.ServiceDiscovery;
  * @see org.apache.dubbo.event.Event
  * @since 2.7.5
  */
-public class ServiceDiscoveryExceptionEvent extends ServiceDiscoveryEvent {
+public class ServiceDiscoveryExceptionEvent extends ServiceDiscoveryEvent { //服务发现异常时的事件
 
-    private final Throwable cause;
+    private final Throwable cause; //异常信息
 
     public ServiceDiscoveryExceptionEvent(ServiceDiscovery source, ServiceDiscovery original, Throwable cause) {
         super(source, original);

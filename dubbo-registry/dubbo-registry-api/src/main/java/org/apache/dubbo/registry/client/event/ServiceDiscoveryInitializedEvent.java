@@ -25,7 +25,7 @@ import org.apache.dubbo.registry.client.ServiceDiscovery;
  * @see ServiceDiscovery#initialize(URL)
  * @since 2.7.5
  */
-public class ServiceDiscoveryInitializedEvent extends ServiceDiscoveryEvent {
+public class ServiceDiscoveryInitializedEvent extends ServiceDiscoveryEvent { //服务发现初始化后事件
 
     public ServiceDiscoveryInitializedEvent(ServiceDiscovery source, ServiceDiscovery original) {
         super(source, original);

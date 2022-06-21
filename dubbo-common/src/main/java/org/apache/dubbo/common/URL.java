@@ -1497,7 +1497,10 @@ class URL implements Serializable {
         return buildKey(inf, getParameter(GROUP_KEY), getParameter(VERSION_KEY));
     }
 
-    public static String buildKey(String path, String group, String version) { //path、group、version组合成服务的唯一标识key
+    /**
+     * 构建服务的唯一标识key：由path、group、version组合
+     */
+    public static String buildKey(String path, String group, String version) {
         return BaseServiceMetadata.buildServiceKey(path, group, version);
     }
 

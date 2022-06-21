@@ -26,9 +26,7 @@ import java.util.SortedSet;
 
 import static org.apache.dubbo.metadata.MetadataService.toURLs;
 import static org.apache.dubbo.metadata.WritableMetadataService.getExtension;
-import static org.apache.dubbo.registry.client.metadata.ServiceInstanceMetadataUtils.METADATA_SERVICE_URL_PARAMS_PROPERTY_NAME;
-import static org.apache.dubbo.registry.client.metadata.ServiceInstanceMetadataUtils.getMetadataServiceParameter;
-import static org.apache.dubbo.registry.client.metadata.ServiceInstanceMetadataUtils.getMetadataStorageType;
+import static org.apache.dubbo.registry.client.metadata.ServiceInstanceMetadataUtils.*;
 
 /**
  * An {@link ServiceInstanceMetadataCustomizer} to customize the {@link URL urls} of {@link MetadataService}
@@ -37,28 +35,28 @@ import static org.apache.dubbo.registry.client.metadata.ServiceInstanceMetadataU
  * @see ServiceInstanceMetadataCustomizer
  * @since 2.7.5
  */
-public class MetadataServiceURLParamsMetadataCustomizer extends ServiceInstanceMetadataCustomizer {
+public class MetadataServiceURLParamsMetadataCustomizer extends ServiceInstanceMetadataCustomizer { // 元数据url中参数处理的元数据自定器
 
     @Override
     public String resolveMetadataPropertyName(ServiceInstance serviceInstance) {
-        return METADATA_SERVICE_URL_PARAMS_PROPERTY_NAME;
+        return METADATA_SERVICE_URL_PARAMS_PROPERTY_NAME; //元数据对应的属性名：dubbo.metadata-service.url-params
     }
 
     @Override
     public String resolveMetadataPropertyValue(ServiceInstance serviceInstance) {
 
-        String metadataStorageType = getMetadataStorageType(serviceInstance);
+        String metadataStorageType = getMetadataStorageType(serviceInstance); //获取元数据存储类型，即为WritableMetadataService的扩展名
 
-        WritableMetadataService writableMetadataService = getExtension(metadataStorageType);
+        WritableMetadataService writableMetadataService = getExtension(metadataStorageType); //根据SPI机制获取到WritableMetadataService实例
 
-        String serviceInterface = MetadataService.class.getName();
+        String serviceInterface = MetadataService.class.getName(); //提取元数据信息
 
         String group = serviceInstance.getServiceName();
 
         String version = MetadataService.VERSION;
 
-        SortedSet<String> urls = writableMetadataService.getExportedURLs(serviceInterface, group, version);
+        SortedSet<String> urls = writableMetadataService.getExportedURLs(serviceInterface, group, version); //查找serviceInterface, group, version对应关联服务存储的元数据列表
 
-        return getMetadataServiceParameter(toURLs(urls));
+        return getMetadataServiceParameter(toURLs(urls)); //存储的url元数据中参数Map对应的字符串
     }
 }

@@ -34,7 +34,7 @@ import static org.apache.dubbo.registry.client.metadata.ServiceInstanceMetadataU
  *
  * @since 2.7.5
  */
-public class ExportedServicesRevisionMetadataCustomizer extends ServiceInstanceMetadataCustomizer {
+public class ExportedServicesRevisionMetadataCustomizer extends ServiceInstanceMetadataCustomizer { //计算暴露服务版本的自定器
 
     @Override
     protected String resolveMetadataPropertyName(ServiceInstance serviceInstance) {

@@ -30,12 +30,12 @@ import org.apache.dubbo.registry.client.event.listener.CustomizableServiceInstan
  * @since 2.7.5
  */
 @SPI
-public interface ServiceInstanceCustomizer extends Prioritized {
+public interface ServiceInstanceCustomizer extends Prioritized { //ServiceInstance的自定器，Customizer：自定器
 
     /**
      * Customizes {@link ServiceInstance the service instance}
      *
      * @param serviceInstance {@link ServiceInstance the service instance}
      */
-    void customize(ServiceInstance serviceInstance);
+    void customize(ServiceInstance serviceInstance); //对服务实例进行自定义处理
 }

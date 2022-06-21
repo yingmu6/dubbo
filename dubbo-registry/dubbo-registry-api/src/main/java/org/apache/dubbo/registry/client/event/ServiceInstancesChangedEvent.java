@@ -26,15 +26,16 @@ import static java.util.Collections.unmodifiableCollection;
 
 /**
  * An event raised after the {@link ServiceInstance instances} of one service has been changed.
+ * （在服务实例变更后引起的事件）
  *
  * @see ServiceInstancesChangedListener
  * @since 2.7.5
  */
-public class ServiceInstancesChangedEvent extends Event {
+public class ServiceInstancesChangedEvent extends Event { //服务实例变更事件
 
     private final String serviceName;
 
-    private final Collection<ServiceInstance> serviceInstances;
+    private final Collection<ServiceInstance> serviceInstances; //服务实例集合
 
     /**
      * @param serviceName      The name of service that was changed

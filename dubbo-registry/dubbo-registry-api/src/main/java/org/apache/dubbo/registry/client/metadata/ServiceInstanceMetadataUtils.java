@@ -16,26 +16,17 @@
  */
 package org.apache.dubbo.registry.client.metadata;
 
+import com.alibaba.fastjson.JSON;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.utils.StringUtils;
 import org.apache.dubbo.metadata.MetadataService;
 import org.apache.dubbo.metadata.WritableMetadataService;
 import org.apache.dubbo.registry.client.ServiceInstance;
 
-import com.alibaba.fastjson.JSON;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.Collections.emptyMap;
-import static org.apache.dubbo.common.constants.CommonConstants.APPLICATION_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.DEFAULT_METADATA_STORAGE_TYPE;
-import static org.apache.dubbo.common.constants.CommonConstants.GROUP_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.PORT_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.TIMESTAMP_KEY;
+import static org.apache.dubbo.common.constants.CommonConstants.*;
 import static org.apache.dubbo.common.utils.StringUtils.isBlank;
 import static org.apache.dubbo.registry.integration.RegistryProtocol.DEFAULT_REGISTER_PROVIDER_KEYS;
 import static org.apache.dubbo.rpc.Constants.DEPRECATED_KEY;
@@ -66,7 +57,7 @@ public class ServiceInstanceMetadataUtils {
     /**
      * The {@link URL URLs} property name of {@link MetadataService} :
      * "dubbo.metadata-service.urls", which is used to be compatible with Dubbo Spring Cloud and
-     * discovery the metadata of instance
+     * discovery the metadata of instance（用于兼容Dubbo Spring Cloud并发现实例的元数据）
      */
     public static final String METADATA_SERVICE_URLS_PROPERTY_NAME = METADATA_SERVICE_PREFIX + "urls";
 
@@ -92,9 +83,9 @@ public class ServiceInstanceMetadataUtils {
      * @return non-null {@link Map}, the key is {@link URL#getProtocol() the protocol of URL}, the value is
      * {@link #getMetadataServiceURLParams(ServiceInstance, String)}
      */
-    public static Map<String, Map<String, String>> getMetadataServiceURLsParams(ServiceInstance serviceInstance) {
+    public static Map<String, Map<String, String>> getMetadataServiceURLsParams(ServiceInstance serviceInstance) { //todo @csy-06-21 查看返回的数据值
         Map<String, String> metadata = serviceInstance.getMetadata();
-        String param = metadata.get(METADATA_SERVICE_URL_PARAMS_PROPERTY_NAME);
+        String param = metadata.get(METADATA_SERVICE_URL_PARAMS_PROPERTY_NAME); //从元数据中获取dubbo.metadata-service.url-params参数对应的值
         return isBlank(param) ? emptyMap() : (Map) JSON.parse(param);
     }
 
@@ -109,7 +100,7 @@ public class ServiceInstanceMetadataUtils {
         return params.getOrDefault(protocol, emptyMap());
     }
 
-    public static String getMetadataServiceParameter(List<URL> urls) {
+    public static String getMetadataServiceParameter(List<URL> urls) { //获取元数据参数对应的字符串
 
         Map<String, Map<String, String>> params = new HashMap<>();
 
@@ -121,10 +112,10 @@ public class ServiceInstanceMetadataUtils {
                 // remove DEPRECATED_KEY because it's always false
                 .map(url -> url.removeParameter(DEPRECATED_KEY))
                 // remove TIMESTAMP_KEY because it's nonsense
-                .map(url -> url.removeParameter(TIMESTAMP_KEY))
+                .map(url -> url.removeParameter(TIMESTAMP_KEY)) //把url中非元数据的参数移除
                 .forEach(url -> {
                     String protocol = url.getProtocol();
-                    params.put(protocol, getParams(url));
+                    params.put(protocol, getParams(url)); //按protocol归属参数
                 });
 
         if (params.isEmpty()) {
@@ -179,7 +170,7 @@ public class ServiceInstanceMetadataUtils {
      * @param serviceInstance the specified {@link ServiceInstance}
      * @return if not found in {@link ServiceInstance#getMetadata() metadata} of {@link ServiceInstance}, return
      */
-    public static String getMetadataStorageType(ServiceInstance serviceInstance) {
+    public static String getMetadataStorageType(ServiceInstance serviceInstance) { //获取元数据存储的类型，即为元数据WritableMetadataService的扩展名，如值为local
         Map<String, String> metadata = serviceInstance.getMetadata();
         return metadata.getOrDefault(METADATA_STORAGE_TYPE_PROPERTY_NAME, DEFAULT_METADATA_STORAGE_TYPE);
     }
@@ -255,7 +246,7 @@ public class ServiceInstanceMetadataUtils {
         }
     }
 
-    public static class Endpoint {
+    public static class Endpoint { //静态内部类，维护protocol与port的关系
         Integer port;
         String protocol;
 

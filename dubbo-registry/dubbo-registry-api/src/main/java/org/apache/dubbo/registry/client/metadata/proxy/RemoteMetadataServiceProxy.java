@@ -31,9 +31,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import static java.util.Collections.unmodifiableSortedSet;
-import static org.apache.dubbo.common.constants.CommonConstants.GROUP_KEY;
-import static org.apache.dubbo.common.constants.CommonConstants.PROVIDER_SIDE;
-import static org.apache.dubbo.common.constants.CommonConstants.VERSION_KEY;
+import static org.apache.dubbo.common.constants.CommonConstants.*;
 import static org.apache.dubbo.metadata.URLRevisionResolver.UNKNOWN_REVISION;
 import static org.apache.dubbo.registry.client.metadata.ServiceInstanceMetadataUtils.EXPORTED_SERVICES_REVISION_PROPERTY_NAME;
 
@@ -42,7 +40,7 @@ import static org.apache.dubbo.registry.client.metadata.ServiceInstanceMetadataU
  *
  * @since 2.7.5
  */
-public class RemoteMetadataServiceProxy implements MetadataService { //MetadataService元数据服务的代理类
+public class RemoteMetadataServiceProxy implements MetadataService { //远程元数据服务的代理类
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -63,11 +61,8 @@ public class RemoteMetadataServiceProxy implements MetadataService { //MetadataS
 
     @Override
     public SortedSet<String> getExportedURLs(String serviceInterface, String group, String version, String protocol) {
-        /**
-         * 该方法的用途？
-         * 解：获取暴露的url列表，并进行筛选
-         */
-        SortedSet<String> exportedURLs = getMetadataReport().getExportedURLs(serviceName, revision);
+
+        SortedSet<String> exportedURLs = getMetadataReport().getExportedURLs(serviceName, revision); //从远程获取暴露的url字符串列表
         if (ALL_SERVICE_INTERFACES.equals(serviceInterface)) {
             return exportedURLs;
         }
@@ -108,7 +103,7 @@ public class RemoteMetadataServiceProxy implements MetadataService { //MetadataS
                 version, group, PROVIDER_SIDE, serviceName));
     }
 
-    MetadataReport getMetadataReport() {
+    MetadataReport getMetadataReport() { //获取元数据上报实例
         return MetadataReportInstance.getMetadataReport(true);
     }
 }

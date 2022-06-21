@@ -24,7 +24,7 @@ import java.util.EventObject;
  *
  * @since 2.7.5
  */
-public abstract class Event extends EventObject { //事件：包含事件对象和发生的时间（包含Service实例变更、reference实例销毁等事件）
+public abstract class Event extends EventObject { //事件对象：包含事件对象和发生的时间（事件：比如Service实例变更、reference实例销毁等事件）
     /**
      * java.util.EventObject：java的事件对象
      * The root class from which all event state objects shall be derived（派生）
@@ -45,7 +45,7 @@ public abstract class Event extends EventObject { //事件：包含事件对象�
      * @throws IllegalArgumentException if source is null.
      */
     public Event(Object source) { //EventObject:所有事件状态对象的父类
-        super(source);
+        super(source); // 事件源对象由父类存储
         this.timestamp = System.currentTimeMillis();
     }
 

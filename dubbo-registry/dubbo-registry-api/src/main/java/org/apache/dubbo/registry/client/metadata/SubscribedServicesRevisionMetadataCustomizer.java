@@ -34,7 +34,7 @@ import static org.apache.dubbo.registry.client.metadata.ServiceInstanceMetadataU
  *
  * @since 2.7.5
  */
-public class SubscribedServicesRevisionMetadataCustomizer extends ServiceInstanceMetadataCustomizer {
+public class SubscribedServicesRevisionMetadataCustomizer extends ServiceInstanceMetadataCustomizer { //订阅服务版本的元数据自定义器
 
     @Override
     protected String resolveMetadataPropertyName(ServiceInstance serviceInstance) {
@@ -48,7 +48,7 @@ public class SubscribedServicesRevisionMetadataCustomizer extends ServiceInstanc
 
         WritableMetadataService writableMetadataService = getExtension(metadataStorageType);
 
-        SortedSet<String> subscribedURLs = writableMetadataService.getSubscribedURLs();
+        SortedSet<String> subscribedURLs = writableMetadataService.getSubscribedURLs(); //获取订阅的url列表
 
         URLRevisionResolver resolver = new URLRevisionResolver();
 

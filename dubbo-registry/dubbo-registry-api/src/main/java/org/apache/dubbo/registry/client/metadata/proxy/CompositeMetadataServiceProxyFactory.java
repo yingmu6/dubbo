@@ -36,16 +36,16 @@ import static org.apache.dubbo.common.extension.ExtensionLoader.getExtensionLoad
  *
  * @since 2.7.8
  */
-public class CompositeMetadataServiceProxyFactory extends BaseMetadataServiceProxyFactory {
+public class CompositeMetadataServiceProxyFactory extends BaseMetadataServiceProxyFactory { //元数据代理工厂的复合实现
 
     private static final Logger logger = LoggerFactory.getLogger(CompositeMetadataServiceProxyFactory.class);
 
     @Override
     public MetadataService createProxy(ServiceInstance serviceInstance) {
-        MetadataService metadataService = (MetadataService) newProxyInstance(
+        MetadataService metadataService = (MetadataService) newProxyInstance( //使用java的Proxy创建代理
                 getClass().getClassLoader(),
                 new Class[] {MetadataService.class},
-                new MetadataServiceInvocationHandler(serviceInstance, this)
+                new MetadataServiceInvocationHandler(serviceInstance, this) //指定InvocationHandler调用处理器
         );
         return metadataService;
     }
@@ -105,7 +105,7 @@ public class CompositeMetadataServiceProxyFactory extends BaseMetadataServicePro
         }
 
         @Override
-        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable { // 执行InvocationHandler中的invoke()调用处理
 
             if (Object.class.equals(method.getDeclaringClass())) {
                 return method.invoke(proxy, args);
@@ -113,7 +113,7 @@ public class CompositeMetadataServiceProxyFactory extends BaseMetadataServicePro
 
             Object result = null;
 
-            for (MetadataService metadataService : getMetadataServices()) {
+            for (MetadataService metadataService : getMetadataServices()) { //遍历元数据服务，依次执行方法调用
                 try {
                     result = method.invoke(metadataService, args);
                     if (result != null) {

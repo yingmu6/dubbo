@@ -18,6 +18,7 @@ package org.apache.dubbo.event;
 
 /**
  * Direct {@link EventDispatcher} implementation uses current thread execution model
+ * （执行使用当前线程进行事件派发）
  *
  * @see EventDispatcher
  * @since 2.7.5

@@ -28,13 +28,14 @@ import java.util.List;
  * @since 2.7.5
  */
 @SPI
-public interface MetadataServiceURLBuilder {
+public interface MetadataServiceURLBuilder { //元数据服务URL构建器
 
     /**
      * Build the {@link URL URLs} from the specified {@link ServiceInstance}
      *
      * @param serviceInstance {@link ServiceInstance}
      * @return TODO, usually, we generate one metadata url from one instance. There's no scenario to return a metadta url list.
+     * （通常，我们从一个实例生成一个元数据url。没有返回元数据url列表的方案）
      */
-    List<URL> build(ServiceInstance serviceInstance);
+    List<URL> build(ServiceInstance serviceInstance); //构建服务实例对应的URL列表
 }

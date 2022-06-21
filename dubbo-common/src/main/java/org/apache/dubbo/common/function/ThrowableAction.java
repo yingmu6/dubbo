@@ -26,7 +26,7 @@ import java.util.function.Function;
  * @since 2.7.5
  */
 @FunctionalInterface
-public interface ThrowableAction {
+public interface ThrowableAction { //可以抛出异常的Action
 
     /**
      * Executes the action
@@ -44,7 +44,7 @@ public interface ThrowableAction {
     static void execute(ThrowableAction action) throws RuntimeException {
         try {
             action.execute();
-        } catch (Throwable e) {
+        } catch (Throwable e) { //有异常就转换为RuntimeException抛出
             throw new RuntimeException(e);
         }
     }

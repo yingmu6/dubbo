@@ -29,7 +29,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * @see ServiceInstanceSelector
  * @since 2.7.5
  */
-public class RandomServiceInstanceSelector implements ServiceInstanceSelector {
+public class RandomServiceInstanceSelector implements ServiceInstanceSelector { //按随机的方式选择ServiceInstance
 
     @Override
     public ServiceInstance select(URL registryURL, List<ServiceInstance> serviceInstances) {

@@ -22,7 +22,7 @@ import org.apache.dubbo.common.extension.SPI;
 import java.util.concurrent.Executor;
 
 /**
- * {@link Event Dubbo Event} Dispatcher（dubbo的事件调度器）
+ * {@link Event Dubbo Event} Dispatcher
  *
  * @see Event
  * @see EventListener
@@ -30,7 +30,9 @@ import java.util.concurrent.Executor;
  * @since 2.7.5
  */
 @SPI("direct")
-public interface EventDispatcher extends Listenable<EventListener<?>> {
+public interface EventDispatcher extends Listenable<EventListener<?>> { //事件派发器
+
+    //Dispatcher: 派发器、调度器，interceptor：拦截器
 
     /**
      * Direct（直接） {@link Executor} uses sequential execution model（使用顺序执行模型）
@@ -39,6 +41,7 @@ public interface EventDispatcher extends Listenable<EventListener<?>> {
 
     /**
      * Dispatch a Dubbo event to the registered {@link EventListener Dubbo event listeners}
+     * （将Dubbo事件派发到已注册的Dubbo事件监听器上）
      *
      * @param event a {@link Event Dubbo event}
      */

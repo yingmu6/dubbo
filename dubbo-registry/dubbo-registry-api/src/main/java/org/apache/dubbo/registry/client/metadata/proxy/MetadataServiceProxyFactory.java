@@ -40,7 +40,7 @@ public interface MetadataServiceProxyFactory { //MetadataService 代理工厂
      * @param serviceInstance the instance of {@link ServiceInstance}
      * @return non-null
      */
-    MetadataService getProxy(ServiceInstance serviceInstance);
+    MetadataService getProxy(ServiceInstance serviceInstance); //获取元数据代理
 
     /**
      * Get the default extension of {@link MetadataServiceProxyFactory}

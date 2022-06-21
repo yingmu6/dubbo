@@ -50,7 +50,7 @@ public abstract class GenericEventListener implements EventListener<Event> { //�
 
     private final Method onEventMethod;
 
-    private final Map<Class<?>, Set<Method>> handleEventMethods;
+    private final Map<Class<?>, Set<Method>> handleEventMethods; //维护着事件Class与Method的关联关系
 
     protected GenericEventListener() {
         this.onEventMethod = findOnEventMethod();

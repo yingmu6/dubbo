@@ -44,6 +44,7 @@ public abstract class AbstractEventDispatcher implements EventDispatcher {
 
     private final Object mutex = new Object();
 
+    // 存储者事件与事件监听器的映射关系
     private final ConcurrentMap<Class<? extends Event>, List<EventListener>> listenersCache = new ConcurrentHashMap<>();
 
     private final Executor executor;
@@ -109,12 +110,12 @@ public abstract class AbstractEventDispatcher implements EventDispatcher {
     }
 
     @Override
-    public void dispatch(Event event) {
+    public void dispatch(Event event) { //进行事件派发
 
         Executor executor = getExecutor();
 
-        // execute in sequential or parallel execution model
-        executor.execute(() -> {
+        // execute in sequential or parallel execution model （todo @csy-06-21 此处顺序和并行是指啥？）
+        executor.execute(() -> { //将事件处理使用线程执行
             sortedListeners(entry -> entry.getKey().isAssignableFrom(event.getClass()))
                     .forEach(listener -> {
                         if (listener instanceof ConditionalEventListener) {
@@ -124,7 +125,7 @@ public abstract class AbstractEventDispatcher implements EventDispatcher {
                             }
                         }
                         // Handle the event
-                        listener.onEvent(event);
+                        listener.onEvent(event); //通过事件监听器处理事件
                     });
         });
     }

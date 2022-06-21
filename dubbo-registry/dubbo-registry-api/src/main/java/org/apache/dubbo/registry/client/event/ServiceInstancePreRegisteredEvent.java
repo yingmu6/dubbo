@@ -26,7 +26,7 @@ import org.apache.dubbo.registry.client.ServiceInstance;
  *
  * @since 2.7.5
  */
-public class ServiceInstancePreRegisteredEvent extends ServiceInstanceEvent {
+public class ServiceInstancePreRegisteredEvent extends ServiceInstanceEvent { //服务实例在注册中心注册前的事件
 
     public ServiceInstancePreRegisteredEvent(Object source, ServiceInstance serviceInstance) {
         super(source, serviceInstance);
