@@ -22,10 +22,10 @@ import java.util.Map;
 /**
  * In-memory configuration
  */
-public class InmemoryConfiguration implements Configuration {
+public class InmemoryConfiguration implements Configuration { //内存配置
 
     // stores the configuration key-value pairs
-    private Map<String, String> store = new LinkedHashMap<>();
+    private Map<String, String> store = new LinkedHashMap<>(); //按key-value形式存在内存中
 
     @Override
     public Object getInternalProperty(String key) {

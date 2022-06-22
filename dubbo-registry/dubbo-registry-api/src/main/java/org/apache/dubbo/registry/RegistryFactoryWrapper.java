@@ -22,7 +22,7 @@ import org.apache.dubbo.common.extension.ExtensionLoader;
 
 import java.util.Collections;
 
-public class RegistryFactoryWrapper implements RegistryFactory {
+public class RegistryFactoryWrapper implements RegistryFactory { //注册中心工厂的封装类
     private RegistryFactory registryFactory;
 
     public RegistryFactoryWrapper(RegistryFactory registryFactory) {

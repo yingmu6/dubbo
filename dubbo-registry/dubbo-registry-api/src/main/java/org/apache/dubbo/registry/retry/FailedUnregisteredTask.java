@@ -24,7 +24,7 @@ import org.apache.dubbo.registry.support.FailbackRegistry;
 /**
  * FailedUnregisteredTask
  */
-public final class FailedUnregisteredTask extends AbstractRetryTask {
+public final class FailedUnregisteredTask extends AbstractRetryTask { //取消注册失败任务
 
     private static final String NAME = "retry unregister";
 
@@ -34,7 +34,7 @@ public final class FailedUnregisteredTask extends AbstractRetryTask {
 
     @Override
     protected void doRetry(URL url, FailbackRegistry registry, Timeout timeout) {
-        registry.doUnregister(url);
+        registry.doUnregister(url); //再次取消注册
         registry.removeFailedUnregisteredTask(url);
     }
 }

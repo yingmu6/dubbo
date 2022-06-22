@@ -32,7 +32,8 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.Executor;
 
-public abstract class AbstractZookeeperClient<TargetDataListener, TargetChildListener> implements ZookeeperClient {
+public abstract class AbstractZookeeperClient<TargetDataListener, TargetChildListener> implements ZookeeperClient { //Zookeeper客户端的抽象类
+    // 此处定义的泛型，用具体名称表示，比如TargetDataListener，而不是用T、R等符号，泛型的标识用啥都可以，符合语境即可
 
     /**
      * zookeeper 临时节点、永久节点了解？以及客户端连接方式了解
@@ -53,7 +54,7 @@ public abstract class AbstractZookeeperClient<TargetDataListener, TargetChildLis
 
     private final URL url;
 
-    private final Set<StateListener> stateListeners = new CopyOnWriteArraySet<StateListener>();
+    private final Set<StateListener> stateListeners = new CopyOnWriteArraySet<StateListener>(); //连接状态监听器列表
 
     private final ConcurrentMap<String, ConcurrentMap<ChildListener, TargetChildListener>> childListeners = new ConcurrentHashMap<String, ConcurrentMap<ChildListener, TargetChildListener>>();
 
@@ -61,7 +62,7 @@ public abstract class AbstractZookeeperClient<TargetDataListener, TargetChildLis
 
     private volatile boolean closed = false;
 
-    private final Set<String>  persistentExistNodePath = new ConcurrentHashSet<>();
+    private final Set<String> persistentExistNodePath = new ConcurrentHashSet<>(); //持久化节点路径的集合
 
     public AbstractZookeeperClient(URL url) {
         this.url = url;
@@ -81,9 +82,9 @@ public abstract class AbstractZookeeperClient<TargetDataListener, TargetChildLis
 
 
     @Override
-    public void create(String path, boolean ephemeral) {
+    public void create(String path, boolean ephemeral) { //ephemeral：短暂的，临时的
         if (!ephemeral) {
-            if(persistentExistNodePath.contains(path)){
+            if (persistentExistNodePath.contains(path)) {
                 return;
             }
             if (checkExists(path)) {
@@ -93,6 +94,8 @@ public abstract class AbstractZookeeperClient<TargetDataListener, TargetChildLis
         }
         int i = path.lastIndexOf('/');
         if (i > 0) {
+            // 采用递归的方法，依次拆解路径，比如/A/B/C，会一次拆解为/A/B、A，创建的时候就会创建/A、A/B
+            // 前面的节点都是ephemeral=false，持久化节点，最后一个点是否是持久节点，根据入参ephemeral来判断
             create(path.substring(0, i), false);
         }
         if (ephemeral) {

@@ -27,7 +27,7 @@ import org.apache.dubbo.rpc.Invoker;
  * （引入RegistryProtocol监听器是为了让用户有机会定制或更改RegistryProtocol的导出和引用行为。例如:re-export或re-refer on the fly当某些条件满足时）
  */
 @SPI
-public interface RegistryProtocolListener { //为啥没有实现类？是怎么调用的？解：SPI接口，只提供出接口，实现由使用方处理。 调用的地方如：RegistryProtocol.doRefer
+public interface RegistryProtocolListener { //注册协议监听器，为啥没有实现类？是怎么调用的？解：SPI接口，只提供出接口，实现由使用方处理。 调用的地方如：RegistryProtocol.doRefer
     /**
      * Notify RegistryProtocol's listeners when a service is registered
      *

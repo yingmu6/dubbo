@@ -26,7 +26,7 @@ import java.util.List;
  * @see org.apache.dubbo.registry.Registry
  * @see org.apache.dubbo.registry.RegistryFactory#getRegistry(URL)
  */
-public interface RegistryService { //注册服务，包含注册数据、订阅数据、查询数据的功能
+public interface RegistryService { // 注册服务，包含注册数据、订阅数据、查询数据的功能
 
     /**
      * Register data（注册的数据包含）, such as : provider service, consumer address, route rule（路由规则）, override rule（覆盖规则） and other data.

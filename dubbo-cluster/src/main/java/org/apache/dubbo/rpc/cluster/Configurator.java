@@ -72,7 +72,7 @@ public interface Configurator extends Comparable<Configurator> { //Configurator�
      * @param urls URL list to convert
      * @return converted configurator list
      */
-    static Optional<List<Configurator>> toConfigurators(List<URL> urls) { //将configurators类型的URL列表，转换为Configurator配置器列表
+    static Optional<List<Configurator>> toConfigurators(List<URL> urls) { //通过URL构建Configurator配置器
         if (CollectionUtils.isEmpty(urls)) {
             return Optional.empty();
         }

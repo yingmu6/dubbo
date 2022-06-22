@@ -21,7 +21,7 @@ import org.apache.zookeeper.Watcher;
 /**
  * 2019-02-26
  */
-public enum EventType {
+public enum EventType { //Dubbo定义的节点变更事件
     None(-1),
     NodeCreated(1),
     NodeDeleted(2),
@@ -31,7 +31,6 @@ public enum EventType {
     CONNECTION_RECONNECTED(12),
     CONNECTION_LOST(12),
     INITIALIZED(10);
-
 
 
     private final int intValue;     // Integer representation of value

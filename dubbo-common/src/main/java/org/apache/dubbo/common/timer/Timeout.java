@@ -20,12 +20,12 @@ package org.apache.dubbo.common.timer;
  * A handle associated with a {@link TimerTask} that is returned by a
  * {@link Timer}.
  */
-public interface Timeout {
+public interface Timeout { //定时器处理类
 
     /**
      * Returns the {@link Timer} that created this handle.
      */
-    Timer timer();
+    Timer timer(); //返回当前处理关联的定时器
 
     /**
      * Returns the {@link TimerTask} which is associated with this handle.

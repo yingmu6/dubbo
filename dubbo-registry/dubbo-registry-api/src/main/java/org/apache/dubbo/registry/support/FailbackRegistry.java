@@ -40,7 +40,7 @@ import static org.apache.dubbo.registry.Constants.*;
  * 注册服务相关操作失败处理，对注册、取消注册、订阅、取消订阅等操作失败时，
  * 会进行异常捕获，存入失败的集合中，再有定时任务进行重试操作
  */
-public abstract class FailbackRegistry extends AbstractRegistry {
+public abstract class FailbackRegistry extends AbstractRegistry { //失败恢复注册服务
 
     // todo @csy-06-18 类图待整理
 

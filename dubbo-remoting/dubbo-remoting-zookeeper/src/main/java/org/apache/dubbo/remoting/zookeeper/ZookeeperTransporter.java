@@ -22,9 +22,10 @@ import org.apache.dubbo.common.extension.SPI;
 import org.apache.dubbo.remoting.Constants;
 
 @SPI("curator")
-public interface ZookeeperTransporter {
+public interface ZookeeperTransporter { //zookeeper传输类
 
     @Adaptive({Constants.CLIENT_KEY, Constants.TRANSPORTER_KEY})
-    ZookeeperClient connect(URL url);
+        //获取的扩展名：url.getParameter(CLIENT_KEY, url.getParameter(TRANSPORTER_KEY, "curator"))
+    ZookeeperClient connect(URL url); //连接到url指定的zk，并创建一个zk客户端实例
 
 }

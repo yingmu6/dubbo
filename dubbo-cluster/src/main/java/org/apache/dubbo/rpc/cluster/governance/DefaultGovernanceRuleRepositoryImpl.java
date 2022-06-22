@@ -19,7 +19,7 @@ package org.apache.dubbo.rpc.cluster.governance;
 import org.apache.dubbo.common.config.configcenter.ConfigurationListener;
 import org.apache.dubbo.common.config.configcenter.DynamicConfiguration;
 
-public class DefaultGovernanceRuleRepositoryImpl implements GovernanceRuleRepository {
+public class DefaultGovernanceRuleRepositoryImpl implements GovernanceRuleRepository { //默认治理规则仓库实现类
 
     private DynamicConfiguration dynamicConfiguration = DynamicConfiguration.getDynamicConfiguration();
 
@@ -35,6 +35,6 @@ public class DefaultGovernanceRuleRepositoryImpl implements GovernanceRuleReposi
 
     @Override
     public String getRule(String key, String group, long timeout) throws IllegalStateException {
-        return dynamicConfiguration.getConfig(key, group, timeout); //
+        return dynamicConfiguration.getConfig(key, group, timeout); //规则信息从配置中心获取
     }
 }

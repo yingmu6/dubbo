@@ -16,7 +16,7 @@
  */
 package org.apache.dubbo.remoting.zookeeper;
 
-public interface StateListener {
+public interface StateListener { //连接状态监听器
 
     int SESSION_LOST = 0;
 
@@ -28,6 +28,6 @@ public interface StateListener {
 
     int NEW_SESSION_CREATED = 4;
 
-    void stateChanged(int connected);
+    void stateChanged(int connected); //连接状态变更处理
 
 }

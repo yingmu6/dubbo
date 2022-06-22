@@ -69,14 +69,14 @@ import static org.apache.dubbo.rpc.cluster.Constants.*;
 /**
  * RegistryProtocol
  */
-public class RegistryProtocol implements Protocol {
-    public static final String[] DEFAULT_REGISTER_PROVIDER_KEYS = {
+public class RegistryProtocol implements Protocol { //注册协议
+    public static final String[] DEFAULT_REGISTER_PROVIDER_KEYS = { //提供者写到注册中心的key数组
             APPLICATION_KEY, CODEC_KEY, EXCHANGER_KEY, SERIALIZATION_KEY, CLUSTER_KEY, CONNECTIONS_KEY, DEPRECATED_KEY,
             GROUP_KEY, LOADBALANCE_KEY, MOCK_KEY, PATH_KEY, TIMEOUT_KEY, TOKEN_KEY, VERSION_KEY, WARMUP_KEY,
             WEIGHT_KEY, TIMESTAMP_KEY, DUBBO_VERSION_KEY, RELEASE_KEY
     };
 
-    public static final String[] DEFAULT_REGISTER_CONSUMER_KEYS = {
+    public static final String[] DEFAULT_REGISTER_CONSUMER_KEYS = { //消费者写到注册中心的key数组
             APPLICATION_KEY, VERSION_KEY, GROUP_KEY, DUBBO_VERSION_KEY, RELEASE_KEY
     };
 
@@ -273,10 +273,10 @@ public class RegistryProtocol implements Protocol {
             }
 
             logger.info("Try to unregister old url: " + oldProviderUrl);
-            registry.reExportUnregister(oldProviderUrl);
+            registry.reExportUnregister(oldProviderUrl); //尝试对老的url取消注册
 
             logger.info("Try to register new url: " + newProviderUrl);
-            registry.reExportRegister(newProviderUrl);
+            registry.reExportRegister(newProviderUrl); //尝试对新的url注册
         }
         try {
             ProviderModel.RegisterStatedURL statedUrl = getStatedUrl(registryUrl, newProviderUrl);
@@ -639,8 +639,8 @@ public class RegistryProtocol implements Protocol {
         }
     }
 
-    private class ServiceConfigurationListener extends AbstractConfiguratorListener {
-        private URL providerUrl;
+    private class ServiceConfigurationListener extends AbstractConfiguratorListener { //服务配置监听器
+        private URL providerUrl; //提供者url
         private OverrideListener notifyListener;
 
         public ServiceConfigurationListener(URL providerUrl, OverrideListener notifyListener) {
@@ -683,12 +683,12 @@ public class RegistryProtocol implements Protocol {
     }
 
     /**
-     * exporter proxy, establish the corresponding relationship between the returned exporter and the exporter
+     * exporter proxy（暴露者代理类）, establish（建立） the corresponding relationship（相应的关系） between the returned exporter and the exporter
      * exported by the protocol, and can modify the relationship at the time of override.
      *
      * @param <T>
      */
-    private class ExporterChangeableWrapper<T> implements Exporter<T> {
+    private class ExporterChangeableWrapper<T> implements Exporter<T> { //
 
         private final ExecutorService executor = newSingleThreadExecutor(new NamedThreadFactory("Exporter-Unexport", true));
 
@@ -715,6 +715,13 @@ public class RegistryProtocol implements Protocol {
             this.exporter = exporter;
         }
 
+        /**
+         * 取消服务暴露主要逻辑：
+         * 1）对当前注册url取消注册
+         * 2）对当前订阅url取消订阅
+         * 3）在治理规则仓库中移除订阅url对应的监听器
+         * 4）异步进行服务取消暴露 exporter.unexport()
+         */
         @Override
         public void unexport() {
             String key = getCacheKey(this.originInvoker);
@@ -722,7 +729,7 @@ public class RegistryProtocol implements Protocol {
 
             Registry registry = RegistryProtocol.this.getRegistry(originInvoker);
             try {
-                registry.unregister(registerUrl);
+                registry.unregister(registerUrl); //
             } catch (Throwable t) {
                 logger.warn(t.getMessage(), t);
             }

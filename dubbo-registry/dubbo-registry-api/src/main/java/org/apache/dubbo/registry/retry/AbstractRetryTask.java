@@ -33,7 +33,7 @@ import static org.apache.dubbo.registry.Constants.*;
 /**
  * AbstractRetryTask
  */
-public abstract class AbstractRetryTask implements TimerTask { //重试任务
+public abstract class AbstractRetryTask implements TimerTask { //抽象的重试任务
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -45,7 +45,7 @@ public abstract class AbstractRetryTask implements TimerTask { //重试任务
     /**
      * registry for this task
      */
-    protected final FailbackRegistry registry;
+    protected final FailbackRegistry registry; //失败重试任务
 
     /**
      * retry period
@@ -66,7 +66,7 @@ public abstract class AbstractRetryTask implements TimerTask { //重试任务
      * times of retry.
      * retry task is execute in single thread so that the times is not need volatile.
      */
-    private int times = 1;
+    private int times = 1; //重试此处
 
     private volatile boolean cancel;
 
@@ -78,7 +78,7 @@ public abstract class AbstractRetryTask implements TimerTask { //重试任务
         this.registry = registry;
         this.taskName = taskName;
         cancel = false;
-        this.retryPeriod = url.getParameter(REGISTRY_RETRY_PERIOD_KEY, DEFAULT_REGISTRY_RETRY_PERIOD);
+        this.retryPeriod = url.getParameter(REGISTRY_RETRY_PERIOD_KEY, DEFAULT_REGISTRY_RETRY_PERIOD); //取URL设置的重试时间，若没设置，取默认值
         this.retryTimes = url.getParameter(REGISTRY_RETRY_TIMES_KEY, DEFAULT_REGISTRY_RETRY_TIMES);
     }
 

@@ -367,7 +367,7 @@ public class HashedWheelTimer implements Timer { //基于Hash表实现的Timer�
     }
 
     @Override
-    public Timeout newTimeout(TimerTask task, long delay, TimeUnit unit) {
+    public Timeout newTimeout(TimerTask task, long delay, TimeUnit unit) { //创建定时任务
         if (task == null) {
             throw new NullPointerException("task");
         }
@@ -384,7 +384,7 @@ public class HashedWheelTimer implements Timer { //基于Hash表实现的Timer�
                     + "timeouts (" + maxPendingTimeouts + ")");
         }
 
-        start();
+        start(); //启动后台线程
 
         // Add the timeout to the timeout queue which will be processed on the next tick.
         // During processing all the queued HashedWheelTimeouts will be added to the correct HashedWheelBucket.
@@ -542,7 +542,7 @@ public class HashedWheelTimer implements Timer { //基于Hash表实现的Timer�
         }
     }
 
-    private static final class HashedWheelTimeout implements Timeout {
+    private static final class HashedWheelTimeout implements Timeout { //基础Hash轮子实现的定时器
 
         private static final int ST_INIT = 0;
         private static final int ST_CANCELLED = 1;

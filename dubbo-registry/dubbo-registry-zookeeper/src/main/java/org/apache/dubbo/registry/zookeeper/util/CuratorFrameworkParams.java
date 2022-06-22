@@ -16,10 +16,9 @@
  */
 package org.apache.dubbo.registry.zookeeper.util;
 
+import org.apache.curator.framework.CuratorFramework;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.registry.client.ServiceInstance;
-
-import org.apache.curator.framework.CuratorFramework;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -30,7 +29,7 @@ import java.util.function.Function;
  * @see CuratorFramework
  * @since 2.7.5
  */
-public enum CuratorFrameworkParams {
+public enum CuratorFrameworkParams { //curator框架参数枚举
 
     /**
      * The root path of Dubbo Service
@@ -49,6 +48,7 @@ public enum CuratorFrameworkParams {
 
     /**
      * Initial amount of time to wait between retries
+     * (重试之间等待的初始时间)
      */
     BASE_SLEEP_TIME("baseSleepTimeMs", 50, Integer::valueOf),
 
@@ -78,9 +78,9 @@ public enum CuratorFrameworkParams {
 
     private final Object defaultValue;
 
-    private final Function<String, Object> converter;
+    private final Function<String, Object> converter; //进行转换的函数
 
-    <T> CuratorFrameworkParams(String name, T defaultValue, Function<String, T> converter) {
+    <T> CuratorFrameworkParams(String name, T defaultValue, Function<String, T> converter) { //converter：函数式参数
         this.name = name;
         this.defaultValue = defaultValue;
         this.converter = (Function<String, Object>) converter;
@@ -94,7 +94,7 @@ public enum CuratorFrameworkParams {
      * @return the parameter value if present, or return <code>null</code>
      */
     public <T> T getParameterValue(URL url) {
-        String param = url.getParameter(name);
+        String param = url.getParameter(name); //因为url中的参数value都是String的，所以要进行类型转换
         Object value = param != null ? converter.apply(param) : defaultValue;
         return (T) value;
     }

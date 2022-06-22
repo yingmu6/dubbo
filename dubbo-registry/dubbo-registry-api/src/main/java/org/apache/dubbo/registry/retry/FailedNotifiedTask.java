@@ -29,7 +29,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * FailedNotifiedTask
  */
-public final class FailedNotifiedTask extends AbstractRetryTask {
+public final class FailedNotifiedTask extends AbstractRetryTask { //失败通知的重试任务
 
     private static final String NAME = "retry notify";
 

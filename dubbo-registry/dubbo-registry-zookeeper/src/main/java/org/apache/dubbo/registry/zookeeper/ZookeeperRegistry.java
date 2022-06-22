@@ -42,9 +42,10 @@ import static org.apache.dubbo.common.constants.RegistryConstants.*;
 
 /**
  * ZookeeperRegistry
- *
  */
-public class ZookeeperRegistry extends FailbackRegistry {
+public class ZookeeperRegistry extends FailbackRegistry { //Zookeeper实现的注册中心，继承FailbackRegistry，可以进行失败恢复处理
+
+    // Zookeeper的客户端有：Curator、ZkClient等
 
     private final static Logger logger = LoggerFactory.getLogger(ZookeeperRegistry.class);
 
@@ -56,7 +57,7 @@ public class ZookeeperRegistry extends FailbackRegistry {
 
     private final ConcurrentMap<URL, ConcurrentMap<NotifyListener, ChildListener>> zkListeners = new ConcurrentHashMap<>();
 
-    private final ZookeeperClient zkClient;
+    private final ZookeeperClient zkClient; //zookeeper客户端
 
     public ZookeeperRegistry(URL url, ZookeeperTransporter zookeeperTransporter) {
         super(url); //调用父类构造函数
@@ -68,8 +69,8 @@ public class ZookeeperRegistry extends FailbackRegistry {
             group = PATH_SEPARATOR + group;
         }
         this.root = group;
-        zkClient = zookeeperTransporter.connect(url);
-        zkClient.addStateListener((state) -> {
+        zkClient = zookeeperTransporter.connect(url); //获取到zk客户端
+        zkClient.addStateListener((state) -> { //添加状态监听器
             if (state == StateListener.RECONNECTED) {
                 logger.warn("Trying to fetch the latest urls, in case there're provider changes during connection loss.\n" +
                         " Since ephemeral ZNode will not get deleted for a connection lose, " +
@@ -278,12 +279,12 @@ public class ZookeeperRegistry extends FailbackRegistry {
     }
 
     /**
-     * When zookeeper connection recovered from a connection loss, it need to fetch the latest provider list.
+     * When zookeeper connection recovered（恢复） from a connection loss, it need to fetch the latest provider list.
      * re-register watcher is only a side effect and is not mandate.
      */
-    private void fetchLatestAddresses() {
+    private void fetchLatestAddresses() { //获取最新的连接地址
         // subscribe
-        Map<URL, Set<NotifyListener>> recoverSubscribed = new HashMap<URL, Set<NotifyListener>>(getSubscribed());
+        Map<URL, Set<NotifyListener>> recoverSubscribed = new HashMap<URL, Set<NotifyListener>>(getSubscribed()); //从缓存中获取订阅信息
         if (!recoverSubscribed.isEmpty()) {
             if (logger.isInfoEnabled()) {
                 logger.info("Fetching the latest urls of " + recoverSubscribed.keySet());

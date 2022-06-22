@@ -17,7 +17,10 @@
 
 package org.apache.dubbo.registry;
 
-public interface Constants {
+public interface Constants { //注册中心用到的常量
+    // 以接口形式定义常量，因为接口中的常量默认就是 public static final的，所以与常量的概念比较吻合
+    // 还有就是接口的变量只能是public的不能用其它的修饰符，若变量定义到类中，变量的访问属性就不受控制了
+
     String REGISTER_IP_KEY = "register.ip";
 
     String REGISTER_KEY = "register";

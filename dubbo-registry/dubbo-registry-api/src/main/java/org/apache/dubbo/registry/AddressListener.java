@@ -23,7 +23,7 @@ import org.apache.dubbo.rpc.cluster.Directory;
 import java.util.List;
 
 @SPI
-public interface AddressListener { //地址监听器（目前没有对应的扩展实例，为3.x预留的SPI接口）
+public interface AddressListener { //地址监听器（目前没有对应的扩展实例，为后续预留的SPI接口）
 
     /**
      * processing when receiving the address list

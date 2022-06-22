@@ -38,7 +38,7 @@ import static org.apache.dubbo.rpc.cluster.Constants.REFER_KEY;
  *
  * @see org.apache.dubbo.registry.RegistryFactory
  */
-public abstract class AbstractRegistryFactory implements RegistryFactory { //抽象注册工厂，对RegistryFactory接口公共功能抽象
+public abstract class AbstractRegistryFactory implements RegistryFactory { // 抽象注册工厂，对RegistryFactory接口公共功能抽象
 
     // Log output
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRegistryFactory.class);

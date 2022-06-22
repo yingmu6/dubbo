@@ -239,7 +239,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
      * @return extension list which are activated.
      * @see #getActivateExtension(org.apache.dubbo.common.URL, String, String)
      */
-    public List<T> getActivateExtension(URL url, String key) { //与url中的参数进行匹配
+    public List<T> getActivateExtension(URL url, String key) { //获取符合条件的扩展实例列表
         return getActivateExtension(url, key, null);
     }
 

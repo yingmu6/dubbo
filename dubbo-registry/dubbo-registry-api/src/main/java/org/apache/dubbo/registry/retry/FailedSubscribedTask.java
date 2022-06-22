@@ -25,7 +25,7 @@ import org.apache.dubbo.registry.support.FailbackRegistry;
 /**
  * FailedSubscribedTask
  */
-public final class FailedSubscribedTask extends AbstractRetryTask {
+public final class FailedSubscribedTask extends AbstractRetryTask { //订阅失败的重试任务
 
     private static final String NAME = "retry subscribe";
 
@@ -41,7 +41,7 @@ public final class FailedSubscribedTask extends AbstractRetryTask {
 
     @Override
     protected void doRetry(URL url, FailbackRegistry registry, Timeout timeout) {
-        registry.doSubscribe(url, listener);
+        registry.doSubscribe(url, listener); //再次做订阅
         registry.removeFailedSubscribedTask(url, listener);
     }
 }

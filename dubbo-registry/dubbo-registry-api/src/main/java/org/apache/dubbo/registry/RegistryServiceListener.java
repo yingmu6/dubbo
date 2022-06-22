@@ -21,8 +21,8 @@ import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.extension.SPI;
 
 @SPI
-public interface RegistryServiceListener {
-    
+public interface RegistryServiceListener { //注册服务监听器
+
     default void onRegister(URL url) {
 
     }

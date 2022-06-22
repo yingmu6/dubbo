@@ -48,7 +48,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.apache.dubbo.common.constants.CommonConstants.TIMEOUT_KEY;
 
-public class CuratorZookeeperClient extends AbstractZookeeperClient<CuratorZookeeperClient.CuratorWatcherImpl, CuratorZookeeperClient.CuratorWatcherImpl> {
+public class CuratorZookeeperClient extends AbstractZookeeperClient<CuratorZookeeperClient.CuratorWatcherImpl, CuratorZookeeperClient.CuratorWatcherImpl> { //Curator实现的Zookeeper客户端
 
     protected static final Logger logger = LoggerFactory.getLogger(CuratorZookeeperClient.class);
     private static final String ZK_SESSION_EXPIRE_KEY = "zk.session.expire";
@@ -57,7 +57,7 @@ public class CuratorZookeeperClient extends AbstractZookeeperClient<CuratorZooke
     private final CuratorFramework client;
     private Map<String, TreeCache> treeCacheMap = new ConcurrentHashMap<>();
 
-    public CuratorZookeeperClient(URL url) {
+    public CuratorZookeeperClient(URL url) { //做初始化操作
         super(url);
         try {
             int timeout = url.getParameter(TIMEOUT_KEY, DEFAULT_CONNECTION_TIMEOUT_MS);
@@ -71,10 +71,10 @@ public class CuratorZookeeperClient extends AbstractZookeeperClient<CuratorZooke
             if (authority != null && authority.length() > 0) {
                 builder = builder.authorization("digest", authority.getBytes());
             }
-            client = builder.build();
+            client = builder.build(); //通过CuratorFrameworkFactory中的构建器创建Zookeeper客户端
             client.getConnectionStateListenable().addListener(new CuratorConnectionStateListener(url));
             client.start();
-            boolean connected = client.blockUntilConnected(timeout, TimeUnit.MILLISECONDS);
+            boolean connected = client.blockUntilConnected(timeout, TimeUnit.MILLISECONDS); //阻塞直到连接上zk服务端
             if (!connected) {
                 throw new IllegalStateException("zookeeper not connected");
             }
@@ -97,14 +97,14 @@ public class CuratorZookeeperClient extends AbstractZookeeperClient<CuratorZooke
     @Override
     public void createEphemeral(String path) {
         try {
-            client.create().withMode(CreateMode.EPHEMERAL).forPath(path);
-        } catch (NodeExistsException e) {
+            client.create().withMode(CreateMode.EPHEMERAL).forPath(path); //使用Zookeeper客户端创建节点
+        } catch (NodeExistsException e) { //异常处理
             logger.warn("ZNode " + path + " already exists, since we will only try to recreate a node on a session expiration" +
                     ", this duplication might be caused by a delete delay from the zk server, which means the old expired session" +
                     " may still holds this ZNode and the server just hasn't got time to do the deletion. In this case, " +
                     "we can just try to delete and create again.", e);
             deletePath(path);
-            createEphemeral(path);
+            createEphemeral(path); //尝试删除节点，再做一次创建节点处理  todo @csy-06-22 此处会不会出现反复创建节点失败，又反复尝试创建节点？没看到有结束标志
         } catch (Exception e) {
             throw new IllegalStateException(e.getMessage(), e);
         }
@@ -256,7 +256,7 @@ public class CuratorZookeeperClient extends AbstractZookeeperClient<CuratorZooke
         listener.unwatch();
     }
 
-    static class CuratorWatcherImpl implements CuratorWatcher, TreeCacheListener {
+    static class CuratorWatcherImpl implements CuratorWatcher, TreeCacheListener { //CuratorWatcher观察者的实现类
 
         private CuratorFramework client;
         private volatile ChildListener childListener;
@@ -303,7 +303,7 @@ public class CuratorZookeeperClient extends AbstractZookeeperClient<CuratorZooke
                 EventType eventType = null;
                 String content = null;
                 String path = null;
-                switch (type) {
+                switch (type) { //将Zookeeper定义的事件类型转换为Dubbo定义的事件类型
                     case NODE_ADDED:
                         eventType = EventType.NodeCreated;
                         path = event.getData().getPath();

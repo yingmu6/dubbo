@@ -34,27 +34,28 @@ import java.util.List;
 /**
  * AbstractConfiguratorListener
  */
-public abstract class AbstractConfiguratorListener implements ConfigurationListener {
+public abstract class AbstractConfiguratorListener implements ConfigurationListener { //抽象配置监听器（整合配置中心）
+    // integration 结合、整合（整合其它层内容）
     private static final Logger logger = LoggerFactory.getLogger(AbstractConfiguratorListener.class);
 
     protected List<Configurator> configurators = Collections.emptyList(); //维护着配置器列表
     protected GovernanceRuleRepository ruleRepository = ExtensionLoader.getExtensionLoader(
-            GovernanceRuleRepository.class).getDefaultExtension(); //获取默认的扩展实例
+            GovernanceRuleRepository.class).getDefaultExtension(); //获取治理规则仓库的扩展实例
 
     protected final void initWith(String key) { //初始化操作
-        ruleRepository.addListener(key, this);
-        String rawConfig = ruleRepository.getRule(key, DynamicConfiguration.DEFAULT_GROUP);
+        ruleRepository.addListener(key, this); //将当前监听器添加到治理仓库中
+        String rawConfig = ruleRepository.getRule(key, DynamicConfiguration.DEFAULT_GROUP); //从配置中心获取配置的规则
         if (!StringUtils.isEmpty(rawConfig)) {
             genConfiguratorsFromRawRule(rawConfig);
         }
     }
 
-    protected final void stopListen(String key) {
+    protected final void stopListen(String key) { //停止监听，移除对应的监听器
         ruleRepository.removeListener(key, this);
     }
 
     @Override
-    public void process(ConfigChangedEvent event) {
+    public void process(ConfigChangedEvent event) { //配置发生变更时处理
         if (logger.isInfoEnabled()) {
             logger.info("Notification of overriding rule, change type is: " + event.getChangeType() +
                     ", raw config content is:\n " + event.getContent());
@@ -71,7 +72,7 @@ public abstract class AbstractConfiguratorListener implements ConfigurationListe
         notifyOverrides();
     }
 
-    private boolean genConfiguratorsFromRawRule(String rawConfig) {
+    private boolean genConfiguratorsFromRawRule(String rawConfig) { //根据变更的内容产生新的Configurator列表
         boolean parseSuccess = true;
         try {
             // parseConfigurators will recognize app/service config automatically.

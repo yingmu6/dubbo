@@ -16,11 +16,6 @@
  */
 package org.apache.dubbo.registry.zookeeper.util;
 
-import org.apache.dubbo.common.URL;
-import org.apache.dubbo.registry.client.DefaultServiceInstance;
-import org.apache.dubbo.registry.client.ServiceInstance;
-import org.apache.dubbo.registry.zookeeper.ZookeeperInstance;
-
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -28,6 +23,10 @@ import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceDiscoveryBuilder;
 import org.apache.curator.x.discovery.ServiceInstanceBuilder;
+import org.apache.dubbo.common.URL;
+import org.apache.dubbo.registry.client.DefaultServiceInstance;
+import org.apache.dubbo.registry.client.ServiceInstance;
+import org.apache.dubbo.registry.zookeeper.ZookeeperInstance;
 
 import java.util.Collection;
 import java.util.List;
@@ -35,39 +34,37 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.apache.curator.x.discovery.ServiceInstance.builder;
-import static org.apache.dubbo.registry.zookeeper.util.CuratorFrameworkParams.BASE_SLEEP_TIME;
-import static org.apache.dubbo.registry.zookeeper.util.CuratorFrameworkParams.BLOCK_UNTIL_CONNECTED_UNIT;
-import static org.apache.dubbo.registry.zookeeper.util.CuratorFrameworkParams.BLOCK_UNTIL_CONNECTED_WAIT;
-import static org.apache.dubbo.registry.zookeeper.util.CuratorFrameworkParams.MAX_RETRIES;
-import static org.apache.dubbo.registry.zookeeper.util.CuratorFrameworkParams.MAX_SLEEP;
+import static org.apache.dubbo.registry.zookeeper.util.CuratorFrameworkParams.*;
 
 /**
  * Curator Framework Utilities Class
  *
  * @since 2.7.5
  */
-public abstract class CuratorFrameworkUtils {
+public abstract class CuratorFrameworkUtils { //curator客户端工具类
 
+    // 创建ServiceDiscovery实例
     public static ServiceDiscovery<ZookeeperInstance> buildServiceDiscovery(CuratorFramework curatorFramework,
                                                                             String basePath) {
-        return ServiceDiscoveryBuilder.builder(ZookeeperInstance.class)
+        return ServiceDiscoveryBuilder.builder(ZookeeperInstance.class) //通过ServiceDiscoveryBuilder构建器进行构建
                 .client(curatorFramework)
                 .basePath(basePath)
                 .build();
     }
 
-    public static CuratorFramework buildCuratorFramework(URL connectionURL) throws Exception {
+    // 构建Zookeeper客户端
+    public static CuratorFramework buildCuratorFramework(URL connectionURL) throws Exception { //CuratorFramework：Zookeeper框架客户端
         CuratorFramework curatorFramework = CuratorFrameworkFactory.builder()
-                .connectString(connectionURL.getIp() + ":" + connectionURL.getPort())
-                .retryPolicy(buildRetryPolicy(connectionURL))
+                .connectString(connectionURL.getIp() + ":" + connectionURL.getPort()) //指定连接的地址
+                .retryPolicy(buildRetryPolicy(connectionURL)) //指定重试策略
                 .build();
-        curatorFramework.start();
+        curatorFramework.start(); //启动客户端
         curatorFramework.blockUntilConnected(BLOCK_UNTIL_CONNECTED_WAIT.getParameterValue(connectionURL),
-                BLOCK_UNTIL_CONNECTED_UNIT.getParameterValue(connectionURL));
+                BLOCK_UNTIL_CONNECTED_UNIT.getParameterValue(connectionURL)); // 阻塞直到与ZooKeeper连接可用或已超过maxWaitTime
         return curatorFramework;
     }
 
-    public static RetryPolicy buildRetryPolicy(URL connectionURL) {
+    public static RetryPolicy buildRetryPolicy(URL connectionURL) { //构建curator的重试策略
         int baseSleepTimeMs = BASE_SLEEP_TIME.getParameterValue(connectionURL);
         int maxRetries = MAX_RETRIES.getParameterValue(connectionURL);
         int getMaxSleepMs = MAX_SLEEP.getParameterValue(connectionURL);
@@ -80,6 +77,7 @@ public abstract class CuratorFrameworkUtils {
         return instances.stream().map(CuratorFrameworkUtils::build).collect(Collectors.toList());
     }
 
+    // 将Zookeeper的ServiceInstance转换为Dubbo定义的ServiceInstance
     public static ServiceInstance build(org.apache.curator.x.discovery.ServiceInstance<ZookeeperInstance> instance) {
         String name = instance.getName();
         String host = instance.getAddress();
@@ -90,6 +88,7 @@ public abstract class CuratorFrameworkUtils {
         return serviceInstance;
     }
 
+    // 将Dubbo定义的ServiceInstance转换为Zookeeper的ServiceInstance转换
     public static org.apache.curator.x.discovery.ServiceInstance<ZookeeperInstance> build(ServiceInstance serviceInstance) {
         ServiceInstanceBuilder builder = null;
         String serviceName = serviceInstance.getServiceName();

@@ -21,15 +21,15 @@ import java.util.List;
 /**
  *
  */
-public class ConfiguratorConfig {
-    public static final String SCOPE_SERVICE = "service";
-    public static final String SCOPE_APPLICATION = "application";
+public class ConfiguratorConfig { //配置器配置
+    public static final String SCOPE_SERVICE = "service";         // 服务范围
+    public static final String SCOPE_APPLICATION = "application"; // 应用范围
 
     private String configVersion;
     private String scope;
     private String key;
     private Boolean enabled = true;
-    private List<ConfigItem> configs;
+    private List<ConfigItem> configs; //配置项列表
 
 
     public String getConfigVersion() {

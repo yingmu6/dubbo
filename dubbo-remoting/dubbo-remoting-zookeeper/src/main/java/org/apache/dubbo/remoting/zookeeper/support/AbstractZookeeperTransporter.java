@@ -24,11 +24,7 @@ import org.apache.dubbo.common.utils.StringUtils;
 import org.apache.dubbo.remoting.zookeeper.ZookeeperClient;
 import org.apache.dubbo.remoting.zookeeper.ZookeeperTransporter;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.apache.dubbo.common.constants.CommonConstants.TIMEOUT_KEY;
@@ -44,6 +40,7 @@ public abstract class AbstractZookeeperTransporter implements ZookeeperTransport
 
     /**
      * share connnect for registry, metadata, etc..
+     * （共享连接，如注册服务、元数据）
      * <p>
      * Make sure the connection is connected.
      *
@@ -56,11 +53,13 @@ public abstract class AbstractZookeeperTransporter implements ZookeeperTransport
         // address format: {[username:password@]address}
         List<String> addressList = getURLBackupAddress(url);
         // The field define the zookeeper server , including protocol, host, port, username, password
+
+        // 会从缓存中根据地址查找zookeeperClient，如找到则不创建客户端，则实现同一个连接地址对应的zookeeperClient相同，实现共享
         if ((zookeeperClient = fetchAndUpdateZookeeperClientCache(addressList)) != null && zookeeperClient.isConnected()) {
             logger.info("find valid zookeeper client from the cache for address: " + url);
-            return zookeeperClient;
+            return zookeeperClient; //从缓存中找到ZookeeperClient，直接返回
         }
-        // avoid creating too many connections， so add lock
+        // avoid creating too many connections， so add lock（避免并发时创建太多连接，所以加锁处理）
         synchronized (zookeeperClientMap) {
             if ((zookeeperClient = fetchAndUpdateZookeeperClientCache(addressList)) != null && zookeeperClient.isConnected()) {
                 logger.info("find valid zookeeper client from the cache for address: " + url);
@@ -69,7 +68,7 @@ public abstract class AbstractZookeeperTransporter implements ZookeeperTransport
 
             zookeeperClient = createZookeeperClient(url);
             logger.info("No valid zookeeper client found from cache, therefore create a new client for url. " + url);
-            writeToClientMap(addressList, zookeeperClient);
+            writeToClientMap(addressList, zookeeperClient); //在缓存中没有发现有效的zookeeper client，就重新创建
         }
         return zookeeperClient;
     }
@@ -93,7 +92,7 @@ public abstract class AbstractZookeeperTransporter implements ZookeeperTransport
     ZookeeperClient fetchAndUpdateZookeeperClientCache(List<String> addressList) {
 
         ZookeeperClient zookeeperClient = null;
-        for (String address : addressList) {
+        for (String address : addressList) { // 从缓存中获取指定地址对应的ZookeeperClient
             if ((zookeeperClient = zookeeperClientMap.get(address)) != null && zookeeperClient.isConnected()) {
                 break;
             }
@@ -110,7 +109,7 @@ public abstract class AbstractZookeeperTransporter implements ZookeeperTransport
      * @param url such as:zookeeper://127.0.0.1:2181?127.0.0.1:8989,127.0.0.1:9999
      * @return such as 127.0.0.1:2181,127.0.0.1:8989,127.0.0.1:9999
      */
-    List<String> getURLBackupAddress(URL url) {
+    List<String> getURLBackupAddress(URL url) { //获取url中连接地址列表
         List<String> addressList = new ArrayList<String>();
         addressList.add(url.getAddress());
         addressList.addAll(url.getParameter(RemotingConstants.BACKUP_KEY, Collections.EMPTY_LIST));
@@ -141,6 +140,7 @@ public abstract class AbstractZookeeperTransporter implements ZookeeperTransport
 
     /**
      * write address-ZookeeperClient relationship to Map
+     * （把地址与ZookeeperClient关系写到Map中）
      *
      * @param addressList
      * @param zookeeperClient

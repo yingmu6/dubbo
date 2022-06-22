@@ -43,7 +43,7 @@ import static org.apache.dubbo.registry.Constants.REGISTRY__LOCAL_FILE_CACHE_ENA
 /**
  * AbstractRegistry. (SPI, Prototype, ThreadSafe)
  */
-public abstract class AbstractRegistry implements Registry {
+public abstract class AbstractRegistry implements Registry { //注册中心抽象实现类
 
     // URL address separator, used in file cache, service provider URL separation
     private static final char URL_SEPARATOR = ' ';
@@ -107,7 +107,7 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     protected static List<URL> filterEmpty(URL url, List<URL> urls) {
-        if (CollectionUtils.isEmpty(urls)) {
+        if (CollectionUtils.isEmpty(urls)) { //在url列表为空时，设置一个空协议的url加入列表并返回
             List<URL> result = new ArrayList<>(1);
             result.add(url.setProtocol(EMPTY_PROTOCOL));
             return result;
@@ -356,13 +356,13 @@ public abstract class AbstractRegistry implements Registry {
         }
     }
 
-    protected void notify(List<URL> urls) {
+    protected void notify(List<URL> urls) { //通知处理
         if (CollectionUtils.isEmpty(urls)) {
             return;
         }
 
         for (Map.Entry<URL, Set<NotifyListener>> entry : getSubscribed().entrySet()) { //遍历订阅的缓存Map
-            URL url = entry.getKey();
+            URL url = entry.getKey(); //消费端的url
 
             // 若缓存中url与传入的url不匹配，则不进行后续的通知处理
             if (!UrlUtils.isMatch(url, urls.get(0))) { //todo @csy-06-17 此处为啥总是urls.get(0)用第一个元素比较，是当前场景下的url列表只有一个吗？
@@ -371,7 +371,7 @@ public abstract class AbstractRegistry implements Registry {
 
             Set<NotifyListener> listeners = entry.getValue();
             if (listeners != null) {
-                for (NotifyListener listener : listeners) { //遍历监听器，依次做通知处理
+                for (NotifyListener listener : listeners) { //遍历url对应的消费端监听器，依次做通知处理
                     try {
                         notify(url, listener, filterEmpty(url, urls));
                     } catch (Throwable t) {
@@ -383,11 +383,11 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     /**
-     * Notify changes from the Provider side.
+     * Notify changes from the Provider side.（从提供者端通知改变）
      *
-     * @param url      consumer side url
+     * @param url      consumer side url（消费端的url）
      * @param listener listener
-     * @param urls     provider latest urls
+     * @param urls     provider latest urls（服务者最新的url列表）
      */
     protected void notify(URL url, NotifyListener listener, List<URL> urls) { //通知数据变更
         if (url == null) {
@@ -401,7 +401,7 @@ public abstract class AbstractRegistry implements Registry {
             logger.warn("Ignore empty notify urls for subscribe url " + url);
             return;
         }
-        if (logger.isInfoEnabled()) {
+        if (logger.isInfoEnabled()) { //todo @csy-06-22 此处待调试查看数据
             logger.info("Notify urls for subscribe url " + url + ", urls: " + urls);
         }
         // keep every provider's category.
@@ -460,7 +460,7 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     @Override
-    public void destroy() {
+    public void destroy() { //销毁处理
         if (logger.isInfoEnabled()) {
             logger.info("Destroy registry:" + getUrl());
         }

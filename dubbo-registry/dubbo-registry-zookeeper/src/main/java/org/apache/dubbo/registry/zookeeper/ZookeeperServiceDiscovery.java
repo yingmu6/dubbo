@@ -44,17 +44,17 @@ import static org.apache.dubbo.registry.zookeeper.util.CuratorFrameworkUtils.*;
  * Zookeeper {@link ServiceDiscovery} implementation based on
  * <a href="https://curator.apache.org/curator-x-discovery/index.html">Apache Curator X Discovery</a>
  */
-public class ZookeeperServiceDiscovery implements ServiceDiscovery, EventListener<ServiceInstancesChangedEvent> {
+public class ZookeeperServiceDiscovery implements ServiceDiscovery, EventListener<ServiceInstancesChangedEvent> { //Zookeeper实现的服务发现
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private EventDispatcher dispatcher;
+    private EventDispatcher dispatcher; //事件派发器
 
-    private CuratorFramework curatorFramework;
+    private CuratorFramework curatorFramework; //curator客户端
 
     private String rootPath;
 
-    private org.apache.curator.x.discovery.ServiceDiscovery<ZookeeperInstance> serviceDiscovery;
+    private org.apache.curator.x.discovery.ServiceDiscovery<ZookeeperInstance> serviceDiscovery; //curator的服务发现
 
     /**
      * The Key is watched Zookeeper path, the value is an instance of {@link CuratorWatcher}

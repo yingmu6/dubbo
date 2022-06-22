@@ -17,9 +17,9 @@
 package org.apache.dubbo.registry.support;
 
 /**
- * Wrapper Exception, it is used to indicate that {@link FailbackRegistry} skips Failback.
+ * Wrapper Exception, it is used to indicate that {@link FailbackRegistry} skips Failback（跳过故障恢复）.
  * <p>
- * NOTE: Expect to find other more conventional ways of instruction.
+ * NOTE: Expect（期待） to find other more conventional（传统的） ways of instruction（操作方式）.
  *
  * @see FailbackRegistry
  */
@@ -29,7 +29,7 @@ public class SkipFailbackWrapperException extends RuntimeException {
     }
 
     @Override
-    public synchronized Throwable fillInStackTrace() {
+    public synchronized Throwable fillInStackTrace() { //返回的异常信息为null，不做任何处理
         // do nothing
         return null;
     }

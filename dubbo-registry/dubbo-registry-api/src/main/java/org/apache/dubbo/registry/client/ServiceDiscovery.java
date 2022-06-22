@@ -40,7 +40,7 @@ import static org.apache.dubbo.event.EventDispatcher.getDefaultExtension;
  * @since 2.7.5
  */
 @SPI("zookeeper")
-public interface ServiceDiscovery extends Prioritized { //服务发现
+public interface ServiceDiscovery extends Prioritized { //服务发现，ServiceDiscovery与ServiceInstance功能用途与curator类似
 
     // ==================================== Lifecycle ==================================== //
 

@@ -21,13 +21,13 @@ import org.apache.dubbo.common.URL;
 import java.util.List;
 import java.util.concurrent.Executor;
 
-public interface ZookeeperClient { //zookeeper客户端封装功能
+public interface ZookeeperClient { // zookeeper客户端
 
-    void create(String path, boolean ephemeral);
+    void create(String path, boolean ephemeral); //创建指定路径的接口，并指定是否是持久节点
 
     void delete(String path);
 
-    List<String> getChildren(String path);
+    List<String> getChildren(String path); //获取指定路径path下的所有子路径
 
     List<String> addChildListener(String path, ChildListener listener);
 

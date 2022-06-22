@@ -20,7 +20,7 @@ import org.apache.dubbo.common.URL;
 import org.apache.dubbo.remoting.zookeeper.ZookeeperClient;
 import org.apache.dubbo.remoting.zookeeper.support.AbstractZookeeperTransporter;
 
-public class CuratorZookeeperTransporter extends AbstractZookeeperTransporter {
+public class CuratorZookeeperTransporter extends AbstractZookeeperTransporter { //Curator实现的Zookeeper传输类
     @Override
     public ZookeeperClient createZookeeperClient(URL url) {
         return new CuratorZookeeperClient(url);

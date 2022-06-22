@@ -23,7 +23,6 @@ import org.apache.dubbo.common.utils.CollectionUtils;
 import org.apache.dubbo.common.utils.StringUtils;
 import org.apache.dubbo.rpc.cluster.configurator.parser.model.ConfigItem;
 import org.apache.dubbo.rpc.cluster.configurator.parser.model.ConfiguratorConfig;
-
 import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
@@ -32,10 +31,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.apache.dubbo.rpc.cluster.Constants.OVERRIDE_PROVIDERS_KEY;
 import static org.apache.dubbo.common.constants.CommonConstants.ANYHOST_VALUE;
 import static org.apache.dubbo.common.constants.RegistryConstants.APP_DYNAMIC_CONFIGURATORS_CATEGORY;
 import static org.apache.dubbo.common.constants.RegistryConstants.DYNAMIC_CONFIGURATORS_CATEGORY;
+import static org.apache.dubbo.rpc.cluster.Constants.OVERRIDE_PROVIDERS_KEY;
 
 /**
  * Config parser
@@ -44,7 +43,7 @@ public class ConfigParser {
 
     public static List<URL> parseConfigurators(String rawConfig) {
         // compatible url JsonArray, such as [ "override://xxx", "override://xxx" ]
-        if (isJsonArray(rawConfig)) {
+        if (isJsonArray(rawConfig)) { //数组类型，按数组解析
             return parseJsonArray(rawConfig);
         }
 
@@ -52,9 +51,9 @@ public class ConfigParser {
         ConfiguratorConfig configuratorConfig = parseObject(rawConfig);
 
         String scope = configuratorConfig.getScope();
-        List<ConfigItem> items = configuratorConfig.getConfigs();
+        List<ConfigItem> items = configuratorConfig.getConfigs(); //获取配置项列表
 
-        if (ConfiguratorConfig.SCOPE_APPLICATION.equals(scope)) {
+        if (ConfiguratorConfig.SCOPE_APPLICATION.equals(scope)) { //应用范围处理
             items.forEach(item -> urls.addAll(appItemToUrls(item, configuratorConfig)));
         } else {
             // service scope by default.
@@ -78,7 +77,7 @@ public class ConfigParser {
         itemDescription.addPropertyParameters("items", ConfigItem.class);
         constructor.addTypeDescription(itemDescription);
 
-        Yaml yaml = new Yaml(constructor);
+        Yaml yaml = new Yaml(constructor); //todo @csy-06-22 此处的Yaml功能用途是什么？
         return yaml.load(rawConfig);
     }
 
@@ -109,17 +108,17 @@ public class ConfigParser {
         return urls;
     }
 
-    private static List<URL> appItemToUrls(ConfigItem item, ConfiguratorConfig config) {
+    private static List<URL> appItemToUrls(ConfigItem item, ConfiguratorConfig config) { //将应用配置项转换为对应的url列表
         List<URL> urls = new ArrayList<>();
         List<String> addresses = parseAddresses(item);
         for (String addr : addresses) {
             StringBuilder urlBuilder = new StringBuilder();
-            urlBuilder.append("override://").append(addr).append("/");
-            List<String> services = item.getServices();
+            urlBuilder.append("override://").append(addr).append("/"); //构建override协议
+            List<String> services = item.getServices(); //获取配置项中的服务列表
             if (services == null) {
                 services = new ArrayList<>();
             }
-            if (services.isEmpty()) {
+            if (services.isEmpty()) { //服务列表为空，则使用"*"代替，表明所有服务都支持
                 services.add("*");
             }
             for (String s : services) {
@@ -139,7 +138,7 @@ public class ConfigParser {
         return urls;
     }
 
-    private static String toParameterString(ConfigItem item) {
+    private static String toParameterString(ConfigItem item) { //将配置项参数转换为字符串
         StringBuilder sb = new StringBuilder();
         sb.append("category=");
         sb.append(DYNAMIC_CONFIGURATORS_CATEGORY);
@@ -153,7 +152,7 @@ public class ConfigParser {
                     "you want to change in the rule.");
         }
 
-        parameters.forEach((k, v) -> {
+        parameters.forEach((k, v) -> { //循环拼接参数信息
             sb.append("&");
             sb.append(k);
             sb.append("=");
@@ -162,7 +161,7 @@ public class ConfigParser {
 
         if (CollectionUtils.isNotEmpty(item.getProviderAddresses())) {
             sb.append("&");
-            sb.append(OVERRIDE_PROVIDERS_KEY);
+            sb.append(OVERRIDE_PROVIDERS_KEY); //拼接提供者地址信息
             sb.append("=");
             sb.append(CollectionUtils.join(item.getProviderAddresses(), ","));
         }
@@ -170,7 +169,7 @@ public class ConfigParser {
         return sb.toString();
     }
 
-    private static String appendService(String serviceKey) {
+    private static String appendService(String serviceKey) { //附加服务信息
         StringBuilder sb = new StringBuilder();
         if (StringUtils.isEmpty(serviceKey)) {
             throw new IllegalStateException("service field in configuration is null.");
@@ -180,7 +179,7 @@ public class ConfigParser {
         int i = interfaceName.indexOf('/');
         if (i > 0) {
             sb.append("group=");
-            sb.append(interfaceName, 0, i);
+            sb.append(interfaceName, 0, i); //将服务对应的接口名拼接
             sb.append("&");
 
             interfaceName = interfaceName.substring(i + 1);
@@ -217,7 +216,7 @@ public class ConfigParser {
         return addresses;
     }
 
-    private static boolean isJsonArray(String rawConfig) {
+    private static boolean isJsonArray(String rawConfig) { //校验Json字符串是否是数组类型
         try {
             JSONValidator validator = JSONValidator.from(rawConfig);
             return validator.validate() && validator.getType() == JSONValidator.Type.Array;

@@ -24,7 +24,7 @@ import org.apache.dubbo.common.utils.CollectionUtils;
 
 import java.util.List;
 
-public class ListenerRegistryWrapper implements Registry {
+public class ListenerRegistryWrapper implements Registry { //对注册服务和注册服务监听器的封装
     private static final Logger logger = LoggerFactory.getLogger(ListenerRegistryWrapper.class);
 
     private final Registry registry;
@@ -58,7 +58,7 @@ public class ListenerRegistryWrapper implements Registry {
         } finally {
             if (CollectionUtils.isNotEmpty(listeners)) {
                 RuntimeException exception = null;
-                for (RegistryServiceListener listener : listeners) {
+                for (RegistryServiceListener listener : listeners) { //todo @csy-06-22 RegistryServiceListener是怎么被实例化？是怎么被使用的？
                     if (listener != null) {
                         try {
                             listener.onRegister(url);

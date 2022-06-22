@@ -26,7 +26,7 @@ import org.apache.dubbo.common.extension.SPI;
  * @see org.apache.dubbo.registry.support.AbstractRegistryFactory
  */
 @SPI("dubbo")
-public interface RegistryFactory {
+public interface RegistryFactory { //注册中心工厂
 
     /**
      * Connect to the registry（连接到注册中心）
@@ -43,6 +43,6 @@ public interface RegistryFactory {
      * @return Registry reference, never return empty value
      */
     @Adaptive({"protocol"})
-    Registry getRegistry(URL url); //连接到注册中心，并返回注册实例
+    Registry getRegistry(URL url); //获取注册中心实例
 
 }

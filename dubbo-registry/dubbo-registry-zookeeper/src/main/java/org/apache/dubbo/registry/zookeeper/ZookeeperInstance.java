@@ -26,7 +26,7 @@ import java.util.Map;
  *
  * @since 2.7.5
  */
-public class ZookeeperInstance {
+public class ZookeeperInstance { //Zookeeper的实例
 
     private String id;
 

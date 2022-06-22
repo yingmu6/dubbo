@@ -33,6 +33,6 @@ public interface ConfiguratorFactory { //通过工厂模式获取Configurator实
      * @return configurator instance.
      */
     @Adaptive("protocol")
-    Configurator getConfigurator(URL url);
+    Configurator getConfigurator(URL url); //自适应扩展方法，根据url.getProtocol()获取扩展名
 
 }

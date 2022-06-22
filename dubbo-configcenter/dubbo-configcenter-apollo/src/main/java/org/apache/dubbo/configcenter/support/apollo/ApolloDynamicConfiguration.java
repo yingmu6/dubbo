@@ -158,7 +158,7 @@ public class ApolloDynamicConfiguration implements DynamicConfiguration {
 
     @Override
     public String getConfig(String key, String group, long timeout) throws IllegalStateException {
-        if (StringUtils.isNotEmpty(group)) {
+        if (StringUtils.isNotEmpty(group)) { //group对应apollo的namespace
             if (group.equals(url.getParameter(APPLICATION_KEY))) {
                 return ConfigService.getAppConfig().getProperty(key, null);
             } else {

@@ -23,7 +23,7 @@ import org.apache.dubbo.registry.support.FailbackRegistry;
 /**
  *
  */
-public class ReExportTask extends AbstractRetryTask {
+public class ReExportTask extends AbstractRetryTask { //再次暴露任务
 
     private static final String NAME = "retry re-export";
 
@@ -36,6 +36,6 @@ public class ReExportTask extends AbstractRetryTask {
 
     @Override
     protected void doRetry(URL oldUrl, FailbackRegistry registry, Timeout timeout) {
-        runnable.run();
+        runnable.run(); //执行线程，具体的执行内容看调用的地方，如RegistryProtocol#reExport
     }
 }

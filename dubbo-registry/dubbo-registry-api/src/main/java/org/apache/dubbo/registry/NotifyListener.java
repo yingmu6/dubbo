@@ -25,7 +25,7 @@ import java.util.List;
  *
  * @see org.apache.dubbo.registry.RegistryService#subscribe(URL, NotifyListener)
  */
-public interface NotifyListener {
+public interface NotifyListener { //通知监听器
 
     /**
      * Triggered when a service change notification is received.（收到服务变更通知时触发）

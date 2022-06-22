@@ -56,7 +56,7 @@ import static org.apache.dubbo.rpc.cluster.Constants.ROUTER_KEY;
 /**
  * RegistryDirectory
  */
-public class RegistryDirectory<T> extends AbstractDirectory<T> implements NotifyListener {
+public class RegistryDirectory<T> extends AbstractDirectory<T> implements NotifyListener { //注册目录
     /**
      * RegistryDirectory的数据结构以及用途待了解
      * 解答 ：
@@ -69,10 +69,10 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
 
     private static final Logger logger = LoggerFactory.getLogger(RegistryDirectory.class);
 
-    private static final Cluster CLUSTER = ExtensionLoader.getExtensionLoader(Cluster.class).getAdaptiveExtension();
+    private static final Cluster CLUSTER = ExtensionLoader.getExtensionLoader(Cluster.class).getAdaptiveExtension(); //集群容错策略
 
     private static final RouterFactory ROUTER_FACTORY = ExtensionLoader.getExtensionLoader(RouterFactory.class)
-            .getAdaptiveExtension();
+            .getAdaptiveExtension(); //路由工厂
 
     private final String serviceKey; // Initialization at construction time, assertion not null
     /**
@@ -86,7 +86,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
     private Registry registry; // Initialization at the time of injection, the assertion is not null
     private volatile boolean forbidden = false;
     private boolean shouldRegister;
-    private boolean shouldSimplified;
+    private boolean shouldSimplified; //是否需要简化
 
     private volatile URL overrideDirectoryUrl; // Initialization at construction time, assertion not null, and always assign non null value
 

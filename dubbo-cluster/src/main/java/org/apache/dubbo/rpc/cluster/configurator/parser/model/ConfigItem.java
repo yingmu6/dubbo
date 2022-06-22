@@ -22,7 +22,7 @@ import java.util.Map;
 /**
  *
  */
-public class ConfigItem {
+public class ConfigItem { //配置项
     public static final String GENERAL_TYPE = "general";
     public static final String WEIGHT_TYPE = "weight";
     public static final String BALANCING_TYPE = "balancing";
@@ -30,7 +30,7 @@ public class ConfigItem {
 
     private String type;
     private Boolean enabled;
-    private List<String> addresses;
+    private List<String> addresses; //地址列表
     private List<String> providerAddresses;
     private List<String> services;
     private List<String> applications;

@@ -26,15 +26,14 @@ import java.util.Collection;
 
 /**
  * RegistryStatusChecker
- *
  */
 @Activate
-public class RegistryStatusChecker implements StatusChecker {
+public class RegistryStatusChecker implements StatusChecker { //注册状态检查，@Activate修饰的自适应扩展类
 
     @Override
     public Status check() {
-        Collection<Registry> registries = AbstractRegistryFactory.getRegistries();
-        if (registries.isEmpty()) { //判断注册实例列表是否为空
+        Collection<Registry> registries = AbstractRegistryFactory.getRegistries(); //获取缓存的注册实例
+        if (registries.isEmpty()) { //没有注册实例时，状态为UNKNOWN
             return new Status(Status.Level.UNKNOWN);
         }
         Status.Level level = Status.Level.OK;
@@ -43,7 +42,7 @@ public class RegistryStatusChecker implements StatusChecker {
             if (buf.length() > 0) {
                 buf.append(",");
             }
-            buf.append(registry.getUrl().getAddress()); //连接地址
+            buf.append(registry.getUrl().getAddress()); //拼接注册店址
             if (!registry.isAvailable()) { //判断注册实例是否可用
                 level = Status.Level.ERROR;
                 buf.append("(disconnected)");
