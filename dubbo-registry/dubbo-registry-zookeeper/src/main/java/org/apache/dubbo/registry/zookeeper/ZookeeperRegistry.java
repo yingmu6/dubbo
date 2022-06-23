@@ -235,7 +235,7 @@ public class ZookeeperRegistry extends FailbackRegistry { //Zookeeper实现的�
             categories = url.getParameter(CATEGORY_KEY, new String[]{DEFAULT_CATEGORY});
         }
         String[] paths = new String[categories.length];
-        for (int i = 0; i < categories.length; i++) {
+        for (int i = 0; i < categories.length; i++) { //将路径带上分类
             paths[i] = toServicePath(url) + PATH_SEPARATOR + categories[i];
         }
         return paths;

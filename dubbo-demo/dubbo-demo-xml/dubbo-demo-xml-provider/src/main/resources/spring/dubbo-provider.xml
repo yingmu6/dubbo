@@ -21,10 +21,12 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
        http://dubbo.apache.org/schema/dubbo http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
 
-    <dubbo:application metadata-type="remote" name="demo-provider"> <!-- 没有设置id时，会尝试查找name等值 -->
-        <dubbo:parameter key="name" value="zhangsan"/>
-        <dubbo:parameter key="age" value="11"/>
-    </dubbo:application>
+<!--    <dubbo:application metadata-type="remote" name="demo-provider"> &lt;!&ndash; 没有设置id时，会尝试查找name等值 &ndash;&gt;-->
+<!--        <dubbo:parameter key="name" value="zhangsan"/>-->
+<!--        <dubbo:parameter key="age" value="11"/>-->
+<!--    </dubbo:application>-->
+
+    <dubbo:application name="demo-provider"/>
 
     <dubbo:metadata-report address="zookeeper://127.0.0.1:2181"/>
     <!-- <dubbo:config-center>可以不配置，dubbo会对应添加配置 -->
@@ -35,8 +37,8 @@
     <dubbo:registry address="zookeeper://127.0.0.1:2181/all?default.name=test" simplified="true"/>
     <dubbo:protocol name="dubbo" port="20881" status="server"/>
 
-    <bean id="demoService" class="org.apache.dubbo.demo.provider.DemoServiceImqqp"/>
-    <dubbo:service interface="org.apache.dubbo.demo.DemoService" ref="demoService"/>
+<!--    <bean id="demoService" class="org.apache.dubbo.demo.provider.DemoServiceImqqp"/>-->
+<!--    <dubbo:service interface="org.apache.dubbo.demo.DemoService" ref="demoService"/>-->
 
     <bean id="greetingService" class="org.apache.dubbo.demo.provider.GreetingServiceImpl"/>
     <dubbo:service interface="org.apache.dubbo.demo.GreetingService" ref="greetingService"/>

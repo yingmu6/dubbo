@@ -57,7 +57,7 @@ public class CuratorZookeeperClient extends AbstractZookeeperClient<CuratorZooke
     private final CuratorFramework client;
     private Map<String, TreeCache> treeCacheMap = new ConcurrentHashMap<>();
 
-    public CuratorZookeeperClient(URL url) { //做初始化操作
+    public CuratorZookeeperClient(URL url) { //做初始化操作，不管消费者还是提供者启动时都会去连接Zookeeper，如果连接不上会抛出异常
         super(url);
         try {
             int timeout = url.getParameter(TIMEOUT_KEY, DEFAULT_CONNECTION_TIMEOUT_MS);
