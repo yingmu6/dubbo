@@ -22,7 +22,7 @@ import org.apache.dubbo.common.extension.ExtensionLoader;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-public class RegistryFactoryWrapperTest { //test3
+public class RegistryFactoryWrapperTest { //test4
     private RegistryFactory registryFactory = ExtensionLoader.getExtensionLoader(RegistryFactory.class).getAdaptiveExtension();
 
     @Test
