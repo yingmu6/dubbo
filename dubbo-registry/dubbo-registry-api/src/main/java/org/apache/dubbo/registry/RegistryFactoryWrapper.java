@@ -25,7 +25,7 @@ import java.util.Collections;
 public class RegistryFactoryWrapper implements RegistryFactory { //注册中心工厂的封装类
     private RegistryFactory registryFactory;
 
-    public RegistryFactoryWrapper(RegistryFactory registryFactory) {
+    public RegistryFactoryWrapper(RegistryFactory registryFactory) { //RegistryFactory的封装类
         this.registryFactory = registryFactory;
     }
 

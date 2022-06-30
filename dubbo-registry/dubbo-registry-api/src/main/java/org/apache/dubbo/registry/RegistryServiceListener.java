@@ -23,7 +23,7 @@ import org.apache.dubbo.common.extension.SPI;
 @SPI
 public interface RegistryServiceListener { //注册服务监听器
 
-    default void onRegister(URL url) {
+    default void onRegister(URL url) { //对注册操作进行监听
 
     }
 

@@ -52,16 +52,17 @@ public class ListenerRegistryWrapper implements Registry { //对注册服务和�
     }
 
     @Override
-    public void register(URL url) {
+    public void register(URL url) { //事件回调（执行完指定动作后，主动回调指定方法）
         try {
             registry.register(url);
         } finally {
             if (CollectionUtils.isNotEmpty(listeners)) {
                 RuntimeException exception = null;
-                for (RegistryServiceListener listener : listeners) { //todo @csy-06-22 RegistryServiceListener是怎么被实例化？是怎么被使用的？
+                //@csy-06-22 RegistryServiceListener是怎么被实例化？是怎么被使用的？解答：在RegistryFactoryWrapper#getRegistry中通过RegistryServiceListener的getActivateExtension()获取到
+                for (RegistryServiceListener listener : listeners) {
                     if (listener != null) {
                         try {
-                            listener.onRegister(url);
+                            listener.onRegister(url); //执行完注册功能时，主动回调监听器的监听方法onRegister
                         } catch (RuntimeException t) {
                             logger.error(t.getMessage(), t);
                             exception = t;

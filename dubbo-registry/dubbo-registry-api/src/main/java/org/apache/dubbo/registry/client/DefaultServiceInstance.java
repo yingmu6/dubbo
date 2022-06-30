@@ -43,7 +43,7 @@ public class DefaultServiceInstance implements ServiceInstance { //服务实例�
 
     private boolean healthy;
 
-    private Map<String, String> metadata = new HashMap<>(); //todo @csy-06-21 此处都存在什么值的？
+    private Map<String, String> metadata = new HashMap<>(); //todo @csy-06-21 此处都存在什么值的？解：存提供者url的元数据等，可以参见DefaultServiceInstanceTest#createInstance
 
     public DefaultServiceInstance() {
     }

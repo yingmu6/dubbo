@@ -34,7 +34,7 @@ public class CustomizableServiceInstanceListener implements EventListener<Servic
     @Override
     public void onEvent(ServiceInstancePreRegisteredEvent event) {
         ExtensionLoader<ServiceInstanceCustomizer> loader =
-                ExtensionLoader.getExtensionLoader(ServiceInstanceCustomizer.class);
+                ExtensionLoader.getExtensionLoader(ServiceInstanceCustomizer.class); //todo @csy 此处org.apache.dubbo.registry.client.ServiceInstanceCustomizer文件中看到的是5个扩展，为啥loader.getSupportedExtensionInstances()看到的是4个？入口是CustomizableServiceInstanceListenerTest#testOnEvent
         // FIXME, sort customizer before apply
         loader.getSupportedExtensionInstances().forEach(customizer -> {
             // customizes

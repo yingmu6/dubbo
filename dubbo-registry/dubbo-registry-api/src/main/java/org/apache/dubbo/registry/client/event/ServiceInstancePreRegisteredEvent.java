@@ -27,6 +27,7 @@ import org.apache.dubbo.registry.client.ServiceInstance;
  * @since 2.7.5
  */
 public class ServiceInstancePreRegisteredEvent extends ServiceInstanceEvent { //服务实例在注册中心注册前的事件
+    // 查看成员变量、成员方法时，要看下具体的继承，静态代码不容易看出，比如此处的成员变量来自于父类的serviceInstance、timestamp、source
 
     public ServiceInstancePreRegisteredEvent(Object source, ServiceInstance serviceInstance) {
         super(source, serviceInstance);
