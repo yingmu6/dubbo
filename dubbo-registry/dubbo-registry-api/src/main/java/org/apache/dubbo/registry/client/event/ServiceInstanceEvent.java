@@ -33,7 +33,7 @@ public abstract class ServiceInstanceEvent extends Event { //服务实例事件
      * 3）ServiceInstanceRegisteredEvent：服务实例在注册中心注册后的事件
      * 4）ServiceInstanceUnregisteredEvent：服务实例在注册中心取消注册后的事件
      */
-    private final ServiceInstance serviceInstance;
+    private final ServiceInstance serviceInstance; //维护着服务实例对象
 
     /**
      * @param serviceInstance {@link ServiceInstance an service instance}

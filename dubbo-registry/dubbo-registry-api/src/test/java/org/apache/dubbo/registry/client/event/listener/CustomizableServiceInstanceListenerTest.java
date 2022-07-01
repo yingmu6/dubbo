@@ -18,7 +18,6 @@ package org.apache.dubbo.registry.client.event.listener;
 
 import org.apache.dubbo.registry.client.DefaultServiceInstanceTest;
 import org.apache.dubbo.registry.client.event.ServiceInstancePreRegisteredEvent;
-
 import org.junit.jupiter.api.Test;
 
 /**
@@ -28,10 +27,11 @@ import org.junit.jupiter.api.Test;
  */
 public class CustomizableServiceInstanceListenerTest {
 
-    private CustomizableServiceInstanceListener listener = new CustomizableServiceInstanceListener();
+    private CustomizableServiceInstanceListener listener = new CustomizableServiceInstanceListener(); //初始化监听对象
 
     @Test
-    public void testOnEvent() {
+    public void testOnEvent() { //已测
+        // 事件对象传递的是this
         ServiceInstancePreRegisteredEvent event = new ServiceInstancePreRegisteredEvent(this, DefaultServiceInstanceTest.createInstance());
         // breaking test
         listener.onEvent(event);
