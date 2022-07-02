@@ -69,7 +69,7 @@ public interface ServiceDiscovery extends Prioritized { //服务发现，Service
      * @param serviceInstance an instance of {@link ServiceInstance} to be registered
      * @throws RuntimeException if failed
      */
-    void register(ServiceInstance serviceInstance) throws RuntimeException; //按服务实例向注册中心注册
+    void register(ServiceInstance serviceInstance) throws RuntimeException; //注册服务实例
 
     /**
      * Updates the registered {@link ServiceInstance}.
@@ -148,7 +148,7 @@ public interface ServiceDiscovery extends Prioritized { //服务发现，Service
      * @throws UnsupportedOperationException if not supported
      */
     default Page<ServiceInstance> getInstances(String serviceName, int offset, int pageSize) throws NullPointerException,
-            IllegalArgumentException {
+            IllegalArgumentException { //分页查询ServiceInstance
         return getInstances(serviceName, offset, pageSize, false);
     }
 
@@ -166,7 +166,7 @@ public interface ServiceDiscovery extends Prioritized { //服务发现，Service
      * @throws UnsupportedOperationException if not supported
      */
     default Page<ServiceInstance> getInstances(String serviceName, int offset, int pageSize, boolean healthyOnly) throws
-            NullPointerException, IllegalArgumentException, UnsupportedOperationException {
+            NullPointerException, IllegalArgumentException, UnsupportedOperationException { //该方法需要在实现类实现
         throw new UnsupportedOperationException("Current implementation does not support pagination query method.");
     }
 

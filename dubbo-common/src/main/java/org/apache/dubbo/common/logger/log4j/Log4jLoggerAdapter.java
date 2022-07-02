@@ -19,7 +19,6 @@ package org.apache.dubbo.common.logger.log4j;
 import org.apache.dubbo.common.logger.Level;
 import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerAdapter;
-
 import org.apache.log4j.Appender;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.LogManager;
@@ -106,7 +105,7 @@ public class Log4jLoggerAdapter implements LoggerAdapter {
 
     @Override
     public Logger getLogger(String key) {
-        return new Log4jLogger(LogManager.getLogger(key));
+        return new Log4jLogger(LogManager.getLogger(key)); //使用org.apache.log4j的日志管理器获取到Logger，并作为参数构建dubbo封装的Log4jLogger
     }
 
     @Override

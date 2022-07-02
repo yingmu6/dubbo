@@ -107,7 +107,7 @@ public class ZookeeperServiceDiscovery implements ServiceDiscovery, EventListene
     public Page<ServiceInstance> getInstances(String serviceName, int offset, int pageSize, boolean healthyOnly) {
         String path = buildServicePath(serviceName);
 
-        return execute(path, p -> {
+        return execute(path, p -> { //todo @csy 此处是怎么实现分页逻辑的？
 
             List<ServiceInstance> serviceInstances = new LinkedList<>();
 
@@ -168,7 +168,7 @@ public class ZookeeperServiceDiscovery implements ServiceDiscovery, EventListene
         }
     }
 
-    private String buildServicePath(String serviceName) {
+    private String buildServicePath(String serviceName) { //构建服务名对应的zk路径：root根路径 + serviceName服务接口名
         return rootPath + "/" + serviceName;
     }
 

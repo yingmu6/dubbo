@@ -18,12 +18,11 @@ package org.apache.dubbo.common.logger.slf4j;
 
 import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.support.FailsafeLogger;
-
 import org.slf4j.spi.LocationAwareLogger;
 
 import java.io.Serializable;
 
-public class Slf4jLogger implements Logger, Serializable {
+public class Slf4jLogger implements Logger, Serializable { //dubbo对slf4j的封装
 
     private static final long serialVersionUID = 1L;
 
@@ -33,7 +32,7 @@ public class Slf4jLogger implements Logger, Serializable {
 
     private final LocationAwareLogger locationAwareLogger;
 
-    public Slf4jLogger(org.slf4j.Logger logger) {
+    public Slf4jLogger(org.slf4j.Logger logger) { //对slf4j进行封装
         if (logger instanceof LocationAwareLogger) {
             locationAwareLogger = (LocationAwareLogger) logger;
         } else {

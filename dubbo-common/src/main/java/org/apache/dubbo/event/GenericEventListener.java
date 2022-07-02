@@ -32,12 +32,12 @@ import static org.apache.dubbo.common.function.ThrowableFunction.execute;
 /**
  * An abstract class of {@link EventListener} for Generic events, the sub class could add more {@link Event event}
  * handle methods, rather than only binds the {@link EventListener#onEvent(Event)} method that is declared to be
- * <code>final</code> the implementation can't override. It's notable that all {@link Event event} handle methods must
- * meet following conditions:
+ * <code>final</code> the implementation can't override（onEvent被声明为final方法，不能被子类实现）. It's notable（值得注意的是） that all {@link Event event} handle methods must
+ * meet following conditions（满足以下条件）:
  * <ul>
  * <li>not {@link #onEvent(Event)} method</li>
- * <li><code>public</code> accessibility</li>
- * <li><code>void</code> return type</li>
+ * <li><code>public</code> accessibility</li> public 可见的
+ * <li><code>void</code> return type</li> 返回void类型
  * <li>no {@link Exception exception} declaration</li>
  * <li>only one {@link Event} type argument</li>
  * </ul>

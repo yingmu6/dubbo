@@ -31,7 +31,8 @@ import static java.lang.String.format;
  */
 public class LoggingEventListener extends GenericEventListener { //事件的日志监听器
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    // 初始化成员变量logger，在对象创建时进行初始化
+    private final Logger logger = LoggerFactory.getLogger(getClass()); //getClass()是Object的方法，指的是当前类LoggingEventListener对应的class，如：值为Class@1704
 
     public void onEvent(ServiceDiscoveryInitializingEvent event) {
         info("%s is initializing...", event.getServiceDiscovery());

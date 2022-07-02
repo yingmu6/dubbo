@@ -36,13 +36,13 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class LoggerFactory {
 
-    private static final ConcurrentMap<String, FailsafeLogger> LOGGERS = new ConcurrentHashMap<>();
-    private static volatile LoggerAdapter LOGGER_ADAPTER;
+    private static final ConcurrentMap<String, FailsafeLogger> LOGGERS = new ConcurrentHashMap<>(); //使用日志的类名与日志处理器的映射
+    private static volatile LoggerAdapter LOGGER_ADAPTER; //日志适配器
 
     // search common-used logging frameworks
     static {
-        String logger = System.getProperty("dubbo.application.logger", "");
-        switch (logger) {
+        String logger = System.getProperty("dubbo.application.logger", ""); //获取系统属性中日志相关的值
+        switch (logger) { //根据系统属性设置的值，选择日志处理适配器
             case "slf4j":
                 setLoggerAdapter(new Slf4jLoggerAdapter());
                 break;
@@ -59,18 +59,18 @@ public class LoggerFactory {
                 setLoggerAdapter(new Log4j2LoggerAdapter());
                 break;
             default:
-                List<Class<? extends LoggerAdapter>> candidates = Arrays.asList(
+                List<Class<? extends LoggerAdapter>> candidates = Arrays.asList( //将日志适配器都放在候选列表中
                         Log4jLoggerAdapter.class,
                         Slf4jLoggerAdapter.class,
                         Log4j2LoggerAdapter.class,
                         JclLoggerAdapter.class,
                         JdkLoggerAdapter.class
                 );
-                for (Class<? extends LoggerAdapter> clazz : candidates) {
+                for (Class<? extends LoggerAdapter> clazz : candidates) { //从候选的日志适配器中，依次尝试设置日志处理器
                     try {
-                        setLoggerAdapter(clazz.newInstance());
+                        setLoggerAdapter(clazz.newInstance()); // 只要有一个设置成功，即跳出循环
                         break;
-                    } catch (Throwable ignored) {
+                    } catch (Throwable ignored) { //若出现异常，捕获异常不处理，进入下一次循环
                     }
                 }
         }
@@ -90,11 +90,11 @@ public class LoggerFactory {
      *
      * @param loggerAdapter logger provider
      */
-    public static void setLoggerAdapter(LoggerAdapter loggerAdapter) {
+    public static void setLoggerAdapter(LoggerAdapter loggerAdapter) { //设置日志适配器类
         if (loggerAdapter != null) {
             Logger logger = loggerAdapter.getLogger(LoggerFactory.class.getName());
             logger.info("using logger: " + loggerAdapter.getClass().getName());
-            LoggerFactory.LOGGER_ADAPTER = loggerAdapter;
+            LoggerFactory.LOGGER_ADAPTER = loggerAdapter; //记录日志处理的适配器类
             for (Map.Entry<String, FailsafeLogger> entry : LOGGERS.entrySet()) {
                 entry.getValue().setLogger(LOGGER_ADAPTER.getLogger(entry.getKey()));
             }
@@ -107,7 +107,7 @@ public class LoggerFactory {
      * @param key the returned logger will be named after clazz
      * @return logger
      */
-    public static Logger getLogger(Class<?> key) {
+    public static Logger getLogger(Class<?> key) { //统一使用FailsafeLogger做封装，具体的日志处理器可配置、可选择LOGGER_ADAPTER
         return LOGGERS.computeIfAbsent(key.getName(), name -> new FailsafeLogger(LOGGER_ADAPTER.getLogger(name)));
     }
 

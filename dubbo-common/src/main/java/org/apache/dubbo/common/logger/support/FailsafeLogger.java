@@ -20,11 +20,11 @@ import org.apache.dubbo.common.Version;
 import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.utils.NetUtils;
 
-public class FailsafeLogger implements Logger {
+public class FailsafeLogger implements Logger { //失败时安全处理的日志处理器（日志打印报异常时，主动通过try/catch捕获，不向上抛出异常）
 
     private Logger logger;
 
-    public FailsafeLogger(Logger logger) {
+    public FailsafeLogger(Logger logger) { //对Dubbo定义的自定义日志处理器，再次统一封装，相当于门面类
         this.logger = logger;
     }
 
@@ -44,7 +44,7 @@ public class FailsafeLogger implements Logger {
     public void trace(String msg, Throwable e) {
         try {
             logger.trace(appendContextMessage(msg), e);
-        } catch (Throwable t) {
+        } catch (Throwable t) { //主动捕获异常，不向上抛出异常
         }
     }
 

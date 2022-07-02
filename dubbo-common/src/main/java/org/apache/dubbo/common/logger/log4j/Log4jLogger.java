@@ -18,16 +18,15 @@ package org.apache.dubbo.common.logger.log4j;
 
 import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.support.FailsafeLogger;
-
 import org.apache.log4j.Level;
 
-public class Log4jLogger implements Logger {
+public class Log4jLogger implements Logger { //对log4j进行封装
 
     private static final String FQCN = FailsafeLogger.class.getName();
 
     private final org.apache.log4j.Logger logger;
 
-    public Log4jLogger(org.apache.log4j.Logger logger) {
+    public Log4jLogger(org.apache.log4j.Logger logger) { //对具体的日志处理器进行封装
         this.logger = logger;
     }
 

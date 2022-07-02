@@ -41,7 +41,7 @@ public class LoggingEventListenerTest {
     }
 
     @Test
-    public void testOnEvent() throws Exception {
+    public void testOnEvent() throws Exception { //测试LoggingEventListener中的onEvent()方法的使用（没有用上Assert断言，表明测的是使用方式，而不是测内部具体逻辑）
 
         URL connectionURL = URL.valueOf("file:///Users/Home");
 
