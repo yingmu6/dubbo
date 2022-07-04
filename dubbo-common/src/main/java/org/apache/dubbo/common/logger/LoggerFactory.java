@@ -34,7 +34,7 @@ import java.util.concurrent.ConcurrentMap;
 /**
  * Logger factory （日志工厂）
  */
-public class LoggerFactory { //日志
+public class LoggerFactory { //日志工厂
 
     private static final ConcurrentMap<String, FailsafeLogger> LOGGERS = new ConcurrentHashMap<>(); //使用日志的类名与日志处理器的映射
     private static volatile LoggerAdapter LOGGER_ADAPTER; //日志适配器
