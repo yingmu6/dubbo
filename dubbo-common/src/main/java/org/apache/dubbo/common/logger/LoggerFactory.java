@@ -40,7 +40,7 @@ public class LoggerFactory { //日志工厂
     private static volatile LoggerAdapter LOGGER_ADAPTER; //日志适配器
 
     // search common-used logging frameworks
-    static { // 静态 方法
+    static { // 静态 方 法
         String logger = System.getProperty("dubbo.application.logger", ""); // 获取系统属性中日志相关的值
         switch (logger) { //根据系统属性设置的值，选择日志处理适配器
             case "slf4j":
