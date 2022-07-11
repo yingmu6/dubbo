@@ -499,7 +499,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
      * @return non-null
      */
     public T getOrDefaultExtension(String name) {
-        return containsExtension(name) ? getExtension(name) : getDefaultExtension(); //todo @csy 默认扩展名也是配置在文件中的，此处getExtension(name)与getDefaultExtension()有啥不同？
+        return containsExtension(name) ? getExtension(name) : getDefaultExtension();
     }
 
     /**
@@ -903,7 +903,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
      */
     private void loadDirectory(Map<String, Class<?>> extensionClasses, String dir, String type, //extensionClasses引用传递，形参的改变会影响实参改变
                                boolean extensionLoaderClassLoaderFirst, boolean overridden, String... excludedPackages) {
-        String fileName = dir + type; //如dir："META-INF/dubbo/internal/" ，type："org.apache.dubbo.common.extension.ExtensionFactory"
+        String fileName = dir + type; //如dir："META-INF/dubbo/internal/" ，type："org.apache.dubbo.common.extension.ExtensionFactory" （加载的是type接口所在模块下的dubbo配置文件）
         try {
             Enumeration<java.net.URL> urls = null;
             ClassLoader classLoader = findClassLoader();

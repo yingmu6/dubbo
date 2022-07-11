@@ -34,7 +34,7 @@ public class ServiceBeanTest {
         MatcherAssert.assertThat(beanService, not(nullValue()));
     }
 
-    abstract class TestService implements Service { //todo @csy 这是怎样的写法？ 注解也能继承吗
+    abstract class TestService implements Service {
 
     }
 }

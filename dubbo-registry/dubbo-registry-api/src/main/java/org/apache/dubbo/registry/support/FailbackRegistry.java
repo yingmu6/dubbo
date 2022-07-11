@@ -42,8 +42,6 @@ import static org.apache.dubbo.registry.Constants.*;
  */
 public abstract class FailbackRegistry extends AbstractRegistry { //失败恢复注册服务
 
-    // todo @csy-06-18 类图待整理
-
     /*  retry task map（维护重试的任务） */
 
     /**

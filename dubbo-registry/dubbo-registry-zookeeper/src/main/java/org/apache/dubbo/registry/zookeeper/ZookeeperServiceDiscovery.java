@@ -107,18 +107,18 @@ public class ZookeeperServiceDiscovery implements ServiceDiscovery, EventListene
     public Page<ServiceInstance> getInstances(String serviceName, int offset, int pageSize, boolean healthyOnly) {
         String path = buildServicePath(serviceName);
 
-        return execute(path, p -> { //todo @csy 此处是怎么实现分页逻辑的？
+        return execute(path, p -> { //函数传递，lambda表达式是懒加载，传递的是函数声明，只有使用时才进行调用
 
             List<ServiceInstance> serviceInstances = new LinkedList<>();
 
-            List<String> serviceIds = new LinkedList<>(curatorFramework.getChildren().forPath(p));
+            List<String> serviceIds = new LinkedList<>(curatorFramework.getChildren().forPath(p)); //通过curator客户端获取指定路径服务id列表
 
             int totalSize = serviceIds.size();
 
             Iterator<String> iterator = serviceIds.iterator();
 
             for (int i = 0; i < offset; i++) {
-                if (iterator.hasNext()) { // remove the elements from 0 to offset
+                if (iterator.hasNext()) { // remove the elements from 0 to offset（将0到offset之前的元素移除掉，那么分页的数据就可以从0开始读取了）
                     iterator.next();
                     iterator.remove();
                 }
@@ -127,7 +127,7 @@ public class ZookeeperServiceDiscovery implements ServiceDiscovery, EventListene
             for (int i = 0; i < pageSize; i++) {
                 if (iterator.hasNext()) {
                     String serviceId = iterator.next();
-                    ServiceInstance serviceInstance = build(serviceDiscovery.queryForInstance(serviceName, serviceId));
+                    ServiceInstance serviceInstance = build(serviceDiscovery.queryForInstance(serviceName, serviceId)); //通过服务接口名+服务id查找到服务实例ServiceInstance，并将curator定义的ServiceInstance转换为Dubbo定义的
                     serviceInstances.add(serviceInstance);
                 }
             }

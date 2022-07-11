@@ -65,7 +65,7 @@ public abstract class AbstractRegistry implements Registry { //注册中心抽�
     // 使用Set集合，根据Set的特性不会出现重复的元素，也就是可以反复注册同一个url，使用集合支持幂等
     private final Set<URL> registered = new ConcurrentHashSet<>(); //被注册的url列表
     // 订阅的url与关联的监听器列表的缓存（一个url的数据变更可以被多个监听器监听）
-    private final ConcurrentMap<URL, Set<NotifyListener>> subscribed = new ConcurrentHashMap<>(); //todo @csy-06-17 该数据是private，会被同步的实现类共享吗？
+    private final ConcurrentMap<URL, Set<NotifyListener>> subscribed = new ConcurrentHashMap<>();
     // notified数据格式：ConcurrentMap<URL, Map<category, List<URL>>>
     private final ConcurrentMap<URL, Map<String, List<URL>>> notified = new ConcurrentHashMap<>();
     private URL registryUrl; //注册的url
@@ -182,7 +182,7 @@ public abstract class AbstractRegistry implements Registry { //注册中心抽�
                     if (!file.exists()) {
                         file.createNewFile();
                     }
-                    try (FileOutputStream outputFile = new FileOutputStream(file)) { //todo @csy-06-18 写入文件内容都有什么？看到文件中"#Wed Jun 01 08:32:08 CST 2022"，是怎么写入的？
+                    try (FileOutputStream outputFile = new FileOutputStream(file)) {
                         //把属性对象的值，写到本地文件中， 实现内存 -》文件的数据转换
                         properties.store(outputFile, "Dubbo Registry Cache"); // 第二个参数会作为注释内容 带上"#"写到文件中
                     }
@@ -190,7 +190,7 @@ public abstract class AbstractRegistry implements Registry { //注册中心抽�
                     lock.release(); //释放锁
                 }
             }
-        } catch (Throwable e) { //保存失败后做重试操作，todo @csy-06-18 此处重试并没有看到用for循环执行，那没执行完一次，方法结束后就会停止，是怎么做到重试的？
+        } catch (Throwable e) { //保存失败后做重试操作
             savePropertiesRetryTimes.incrementAndGet();
             if (savePropertiesRetryTimes.get() >= MAX_RETRY_TIMES_SAVE_PROPERTIES) { //超过最大重试次数，不进行后续重试操作
                 logger.warn("Failed to save registry cache file after retrying " + MAX_RETRY_TIMES_SAVE_PROPERTIES + " times, cause: " + e.getMessage(), e);
@@ -262,8 +262,8 @@ public abstract class AbstractRegistry implements Registry { //注册中心抽�
             }
         } else {
             final AtomicReference<List<URL>> reference = new AtomicReference<>();
-            NotifyListener listener = reference::set; //todo @csy-06-17 此处的用法含义是怎样的？
-            subscribe(url, listener); // Subscribe logic guarantees the first notify to return（订阅逻辑保证第一个通知返回） todo @csy-06-17 此处为啥这么处理
+            NotifyListener listener = reference::set;
+            subscribe(url, listener); // Subscribe logic guarantees the first notify to return（订阅逻辑保证第一个通知返回）
             List<URL> urls = reference.get();
             if (CollectionUtils.isNotEmpty(urls)) {
                 for (URL u : urls) {
@@ -365,7 +365,7 @@ public abstract class AbstractRegistry implements Registry { //注册中心抽�
             URL url = entry.getKey(); //消费端的url
 
             // 若缓存中url与传入的url不匹配，则不进行后续的通知处理
-            if (!UrlUtils.isMatch(url, urls.get(0))) { //todo @csy-06-17 此处为啥总是urls.get(0)用第一个元素比较，是当前场景下的url列表只有一个吗？
+            if (!UrlUtils.isMatch(url, urls.get(0))) {
                 continue;
             }
 
@@ -401,7 +401,7 @@ public abstract class AbstractRegistry implements Registry { //注册中心抽�
             logger.warn("Ignore empty notify urls for subscribe url " + url);
             return;
         }
-        if (logger.isInfoEnabled()) { //todo @csy-06-22 此处待调试查看数据
+        if (logger.isInfoEnabled()) {
             logger.info("Notify urls for subscribe url " + url + ", urls: " + urls);
         }
         // keep every provider's category.

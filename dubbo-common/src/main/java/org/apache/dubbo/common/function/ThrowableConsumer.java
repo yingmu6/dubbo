@@ -61,6 +61,6 @@ public interface ThrowableConsumer<T> { //带着异常的消费端，函数式�
      * @return the result after execution
      */
     static <T> void execute(T t, ThrowableConsumer<T> consumer) {
-        consumer.execute(t);
+        consumer.execute(t); //接收传入的参数，按consumer定义的操作处理
     }
 }

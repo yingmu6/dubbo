@@ -28,7 +28,7 @@ import java.util.function.Function;
  * @since 2.7.5
  */
 @FunctionalInterface
-public interface ThrowableFunction<T, R> { //dubbo自定义的函数式接口
+public interface ThrowableFunction<T, R> { //dubbo自定义的函数式接口，可抛出异常的函数式接口
 
     /**
      * Applies this function to the given argument.
@@ -65,7 +65,7 @@ public interface ThrowableFunction<T, R> { //dubbo自定义的函数式接口
      * @param <R>      the return type
      * @return the result after execution
      */
-    static <T, R> R execute(T t, ThrowableFunction<T, R> function) { //static静态方法
+    static <T, R> R execute(T t, ThrowableFunction<T, R> function) { //static静态方法，用函数function接收传入的值t进行处理，并返回处理的值R
         return function.execute(t);
     }
 }

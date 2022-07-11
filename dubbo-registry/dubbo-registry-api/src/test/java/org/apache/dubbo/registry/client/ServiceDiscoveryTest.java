@@ -17,7 +17,6 @@
 package org.apache.dubbo.registry.client;
 
 import org.apache.dubbo.common.utils.Page;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,9 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * {@link ServiceDiscovery} Test case
@@ -193,10 +190,10 @@ public class ServiceDiscoveryTest {
 
 
         DefaultServiceInstance serviceInstance = new DefaultServiceInstance("A", "127.0.0.1", 8082);
-        serviceInstance.setHealthy(false);
+        serviceInstance.setHealthy(false); //healthy：设置服务健康状态
         instances.add(serviceInstance);
 
-        instances.forEach(serviceDiscovery::register);
+        instances.forEach(serviceDiscovery::register); //one line ，一行代码的编程
 
         // offset starts 0
         int offset = 0;
@@ -207,7 +204,7 @@ public class ServiceDiscoveryTest {
         assertEquals(0, page.getOffset());
         assertEquals(5, page.getPageSize());
         assertEquals(3, page.getTotalSize());
-        assertEquals(2, page.getData().size());
+        assertEquals(2, page.getData().size()); //对返回的参数进行判断
         assertTrue(page.hasData());
 
         for (ServiceInstance instance : page.getData()) {

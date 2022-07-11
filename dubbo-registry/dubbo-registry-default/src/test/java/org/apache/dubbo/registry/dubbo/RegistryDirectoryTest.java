@@ -222,7 +222,7 @@ public class RegistryDirectoryTest {
         List<Invoker<DemoService>> invokers = registryDirectory.list(invocation); //list调用过程：AbstractDirectory的list -> AbstractDirectory的doList -> 具体实例RegistryDirectory或StaticsDirectory的doList
         Assertions.assertEquals(1, invokers.size());
 
-//        invocation.setMethodName("getXXX2445"); todo @csy 此处为啥设置该条件，invokers.size()也是1？
+//        invocation.setMethodName("getXXX2445");
         invocation.setMethodName("getXXX");
         invokers = registryDirectory.list(invocation);
         Assertions.assertEquals(1, invokers.size());
@@ -456,7 +456,7 @@ public class RegistryDirectoryTest {
         registryDirectory.setRegistry(new MockRegistry(latch));
         registryDirectory.subscribe(URL.valueOf("consumer://" + NetUtils.getLocalHost() + "/DemoService?category=providers"));
         registryDirectory.destroy();
-        Assertions.assertEquals(0, latch.getCount()); //todo @csy 此处为啥变为0
+        Assertions.assertEquals(0, latch.getCount());
     }
 
     @Test

@@ -44,7 +44,7 @@ public abstract class AbstractEventDispatcher implements EventDispatcher {
 
     private final Object mutex = new Object();
 
-    // 存储者事件与事件监听器的映射关系
+    // 事件与事件监听器列表的映射关系
     private final ConcurrentMap<Class<? extends Event>, List<EventListener>> listenersCache = new ConcurrentHashMap<>();
 
     private final Executor executor;
@@ -64,7 +64,7 @@ public abstract class AbstractEventDispatcher implements EventDispatcher {
     }
 
     @Override
-    public void addEventListener(EventListener<?> listener) throws NullPointerException, IllegalArgumentException {
+    public void addEventListener(EventListener<?> listener) throws NullPointerException, IllegalArgumentException { //将事件与监听器列表添加到本地缓存listenersCache中
         Listenable.assertListener(listener);
         doInListener(listener, listeners -> { //将事件监听器添加到监听器列表中
             addIfAbsent(listeners, listener);
@@ -98,7 +98,7 @@ public abstract class AbstractEventDispatcher implements EventDispatcher {
                 .entrySet()
                 .stream()
                 .filter(predicate)
-                .map(Map.Entry::getValue)
+                .map(Map.Entry::getValue) //获取到事件监听器EventListener列表
                 .flatMap(Collection::stream)
                 .sorted();
     }
@@ -110,17 +110,17 @@ public abstract class AbstractEventDispatcher implements EventDispatcher {
     }
 
     @Override
-    public void dispatch(Event event) { //进行事件派发
+    public void dispatch(Event event) { //进行事件派发（从本地缓存listenersCache中查找到事件与监听器列表，并依次调用监听器进行事件处理）
 
         Executor executor = getExecutor();
 
-        // execute in sequential or parallel execution model （todo @csy-06-21 此处顺序和并行是指啥？）
+        // execute in sequential or parallel execution model
         executor.execute(() -> { //将事件处理使用线程执行
             sortedListeners(entry -> entry.getKey().isAssignableFrom(event.getClass()))
                     .forEach(listener -> {
                         if (listener instanceof ConditionalEventListener) {
                             ConditionalEventListener predicateEventListener = (ConditionalEventListener) listener;
-                            if (!predicateEventListener.accept(event)) { // No accept
+                            if (!predicateEventListener.accept(event)) { // No accept（判断事件是否能被当前监听器处理）
                                 return;
                             }
                         }

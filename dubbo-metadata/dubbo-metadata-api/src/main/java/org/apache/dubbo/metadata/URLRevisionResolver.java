@@ -81,7 +81,7 @@ public class URLRevisionResolver {
      * @return non-null
      * @since 2.7.8
      */
-    public String resolve(Collection<URL> urls) { //todo @csy-06-21 此处的版本是怎样计算的，值是怎样的？
+    public String resolve(Collection<URL> urls) {
 
         if (isEmpty(urls)) {
             return UNKNOWN_REVISION;

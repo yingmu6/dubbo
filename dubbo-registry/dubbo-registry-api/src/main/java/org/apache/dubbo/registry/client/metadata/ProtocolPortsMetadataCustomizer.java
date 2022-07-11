@@ -39,7 +39,7 @@ import static org.apache.dubbo.registry.client.metadata.ServiceInstanceMetadataU
 public class ProtocolPortsMetadataCustomizer implements ServiceInstanceCustomizer { //协议与端口的元数据自定义器
 
     @Override
-    public void customize(ServiceInstance serviceInstance) { //todo @csy 此处都做了哪里自定义？
+    public void customize(ServiceInstance serviceInstance) {
 
         String metadataStoredType = getMetadataStorageType(serviceInstance);
 

@@ -458,7 +458,7 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
     }
 
     private static void checkDuplicate(AbstractConfig oldOne, AbstractConfig newOne) throws IllegalStateException {
-        if (oldOne != null && !oldOne.equals(newOne)) { //检查配置是否重复（todo @csy 此处难理解，为啥是按不等于来比较的）
+        if (oldOne != null && !oldOne.equals(newOne)) { //检查配置是否重复
             String configName = oldOne.getClass().getSimpleName();
             logger.warn("Duplicate Config found for " + configName + ", you should use only one unique " + configName + " for one application.");
         }

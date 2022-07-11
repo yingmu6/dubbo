@@ -46,7 +46,7 @@ public class DefaultServiceInstanceTest {
     }
 
     @Test
-    public void testDefaultValues() {
+    public void testDefaultValues() { //测试DefaultServiceInstance中的默认值
         assertTrue(instance.isEnabled());
         assertTrue(instance.isHealthy());
         assertFalse(instance.getMetadata().isEmpty());
@@ -60,13 +60,13 @@ public class DefaultServiceInstanceTest {
         assertEquals("A", instance.getServiceName());
         assertEquals("127.0.0.1", instance.getHost());
         assertEquals(8080, instance.getPort());
-        assertFalse(instance.isEnabled());
+        assertFalse(instance.isEnabled()); //值已被设置
         assertFalse(instance.isHealthy());
         assertFalse(instance.getMetadata().isEmpty());
     }
 
     @Test
-    public void testGetMetadata() {
+    public void testGetMetadata() { //从DefaultServiceInstance的缓存中获取
         assertNotNull(instance.getMetadata(METADATA_SERVICE_URLS_PROPERTY_NAME));
         assertNotNull(instance.getMetadata(METADATA_SERVICE_URL_PARAMS_PROPERTY_NAME));
     }

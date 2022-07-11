@@ -33,13 +33,23 @@ public class EventDispatcherTest {
     private EventDispatcher defaultInstance = EventDispatcher.getDefaultExtension();
 
     @Test
-    public void testDefaultInstance() {
+    public void testDefaultInstance() { //EventDispatcher的默认实例是DirectEventDispatcher（通过SPI机制获取的实例）
         assertEquals(DirectEventDispatcher.class, defaultInstance.getClass());
     }
 
     @Test
     public void testDefaultMethods() {
-        assertEquals(DIRECT_EXECUTOR, defaultInstance.getExecutor());
-        assertTrue(defaultInstance.getAllEventListeners().isEmpty());
+        assertEquals(DIRECT_EXECUTOR, defaultInstance.getExecutor()); //DirectEventDispatcher实例创建时，调用super(DIRECT_EXECUTOR);指定的
+
+        defaultInstance.addEventListener(new EventListener<Event>() { //使用匿名类构建监听器
+            @Override
+            public void onEvent(Event event) {
+                System.out.println("收到事件" + event.getSource());
+            }
+        });
+
+        assertTrue(!defaultInstance.getAllEventListeners().isEmpty());
+
+        defaultInstance.dispatch(new EchoEvent("hhh")); //进行事件派发时，会调用事件关联监听器的onEvent()方法
     }
 }

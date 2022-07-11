@@ -69,7 +69,7 @@ public abstract class ConfigCenterBasedMetadataReportFactory implements Metadata
         return metadataReportCache.computeIfAbsent(key, k -> new ConfigCenterBasedMetadataReport(actualURL, keyType)); //设置元数据上报实例的缓存，会根据Map的computeIfAbsent确保key不重复，来保证单实例创建
     }
 
-    private URL resolveURLParameters(URL url) { //todo @csy 待调试
+    private URL resolveURLParameters(URL url) {
         URL resolvedURL = url.removeParameters(EXPORT_KEY, REFER_KEY); //移除URL中参数export, refer
         if (PATH.equals(getKeyType())) { // Only handles for "PATH" type
             if (isBlank(resolvedURL.getParameter(CONFIG_ROOT_PATH_PARAM_NAME))) {

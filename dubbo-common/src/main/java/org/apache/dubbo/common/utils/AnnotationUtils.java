@@ -178,7 +178,7 @@ public interface AnnotationUtils {
      * @param annotationsToFilter the annotations to filter
      * @return non-null read-only {@link List}
      */
-    static List<Annotation> getAllDeclaredAnnotations(Class<?> type, Predicate<Annotation>... annotationsToFilter) { //todo @csy pause
+    static List<Annotation> getAllDeclaredAnnotations(Class<?> type, Predicate<Annotation>... annotationsToFilter) {
 
         if (type == null) {
             return emptyList();

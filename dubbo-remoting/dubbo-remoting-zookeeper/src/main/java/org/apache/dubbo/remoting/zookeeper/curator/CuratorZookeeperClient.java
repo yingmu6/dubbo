@@ -104,7 +104,7 @@ public class CuratorZookeeperClient extends AbstractZookeeperClient<CuratorZooke
                     " may still holds this ZNode and the server just hasn't got time to do the deletion. In this case, " +
                     "we can just try to delete and create again.", e);
             deletePath(path);
-            createEphemeral(path); //尝试删除节点，再做一次创建节点处理  todo @csy-06-22 此处会不会出现反复创建节点失败，又反复尝试创建节点？没看到有结束标志
+            createEphemeral(path); //尝试删除节点，再做一次创建节点处理
         } catch (Exception e) {
             throw new IllegalStateException(e.getMessage(), e);
         }

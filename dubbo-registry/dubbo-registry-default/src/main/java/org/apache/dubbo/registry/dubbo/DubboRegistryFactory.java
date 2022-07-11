@@ -90,7 +90,7 @@ public class DubboRegistryFactory extends AbstractRegistryFactory {
         url = getRegistryURL(url);
         List<URL> urls = new ArrayList<>();
         urls.add(url.removeParameter(BACKUP_KEY));
-        String backup = url.getParameter(BACKUP_KEY); //todo @csy-06-18 此处前面已经移除了参数，还能获取到值吗？
+        String backup = url.getParameter(BACKUP_KEY);
         if (backup != null && backup.length() > 0) {
             String[] addresses = COMMA_SPLIT_PATTERN.split(backup);
             for (String address : addresses) {

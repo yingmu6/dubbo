@@ -83,7 +83,7 @@ public class ServiceInstanceMetadataUtils {
      * @return non-null {@link Map}, the key is {@link URL#getProtocol() the protocol of URL}, the value is
      * {@link #getMetadataServiceURLParams(ServiceInstance, String)}
      */
-    public static Map<String, Map<String, String>> getMetadataServiceURLsParams(ServiceInstance serviceInstance) { //todo @csy-06-21 查看返回的数据值
+    public static Map<String, Map<String, String>> getMetadataServiceURLsParams(ServiceInstance serviceInstance) {
         Map<String, String> metadata = serviceInstance.getMetadata();
         String param = metadata.get(METADATA_SERVICE_URL_PARAMS_PROPERTY_NAME); //从元数据中获取dubbo.metadata-service.url-params参数对应的值
         return isBlank(param) ? emptyMap() : (Map) JSON.parse(param);

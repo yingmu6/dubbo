@@ -110,7 +110,7 @@ public abstract class CuratorFrameworkUtils { //curator客户端工具类
         return builder.build();
     }
 
-    public static final String generateId(String host, int port) {
+    public static final String generateId(String host, int port) { //产生服务id
         return host + ":" + port;
     }
 }

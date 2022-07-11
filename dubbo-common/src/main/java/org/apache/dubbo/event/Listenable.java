@@ -124,7 +124,7 @@ public interface Listenable<E extends EventListener<?>> { //对EventListener事�
 
         int modifiers = listenerClass.getModifiers();
 
-        if (Modifier.isAbstract(modifiers) || Modifier.isInterface(modifiers)) {
+        if (Modifier.isAbstract(modifiers) || Modifier.isInterface(modifiers)) { //抽象类和接口不能被处理
             throw new IllegalArgumentException("The listener must be concrete class"); //传入的listener必须是个具体的实例
         }
     }

@@ -68,7 +68,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * timer facility'</a>.  More comprehensive slides are located
  * <a href="http://www.cse.wustl.edu/~cdgill/courses/cs6874/TimingWheels.ppt">here</a>.
  */
-public class HashedWheelTimer implements Timer { //基于Hash表实现的Timer，todo @csy-06-18 具体功能用途待了解
+public class HashedWheelTimer implements Timer {
 
     /**
      * may be in spi?
@@ -280,7 +280,7 @@ public class HashedWheelTimer implements Timer { //基于Hash表实现的Timer�
         return wheel;
     }
 
-    private static int normalizeTicksPerWheel(int ticksPerWheel) { //todo @csy-06-18 此处的计算逻辑是怎样的？
+    private static int normalizeTicksPerWheel(int ticksPerWheel) {
         int normalizedTicksPerWheel = ticksPerWheel - 1;
         normalizedTicksPerWheel |= normalizedTicksPerWheel >>> 1;
         normalizedTicksPerWheel |= normalizedTicksPerWheel >>> 2;

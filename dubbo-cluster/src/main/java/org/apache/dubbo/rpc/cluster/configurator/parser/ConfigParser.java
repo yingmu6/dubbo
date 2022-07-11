@@ -77,7 +77,7 @@ public class ConfigParser {
         itemDescription.addPropertyParameters("items", ConfigItem.class);
         constructor.addTypeDescription(itemDescription);
 
-        Yaml yaml = new Yaml(constructor); //todo @csy-06-22 此处的Yaml功能用途是什么？
+        Yaml yaml = new Yaml(constructor);
         return yaml.load(rawConfig);
     }
 
