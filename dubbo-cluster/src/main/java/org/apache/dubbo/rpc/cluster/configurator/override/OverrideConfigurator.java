@@ -30,7 +30,7 @@ public class OverrideConfigurator extends AbstractConfigurator {
     }
 
     @Override
-    public URL doConfigure(URL currentUrl, URL configUrl) { //实现url参数覆盖，本质是url参数Map的覆盖
+    public URL doConfigure(URL currentUrl, URL configUrl) { //实现url参数覆盖，本质是url参数Map的覆盖（用配置url的参数，覆盖指定url的参数）
         return currentUrl.addParameters(configUrl.getParameters());
     }
 

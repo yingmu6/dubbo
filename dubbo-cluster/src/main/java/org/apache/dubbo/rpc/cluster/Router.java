@@ -50,7 +50,7 @@ public interface Router extends Comparable<Router> {
     URL getUrl();
 
     /**
-     * Filter invokers with current routing rule and only return the invokers that comply with the rule.
+     * Filter invokers with current routing rule and only return the invokers that comply（遵守） with the rule.
      * （用路由规则过滤Invoker列表，返回与路由规则匹配的invoker列表）
      *
      * @param invokers   invoker list
@@ -102,6 +102,6 @@ public interface Router extends Comparable<Router> {
         if (o == null) {
             throw new IllegalArgumentException();
         }
-        return Integer.compare(this.getPriority(), o.getPriority());
+        return Integer.compare(this.getPriority(), o.getPriority()); //将优先级进行比较
     }
 }

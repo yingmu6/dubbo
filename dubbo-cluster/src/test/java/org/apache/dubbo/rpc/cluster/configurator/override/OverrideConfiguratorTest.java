@@ -29,20 +29,21 @@ import org.junit.jupiter.api.Test;
 public class OverrideConfiguratorTest {
 
     @Test
-    public void testOverride_Application() {
+    public void testOverride_Application() { //todo @pause 22/07/12
+        // 此处OverrideConfigurator中维护的configuratorUrl值为 "override://0.0.0.0/com.foo.BarService?timeout=200"，由于URL的toString()不显示用户名、密码，所以此处string中，没看到foo，但url中的username是有值的
         OverrideConfigurator configurator = new OverrideConfigurator(URL.valueOf("override://foo@0.0.0.0/com.foo.BarService?timeout=200"));
 
-        URL url = configurator.configure(URL.valueOf(UrlConstant.URL_CONSUMER));
+        URL url = configurator.configure(URL.valueOf(UrlConstant.URL_CONSUMER)); //产生的url为：dubbo://10.20.153.10:20880/com.foo.BarService?application=foo&side=consumer&timeout=200
+        Assertions.assertEquals("200", url.getParameter("timeout")); //若满足配置条件，则将配置url的参数替换指定url的参数
+
+        url = configurator.configure(URL.valueOf(UrlConstant.URL_ONE)); //产生的url值为：dubbo://10.20.153.10:20880/com.foo.BarService?application=foo&side=consumer&timeout=200
         Assertions.assertEquals("200", url.getParameter("timeout"));
 
-        url = configurator.configure(URL.valueOf(UrlConstant.URL_ONE));
-        Assertions.assertEquals("200", url.getParameter("timeout"));
+        url = configurator.configure(URL.valueOf(UrlConstant.APPLICATION_BAR_SIDE_CONSUMER_11)); //产生的url：dubbo://10.20.153.11:20880/com.foo.BarService?application=bar&side=consumer
+        Assertions.assertNull(url.getParameter("timeout")); //此处由于没符合配置条件，所以直接返回输入的url：APPLICATION_BAR_SIDE_CONSUMER_11
 
-        url = configurator.configure(URL.valueOf(UrlConstant.APPLICATION_BAR_SIDE_CONSUMER_11));
-        Assertions.assertNull(url.getParameter("timeout"));
-
-        url = configurator.configure(URL.valueOf(UrlConstant.TIMEOUT_1000_SIDE_CONSUMER_11));
-        Assertions.assertEquals("1000", url.getParameter("timeout"));
+        url = configurator.configure(URL.valueOf(UrlConstant.TIMEOUT_1000_SIDE_CONSUMER_11)); //产生的url：dubbo://10.20.153.11:20880/com.foo.BarService?application=bar&side=consumer&timeout=1000
+        Assertions.assertEquals("1000", url.getParameter("timeout")); //此处也是没有满足配置条件，直接返回输入的url
     }
 
     @Test

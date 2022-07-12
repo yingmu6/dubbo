@@ -51,7 +51,7 @@ public class ConditionRouterTest {
     }
 
     @Test
-    public void testRoute_matchWhen() {
+    public void testRoute_matchWhen() { //todo @pause 22/07/12
         Invocation invocation = new RpcInvocation();
 
         Router router = new ConditionRouterFactory().getRouter(getRouteUrl(" => host = 1.2.3.4"));

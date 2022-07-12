@@ -38,15 +38,14 @@ import static org.apache.dubbo.rpc.cluster.Constants.*;
 
 /**
  * ConditionRouter
- *
  */
 public class ConditionRouter extends AbstractRouter {
     public static final String NAME = "condition";
 
     private static final Logger logger = LoggerFactory.getLogger(ConditionRouter.class);
     protected static final Pattern ROUTE_PATTERN = Pattern.compile("([&!=,]*)\\s*([^&!=,\\s]+)");
-    protected Map<String, MatchPair> whenCondition;
-    protected Map<String, MatchPair> thenCondition;
+    protected Map<String, MatchPair> whenCondition; //when的条件
+    protected Map<String, MatchPair> thenCondition; //then的条件
 
     private boolean enabled;
 
@@ -177,7 +176,7 @@ public class ConditionRouter extends AbstractRouter {
             }
             for (Invoker<T> invoker : invokers) {
                 if (matchThen(invoker.getUrl(), url)) { //url：是消费端的url，invoker.getUrl()：是提供端的url
-                    result.add(invoker);
+                    result.add(invoker); //若invoker中的url，满足匹配的条件，则加入到结果列表中
                 }
             }
             if (!result.isEmpty()) { //若按路由条件筛选到invoker列表，则做对应返回
@@ -231,7 +230,7 @@ public class ConditionRouter extends AbstractRouter {
                     sampleValue = sample.get(key);
                 }
             }
-            if (sampleValue != null) {
+            if (sampleValue != null) { //使用ConditionRouter.MatchPair#isMatch进行匹配
                 if (!matchPair.getValue().isMatch(sampleValue, param)) { //将提供者相关的值与消费端设置的比较参数值进行比较
                     return false;
                 } else {
@@ -256,7 +255,7 @@ public class ConditionRouter extends AbstractRouter {
         private boolean isMatch(String value, URL param) {
             if (!matches.isEmpty() && mismatches.isEmpty()) { //只有matches匹配集合
                 for (String match : matches) {
-                    if (UrlUtils.isMatchGlobPattern(match, value, param)) {
+                    if (UrlUtils.isMatchGlobPattern(match, value, param)) { //判断输入的值是否与传入的值匹配
                         return true;
                     }
                 }
