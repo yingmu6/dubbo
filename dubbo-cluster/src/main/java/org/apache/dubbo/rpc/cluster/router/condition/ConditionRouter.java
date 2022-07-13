@@ -86,7 +86,7 @@ public class ConditionRouter extends AbstractRouter {
     }
 
     private static Map<String, MatchPair> parseRule(String rule)
-            throws ParseException {
+            throws ParseException { //解析规则
         Map<String, MatchPair> condition = new HashMap<String, MatchPair>();
         if (StringUtils.isBlank(rule)) {
             return condition;
