@@ -51,14 +51,14 @@ public class ConditionRouterTest {
     }
 
     @Test
-    public void testRoute_matchWhen() { //todo @pause 22/07/12
+    public void testRoute_matchWhen() {
         Invocation invocation = new RpcInvocation();
 
-        Router router = new ConditionRouterFactory().getRouter(getRouteUrl(" => host = 1.2.3.4"));
+        Router router = new ConditionRouterFactory().getRouter(getRouteUrl(" => host = 1.2.3.4")); // 匹配条件whenCondition为空，应用所有消费者
         boolean matchWhen = ((ConditionRouter) router).matchWhen(URL.valueOf("consumer://1.1.1.1/com.foo.BarService"), invocation);
         Assertions.assertTrue(matchWhen);
 
-        router = new ConditionRouterFactory().getRouter(getRouteUrl("host = 2.2.2.2,1.1.1.1,3.3.3.3 => host = 1.2.3.4"));
+        router = new ConditionRouterFactory().getRouter(getRouteUrl("host = 2.2.2.2,1.1.1.1,3.3.3.3 => host = 1.2.3.4")); // 2.2.2.2,1.1.1.1,3.3.3.3 作为消费者匹配的条件matchers，1.2.3.4作为提供者的匹配条件matchers
         matchWhen = ((ConditionRouter) router).matchWhen(URL.valueOf("consumer://1.1.1.1/com.foo.BarService"), invocation);
         Assertions.assertTrue(matchWhen);
 

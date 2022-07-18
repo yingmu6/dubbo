@@ -400,10 +400,10 @@ public class UrlUtils {
     }
 
     public static boolean isMatchGlobPattern(String pattern, String value) { //根据"*"号的位置，做不同的比较
-        if ("*".equals(pattern)) {
+        if ("*".equals(pattern)) { //*号表示任意字符
             return true;
         }
-        if (StringUtils.isEmpty(pattern) && StringUtils.isEmpty(value)) {
+        if (StringUtils.isEmpty(pattern) && StringUtils.isEmpty(value)) { //pattern的值来自于ConditionRouter.MatchPair的matches、mismatches集合中的值，pattern是设置的条件
             return true;
         }
         if (StringUtils.isEmpty(pattern) || StringUtils.isEmpty(value)) {
@@ -417,7 +417,7 @@ public class UrlUtils {
         }
         // "*" is at the end
         else if (i == pattern.length() - 1) {
-            return value.startsWith(pattern.substring(0, i));
+            return value.startsWith(pattern.substring(0, i)); //去除掉*号进行比较
         }
         // "*" is at the beginning
         else if (i == 0) {
@@ -427,7 +427,7 @@ public class UrlUtils {
         else {
             String prefix = pattern.substring(0, i);
             String suffix = pattern.substring(i + 1);
-            return value.startsWith(prefix) && value.endsWith(suffix);
+            return value.startsWith(prefix) && value.endsWith(suffix); //*号在中间时，比较*号前后的内容
         }
     }
 

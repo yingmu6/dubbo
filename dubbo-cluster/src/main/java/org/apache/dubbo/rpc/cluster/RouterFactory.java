@@ -43,5 +43,5 @@ public interface RouterFactory { //路由工厂
      * @return router instance
      */
     @Adaptive("protocol")
-    Router getRouter(URL url);
+    Router getRouter(URL url); //创建路由器
 }

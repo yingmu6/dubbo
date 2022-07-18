@@ -43,7 +43,7 @@ public class ConditionRouter extends AbstractRouter {
     public static final String NAME = "condition";
 
     private static final Logger logger = LoggerFactory.getLogger(ConditionRouter.class);
-    protected static final Pattern ROUTE_PATTERN = Pattern.compile("([&!=,]*)\\s*([^&!=,\\s]+)");
+    protected static final Pattern ROUTE_PATTERN = Pattern.compile("([&!=,]*)\\s*([^&!=,\\s]+)"); //包含 &!=, 等字符串的匹配
     protected Map<String, MatchPair> whenCondition; //when的条件
     protected Map<String, MatchPair> thenCondition; //then的条件
 
@@ -69,11 +69,11 @@ public class ConditionRouter extends AbstractRouter {
                 throw new IllegalArgumentException("Illegal route rule!");
             }
             rule = rule.replace("consumer.", "").replace("provider.", ""); //去除指定参数
-            int i = rule.indexOf("=>"); //找到 => 位置
+            int i = rule.indexOf("=>"); //找到 字符串"=>" 位置
             String whenRule = i < 0 ? null : rule.substring(0, i).trim(); //取出消费者匹配的条件
             String thenRule = i < 0 ? rule.trim() : rule.substring(i + 2).trim(); //取出提供者地址列表过滤条件
             /**
-             * 解析路由表达式：生成
+             * 解析路由表达式rule：生成消费者条件、提供者条件
              */
             Map<String, MatchPair> when = StringUtils.isBlank(whenRule) || "true".equals(whenRule) ? new HashMap<String, MatchPair>() : parseRule(whenRule); //如果匹配条件为空，表示对所有消费方应用
             Map<String, MatchPair> then = StringUtils.isBlank(thenRule) || "false".equals(thenRule) ? null : parseRule(thenRule); //如果过滤条件为空，表示禁止访问
@@ -85,8 +85,8 @@ public class ConditionRouter extends AbstractRouter {
         }
     }
 
-    private static Map<String, MatchPair> parseRule(String rule)
-            throws ParseException { //解析 规则
+    private static Map<String, MatchPair> parseRule(String rule) //解析规则字符串
+            throws ParseException {
         Map<String, MatchPair> condition = new HashMap<String, MatchPair>();
         if (StringUtils.isBlank(rule)) {
             return condition;
@@ -123,7 +123,7 @@ public class ConditionRouter extends AbstractRouter {
                 }
 
                 values = pair.matches;
-                values.add(content);
+                values.add(content); //设置到匹配的条件集合
             }
             // The Value in the KV part.
             else if ("!=".equals(separator)) {  // "!="对应MatchPair中的匹配条件mismatches
@@ -137,7 +137,7 @@ public class ConditionRouter extends AbstractRouter {
                 values = pair.mismatches;
                 values.add(content);
             }
-            // The Value in the KV part, if Value have more than one items.
+            // The Value in the KV part, if Value have more than one items.（有多个匹配的值）
             else if (",".equals(separator)) { // Should be separated by ','
                 if (values == null || values.isEmpty()) {
                     throw new ParseException("Illegal route rule \""
@@ -146,7 +146,7 @@ public class ConditionRouter extends AbstractRouter {
                             + content + "\".", matcher.start());
                 }
                 values.add(content);
-            } else {
+            } else { //出现未知的匹配字符，则抛出异常
                 throw new ParseException("Illegal route rule \"" + rule
                         + "\", The error char '" + separator + "' at index "
                         + matcher.start() + " before \"" + content + "\".", matcher.start());
@@ -175,7 +175,7 @@ public class ConditionRouter extends AbstractRouter {
                 return result;
             }
             for (Invoker<T> invoker : invokers) {
-                if (matchThen(invoker.getUrl(), url)) { //url：是消费端的url，invoker.getUrl()：是提供端的url
+                if (matchThen(invoker.getUrl(), url)) { //匹配提供者的条件
                     result.add(invoker); //若invoker中的url，满足匹配的条件，则加入到结果列表中
                 }
             }
@@ -193,7 +193,7 @@ public class ConditionRouter extends AbstractRouter {
 
     @Override
     public boolean isRuntime() {
-        // We always return true for previously defined Router, that is, old Router doesn't support cache anymore.
+        // We always return true for previously（之前的） defined Router, that is, old Router doesn't support cache anymore.
 //        return true;
         return this.url.getParameter(RUNTIME_KEY, false);
     }
@@ -203,11 +203,11 @@ public class ConditionRouter extends AbstractRouter {
         return url;
     }
 
-    boolean matchWhen(URL url, Invocation invocation) { //匹配消费者的匹配条件，在whenCondition条件为空，或url能与whenCondition匹配时返回true
+    boolean matchWhen(URL url, Invocation invocation) { //匹配消费者的条件，在whenCondition条件为空，即 "=>" 之前的条件为空时，表明对所有消费者应用，返回true
         return CollectionUtils.isEmptyMap(whenCondition) || matchCondition(whenCondition, url, null, invocation);
     }
 
-    private boolean matchThen(URL url, URL param) { //匹配提供者地址列表的过滤条件，在thenCondition条件不为空，且url能与whenCondition匹配时返回true
+    private boolean matchThen(URL url, URL param) { //匹配提供者的条件，在thenCondition条件为空，即 "=>" 之前的条件为空时，表明禁止访问，返回false
         return CollectionUtils.isNotEmptyMap(thenCondition) && matchCondition(thenCondition, url, param, null);
     }
 
@@ -220,7 +220,7 @@ public class ConditionRouter extends AbstractRouter {
             //get real invoked method name from invocation（从调用中获取实际调用的方法名称）
             if (invocation != null && (METHOD_KEY.equals(key) || METHODS_KEY.equals(key))) { //在Invocation不为空的时候，会比较Invocation中的methodName
                 sampleValue = invocation.getMethodName();
-            } else if (ADDRESS_KEY.equals(key)) {
+            } else if (ADDRESS_KEY.equals(key)) { //根据参数key名称进行比较 todo @pause
                 sampleValue = url.getAddress();
             } else if (HOST_KEY.equals(key)) {
                 sampleValue = url.getHost();
@@ -255,8 +255,8 @@ public class ConditionRouter extends AbstractRouter {
         private boolean isMatch(String value, URL param) {
             if (!matches.isEmpty() && mismatches.isEmpty()) { //只有matches匹配集合
                 for (String match : matches) {
-                    if (UrlUtils.isMatchGlobPattern(match, value, param)) { //判断输入的值是否与传入的值匹配
-                        return true;
+                    if (UrlUtils.isMatchGlobPattern(match, value, param)) { //判断输入的值是否在当前的matchers集合中
+                        return true; //在匹配集合中，则返回true
                     }
                 }
                 return false;
@@ -265,7 +265,7 @@ public class ConditionRouter extends AbstractRouter {
             if (!mismatches.isEmpty() && matches.isEmpty()) { //只有mismatches不匹配集合
                 for (String mismatch : mismatches) {
                     if (UrlUtils.isMatchGlobPattern(mismatch, value, param)) {
-                        return false;
+                        return false; //在不匹配的集合中，则返回false
                     }
                 }
                 return true;
@@ -273,7 +273,7 @@ public class ConditionRouter extends AbstractRouter {
 
             if (!matches.isEmpty() && !mismatches.isEmpty()) { //matches、mismatches都不为空
                 //when both mismatches and matches contain the same value, then using mismatches first（当不匹配的集合和匹配的集合都包含相同的值，优先使用不匹配集合的比较结果）
-                for (String mismatch : mismatches) {
+                for (String mismatch : mismatches) { //优先比较是否在不匹配mismatches集合中
                     if (UrlUtils.isMatchGlobPattern(mismatch, value, param)) {
                         return false;
                     }
