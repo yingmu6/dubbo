@@ -392,7 +392,7 @@ public class UrlUtils {
                 && (consumerClassifier == null || ANY_VALUE.equals(consumerClassifier) || StringUtils.isEquals(consumerClassifier, providerClassifier)); //比较group、version、classifier的参数值
     }
 
-    public static boolean isMatchGlobPattern(String pattern, String value, URL param) { //GlobPattern:全局模式
+    public static boolean isMatchGlobPattern(String pattern, String value, URL param) { //GlobPattern:全局模式（URL param只有匹配thenCondition时才有值，whenCondition传null）
         if (param != null && pattern.startsWith("$")) { //若以$开头，则先去除$符号
             pattern = param.getRawParameter(pattern.substring(1));
         }

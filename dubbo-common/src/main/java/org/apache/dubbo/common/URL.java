@@ -1283,7 +1283,7 @@ class URL implements Serializable {
         return getParameter(key);
     }
 
-    public Map<String, String> toMap() {
+    public Map<String, String> toMap() { //将url转换为Map，包含url中核心属性值
         Map<String, String> map = new HashMap<>(parameters);
         if (protocol != null) {
             map.put(PROTOCOL_KEY, protocol);

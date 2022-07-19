@@ -55,7 +55,7 @@ public class ConditionRouter extends AbstractRouter {
         this.init(rule);
     }
 
-    public ConditionRouter(URL url) {
+    public ConditionRouter(URL url) { //对象初始化时，先解析出规则，存入whenCondition、thenCondition，然后再进行比较
         this.url = url; //url的值如：condition://0.0.0.0/com.foo.BarService?rule=+%3D%3E++host+%3D+192.168.3.16，rule对应的值是经过编码的
         this.priority = url.getParameter(PRIORITY_KEY, 0);
         this.force = url.getParameter(FORCE_KEY, false);
@@ -166,22 +166,22 @@ public class ConditionRouter extends AbstractRouter {
             return invokers;
         }
         try {
-            if (!matchWhen(url, invocation)) { //若消费者条件不匹配，则不对invoker列表路由，直接返回
+            if (!matchWhen(url, invocation)) { //先匹配whenCondition条件
                 return invokers;
             }
             List<Invoker<T>> result = new ArrayList<Invoker<T>>();
-            if (thenCondition == null) { //若过滤条件为空，返回空列表，表示禁止访问
+            if (thenCondition == null) { //若过滤条件thenCondition为空，返回空列表，表示禁止访问
                 logger.warn("The current consumer in the service blacklist. consumer: " + NetUtils.getLocalHost() + ", service: " + url.getServiceKey());
                 return result;
             }
             for (Invoker<T> invoker : invokers) {
-                if (matchThen(invoker.getUrl(), url)) { //匹配提供者的条件
+                if (matchThen(invoker.getUrl(), url)) { //再匹配thenCondition条件
                     result.add(invoker); //若invoker中的url，满足匹配的条件，则加入到结果列表中
                 }
             }
             if (!result.isEmpty()) { //若按路由条件筛选到invoker列表，则做对应返回
                 return result;
-            } else if (force) {
+            } else if (force) { //若设置force=true：未匹配上时返回空列表，否则原样返回列表
                 logger.warn("The route result is empty and force execute. consumer: " + NetUtils.getLocalHost() + ", service: " + url.getServiceKey() + ", router: " + url.getParameterAndDecoded(RULE_KEY));
                 return result;
             }
@@ -216,9 +216,9 @@ public class ConditionRouter extends AbstractRouter {
         boolean result = false;
         for (Map.Entry<String, MatchPair> matchPair : condition.entrySet()) {
             String key = matchPair.getKey();
-            String sampleValue; //样品值：提供者相关比较的值
-            //get real invoked method name from invocation（从调用中获取实际调用的方法名称）
-            if (invocation != null && (METHOD_KEY.equals(key) || METHODS_KEY.equals(key))) { //在Invocation不为空的时候，会比较Invocation中的methodName
+            String sampleValue; //样品值：提供者相关比较的值（从url或invocation中取出condition的key对应的值）
+            //get real invoked method name from invocation
+            if (invocation != null && (METHOD_KEY.equals(key) || METHODS_KEY.equals(key))) { //在Invocation不为空的时候，通过invocation取值
                 sampleValue = invocation.getMethodName();
             } else if (ADDRESS_KEY.equals(key)) { //根据参数key名称进行比较 todo @pause
                 sampleValue = url.getAddress();
@@ -230,13 +230,13 @@ public class ConditionRouter extends AbstractRouter {
                     sampleValue = sample.get(key);
                 }
             }
-            if (sampleValue != null) { //使用ConditionRouter.MatchPair#isMatch进行匹配
-                if (!matchPair.getValue().isMatch(sampleValue, param)) { //将提供者相关的值与消费端设置的比较参数值进行比较
+            if (sampleValue != null) { //在url和invocation中存在指定key的值
+                if (!matchPair.getValue().isMatch(sampleValue, param)) { //将提取的值与事先归纳好的匹配对matchPair进行比较
                     return false;
                 } else {
                     result = true;
                 }
-            } else {
+            } else { //在url和invocation中不存在指定key的值
                 //not pass the condition
                 if (!matchPair.getValue().matches.isEmpty()) {
                     return false;
@@ -273,7 +273,7 @@ public class ConditionRouter extends AbstractRouter {
 
             if (!matches.isEmpty() && !mismatches.isEmpty()) { //matches、mismatches都不为空
                 //when both mismatches and matches contain the same value, then using mismatches first（当不匹配的集合和匹配的集合都包含相同的值，优先使用不匹配集合的比较结果）
-                for (String mismatch : mismatches) { //优先比较是否在不匹配mismatches集合中
+                for (String mismatch : mismatches) { //优先使用不匹配集合进行比较
                     if (UrlUtils.isMatchGlobPattern(mismatch, value, param)) {
                         return false;
                     }

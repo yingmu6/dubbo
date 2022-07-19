@@ -51,7 +51,7 @@ public class ConditionRouterTest {
     }
 
     @Test
-    public void testRoute_matchWhen() {
+    public void testRoute_matchWhen() { //匹配whenCondition
         Invocation invocation = new RpcInvocation();
 
         Router router = new ConditionRouterFactory().getRouter(getRouteUrl(" => host = 1.2.3.4")); // 匹配条件whenCondition为空，应用所有消费者
@@ -59,28 +59,28 @@ public class ConditionRouterTest {
         Assertions.assertTrue(matchWhen);
 
         router = new ConditionRouterFactory().getRouter(getRouteUrl("host = 2.2.2.2,1.1.1.1,3.3.3.3 => host = 1.2.3.4")); // 2.2.2.2,1.1.1.1,3.3.3.3 作为消费者匹配的条件matchers，1.2.3.4作为提供者的匹配条件matchers
-        matchWhen = ((ConditionRouter) router).matchWhen(URL.valueOf("consumer://1.1.1.1/com.foo.BarService"), invocation);
-        Assertions.assertTrue(matchWhen);
+        matchWhen = ((ConditionRouter) router).matchWhen(URL.valueOf("consumer://1.1.1.1/com.foo.BarService"), invocation); //router的whenCondition为Map<"host", Set<2.2.2,1.1.1.1,3.3.3.3>>，thenCondition为Map<"host", Set<1.2.3.4>>
+        Assertions.assertTrue(matchWhen); // 因为consumer://1.1.1.1/xxx的host为1.1.1.1 在whenCondition的matches集合中，所以能匹配上
 
         router = new ConditionRouterFactory().getRouter(getRouteUrl("host = 2.2.2.2,1.1.1.1,3.3.3.3 & host !=1.1.1.1 => host = 1.2.3.4"));
         matchWhen = ((ConditionRouter) router).matchWhen(URL.valueOf("consumer://1.1.1.1/com.foo.BarService"), invocation);
-        Assertions.assertFalse(matchWhen);
+        Assertions.assertFalse(matchWhen); // 当匹配集合、不匹配集合都存在元素时，优先使用不匹配mismatches进行比较，此处1.1.1.1在不匹配集合中，所以结果为不匹配
 
         router = new ConditionRouterFactory().getRouter(getRouteUrl("host !=4.4.4.4 & host = 2.2.2.2,1.1.1.1,3.3.3.3 => host = 1.2.3.4"));
         matchWhen = ((ConditionRouter) router).matchWhen(URL.valueOf("consumer://1.1.1.1/com.foo.BarService"), invocation);
-        Assertions.assertTrue(matchWhen);
+        Assertions.assertTrue(matchWhen); //虽然mismatches不为空，但1.1.1.1不与其中元素相匹配，而是与matches中元素相匹配，所以结果为true，
 
         router = new ConditionRouterFactory().getRouter(getRouteUrl("host !=4.4.4.* & host = 2.2.2.2,1.1.1.1,3.3.3.3 => host = 1.2.3.4"));
-        matchWhen = ((ConditionRouter) router).matchWhen(URL.valueOf("consumer://1.1.1.1/com.foo.BarService"), invocation);
+        matchWhen = ((ConditionRouter) router).matchWhen(URL.valueOf("consumer://1.1.1.1/com.foo.BarService"), invocation); //1.1.1.1不是以4.4.4.开头的，所以与mismatches集合元素不匹配
         Assertions.assertTrue(matchWhen);
 
         router = new ConditionRouterFactory().getRouter(getRouteUrl("host = 2.2.2.2,1.1.1.*,3.3.3.3 & host != 1.1.1.1 => host = 1.2.3.4"));
         matchWhen = ((ConditionRouter) router).matchWhen(URL.valueOf("consumer://1.1.1.1/com.foo.BarService"), invocation);
-        Assertions.assertFalse(matchWhen);
+        Assertions.assertFalse(matchWhen); //虽然能与matches集合的1.1.1.*匹配，但是会优先匹配mismatches
 
         router = new ConditionRouterFactory().getRouter(getRouteUrl("host = 2.2.2.2,1.1.1.*,3.3.3.3 & host != 1.1.1.2 => host = 1.2.3.4"));
         matchWhen = ((ConditionRouter) router).matchWhen(URL.valueOf("consumer://1.1.1.1/com.foo.BarService"), invocation);
-        Assertions.assertTrue(matchWhen);
+        Assertions.assertTrue(matchWhen); //与matches集合的1.1.1.*匹配上
     }
 
     @Test
@@ -119,7 +119,7 @@ public class ConditionRouterTest {
                 FORCE_KEY, String.valueOf(true)));
 
 
-
+        // 使用路由器对invoker列表路由过滤
         List<Invoker<String>> filteredInvokers1 = router1.route(invokers, URL.valueOf("consumer://" + LOCAL_HOST + "/com.foo.BarService"), new RpcInvocation());
         List<Invoker<String>> filteredInvokers2 = router2.route(invokers, URL.valueOf("consumer://" + LOCAL_HOST + "/com.foo.BarService"), new RpcInvocation());
         List<Invoker<String>> filteredInvokers3 = router3.route(invokers, URL.valueOf("consumer://" + LOCAL_HOST + "/com.foo.BarService"), new RpcInvocation());
