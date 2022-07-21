@@ -104,7 +104,7 @@ public class ConditionRouterTest {
                 String.valueOf(true)));
         Router router2 = new ConditionRouterFactory().getRouter(getRouteUrl(
                 "host = " + LOCAL_HOST + " => " + " host = 10.20.3.* & host != 10.20.3.3").addParameter(
-                FORCE_KEY, String.valueOf(true)));
+                FORCE_KEY, String.valueOf(true))); //force为true，在列表为空时也返回
         Router router3 = new ConditionRouterFactory().getRouter(getRouteUrl(
                 "host = " + LOCAL_HOST + " => " + " host = 10.20.3.3  & host != 10.20.3.3").addParameter(
                 FORCE_KEY, String.valueOf(true)));
@@ -119,14 +119,41 @@ public class ConditionRouterTest {
                 FORCE_KEY, String.valueOf(true)));
 
 
-        // 使用路由器对invoker列表 路由过滤
+        /**
+         * 数据分析 router1.route相关数据
+         *
+         * whenCondition= Map<"host", MatchPair>
+         * MatchPair.matches = ["127.0.0.1"]
+         * MatchPair.mismatches = []
+         *
+         * thenCondition= Map<"host", MatchPair>
+         * MatchPair.matches = ["10.20.3.3"]
+         * MatchPair.mismatches = []
+         *
+         * SCRIPT_URL = "condition://0.0.0.0/com.foo.BarService?rule="xxx"&force=true "
+         *
+         * URL.valueOf("consumer://" + LOCAL_HOST + "/com.foo.BarService")
+         * url对应的字符串为："consumer://127.0.0.1/com.foo.BarService"
+         *
+         * Invocation的值为new RpcInvocation()
+         *
+         * 提供者列表
+         * Invoker<String> invoker1 = new MockInvoker<String>(URL.valueOf(
+         *                 "dubbo://10.20.3.3:20880/com.foo.BarService?serialization=fastjson"));
+         * Invoker<String> invoker2 = new MockInvoker<String>(URL.valueOf("dubbo://" + LOCAL_HOST
+         *                 + ":20880/com.foo.BarService"));
+         * Invoker<String> invoker3 = new MockInvoker<String>(URL.valueOf("dubbo://" + LOCAL_HOST
+         *                 + ":20880/com.foo.BarService"));
+         */
+
+        // 使用路由器对invoker列表路由过滤
         List<Invoker<String>> filteredInvokers1 = router1.route(invokers, URL.valueOf("consumer://" + LOCAL_HOST + "/com.foo.BarService"), new RpcInvocation());
         List<Invoker<String>> filteredInvokers2 = router2.route(invokers, URL.valueOf("consumer://" + LOCAL_HOST + "/com.foo.BarService"), new RpcInvocation());
         List<Invoker<String>> filteredInvokers3 = router3.route(invokers, URL.valueOf("consumer://" + LOCAL_HOST + "/com.foo.BarService"), new RpcInvocation());
         List<Invoker<String>> filteredInvokers4 = router4.route(invokers, URL.valueOf("consumer://" + LOCAL_HOST + "/com.foo.BarService"), new RpcInvocation());
         List<Invoker<String>> filteredInvokers5 = router5.route(invokers, URL.valueOf("consumer://" + LOCAL_HOST + "/com.foo.BarService"), new RpcInvocation());
         List<Invoker<String>> filteredInvokers6 = router6.route(invokers, URL.valueOf("consumer://" + LOCAL_HOST + "/com.foo.BarService"), new RpcInvocation());
-        Assertions.assertEquals(1, filteredInvokers1.size());
+        Assertions.assertEquals(1, filteredInvokers1.size()); //比较thenCondition时，会用提供者invoker的url进行比较，由于router1的then条件的matches集合为["10.20.3.3"]，所以就匹配到invoker1
         Assertions.assertEquals(0, filteredInvokers2.size());
         Assertions.assertEquals(0, filteredInvokers3.size());
         Assertions.assertEquals(1, filteredInvokers4.size());

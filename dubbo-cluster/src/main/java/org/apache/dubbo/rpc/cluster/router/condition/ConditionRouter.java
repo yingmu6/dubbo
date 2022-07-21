@@ -47,6 +47,18 @@ public class ConditionRouter extends AbstractRouter {
     protected Map<String, MatchPair> whenCondition; //when的条件
     protected Map<String, MatchPair> thenCondition; //then的条件
 
+    /**
+     * => 之前的为消费者匹配条件，所有参数和消费者的 URL 进行对比，当消费者满足匹配条件时，对该消费者执行后面的过滤规则。
+     * => 之后为提供者地址列表的过滤条件，所有参数和提供者的 URL 进行对比，消费者最终只拿到过滤后的地址列表。
+     * 如果匹配条件为空，表示对所有消费方应用，如：=> host != 10.20.153.11
+     * 如果过滤条件为空，表示禁止访问，如：host = 10.20.153.10 =>
+     * <p>
+     * 路由器里面存放着匹配的规则
+     * <p>
+     * 官网地址
+     * https://dubbo.apache.org/zh/docs/v2.7/user/examples/routing-rule-deprecated/
+     */
+
     private boolean enabled;
 
     public ConditionRouter(String rule, boolean force, boolean enabled) {
@@ -166,8 +178,8 @@ public class ConditionRouter extends AbstractRouter {
             return invokers;
         }
         try {
-            if (!matchWhen(url, invocation)) { //先匹配whenCondition条件
-                return invokers;
+            if (!matchWhen(url, invocation)) { //先匹配whenCondition条件（匹配消费者条件）
+                return invokers; //when条件不匹配，则不进行过滤
             }
             List<Invoker<T>> result = new ArrayList<Invoker<T>>();
             if (thenCondition == null) { //若过滤条件thenCondition为空，返回空列表，表示禁止访问
@@ -175,7 +187,7 @@ public class ConditionRouter extends AbstractRouter {
                 return result;
             }
             for (Invoker<T> invoker : invokers) {
-                if (matchThen(invoker.getUrl(), url)) { //再匹配thenCondition条件
+                if (matchThen(invoker.getUrl(), url)) { //再匹配thenCondition条件（匹配提供者条件）
                     result.add(invoker); //若invoker中的url，满足匹配的条件，则加入到结果列表中
                 }
             }
@@ -220,7 +232,7 @@ public class ConditionRouter extends AbstractRouter {
             //get real invoked method name from invocation
             if (invocation != null && (METHOD_KEY.equals(key) || METHODS_KEY.equals(key))) { //在Invocation不为空的时候，通过invocation取值
                 sampleValue = invocation.getMethodName();
-            } else if (ADDRESS_KEY.equals(key)) { //根据参数key名称进行比较 todo @pause
+            } else if (ADDRESS_KEY.equals(key)) { //根据参数key名称进行比较
                 sampleValue = url.getAddress();
             } else if (HOST_KEY.equals(key)) {
                 sampleValue = url.getHost();
@@ -231,7 +243,7 @@ public class ConditionRouter extends AbstractRouter {
                 }
             }
             if (sampleValue != null) { //在url和invocation中存在指定key的值
-                if (!matchPair.getValue().isMatch(sampleValue, param)) { //将提取的值与事先归纳好的匹配对matchPair进行比较
+                if (!matchPair.getValue().isMatch(sampleValue, param)) { //将sampleValue的值与事先归纳好的匹配对matchPair进行比较
                     return false;
                 } else {
                     result = true;
