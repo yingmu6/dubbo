@@ -22,7 +22,7 @@ import org.apache.dubbo.common.extension.SPI;
  * InvokerListener. (SPI, Singleton, ThreadSafe)
  */
 @SPI
-public interface InvokerListener { //功能用途是怎样的？解：对Invoker事件进行监听，包含引用、销毁事件（当有服务引用时，触发该事件）
+public interface InvokerListener { //功能用途是怎样的？解：对Invoker进行监听，包含引用、销毁操作
 
     /**
      * The invoker referred

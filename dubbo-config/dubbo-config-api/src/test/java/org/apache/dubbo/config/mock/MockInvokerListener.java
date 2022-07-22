@@ -20,7 +20,7 @@ import org.apache.dubbo.rpc.Invoker;
 import org.apache.dubbo.rpc.InvokerListener;
 import org.apache.dubbo.rpc.RpcException;
 
-public class MockInvokerListener implements InvokerListener {
+public class MockInvokerListener implements InvokerListener { //用于进行Mock测试的
     @Override
     public void referred(Invoker<?> invoker) throws RpcException {
 
@@ -30,4 +30,5 @@ public class MockInvokerListener implements InvokerListener {
     public void destroyed(Invoker<?> invoker) {
 
     }
+
 }

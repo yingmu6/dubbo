@@ -125,7 +125,7 @@ public class UrlUtils {
                 }
             }
         }
-        if (changed) {
+        if (changed) { //若数据有变更，则创建新的URL
             u = new URL(protocol, username, password, host, port, path, parameters);
         }
         return u;

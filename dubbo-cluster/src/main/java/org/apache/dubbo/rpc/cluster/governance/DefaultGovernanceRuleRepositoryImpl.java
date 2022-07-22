@@ -24,7 +24,7 @@ public class DefaultGovernanceRuleRepositoryImpl implements GovernanceRuleReposi
     private DynamicConfiguration dynamicConfiguration = DynamicConfiguration.getDynamicConfiguration();
 
     @Override
-    public void addListener(String key, String group, ConfigurationListener listener) {
+    public void addListener(String key, String group, ConfigurationListener listener) { //添加配置规则的监听器
         dynamicConfiguration.addListener(key, group, listener);
     }
 
