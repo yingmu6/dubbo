@@ -106,7 +106,7 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> {
     }
 
     /**
-     * Select a invoker using loadbalance policy.</br>
+     * Select a invoker using loadbalance policy.</br> （使用负载均衡策略获取一个invoker）
      * a) Firstly, select an invoker using loadbalance. If this invoker is in previously selected list, or,
      * if this invoker is unavailable, then continue step b (reselect), otherwise return the first selected invoker</br>
      * <p>
@@ -145,7 +145,7 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> {
 
         Invoker<T> invoker = doSelect(loadbalance, invocation, invokers, selected);
 
-        if (sticky) {
+        if (sticky) { //粘粘处理
             stickyInvoker = invoker;
         }
         return invoker;
@@ -157,7 +157,7 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> {
         if (CollectionUtils.isEmpty(invokers)) {
             return null;
         }
-        if (invokers.size() == 1) {
+        if (invokers.size() == 1) { //只有一个invoker，直接返回
             return invokers.get(0);
         }
         Invoker<T> invoker = loadbalance.select(invokers, getUrl(), invocation);
@@ -237,18 +237,18 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> {
     }
 
     @Override
-    public Result invoke(final Invocation invocation) throws RpcException {
+    public Result invoke(final Invocation invocation) throws RpcException { //执行服务调用
         checkWhetherDestroyed();
 
-        // binding attachments into invocation.
-        Map<String, Object> contextAttachments = RpcContext.getContext().getObjectAttachments();
+        // binding attachments into invocation.（将上下文中的附加参数绑定到invocation中）
+        Map<String, Object> contextAttachments = RpcContext.getContext().getObjectAttachments(); //上下文信息：在同一个线程中是可见的
         if (contextAttachments != null && contextAttachments.size() != 0) {
             ((RpcInvocation) invocation).addObjectAttachments(contextAttachments); //将上下文的附加参数设置到调用信息Invocation中
         }
 
-        List<Invoker<T>> invokers = list(invocation);
-        LoadBalance loadbalance = initLoadBalance(invokers, invocation);
-        RpcUtils.attachInvocationIdIfAsync(getUrl(), invocation);
+        List<Invoker<T>> invokers = list(invocation); //获取调用信息对应的invoker列表
+        LoadBalance loadbalance = initLoadBalance(invokers, invocation); //初始化负载均衡策略
+        RpcUtils.attachInvocationIdIfAsync(getUrl(), invocation); //若是异步的话，设置ID值
         return doInvoke(invocation, invokers, loadbalance);
     }
 
@@ -295,10 +295,10 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> {
      * @param invocation invocation
      * @return LoadBalance instance. if not need init, return null.
      */
-    protected LoadBalance initLoadBalance(List<Invoker<T>> invokers, Invocation invocation) {
+    protected LoadBalance initLoadBalance(List<Invoker<T>> invokers, Invocation invocation) { //初始化负载均衡实例
         if (CollectionUtils.isNotEmpty(invokers)) {
             return ExtensionLoader.getExtensionLoader(LoadBalance.class).getExtension(invokers.get(0).getUrl()
-                    .getMethodParameter(RpcUtils.getMethodName(invocation), LOADBALANCE_KEY, DEFAULT_LOADBALANCE));
+                    .getMethodParameter(RpcUtils.getMethodName(invocation), LOADBALANCE_KEY, DEFAULT_LOADBALANCE)); //从方法参数中获取负载均衡loadbalance配置，默认random
         } else {
             return ExtensionLoader.getExtensionLoader(LoadBalance.class).getExtension(DEFAULT_LOADBALANCE);
         }

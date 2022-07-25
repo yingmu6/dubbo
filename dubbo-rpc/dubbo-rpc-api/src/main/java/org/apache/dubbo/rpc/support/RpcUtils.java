@@ -84,7 +84,7 @@ public class RpcUtils {
     }
 
     /**
-     * Idempotent operation: invocation id will be added in async operation by default
+     * Idempotent operation（幂等操作）: invocation id will be added in async operation by default
      *
      * @param url
      * @param inv

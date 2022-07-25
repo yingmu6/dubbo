@@ -65,7 +65,7 @@ public class RpcContext {
         }
     };
 
-    protected final Map<String, Object> attachments = new HashMap<>();
+    protected final Map<String, Object> attachments = new HashMap<>(); //存储附加参数
     private final Map<String, Object> values = new HashMap<String, Object>();
 
     private List<URL> urls;

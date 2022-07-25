@@ -128,8 +128,8 @@ final class HeaderExchangeChannel implements ExchangeChannel {
         // create request.
         Request req = new Request();
         req.setVersion(Version.getProtocolVersion());
-        req.setTwoWay(true);
-        req.setData(request);
+        req.setTwoWay(true); //设置双向通讯
+        req.setData(request); //设置请求体
         DefaultFuture future = DefaultFuture.newFuture(channel, req, timeout, executor);
         try {
             channel.send(req);

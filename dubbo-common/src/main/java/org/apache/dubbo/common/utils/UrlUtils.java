@@ -27,7 +27,7 @@ import static java.util.Collections.emptyMap;
 import static org.apache.dubbo.common.constants.CommonConstants.*;
 import static org.apache.dubbo.common.constants.RegistryConstants.*;
 
-public class UrlUtils {
+public class UrlUtils { //url处理工具
 
     /**
      * in the url string,mark the param begin
@@ -35,7 +35,7 @@ public class UrlUtils {
     private final static String URL_PARAM_STARTING_SYMBOL = "?";
 
     public static URL parseURL(String address, Map<String, String> defaults) { //通过访问地址和参数Map，构建URL实例
-        if (address == null || address.length() == 0) {
+        if (address == null || address.length() == 0) { //defaults：存储默认值
             return null;
         }
         String url;
@@ -55,7 +55,7 @@ public class UrlUtils {
                 url += URL_PARAM_STARTING_SYMBOL + RemotingConstants.BACKUP_KEY + "=" + backup.toString();
             }
         }
-        String defaultProtocol = defaults == null ? null : defaults.get(PROTOCOL_KEY);
+        String defaultProtocol = defaults == null ? null : defaults.get(PROTOCOL_KEY); //从存储默认值的Map中获取值
         if (defaultProtocol == null || defaultProtocol.length() == 0) { //使用dubbo作为默认协议
             defaultProtocol = DUBBO_PROTOCOL;
         }

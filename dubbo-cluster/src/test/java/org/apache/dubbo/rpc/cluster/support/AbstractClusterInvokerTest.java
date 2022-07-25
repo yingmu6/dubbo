@@ -20,12 +20,7 @@ import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.extension.ExtensionLoader;
 import org.apache.dubbo.common.utils.NetUtils;
 import org.apache.dubbo.common.utils.StringUtils;
-import org.apache.dubbo.rpc.Invocation;
-import org.apache.dubbo.rpc.Invoker;
-import org.apache.dubbo.rpc.Result;
-import org.apache.dubbo.rpc.RpcContext;
-import org.apache.dubbo.rpc.RpcException;
-import org.apache.dubbo.rpc.RpcInvocation;
+import org.apache.dubbo.rpc.*;
 import org.apache.dubbo.rpc.cluster.Directory;
 import org.apache.dubbo.rpc.cluster.LoadBalance;
 import org.apache.dubbo.rpc.cluster.directory.StaticDirectory;
@@ -33,12 +28,7 @@ import org.apache.dubbo.rpc.cluster.filter.DemoService;
 import org.apache.dubbo.rpc.cluster.loadbalance.LeastActiveLoadBalance;
 import org.apache.dubbo.rpc.cluster.loadbalance.RandomLoadBalance;
 import org.apache.dubbo.rpc.cluster.loadbalance.RoundRobinLoadBalance;
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
@@ -48,9 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static org.apache.dubbo.common.constants.CommonConstants.MONITOR_KEY;
-import static org.apache.dubbo.rpc.cluster.Constants.CLUSTER_AVAILABLE_CHECK_KEY;
-import static org.apache.dubbo.rpc.cluster.Constants.INVOCATION_NEED_MOCK;
-import static org.apache.dubbo.rpc.cluster.Constants.REFER_KEY;
+import static org.apache.dubbo.rpc.cluster.Constants.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -144,21 +132,21 @@ public class AbstractClusterInvokerTest {
 
 
     @Test
-    public void testBindingAttachment() {
+    public void testBindingAttachment() { //测试将上下文中的附加参数绑定到Invocation中
         final String attachKey = "attach";
         final String attachValue = "value";
 
         // setup attachment
         RpcContext.getContext().setAttachment(attachKey, attachValue);
         Map<String, Object> attachments = RpcContext.getContext().getObjectAttachments();
-        Assertions.assertTrue( attachments != null && attachments.size() == 1,"set attachment failed!");
+        Assertions.assertTrue(attachments != null && attachments.size() == 1, "set attachment failed!");
 
         cluster = new AbstractClusterInvoker(dic) {
             @Override
             protected Result doInvoke(Invocation invocation, List invokers, LoadBalance loadbalance)
                     throws RpcException {
                 // attachment will be bind to invocation
-                String value = invocation.getAttachment(attachKey);
+                String value = invocation.getAttachment(attachKey); //因为AbstractClusterInvoker#invoke中会把RpcContent的参数信息，设置到Invocation中
                 Assertions.assertNotNull(value);
                 Assertions.assertEquals(attachValue, value, "binding attachment failed!");
                 return null;
@@ -175,22 +163,23 @@ public class AbstractClusterInvokerTest {
         Assertions.assertNotNull(l,"cluster.initLoadBalance returns null!");
         {
             Invoker invoker = cluster.select(l, null, null, null);
-            Assertions.assertNull(invoker);
+//            Assertions.assertFalse(invoker.isAvailable());
+            Assertions.assertNull(invoker); //由于invokers为空，所以选出的invoker为空
         }
         {
             invokers.clear();
             selectedInvokers.clear();
-            Invoker invoker = cluster.select(l, null, invokers, null);
+            Invoker invoker = cluster.select(l, null, invokers, null); //此处invokers列表已经清空了，所以选择的invokers为空
             Assertions.assertNull(invoker);
         }
     }
 
     @Test
-    public void testSelect_Invokersize1() throws Exception {
+    public void testSelect_Invokersize1() throws Exception { //todo @pause
         invokers.clear();
         invokers.add(invoker1);
         LoadBalance l = cluster.initLoadBalance(invokers, invocation);
-        Assertions.assertNotNull(l,"cluster.initLoadBalance returns null!");
+        Assertions.assertNotNull(l, "cluster.initLoadBalance returns null!");
         Invoker invoker = cluster.select(l, null, invokers, null);
         Assertions.assertEquals(invoker1, invoker);
     }

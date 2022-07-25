@@ -65,7 +65,7 @@ public class FailoverClusterInvoker<T> extends AbstractClusterInvoker<T> { //调
         for (int i = 0; i < len; i++) { //进行循环重试调用
             //Reselect before retry to avoid a change of candidate（候选） `invokers`.
             //NOTE: if `invokers` changed, then `invoked` also lose accuracy（准确性）.
-            if (i > 0) {
+            if (i > 0) { //每次重试，都会取最新的提供者列表
                 checkWhetherDestroyed();
                 copyInvokers = list(invocation); //通过路由链RouterChain筛选到调用列表invokers
                 // check again

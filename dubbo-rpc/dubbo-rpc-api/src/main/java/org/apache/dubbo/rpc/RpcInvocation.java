@@ -328,7 +328,7 @@ public class RpcInvocation implements Invocation, Serializable { //RpcInvocation
         this.attachments.putAll(attachments);
     }
 
-    public void addObjectAttachments(Map<String, Object> attachments) {
+    public void addObjectAttachments(Map<String, Object> attachments) { //添加附加参数
         if (attachments == null) {
             return;
         }

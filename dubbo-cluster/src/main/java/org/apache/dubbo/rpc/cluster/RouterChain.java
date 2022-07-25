@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 /**
  * Router chain
  */
-public class RouterChain<T> {
+public class RouterChain<T> { //路由链：由多个路由器组成
     /**
      * 路由规则是什么？路由链是怎么使用的？
      * 解答：1）通过Dubbo中的路由规则可以做服务治理，路由规则在发起一次RPC调用前起到过滤目标服务器地址的作用，过滤后的地址列表，将作为消费端最终发起RPC调用的备选地址。
@@ -97,12 +97,11 @@ public class RouterChain<T> {
     }
 
     /**
-     *
      * @param url
      * @param invocation
      * @return
      */
-    public List<Invoker<T>> route(URL url, Invocation invocation) {
+    public List<Invoker<T>> route(URL url, Invocation invocation) { //将提供者invoker列表，依次通过路由列表进行路由
         List<Invoker<T>> finalInvokers = invokers; //invokers值会RegistryDirectory.refreshInvoker中进行设置
         for (Router router : routers) { //Router的实例是在哪里选择的？解：在RegistryDirectory#notify中会调用addRouters()方法添加路由列表
             finalInvokers = router.route(finalInvokers, url, invocation); //Router是如何选择invoker列表的？解：将invoker列表依次经过路由链做过滤处理
