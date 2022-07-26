@@ -247,6 +247,6 @@ public class ReferenceConfigCache {
     }
 
     public interface KeyGenerator {
-        String generateKey(ReferenceConfigBase<?> referenceConfig);
+        String generateKey(ReferenceConfigBase<?> referenceConfig); //产生配置的key
     }
 }

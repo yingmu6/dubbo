@@ -42,13 +42,13 @@ import static org.apache.dubbo.rpc.cluster.Constants.*;
 /**
  * AbstractClusterInvoker
  */
-public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> {
+public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> { //抽象集群invoker
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractClusterInvoker.class);
 
-    protected Directory<T> directory;
+    protected Directory<T> directory; //invoker目录管理
 
-    protected boolean availablecheck;
+    protected boolean availablecheck; //可用性检查
 
     private AtomicBoolean destroyed = new AtomicBoolean(false);
 
@@ -137,7 +137,11 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> {
             stickyInvoker = null;
         }
         //ignore concurrency problem
-        if (sticky && stickyInvoker != null && (selected == null || !selected.contains(stickyInvoker))) {
+        if (sticky && stickyInvoker != null && (selected == null || !selected.contains(stickyInvoker))) { //sticky为true，stickyInvoker粘滞的invoker不为空且不在selected集合中时，将stickyInvoker作为选择的结果
+            /**
+             * 粘滞连接用于有状态服务，尽可能让客户端总是向同一提供者发起调用，除非该提供者挂了，再连另一台。粘滞连接将自动开启延迟连接，以减少长连接数。
+             * 官方文档：https://dubbo.apache.org/zh/docs/v2.7/user/examples/stickiness/
+             */
             if (availablecheck && stickyInvoker.isAvailable()) {
                 return stickyInvoker;
             }
@@ -211,13 +215,13 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> {
                 continue;
             }
 
-            if (selected == null || !selected.contains(invoker)) {
+            if (selected == null || !selected.contains(invoker)) { //构建新的selected集合
                 reselectInvokers.add(invoker);
             }
         }
 
         if (!reselectInvokers.isEmpty()) {
-            return loadbalance.select(reselectInvokers, getUrl(), invocation);
+            return loadbalance.select(reselectInvokers, getUrl(), invocation); //重新选择
         }
 
         // Just pick an available invoker using loadbalance policy

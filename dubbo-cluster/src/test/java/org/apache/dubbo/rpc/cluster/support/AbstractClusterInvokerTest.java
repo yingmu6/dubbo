@@ -164,7 +164,7 @@ public class AbstractClusterInvokerTest {
         {
             Invoker invoker = cluster.select(l, null, null, null);
 //            Assertions.assertFalse(invoker.isAvailable());
-            Assertions.assertNull(invoker); //由于invokers为空，所以选出的invoker为空
+            Assertions.assertNull(invoker); //由于invokers为空，所以select()选出的invoker为空
         }
         {
             invokers.clear();
@@ -175,7 +175,7 @@ public class AbstractClusterInvokerTest {
     }
 
     @Test
-    public void testSelect_Invokersize1() throws Exception { //todo @pause
+    public void testSelect_Invokersize1() throws Exception { //invoker列表只有一条的话，直接返回，不使用负载均衡
         invokers.clear();
         invokers.add(invoker1);
         LoadBalance l = cluster.initLoadBalance(invokers, invocation);

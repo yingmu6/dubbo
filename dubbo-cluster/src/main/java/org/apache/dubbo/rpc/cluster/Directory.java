@@ -49,6 +49,6 @@ public interface Directory<T> extends Node { //目录：用来管理多个Invoke
 
     List<Invoker<T>> getAllInvokers();
 
-    URL getConsumerUrl();
+    URL getConsumerUrl(); //获取消费者url
 
 }

@@ -841,7 +841,7 @@ class URL implements Serializable {
         return value;
     }
 
-    public String getMethodParameter(String method, String key, String defaultValue) {
+    public String getMethodParameter(String method, String key, String defaultValue) { //获取方法参数<dubbo:method/>中设置的值
         String value = getMethodParameter(method, key);
         return StringUtils.isEmpty(value) ? defaultValue : value;
     }
