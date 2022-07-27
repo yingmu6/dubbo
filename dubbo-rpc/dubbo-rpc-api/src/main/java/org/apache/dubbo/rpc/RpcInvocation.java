@@ -73,7 +73,7 @@ public class RpcInvocation implements Invocation, Serializable { //RpcInvocation
     private Map<String, Object> attachments; //在RPC调用期间传递到远程服务器
 
     /**
-     * Only used on the caller side, will not appear on the wire（导线）.
+     * Only used on the caller side（调用端）, will not appear on the wire（导线）.
      */
     private Map<Object, Object> attributes = new HashMap<Object, Object>(); //仅仅用在调用方，不会传递到远端（类似元数据处理方式：核心数据发送到远端，其它数据不传，而是传到元数据中心）
 
@@ -118,7 +118,7 @@ public class RpcInvocation implements Invocation, Serializable { //RpcInvocation
     }
 
     // 提供多种构造函数，可有选择的调用
-    public RpcInvocation(Invocation invocation) {
+    public RpcInvocation(Invocation invocation) { //提取传入的invocation值，构建RpcInvocation
         this(invocation.getMethodName(), invocation.getServiceName(), invocation.getParameterTypes(),
                 invocation.getArguments(), invocation.getObjectAttachments(), invocation.getInvoker(), invocation.getAttributes());
         this.targetServiceUniqueName = invocation.getTargetServiceUniqueName();

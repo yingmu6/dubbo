@@ -42,26 +42,26 @@ import static org.apache.dubbo.rpc.Constants.GENERIC_KEY;
  * GenericImplInvokerFilter
  */
 @Activate(group = CommonConstants.CONSUMER, value = GENERIC_KEY, order = 20000)
-public class GenericImplFilter implements Filter, Filter.Listener {
+public class GenericImplFilter implements Filter, Filter.Listener { //实现消费端的泛化功能
 
     private static final Logger logger = LoggerFactory.getLogger(GenericImplFilter.class);
 
-    private static final Class<?>[] GENERIC_PARAMETER_TYPES = new Class<?>[]{String.class, String[].class, Object[].class};
+    private static final Class<?>[] GENERIC_PARAMETER_TYPES = new Class<?>[] {String.class, String[].class, Object[].class};
 
     private static final String GENERIC_IMPL_MARKER = "GENERIC_IMPL";
 
     @Override
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
-        String generic = invoker.getUrl().getParameter(GENERIC_KEY);
+        String generic = invoker.getUrl().getParameter(GENERIC_KEY); //获取泛化方式
         // calling a generic impl service
-        if (isCallingGenericImpl(generic, invocation)) {
+        if (isCallingGenericImpl(generic, invocation)) { //泛化实现：用于服务提供端泛化
             RpcInvocation invocation2 = new RpcInvocation(invocation);
 
             /**
              * Mark this invocation as a generic impl call, this value will be removed automatically before passing on the wire.
              * See {@link RpcUtils#sieveUnnecessaryAttachments(Invocation)}
              */
-            invocation2.put(GENERIC_IMPL_MARKER, true);
+            invocation2.put(GENERIC_IMPL_MARKER, true); //设置泛化实现的标志
 
             String methodName = invocation2.getMethodName();
             Class<?>[] parameterTypes = invocation2.getParameterTypes();
@@ -69,41 +69,41 @@ public class GenericImplFilter implements Filter, Filter.Listener {
 
             String[] types = new String[parameterTypes.length];
             for (int i = 0; i < parameterTypes.length; i++) {
-                types[i] = ReflectUtils.getName(parameterTypes[i]);
+                types[i] = ReflectUtils.getName(parameterTypes[i]); //获取class对象对应的描述信息
             }
 
             Object[] args;
-            if (ProtocolUtils.isBeanGenericSerialization(generic)) {
+            if (ProtocolUtils.isBeanGenericSerialization(generic)) { //泛化类型为：bean，使用JavaBeanSerializeUtil进行序列化
                 args = new Object[arguments.length];
                 for (int i = 0; i < arguments.length; i++) {
                     args[i] = JavaBeanSerializeUtil.serialize(arguments[i], JavaBeanAccessor.METHOD);
                 }
-            } else {
+            } else { //其它类型用PojoUtils进行序列化
                 args = PojoUtils.generalize(arguments);
             }
 
             if (RpcUtils.isReturnTypeFuture(invocation)) {
-                invocation2.setMethodName($INVOKE_ASYNC);
+                invocation2.setMethodName($INVOKE_ASYNC); //GenericService中的异步调用$invokeAsync
             } else {
-                invocation2.setMethodName($INVOKE);
+                invocation2.setMethodName($INVOKE); //GenericService中的同步调用$invoke
             }
             invocation2.setParameterTypes(GENERIC_PARAMETER_TYPES);
             invocation2.setParameterTypesDesc(GENERIC_PARAMETER_DESC);
-            invocation2.setArguments(new Object[] {methodName, types, args});
+            invocation2.setArguments(new Object[] {methodName, types, args}); //设置泛化接口方法中的参数列表
             return invoker.invoke(invocation2);
         }
         // making a generic call to a normal service
-        else if (isMakingGenericCall(generic, invocation)) {
+        else if (isMakingGenericCall(generic, invocation)) { //泛化调用：用于服务消费端泛化
 
             Object[] args = (Object[]) invocation.getArguments()[2];
-            if (ProtocolUtils.isJavaGenericSerialization(generic)) {
+            if (ProtocolUtils.isJavaGenericSerialization(generic)) { //序列化方式：nativejava
 
                 for (Object arg : args) {
                     if (!(byte[].class == arg.getClass())) {
                         error(generic, byte[].class.getName(), arg.getClass().getName());
                     }
                 }
-            } else if (ProtocolUtils.isBeanGenericSerialization(generic)) {
+            } else if (ProtocolUtils.isBeanGenericSerialization(generic)) {//序列化方式：bean
                 for (Object arg : args) {
                     if (!(arg instanceof JavaBeanDescriptor)) {
                         error(generic, JavaBeanDescriptor.class.getName(), arg.getClass().getName());
@@ -128,15 +128,15 @@ public class GenericImplFilter implements Filter, Filter.Listener {
         Class<?>[] parameterTypes = invocation.getParameterTypes();
         Object genericImplMarker = invocation.get(GENERIC_IMPL_MARKER);
         if (genericImplMarker != null && (boolean) invocation.get(GENERIC_IMPL_MARKER)) { //包含泛化实现的标识
-            if (!appResponse.hasException()) {
-                Object value = appResponse.getValue();
+            if (!appResponse.hasException()) { //响应没有异常信息
+                Object value = appResponse.getValue(); //获取响应结果
                 try {
                     Class<?> invokerInterface = invoker.getInterface();
                     if (!$INVOKE.equals(methodName) && !$INVOKE_ASYNC.equals(methodName)
                             && invokerInterface.isAssignableFrom(GenericService.class)) {
                         try {
                             // find the real interface from url
-                            String realInterface = invoker.getUrl().getParameter(Constants.INTERFACE);
+                            String realInterface = invoker.getUrl().getParameter(Constants.INTERFACE); //查找真实的调用接口
                             invokerInterface = ReflectUtils.forName(realInterface);
                         } catch (Throwable e) {
                             // ignore
@@ -147,7 +147,7 @@ public class GenericImplFilter implements Filter, Filter.Listener {
                     if (ProtocolUtils.isBeanGenericSerialization(generic)) {
                         if (value == null) {
                             appResponse.setValue(value);
-                        } else if (value instanceof JavaBeanDescriptor) {
+                        } else if (value instanceof JavaBeanDescriptor) { //反序列化，并将值设置到响应结果appResponse中
                             appResponse.setValue(JavaBeanSerializeUtil.deserialize((JavaBeanDescriptor) value));
                         } else {
                             throw new RpcException("The type of result value is " + value.getClass().getName() + " other than " + JavaBeanDescriptor.class.getName() + ", and the result is " + value);
@@ -159,7 +159,7 @@ public class GenericImplFilter implements Filter, Filter.Listener {
                 } catch (NoSuchMethodException e) {
                     throw new RpcException(e.getMessage(), e);
                 }
-            } else if (appResponse.getException() instanceof com.alibaba.dubbo.rpc.service.GenericException) {
+            } else if (appResponse.getException() instanceof com.alibaba.dubbo.rpc.service.GenericException) { //响应包含异常信息
                 com.alibaba.dubbo.rpc.service.GenericException exception = (com.alibaba.dubbo.rpc.service.GenericException) appResponse.getException();
                 try {
                     String className = exception.getExceptionClass();
@@ -189,7 +189,7 @@ public class GenericImplFilter implements Filter, Filter.Listener {
                         } catch (Throwable e) {
                             logger.warn(e.getMessage(), e);
                         }
-                        appResponse.setException(targetException);
+                        appResponse.setException(targetException); //在响应结果中appResponse设置异常信息
                     } else if (lastException != null) {
                         throw lastException;
                     }
@@ -206,13 +206,13 @@ public class GenericImplFilter implements Filter, Filter.Listener {
     }
 
     private boolean isCallingGenericImpl(String generic, Invocation invocation) {
-        return ProtocolUtils.isGeneric(generic)
-                && (!$INVOKE.equals(invocation.getMethodName()) && !$INVOKE_ASYNC.equals(invocation.getMethodName()))
-                && invocation instanceof RpcInvocation;
+        return ProtocolUtils.isGeneric(generic) //是泛化类型
+                && (!$INVOKE.equals(invocation.getMethodName()) && !$INVOKE_ASYNC.equals(invocation.getMethodName())) //方法名不为$invoke且不为$invokeAsync
+                && invocation instanceof RpcInvocation; //invocation类型为RpcInvocation
     }
 
     private boolean isMakingGenericCall(String generic, Invocation invocation) {
-        return (invocation.getMethodName().equals($INVOKE) || invocation.getMethodName().equals($INVOKE_ASYNC))
+        return (invocation.getMethodName().equals($INVOKE) || invocation.getMethodName().equals($INVOKE_ASYNC)) //方法名为$invoke或为$invokeAsync
                 && invocation.getArguments() != null
                 && invocation.getArguments().length == 3
                 && ProtocolUtils.isGeneric(generic);

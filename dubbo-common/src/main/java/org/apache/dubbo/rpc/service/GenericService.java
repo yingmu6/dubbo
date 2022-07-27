@@ -35,7 +35,7 @@ public interface GenericService {//泛化服务接口
      * @return invocation return value
      * @throws GenericException potential exception thrown from the invocation
      */
-    Object $invoke(String method, String[] parameterTypes, Object[] args) throws GenericException;
+    Object $invoke(String method, String[] parameterTypes, Object[] args) throws GenericException; //同步调用
 
     default CompletableFuture<Object> $invokeAsync(String method, String[] parameterTypes, Object[] args) throws GenericException { //异步调用
         Object object = $invoke(method, parameterTypes, args);

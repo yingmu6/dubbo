@@ -46,7 +46,7 @@ public class ProtocolUtils {
         return groupServiceKeyCache.getServiceKey(serviceName, serviceVersion, port);
     }
 
-    public static boolean isGeneric(String generic) { //判断是否是泛化接口
+    public static boolean isGeneric(String generic) { //判断是否是泛化调用（定义了5种泛化方式）
         return StringUtils.isNotEmpty(generic)
                 && (GENERIC_SERIALIZATION_DEFAULT.equalsIgnoreCase(generic)  /* Normal generalization cal */
                 || GENERIC_SERIALIZATION_NATIVE_JAVA.equalsIgnoreCase(generic) /* Streaming generalization call supporting jdk serialization */

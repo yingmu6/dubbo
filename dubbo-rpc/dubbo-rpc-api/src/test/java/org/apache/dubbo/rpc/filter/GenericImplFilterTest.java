@@ -16,18 +16,12 @@
  */
 package org.apache.dubbo.rpc.filter;
 
+import com.alibaba.dubbo.rpc.service.GenericException;
 import org.apache.dubbo.common.URL;
-import org.apache.dubbo.rpc.AppResponse;
-import org.apache.dubbo.rpc.AsyncRpcResult;
-import org.apache.dubbo.rpc.Invocation;
-import org.apache.dubbo.rpc.Invoker;
-import org.apache.dubbo.rpc.Result;
-import org.apache.dubbo.rpc.RpcInvocation;
+import org.apache.dubbo.rpc.*;
 import org.apache.dubbo.rpc.service.GenericService;
 import org.apache.dubbo.rpc.support.DemoService;
 import org.apache.dubbo.rpc.support.Person;
-
-import com.alibaba.dubbo.rpc.service.GenericException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -53,19 +47,19 @@ public class GenericImplFilterTest {
 
 
         URL url = URL.valueOf("test://test:11/org.apache.dubbo.rpc.support.DemoService?" +
-                "accesslog=true&group=dubbo&version=1.1&generic=true");
+                "accesslog=true&group=dubbo&version=1.1&generic=true"); //genericImplFilter.onResponse中会用到url值
         Invoker invoker = Mockito.mock(Invoker.class);
 
         Map<String, Object> person = new HashMap<String, Object>();
         person.put("name", "dubbo");
         person.put("age", 10);
 
-        AppResponse mockRpcResult = new AppResponse(person);
+        AppResponse mockRpcResult = new AppResponse(person); //todo @csy pause
         when(invoker.invoke(any(Invocation.class))).thenReturn(AsyncRpcResult.newDefaultAsyncResult(mockRpcResult, invocation));
         when(invoker.getUrl()).thenReturn(url);
         when(invoker.getInterface()).thenReturn(DemoService.class);
 
-        Result asyncResult = genericImplFilter.invoke(invoker, invocation);
+        Result asyncResult = genericImplFilter.invoke(invoker, invocation); //此处测试用例中genericImplFilter对象创建是直接new的，而实际场景是通过SPI机制创建的，只是创建方式不一样
         Result result = asyncResult.get();
         genericImplFilter.onResponse(result, invoker, invocation);
 
