@@ -112,7 +112,7 @@ public class GenericImplFilter implements Filter, Filter.Listener { //实现消�
             }
 
             invocation.setAttachment(
-                    GENERIC_KEY, invoker.getUrl().getParameter(GENERIC_KEY));
+                    GENERIC_KEY, invoker.getUrl().getParameter(GENERIC_KEY)); //设置泛化类型
         }
         return invoker.invoke(invocation);
     }
@@ -127,7 +127,7 @@ public class GenericImplFilter implements Filter, Filter.Listener { //实现消�
         String methodName = invocation.getMethodName();
         Class<?>[] parameterTypes = invocation.getParameterTypes();
         Object genericImplMarker = invocation.get(GENERIC_IMPL_MARKER);
-        if (genericImplMarker != null && (boolean) invocation.get(GENERIC_IMPL_MARKER)) { //包含泛化实现的标识
+        if (genericImplMarker != null && (boolean) invocation.get(GENERIC_IMPL_MARKER)) { //泛化实现才能进行响应操作
             if (!appResponse.hasException()) { //响应没有异常信息
                 Object value = appResponse.getValue(); //获取响应结果
                 try {
@@ -154,7 +154,7 @@ public class GenericImplFilter implements Filter, Filter.Listener { //实现消�
                         }
                     } else {
                         Type[] types = ReflectUtils.getReturnTypes(method);
-                        appResponse.setValue(PojoUtils.realize(value, (Class<?>) types[0], types[1]));
+                        appResponse.setValue(PojoUtils.realize(value, (Class<?>) types[0], types[1])); //将响应结果值反序列化后，设置到Result中
                     }
                 } catch (NoSuchMethodException e) {
                     throw new RpcException(e.getMessage(), e);
@@ -167,7 +167,7 @@ public class GenericImplFilter implements Filter, Filter.Listener { //实现消�
                     Throwable targetException = null;
                     Throwable lastException = null;
                     try {
-                        targetException = (Throwable) clazz.newInstance();
+                        targetException = (Throwable) clazz.newInstance(); //构建异常实例
                     } catch (Throwable e) {
                         lastException = e;
                         for (Constructor<?> constructor : clazz.getConstructors()) {

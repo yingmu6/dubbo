@@ -899,9 +899,9 @@ public final class ReflectUtils { //JVM虚拟机中的类型描述符
      * @throws IllegalStateException  when multiple methods are found (overridden method when parameter info is not provided)
      */
     public static Method findMethodByMethodSignature(Class<?> clazz, String methodName, String[] parameterTypes)
-            throws NoSuchMethodException, ClassNotFoundException {
+            throws NoSuchMethodException, ClassNotFoundException { //从指定的类中找到指定方法签名的Method（重载方法也可找到）
         String signature = clazz.getName() + "." + methodName;
-        if (parameterTypes != null && parameterTypes.length > 0) {
+        if (parameterTypes != null && parameterTypes.length > 0) { //构建方法签名：类名+方法名+参数类型名称
             signature += StringUtils.join(parameterTypes);
         }
         Method method = SIGNATURE_METHODS_CACHE.get(signature);

@@ -155,7 +155,7 @@ public class RpcUtils {
         return isAsync;
     }
 
-    public static boolean isReturnTypeFuture(Invocation inv) { //判断返回类型是否是Future类型
+    public static boolean isReturnTypeFuture(Invocation inv) { //判断返回类型是否是CompletableFuture类型
         Class<?> clazz;
         if (inv instanceof RpcInvocation) {
             clazz = ((RpcInvocation) inv).getReturnType();

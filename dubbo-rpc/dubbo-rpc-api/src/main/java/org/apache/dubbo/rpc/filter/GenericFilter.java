@@ -43,44 +43,44 @@ import static org.apache.dubbo.rpc.Constants.GENERIC_KEY;
  * GenericInvokerFilter.
  */
 @Activate(group = CommonConstants.PROVIDER, order = -20000)
-public class GenericFilter implements Filter, Filter.Listener {
+public class GenericFilter implements Filter, Filter.Listener { //泛化过滤器，作用于提供端，对GenericService进行调用处理
 
     @Override
     public Result invoke(Invoker<?> invoker, Invocation inv) throws RpcException {
         if ((inv.getMethodName().equals($INVOKE) || inv.getMethodName().equals($INVOKE_ASYNC))
                 && inv.getArguments() != null
-                && inv.getArguments().length == 3
+                && inv.getArguments().length == 3 //GenericService中的$invoke、$invokeAsync方法都是3个
                 && !GenericService.class.isAssignableFrom(invoker.getInterface())) {
             String name = ((String) inv.getArguments()[0]).trim();
             String[] types = (String[]) inv.getArguments()[1];
             Object[] args = (Object[]) inv.getArguments()[2];
             try {
-                Method method = ReflectUtils.findMethodByMethodSignature(invoker.getInterface(), name, types);
+                Method method = ReflectUtils.findMethodByMethodSignature(invoker.getInterface(), name, types); //根据方法签名找到对应的Method
                 Class<?>[] params = method.getParameterTypes();
                 if (args == null) {
                     args = new Object[params.length];
                 }
 
-                if (args.length != types.length) {
+                if (args.length != types.length) { //参数类型个数与参数值个数比较
                     throw new RpcException("args.length != types.length");
                 }
                 String generic = inv.getAttachment(GENERIC_KEY);
 
-                if (StringUtils.isBlank(generic)) {
+                if (StringUtils.isBlank(generic)) { //泛化类型为空时，从上下文参数获取
                     generic = RpcContext.getContext().getAttachment(GENERIC_KEY);
                 }
 
                 if (StringUtils.isEmpty(generic)
-                        || ProtocolUtils.isDefaultGenericSerialization(generic)
+                        || ProtocolUtils.isDefaultGenericSerialization(generic) //默认的序列化方式generic=true
                         || ProtocolUtils.isGenericReturnRawResult(generic)) {
                     args = PojoUtils.realize(args, params, method.getGenericParameterTypes());
                 } else if (ProtocolUtils.isJavaGenericSerialization(generic)) {
                     for (int i = 0; i < args.length; i++) {
-                        if (byte[].class == args[i].getClass()) {
+                        if (byte[].class == args[i].getClass()) { //使用java序列化方式时，需要参数为字节数组
                             try (UnsafeByteArrayInputStream is = new UnsafeByteArrayInputStream((byte[]) args[i])) {
                                 args[i] = ExtensionLoader.getExtensionLoader(Serialization.class)
                                         .getExtension(GENERIC_SERIALIZATION_NATIVE_JAVA)
-                                        .deserialize(null, is).readObject();
+                                        .deserialize(null, is).readObject(); //使用java序列化方式进行反序列化，并从输入流中读取内容
                             } catch (Exception e) {
                                 throw new RpcException("Deserialize argument [" + (i + 1) + "] failed.", e);
                             }
@@ -94,7 +94,7 @@ public class GenericFilter implements Filter, Filter.Listener {
                                             args[i].getClass());
                         }
                     }
-                } else if (ProtocolUtils.isBeanGenericSerialization(generic)) {
+                } else if (ProtocolUtils.isBeanGenericSerialization(generic)) { //bean方式泛化处理
                     for (int i = 0; i < args.length; i++) {
                         if (args[i] instanceof JavaBeanDescriptor) {
                             args[i] = JavaBeanSerializeUtil.deserialize((JavaBeanDescriptor) args[i]);
@@ -114,7 +114,7 @@ public class GenericFilter implements Filter, Filter.Listener {
                         try (UnsafeByteArrayInputStream is =
                                      new UnsafeByteArrayInputStream(((String) args[0]).getBytes())) {
                             args[0] = ExtensionLoader.getExtensionLoader(Serialization.class)
-                                    .getExtension(GENERIC_SERIALIZATION_PROTOBUF)
+                                    .getExtension(GENERIC_SERIALIZATION_PROTOBUF) //使用protobuf方式进行反序列化
                                     .deserialize(null, is).readObject(method.getParameterTypes()[0]);
                         } catch (Exception e) {
                             throw new RpcException("Deserialize argument failed.", e);
@@ -154,7 +154,7 @@ public class GenericFilter implements Filter, Filter.Listener {
                 generic = RpcContext.getContext().getAttachment(GENERIC_KEY);
             }
 
-            if (appResponse.hasException()) {
+            if (appResponse.hasException()) { //异常处理
                 Throwable appException = appResponse.getException();
                 if (appException instanceof GenericException) {
                     GenericException tmp = (GenericException) appException;

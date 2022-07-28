@@ -133,7 +133,7 @@ public class RpcInvocation implements Invocation, Serializable { //RpcInvocation
         this.returnType = method.getReturnType();
     }
 
-    public RpcInvocation(String methodName, String serviceName, Class<?>[] parameterTypes, Object[] arguments) {
+    public RpcInvocation(String methodName, String serviceName, Class<?>[] parameterTypes, Object[] arguments) { //使用调用信息核心参数构造，包含调用的方法名、接口名、参数类型列表、参数值列表
         this(methodName, serviceName, parameterTypes, arguments, null, null, null);
     }
 

@@ -48,30 +48,31 @@ public class GenericImplFilterTest {
 
         URL url = URL.valueOf("test://test:11/org.apache.dubbo.rpc.support.DemoService?" +
                 "accesslog=true&group=dubbo&version=1.1&generic=true"); //genericImplFilter.onResponse中会用到url值
-        Invoker invoker = Mockito.mock(Invoker.class);
+        Invoker invoker = Mockito.mock(Invoker.class); //mock对象
 
         Map<String, Object> person = new HashMap<String, Object>();
         person.put("name", "dubbo");
-        person.put("age", 10);
+        person.put("age", 20);
 
-        AppResponse mockRpcResult = new AppResponse(person); //todo @csy pause
-        when(invoker.invoke(any(Invocation.class))).thenReturn(AsyncRpcResult.newDefaultAsyncResult(mockRpcResult, invocation));
+        AppResponse mockRpcResult = new AppResponse(person);
+        // 执行方法Invoker相关调用时，返回mock值
+        when(invoker.invoke(any(Invocation.class))).thenReturn(AsyncRpcResult.newDefaultAsyncResult(mockRpcResult, invocation)); //返回异步处理的结果
         when(invoker.getUrl()).thenReturn(url);
         when(invoker.getInterface()).thenReturn(DemoService.class);
 
         Result asyncResult = genericImplFilter.invoke(invoker, invocation); //此处测试用例中genericImplFilter对象创建是直接new的，而实际场景是通过SPI机制创建的，只是创建方式不一样
-        Result result = asyncResult.get();
-        genericImplFilter.onResponse(result, invoker, invocation);
+        Result result = asyncResult.get(); //由于对invoker.invoke(invocation2)进行了mock，所以此处返回AsyncRpcResult对象的引用
+        genericImplFilter.onResponse(result, invoker, invocation); //引用传递，此处invocation的值已被genericImplFilter.invoke处理时改变
 
         Assertions.assertEquals(Person.class, result.getValue().getClass());
-        Assertions.assertEquals(10, ((Person) result.getValue()).getAge());
+        Assertions.assertEquals(20, ((Person) result.getValue()).getAge()); //取结果result中的值
     }
 
     @Test
-    public void testInvokeWithException() throws Exception {
+    public void testInvokeWithException() throws Exception { //调用结果返回异常信息
 
         RpcInvocation invocation = new RpcInvocation("getPerson", "org.apache.dubbo.rpc.support.DemoService",
-                new Class[]{Person.class}, new Object[]{new Person("dubbo", 10)});
+                new Class[] {Person.class}, new Object[] {new Person("dubbo", 10)});
 
         URL url = URL.valueOf("test://test:11/org.apache.dubbo.rpc.support.DemoService?" +
                 "accesslog=true&group=dubbo&version=1.1&generic=true");

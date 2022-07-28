@@ -305,7 +305,7 @@ public class AsyncRpcResult implements Result {
     /**
      * Some utility methods used to quickly generate default AsyncRpcResult instance.
      */
-    public static AsyncRpcResult newDefaultAsyncResult(AppResponse appResponse, Invocation invocation) {
+    public static AsyncRpcResult newDefaultAsyncResult(AppResponse appResponse, Invocation invocation) { //返回默认的结果值
         return new AsyncRpcResult(CompletableFuture.completedFuture(appResponse), invocation);
     }
 

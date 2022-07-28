@@ -29,8 +29,8 @@ import java.util.function.Function;
 /**
  * {@link AsyncRpcResult} is introduced（引进） in 3.0.0 to replace RpcResult, and RpcResult is replaced with {@link AppResponse}:
  * <ul>
- *     <li>AsyncRpcResult is the object that is actually passed in the call chain</li>
- *     <li>AppResponse only simply represents the business result</li>
+ *     <li>AsyncRpcResult is the object that is actually passed in the call chain（通过调用链路）</li>
+ *     <li>AppResponse only simply represents the business result（仅仅是简单的业务结果）</li>
  * </ul>
  *
  *  The relationship between them can be described as follow, an abstraction of the definition of AsyncRpcResult:

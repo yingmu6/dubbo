@@ -17,17 +17,10 @@
 package org.apache.dubbo.rpc.filter;
 
 import org.apache.dubbo.common.URL;
-import org.apache.dubbo.rpc.AppResponse;
-import org.apache.dubbo.rpc.AsyncRpcResult;
-import org.apache.dubbo.rpc.Invocation;
-import org.apache.dubbo.rpc.Invoker;
-import org.apache.dubbo.rpc.Result;
-import org.apache.dubbo.rpc.RpcException;
-import org.apache.dubbo.rpc.RpcInvocation;
+import org.apache.dubbo.rpc.*;
 import org.apache.dubbo.rpc.service.GenericService;
 import org.apache.dubbo.rpc.support.DemoService;
 import org.apache.dubbo.rpc.support.Person;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -55,7 +48,7 @@ public class GenericFilterTest {
         person.put("age", 10);
 
         RpcInvocation invocation = new RpcInvocation($INVOKE, GenericService.class.getName(), genericInvoke.getParameterTypes(),
-                new Object[]{"getPerson", new String[]{Person.class.getCanonicalName()}, new Object[]{person}});
+                new Object[] {"getPerson", new String[] {Person.class.getCanonicalName()}, new Object[] {person}}); //对$invoke方法进行处理
 
         URL url = URL.valueOf("test://test:11/org.apache.dubbo.rpc.support.DemoService?" +
                 "accesslog=true&group=dubbo&version=1.1");
@@ -84,7 +77,7 @@ public class GenericFilterTest {
 
             RpcInvocation invocation = new RpcInvocation($INVOKE, GenericService.class.getName(), genericInvoke.getParameterTypes(),
                     new Object[]{"getPerson", new String[]{Person.class.getCanonicalName()}, new Object[]{person}});
-            invocation.setAttachment(GENERIC_KEY, GENERIC_SERIALIZATION_NATIVE_JAVA);
+            invocation.setAttachment(GENERIC_KEY, GENERIC_SERIALIZATION_NATIVE_JAVA); //指定java序列化方式
 
             URL url = URL.valueOf("test://test:11/org.apache.dubbo.rpc.support.DemoService?" +
                     "accesslog=true&group=dubbo&version=1.1");
