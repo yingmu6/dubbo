@@ -143,21 +143,21 @@ public class RegistryProtocol implements Protocol { //注册协议
 
     @Override
     public <T> Exporter<T> export(final Invoker<T> originInvoker) throws RpcException {
-        URL registryUrl = getRegistryUrl(originInvoker);
+        URL registryUrl = getRegistryUrl(originInvoker); //获取具体的注册url，如zookeeper://xxx（默认注册协议为dubbo，如:dubbo://xxx）
         // url to export locally
-        URL providerUrl = getProviderUrl(originInvoker);
+        URL providerUrl = getProviderUrl(originInvoker); //获取具体的提供者url，如dubbo://xxx
 
         // Subscribe the override data（订阅覆盖数据）
         // FIXME When the provider subscribes, it will affect the scene（场景） : a certain JVM exposes（暴露） the service and call
         //  the same service. Because the subscribed is cached key（缓存键） with the name of the service, it causes the
         //  subscription information to cover（引起订阅信息被覆盖）.
-        final URL overrideSubscribeUrl = getSubscribedOverrideUrl(providerUrl);
-        final OverrideListener overrideSubscribeListener = new OverrideListener(overrideSubscribeUrl, originInvoker);
+        final URL overrideSubscribeUrl = getSubscribedOverrideUrl(providerUrl); //获取订阅的url，如provider://xxx
+        final OverrideListener overrideSubscribeListener = new OverrideListener(overrideSubscribeUrl, originInvoker); //构建监听器，维护着url与invoker关系
         overrideListeners.put(overrideSubscribeUrl, overrideSubscribeListener); //将订阅的url与对应的监听器Listener映射并缓存起来
 
-        providerUrl = overrideUrlWithConfig(providerUrl, overrideSubscribeListener);
+        providerUrl = overrideUrlWithConfig(providerUrl, overrideSubscribeListener); //对providerUrl进行覆盖配置
         //export invoker
-        final ExporterChangeableWrapper<T> exporter = doLocalExport(originInvoker, providerUrl);
+        final ExporterChangeableWrapper<T> exporter = doLocalExport(originInvoker, providerUrl); //做服务暴露
 
         // url to registry
         final Registry registry = getRegistry(originInvoker); //创建注册实例
@@ -356,7 +356,7 @@ public class RegistryProtocol implements Protocol { //注册协议
 
     }
 
-    private URL getSubscribedOverrideUrl(URL registeredProviderUrl) { //协议设置为：protocol://
+    private URL getSubscribedOverrideUrl(URL registeredProviderUrl) { //协议设置为：provider://
         return registeredProviderUrl.setProtocol(PROVIDER_PROTOCOL)
                 .addParameters(CATEGORY_KEY, CONFIGURATORS_CATEGORY, CHECK_KEY, String.valueOf(false));
     }
@@ -369,10 +369,10 @@ public class RegistryProtocol implements Protocol { //注册协议
      */
     private URL getProviderUrl(final Invoker<?> originInvoker) { //取出服务提供者的url，比如registry://xxx?xx&export=dubbo://192.168.1.105:20881/org.apache.dubbo.demo.GreetingService/xxx
         String export = originInvoker.getUrl().getParameterAndDecoded(EXPORT_KEY);
-        if (export == null || export.length() == 0) { //注册协议中对应的url中，需要包含export参数，如registry://xxx?xx&export=xxx
+        if (export == null || export.length() == 0) { //注册协议中对应的url中，需要包含export参数，如registry://xxx?xx&export=dubbo://xxx
             throw new IllegalArgumentException("The registry export url is null! registry: " + originInvoker.getUrl());
         }
-        return URL.valueOf(export); //将url字符串构建为URL对象
+        return URL.valueOf(export); //将url字符串构建为URL对象，export值如：dubbo://xxx
     }
 
     /**
@@ -503,12 +503,12 @@ public class RegistryProtocol implements Protocol { //注册协议
 
     //Merge the urls of configurators
     private static URL getConfigedInvokerUrl(List<Configurator> configurators, URL url) {
-        if (configurators != null && configurators.size() > 0) {
+        if (configurators != null && configurators.size() > 0) { //若配置器不为空时，对url进行配置，产生新的url
             for (Configurator configurator : configurators) {
                 url = configurator.configure(url);
             }
         }
-        return url;
+        return url; //配置器为空时，不对url处理，直接返回
     }
 
     public static class InvokerDelegate<T> extends InvokerWrapper<T> { //Invoker的委派类
@@ -672,7 +672,7 @@ public class RegistryProtocol implements Protocol { //注册协议
          * @param <T>
          * @return
          */
-        private <T> URL overrideUrl(URL providerUrl) {
+        private <T> URL overrideUrl(URL providerUrl) { //对提供者url进行配置处理
             return RegistryProtocol.getConfigedInvokerUrl(configurators, providerUrl);
         }
 
@@ -688,7 +688,7 @@ public class RegistryProtocol implements Protocol { //注册协议
      *
      * @param <T>
      */
-    private class ExporterChangeableWrapper<T> implements Exporter<T> { //
+    private class ExporterChangeableWrapper<T> implements Exporter<T> { //服务暴露变更的封装类
 
         private final ExecutorService executor = newSingleThreadExecutor(new NamedThreadFactory("Exporter-Unexport", true));
 
