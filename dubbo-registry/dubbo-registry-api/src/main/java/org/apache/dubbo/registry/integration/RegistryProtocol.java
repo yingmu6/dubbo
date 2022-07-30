@@ -166,7 +166,7 @@ public class RegistryProtocol implements Protocol { //注册协议
         // decide if we need to delay publish
         boolean register = providerUrl.getParameter(REGISTER_KEY, true);
         if (register) {
-            register(registryUrl, registeredProviderUrl);
+            register(registryUrl, registeredProviderUrl); //服务注册
         }
 
         // register stated（声明） url on provider model
@@ -177,7 +177,7 @@ public class RegistryProtocol implements Protocol { //注册协议
         exporter.setSubscribeUrl(overrideSubscribeUrl);
 
         // Deprecated! Subscribe to override rules in 2.6.x or before.
-        registry.subscribe(overrideSubscribeUrl, overrideSubscribeListener);
+        registry.subscribe(overrideSubscribeUrl, overrideSubscribeListener); //数据订阅
 
         notifyExport(exporter);
         //Ensure（确保） that a new exporter instance（新的exporter实例） is returned every time export（每次暴露）
