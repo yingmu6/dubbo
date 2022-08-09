@@ -99,9 +99,9 @@ public class WrappedChannelHandler implements ChannelHandlerDelegate {
     }
 
     /**
-     * Currently, this method is mainly customized to facilitate the thread model on consumer side.
+     * Currently, this method is mainly customized（定制） to facilitate（方便） the thread model on consumer side（消费端线程模型）.
      * 1. Use ThreadlessExecutor, aka., delegate callback directly to the thread initiating the call.
-     * 2. Use shared executor to execute the callback.
+     * 2. Use shared executor（共享线程池） to execute the callback.
      *
      * @param msg
      * @return
@@ -114,7 +114,7 @@ public class WrappedChannelHandler implements ChannelHandlerDelegate {
             if (responseFuture == null) {
                 return getSharedExecutorService();
             } else {
-                ExecutorService executor = responseFuture.getExecutor();
+                ExecutorService executor = responseFuture.getExecutor(); //响应的future不为空时，尝试获取线程池对象
                 if (executor == null || executor.isShutdown()) {
                     executor = getSharedExecutorService();
                 }

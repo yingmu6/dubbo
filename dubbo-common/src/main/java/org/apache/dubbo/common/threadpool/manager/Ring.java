@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class Ring<T> {
+public class Ring<T> { //Ring: 环状，圈
 
     AtomicInteger count = new AtomicInteger();
 
@@ -45,7 +45,7 @@ public class Ring<T> {
             count.set(count.get() % itemList.size());
         }
 
-        int index = Math.abs(count.getAndIncrement()) % itemList.size();
+        int index = Math.abs(count.getAndIncrement()) % itemList.size(); //轮询取值
         return itemList.get(index);
     }
 

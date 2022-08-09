@@ -35,6 +35,7 @@ public interface Dispatcher { //事件派发
      * @return channel handler
      */
     @Adaptive({Constants.DISPATCHER_KEY, "dispather", "channel.handler"})
+    //"dispather"是拼写错误的单词，做了兼容处理
     // The last two parameters are reserved for compatibility with the old configuration
     ChannelHandler dispatch(ChannelHandler handler, URL url);
 

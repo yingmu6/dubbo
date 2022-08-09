@@ -46,7 +46,7 @@ public class ConnectionOrderedChannelHandler extends WrappedChannelHandler {
                 0L, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>(url.getPositiveParameter(CONNECT_QUEUE_CAPACITY, Integer.MAX_VALUE)),
                 new NamedThreadFactory(threadName, true),
-                new AbortPolicyWithReport(threadName, url)
+                new AbortPolicyWithReport(threadName, url)  //构建业务线程池
         );  // FIXME There's no place to release connectionExecutor!
         queuewarninglimit = url.getParameter(CONNECT_QUEUE_WARNING_SIZE, DEFAULT_CONNECT_QUEUE_WARNING_SIZE);
     }
@@ -55,7 +55,7 @@ public class ConnectionOrderedChannelHandler extends WrappedChannelHandler {
     public void connected(Channel channel) throws RemotingException {
         try {
             checkQueueLength();
-            connectionExecutor.execute(new ChannelEventRunnable(channel, handler, ChannelState.CONNECTED));
+            connectionExecutor.execute(new ChannelEventRunnable(channel, handler, ChannelState.CONNECTED)); //派发到业务线程池执行
         } catch (Throwable t) {
             throw new ExecutionException("connect event", channel, getClass() + " error when process connected event .", t);
         }

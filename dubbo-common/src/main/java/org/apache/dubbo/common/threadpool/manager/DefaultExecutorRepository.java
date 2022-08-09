@@ -31,8 +31,8 @@ import static org.apache.dubbo.common.constants.CommonConstants.*;
 /**
  * Consider implementing {@code Licycle} to enable executors shutdown when the process stops.
  */
-public class DefaultExecutorRepository implements ExecutorRepository {
-    
+public class DefaultExecutorRepository implements ExecutorRepository { //线程池仓库的默认实现
+
     private static final Logger logger = LoggerFactory.getLogger(DefaultExecutorRepository.class);
 
     private int DEFAULT_SCHEDULER_SIZE = Runtime.getRuntime().availableProcessors(); //可使用的进程数
@@ -84,7 +84,7 @@ public class DefaultExecutorRepository implements ExecutorRepository {
         return executor;
     }
 
-    public ExecutorService getExecutor(URL url) {
+    public ExecutorService getExecutor(URL url) { //获取指定参数对应的ExecutorService
         String componentKey = EXECUTOR_SERVICE_COMPONENT_KEY;
         if (CONSUMER_SIDE.equalsIgnoreCase(url.getParameter(SIDE_KEY))) {
             componentKey = CONSUMER_SIDE;
@@ -104,10 +104,10 @@ public class DefaultExecutorRepository implements ExecutorRepository {
         Integer portKey = url.getPort();
         ExecutorService executor = executors.get(portKey);
         if (executor != null) {
-            if (executor.isShutdown() || executor.isTerminated()) {
-                executors.remove(portKey); //先做移除操作
+            if (executor.isShutdown() || executor.isTerminated()) { //判断线程池是否有效，若无效先将老的移除，后添加新的线程池
+                executors.remove(portKey);
                 executor = createExecutor(url);
-                executors.put(portKey, executor); //再做添加操作
+                executors.put(portKey, executor);
             }
         }
         return executor;

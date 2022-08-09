@@ -63,11 +63,11 @@ public class AbortPolicyWithReport extends ThreadPoolExecutor.AbortPolicy {
     }
 
     @Override
-    public void rejectedExecution(Runnable r, ThreadPoolExecutor e) {
+    public void rejectedExecution(Runnable r, ThreadPoolExecutor e) { // EXHAUSTED（枯竭的、耗尽的）
         String msg = String.format("Thread pool is EXHAUSTED!" +
                         " Thread Name: %s, Pool Size: %d (active: %d, core: %d, max: %d, largest: %d), Task: %d (completed: "
                         + "%d)," +
-                        " Executor status:(isShutdown:%s, isTerminated:%s, isTerminating:%s), in %s://%s:%d!",
+                        " Executor status:(isShutdown:%s, isTerminated:%s, isTerminating:%s), in %s://%s:%d!",  //线程池耗尽的提示信息
                 threadName, e.getPoolSize(), e.getActiveCount(), e.getCorePoolSize(), e.getMaximumPoolSize(),
                 e.getLargestPoolSize(),
                 e.getTaskCount(), e.getCompletedTaskCount(), e.isShutdown(), e.isTerminated(), e.isTerminating(),
