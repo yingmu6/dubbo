@@ -288,7 +288,7 @@ public abstract class Proxy { //代理抽象类
     }
 
     /**
-     * get instance with special handler.
+     * get instance with special handler.（带着指定的处理类创建代理实例）
      *
      * @return instance.
      */

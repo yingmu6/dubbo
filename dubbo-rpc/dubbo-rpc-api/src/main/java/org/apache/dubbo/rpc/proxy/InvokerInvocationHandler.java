@@ -35,7 +35,7 @@ import java.lang.reflect.Method;
  * 3）动态代理就是Proxy的class文件在程序运行前是不存在，其字节码是在运行的时候自动生成的。
  * https://www.jianshu.com/p/4df6e4d7eb46
  */
-public class InvokerInvocationHandler implements InvocationHandler {
+public class InvokerInvocationHandler implements InvocationHandler { //Proxy与InvocationHandler结合使用，创建动态代理类
     // InvocationHandler：每一个代理实例都与一个调用处理类关联，当代理实例上的方法被调用时，会调用InvocationHandler的invoke方法（方法回调）
     private static final Logger logger = LoggerFactory.getLogger(InvokerInvocationHandler.class);
     private final Invoker<?> invoker;
@@ -84,6 +84,6 @@ public class InvokerInvocationHandler implements InvocationHandler {
             rpcInvocation.put(Constants.METHOD_MODEL, consumerModel.getMethodModel(method));
         }
 
-        return invoker.invoke(rpcInvocation).recreate();
+        return invoker.invoke(rpcInvocation).recreate(); //执行远程调用
     }
 }
