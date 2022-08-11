@@ -51,7 +51,7 @@ public interface Filter { //过滤器（过多使用时，需要考虑性能影�
      * 什么地方会引用？解：实现类可以选择是否实现，如ActiveLimitFilter实现了Filter.Listener但AccessLogFilter没实现
      * 相比2.5.6，多了信息响应以及异常处理
      */
-    interface Listener {
+    interface Listener { //过滤器中的监听器
         void onResponse(Result appResponse, Invoker<?> invoker, Invocation invocation);
 
         void onError(Throwable t, Invoker<?> invoker, Invocation invocation);

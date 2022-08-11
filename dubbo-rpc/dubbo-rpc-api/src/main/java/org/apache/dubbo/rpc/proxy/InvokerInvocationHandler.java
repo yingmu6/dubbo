@@ -53,7 +53,7 @@ public class InvokerInvocationHandler implements InvocationHandler { //Proxy与I
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         /**
          *  @csy 该方法的功能用途是什么？
-         *  执行远程方法的调用
+         *  执行远程方法的调用（执行具体接口的方法调用时，会进入该方法）
          */
 
         if (method.getDeclaringClass() == Object.class) {
