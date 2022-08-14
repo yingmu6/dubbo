@@ -26,7 +26,7 @@ import static org.apache.dubbo.rpc.Constants.$ECHO;
  * Dubbo provided default Echo echo service, which is available for all dubbo provider service interface.
  */
 @Activate(group = CommonConstants.PROVIDER, order = -110000)
-public class EchoFilter implements Filter { //Echo 服务用来判断服务提供 是否可用
+public class EchoFilter implements Filter { //Echo 服务用来判断服务提供是否可用
 
     @Override
     public Result invoke(Invoker<?> invoker, Invocation inv) throws RpcException {
