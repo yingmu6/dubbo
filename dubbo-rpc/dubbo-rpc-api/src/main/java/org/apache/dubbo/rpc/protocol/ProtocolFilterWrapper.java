@@ -43,9 +43,25 @@ public class ProtocolFilterWrapper implements Protocol { //org.apache.dubbo.rpc.
         this.protocol = protocol;
     }
 
+    /**
+     * 构造调用链讲解，参考：https://www.jianshu.com/p/09edc9549b8e
+     * 因为new Invoker<T>{...} 是个匿名类，编译后为：ProtocolFilterWrapper$1，构造函数为：ProtocolFilterWrapper$1(final Invoker val$invoker, final Filter val$filter, final Invoker val$next)
+     * 模拟逻辑为：
+     * 1）若过滤器依次为： A => B => C => D => E
+     * 2）构造过滤链的流程为：
+     * <p>
+     * 为了方便记忆，把每次循环编号，比如Loop(i) 表示第一次循环，last(i)表示第 i 次循环后的的last值。
+     * Loop(1)   last 1 = new ProtocolFilterWrapper$1( invoker , E , invoker )，
+     * Loop(2)   last 2 = new ProtocolFilterWrapper$1( invoker , D ,  last 1 )；
+     * Loop(3)   last 3 = new ProtocolFilterWrapper$1( invoker , C, last 2 )；
+     * Loop(4)   last 4 = new ProtocolFilterWrapper$1( invoker , B, last 3 )；
+     * Loop(5)   last 5 = new ProtocolFilterWrapper$1( invoker , A , last 4 )；
+     * <p>
+     * 最后 return last 5，这样就把所有filter串起来了，最终的Invoker chain顺序是 last 5 -> last 4 -> last 3 -> last 2 -> last 1(即invoker本身)。
+     */
     private static <T> Invoker<T> buildInvokerChain(final Invoker<T> invoker, String key, String group) { //构建调用链，并返回头结点
         Invoker<T> last = invoker;
-        List<Filter> filters = ExtensionLoader.getExtensionLoader(Filter.class).getActivateExtension(invoker.getUrl(), key, group);
+        List<Filter> filters = ExtensionLoader.getExtensionLoader(Filter.class).getActivateExtension(invoker.getUrl(), key, group); //获取满足条件的过滤器Filter列表
 
         if (!filters.isEmpty()) {
             for (int i = filters.size() - 1; i >= 0; i--) { //从后往前遍历，最后一个就是头结点
@@ -72,7 +88,7 @@ public class ProtocolFilterWrapper implements Protocol { //org.apache.dubbo.rpc.
                     public Result invoke(Invocation invocation) throws RpcException {
                         Result asyncResult;
                         try {
-                            asyncResult = filter.invoke(next, invocation);
+                            asyncResult = filter.invoke(next, invocation); //使用过滤器Filter执行调用
                         } catch (Exception e) {
                             /**
                              * 此处为什么会出现异常？都有哪些异常的？出现异常的处理逻辑是怎样的？
@@ -80,12 +96,12 @@ public class ProtocolFilterWrapper implements Protocol { //org.apache.dubbo.rpc.
                              * 具体的异常，看具体的实现类，如GenericFilter#invoke
                              */
 
-                            if (filter instanceof ListenableFilter) {
+                            if (filter instanceof ListenableFilter) { //若过滤器是ListenableFilter，则回调onError()方法响应错误
                                 ListenableFilter listenableFilter = ((ListenableFilter) filter);
                                 try {
                                     Filter.Listener listener = listenableFilter.listener(invocation);
                                     if (listener != null) {
-                                        listener.onError(e, invoker, invocation);
+                                        listener.onError(e, invoker, invocation); //使用监听器通知异常信息
                                     }
                                 } finally {
                                     listenableFilter.removeListener(invocation);
