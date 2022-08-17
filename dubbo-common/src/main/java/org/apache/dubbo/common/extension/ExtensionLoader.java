@@ -1093,7 +1093,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
      * <p>
      * like: ProtocolFilterWrapper, ProtocolListenerWrapper
      */
-    private void cacheWrapperClass(Class<?> clazz) {
+    private void cacheWrapperClass(Class<?> clazz) { //缓存封装类
         if (cachedWrapperClasses == null) {
             cachedWrapperClasses = new ConcurrentHashSet<>();
         }
