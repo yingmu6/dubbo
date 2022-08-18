@@ -31,7 +31,6 @@ import org.apache.dubbo.remoting.exchange.Request;
 import org.apache.dubbo.remoting.exchange.Response;
 import org.apache.dubbo.remoting.exchange.codec.ExchangeCodec;
 import org.apache.dubbo.remoting.telnet.codec.TelnetCodec;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -60,7 +59,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  *         4-11 id (long)
  *         12 -15 datalength
  */
-public class ExchangeCodecTest extends TelnetCodecTest {
+public class ExchangeCodecTest extends TelnetCodecTest { // Codec编码测试
     // magic header.
     private static final short MAGIC = (short) 0xdabb;
     private static final byte MAGIC_HIGH = (byte) Bytes.short2bytes(MAGIC)[0];

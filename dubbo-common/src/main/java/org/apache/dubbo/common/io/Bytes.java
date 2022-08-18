@@ -63,8 +63,8 @@ public class Bytes {
      * @param v value.
      * @return byte[].
      */
-    public static byte[] short2bytes(short v) {
-        byte[] ret = {0, 0};
+    public static byte[] short2bytes(short v) { //short值转换为byte数组
+        byte[] ret = {0, 0}; //一个short占用两个字节，所有用两个byte元素存储（先按对应的字节数转化为相对应的二进制，再做运算）
         short2bytes(v, ret);
         return ret;
     }
@@ -86,8 +86,23 @@ public class Bytes {
      * @param b byte array.
      */
     public static void short2bytes(short v, byte[] b, int off) {
-        b[off + 1] = (byte) v;
+        b[off + 1] = (byte) v; //byte的取值范围 -128 ~ 127，若没有超过这个返回，则可以直接强转
         b[off + 0] = (byte) (v >>> 8);
+    }
+
+    public static void main(String[] args) {
+        // 一个short为两个字节，先将字节转换为二进制数，如15的二进制表示 00000000 00001111
+        short v = 15;
+        byte[] b = new byte[2];
+        short2bytes(v, b, 0);
+        System.out.println(b[0] + ";;" + b[1]);
+
+        short v2 = 256;
+        byte[] b2 = new byte[2];
+        short2bytes(v2, b2, 0);
+        System.out.println(b2[0] + ";;" + b2[1]);
+
+        System.out.println((byte) 256);
     }
 
     /**

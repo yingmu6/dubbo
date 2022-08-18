@@ -21,7 +21,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.HEARTBEAT_EVENT;
 /**
  * Response（响应内容：包含响应状态、响应id、版本version、响应结果等）
  */
-public class Response {
+public class Response { // 响应状态值，协议头的第4个字节处理（第1、2个是魔法数，第3个是flag）
 
     /**
      * ok. 响应状态值

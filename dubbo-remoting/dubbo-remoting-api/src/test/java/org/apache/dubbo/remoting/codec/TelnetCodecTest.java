@@ -23,17 +23,11 @@ import org.apache.dubbo.remoting.Codec2;
 import org.apache.dubbo.remoting.buffer.ChannelBuffer;
 import org.apache.dubbo.remoting.buffer.ChannelBuffers;
 import org.apache.dubbo.remoting.telnet.codec.TelnetCodec;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -73,7 +67,7 @@ public class TelnetCodecTest {
         return ret;
     }
 
-    protected byte[] objectToByte(Object obj) {
+    protected byte[] objectToByte(Object obj) { //将对象转换为字节数组
         byte[] bytes;
         if (obj instanceof String) {
             bytes = ((String) obj).getBytes();
@@ -81,7 +75,7 @@ public class TelnetCodecTest {
             bytes = (byte[]) obj;
         } else {
             try {
-                //object to bytearray
+                //object to bytearray (对象转化为字节数组方式)
                 ByteArrayOutputStream bo = new ByteArrayOutputStream();
                 ObjectOutputStream oo = new ObjectOutputStream(bo);
                 oo.writeObject(obj);

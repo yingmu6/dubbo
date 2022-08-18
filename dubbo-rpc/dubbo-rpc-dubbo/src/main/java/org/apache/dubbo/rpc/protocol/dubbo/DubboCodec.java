@@ -73,10 +73,10 @@ public class DubboCodec extends ExchangeCodec {
             byte status = header[3];
             res.setStatus(status);
             try {
-                if (status == Response.OK) {
+                if (status == Response.OK) { //正常响应
                     Object data;
                     if (res.isEvent()) { //若是事件的话，按事件进行解析
-                        ObjectInput in = CodecSupport.deserialize(channel.getUrl(), is, proto);
+                        ObjectInput in = CodecSupport.deserialize(channel.getUrl(), is, proto); //获取序列化的输入流
                         data = decodeEventData(channel, in);
                     } else {
                         DecodeableRpcResult result;

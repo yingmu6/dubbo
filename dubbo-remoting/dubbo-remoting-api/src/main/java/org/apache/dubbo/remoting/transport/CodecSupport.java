@@ -36,7 +36,7 @@ import static org.apache.dubbo.common.serialize.Constants.*;
 public class CodecSupport {
 
     private static final Logger logger = LoggerFactory.getLogger(CodecSupport.class);
-    private static Map<Byte, Serialization> ID_SERIALIZATION_MAP = new HashMap<Byte, Serialization>();
+    private static Map<Byte, Serialization> ID_SERIALIZATION_MAP = new HashMap<Byte, Serialization>(); //序列化id与序列化实例的映射
     private static Map<Byte, String> ID_SERIALIZATIONNAME_MAP = new HashMap<Byte, String>(); //序列化id与扩展名称的映射
     private static Map<String, Byte> SERIALIZATIONNAME_ID_MAP = new HashMap<String, Byte>(); //扩展名称与序列化id的映射
 
