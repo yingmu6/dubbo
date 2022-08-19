@@ -24,12 +24,7 @@ import org.apache.dubbo.remoting.TimeoutException;
 import org.apache.dubbo.remoting.exchange.ExchangeClient;
 import org.apache.dubbo.remoting.exchange.support.header.HeaderExchangeClient;
 import org.apache.dubbo.remoting.transport.ClientDelegate;
-import org.apache.dubbo.rpc.AppResponse;
-import org.apache.dubbo.rpc.AsyncRpcResult;
-import org.apache.dubbo.rpc.Invocation;
-import org.apache.dubbo.rpc.Result;
-import org.apache.dubbo.rpc.RpcException;
-import org.apache.dubbo.rpc.RpcInvocation;
+import org.apache.dubbo.rpc.*;
 import org.apache.dubbo.rpc.protocol.AbstractInvoker;
 import org.apache.dubbo.rpc.support.RpcUtils;
 
@@ -43,17 +38,17 @@ import static org.apache.dubbo.rpc.Constants.TOKEN_KEY;
 import static org.apache.dubbo.rpc.protocol.dubbo.Constants.CALLBACK_SERVICE_KEY;
 
 /**
- * Server push uses this Invoker to continuously push data to client.
+ * Server push uses this Invoker to continuously（不断的） push data to client.
  * Wrap the existing invoker on the channel.
  */
-class ChannelWrappedInvoker<T> extends AbstractInvoker<T> {
+class ChannelWrappedInvoker<T> extends AbstractInvoker<T> { //服务端使用这个Invoker不断地推送数据给客户端
 
     private final Channel channel;
     private final String serviceKey;
     private final ExchangeClient currentClient;
 
     ChannelWrappedInvoker(Class<T> serviceType, Channel channel, URL url, String serviceKey) {
-        super(serviceType, url, new String[]{GROUP_KEY, TOKEN_KEY});
+        super(serviceType, url, new String[] {GROUP_KEY, TOKEN_KEY});
         this.channel = channel;
         this.serviceKey = serviceKey;
         this.currentClient = new HeaderExchangeClient(new ChannelWrapper(this.channel), false);

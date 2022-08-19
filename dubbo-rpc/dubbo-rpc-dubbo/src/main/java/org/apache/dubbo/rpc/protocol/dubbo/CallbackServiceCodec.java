@@ -110,7 +110,7 @@ class CallbackServiceCodec {
         URL exportUrl = new URL(DubboProtocol.NAME, channel.getLocalAddress().getAddress().getHostAddress(), channel.getLocalAddress().getPort(), clazz.getName() + "." + instid, tmpMap);
 
         // no need to generate multiple exporters for different channel in the same JVM, cache key cannot collide（冲突）.
-        String cacheKey = getClientSideCallbackServiceCacheKey(instid);
+        String cacheKey = getClientSideCallbackServiceCacheKey(instid); //构建缓存key
         String countKey = getClientSideCountKey(clazz.getName());
         if (export) {
             // one channel can have multiple callback instances, no need to re-export for different instance.
@@ -160,7 +160,7 @@ class CallbackServiceCodec {
                     proxy = PROXY_FACTORY.getProxy(new AsyncToSyncInvoker<>(invoker));
                     channel.setAttribute(proxyCacheKey, proxy);
                     channel.setAttribute(invokerCacheKey, invoker);
-                    increaseInstanceCount(channel, countkey);
+                    increaseInstanceCount(channel, countkey); //每引用一次，计数器就加一
 
                     //convert error fail fast .
                     //ignore concurrent problem.
@@ -215,7 +215,7 @@ class CallbackServiceCodec {
     }
 
     private static boolean isInstancesOverLimit(Channel channel, URL url, String interfaceClass, int instid, boolean isServer) {
-        Integer count = (Integer) channel.getAttribute(isServer ? getServerSideCountKey(channel, interfaceClass) : getClientSideCountKey(interfaceClass));
+        Integer count = (Integer) channel.getAttribute(isServer ? getServerSideCountKey(channel, interfaceClass) : getClientSideCountKey(interfaceClass)); //获取服务端或客户端的服务数目
         int limit = url.getParameter(CALLBACK_INSTANCES_LIMIT_KEY, DEFAULT_CALLBACK_INSTANCES);
         if (count != null && count >= limit) {
             //client side error

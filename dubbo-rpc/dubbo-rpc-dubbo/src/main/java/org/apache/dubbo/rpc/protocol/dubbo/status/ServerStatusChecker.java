@@ -47,7 +47,7 @@ public class ServerStatusChecker implements StatusChecker {
         for (ProtocolServer protocolServer : servers) {
             RemotingServer server = protocolServer.getRemotingServer();
             server.close();
-            if (!server.isBound()) {
+            if (!server.isBound()) { //判断通道是否是活跃的
                 level = Status.Level.ERROR;
                 buf.setLength(0);
                 buf.append(server.getLocalAddress());

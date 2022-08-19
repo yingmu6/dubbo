@@ -20,11 +20,7 @@ import org.apache.dubbo.common.constants.CommonConstants;
 import org.apache.dubbo.common.extension.Activate;
 import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
-import org.apache.dubbo.rpc.Filter;
-import org.apache.dubbo.rpc.Invocation;
-import org.apache.dubbo.rpc.Invoker;
-import org.apache.dubbo.rpc.Result;
-import org.apache.dubbo.rpc.RpcException;
+import org.apache.dubbo.rpc.*;
 import org.apache.dubbo.rpc.model.ApplicationModel;
 import org.apache.dubbo.rpc.model.AsyncMethodInfo;
 import org.apache.dubbo.rpc.model.ConsumerModel;
@@ -65,7 +61,7 @@ public class FutureFilter implements Filter, Filter.Listener {
         fireThrowCallback(invoker, invocation, t);
     }
 
-    private void fireInvokeCallback(final Invoker<?> invoker, final Invocation invocation) {
+    private void fireInvokeCallback(final Invoker<?> invoker, final Invocation invocation) { //fire: 解雇，发射
         final AsyncMethodInfo asyncMethodInfo = getAsyncMethodInfo(invoker, invocation);
         if (asyncMethodInfo == null) {
             return;

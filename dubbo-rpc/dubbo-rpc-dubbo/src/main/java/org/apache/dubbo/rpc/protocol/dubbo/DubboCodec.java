@@ -59,7 +59,7 @@ public class DubboCodec extends ExchangeCodec {
     private static final Logger log = LoggerFactory.getLogger(DubboCodec.class);
 
     @Override
-    protected Object decodeBody(Channel channel, InputStream is, byte[] header) throws IOException {
+    protected Object decodeBody(Channel channel, InputStream is, byte[] header) throws IOException { //将字节数组转换为对象
         byte flag = header[2], proto = (byte) (flag & SERIALIZATION_MASK);
         // get request id.
         long id = Bytes.bytes2long(header, 4);

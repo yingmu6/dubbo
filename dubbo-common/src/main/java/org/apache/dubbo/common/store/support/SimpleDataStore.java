@@ -24,11 +24,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-public class SimpleDataStore implements DataStore {
+public class SimpleDataStore implements DataStore { //简单的数据存储
 
     // <component name or id, <data-name, data-value>>
     private ConcurrentMap<String, ConcurrentMap<String, Object>> data =
-            new ConcurrentHashMap<String, ConcurrentMap<String, Object>>();
+            new ConcurrentHashMap<String, ConcurrentMap<String, Object>>(); //使用了Map做缓存
 
     @Override
     public Map<String, Object> get(String componentName) {

@@ -70,7 +70,7 @@ public class TraceFilter implements Filter {
         long start = System.currentTimeMillis();
         Result result = invoker.invoke(invocation);
         long end = System.currentTimeMillis();
-        if (TRACERS.size() > 0) {
+        if (TRACERS.size() > 0) { // 执行invoke后判断处理
             String key = invoker.getInterface().getName() + "." + invocation.getMethodName();
             Set<Channel> channels = TRACERS.get(key);
             if (channels == null || channels.isEmpty()) {

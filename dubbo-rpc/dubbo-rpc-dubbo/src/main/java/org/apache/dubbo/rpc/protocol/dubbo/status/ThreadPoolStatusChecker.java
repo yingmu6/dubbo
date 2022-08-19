@@ -35,8 +35,8 @@ public class ThreadPoolStatusChecker implements StatusChecker {
 
     @Override
     public Status check() {
-        DataStore dataStore = ExtensionLoader.getExtensionLoader(DataStore.class).getDefaultExtension();
-        Map<String, Object> executors = dataStore.get(CommonConstants.EXECUTOR_SERVICE_COMPONENT_KEY);
+        DataStore dataStore = ExtensionLoader.getExtensionLoader(DataStore.class).getDefaultExtension(); //获取数据存储对象
+        Map<String, Object> executors = dataStore.get(CommonConstants.EXECUTOR_SERVICE_COMPONENT_KEY); //获取存储的内容
 
         StringBuilder msg = new StringBuilder();
         Status.Level level = Status.Level.OK;
@@ -45,7 +45,7 @@ public class ThreadPoolStatusChecker implements StatusChecker {
             ExecutorService executor = (ExecutorService) entry.getValue();
 
             if (executor instanceof ThreadPoolExecutor) {
-                ThreadPoolExecutor tp = (ThreadPoolExecutor) executor;
+                ThreadPoolExecutor tp = (ThreadPoolExecutor) executor; //获取到线程池参数，将ActiveCount与Max线程数进行比较 (做线程数比较)
                 boolean ok = tp.getActiveCount() < tp.getMaximumPoolSize() - 1; //判断正在使用的线程数是否超过最大线程数-1（因为一般都是新加线程时判断，若判断成功，表明可以加入新线程）
                 Status.Level lvl = Status.Level.OK;
                 if (!ok) {
@@ -61,7 +61,7 @@ public class ThreadPoolStatusChecker implements StatusChecker {
                         .append(tp.getActiveCount()).append(", task:").append(tp.getTaskCount()).append(", service port: ").append(port);
             }
         }
-        return msg.length() == 0 ? new Status(Status.Level.UNKNOWN) : new Status(level, msg.toString());
+        return msg.length() == 0 ? new Status(Status.Level.UNKNOWN) : new Status(level, msg.toString()); //返回检查的Status
     }
 
 }
