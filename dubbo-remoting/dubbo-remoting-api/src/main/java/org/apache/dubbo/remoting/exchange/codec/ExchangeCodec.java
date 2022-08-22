@@ -87,7 +87,7 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
     protected Object decode(Channel channel, ChannelBuffer buffer, int readable, byte[] header) throws IOException {
         // check magic number.
         if (readable > 0 && header[0] != MAGIC_HIGH
-                || readable > 1 && header[1] != MAGIC_LOW) {
+                || readable > 1 && header[1] != MAGIC_LOW) { //没有包标志 0xdabb
             int length = header.length;
             if (header.length < readable) {
                 header = Bytes.copyOf(header, readable);
@@ -103,20 +103,20 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
             return super.decode(channel, buffer, readable, header);
         }
         // check length.
-        if (readable < HEADER_LENGTH) {
+        if (readable < HEADER_LENGTH) { //小于请求头长度，表明数据长度不够，还需要输入更多的信息（半包场景）
             return DecodeResult.NEED_MORE_INPUT;
         }
 
-        // get data length.
-        int len = Bytes.bytes2int(header, 12);
+        // get data length.（从请求头自己数组中获取到请求体的长度）
+        int len = Bytes.bytes2int(header, 12); //从指定位置，开始取int值，一个int占4个字节，所以会从下标12~15取出字节值，拼装为int值
         checkPayload(channel, len);
 
         int tt = len + HEADER_LENGTH;
-        if (readable < tt) {
+        if (readable < tt) { //buffer中可读字节数少于 请求体+请求头长度时，表明数据还不够，还需要更多的输入（半包场景）
             return DecodeResult.NEED_MORE_INPUT;
         }
 
-        // limit input stream.
+        // limit input stream. （构建buffer输入流，并设定相关的下标）
         ChannelBufferInputStream is = new ChannelBufferInputStream(buffer, len);
 
         try {
@@ -148,7 +148,7 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
             // get status.
             byte status = header[3];
             res.setStatus(status);
-            try {
+            try { //todo @pause
                 ObjectInput in = CodecSupport.deserialize(channel.getUrl(), is, proto); //模型转换，将输入流转换为Dubbo的输入流模型
                 if (status == Response.OK) {
                     Object data;

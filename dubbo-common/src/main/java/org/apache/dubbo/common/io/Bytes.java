@@ -298,7 +298,7 @@ public class Bytes {
      * @param off offset.
      * @return int.
      */
-    public static int bytes2int(byte[] b, int off) {
+    public static int bytes2int(byte[] b, int off) { //将byte数组转换为int值
         return ((b[off + 3] & 0xFF) << 0) +
                 ((b[off + 2] & 0xFF) << 8) +
                 ((b[off + 1] & 0xFF) << 16) +
@@ -347,7 +347,7 @@ public class Bytes {
      * @param off offset.
      * @return long.
      */
-    public static long bytes2long(byte[] b, int off) {
+    public static long bytes2long(byte[] b, int off) { //字节数组转换为long类型
         return ((b[off + 7] & 0xFFL) << 0) +
                 ((b[off + 6] & 0xFFL) << 8) +
                 ((b[off + 5] & 0xFFL) << 16) +

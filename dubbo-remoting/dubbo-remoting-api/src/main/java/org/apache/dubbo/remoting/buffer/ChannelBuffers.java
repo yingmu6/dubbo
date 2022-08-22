@@ -58,7 +58,7 @@ public final class ChannelBuffers { //ChannelBuffer的工具处理类，提供�
         return wrappedBuffer(dest);
     }
 
-    public static ChannelBuffer wrappedBuffer(byte[] array) {
+    public static ChannelBuffer wrappedBuffer(byte[] array) { //将字节数组封装为ChannelBuffer
         if (array == null) {
             throw new NullPointerException("array == null");
         }

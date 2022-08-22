@@ -52,14 +52,25 @@ public interface Codec2 {
      */
 
     @Adaptive({Constants.CODEC_KEY})
-    void encode(Channel channel, ChannelBuffer buffer, Object message) throws IOException;
+    void encode(Channel channel, ChannelBuffer buffer, Object message) throws IOException; // 通常我们也习惯将编码（Encode）称为序列化（serialization），它将对象序列化为字节数组，用于网络传输、数据持久化或者其它用途。
 
     @Adaptive({Constants.CODEC_KEY})
-    Object decode(Channel channel, ChannelBuffer buffer) throws IOException;
+    Object decode(Channel channel, ChannelBuffer buffer) throws IOException; // 解码（Decode）/反序列化（deserialization）把从网络、磁盘等读取的字节数组还原成原始对象（通常是原始对象的拷贝），以方便后续的业务逻辑操作
 
     enum DecodeResult { //解码枚举
         NEED_MORE_INPUT, SKIP_SOME_INPUT
     }
 
+    /**
+     *
+     * Java序列化的优缺点：
+     * Java默认提供的序列化机制，需要序列化的Java对象只需要实现 java.io.Serializable接口并生成序列化ID，这个类就能够通过java.io.ObjectInput和 java.io.ObjectOutput序列化和反序列化。
+     * 由于使用简单，开发门槛低，Java序列化得到了广泛的应用，但是由于它自身存在很多缺点，因此大多数的RPC框架并没有选择它。Java序列化的主要缺点如下：
+     * 1）无法跨语言：是Java序列化最致命的问题。对于跨进程的服务调用，服务提供者可能会使用C++或者其它语言开发，当我们需要和异构语言进程交互 时，Java序列化就难以胜任。由于Java序列化技术是Java语言内部的私有协议，其它语言并不支持，对于用户来说它完全是黑盒。Java序列化后的 字节数组，别的语言无法进行反序列化，这就严重阻碍了它的应用范围；
+     * 2）序列化后的码流太大: 例如使用二进制编解码技术对同一个复杂的POJO对象进行编码，它的码流仅仅为Java序列化之后的20%左右；目前主流的编解码框架，序列化之后的码流都远远小于原生的Java序列化；
+     * 3）序列化效率差：在相同的硬件条件下、对同一个POJO对象做100W次序列化，二进制编码和Java原生序列化的性能对比测试如下图所示：Java原生序列化的耗时是二进制编码的16.2倍，效率非常差
+     *
+     * https://blog.51cto.com/u_15061944/2593174  Netty编解码框架分析
+     */
 }
 

@@ -35,7 +35,7 @@ public class FastJsonObjectOutput implements ObjectOutput {
     }
 
     public FastJsonObjectOutput(Writer writer) {
-        this.writer = new PrintWriter(writer);
+        this.writer = new PrintWriter(writer); //对输出流进行封装
     }
 
     @Override

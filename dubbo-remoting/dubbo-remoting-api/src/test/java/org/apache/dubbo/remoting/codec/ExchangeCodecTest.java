@@ -79,23 +79,23 @@ public class ExchangeCodecTest extends TelnetCodecTest { // Codec编码测试
         return obj;
     }
 
-    private byte[] getRequestBytes(Object obj, byte[] header) throws IOException {
+    private byte[] getRequestBytes(Object obj, byte[] header) throws IOException { //构造请求头，请求体用输出流进行序列化
         // encode request data.
         UnsafeByteArrayOutputStream bos = new UnsafeByteArrayOutputStream(1024);
         ObjectOutput out = serialization.serialize(url, bos);
-        out.writeObject(obj);
+        out.writeObject(obj); //将对象写到输出流
 
         out.flushBuffer();
         bos.flush();
         bos.close();
         byte[] data = bos.toByteArray();
         byte[] len = Bytes.int2bytes(data.length);
-        System.arraycopy(len, 0, header, 12, 4);
-        byte[] request = join(header, data);
+        System.arraycopy(len, 0, header, 12, 4); //设置请求体长度
+        byte[] request = join(header, data); //将请求头+请求体对应的字节数组拼接
         return request;
     }
 
-    private byte[] assemblyDataProtocol(byte[] header) {
+    private byte[] assemblyDataProtocol(byte[] header) { //assembly：装配
         Person request = new Person();
         byte[] newbuf = join(header, objectToByte(request));
         return newbuf;
@@ -120,13 +120,13 @@ public class ExchangeCodecTest extends TelnetCodecTest { // Codec编码测试
     }
 
     @Test
-    public void test_Decode_Error_Length() throws IOException {
-        byte[] header = new byte[]{MAGIC_HIGH, MAGIC_LOW, 0x02, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-        Person person = new Person();
-        byte[] request = getRequestBytes(person, header);
+    public void test_Decode_Error_Length() throws IOException { //todo @pause
+        byte[] header = new byte[] {MAGIC_HIGH, MAGIC_LOW, 0x02, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //请求头
+        Person person = new Person(); //请求体
+        byte[] request = getRequestBytes(person, header); //将请求体序列化后与请求头字节数组拼接（模拟编码过程）
 
         Channel channel = getServerSideChannel(url);
-        byte[] baddata = new byte[]{1, 2};
+        byte[] baddata = new byte[] {1, 2}; //错误的数据，超出了编码请求头中的 指定长度86，解码时就会丢弃
         ChannelBuffer buffer = ChannelBuffers.wrappedBuffer(join(request, baddata));
         Response obj = (Response) codec.decode(channel, buffer);
         Assertions.assertEquals(person, obj.getResult());

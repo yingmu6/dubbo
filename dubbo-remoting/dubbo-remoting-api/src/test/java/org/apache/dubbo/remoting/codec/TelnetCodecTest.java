@@ -60,7 +60,7 @@ public class TelnetCodecTest {
         return channel;
     }
 
-    protected byte[] join(byte[] in1, byte[] in2) {
+    protected byte[] join(byte[] in1, byte[] in2) { //拼接字节数组 (使用数组拷贝，进行拼接)
         byte[] ret = new byte[in1.length + in2.length];
         System.arraycopy(in1, 0, ret, 0, in1.length);
         System.arraycopy(in2, 0, ret, in1.length, in2.length);
@@ -73,7 +73,7 @@ public class TelnetCodecTest {
             bytes = ((String) obj).getBytes();
         } else if (obj instanceof byte[]) {
             bytes = (byte[]) obj;
-        } else {
+        } else { //对象处理
             try {
                 //object to bytearray (对象转化为字节数组方式)
                 ByteArrayOutputStream bo = new ByteArrayOutputStream();

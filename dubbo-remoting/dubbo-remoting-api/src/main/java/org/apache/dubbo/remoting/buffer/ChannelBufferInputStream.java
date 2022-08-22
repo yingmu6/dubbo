@@ -23,8 +23,8 @@ import java.io.InputStream;
 public class ChannelBufferInputStream extends InputStream {
 
     private final ChannelBuffer buffer;
-    private final int startIndex;
-    private final int endIndex;
+    private final int startIndex; //请求体可读的开始位置
+    private final int endIndex; //请求体可读的结束位置
 
     public ChannelBufferInputStream(ChannelBuffer buffer) {
         this(buffer, buffer.readableBytes());
@@ -43,8 +43,8 @@ public class ChannelBufferInputStream extends InputStream {
 
         this.buffer = buffer;
         startIndex = buffer.readerIndex();
-        endIndex = startIndex + length;
-        buffer.markReaderIndex();
+        endIndex = startIndex + length; // endIndex：限制了结束位置，即使附加了有额外的参数，也会以请求头中的数据长度为准
+        buffer.markReaderIndex(); //标记当前读的索引位置
     }
 
     public int readBytes() {

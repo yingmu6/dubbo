@@ -60,7 +60,7 @@ public interface Serialization { //都有哪些序列化方式？ 可以看具�
      * @throws IOException
      */
     @Adaptive
-    ObjectOutput serialize(URL url, OutputStream output) throws IOException;
+    ObjectOutput serialize(URL url, OutputStream output) throws IOException; //获取序列化对应的输出流实例
 
     /**
      * Get a deserialization implementation instance

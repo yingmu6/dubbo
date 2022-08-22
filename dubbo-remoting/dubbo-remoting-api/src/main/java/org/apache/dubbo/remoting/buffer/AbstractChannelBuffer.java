@@ -74,7 +74,7 @@ public abstract class AbstractChannelBuffer implements ChannelBuffer {
     }
 
     @Override
-    public void setIndex(int readerIndex, int writerIndex) {
+    public void setIndex(int readerIndex, int writerIndex) { //设置读、写下标
         if (readerIndex < 0 || readerIndex > writerIndex || writerIndex > capacity()) {
             throw new IndexOutOfBoundsException();
         }

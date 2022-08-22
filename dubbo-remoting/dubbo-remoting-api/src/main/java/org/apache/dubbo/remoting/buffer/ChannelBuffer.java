@@ -423,7 +423,7 @@ public interface ChannelBuffer extends Comparable<ChannelBuffer> {
      * calling {@link #resetReaderIndex()}. The initial value of the marked
      * {@code readerIndex} is {@code 0}.
      */
-    void markReaderIndex();
+    void markReaderIndex(); //标记当前在buffer中读的索引
 
     /**
      * Marks the current {@code writerIndex} in this buffer.  You can reposition
@@ -462,7 +462,7 @@ public interface ChannelBuffer extends Comparable<ChannelBuffer> {
      * @throws IndexOutOfBoundsException if {@code dst.length} is greater than
      *                                   {@code this.readableBytes}
      */
-    void readBytes(byte[] dst);
+    void readBytes(byte[] dst); //从buffer中读取数据，写到目标数组dst中
 
     /**
      * Transfers this buffer's data to the specified destination starting at the
