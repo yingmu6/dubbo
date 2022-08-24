@@ -33,7 +33,7 @@ public interface ObjectInput extends DataInput {
      * @throws ClassNotFoundException if an ClassNotFoundException occurs
      */
     @Deprecated
-    Object readObject() throws IOException, ClassNotFoundException;
+    Object readObject() throws IOException, ClassNotFoundException; //从输入流中读取对象（已被弃用，最好要指定对象类型）
 
     /**
      * read object （从输入流中读取内容，并转换为指定类型的对象）

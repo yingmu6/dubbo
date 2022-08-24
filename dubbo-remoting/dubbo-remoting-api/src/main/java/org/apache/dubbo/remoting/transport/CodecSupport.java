@@ -52,7 +52,7 @@ public class CodecSupport {
                         + ", ignore this Serialization extension");
                 continue;
             }
-            ID_SERIALIZATION_MAP.put(idByte, serialization);
+            ID_SERIALIZATION_MAP.put(idByte, serialization); //将序列化id与序列化实例缓存起来
             ID_SERIALIZATIONNAME_MAP.put(idByte, name);
             SERIALIZATIONNAME_ID_MAP.put(name, idByte);
         }
@@ -78,9 +78,10 @@ public class CodecSupport {
         Serialization serialization = getSerializationById(id);
         String serializationName = url.getParameter(Constants.SERIALIZATION_KEY, Constants.DEFAULT_REMOTING_SERIALIZATION);
         // Check if "serialization id" passed from network matches the id on this side(only take effect for JDK serialization), for security purpose.
+        // （检查网络传来的“序列化id”是否与这边的id匹配（只对JDK序列化有效），出于安全考虑。）
         if (serialization == null
                 || ((id == JAVA_SERIALIZATION_ID || id == NATIVE_JAVA_SERIALIZATION_ID || id == COMPACTED_JAVA_SERIALIZATION_ID)
-                && !(serializationName.equals(ID_SERIALIZATIONNAME_MAP.get(id))))) {
+                && !(serializationName.equals(ID_SERIALIZATIONNAME_MAP.get(id))))) { //检查url中的序列化id是否正确
             throw new IOException("Unexpected serialization id:" + id + " received from network, please check if the peer send the right id.");
         }
         return serialization;

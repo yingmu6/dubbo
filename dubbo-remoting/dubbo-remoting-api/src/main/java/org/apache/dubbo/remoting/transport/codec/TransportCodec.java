@@ -33,6 +33,7 @@ import java.io.OutputStream;
 /**
  * Subclasses {@link org.apache.dubbo.remoting.telnet.codec.TelnetCodec} and {@link org.apache.dubbo.remoting.exchange.codec.ExchangeCodec}
  * both override all the methods declared in this class.
+ * （TelnetCodec、ExchangeCodec 完全重写了TransportCodec的方法，也就是TransportCodec的方法在这两个类中不适用了，后续可以弃用掉）
  */
 @Deprecated
 public class TransportCodec extends AbstractCodec { //业务编码类都需要继承此类
@@ -40,7 +41,7 @@ public class TransportCodec extends AbstractCodec { //业务编码类都需要�
     @Override
     public void encode(Channel channel, ChannelBuffer buffer, Object message) throws IOException {
         OutputStream output = new ChannelBufferOutputStream(buffer);
-        ObjectOutput objectOutput = getSerialization(channel).serialize(channel.getUrl(), output);
+        ObjectOutput objectOutput = getSerialization(channel).serialize(channel.getUrl(), output); //用底层的输出流构建Dubbo的输出流
         encodeData(channel, objectOutput, message);
         objectOutput.flushBuffer();
         if (objectOutput instanceof Cleanable) {

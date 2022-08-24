@@ -68,7 +68,7 @@ public class Hessian2ObjectOutput implements ObjectOutput {
     }
 
     @Override
-    public void writeFloat(float v) throws IOException {
+    public void writeFloat(float v) throws IOException { //Hessian2有提供写入具体参数的方法
         mH2o.writeDouble(v);
     }
 

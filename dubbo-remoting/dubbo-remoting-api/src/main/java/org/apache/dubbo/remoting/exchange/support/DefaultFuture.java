@@ -50,7 +50,7 @@ public class DefaultFuture extends CompletableFuture<Object> {
 
     private static final Map<Long, Channel> CHANNELS = new ConcurrentHashMap<>();
 
-    private static final Map<Long, DefaultFuture> FUTURES = new ConcurrentHashMap<>();
+    private static final Map<Long, DefaultFuture> FUTURES = new ConcurrentHashMap<>(); //请求id与DefaultFuture实例的缓存映射
 
     public static final Timer TIME_OUT_TIMER = new HashedWheelTimer(
             new NamedThreadFactory("dubbo-future-timeout", true),

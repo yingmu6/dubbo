@@ -120,14 +120,14 @@ public class ExchangeCodecTest extends TelnetCodecTest { // Codec编码测试
     }
 
     @Test
-    public void test_Decode_Error_Length() throws IOException { //todo @pause
+    public void test_Decode_Error_Length() throws IOException {
         byte[] header = new byte[] {MAGIC_HIGH, MAGIC_LOW, 0x02, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //请求头
         Person person = new Person(); //请求体
         byte[] request = getRequestBytes(person, header); //将请求体序列化后与请求头字节数组拼接（模拟编码过程）
 
         Channel channel = getServerSideChannel(url);
-        byte[] baddata = new byte[] {1, 2}; //错误的数据，超出了编码请求头中的 指定长度86，解码时就会丢弃
-        ChannelBuffer buffer = ChannelBuffers.wrappedBuffer(join(request, baddata));
+        byte[] baddata = new byte[] {1, 2}; //错误的数据，超出了编码请求头中的 指定长度，解码时就会丢弃
+        ChannelBuffer buffer = ChannelBuffers.wrappedBuffer(join(request, baddata)); //想把baddata拼接到报文对应的字节数组的尾部
         Response obj = (Response) codec.decode(channel, buffer);
         Assertions.assertEquals(person, obj.getResult());
         //only decode necessary bytes
@@ -136,16 +136,16 @@ public class ExchangeCodecTest extends TelnetCodecTest { // Codec编码测试
 
     @Test
     public void test_Decode_Error_Response_Object() throws IOException {
-        //00000010-response/oneway/hearbeat=true |20-stats=ok|id=0|length=0
-        byte[] header = new byte[]{MAGIC_HIGH, MAGIC_LOW, 0x02, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        //00000010-response/oneway/hearbeat=true |20-stats=ok|id=0|length=0  (对请求头进行解读，按占据多少bit来看待请求头，8bit=1byte)
+        byte[] header = new byte[] {MAGIC_HIGH, MAGIC_LOW, 0x02, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         Person person = new Person();
         byte[] request = getRequestBytes(person, header);
         //bad object
-        byte[] badbytes = new byte[]{-1, -2, -3, -4, -3, -4, -3, -4, -3, -4, -3, -4};
-        System.arraycopy(badbytes, 0, request, 21, badbytes.length);
+        byte[] badbytes = new byte[] {-1, -2, -3, -4, -3, -4, -3, -4, -3, -4, -3, -4};
+        System.arraycopy(badbytes, 0, request, 21, badbytes.length); //想把报文对应的字节数组的中间的字节替换掉
 
         Response obj = (Response) decode(request);
-        Assertions.assertEquals(90, obj.getStatus());
+        Assertions.assertEquals(90, obj.getStatus()); //90 - CLIENT_ERROR（因为更改了内容，无法反序列化为原来的对象，就会报反序列化异常，捕获后就以90 客户端异常抛出来）
     }
 
     @Test

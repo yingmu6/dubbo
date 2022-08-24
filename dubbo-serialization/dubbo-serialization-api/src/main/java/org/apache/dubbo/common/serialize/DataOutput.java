@@ -22,6 +22,7 @@ import java.io.IOException;
  * Basic data type output interface.（支持输出各种基本类型的数据）
  */
 public interface DataOutput {
+    //接口层次上，可支持按各种类型写入，具体的实现逻辑看具体的序列化方式，如fastJson最终都是按Object写入，而Hessian2有提供具体类型的方法调用
 
     /**
      * Write boolean.
@@ -106,7 +107,7 @@ public interface DataOutput {
     void writeBytes(byte[] v, int off, int len) throws IOException;
 
     /**
-     * Flush buffer.
+     * Flush buffer.（刷新缓冲区）
      *
      * @throws IOException
      */

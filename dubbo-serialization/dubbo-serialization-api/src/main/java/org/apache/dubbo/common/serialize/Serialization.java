@@ -33,7 +33,13 @@ import java.io.OutputStream;
  * </pre>
  */
 @SPI("hessian2")
-public interface Serialization { //都有哪些序列化方式？ 可以看具体的序列化策略，比如protobuf、fastJson、hessian2等
+public interface Serialization { // 序列化对应的策略接口
+    //都有哪些序列化方式？ 可以看具体的序列化策略，比如protobuf、fastJson、hessian2等
+
+    /**
+     * 1）先获取到序列化、发序列化对应的输出流ObjectOutput、输入流ObjectInput
+     * 2）然后再执行对应的读readObject()、写操作writeObject()
+     */
 
     /**
      * Get content type unique id, recommended that custom implementations use values different with
@@ -42,10 +48,10 @@ public interface Serialization { //都有哪些序列化方式？ 可以看具�
      *
      * @return content type id
      */
-    byte getContentTypeId();
+    byte getContentTypeId(); //获取序列化方式对应的id
 
     /**
-     * Get content type
+     * Get content type（获取序列化对应的方式）
      *
      * @return content type
      */
@@ -63,10 +69,10 @@ public interface Serialization { //都有哪些序列化方式？ 可以看具�
     ObjectOutput serialize(URL url, OutputStream output) throws IOException; //获取序列化对应的输出流实例
 
     /**
-     * Get a deserialization implementation instance
+     * Get a deserialization implementation instance （获取反序列化实现实例：即为反序列化对应的输入流）
      *
-     * @param url URL address for the remote service
-     * @param input the underlying input stream
+     * @param url   URL address for the remote service
+     * @param input the underlying input stream （底层输入流）
      * @return deserializer
      * @throws IOException
      */

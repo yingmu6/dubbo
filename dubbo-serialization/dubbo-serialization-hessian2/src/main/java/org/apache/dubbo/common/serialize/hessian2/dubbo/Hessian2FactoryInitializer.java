@@ -16,15 +16,14 @@
  */
 package org.apache.dubbo.common.serialize.hessian2.dubbo;
 
+import com.alibaba.com.caucho.hessian.io.SerializerFactory;
 import org.apache.dubbo.common.config.ConfigurationUtils;
 import org.apache.dubbo.common.extension.ExtensionLoader;
 import org.apache.dubbo.common.extension.SPI;
 import org.apache.dubbo.common.utils.StringUtils;
 
-import com.alibaba.com.caucho.hessian.io.SerializerFactory;
-
 @SPI("default")
-public interface Hessian2FactoryInitializer {
+public interface Hessian2FactoryInitializer { //hessian2的工厂初始化类
     String WHITELIST = "dubbo.application.hessian2.whitelist";
     String ALLOW = "dubbo.application.hessian2.allow";
     String DENY = "dubbo.application.hessian2.deny";
@@ -34,7 +33,7 @@ public interface Hessian2FactoryInitializer {
 
     static Hessian2FactoryInitializer getInstance() {
         String whitelist = ConfigurationUtils.getProperty(WHITELIST);
-        if (StringUtils.isNotEmpty(whitelist)) {
+        if (StringUtils.isNotEmpty(whitelist)) { //可以设置白名单
             return loader.getExtension("whitelist");
         }
         return loader.getDefaultExtension();

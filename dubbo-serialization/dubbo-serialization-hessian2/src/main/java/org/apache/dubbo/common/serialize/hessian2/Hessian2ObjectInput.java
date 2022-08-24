@@ -16,10 +16,9 @@
  */
 package org.apache.dubbo.common.serialize.hessian2;
 
+import com.alibaba.com.caucho.hessian.io.Hessian2Input;
 import org.apache.dubbo.common.serialize.ObjectInput;
 import org.apache.dubbo.common.serialize.hessian2.dubbo.Hessian2FactoryInitializer;
-
-import com.alibaba.com.caucho.hessian.io.Hessian2Input;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,7 +29,7 @@ import java.lang.reflect.Type;
  */
 public class Hessian2ObjectInput implements ObjectInput {
 
-    private static ThreadLocal<Hessian2Input> INPUT_TL = ThreadLocal.withInitial(() -> {
+    private static ThreadLocal<Hessian2Input> INPUT_TL = ThreadLocal.withInitial(() -> { //本地线程
         Hessian2Input h2i = new Hessian2Input(null);
         h2i.setSerializerFactory(Hessian2FactoryInitializer.getInstance().getSerializerFactory());
         h2i.setCloseStreamOnClose(true);
@@ -41,7 +40,7 @@ public class Hessian2ObjectInput implements ObjectInput {
 
     public Hessian2ObjectInput(InputStream is) {
         mH2i = INPUT_TL.get();
-        mH2i.init(is);
+        mH2i.init(is); //初始化Hessian2的输入流
     }
 
     @Override

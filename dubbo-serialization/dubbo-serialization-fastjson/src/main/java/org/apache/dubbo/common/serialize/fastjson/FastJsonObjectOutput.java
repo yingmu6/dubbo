@@ -74,7 +74,7 @@ public class FastJsonObjectOutput implements ObjectOutput {
     }
 
     @Override
-    public void writeUTF(String v) throws IOException {
+    public void writeUTF(String v) throws IOException { //fastJson中不管是怎样的类型，最终都是按对象写入
         writeObject(v);
     }
 

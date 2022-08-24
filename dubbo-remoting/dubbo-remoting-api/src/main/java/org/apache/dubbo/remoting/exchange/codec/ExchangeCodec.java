@@ -83,8 +83,9 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
         return decode(channel, buffer, readable, header);
     }
 
+    // 解码返回Object，相当于泛型处理，哪种类型的Object都可适应
     @Override
-    protected Object decode(Channel channel, ChannelBuffer buffer, int readable, byte[] header) throws IOException {
+    protected Object decode(Channel channel, ChannelBuffer buffer, int readable, byte[] header) throws IOException { //报文中只有一个head，body可以分包传输，然后再进行组装
         // check magic number.
         if (readable > 0 && header[0] != MAGIC_HIGH
                 || readable > 1 && header[1] != MAGIC_LOW) { //没有包标志 0xdabb
@@ -111,7 +112,7 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
         int len = Bytes.bytes2int(header, 12); //从指定位置，开始取int值，一个int占4个字节，所以会从下标12~15取出字节值，拼装为int值
         checkPayload(channel, len);
 
-        int tt = len + HEADER_LENGTH;
+        int tt = len + HEADER_LENGTH; //传输报文的总长度
         if (readable < tt) { //buffer中可读字节数少于 请求体+请求头长度时，表明数据还不够，还需要更多的输入（半包场景）
             return DecodeResult.NEED_MORE_INPUT;
         }
@@ -146,15 +147,15 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
                 res.setEvent(true);
             }
             // get status.
-            byte status = header[3];
+            byte status = header[3]; //从请求头中获取响应状态
             res.setStatus(status);
-            try { //todo @pause
+            try {
                 ObjectInput in = CodecSupport.deserialize(channel.getUrl(), is, proto); //模型转换，将输入流转换为Dubbo的输入流模型
                 if (status == Response.OK) {
                     Object data;
-                    if (res.isHeartbeat()) {
+                    if (res.isHeartbeat()) { //心跳事件
                         data = decodeHeartbeatData(channel, in);
-                    } else if (res.isEvent()) {
+                    } else if (res.isEvent()) { //普通事件
                         data = decodeEventData(channel, in);
                     } else {
                         data = decodeResponseData(channel, in, getRequestData(id));
@@ -163,7 +164,7 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
                 } else {
                     res.setErrorMessage(in.readUTF());
                 }
-            } catch (Throwable t) {
+            } catch (Throwable t) { //解析出错就报出"客户端出错"
                 res.setStatus(Response.CLIENT_ERROR);
                 res.setErrorMessage(StringUtils.toString(t));
             }
@@ -201,7 +202,7 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
         if (future == null) {
             return null;
         }
-        Request req = future.getRequest();
+        Request req = future.getRequest(); //获取异步的请求数据
         if (req == null) {
             return null;
         }
@@ -374,7 +375,7 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
 
     protected Object decodeResponseData(ObjectInput in) throws IOException {
         try {
-            return in.readObject();
+            return in.readObject(); //从输入流中读取出对象
         } catch (ClassNotFoundException e) {
             throw new IOException(StringUtils.toString("Read object failed.", e));
         }
