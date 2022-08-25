@@ -59,7 +59,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  *         4-11 id (long)
  *         12 -15 datalength
  */
-public class ExchangeCodecTest extends TelnetCodecTest { // Codec编码测试
+public class ExchangeCodecTest extends TelnetCodecTest { // Codec编码测试（测试类也继承）
     // magic header.
     private static final short MAGIC = (short) 0xdabb;
     private static final byte MAGIC_HIGH = (byte) Bytes.short2bytes(MAGIC)[0];
@@ -97,7 +97,7 @@ public class ExchangeCodecTest extends TelnetCodecTest { // Codec编码测试
 
     private byte[] assemblyDataProtocol(byte[] header) { //assembly：装配
         Person request = new Person();
-        byte[] newbuf = join(header, objectToByte(request));
+        byte[] newbuf = join(header, objectToByte(request)); //拼接请求头 + 请求体的字节数组
         return newbuf;
     }
     //===================================================================================
@@ -108,19 +108,25 @@ public class ExchangeCodecTest extends TelnetCodecTest { // Codec编码测试
     }
 
     @Test
-    public void test_Decode_Error_MagicNum() throws IOException {
+    public void test_Decode_Error_MagicNum() throws IOException { //测试请求报文中没有包含完整的魔法数
+        /**
+         * 功能描述：当请求报文中没有完整的魔法数，即连着的Oxdabb，则交由TelnetCodec来解码。按命令解码时，如果没有包含指令的指令，会返回DecodeResult.NEED_MORE_INPUT信息
+         */
         HashMap<byte[], Object> inputBytes = new HashMap<byte[], Object>();
-        inputBytes.put(new byte[]{0}, TelnetCodec.DecodeResult.NEED_MORE_INPUT);
-        inputBytes.put(new byte[]{MAGIC_HIGH, 0}, TelnetCodec.DecodeResult.NEED_MORE_INPUT);
-        inputBytes.put(new byte[]{0, MAGIC_LOW}, TelnetCodec.DecodeResult.NEED_MORE_INPUT);
+        inputBytes.put(new byte[] {0}, TelnetCodec.DecodeResult.NEED_MORE_INPUT); //请求头中没有魔法数
+        inputBytes.put(new byte[] {MAGIC_HIGH, 0}, TelnetCodec.DecodeResult.NEED_MORE_INPUT); //请求头中只有魔法数高位， DecodeResult是Codec2的内部枚举，TelnetCodec继承了Codec2，所以可以引用
+        inputBytes.put(new byte[] {0, MAGIC_LOW}, TelnetCodec.DecodeResult.NEED_MORE_INPUT); //只有魔法数低位
 
-        for (Map.Entry<byte[], Object> entry: inputBytes.entrySet()) {
+        for (Map.Entry<byte[], Object> entry : inputBytes.entrySet()) {
             testDecode_assertEquals(assemblyDataProtocol(entry.getKey()), entry.getValue());
         }
     }
 
     @Test
-    public void test_Decode_Error_Length() throws IOException {
+    public void test_Decode_Error_Length() throws IOException { //测试在请求报文中附加额外的数据
+        /**
+         * 功能描述：请求报文若附加了额外的数据，不会被解析，解析时会严格按照请求头指定的body长度来解析
+         */
         byte[] header = new byte[] {MAGIC_HIGH, MAGIC_LOW, 0x02, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //请求头
         Person person = new Person(); //请求体
         byte[] request = getRequestBytes(person, header); //将请求体序列化后与请求头字节数组拼接（模拟编码过程）
@@ -135,7 +141,11 @@ public class ExchangeCodecTest extends TelnetCodecTest { // Codec编码测试
     }
 
     @Test
-    public void test_Decode_Error_Response_Object() throws IOException {
+    public void test_Decode_Error_Response_Object() throws IOException { //解析将请求体中的内容变更
+        /**
+         * 功能描述：覆盖了请求体的内容，就无法反序列化出对象，会解析异常，最后会返回客户端异常90的状态值
+         */
+
         //00000010-response/oneway/hearbeat=true |20-stats=ok|id=0|length=0  (对请求头进行解读，按占据多少bit来看待请求头，8bit=1byte)
         byte[] header = new byte[] {MAGIC_HIGH, MAGIC_LOW, 0x02, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         Person person = new Person();

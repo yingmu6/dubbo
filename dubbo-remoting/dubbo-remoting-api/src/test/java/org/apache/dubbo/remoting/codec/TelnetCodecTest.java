@@ -43,7 +43,7 @@ public class TelnetCodecTest {
      */
     @BeforeEach
     public void setUp() throws Exception {
-        codec = new TelnetCodec();
+        codec = new TelnetCodec(); //codec：如果是启动当前测试用例时，codec的实例为TelnetCodec，如果启动的是ExchangeCodecTest时，会赋值为ExchangeCodec（使用继承的思想）
     }
 
     protected AbstractMockChannel getServerSideChannel(URL url) {
@@ -76,10 +76,10 @@ public class TelnetCodecTest {
         } else { //对象处理
             try {
                 //object to bytearray (对象转化为字节数组方式)
-                ByteArrayOutputStream bo = new ByteArrayOutputStream();
-                ObjectOutputStream oo = new ObjectOutputStream(bo);
+                ByteArrayOutputStream bo = new ByteArrayOutputStream(); //字节数组输出流：数据会被写进字节数组
+                ObjectOutputStream oo = new ObjectOutputStream(bo); //此处是使用java方式序列化
                 oo.writeObject(obj);
-                bytes = bo.toByteArray();
+                bytes = bo.toByteArray(); //从输出流中获取字节数组（同样的内容，都是对Person对象序列化，Hessian2序列化后的字节数组为70个字节，而java的字节数为116，明显大了很多）
                 bo.close();
                 oo.close();
             } catch (Exception e) {

@@ -39,7 +39,7 @@ import static org.apache.dubbo.remoting.Constants.DEFAULT_CHARSET;
 /**
  * TelnetCodec
  */
-public class TelnetCodec extends TransportCodec {
+public class TelnetCodec extends TransportCodec { //在终端执行telnet指定的编解码
 
     private static final Logger logger = LoggerFactory.getLogger(TelnetCodec.class);
 
@@ -51,15 +51,21 @@ public class TelnetCodec extends TransportCodec {
 
     private static final byte[] DOWN = new byte[] {27, 91, 66};
 
-    private static final List<?> ENTER = Arrays.asList(
+    private static final List<?> ENTER = Arrays.asList( //换行指令
             new byte[] {'\r', '\n'} /* Windows Enter */,
             new byte[] {'\n'} /* Linux Enter */);
 
-    private static final List<?> EXIT = Arrays.asList(
+    private static final List<?> EXIT = Arrays.asList( //退出对应的字节数组，是个二维数组
             new byte[] {3} /* Windows Ctrl+C */,
             new byte[] {-1, -12, -1, -3, 6} /* Linux Ctrl+C */,
             new byte[] {-1, -19, -1, -3, 6} /* Linux Pause */);
 
+    /**
+     * 获取字符集的逻辑
+     * 1）从通道Channel的设置的属性值获取
+     * 2）若没有，从通道的Url中获取
+     * 3）若还没有，则取默认的字符集（默认字符集为UTF-8）
+     */
     private static Charset getCharset(Channel channel) {
         if (channel != null) {
             Object attribute = channel.getAttribute(CHARSET_KEY); //获取配置的字符集名称
@@ -127,11 +133,11 @@ public class TelnetCodec extends TransportCodec {
         return new String(copy, 0, index, charset.name()).trim();
     }
 
-    private static boolean isEquals(byte[] message, byte[] command) throws IOException {
+    private static boolean isEquals(byte[] message, byte[] command) throws IOException { //判断第一个数组是否和第二个数组相等
         return message.length == command.length && endsWith(message, command);
     }
 
-    private static boolean endsWith(byte[] message, byte[] command) throws IOException {
+    private static boolean endsWith(byte[] message, byte[] command) throws IOException { //判断第一个数组是否是以第二个数组结尾
         if (message.length < command.length) {
             return false;
         }
@@ -152,7 +158,7 @@ public class TelnetCodec extends TransportCodec {
             }
             byte[] msgData = ((String) message).getBytes(getCharset(channel).name()); //若是字符串，直接根据字符集获取字节数组
             buffer.writeBytes(msgData);
-        } else { //对象类型处理
+        } else { //对象类型处理，交由父类来处理
             super.encode(channel, buffer, message);
         }
     }
@@ -167,7 +173,7 @@ public class TelnetCodec extends TransportCodec {
     
     @SuppressWarnings("unchecked")
     protected Object decode(Channel channel, ChannelBuffer buffer, int readable, byte[] message) throws IOException {
-        if (isClientSide(channel)) {
+        if (isClientSide(channel)) { //若是客户端，直接将字节数组转换为字符串
             return toString(message, getCharset(channel));
         }
         checkPayload(channel, readable);
@@ -186,7 +192,7 @@ public class TelnetCodec extends TransportCodec {
         }
 
         for (Object command : EXIT) {
-            if (isEquals(message, (byte[]) command)) {
+            if (isEquals(message, (byte[]) command)) { //判断是否包含"退出指令"，若包含则关闭channel
                 if (logger.isInfoEnabled()) {
                     logger.info(new Exception("Close channel " + channel + " on exit command: " + Arrays.toString((byte[]) command)));
                 }
@@ -260,7 +266,7 @@ public class TelnetCodec extends TransportCodec {
                 break;
             }
         }
-        if (enter == null) {
+        if (enter == null) { //如果都不是上述的Telnet指令，则认为数据不完整，还需要输入更多的数据
             return DecodeResult.NEED_MORE_INPUT;
         }
         LinkedList<String> history = (LinkedList<String>) channel.getAttribute(HISTORY_LIST_KEY);

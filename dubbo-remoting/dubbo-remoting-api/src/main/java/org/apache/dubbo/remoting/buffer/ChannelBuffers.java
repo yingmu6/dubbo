@@ -65,7 +65,7 @@ public final class ChannelBuffers { //ChannelBuffer的工具处理类，提供�
         if (array.length == 0) {
             return EMPTY_BUFFER;
         }
-        return new HeapChannelBuffer(array);
+        return new HeapChannelBuffer(array); //ChannelBuffer实例为HeapChannelBuffer，将输入的字节数组存在Buffer维护的字节数组中
     }
 
     public static ChannelBuffer wrappedBuffer(ByteBuffer buffer) {

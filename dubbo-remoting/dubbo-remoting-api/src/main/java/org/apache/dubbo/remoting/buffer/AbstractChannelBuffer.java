@@ -208,7 +208,7 @@ public abstract class AbstractChannelBuffer implements ChannelBuffer {
     public void readBytes(byte[] dst, int dstIndex, int length) {
         checkReadableBytes(length);
         getBytes(readerIndex, dst, dstIndex, length);
-        readerIndex += length;
+        readerIndex += length; //读取数据后，更改读下标
     }
 
     @Override

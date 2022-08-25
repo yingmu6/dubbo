@@ -477,7 +477,7 @@ public interface ChannelBuffer extends Comparable<ChannelBuffer> {
      *                                   or if {@code dstIndex + length} is
      *                                   greater than {@code dst.length}
      */
-    void readBytes(byte[] dst, int dstIndex, int length);
+    void readBytes(byte[] dst, int dstIndex, int length); //读取缓存区buffer的内容，写到目标数组中
 
     /**
      * Transfers this buffer's data to the specified destination starting at the

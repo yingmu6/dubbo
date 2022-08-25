@@ -78,8 +78,8 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
     @Override
     public Object decode(Channel channel, ChannelBuffer buffer) throws IOException {
         int readable = buffer.readableBytes();
-        byte[] header = new byte[Math.min(readable, HEADER_LENGTH)];
-        buffer.readBytes(header);
+        byte[] header = new byte[Math.min(readable, HEADER_LENGTH)]; //若可读数少于16字节，就按可读数构建请求头
+        buffer.readBytes(header); //从buffer中读取请求头内容
         return decode(channel, buffer, readable, header);
     }
 
@@ -88,20 +88,20 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
     protected Object decode(Channel channel, ChannelBuffer buffer, int readable, byte[] header) throws IOException { //报文中只有一个head，body可以分包传输，然后再进行组装
         // check magic number.
         if (readable > 0 && header[0] != MAGIC_HIGH
-                || readable > 1 && header[1] != MAGIC_LOW) { //没有包标志 0xdabb
+                || readable > 1 && header[1] != MAGIC_LOW) { //没有完整的包标志 0xdabb
             int length = header.length;
             if (header.length < readable) {
                 header = Bytes.copyOf(header, readable);
-                buffer.readBytes(header, length, readable - length);
+                buffer.readBytes(header, length, readable - length); //举例：HeapChannelBuffer中没有申明readBytes()方法，是继承AbstractChannelBuffer的，所以会先进入父类
             }
             for (int i = 1; i < header.length - 1; i++) {
-                if (header[i] == MAGIC_HIGH && header[i + 1] == MAGIC_LOW) {
+                if (header[i] == MAGIC_HIGH && header[i + 1] == MAGIC_LOW) { //判断是否存在有相连的包标志
                     buffer.readerIndex(buffer.readerIndex() - header.length + i);
                     header = Bytes.copyOf(header, i);
                     break;
                 }
             }
-            return super.decode(channel, buffer, readable, header);
+            return super.decode(channel, buffer, readable, header); //没有包含魔法数，则认为是Telnet输入的数据，按父类TelnetCodec的解码方式进行解码，若没有找到对应Telnet指令，则会抛出DecodeResult.NEED_MORE_INPUT
         }
         // check length.
         if (readable < HEADER_LENGTH) { //小于请求头长度，表明数据长度不够，还需要输入更多的信息（半包场景）

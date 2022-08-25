@@ -51,9 +51,9 @@ public class Bytes {
      * @param length new length.
      * @return new byte array.
      */
-    public static byte[] copyOf(byte[] src, int length) {
+    public static byte[] copyOf(byte[] src, int length) { //从原字节数组拷贝指定长度的元素，创新新的字节数组
         byte[] dest = new byte[length];
-        System.arraycopy(src, 0, dest, 0, Math.min(src.length, length));
+        System.arraycopy(src, 0, dest, 0, Math.min(src.length, length)); //若数组的实际长度小于指定长度，按实际长度来拷贝
         return dest;
     }
 

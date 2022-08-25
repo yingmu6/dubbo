@@ -26,7 +26,7 @@ import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AbstractMockChannel implements Channel {
+public class AbstractMockChannel implements Channel { //用于单元测试中
     public static final String LOCAL_ADDRESS = "local";
     public static final String REMOTE_ADDRESS = "remote";
     public static final String ERROR_WHEN_SEND = "error_when_send";

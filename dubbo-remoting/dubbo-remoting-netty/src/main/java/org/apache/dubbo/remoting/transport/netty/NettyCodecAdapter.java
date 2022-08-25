@@ -19,30 +19,20 @@ package org.apache.dubbo.remoting.transport.netty;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.remoting.Codec2;
 import org.apache.dubbo.remoting.buffer.DynamicChannelBuffer;
-
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
-import org.jboss.netty.channel.Channel;
-import org.jboss.netty.channel.ChannelHandler;
+import org.jboss.netty.channel.*;
 import org.jboss.netty.channel.ChannelHandler.Sharable;
-import org.jboss.netty.channel.ChannelHandlerContext;
-import org.jboss.netty.channel.Channels;
-import org.jboss.netty.channel.ExceptionEvent;
-import org.jboss.netty.channel.MessageEvent;
-import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
 import org.jboss.netty.handler.codec.oneone.OneToOneEncoder;
 
 import java.io.IOException;
 
-import static org.apache.dubbo.remoting.Constants.BUFFER_KEY;
-import static org.apache.dubbo.remoting.Constants.DEFAULT_BUFFER_SIZE;
-import static org.apache.dubbo.remoting.Constants.MAX_BUFFER_SIZE;
-import static org.apache.dubbo.remoting.Constants.MIN_BUFFER_SIZE;
+import static org.apache.dubbo.remoting.Constants.*;
 
 /**
  * NettyCodecAdapter.
  */
-final class NettyCodecAdapter {
+final class NettyCodecAdapter { //todo @pause 处理拆包、粘包
 
     private final ChannelHandler encoder = new InternalEncoder();
 

@@ -41,7 +41,7 @@ public abstract class AbstractCodec implements Codec2 {
 
     private static final String SERVER_SIDE = "server";
 
-    protected static void checkPayload(Channel channel, long size) throws IOException { //检查负载大小（指的是请求体的长度）
+    protected static void checkPayload(Channel channel, long size) throws IOException { //检查负载大小（来源：可以是请求体的长度、可读数readable等）
         int payload = Constants.DEFAULT_PAYLOAD;
         if (channel != null && channel.getUrl() != null) {
             payload = channel.getUrl().getParameter(Constants.PAYLOAD_KEY, Constants.DEFAULT_PAYLOAD);
@@ -66,11 +66,11 @@ public abstract class AbstractCodec implements Codec2 {
             return false;
         } else {
             InetSocketAddress address = channel.getRemoteAddress();
-            URL url = channel.getUrl();
+            URL url = channel.getUrl(); //远程url，即服务端的url
             boolean isClient = url.getPort() == address.getPort()
                     && NetUtils.filterLocalHost(url.getIp()).equals(
                     NetUtils.filterLocalHost(address.getAddress()
-                            .getHostAddress()));
+                            .getHostAddress())); //比较逻辑：当通道中的远程地址与url地址比较，如果远程是服务端，那么当前就是客户端，反之类推（也可以按localAddress来判断）
             channel.setAttribute(SIDE_KEY, isClient ? CLIENT_SIDE
                 : SERVER_SIDE);
             return isClient;

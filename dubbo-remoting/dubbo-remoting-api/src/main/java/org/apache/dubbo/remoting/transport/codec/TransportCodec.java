@@ -42,7 +42,7 @@ public class TransportCodec extends AbstractCodec { //业务编码类都需要�
     public void encode(Channel channel, ChannelBuffer buffer, Object message) throws IOException {
         OutputStream output = new ChannelBufferOutputStream(buffer);
         ObjectOutput objectOutput = getSerialization(channel).serialize(channel.getUrl(), output); //用底层的输出流构建Dubbo的输出流
-        encodeData(channel, objectOutput, message);
+        encodeData(channel, objectOutput, message); //因为TelnetCodec中没有该方法，所以会执行ExchangeCodec或DubboCodec，有多级继承时，哪个子类重写了该方法，就执行哪个类的方法
         objectOutput.flushBuffer();
         if (objectOutput instanceof Cleanable) {
             ((Cleanable) objectOutput).cleanup();
