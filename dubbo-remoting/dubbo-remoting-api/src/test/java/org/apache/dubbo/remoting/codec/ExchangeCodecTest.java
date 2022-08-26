@@ -72,7 +72,7 @@ public class ExchangeCodecTest extends TelnetCodecTest { // Codec编码测试（
     }
 
     private Object decode(byte[] request) throws IOException {
-        ChannelBuffer buffer = ChannelBuffers.wrappedBuffer(request);
+        ChannelBuffer buffer = ChannelBuffers.wrappedBuffer(request); //将byte数组封装为ChannelBuffer实例
         AbstractMockChannel channel = getServerSideChannel(url);
         //decode
         Object obj = codec.decode(channel, buffer);
@@ -159,14 +159,17 @@ public class ExchangeCodecTest extends TelnetCodecTest { // Codec编码测试（
     }
 
     @Test
-    public void testInvalidSerializaitonId() throws Exception {
-        byte[] header = new byte[]{MAGIC_HIGH, MAGIC_LOW, (byte)0x8F, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-        Object obj =  decode(header);
-        Assertions.assertTrue(obj instanceof Request);
+    public void testInvalidSerializaitonId() throws Exception { //测试无效的序列化id
+        // 0x8F对应的十进制143，二进制为10001111，后5个bit是序列化id，值为15（该值是没有的序列化id，参见org.apache.dubbo.common.serialize.Constants）
+        byte[] header = new byte[] {MAGIC_HIGH, MAGIC_LOW, (byte) 0x8F, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        Object obj = decode(header);
+        Assertions.assertTrue(obj instanceof Request); //解析出错时，还是返回Request/Response对象，设置标志或状态
         Request request = (Request) obj;
         Assertions.assertTrue(request.isBroken());
-        Assertions.assertTrue(request.getData() instanceof IOException);
-        header = new byte[]{MAGIC_HIGH, MAGIC_LOW, (byte)0x1F, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        Assertions.assertTrue(request.getData() instanceof IOException); // 由于序列化id不存在，所以没有找到序列化实例，就抛出异常了
+
+        // 0x1F对应的十进制为31，二进制为00011111，后5个bit是序列化id，值为31（该序列化id也是不存在的，因为第一位是0，会构建Response对象）
+        header = new byte[] {MAGIC_HIGH, MAGIC_LOW, (byte) 0x1F, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
         obj = decode(header);
         Assertions.assertTrue(obj instanceof Response);
@@ -176,14 +179,14 @@ public class ExchangeCodecTest extends TelnetCodecTest { // Codec编码测试（
     }
 
     @Test
-    public void test_Decode_Check_Payload() throws IOException {
-        byte[] header = new byte[]{MAGIC_HIGH, MAGIC_LOW, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+    public void test_Decode_Check_Payload() throws IOException { //测试 解码时检查负载大小的功能
+        byte[] header = new byte[] {MAGIC_HIGH, MAGIC_LOW, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
         byte[] request = assemblyDataProtocol(header);
         try {
             testDecode_assertEquals(request, TelnetCodec.DecodeResult.NEED_MORE_INPUT);
-            fail();
+            fail(); // 主动抛出异常
         } catch (IOException expected) {
-            Assertions.assertTrue(expected.getMessage().startsWith("Data length too large: " + Bytes.bytes2int(new byte[]{1, 1, 1, 1})));
+            Assertions.assertTrue(expected.getMessage().startsWith("Data length too large: " + Bytes.bytes2int(new byte[] {1, 1, 1, 1})));
         }
     }
 

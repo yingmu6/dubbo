@@ -37,7 +37,7 @@ public class Request { //请求内容
 
     private boolean mEvent = false;
 
-    private boolean mBroken = false;
+    private boolean mBroken = false; //broken：破碎的，残碎的，在有异常时，值为true，且mData中会存储异常信息
 
     private Object mData; //请求体
 

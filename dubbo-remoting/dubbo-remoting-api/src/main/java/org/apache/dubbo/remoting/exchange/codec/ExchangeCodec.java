@@ -54,10 +54,10 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
     protected static final byte MAGIC_HIGH = Bytes.short2bytes(MAGIC)[0];
     protected static final byte MAGIC_LOW = Bytes.short2bytes(MAGIC)[1];
     // message flag.ExchangeCodec
-    protected static final byte FLAG_REQUEST = (byte) 0x80; // 十进制为128，二进制位10000000
+    protected static final byte FLAG_REQUEST = (byte) 0x80; // 十进制为128，二进制位10000000（进行按位与的运算，可取出字节中第一位的值）
     protected static final byte FLAG_TWOWAY = (byte) 0x40; // 十进制为64，二进制位01000000
     protected static final byte FLAG_EVENT = (byte) 0x20; // 十进制为32，二进制位00100000
-    protected static final int SERIALIZATION_MASK = 0x1f;
+    protected static final int SERIALIZATION_MASK = 0x1f; // 十进制为31，二进制为00011111（与该值进行按位与运算，就可以获取后5个bit对应的值，即序列化id，而不用将数字先转换为二进制数，然后再做加法获取指定位数的值）
     private static final Logger logger = LoggerFactory.getLogger(ExchangeCodec.class);
 
     public Short getMagicCode() {
@@ -110,6 +110,8 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
 
         // get data length.（从请求头自己数组中获取到请求体的长度）
         int len = Bytes.bytes2int(header, 12); //从指定位置，开始取int值，一个int占4个字节，所以会从下标12~15取出字节值，拼装为int值
+
+        // 在解析body内容时，先解析出请求头的len，判断是否超过负载容量（会信任请求头的len，还不是按实际读出的字节数来判断）
         checkPayload(channel, len);
 
         int tt = len + HEADER_LENGTH; //传输报文的总长度
@@ -136,13 +138,13 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
         }
     }
 
-    protected Object decodeBody(Channel channel, InputStream is, byte[] header) throws IOException {
-        byte flag = header[2], proto = (byte) (flag & SERIALIZATION_MASK);
+    protected Object decodeBody(Channel channel, InputStream is, byte[] header) throws IOException { //构建Request、Response对象，并将从输入流读取的内容存入构建的对象中
+        byte flag = header[2], proto = (byte) (flag & SERIALIZATION_MASK); // 取出序列化id值，直接用按位与求值（简单粗暴的方法是：先转换为二进制，然后每位求值，再相加）
         // get request id.
         long id = Bytes.bytes2long(header, 4);
-        if ((flag & FLAG_REQUEST) == 0) {
+        if ((flag & FLAG_REQUEST) == 0) { // 取出req/res标志位的值，0表示响应
             // decode response.
-            Response res = new Response(id);
+            Response res = new Response(id); //构建响应对象
             if ((flag & FLAG_EVENT) != 0) {
                 res.setEvent(true);
             }
@@ -169,9 +171,9 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
                 res.setErrorMessage(StringUtils.toString(t));
             }
             return res;
-        } else {
+        } else { //req/res标志位值为1，表示请求
             // decode request.
-            Request req = new Request(id);
+            Request req = new Request(id); //构建请求对象
             req.setVersion(Version.getProtocolVersion());
             req.setTwoWay((flag & FLAG_TWOWAY) != 0);
             if ((flag & FLAG_EVENT) != 0) {
@@ -188,7 +190,7 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
                     data = decodeRequestData(channel, in);
                 }
                 req.setData(data);
-            } catch (Throwable t) {
+            } catch (Throwable t) { //反序列化异常时，进行捕获，并将broken置为true，将异常信息设置到Request对象的data字段（容错处理，云端反序列化出现异常）
                 // bad request
                 req.setBroken(true);
                 req.setData(t);

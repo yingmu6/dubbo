@@ -103,6 +103,10 @@ public class Bytes {
         System.out.println(b2[0] + ";;" + b2[1]);
 
         System.out.println((byte) 256);
+
+        System.out.println("byte转换为int " + bytes2int(new byte[] {1, 1, 1, 1}));
+
+        System.out.println("byte转换为int2 " + bytes2int(new byte[] {3, 5, 1, 7})); //50659591
     }
 
     /**
@@ -293,6 +297,14 @@ public class Bytes {
 
     /**
      * to int.
+     * 字节数组转换为int的逻辑，如new byte[] {1,1,1,1}
+     * 说明：字节数组还是按左高位、右低位排列起来的
+     * 手动验证：可以将每个数字按照二进制展开，然后按顺序拼接起来，然后依次相加计算出值（一个int占4个字节，所以最终拼接出32位）
+     * <p>
+     * 代码处理流程：使用按位与、移位运算进行处理
+     * 1）通过和0xFF按位与，得到具体二进制展示形式
+     * 2）然后通过移位，将数组的元素移动到相应位置
+     * 3）最后各位累加求和，得到最终的值
      *
      * @param b   byte array.
      * @param off offset.
