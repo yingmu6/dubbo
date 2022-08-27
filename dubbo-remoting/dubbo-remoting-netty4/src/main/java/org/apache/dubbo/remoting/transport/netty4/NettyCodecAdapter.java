@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * NettyCodecAdapter.
  */
-final public class NettyCodecAdapter {
+final public class NettyCodecAdapter { //Netty编码适配器
 
     private final ChannelHandler encoder = new InternalEncoder();
 
@@ -58,7 +58,7 @@ final public class NettyCodecAdapter {
         return decoder;
     }
 
-    private class InternalEncoder extends MessageToByteEncoder {
+    private class InternalEncoder extends MessageToByteEncoder { //继承了Netty的编码器
 
         @Override
         protected void encode(ChannelHandlerContext ctx, Object msg, ByteBuf out) throws Exception {
@@ -69,7 +69,7 @@ final public class NettyCodecAdapter {
         }
     }
 
-    private class InternalDecoder extends ByteToMessageDecoder {
+    private class InternalDecoder extends ByteToMessageDecoder { //继承Netty的解码器
 
         @Override
         protected void decode(ChannelHandlerContext ctx, ByteBuf input, List<Object> out) throws Exception {
@@ -82,7 +82,7 @@ final public class NettyCodecAdapter {
             do {
                 int saveReaderIndex = message.readerIndex();
                 Object msg = codec.decode(channel, message);
-                if (msg == Codec2.DecodeResult.NEED_MORE_INPUT) {
+                if (msg == Codec2.DecodeResult.NEED_MORE_INPUT) { //如果NEED_MORE_INPUT，数据不完整，继续进行循环读取内容
                     message.readerIndex(saveReaderIndex);
                     break;
                 } else {
@@ -91,10 +91,10 @@ final public class NettyCodecAdapter {
                         throw new IOException("Decode without read data.");
                     }
                     if (msg != null) {
-                        out.add(msg);
+                        out.add(msg); //如果包完整了，则加到读取的对象列表中
                     }
                 }
-            } while (message.readable());
+            } while (message.readable()); //若还有可读的数据，则继续循环处理
         }
     }
 }

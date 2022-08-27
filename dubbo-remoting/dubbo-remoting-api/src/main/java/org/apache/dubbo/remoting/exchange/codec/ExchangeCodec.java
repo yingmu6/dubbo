@@ -96,15 +96,15 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
             }
             for (int i = 1; i < header.length - 1; i++) {
                 if (header[i] == MAGIC_HIGH && header[i + 1] == MAGIC_LOW) { //判断是否存在有相连的包标志
-                    buffer.readerIndex(buffer.readerIndex() - header.length + i);
+                    buffer.readerIndex(buffer.readerIndex() - header.length + i); //重设置readerIndex
                     header = Bytes.copyOf(header, i);
                     break;
                 }
             }
-            return super.decode(channel, buffer, readable, header); //没有包含魔法数，则认为是Telnet输入的数据，按父类TelnetCodec的解码方式进行解码，若没有找到对应Telnet指令，则会抛出DecodeResult.NEED_MORE_INPUT
+            return super.decode(channel, buffer, readable, header); //首部没有包含完整魔法数或魔法数不在首部，则认为是Telnet输入的数据，按父类TelnetCodec的解码方式进行解码，若没有找到对应Telnet指令，则会抛出DecodeResult.NEED_MORE_INPUT
         }
         // check length.
-        if (readable < HEADER_LENGTH) { //小于请求头长度，表明数据长度不够，还需要输入更多的信息（半包场景）
+        if (readable < HEADER_LENGTH) { //小于请求头长度，表明数据长度不够，还需要输入更多的信息（半包场景或请求头长度不足场景）
             return DecodeResult.NEED_MORE_INPUT;
         }
 
@@ -130,7 +130,7 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
                     if (logger.isWarnEnabled()) {
                         logger.warn("Skip input stream " + is.available());
                     }
-                    StreamUtils.skipUnusedStream(is);
+                    StreamUtils.skipUnusedStream(is); //跳过并弃用未使用的字节
                 } catch (IOException e) {
                     logger.warn(e.getMessage(), e);
                 }
@@ -164,7 +164,7 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
                     }
                     res.setResult(data);
                 } else {
-                    res.setErrorMessage(in.readUTF());
+                    res.setErrorMessage(in.readUTF()); //如果请求头中的状态为非正常状态，就把输入的值作为错误内容返回
                 }
             } catch (Throwable t) { //解析出错就报出"客户端出错"
                 res.setStatus(Response.CLIENT_ERROR);
@@ -174,7 +174,7 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
         } else { //req/res标志位值为1，表示请求
             // decode request.
             Request req = new Request(id); //构建请求对象
-            req.setVersion(Version.getProtocolVersion());
+            req.setVersion(Version.getProtocolVersion()); //设置版本号
             req.setTwoWay((flag & FLAG_TWOWAY) != 0);
             if ((flag & FLAG_EVENT) != 0) {
                 req.setEvent(true);

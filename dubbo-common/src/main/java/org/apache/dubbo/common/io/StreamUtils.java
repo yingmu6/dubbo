@@ -225,7 +225,7 @@ public class StreamUtils {
 
     public static void skipUnusedStream(InputStream is) throws IOException {
         if (is.available() > 0) {
-            is.skip(is.available());
+            is.skip(is.available()); //跳过并弃用指定的字节数
         }
     }
 }

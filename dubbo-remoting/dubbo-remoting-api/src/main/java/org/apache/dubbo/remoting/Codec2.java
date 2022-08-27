@@ -55,7 +55,7 @@ public interface Codec2 {
     @Adaptive({Constants.CODEC_KEY})
     void encode(Channel channel, ChannelBuffer buffer, Object message) throws IOException; // 通常我们也习惯将编码（Encode）称为序列化（serialization），它将对象序列化为字节数组，用于网络传输、数据持久化或者其它用途。
 
-    // 功能描述：从buffer中读取字节数组，然后反序列化为对象并返回
+    // 功能描述：从buffer中读取字节数组，然后反序列化为对象并返回（解码返回的对象，可能是Request、Response，需要根据请求头标志位来判断）
     @Adaptive({Constants.CODEC_KEY})
     Object decode(Channel channel, ChannelBuffer buffer) throws IOException; // 解码（Decode）/反序列化（deserialization）把从网络、磁盘等读取的字节数组还原成原始对象（通常是原始对象的拷贝），以方便后续的业务逻辑操作
 

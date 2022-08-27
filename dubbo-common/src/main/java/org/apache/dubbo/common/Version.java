@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 /**
  * Version
  */
-public final class Version {
+public final class Version { // 获取版本号的工具类
     private static final Logger logger = LoggerFactory.getLogger(Version.class);
 
     private static final Pattern PREFIX_DIGITS_PATTERN = Pattern.compile("^([0-9]*).*");
@@ -54,7 +54,7 @@ public final class Version {
 
     static { //类在加载时，会被执行。  所以，会先检测Version、在检测其它类（先看看类都进行了哪些初始化）
         // check if there's duplicated jar
-        Version.checkDuplicate(Version.class);
+        Version.checkDuplicate(Version.class); //检查Version.class是否重复
     }
 
     private Version() {
@@ -234,17 +234,17 @@ public final class Version {
     }
 
     public static void checkDuplicate(Class<?> cls, boolean failOnError) { //构建类对应的相对路径，如org/apache/dubbo/config/spring/schema/DubboNamespaceHandler.class
-        checkDuplicate(cls.getName().replace('.', '/') + ".class", failOnError);
+        checkDuplicate(cls.getName().replace('.', '/') + ".class", failOnError); //将类路径转换为资源路径
     }
 
-    public static void checkDuplicate(Class<?> cls) {
+    public static void checkDuplicate(Class<?> cls) { //检查
         checkDuplicate(cls, false);
     }
 
     public static void checkDuplicate(String path, boolean failOnError) {
         try {
             // search in caller's classloader
-            Set<String> files = getResources(path);
+            Set<String> files = getResources(path); //加载指定路径下的文件
             // duplicated jar is found
             if (files.size() > 1) {
                 String error = "Duplicate class " + path + " in " + files.size() + " jar " + files;

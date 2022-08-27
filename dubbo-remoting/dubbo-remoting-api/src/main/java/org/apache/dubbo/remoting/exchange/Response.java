@@ -139,7 +139,7 @@ public class Response { // 响应状态值，协议头的第4个字节处理（�
         this.mEvent = mEvent;
     }
 
-    public boolean isHeartbeat() {
+    public boolean isHeartbeat() { //心跳事件是事件中一种（是事件，且响应结果是指定的心跳result）
         return mEvent && HEARTBEAT_EVENT == mResult;
     }
 

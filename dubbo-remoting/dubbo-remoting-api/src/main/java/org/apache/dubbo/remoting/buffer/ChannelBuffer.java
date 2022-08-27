@@ -31,7 +31,7 @@ import java.nio.ByteBuffer;
  * <p/>
  * It is recommended to create a new buffer using the helper methods in {@link
  * ChannelBuffers} rather than calling an individual implementation's
- * constructor.
+ * constructor. （推荐使用ChannelBuffers创建、而不是调用自身的构造函数）
  * <p/>
  * <h3>Random Access Indexing</h3>
  * <p/>
@@ -50,13 +50,13 @@ import java.nio.ByteBuffer;
  * }
  * </pre>
  * <p/>
- * <h3>Sequential Access Indexing</h3>
+ * <h3>Sequential Access Indexing（顺序访问索引）</h3>
  * <p/>
  * {@link ChannelBuffer} provides two pointer variables to support sequential
  * read and write operations - {@link #readerIndex() readerIndex} for a read
  * operation and {@link #writerIndex() writerIndex} for a write operation
  * respectively.  The following diagram shows how a buffer is segmented into
- * three areas by the two pointers:
+ * three areas by the two pointers: （提供了两个索引，支持读索引和写索引）
  * <p/>
  * <pre>
  *      +-------------------+------------------+------------------+
@@ -67,7 +67,7 @@ import java.nio.ByteBuffer;
  *      0      <=      readerIndex   <=   writerIndex    <=    capacity
  * </pre>
  * <p/>
- * <h4>Readable bytes (the actual content)</h4>
+ * <h4>Readable bytes (the actual content) 可读内容：指buffer中当前实际存在的内容 </h4>
  * <p/>
  * This segment is where the actual data is stored.  Any operation whose name
  * starts with {@code read} or {@code skip} will get or skip the data at the

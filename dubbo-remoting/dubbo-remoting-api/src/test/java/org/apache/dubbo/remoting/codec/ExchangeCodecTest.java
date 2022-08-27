@@ -191,33 +191,34 @@ public class ExchangeCodecTest extends TelnetCodecTest { // Codec编码测试（
     }
 
     @Test
-    public void test_Decode_Header_Need_Readmore() throws IOException {
-        byte[] header = new byte[]{MAGIC_HIGH, MAGIC_LOW, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    public void test_Decode_Header_Need_Readmore() throws IOException { //测试请求头长度不足16字节场景
+        byte[] header = new byte[] {MAGIC_HIGH, MAGIC_LOW, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         testDecode_assertEquals(header, TelnetCodec.DecodeResult.NEED_MORE_INPUT);
     }
 
     @Test
-    public void test_Decode_Body_Need_Readmore() throws IOException {
-        byte[] header = new byte[]{MAGIC_HIGH, MAGIC_LOW, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 'a', 'a'};
+    public void test_Decode_Body_Need_Readmore() throws IOException { //测试请求体body的实际可读数不足的场景
+        byte[] header = new byte[] {MAGIC_HIGH, MAGIC_LOW, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 'a', 'a'};
         testDecode_assertEquals(header, TelnetCodec.DecodeResult.NEED_MORE_INPUT);
     }
 
     @Test
-    public void test_Decode_MigicCodec_Contain_ExchangeHeader() throws IOException {
-        byte[] header = new byte[]{0, 0, MAGIC_HIGH, MAGIC_LOW, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    public void test_Decode_MigicCodec_Contain_ExchangeHeader() throws IOException { //测试魔法数在中间的情况（按TelnetCodec解析）
+        byte[] header = new byte[] {0, 0, MAGIC_HIGH, MAGIC_LOW, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
         Channel channel = getServerSideChannel(url);
         ChannelBuffer buffer = ChannelBuffers.wrappedBuffer(header);
         Object obj = codec.decode(channel, buffer);
         Assertions.assertEquals(TelnetCodec.DecodeResult.NEED_MORE_INPUT, obj);
         //If the telnet data and request data are in the same data packet, we should guarantee that the receipt of request data won't be affected by the factor that telnet does not have an end characters.
+        // (如果 telnet 数据和请求数据在同一个数据包中，我们应该保证请求数据的接收不会受到 telnet 没有结束字符的因素的影响。)
         Assertions.assertEquals(2, buffer.readerIndex());
     }
 
     @Test
-    public void test_Decode_Return_Response_Person() throws IOException {
-        //00000010-response/oneway/hearbeat=false/hessian |20-stats=ok|id=0|length=0
-        byte[] header = new byte[]{MAGIC_HIGH, MAGIC_LOW, 2, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    public void test_Decode_Return_Response_Person() throws IOException { //测试正常的解码（返回正常状态以及指定对象）
+        //00000010-response/oneway/hearbeat=false/hessian |20-stats=ok|id=0|length=0 （将请求头先解析出来，明确具体含义）
+        byte[] header = new byte[] {MAGIC_HIGH, MAGIC_LOW, 2, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         Person person = new Person();
         byte[] request = getRequestBytes(person, header);
 
@@ -228,19 +229,19 @@ public class ExchangeCodecTest extends TelnetCodecTest { // Codec编码测试（
     }
 
     @Test //The status input has a problem, and the read information is wrong when the serialization is serialized.
-    public void test_Decode_Return_Response_Error() throws IOException {
-        byte[] header = new byte[]{MAGIC_HIGH, MAGIC_LOW, 2, 90, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    public void test_Decode_Return_Response_Error() throws IOException { //测试请求头的status为非正常时，解码返回错误描述信息
+        byte[] header = new byte[] {MAGIC_HIGH, MAGIC_LOW, 2, 90, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         String errorString = "encode request data error ";
         byte[] request = getRequestBytes(errorString, header);
         Response obj = (Response) decode(request);
-        Assertions.assertEquals(90, obj.getStatus());
+        Assertions.assertEquals(90, obj.getStatus()); //当请求头的status为非正常状态时，输入的信息会作为错误描述信息直接返回
         Assertions.assertEquals(errorString, obj.getErrorMessage());
     }
 
     @Test
-    public void test_Decode_Return_Request_Event_Object() throws IOException {
-        //|10011111|20-stats=ok|id=0|length=0
-        byte[] header = new byte[]{MAGIC_HIGH, MAGIC_LOW, (byte) 0xe2, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    public void test_Decode_Return_Request_Event_Object() throws IOException { //测试正常的请求Request返回
+        //|11100010|20-stats=ok|id=0|length=0
+        byte[] header = new byte[] {MAGIC_HIGH, MAGIC_LOW, (byte) 0xe2, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         Person person = new Person();
         byte[] request = getRequestBytes(person, header);
 
