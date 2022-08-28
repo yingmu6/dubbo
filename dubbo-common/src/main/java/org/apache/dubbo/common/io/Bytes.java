@@ -107,6 +107,9 @@ public class Bytes {
         System.out.println("byte转换为int " + bytes2int(new byte[] {1, 1, 1, 1}));
 
         System.out.println("byte转换为int2 " + bytes2int(new byte[] {3, 5, 1, 7})); //50659591
+
+        byte[] bytes = short2bytes((short) 212);
+        System.out.println("short转换为byte数组" + bytes[0] + "," + bytes[1]);
     }
 
     /**

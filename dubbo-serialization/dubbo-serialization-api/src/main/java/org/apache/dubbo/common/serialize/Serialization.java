@@ -59,6 +59,7 @@ public interface Serialization { // 序列化对应的策略接口
 
     /**
      * Get a serialization implementation instance
+     * （通过自适应方式获取序列化实例，从参数url获取序列化实例，默认hessian2，找到实例后再执行serialize()方法）
      *
      * @param url    URL address for the remote service
      * @param output the underlying output stream
@@ -66,7 +67,7 @@ public interface Serialization { // 序列化对应的策略接口
      * @throws IOException
      */
     @Adaptive
-    ObjectOutput serialize(URL url, OutputStream output) throws IOException; //获取序列化对应的输出流实例
+    ObjectOutput serialize(URL url, OutputStream output) throws IOException; //获取指定序列化对应的输出流实例
 
     /**
      * Get a deserialization implementation instance （获取反序列化实现实例：即为反序列化对应的输入流）
@@ -77,6 +78,6 @@ public interface Serialization { // 序列化对应的策略接口
      * @throws IOException
      */
     @Adaptive
-    ObjectInput deserialize(URL url, InputStream input) throws IOException;
+    ObjectInput deserialize(URL url, InputStream input) throws IOException; //获取指定序列化对应的输入流实例
 
 }

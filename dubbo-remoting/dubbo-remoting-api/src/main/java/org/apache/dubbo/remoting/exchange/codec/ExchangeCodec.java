@@ -174,7 +174,7 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
         } else { //req/res标志位值为1，表示请求
             // decode request.
             Request req = new Request(id); //构建请求对象
-            req.setVersion(Version.getProtocolVersion()); //设置版本号
+            req.setVersion(Version.getProtocolVersion()); //设置协议版本号
             req.setTwoWay((flag & FLAG_TWOWAY) != 0);
             if ((flag & FLAG_EVENT) != 0) {
                 req.setEvent(true);
@@ -182,7 +182,7 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
             try {
                 ObjectInput in = CodecSupport.deserialize(channel.getUrl(), is, proto);
                 Object data;
-                if (req.isHeartbeat()) {
+                if (req.isHeartbeat()) { // 细分心跳事件、普通事件、非事件请求，要看具体序列化方式有没有将之区分，若没区分，都是按readObject() 读取对象处理了
                     data = decodeHeartbeatData(channel, in);
                 } else if (req.isEvent()) {
                     data = decodeEventData(channel, in);
@@ -224,7 +224,8 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
 
     protected void encodeRequest(Channel channel, ChannelBuffer buffer, Request req) throws IOException {
         Serialization serialization = getSerialization(channel);
-        // header.
+
+        // header. （先对请求头16个字节进行编码，然后再对请求体进行编码）
         byte[] header = new byte[HEADER_LENGTH]; //dubbo请求头，固定16字节
         // set magic number.
         Bytes.short2bytes(MAGIC, header);
@@ -232,7 +233,7 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
         // set request and serialization flag.  等价于：10000000 | serialization.getContentTypeId()
         header[2] = (byte) (FLAG_REQUEST | serialization.getContentTypeId()); // 处理第三个字节的第一位，因为在请求的方法中，所以按位与后标识为1
 
-        if (req.isTwoWay()) { // 按位或运算，二进制位只要出现1的，结果就为1（每位只有0或1）
+        if (req.isTwoWay()) { // 逻辑或：两个数为0，即为0，否则为1
             header[2] |= FLAG_TWOWAY; // 等价于 header[2] = header[2] | 01000000; （处理第三个字节的第二位）
         }
         if (req.isEvent()) {
@@ -244,9 +245,9 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
 
         // encode request data.
         int savedWriteIndex = buffer.writerIndex();
-        buffer.writerIndex(savedWriteIndex + HEADER_LENGTH);
-        ChannelBufferOutputStream bos = new ChannelBufferOutputStream(buffer);
-        ObjectOutput out = serialization.serialize(channel.getUrl(), bos);
+        buffer.writerIndex(savedWriteIndex + HEADER_LENGTH); //可写入的位置：buffer中写位置+请求头长度
+        ChannelBufferOutputStream bos = new ChannelBufferOutputStream(buffer); //创建输出流
+        ObjectOutput out = serialization.serialize(channel.getUrl(), bos); //获取指定序列化实例对应的输出流
         if (req.isEvent()) {
             encodeEventData(channel, out, req.getData());
         } else {
@@ -259,7 +260,7 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
         bos.flush();
         bos.close();
         int len = bos.writtenBytes();
-        checkPayload(channel, len);
+        checkPayload(channel, len); //检查负载（todo 此处是否包含请求）
         Bytes.int2bytes(len, header, 12);
 
         // write
@@ -457,6 +458,7 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
         encodeResponseData(out, data);
     }
 
+    // 编码请求数据，带上协议版本号
     protected void encodeRequestData(Channel channel, ObjectOutput out, Object data, String version) throws IOException {
         encodeRequestData(out, data);
     }

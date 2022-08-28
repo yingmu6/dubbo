@@ -89,7 +89,7 @@ public class ProtocolFilterWrapper implements Protocol { //org.apache.dubbo.rpc.
                         Result asyncResult;
                         try {
                             asyncResult = filter.invoke(next, invocation); //使用过滤器Filter执行调用
-                        } catch (Exception e) {
+                        } catch (Exception e) { // 对过滤器链中filter调用异常进行处理
                             /**
                              * 此处为什么会出现异常？都有哪些异常的？出现异常的处理逻辑是怎样的？
                              * 解答：从方法org.apache.dubbo.rpc.Filter#invoke声明上看，是会抛出RpcException异常的
@@ -104,18 +104,18 @@ public class ProtocolFilterWrapper implements Protocol { //org.apache.dubbo.rpc.
                                         listener.onError(e, invoker, invocation); //使用监听器通知异常信息
                                     }
                                 } finally {
-                                    listenableFilter.removeListener(invocation);
+                                    listenableFilter.removeListener(invocation); //Listener处理完成后，将其移除
                                 }
                             } else if (filter instanceof Filter.Listener) {
                                 Filter.Listener listener = (Filter.Listener) filter;
                                 listener.onError(e, invoker, invocation);
                             }
-                            throw e;
+                            throw e; //若有监听器，使用监听器回调通知，否则直接抛出异常
                         } finally {
 
                         }
                         return asyncResult.whenCompleteWithContext((r, t) -> { //此处的处理逻辑是怎样的？解答：添加回调方法，在RPC完成调用时，对响应的内容进行处理
-                            if (filter instanceof ListenableFilter) {
+                            if (filter instanceof ListenableFilter) { //响应结果
                                 ListenableFilter listenableFilter = ((ListenableFilter) filter);
                                 Filter.Listener listener = listenableFilter.listener(invocation);
                                 try {

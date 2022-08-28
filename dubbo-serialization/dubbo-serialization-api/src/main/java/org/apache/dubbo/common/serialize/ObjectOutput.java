@@ -49,7 +49,7 @@ public interface ObjectOutput extends DataOutput {
         writeObject(obj);
     }
 
-    default void writeEvent(Object data) throws IOException {
+    default void writeEvent(Object data) throws IOException { //写事件，目前也是写对象，只是把方法抽象出来，语义上分隔开，后续容易扩展
         writeObject(data);
     }
 

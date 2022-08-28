@@ -118,7 +118,7 @@ public class Request { //请求内容
     }
 
     public boolean isHeartbeat() { //判断是否是心跳请求，是事件且请求数据为空
-        return mEvent && HEARTBEAT_EVENT == mData;
+        return mEvent && HEARTBEAT_EVENT == mData; //HEARTBEAT_EVENT、mData初始值为null，null == null，若没改变值，则为心跳事件了
     }
 
     public void setHeartbeat(boolean isHeartbeat) {

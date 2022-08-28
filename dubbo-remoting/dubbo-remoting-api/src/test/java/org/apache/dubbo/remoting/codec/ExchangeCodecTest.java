@@ -254,37 +254,37 @@ public class ExchangeCodecTest extends TelnetCodecTest { // Codec编码测试（
     }
 
     @Test
-    public void test_Decode_Return_Request_Event_String() throws IOException {
-        //|10011111|20-stats=ok|id=0|length=0
-        byte[] header = new byte[]{MAGIC_HIGH, MAGIC_LOW, (byte) 0xe2, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    public void test_Decode_Return_Request_Event_String() throws IOException { // 测试请求体内容为字符串场景
+        //|11100010|20-stats=ok|id=0|length=0
+        byte[] header = new byte[] {MAGIC_HIGH, MAGIC_LOW, (byte) 0xe2, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         String event = READONLY_EVENT;
-        byte[] request = getRequestBytes(event, header);
+        byte[] request = getRequestBytes(event, header); //body内容是字符串
 
         Request obj = (Request) decode(request);
         Assertions.assertEquals(event, obj.getData());
         Assertions.assertTrue(obj.isTwoWay());
         Assertions.assertTrue(obj.isEvent());
         Assertions.assertEquals(Version.getProtocolVersion(), obj.getVersion());
-        System.out.println(obj);
+        System.out.println(obj); //返回的Request中data为null
     }
 
     @Test
-    public void test_Decode_Return_Request_Heartbeat_Object() throws IOException {
-        //|10011111|20-stats=ok|id=0|length=0
-        byte[] header = new byte[]{MAGIC_HIGH, MAGIC_LOW, (byte) 0xe2, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-        byte[] request = getRequestBytes(null, header);
+    public void test_Decode_Return_Request_Heartbeat_Object() throws IOException { //测试请求体内容为null场景
+        //|11100010|20-stats=ok|id=0|length=0
+        byte[] header = new byte[] {MAGIC_HIGH, MAGIC_LOW, (byte) 0xe2, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        byte[] request = getRequestBytes(null, header); //请求body为null
         Request obj = (Request) decode(request);
         Assertions.assertNull(obj.getData());
         Assertions.assertTrue(obj.isTwoWay());
         Assertions.assertTrue(obj.isHeartbeat());
         Assertions.assertEquals(Version.getProtocolVersion(), obj.getVersion());
-        System.out.println(obj);
+        System.out.println(obj); //返回的Request中的data为null
     }
 
     @Test
-    public void test_Decode_Return_Request_Object() throws IOException {
-        //|10011111|20-stats=ok|id=0|length=0
-        byte[] header = new byte[]{MAGIC_HIGH, MAGIC_LOW, (byte) 0xe2, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    public void test_Decode_Return_Request_Object() throws IOException { //测试正常的请求返回
+        //11100010|20-stats=ok|id=0|length=0
+        byte[] header = new byte[] {MAGIC_HIGH, MAGIC_LOW, (byte) 0xe2, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         Person person = new Person();
         byte[] request = getRequestBytes(person, header);
 
@@ -297,14 +297,14 @@ public class ExchangeCodecTest extends TelnetCodecTest { // Codec编码测试（
     }
 
     @Test
-    public void test_Decode_Error_Request_Object() throws IOException {
-        //00000010-response/oneway/hearbeat=true |20-stats=ok|id=0|length=0
-        byte[] header = new byte[]{MAGIC_HIGH, MAGIC_LOW, (byte) 0xe2, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    public void test_Decode_Error_Request_Object() throws IOException { //测试请求体内容被改变，反序列化异常的场景
+        //11100010-response/oneway/hearbeat=true |20-stats=ok|id=0|length=0
+        byte[] header = new byte[] {MAGIC_HIGH, MAGIC_LOW, (byte) 0xe2, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         Person person = new Person();
         byte[] request = getRequestBytes(person, header);
         //bad object
-        byte[] badbytes = new byte[]{-1, -2, -3, -4, -3, -4, -3, -4, -3, -4, -3, -4};
-        System.arraycopy(badbytes, 0, request, 21, badbytes.length);
+        byte[] badbytes = new byte[] {-1, -2, -3, -4, -3, -4, -3, -4, -3, -4, -3, -4};
+        System.arraycopy(badbytes, 0, request, 21, badbytes.length); //请求body的内容被篡改了，反序列化时解析不出来，抛出异常，dubbo进行捕获，并标记broken值
 
         Request obj = (Request) decode(request);
         Assertions.assertTrue(obj.isBroken());
@@ -312,9 +312,9 @@ public class ExchangeCodecTest extends TelnetCodecTest { // Codec编码测试（
     }
 
     @Test
-    public void test_Header_Response_NoSerializationFlag() throws IOException {
+    public void test_Header_Response_NoSerializationFlag() throws IOException { //方法名称描述有问，该请求头是有序列化id的
         //00000010-response/oneway/hearbeat=false/noset |20-stats=ok|id=0|length=0
-        byte[] header = new byte[]{MAGIC_HIGH, MAGIC_LOW, (byte) 0x02, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        byte[] header = new byte[] {MAGIC_HIGH, MAGIC_LOW, (byte) 0x02, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         Person person = new Person();
         byte[] request = getRequestBytes(person, header);
 
@@ -325,9 +325,9 @@ public class ExchangeCodecTest extends TelnetCodecTest { // Codec编码测试（
     }
 
     @Test
-    public void test_Header_Response_Heartbeat() throws IOException {
+    public void test_Header_Response_Heartbeat() throws IOException { //测试正常响应解码
         //00000010-response/oneway/hearbeat=true |20-stats=ok|id=0|length=0
-        byte[] header = new byte[]{MAGIC_HIGH, MAGIC_LOW, 0x02, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        byte[] header = new byte[] {MAGIC_HIGH, MAGIC_LOW, 0x02, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         Person person = new Person();
         byte[] request = getRequestBytes(person, header);
 
@@ -338,7 +338,7 @@ public class ExchangeCodecTest extends TelnetCodecTest { // Codec编码测试（
     }
 
     @Test
-    public void test_Encode_Request() throws IOException {
+    public void test_Encode_Request() throws IOException { //todo @pause
         ChannelBuffer encodeBuffer = ChannelBuffers.dynamicBuffer(2014);
         Channel channel = getCliendSideChannel(url);
         Request request = new Request();

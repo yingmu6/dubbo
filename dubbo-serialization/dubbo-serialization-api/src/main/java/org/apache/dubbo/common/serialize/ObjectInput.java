@@ -79,7 +79,7 @@ public interface ObjectInput extends DataInput {
         return (Throwable) obj;
     }
 
-    default Object readEvent() throws IOException, ClassNotFoundException {
+    default Object readEvent() throws IOException, ClassNotFoundException { //默认方法：在接口中执行逻辑
         return readObject();
     }
 

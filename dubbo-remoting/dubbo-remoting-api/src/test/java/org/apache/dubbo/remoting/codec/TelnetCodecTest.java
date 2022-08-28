@@ -53,7 +53,7 @@ public class TelnetCodecTest {
         return channel;
     }
 
-    protected AbstractMockChannel getCliendSideChannel(URL url) {
+    protected AbstractMockChannel getCliendSideChannel(URL url) { //URL存储的是远程地址，即服务端url
         url = url.addParameter(AbstractMockChannel.LOCAL_ADDRESS, "127.0.0.1:12345")
                 .addParameter(AbstractMockChannel.REMOTE_ADDRESS, url.getAddress());
         AbstractMockChannel channel = new AbstractMockChannel(url);

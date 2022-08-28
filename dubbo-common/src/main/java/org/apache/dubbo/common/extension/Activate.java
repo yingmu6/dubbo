@@ -39,7 +39,7 @@ import java.lang.annotation.*;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD}) //可以作用在类上、方法上
-public @interface Activate { //若带上自动激活类设置了group、value，则需要满足设置的条件，才能被激活
+public @interface Activate { //若带上自动激活类设置了group、value，则需要满足设置的条件，才能被激活（activate：使...活动，使...积极起来）
     /**
      * Activate the current extension when one of the groups matches（匹配）. The group passed into
      * {@link ExtensionLoader#getActivateExtension(URL, String, String)} will be used for matching.

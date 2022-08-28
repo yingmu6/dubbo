@@ -191,7 +191,7 @@ public interface Result extends Serializable {
      * Add a callback which can be triggered when the RPC call finishes.
      * (添加一个回调，在RPC完成调用后触发)
      * <p>
-     * Just as the method name implies, this method will guarantee the callback being triggered under the same context as when the call was started,
+     * Just as the method name implies（意味着）, this method will guarantee the callback being triggered under the same context as when the call was started,
      * see implementation in {@link Result#whenCompleteWithContext(BiConsumer)}
      *
      * @param fn
