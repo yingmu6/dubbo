@@ -77,7 +77,7 @@ public abstract class AbstractMethodConfig extends AbstractConfig {
      * Cache the return result with the call parameter as key, the following options are available: lru, threadlocal,
      * jcache, etc.
      */
-    protected String cache;
+    protected String cache; //缓存返回结果，可以指定具体的缓存类型（包含lru, threadlocal, jcache）
 
     /**
      * Whether JSR303 standard annotation validation is enabled or not, if enabled, annotations on method parameters will

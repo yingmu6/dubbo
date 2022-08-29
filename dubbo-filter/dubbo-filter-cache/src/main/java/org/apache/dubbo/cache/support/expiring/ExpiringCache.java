@@ -22,7 +22,7 @@ import org.apache.dubbo.common.URL;
 import java.util.Map;
 
 /**
- * ExpiringCache - With the characteristic of expiration time.(具有过期时间特性)
+ * ExpiringCache - With the characteristic（特性） of expiration time.(具有过期时间特性)
  */
 
 /**
@@ -33,8 +33,9 @@ import java.util.Map;
  *     e.g. 1) &lt;dubbo:service cache="expiring" cache.seconds="60" cache.interval="10"/&gt;
  *          2) &lt;dubbo:consumer cache="expiring" /&gt;
  * </pre>
- * <li>It used constructor argument url instance <b>cache.seconds</b> value to decide time to live of cached object.Default value of it is 180 second.</li>
- * <li>It used constructor argument url instance <b>cache.interval</b> value for cache value expiration interval.Default value of this is 4 second</li>
+ * <li>It used constructor argument url instance <b>cache.seconds</b> value to decide time to live of cached object（决定缓存对象存活的时间）.Default value of it is 180 second.</li>
+ * <li>It used constructor argument url instance <b>cache.interval（间隔）</b> value for cache value expiration interval.Default value of this is 4 second</li>
+ *
  * @see Cache
  * @see ExpiringCacheFactory
  * @see org.apache.dubbo.cache.support.AbstractCacheFactory
@@ -46,7 +47,7 @@ public class ExpiringCache implements Cache {
     public ExpiringCache(URL url) {
         // cache time (second)
         final int secondsToLive = url.getParameter("cache.seconds", 180);
-        // Cache check interval (second)
+        // Cache check interval (second) 缓存检查的间隔
         final int intervalSeconds = url.getParameter("cache.interval", 4);
         ExpiringMap<Object, Object> expiringMap = new ExpiringMap<>(secondsToLive, intervalSeconds);
         expiringMap.getExpireThread().startExpiryIfNotStarted();

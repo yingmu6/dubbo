@@ -19,7 +19,7 @@ package org.apache.dubbo.common.serialize;
 /**
  * Interface defines that the object is cleanable.
  */
-public interface Cleanable {
+public interface Cleanable { //Cleanable：可清除
 
     /**
      * Implementations must implement this cleanup method

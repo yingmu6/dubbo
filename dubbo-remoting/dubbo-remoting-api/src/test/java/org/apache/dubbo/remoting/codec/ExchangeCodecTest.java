@@ -338,28 +338,28 @@ public class ExchangeCodecTest extends TelnetCodecTest { // Codec编码测试（
     }
 
     @Test
-    public void test_Encode_Request() throws IOException { //todo @pause
-        ChannelBuffer encodeBuffer = ChannelBuffers.dynamicBuffer(2014);
+    public void test_Encode_Request() throws IOException { // 测试对请求对象Request的编码
+        ChannelBuffer encodeBuffer = ChannelBuffers.dynamicBuffer(2014); //未指定ChannelBufferFactory时，默认使用HeapChannelBufferFactory创建
         Channel channel = getCliendSideChannel(url);
         Request request = new Request();
         Person person = new Person();
         request.setData(person);
 
-        codec.encode(channel, encodeBuffer, request);
+        codec.encode(channel, encodeBuffer, request); //将请求对象的内容序列化为字节数组，并写到channelBuffer中
 
         //encode resault check need decode
         byte[] data = new byte[encodeBuffer.writerIndex()];
-        encodeBuffer.readBytes(data);
+        encodeBuffer.readBytes(data); //从ChannelBuffer中读取字节数组内容，并写到目标数组中
         ChannelBuffer decodeBuffer = ChannelBuffers.wrappedBuffer(data);
         Request obj = (Request) codec.decode(channel, decodeBuffer);
-        Assertions.assertEquals(request.isBroken(), obj.isBroken());
+        Assertions.assertEquals(request.isBroken(), obj.isBroken()); //比较编码前的Request数据和解码后decode的数据
         Assertions.assertEquals(request.isHeartbeat(), obj.isHeartbeat());
         Assertions.assertEquals(request.isTwoWay(), obj.isTwoWay());
         Assertions.assertEquals(person, obj.getData());
     }
 
     @Test
-    public void test_Encode_Response() throws IOException {
+    public void test_Encode_Response() throws IOException { //对响应对象Response进行编码（todo @pause）
         ChannelBuffer encodeBuffer = ChannelBuffers.dynamicBuffer(1024);
         Channel channel = getCliendSideChannel(url);
         Response response = new Response();
@@ -370,7 +370,7 @@ public class ExchangeCodecTest extends TelnetCodecTest { // Codec编码测试（
         Person person = new Person();
         response.setResult(person);
 
-        codec.encode(channel, encodeBuffer, response);
+        codec.encode(channel, encodeBuffer, response); //编码响应对象
         byte[] data = new byte[encodeBuffer.writerIndex()];
         encodeBuffer.readBytes(data);
 

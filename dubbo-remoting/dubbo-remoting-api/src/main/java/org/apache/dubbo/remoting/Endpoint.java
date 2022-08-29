@@ -51,7 +51,7 @@ public interface Endpoint { //节点
     InetSocketAddress getLocalAddress();
 
     /**
-     * send message.
+     * send message.（客户端、服务端都可以发送下消息，看请求头中是单向或双向）
      *
      * @param message
      * @throws RemotingException

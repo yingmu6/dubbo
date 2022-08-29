@@ -27,7 +27,7 @@ public class HeapChannelBufferFactory implements ChannelBufferFactory {
         super();
     }
 
-    public static ChannelBufferFactory getInstance() {
+    public static ChannelBufferFactory getInstance() { //获取实例对象
         return INSTANCE;
     }
 

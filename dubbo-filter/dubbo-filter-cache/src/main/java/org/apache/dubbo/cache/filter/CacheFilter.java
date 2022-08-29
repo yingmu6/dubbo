@@ -21,12 +21,7 @@ import org.apache.dubbo.cache.CacheFactory;
 import org.apache.dubbo.common.extension.Activate;
 import org.apache.dubbo.common.utils.ConfigUtils;
 import org.apache.dubbo.common.utils.StringUtils;
-import org.apache.dubbo.rpc.AsyncRpcResult;
-import org.apache.dubbo.rpc.Filter;
-import org.apache.dubbo.rpc.Invocation;
-import org.apache.dubbo.rpc.Invoker;
-import org.apache.dubbo.rpc.Result;
-import org.apache.dubbo.rpc.RpcException;
+import org.apache.dubbo.rpc.*;
 
 import java.io.Serializable;
 
@@ -64,7 +59,7 @@ import static org.apache.dubbo.common.constants.FilterConstants.CACHE_KEY;
  * @see org.apache.dubbo.cache.support.expiring.ExpiringCache
  *
  */
-@Activate(group = {CONSUMER, PROVIDER}, value = CACHE_KEY)
+@Activate(group = {CONSUMER, PROVIDER}, value = CACHE_KEY) //提供端、消费端，只要配置cache的，filter都会生效
 public class CacheFilter implements Filter {
 
     private CacheFactory cacheFactory;
@@ -99,7 +94,7 @@ public class CacheFilter implements Filter {
             if (cache != null) {
                 String key = StringUtils.toArgumentString(invocation.getArguments());
                 Object value = cache.get(key);
-                if (value != null) {
+                if (value != null) { // 缓存中存在值
                     if (value instanceof ValueWrapper) {
                         return AsyncRpcResult.newDefaultAsyncResult(((ValueWrapper) value).get(), invocation);
                     } else {
@@ -107,7 +102,7 @@ public class CacheFilter implements Filter {
                     }
                 }
                 Result result = invoker.invoke(invocation);
-                if (!result.hasException()) {
+                if (!result.hasException()) { //缓存中没有值时，执行对应方法调用，并将结果返回
                     cache.put(key, new ValueWrapper(result.getValue()));
                 }
                 return result;
@@ -119,13 +114,13 @@ public class CacheFilter implements Filter {
     /**
      * Cache value wrapper.
      */
-    static class ValueWrapper implements Serializable {
+    static class ValueWrapper implements Serializable { //缓存封装类
 
         private static final long serialVersionUID = -1777337318019193256L;
 
         private final Object value;
 
-        public ValueWrapper (Object value) {
+        public ValueWrapper(Object value) {
             this.value = value;
         }
 

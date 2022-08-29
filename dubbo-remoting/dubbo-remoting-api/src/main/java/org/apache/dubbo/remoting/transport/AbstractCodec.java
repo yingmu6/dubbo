@@ -41,7 +41,7 @@ public abstract class AbstractCodec implements Codec2 {
 
     private static final String SERVER_SIDE = "server";
 
-    protected static void checkPayload(Channel channel, long size) throws IOException { //检查负载大小（来源：可以是请求体的长度、可读数readable等）
+    protected static void checkPayload(Channel channel, long size) throws IOException { //检查负载大小（请求体的数据大小）
         int payload = Constants.DEFAULT_PAYLOAD;
         if (channel != null && channel.getUrl() != null) {
             payload = channel.getUrl().getParameter(Constants.PAYLOAD_KEY, Constants.DEFAULT_PAYLOAD);

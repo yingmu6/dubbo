@@ -28,8 +28,8 @@ import static org.apache.dubbo.common.constants.CommonConstants.METHOD_KEY;
 
 /**
  * AbstractCacheFactory is a default implementation of {@link CacheFactory}. It abstract out the key formation from URL along with
- * invocation method. It initially check if the value for key already present in own local in-memory store then it won't check underlying storage cache {@link Cache}.
- * Internally it used {@link ConcurrentHashMap} to store do level-1 caching.
+ * invocation method. It initially（最初） check if the value for key already present in own local in-memory store then it won't check underlying storage cache {@link Cache}.
+ * Internally it used {@link ConcurrentHashMap} to store do level-1 caching.（做一级缓存）
  *
  * @see CacheFactory
  * @see org.apache.dubbo.cache.support.jcache.JCacheFactory
@@ -40,7 +40,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.METHOD_KEY;
 public abstract class AbstractCacheFactory implements CacheFactory {
 
     /**
-     * This is used to store factory level-1 cached data.
+     * This is used to store factory level-1 cached data.（用来存储一级缓存数据）
      */
     private final ConcurrentMap<String, Cache> caches = new ConcurrentHashMap<String, Cache>();
 
@@ -53,7 +53,7 @@ public abstract class AbstractCacheFactory implements CacheFactory {
     @Override
     public Cache getCache(URL url, Invocation invocation) { // 通过url、invocation组装缓存的key
         url = url.addParameter(METHOD_KEY, invocation.getMethodName());
-        String key = url.toFullString();
+        String key = url.toFullString(); //url的完整信息作为缓存key
         Cache cache = caches.get(key);
         if (cache == null) { //缓存为空，则创建缓存
             caches.put(key, createCache(url));

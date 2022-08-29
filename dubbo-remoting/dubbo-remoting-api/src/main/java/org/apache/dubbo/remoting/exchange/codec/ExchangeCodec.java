@@ -230,8 +230,8 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
         // set magic number.
         Bytes.short2bytes(MAGIC, header);
 
-        // set request and serialization flag.  等价于：10000000 | serialization.getContentTypeId()
-        header[2] = (byte) (FLAG_REQUEST | serialization.getContentTypeId()); // 处理第三个字节的第一位，因为在请求的方法中，所以按位与后标识为1
+        // set request and serialization flag.  等价于：10000000 | serialization.getContentTypeId()  （当遇到负数，如-128 ~ 127，相加往右移，相减往左移，如0xdabb，表示的数，0xda对应的值13*16+10=208，二进制表示为-128+ (218-127）- 1 = -38，类推0xbb为-69
+        header[2] = (byte) (FLAG_REQUEST | serialization.getContentTypeId()); // 处理序列化标识，填写第三个字节的值，如序列化id为2时，按位或：10000000 | 00000010 = 10000010 = 130，用二进制表示 -128 +（130 - 127）- 1（即因为一个字节范围是-128 ~ 127，,130超过3个数，就从-128开始数三个数，减一是因为从-128开始计数，占用一个数）
 
         if (req.isTwoWay()) { // 逻辑或：两个数为0，即为0，否则为1
             header[2] |= FLAG_TWOWAY; // 等价于 header[2] = header[2] | 01000000; （处理第三个字节的第二位）
@@ -251,17 +251,17 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
         if (req.isEvent()) {
             encodeEventData(channel, out, req.getData());
         } else {
-            encodeRequestData(channel, out, req.getData(), req.getVersion());
+            encodeRequestData(channel, out, req.getData(), req.getVersion()); //对请求体进行编码，即最终是通过ObjectOutput#writeObject，将请求体数据写到输出流中
         }
         out.flushBuffer();
-        if (out instanceof Cleanable) {
+        if (out instanceof Cleanable) { //如果输出流实例是Cleanable，则对应调用清理方法
             ((Cleanable) out).cleanup();
         }
         bos.flush();
         bos.close();
         int len = bos.writtenBytes();
-        checkPayload(channel, len); //检查负载（todo 此处是否包含请求）
-        Bytes.int2bytes(len, header, 12);
+        checkPayload(channel, len); //检查请求体负载
+        Bytes.int2bytes(len, header, 12); //请求长度是int类型，占用4个字节，在请求header数组下标为12~15的位置
 
         // write
         buffer.writerIndex(savedWriteIndex);
@@ -284,7 +284,7 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
             }
             // set response status.
             byte status = res.getStatus();
-            header[3] = status;
+            header[3] = status; //设置响应状态（编码请求对象时，不用设置）
             // set request id.
             Bytes.long2bytes(res.getId(), header, 4);
 
@@ -296,9 +296,9 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
                 if (res.isHeartbeat()) { //心跳事件处理
                     encodeEventData(channel, out, res.getResult());
                 } else {                 //响应数据处理
-                    encodeResponseData(channel, out, res.getResult(), res.getVersion());
+                    encodeResponseData(channel, out, res.getResult(), res.getVersion()); //将响应对象的result结果，写到输出流中
                 }
-            } else {
+            } else { //异常状态的响应时，将错误消息写到输出流
                 out.writeUTF(res.getErrorMessage());
             }
             out.flushBuffer();
@@ -327,7 +327,7 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
                     logger.warn(t.getMessage(), t);
                     try {
                         r.setErrorMessage(t.getMessage());
-                        channel.send(r); //发送异常信息
+                        channel.send(r); //通过Channel发送异常信息
                         return;
                     } catch (RemotingException e) {
                         logger.warn("Failed to send bad_response info back: " + t.getMessage() + ", cause: " + e.getMessage(), e);
