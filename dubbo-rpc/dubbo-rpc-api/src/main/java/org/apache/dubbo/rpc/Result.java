@@ -26,14 +26,14 @@ import java.util.function.Function;
 
 
 /**
- * (API, Prototype, NonThreadSafe)
- *
+ * (API, Prototype（原型）, NonThreadSafe（非线程安全）)
+ * <p>
  * An RPC {@link Result}.
- *
+ * <p>
  * Known implementations are:
- * 1. {@link AsyncRpcResult}, it's a {@link CompletionStage} whose underlying value signifies the return value of an RPC call.
- * 2. {@link AppResponse}, it inevitably inherits {@link CompletionStage} and {@link Future}, but you should never treat AppResponse as a type of Future,
- *    instead, it is a normal concrete type.
+ * 1. {@link AsyncRpcResult}, it's a {@link CompletionStage} whose underlying value signifies（表示） the return value of an RPC call
+ * 2. {@link AppResponse}, it inevitably inherits（不可避免地继承） {@link CompletionStage} and {@link Future}, but you should never treat AppResponse as a type of Future,
+ * instead, it is a normal concrete（具体的） type.
  *
  * @serial Don't change the class name and package name.
  * @see org.apache.dubbo.rpc.Invoker#invoke(Invocation)
@@ -108,7 +108,7 @@ public interface Result extends Serializable {
      *
      * @return attachments.
      */
-    Map<String, String> getAttachments();
+    Map<String, String> getAttachments(); //获取附加参数信息
 
     // ------以下是相对于2.5.6新增的内容------
     /**

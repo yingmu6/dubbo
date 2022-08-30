@@ -323,10 +323,10 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
                 Response r = new Response(res.getId(), res.getVersion());
                 r.setStatus(Response.BAD_RESPONSE);
 
-                if (t instanceof ExceedPayloadLimitException) {
+                if (t instanceof ExceedPayloadLimitException) { // 超过负载异常
                     logger.warn(t.getMessage(), t);
                     try {
-                        r.setErrorMessage(t.getMessage());
+                        r.setErrorMessage(t.getMessage()); //异常信息取ExceedPayloadLimitException中的信息
                         channel.send(r); //通过Channel发送异常信息
                         return;
                     } catch (RemotingException e) {
@@ -336,7 +336,7 @@ public class ExchangeCodec extends TelnetCodec { //@csy 交互层编解码，是
                     // FIXME log error message in Codec and handle in caught() of IoHanndler?
                     logger.warn("Fail to encode response: " + res + ", send bad_response info instead, cause: " + t.getMessage(), t);
                     try {
-                        r.setErrorMessage("Failed to send response: " + res + ", cause: " + StringUtils.toString(t));
+                        r.setErrorMessage("Failed to send response: " + res + ", cause: " + StringUtils.toString(t)); //拼接异常信息
                         channel.send(r);
                         return;
                     } catch (RemotingException e) {

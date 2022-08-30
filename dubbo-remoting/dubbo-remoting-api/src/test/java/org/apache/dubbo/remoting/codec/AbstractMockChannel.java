@@ -36,7 +36,7 @@ public class AbstractMockChannel implements Channel { //用于单元测试中
     private ChannelHandler handler;
     private boolean isClosed;
     private volatile boolean closing;
-    private Map<String, Object> attributes = new HashMap<String, Object>(1);
+    private Map<String, Object> attributes = new HashMap<String, Object>(1); //存储属性值
     private volatile Object receivedMessage = null;
 
     public AbstractMockChannel() {

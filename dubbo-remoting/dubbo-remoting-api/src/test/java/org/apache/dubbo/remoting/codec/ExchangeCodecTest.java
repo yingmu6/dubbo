@@ -388,22 +388,22 @@ public class ExchangeCodecTest extends TelnetCodecTest { // Codec编码测试（
     }
 
     @Test
-    public void test_Encode_Error_Response() throws IOException {
+    public void test_Encode_Error_Response() throws IOException { // 测试含有异常信息的Response编码
         ChannelBuffer encodeBuffer = ChannelBuffers.dynamicBuffer(1024);
         Channel channel = getCliendSideChannel(url);
         Response response = new Response();
         response.setHeartbeat(true);
         response.setId(1001L);
-        response.setStatus((byte) 10);
+        response.setStatus((byte) 10); //正常状态为20，响应异常
         response.setVersion("11");
         String badString = "bad";
-        response.setErrorMessage(badString);
+        response.setErrorMessage(badString); //异常的信息会写到errorMessage中
         Person person = new Person();
         response.setResult(person);
 
         codec.encode(channel, encodeBuffer, response);
         byte[] data = new byte[encodeBuffer.writerIndex()];
-        encodeBuffer.readBytes(data);
+        encodeBuffer.readBytes(data); //从buffer中读取内容，写到目标数组中
 
         //encode resault check need decode
         ChannelBuffer decodeBuffer = ChannelBuffers.wrappedBuffer(data);
@@ -417,7 +417,7 @@ public class ExchangeCodecTest extends TelnetCodecTest { // Codec编码测试（
     }
 
     @Test
-    public void testMessageLengthGreaterThanMessageActualLength() throws Exception {
+    public void testMessageLengthGreaterThanMessageActualLength() throws Exception { //测试编解码
         Channel channel = getCliendSideChannel(url);
         Request request = new Request(1L);
         request.setVersion(Version.getProtocolVersion());
@@ -429,7 +429,7 @@ public class ExchangeCodecTest extends TelnetCodecTest { // Codec编码测试（
         encodeBuffer.readBytes(bytes);
         int len = Bytes.bytes2int(bytes, 12);
         ByteArrayOutputStream out = new ByteArrayOutputStream(1024);
-        out.write(bytes, 0, 12);
+        out.write(bytes, 0, 12); //将指定字节数组的指定位置、指定长度的字节写到输出流
         /*
          * The fill length can not be less than 256, because by default, hessian reads 256 bytes from the stream each time.
          * Refer Hessian2Input.readBuffer for more details
@@ -437,21 +437,21 @@ public class ExchangeCodecTest extends TelnetCodecTest { // Codec编码测试（
         int padding = 512;
         out.write(Bytes.int2bytes(len + padding));
         out.write(bytes, 16, bytes.length - 16);
-        for (int i = 0; i < padding; i++) {
+        for (int i = 0; i < padding; i++) { //依次填充数据
             out.write(1);
         }
         out.write(bytes);
         /* request|1111...|request */
         ChannelBuffer decodeBuffer = ChannelBuffers.wrappedBuffer(out.toByteArray());
         Request decodedRequest = (Request) codec.decode(channel, decodeBuffer);
-        Assertions.assertEquals(date, decodedRequest.getData());
+        Assertions.assertEquals(date, decodedRequest.getData()); //解码出来的对象与编码前的对象相等
         Assertions.assertEquals(bytes.length + padding, decodeBuffer.readerIndex());
         decodedRequest = (Request) codec.decode(channel, decodeBuffer);
         Assertions.assertEquals(date, decodedRequest.getData());
     }
 
     @Test
-    public void testMessageLengthExceedPayloadLimitWhenEncode() throws Exception {
+    public void testMessageLengthExceedPayloadLimitWhenEncode() throws Exception { //测试超过有效负载大小的异常情况（编码、解码都会检查）
         Request request = new Request(1L);
         request.setData("hello");
         ChannelBuffer encodeBuffer = ChannelBuffers.dynamicBuffer(512);

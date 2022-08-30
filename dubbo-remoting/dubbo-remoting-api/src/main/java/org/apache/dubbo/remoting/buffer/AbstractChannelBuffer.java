@@ -98,7 +98,7 @@ public abstract class AbstractChannelBuffer implements ChannelBuffer {
     }
 
     @Override
-    public int readableBytes() {
+    public int readableBytes() { //可读的字节数
         return writerIndex - readerIndex;
     }
 

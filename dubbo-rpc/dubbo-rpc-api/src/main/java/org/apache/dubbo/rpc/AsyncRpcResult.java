@@ -55,7 +55,7 @@ public class AsyncRpcResult implements Result {
 
     /**
      * RpcContext may already have been changed when callback happens, it happens when the same thread is used to execute another RPC call.
-     * So we should keep the reference of current RpcContext instance and restore it before callback being executed.
+     * So we should keep the reference of current RpcContext instance and restore（恢复） it before callback being executed.
      */
     private RpcContext storedContext;
     private RpcContext storedServerContext;

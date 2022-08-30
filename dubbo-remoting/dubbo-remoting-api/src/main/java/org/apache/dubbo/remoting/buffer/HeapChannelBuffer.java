@@ -42,7 +42,7 @@ public class HeapChannelBuffer extends AbstractChannelBuffer {
      *
      * @param length the length of the new byte array
      */
-    public HeapChannelBuffer(int length) {
+    public HeapChannelBuffer(int length) { //创建指定容量的字节数组
         this(new byte[length], 0, 0);
     }
 

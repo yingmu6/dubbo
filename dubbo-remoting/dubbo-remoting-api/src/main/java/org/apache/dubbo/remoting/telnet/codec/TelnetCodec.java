@@ -51,7 +51,7 @@ public class TelnetCodec extends TransportCodec { //在终端执行telnet指定�
 
     private static final byte[] DOWN = new byte[] {27, 91, 66};
 
-    private static final List<?> ENTER = Arrays.asList( //换行指令
+    private static final List<?> ENTER = Arrays.asList( //换行指令 （参照ASCII码对照表）
             new byte[] {'\r', '\n'} /* Windows Enter */,
             new byte[] {'\n'} /* Linux Enter */);
 
@@ -71,14 +71,14 @@ public class TelnetCodec extends TransportCodec { //在终端执行telnet指定�
             Object attribute = channel.getAttribute(CHARSET_KEY); //获取配置的字符集名称
             if (attribute instanceof String) { //判断是String类型还是Charset类型
                 try {
-                    return Charset.forName((String) attribute);
+                    return Charset.forName((String) attribute); //尝试获取指定字符串的字符编码
                 } catch (Throwable t) {
                     logger.warn(t.getMessage(), t);
                 }
             } else if (attribute instanceof Charset) {
                 return (Charset) attribute;
             }
-            URL url = channel.getUrl();
+            URL url = channel.getUrl(); //远程url
             if (url != null) {
                 String parameter = url.getParameter(CHARSET_KEY);
                 if (StringUtils.isNotEmpty(parameter)) {
@@ -101,9 +101,9 @@ public class TelnetCodec extends TransportCodec { //在终端执行telnet指定�
     private static String toString(byte[] message, Charset charset) throws UnsupportedEncodingException {
         byte[] copy = new byte[message.length];
         int index = 0;
-        for (int i = 0; i < message.length; i++) {
+        for (int i = 0; i < message.length; i++) { //依次对每个字符处理，先判断是否是特殊字符，若不是再按普通字符处理
             byte b = message[i];
-            if (b == '\b') { // backspace
+            if (b == '\b') { // backspace（退格符）
                 if (index > 0) {
                     index--;
                 }
@@ -123,14 +123,14 @@ public class TelnetCodec extends TransportCodec { //在终端执行telnet指定�
             } else if (b == -1 && i < message.length - 2
                     && (message[i + 1] == -3 || message[i + 1] == -5)) { // handshake
                 i = i + 2;
-            } else {
+            } else { // 按普通字符处理
                 copy[index++] = message[i];
             }
         }
         if (index == 0) {
             return "";
         }
-        return new String(copy, 0, index, charset.name()).trim();
+        return new String(copy, 0, index, charset.name()).trim(); //将字符数组按指定字符编码，解码为对应字符串
     }
 
     private static boolean isEquals(byte[] message, byte[] command) throws IOException { //判断第一个数组是否和第二个数组相等
@@ -174,7 +174,7 @@ public class TelnetCodec extends TransportCodec { //在终端执行telnet指定�
     @SuppressWarnings("unchecked")
     protected Object decode(Channel channel, ChannelBuffer buffer, int readable, byte[] message) throws IOException {
         if (isClientSide(channel)) { //若是客户端，直接将字节数组转换为字符串
-            return toString(message, getCharset(channel));
+            return toString(message, getCharset(channel)); //获取字符集，并将字符数组转换为字符串
         }
         checkPayload(channel, readable);
         if (message == null || message.length == 0) {

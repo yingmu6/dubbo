@@ -88,7 +88,7 @@ public class Response { // 响应状态值，协议头的第4个字节处理（�
 
     private String mErrorMsg;
 
-    private Object mResult;
+    private Object mResult; //响应的结果
 
     public Response() {
     }

@@ -183,7 +183,7 @@ public class TelnetCodecTest {
     }
 
     @Test
-    public void testDecode_String_ClientSide() throws IOException {
+    public void testDecode_String_ClientSide() throws IOException { //客户端解码字符串，因为该字符串没有包含特殊字符，所以字符串原样返回了
         testDecode_assertEquals("aaa".getBytes(), "aaa", false);
     }
 

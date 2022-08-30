@@ -29,10 +29,10 @@ import java.util.function.Function;
 /**
  * {@link AsyncRpcResult} is introduced（引进） in 3.0.0 to replace RpcResult, and RpcResult is replaced with {@link AppResponse}:
  * <ul>
- *     <li>AsyncRpcResult is the object that is actually passed in the call chain（通过调用链路）</li>
+ *     <li>AsyncRpcResult is the object that is actually passed in the call chain（通过调用链路的结果）</li>
  *     <li>AppResponse only simply represents the business result（仅仅是简单的业务结果）</li>
  * </ul>
- *
+ * <p>
  *  The relationship between them can be described as follow, an abstraction of the definition of AsyncRpcResult:
  *  <pre>
  *  {@code
@@ -40,12 +40,12 @@ import java.util.function.Function;
  *       ......
  *  }
  * </pre>
- * AsyncRpcResult is a future representing an unfinished RPC call, while AppResponse is the actual return type of this call.
- * In theory, AppResponse does'n have to implement the {@link Result} interface, this is done mainly for compatibility purpose.
+ * AsyncRpcResult is a future representing an unfinished RPC call（未完成的RPC调用）, while AppResponse is the actual return type of this call.
+ * In theory, AppResponse does'n have to implement the {@link Result} interface, this is done mainly for compatibility（兼容） purpose（目的）.
  *
  * @serial Do not change the class name and properties.
  */
-public class AppResponse implements Result {
+public class AppResponse implements Result { //同步调用的响应结果
 
     private static final long serialVersionUID = -6925924956850004727L;
 
@@ -67,19 +67,19 @@ public class AppResponse implements Result {
     }
 
     @Override
-    public Object recreate() throws Throwable {
+    public Object recreate() throws Throwable { //若有异常则设置异常栈信息并抛出，没有异常则返回具体值（方法名有些歧义，应该是重新设置异常栈信息）
         if (exception != null) {
             // fix issue#619
             try {
                 // get Throwable class
                 Class clazz = exception.getClass(); //获取异常类
                 while (!clazz.getName().equals(Throwable.class.getName())) {
-                    clazz = clazz.getSuperclass();
+                    clazz = clazz.getSuperclass(); //非Throwable类，则取异常类的父类（循环直到取到Throwable为止）
                 }
                 // get stackTrace value
-                Field stackTraceField = clazz.getDeclaredField("stackTrace");
-                stackTraceField.setAccessible(true);
-                Object stackTrace = stackTraceField.get(exception);
+                Field stackTraceField = clazz.getDeclaredField("stackTrace"); // 获取stackTrace堆栈追踪的字段
+                stackTraceField.setAccessible(true); //将字段置为可访问的（因为成员变量一般是用private修饰的，直接访问不了）
+                Object stackTrace = stackTraceField.get(exception); //获取exception对象中的stackTrace字段值
                 if (stackTrace == null) {
                     exception.setStackTrace(new StackTraceElement[0]); //设置异常栈
                 }
@@ -179,13 +179,13 @@ public class AppResponse implements Result {
     @Override
     public String getAttachment(String key, String defaultValue) {
         Object result = attachments.get(key);
-        if (result == null) {
+        if (result == null) { //若值为空，返回默认值
             return defaultValue;
         }
         if (result instanceof String) {
             return (String) result;
         }
-        return defaultValue;
+        return defaultValue; //result值不为空，且类型不为String，返回默认值
     }
 
     @Override
@@ -213,7 +213,7 @@ public class AppResponse implements Result {
     }
 
     @Override
-    public Result whenCompleteWithContext(BiConsumer<Result, Throwable> fn) {
+    public Result whenCompleteWithContext(BiConsumer<Result, Throwable> fn) { //该方法是异步执行处理的，而AppResponse是同步处理的，所以当前方法不支持（在AsyncRpcResult中有支持）
         throw new UnsupportedOperationException("AppResponse represents an concrete business response, there will be no status changes, you should get internal values directly.");
     }
 
