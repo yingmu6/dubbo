@@ -99,7 +99,7 @@ public class TelnetCodecTest {
     }
 
     protected void testDecode_assertEquals(byte[] request, Object ret) throws IOException {
-        testDecode_assertEquals(request, ret, true);
+        testDecode_assertEquals(request, ret, true); //构建服务端的请求
     }
 
     protected void testDecode_assertEquals(byte[] request, Object ret, boolean isServerside) throws IOException {
@@ -155,7 +155,7 @@ public class TelnetCodecTest {
         Assertions.assertEquals(channelReceive, channel.getReceivedMessage());
     }
 
-    private void testDecode_PersonWithEnterByte(byte[] enterbytes, boolean isNeedmore) throws IOException {
+    private void testDecode_PersonWithEnterByte(byte[] enterbytes, boolean isNeedmore) throws IOException { //解码Person对象，并附加上换行符对应的自己数组
         //init channel
         Channel channel = getServerSideChannel(url);
         //init request string
@@ -188,51 +188,63 @@ public class TelnetCodecTest {
     }
 
     @Test
-    public void testDecode_BlankMessage() throws IOException {
-        testDecode_assertEquals(new byte[]{}, Codec2.DecodeResult.NEED_MORE_INPUT);
+    public void testDecode_BlankMessage() throws IOException { //测试服务端返回空消息场景
+        testDecode_assertEquals(new byte[] {}, Codec2.DecodeResult.NEED_MORE_INPUT);
     }
 
     @Test
-    public void testDecode_String_NoEnter() throws IOException {
+    public void testDecode_String_NoEnter() throws IOException { //若没有换行符，则不处理，等待更多输入
         testDecode_assertEquals("aaa", Codec2.DecodeResult.NEED_MORE_INPUT);
     }
 
     @Test
-    public void testDecode_String_WithEnter() throws IOException {
+    public void testDecode_String_WithEnter() throws IOException { //带有换行符，能正常处理
         testDecode_assertEquals("aaa\n", "aaa");
     }
 
     @Test
-    public void testDecode_String_MiddleWithEnter() throws IOException {
+    public void testDecode_String_MiddleWithEnter() throws IOException { //换行符若在中间，则需要继续输入（换行符是在中间的）
+        System.out.println("换行符：的值：" + (byte) '\r' + "，" + (byte) '\n'); // '\r'的值为13，'\n'的值为10
         testDecode_assertEquals("aaa\r\naaa", Codec2.DecodeResult.NEED_MORE_INPUT);
     }
 
     @Test
-    public void testDecode_Person_ObjectOnly() throws IOException {
+    public void testDecode_Person_ObjectOnly() throws IOException { //仅仅只有对象，没有结束标志，需要继续输入
         testDecode_assertEquals(new Person(), Codec2.DecodeResult.NEED_MORE_INPUT);
     }
 
     @Test
-    public void testDecode_Person_WithEnter() throws IOException {
-        testDecode_PersonWithEnterByte(new byte[]{'\r', '\n'}, false);//windows end
-        testDecode_PersonWithEnterByte(new byte[]{'\n', '\r'}, true);
-        testDecode_PersonWithEnterByte(new byte[]{'\n'}, false); //linux end
-        testDecode_PersonWithEnterByte(new byte[]{'\r'}, true);
-        testDecode_PersonWithEnterByte(new byte[]{'\r', 100}, true);
+    public void testDecode_Person_WithEnter() throws IOException { //与org.apache.dubbo.remoting.telnet.codec.TelnetCodec.ENTER字节数据对比，判断是否以Enter的元素结尾
+        testDecode_PersonWithEnterByte(new byte[] {'\r', '\n'}, false);//windows end (是以TelnetCodec中ENTER的 {'\r', '\n结尾的'})
+        testDecode_PersonWithEnterByte(new byte[] {'\n', '\r'}, true); //不能匹配上，不是以ENTER中的元素结尾的
+        testDecode_PersonWithEnterByte(new byte[] {'\n'}, false); //linux end （是以ENTER的 '\n'结尾的，所以能匹配上）
+        testDecode_PersonWithEnterByte(new byte[] {'\r'}, true); //未与 {'\r', '\n'}匹配上
+        testDecode_PersonWithEnterByte(new byte[] {'\r', 100}, true); //未与 {'\r', '\n'}匹配上
+
+        /**
+         * private static final List<?> ENTER = Arrays.asList( //换行指令 （参照ASCII码对照表）
+         *             new byte[] {'\r', '\n'} /* Windows Enter *,
+         *            new byte[] {'\n'} /* Linux Enter );
+         */
     }
 
     @Test
     public void testDecode_WithExitByte() throws IOException {
         HashMap<byte[], Boolean> exitbytes = new HashMap<byte[], Boolean>();
-        exitbytes.put(new byte[]{3}, true); /* Windows Ctrl+C */
-        exitbytes.put(new byte[]{1, 3}, false); //must equal the bytes
-        exitbytes.put(new byte[]{-1, -12, -1, -3, 6}, true); /* Linux Ctrl+C */
-        exitbytes.put(new byte[]{1, -1, -12, -1, -3, 6}, false); //must equal the bytes
-        exitbytes.put(new byte[]{-1, -19, -1, -3, 6}, true);  /* Linux Pause */
+        exitbytes.put(new byte[] {3}, true); /* Windows Ctrl+C */
+        exitbytes.put(new byte[] {1, 3}, false); //must equal the bytes
+        exitbytes.put(new byte[] {-1, -12, -1, -3, 6}, true); /* Linux Ctrl+C */
+        exitbytes.put(new byte[] {1, -1, -12, -1, -3, 6}, false); //must equal the bytes
+        exitbytes.put(new byte[] {-1, -19, -1, -3, 6}, true);  /* Linux Pause */
 
         for (Map.Entry<byte[], Boolean> entry : exitbytes.entrySet()) {
             testDecode_WithExitByte(entry.getKey(), entry.getValue());
         }
+
+//        private static final List<?> EXIT = Arrays.asList( //退出对应的字节数组，是个二维数组
+//                new byte[] {3} /* Windows Ctrl+C */,
+//                new byte[] {-1, -12, -1, -3, 6} /* Linux Ctrl+C */,
+//                new byte[] {-1, -19, -1, -3, 6} /* Linux Pause */);
     }
 
     @Test

@@ -141,9 +141,9 @@ public class TelnetCodec extends TransportCodec { //在终端执行telnet指定�
         if (message.length < command.length) {
             return false;
         }
-        int offset = message.length - command.length;
+        int offset = message.length - command.length; //除去第二个数组的长度，作为起始位置，如：[97,97,97,13,10] ，是以[13,10]结尾的
         for (int i = command.length - 1; i >= 0; i--) {
-            if (message[offset + i] != command[i]) {
+            if (message[offset + i] != command[i]) { //在指定范围内，只要有一个元素不匹配，即为不匹配
                 return false;
             }
         }
@@ -177,7 +177,7 @@ public class TelnetCodec extends TransportCodec { //在终端执行telnet指定�
             return toString(message, getCharset(channel)); //获取字符集，并将字符数组转换为字符串
         }
         checkPayload(channel, readable);
-        if (message == null || message.length == 0) {
+        if (message == null || message.length == 0) { //消息内容为空时，不再进行后续处理
             return DecodeResult.NEED_MORE_INPUT;
         }
 
@@ -251,7 +251,7 @@ public class TelnetCodec extends TransportCodec { //在终端执行telnet指定�
             return DecodeResult.NEED_MORE_INPUT;
         }
         for (Object command : EXIT) {
-            if (isEquals(message, (byte[]) command)) {
+            if (isEquals(message, (byte[]) command)) { //若是结束符，判断是否与结束符相等
                 if (logger.isInfoEnabled()) {
                     logger.info(new Exception("Close channel " + channel + " on exit command " + command));
                 }
@@ -261,17 +261,17 @@ public class TelnetCodec extends TransportCodec { //在终端执行telnet指定�
         }
         byte[] enter = null;
         for (Object command : ENTER) {
-            if (endsWith(message, (byte[]) command)) {
-                enter = (byte[]) command;
+            if (endsWith(message, (byte[]) command)) {//若是换行符，判断是否是以换行符结尾
+                enter = (byte[]) command; //将换行符存下来
                 break;
             }
         }
-        if (enter == null) { //如果都不是上述的Telnet指令，则认为数据不完整，还需要输入更多的数据
+        if (enter == null) { //需要有换行符结尾，没有的话就不往下进行
             return DecodeResult.NEED_MORE_INPUT;
         }
         LinkedList<String> history = (LinkedList<String>) channel.getAttribute(HISTORY_LIST_KEY);
         Integer index = (Integer) channel.getAttribute(HISTORY_INDEX_KEY);
-        channel.removeAttribute(HISTORY_INDEX_KEY);
+        channel.removeAttribute(HISTORY_INDEX_KEY); //使用过后，将HISTORY_INDEX_KEY历史记录所以移除
         if (CollectionUtils.isNotEmpty(history) && index != null && index >= 0 && index < history.size()) {
             String value = history.get(index);
             if (value != null) {
@@ -289,7 +289,7 @@ public class TelnetCodec extends TransportCodec { //在终端执行telnet指定�
                 channel.setAttribute(HISTORY_LIST_KEY, history);
             }
             if (history.isEmpty()) {
-                history.addLast(result);
+                history.addLast(result); //写入历史指令列表
             } else if (!result.equals(history.getLast())) {
                 history.remove(result);
                 history.addLast(result);
