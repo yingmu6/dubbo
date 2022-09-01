@@ -179,7 +179,7 @@ public class TelnetCodecTest {
 
         //decode
         codec.decode(channel, buffer);
-        Assertions.assertEquals(isChannelClose, channel.isClosed());
+        Assertions.assertEquals(isChannelClose, channel.isClosed()); //判断通道是否已经被关闭（若退出指令被匹配上的话，会关闭通道的）
     }
 
     @Test
@@ -229,9 +229,9 @@ public class TelnetCodecTest {
     }
 
     @Test
-    public void testDecode_WithExitByte() throws IOException {
+    public void testDecode_WithExitByte() throws IOException { //退出指定 字节数组是按相等来比较
         HashMap<byte[], Boolean> exitbytes = new HashMap<byte[], Boolean>();
-        exitbytes.put(new byte[] {3}, true); /* Windows Ctrl+C */
+        exitbytes.put(new byte[] {3}, true); /* Windows Ctrl+C */  //与EXIT退出指令列表的第一个元素相等
         exitbytes.put(new byte[] {1, 3}, false); //must equal the bytes
         exitbytes.put(new byte[] {-1, -12, -1, -3, 6}, true); /* Linux Ctrl+C */
         exitbytes.put(new byte[] {1, -1, -12, -1, -3, 6}, false); //must equal the bytes
@@ -248,20 +248,21 @@ public class TelnetCodecTest {
     }
 
     @Test
-    public void testDecode_Backspace() throws IOException {
+    public void testDecode_Backspace() throws IOException { //测试退格键
         //32 8 first add space and then add backspace.
-        testDecode_assertEquals(new byte[]{'\b'}, Codec2.DecodeResult.NEED_MORE_INPUT, new String(new byte[]{32, 8}));
+        testDecode_assertEquals(new byte[] {'\b'}, Codec2.DecodeResult.NEED_MORE_INPUT, new String(new byte[] {32, 8}));
 
         // test chinese
         byte[] chineseBytes = "中".getBytes();
-        byte[] request = join(chineseBytes, new byte[]{'\b'});
-        testDecode_assertEquals(request, Codec2.DecodeResult.NEED_MORE_INPUT, new String(new byte[]{32, 32, 8, 8}));
+        byte[] request = join(chineseBytes, new byte[] {'\b'});
+        testDecode_assertEquals(request, Codec2.DecodeResult.NEED_MORE_INPUT, new String(new byte[] {32, 32, 8, 8}));
         //There may be some problem handling chinese (negative number recognition). Ignoring this problem, the backspace key is only meaningfully input in a real telnet program.
-        testDecode_assertEquals(new byte[]{'a', 'x', -1, 'x', '\b'}, Codec2.DecodeResult.NEED_MORE_INPUT, new String(new byte[]{32, 32, 8, 8}));
+        // （识别中文负数可能会有问题，可以忽视这个问题）
+        testDecode_assertEquals(new byte[] {'a', 'x', -1, 'x', '\b'}, Codec2.DecodeResult.NEED_MORE_INPUT, new String(new byte[] {32, 32, 8, 8})); //
     }
 
     @Test
-    public void testDecode_Backspace_WithError() throws IOException {
+    public void testDecode_Backspace_WithError() throws IOException { //测试退格符功能（带有异常）
         Assertions.assertThrows(IOException.class, () -> {
             url = url.addParameter(AbstractMockChannel.ERROR_WHEN_SEND, Boolean.TRUE.toString());
             testDecode_Backspace();

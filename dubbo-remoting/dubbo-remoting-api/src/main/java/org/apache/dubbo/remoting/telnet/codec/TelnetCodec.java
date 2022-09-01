@@ -181,14 +181,14 @@ public class TelnetCodec extends TransportCodec { //在终端执行telnet指定�
             return DecodeResult.NEED_MORE_INPUT;
         }
 
-        if (message[message.length - 1] == '\b') { // Windows backspace echo
+        if (message[message.length - 1] == '\b') { // Windows backspace echo （'\b'的值为8）
             try {
-                boolean doublechar = message.length >= 3 && message[message.length - 3] < 0; // double byte char
-                channel.send(new String(doublechar ? new byte[] {32, 32, 8, 8} : new byte[] {32, 8}, getCharset(channel).name()));
+                boolean doublechar = message.length >= 3 && message[message.length - 3] < 0; // double byte char （判断逻辑：消息的长度大于3，并且倒数第三个元素数值小于0）
+                channel.send(new String(doublechar ? new byte[] {32, 32, 8, 8} : new byte[] {32, 8}, getCharset(channel).name())); //32对应的字符为空格
             } catch (RemotingException e) {
                 throw new IOException(StringUtils.toString(e));
             }
-            return DecodeResult.NEED_MORE_INPUT;
+            return DecodeResult.NEED_MORE_INPUT; //需要输入更多的字符
         }
 
         for (Object command : EXIT) {
@@ -196,7 +196,7 @@ public class TelnetCodec extends TransportCodec { //在终端执行telnet指定�
                 if (logger.isInfoEnabled()) {
                     logger.info(new Exception("Close channel " + channel + " on exit command: " + Arrays.toString((byte[]) command)));
                 }
-                channel.close();
+                channel.close(); //执行退出指令时，会将通道channel关闭
                 return null;
             }
         }
