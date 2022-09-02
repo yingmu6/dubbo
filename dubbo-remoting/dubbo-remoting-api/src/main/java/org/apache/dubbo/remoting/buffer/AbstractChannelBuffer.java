@@ -53,7 +53,7 @@ public abstract class AbstractChannelBuffer implements ChannelBuffer {
     }
 
     @Override
-    public void readerIndex(int readerIndex) {
+    public void readerIndex(int readerIndex) { //读下标的范围，0 <= readerIndex <= writerIndex
         if (readerIndex < 0 || readerIndex > writerIndex) {
             throw new IndexOutOfBoundsException();
         }
@@ -66,7 +66,7 @@ public abstract class AbstractChannelBuffer implements ChannelBuffer {
     }
 
     @Override
-    public void writerIndex(int writerIndex) {
+    public void writerIndex(int writerIndex) { //写下标的范围，readerIndex <= writerIndex <= capacity
         if (writerIndex < readerIndex || writerIndex > capacity()) {
             throw new IndexOutOfBoundsException();
         }

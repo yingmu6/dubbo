@@ -154,7 +154,7 @@ public class TelnetCodec extends TransportCodec { //在终端执行telnet指定�
     public void encode(Channel channel, ChannelBuffer buffer, Object message) throws IOException { //响应请求内容时编码
         if (message instanceof String) { //字符串类型处理
             if (isClientSide(channel)) {
-                message = message + "\r\n";
+                message = message + "\r\n"; //客户端输入的内容拼接上换行符
             }
             byte[] msgData = ((String) message).getBytes(getCharset(channel).name()); //若是字符串，直接根据字符集获取字节数组
             buffer.writeBytes(msgData);
@@ -170,9 +170,9 @@ public class TelnetCodec extends TransportCodec { //在终端执行telnet指定�
         buffer.readBytes(message);
         return decode(channel, buffer, readable, message);
     }
-    
+
     @SuppressWarnings("unchecked")
-    protected Object decode(Channel channel, ChannelBuffer buffer, int readable, byte[] message) throws IOException {
+    protected Object decode(Channel channel, ChannelBuffer buffer, int readable, byte[] message) throws IOException { //对许多特殊字符，如换行符、退位符进行处理
         if (isClientSide(channel)) { //若是客户端，直接将字节数组转换为字符串
             return toString(message, getCharset(channel)); //获取字符集，并将字符数组转换为字符串
         }
@@ -201,31 +201,36 @@ public class TelnetCodec extends TransportCodec { //在终端执行telnet指定�
             }
         }
 
+        /**
+         * 上下键本意上是对历史指令的支持，但是不同平台的支持不一样，比如Mac就会附加的UP的字节数组为[27,91,65,13,10]
+         * 把换行符加上了，就导致不是以UP结尾，就失效了，官方也给出答案，目前还没有更好的跨平台的解决方案，就先搁置
+         * https://github.com/apache/dubbo/pull/5535
+         */
         boolean up = endsWith(message, UP);
         boolean down = endsWith(message, DOWN);
-        if (up || down) {
+        if (up || down) { //上下键处理：对历史记录的处理
             LinkedList<String> history = (LinkedList<String>) channel.getAttribute(HISTORY_LIST_KEY);
             if (CollectionUtils.isEmpty(history)) {
                 return DecodeResult.NEED_MORE_INPUT;
             }
-            Integer index = (Integer) channel.getAttribute(HISTORY_INDEX_KEY);
+            Integer index = (Integer) channel.getAttribute(HISTORY_INDEX_KEY); //取出历史记录索引
             Integer old = index;
             if (index == null) {
-                index = history.size() - 1;
+                index = history.size() - 1; //若没设置索引，则取列表中的最后一条
             } else {
-                if (up) {
+                if (up) { //执行向上操作
                     index = index - 1;
                     if (index < 0) {
-                        index = history.size() - 1;
+                        index = history.size() - 1; //如果索引小于0，则轮询到最后一条
                     }
-                } else {
+                } else { //执行向下操作
                     index = index + 1;
-                    if (index > history.size() - 1) {
+                    if (index > history.size() - 1) {//如果所以大于最后一条，则轮询到第一条
                         index = 0;
                     }
                 }
             }
-            if (old == null || !old.equals(index)) {
+            if (old == null || !old.equals(index)) { //表示：old不为空或old与index不相等
                 channel.setAttribute(HISTORY_INDEX_KEY, index);
                 String value = history.get(index);
                 if (old != null && old >= 0 && old < history.size()) {
@@ -286,7 +291,7 @@ public class TelnetCodec extends TransportCodec { //在终端执行telnet指定�
         if (result.trim().length() > 0) {
             if (history == null) {
                 history = new LinkedList<String>();
-                channel.setAttribute(HISTORY_LIST_KEY, history);
+                channel.setAttribute(HISTORY_LIST_KEY, history); //指令正常执行后，就会写入通道的历史指令列表
             }
             if (history.isEmpty()) {
                 history.addLast(result); //写入历史指令列表

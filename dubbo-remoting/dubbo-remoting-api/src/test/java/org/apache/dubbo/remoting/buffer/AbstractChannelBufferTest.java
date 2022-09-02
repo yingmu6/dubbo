@@ -29,10 +29,7 @@ import java.util.Random;
 
 import static org.apache.dubbo.remoting.buffer.ChannelBuffers.directBuffer;
 import static org.apache.dubbo.remoting.buffer.ChannelBuffers.wrappedBuffer;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public abstract class AbstractChannelBufferTest {
@@ -40,7 +37,7 @@ public abstract class AbstractChannelBufferTest {
     private static final int CAPACITY = 4096; // Must be even
     private static final int BLOCK_SIZE = 128;
 
-    private long seed;
+    private long seed; //seed：随机数的种子
     private Random random;
     private ChannelBuffer buffer;
 
@@ -55,7 +52,7 @@ public abstract class AbstractChannelBufferTest {
 
     @BeforeEach
     public void init() {
-        buffer = newBuffer(CAPACITY);
+        buffer = newBuffer(CAPACITY); //父类调用子类实现的抽象方法，获取到结果（面向抽象编程）
         seed = System.currentTimeMillis();
         random = new Random(seed);
     }
@@ -66,9 +63,9 @@ public abstract class AbstractChannelBufferTest {
     }
 
     @Test
-    public void initialState() {
-        assertEquals(CAPACITY, buffer.capacity());
-        assertEquals(0, buffer.readerIndex());
+    public void initialState() { //直接运行是运行不了，要指定具体的子类（抽象类不能直接实例化）
+        assertEquals(CAPACITY, buffer.capacity()); //buffer设置了CAPACITY的容量
+        assertEquals(0, buffer.readerIndex()); //初始时，读下标和写下标都是为0
     }
 
     @Test
@@ -79,7 +76,7 @@ public abstract class AbstractChannelBufferTest {
             } catch (IndexOutOfBoundsException e) {
                 fail();
             }
-            buffer.readerIndex(-1);
+            buffer.readerIndex(-1); //读下标不能小于0
         });
     }
 

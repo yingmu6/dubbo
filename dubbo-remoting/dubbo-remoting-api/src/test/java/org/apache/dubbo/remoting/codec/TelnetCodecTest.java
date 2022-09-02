@@ -114,7 +114,7 @@ public class TelnetCodecTest {
     }
 
 
-    protected void testEecode_assertEquals(Object request, byte[] ret, boolean isServerside) throws IOException {
+    protected void testEecode_assertEquals(Object request, byte[] ret, boolean isServerside) throws IOException { //判断请求的Object是否与指定的ret字节数组相同
         //init channel
         Channel channel = isServerside ? getServerSideChannel(url) : getCliendSideChannel(url);
 
@@ -271,7 +271,7 @@ public class TelnetCodecTest {
     }
 
     @Test()
-    public void testDecode_History_UP() throws IOException {
+    public void testDecode_History_UP() throws IOException { //测试 向上键处理
         //init channel
         AbstractMockChannel channel = getServerSideChannel(url);
 
@@ -286,9 +286,9 @@ public class TelnetCodecTest {
     }
 
     @Test
-    public void testDecode_UPorDOWN_WithError() throws IOException {
+    public void testDecode_UPorDOWN_WithError() throws IOException { //测试向上、向下键的异常情况
         Assertions.assertThrows(IOException.class, () -> {
-            url = url.addParameter(AbstractMockChannel.ERROR_WHEN_SEND, Boolean.TRUE.toString());
+            url = url.addParameter(AbstractMockChannel.ERROR_WHEN_SEND, Boolean.TRUE.toString()); // 此处设置ERROR_WHEN_SEND的url参数值，AbstractMock就会解析这个，并抛出异常
 
             //init channel
             AbstractMockChannel channel = getServerSideChannel(url);
@@ -308,7 +308,7 @@ public class TelnetCodecTest {
 
     //=============================================================================================================================
     @Test
-    public void testEncode_String_ClientSide() throws IOException {
+    public void testEncode_String_ClientSide() throws IOException { //客户端请求的字符串编码，会附加上'\r\n'
         testEecode_assertEquals("aaa", "aaa\r\n".getBytes(), false);
     }
     
