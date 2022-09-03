@@ -66,7 +66,7 @@ public abstract class AbstractChannelBuffer implements ChannelBuffer {
     }
 
     @Override
-    public void writerIndex(int writerIndex) { //写下标的范围，readerIndex <= writerIndex <= capacity
+    public void writerIndex(int writerIndex) { //写下标的范围，0 <= readerIndex <= writerIndex <= capacity （设置读写下标时，都会先校验下标的合理范围）
         if (writerIndex < readerIndex || writerIndex > capacity()) {
             throw new IndexOutOfBoundsException();
         }

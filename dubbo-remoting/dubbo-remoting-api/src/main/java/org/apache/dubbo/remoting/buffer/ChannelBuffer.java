@@ -310,7 +310,7 @@ public interface ChannelBuffer extends Comparable<ChannelBuffer> {
      *                                   dst.length} is greater than {@code
      *                                   this.capacity}
      */
-    void getBytes(int index, byte[] dst);
+    void getBytes(int index, byte[] dst); //从当前buffer读取内容到目标数组
 
     /**
      * Transfers（传输） this buffer's data to the specified destination starting at the
@@ -341,7 +341,7 @@ public interface ChannelBuffer extends Comparable<ChannelBuffer> {
      *                                   dst.remaining()} is greater than {@code
      *                                   this.capacity}
      */
-    void getBytes(int index, ByteBuffer dst);
+    void getBytes(int index, ByteBuffer dst); //将当前buffer写到目标buffer中
 
     /**
      * Transfers this buffer's data to the specified destination starting at the

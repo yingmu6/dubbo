@@ -69,7 +69,7 @@ public abstract class AbstractChannelBufferTest {
     }
 
     @Test
-    public void readerIndexBoundaryCheck1() {
+    public void readerIndexBoundaryCheck1() { //读下标越界检查
         Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
             try {
                 buffer.writerIndex(0);
@@ -81,19 +81,19 @@ public abstract class AbstractChannelBufferTest {
     }
 
     @Test
-    public void readerIndexBoundaryCheck2() {
+    public void readerIndexBoundaryCheck2() { //测试readerIndex下标是否越界
         Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
             try {
                 buffer.writerIndex(buffer.capacity());
             } catch (IndexOutOfBoundsException e) {
                 fail();
             }
-            buffer.readerIndex(buffer.capacity() + 1);
+            buffer.readerIndex(buffer.capacity() + 1); //readerIndex 需要小于等于writerIndex
         });
     }
 
     @Test
-    public void readerIndexBoundaryCheck3() {
+    public void readerIndexBoundaryCheck3() { //同上测试下标
         Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
             try {
                 buffer.writerIndex(CAPACITY / 2);
@@ -105,7 +105,7 @@ public abstract class AbstractChannelBufferTest {
     }
 
     @Test
-    public void readerIndexBoundaryCheck4() {
+    public void readerIndexBoundaryCheck4() { //读写下标值可以一致
         buffer.writerIndex(0);
         buffer.readerIndex(0);
         buffer.writerIndex(buffer.capacity());
@@ -113,14 +113,14 @@ public abstract class AbstractChannelBufferTest {
     }
 
     @Test
-    public void writerIndexBoundaryCheck1() {
+    public void writerIndexBoundaryCheck1() { //读写下标都不能 <0
         Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
             buffer.writerIndex(-1);
         });
     }
 
     @Test
-    public void writerIndexBoundaryCheck2() {
+    public void writerIndexBoundaryCheck2() { //测试写下标
 
         Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
             try {
@@ -129,12 +129,12 @@ public abstract class AbstractChannelBufferTest {
             } catch (IndexOutOfBoundsException e) {
                 fail();
             }
-            buffer.writerIndex(buffer.capacity() + 1);
+            buffer.writerIndex(buffer.capacity() + 1); //写下标不能超过capacity
         });
     }
 
     @Test
-    public void writerIndexBoundaryCheck3() {
+    public void writerIndexBoundaryCheck3() { //测试读下标越界的情况
         Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
             try {
                 buffer.writerIndex(CAPACITY);
@@ -142,39 +142,39 @@ public abstract class AbstractChannelBufferTest {
             } catch (IndexOutOfBoundsException e) {
                 fail();
             }
-            buffer.writerIndex(CAPACITY / 4);
+            buffer.writerIndex(CAPACITY / 4); //此处抛出异常是writerIndex小于了readerIndex
         });
     }
 
     @Test
-    public void writerIndexBoundaryCheck4() {
+    public void writerIndexBoundaryCheck4() { //正常使用情况
         buffer.writerIndex(0);
         buffer.readerIndex(0);
         buffer.writerIndex(CAPACITY);
     }
 
     @Test
-    public void getByteBoundaryCheck1() {
+    public void getByteBoundaryCheck1() { //数组下标越界场景
         Assertions.assertThrows(IndexOutOfBoundsException.class, () -> buffer.getByte(-1));
     }
 
     @Test
-    public void getByteBoundaryCheck2() {
+    public void getByteBoundaryCheck2() { // buffer数组的下标范围 0 <= x <= capacity
         Assertions.assertThrows(IndexOutOfBoundsException.class, () -> buffer.getByte(buffer.capacity()));
     }
 
     @Test
-    public void getByteArrayBoundaryCheck1() {
+    public void getByteArrayBoundaryCheck1() { //从当前buffer拷贝内容到指定数组时，数据越界
         Assertions.assertThrows(IndexOutOfBoundsException.class, () -> buffer.getBytes(-1, new byte[0]));
     }
 
     @Test
-    public void getByteArrayBoundaryCheck2() {
+    public void getByteArrayBoundaryCheck2() { //同上
         Assertions.assertThrows(IndexOutOfBoundsException.class, () -> buffer.getBytes(-1, new byte[0], 0, 0));
     }
 
     @Test
-    public void getByteBufferBoundaryCheck() {
+    public void getByteBufferBoundaryCheck() { //ByteBuffer是java的字节缓冲区
         Assertions.assertThrows(IndexOutOfBoundsException.class, () -> buffer.getBytes(-1, ByteBuffer.allocate(0)));
     }
 

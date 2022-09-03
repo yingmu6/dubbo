@@ -115,8 +115,8 @@ public class HeapChannelBuffer extends AbstractChannelBuffer {
     }
 
     @Override
-    public void getBytes(int index, ByteBuffer dst) {
-        dst.put(array, index, Math.min(capacity() - index, dst.remaining()));
+    public void getBytes(int index, ByteBuffer dst) { //（把当前buffer维护的array内容写到ByteBuffer中）index是非负数，不然会报出IndexOutOfBoundsException
+        dst.put(array, index, Math.min(capacity() - index, dst.remaining())); //因为写到java的ByteBuffer中，length不超过array.length - offset，所以此处做了最小值的选取
     }
 
     @Override
