@@ -116,7 +116,7 @@ public class HeapChannelBuffer extends AbstractChannelBuffer {
 
     @Override
     public void getBytes(int index, ByteBuffer dst) { //（把当前buffer维护的array内容写到ByteBuffer中）index是非负数，不然会报出IndexOutOfBoundsException
-        dst.put(array, index, Math.min(capacity() - index, dst.remaining())); //因为写到java的ByteBuffer中，length不超过array.length - offset，所以此处做了最小值的选取
+        dst.put(array, index, Math.min(capacity() - index, dst.remaining())); //将当前buffer的可拷贝容量与目标buffer的剩余容量进行比较，获取最小值
     }
 
     @Override
@@ -201,7 +201,7 @@ public class HeapChannelBuffer extends AbstractChannelBuffer {
     }
 
     @Override
-    public ChannelBuffer copy(int index, int length) {
+    public ChannelBuffer copy(int index, int length) { //buffer的内容拷贝
         if (index < 0 || length < 0 || index + length > array.length) {
             throw new IndexOutOfBoundsException();
         }

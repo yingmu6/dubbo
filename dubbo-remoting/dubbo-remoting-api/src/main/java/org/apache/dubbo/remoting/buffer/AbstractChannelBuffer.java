@@ -108,12 +108,12 @@ public abstract class AbstractChannelBuffer implements ChannelBuffer {
     }
 
     @Override
-    public void markReaderIndex() {
+    public void markReaderIndex() { //把读下标赋值给读标记下标
         markedReaderIndex = readerIndex;
     }
 
     @Override
-    public void resetReaderIndex() {
+    public void resetReaderIndex() { //重置操作时，将读标记下标赋值给读下标
         readerIndex(markedReaderIndex);
     }
 

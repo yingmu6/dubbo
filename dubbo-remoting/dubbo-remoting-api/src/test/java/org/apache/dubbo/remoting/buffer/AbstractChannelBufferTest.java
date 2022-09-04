@@ -179,70 +179,73 @@ public abstract class AbstractChannelBufferTest {
     }
 
     @Test
-    public void copyBoundaryCheck1() {
+    public void copyBoundaryCheck1() { //buffer内容拷贝，但是下标越界了
         Assertions.assertThrows(IndexOutOfBoundsException.class, () -> buffer.copy(-1, 0));
     }
 
     @Test
-    public void copyBoundaryCheck2() {
+    public void copyBoundaryCheck2() { //buffer内容拷贝，但是内容长度越界了
         Assertions.assertThrows(IndexOutOfBoundsException.class, () -> buffer.copy(0, buffer.capacity() + 1));
     }
 
     @Test
-    public void copyBoundaryCheck3() {
+    public void copyBoundaryCheck3() { //同上类似测试
         Assertions.assertThrows(IndexOutOfBoundsException.class, () -> buffer.copy(buffer.capacity() + 1, 0));
     }
 
     @Test
-    public void copyBoundaryCheck4() {
+    public void copyBoundaryCheck4() { //同上类似测试
         Assertions.assertThrows(IndexOutOfBoundsException.class, () -> buffer.copy(buffer.capacity(), 1));
     }
 
     @Test
-    public void setIndexBoundaryCheck1() {
+    public void setIndexBoundaryCheck1() { //读下标越界
         Assertions.assertThrows(IndexOutOfBoundsException.class, () -> buffer.setIndex(-1, CAPACITY));
     }
 
     @Test
-    public void setIndexBoundaryCheck2() {
+    public void setIndexBoundaryCheck2() { //写下标小于读下标异常
         Assertions.assertThrows(IndexOutOfBoundsException.class, () -> buffer.setIndex(CAPACITY / 2, CAPACITY / 4));
     }
 
     @Test
-    public void setIndexBoundaryCheck3() {
+    public void setIndexBoundaryCheck3() { //写下标大于容量
         Assertions.assertThrows(IndexOutOfBoundsException.class, () -> buffer.setIndex(0, CAPACITY + 1));
     }
 
     @Test
-    public void getByteBufferState() {
-        ByteBuffer dst = ByteBuffer.allocate(4);
+    public void getByteBufferState() { //测试java API中的ByteBuffer
+        ByteBuffer dst = ByteBuffer.allocate(4); //分配指定容量的缓存区，默认为HeapByteBuffer实现类
+//        ByteBuffer dst = new ByteBuffer(); //ByteBuffer是抽象类，不能直接new对象
         dst.position(1);
         dst.limit(3);
+
+        // java.nio.Buffer中的mark <= position <= limit <= capacity，这些标识是ByteBuffer继承Buffer的，ByteBuffer中维护中字节数组
 
         buffer.setByte(0, (byte) 1);
         buffer.setByte(1, (byte) 2);
         buffer.setByte(2, (byte) 3);
         buffer.setByte(3, (byte) 4);
-        buffer.getBytes(1, dst);
+        buffer.getBytes(1, dst); //根据HeapChannelBuffer中的实现逻辑，会从当前buffer中index=1，且拷贝dst的limit-position数量的元素，最终是拷贝了两个元素
 
-        assertEquals(3, dst.position());
-        assertEquals(3, dst.limit());
+        assertEquals(3, dst.position()); //因为增加了两个长度，所以position位置也对应增加2，即1+2=3（每写入一个元素，position就增加1）
+        assertEquals(3, dst.limit()); //limit的长度保持不对
 
-        dst.clear();
+        dst.clear(); //清理游标，将position=0，limit=capacity，mark=-1（但并没清理缓冲区数据）
         assertEquals(0, dst.get(0));
-        assertEquals(2, dst.get(1));
+        assertEquals(2, dst.get(1)); //值来源于上文中buffer.getBytes(1, dst)的拷贝
         assertEquals(3, dst.get(2));
         assertEquals(0, dst.get(3));
     }
 
     @Test
-    public void getDirectByteBufferBoundaryCheck() {
+    public void getDirectByteBufferBoundaryCheck() { //此处会在java.nio.Buffer#checkBounds()中检查下标越界时抛出下标越界异常
         Assertions.assertThrows(IndexOutOfBoundsException.class, () -> buffer.getBytes(-1, ByteBuffer.allocateDirect(0)));
     }
 
     @Test
     public void getDirectByteBufferState() {
-        ByteBuffer dst = ByteBuffer.allocateDirect(4);
+        ByteBuffer dst = ByteBuffer.allocateDirect(4); //分配指定容量的缓存区，对应的实现类为DirectByteBuffer
         dst.position(1);
         dst.limit(3);
 

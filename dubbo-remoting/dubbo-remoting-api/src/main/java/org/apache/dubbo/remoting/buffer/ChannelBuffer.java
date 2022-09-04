@@ -235,12 +235,12 @@ public interface ChannelBuffer extends Comparable<ChannelBuffer> {
     ChannelBuffer copy();
 
     /**
-     * Returns a copy of this buffer's sub-region.  Modifying the content of the
+     * Returns a copy of this buffer's sub-region（当前buffer的子区域）.  Modifying the content of the
      * returned buffer or this buffer does not affect each other at all. This
      * method does not modify {@code readerIndex} or {@code writerIndex} of this
-     * buffer.
+     * buffer.（该方法不会修改当前buffer的readerIndex、writerIndex）
      */
-    ChannelBuffer copy(int index, int length);
+    ChannelBuffer copy(int index, int length); //buffer内容拷贝
 
     /**
      * Discards the bytes between the 0th index and {@code readerIndex}. It
