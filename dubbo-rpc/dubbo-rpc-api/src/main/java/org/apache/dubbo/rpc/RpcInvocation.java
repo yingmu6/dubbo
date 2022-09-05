@@ -58,8 +58,8 @@ public class RpcInvocation implements Invocation, Serializable { //RpcInvocation
 
     private String targetServiceUniqueName;
 
-    private String methodName;
-    private String serviceName;
+    private String methodName; //调用的方法名
+    private String serviceName; //调用的服务名
 
     private transient Class<?>[] parameterTypes;
     private String parameterTypesDesc;
@@ -141,7 +141,7 @@ public class RpcInvocation implements Invocation, Serializable { //RpcInvocation
         this(methodName, serviceName, parameterTypes, arguments, attachments, null, null);
     }
 
-    // 构建调用的基本信息
+    // 构建调用的基本信息（如服务接口信息、方法信息、方法参数信息等）
     public RpcInvocation(String methodName, String serviceName, Class<?>[] parameterTypes, Object[] arguments,
                          Map<String, Object> attachments, Invoker<?> invoker, Map<Object, Object> attributes) {
         this.methodName = methodName;

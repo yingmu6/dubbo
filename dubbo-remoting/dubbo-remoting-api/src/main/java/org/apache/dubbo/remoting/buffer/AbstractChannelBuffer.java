@@ -43,9 +43,9 @@ public abstract class AbstractChannelBuffer implements ChannelBuffer {
 
     private int writerIndex;
 
-    private int markedReaderIndex;
+    private int markedReaderIndex; //标记的读下标
 
-    private int markedWriterIndex;
+    private int markedWriterIndex; //标记的写下标
 
     @Override
     public int readerIndex() {
@@ -128,15 +128,15 @@ public abstract class AbstractChannelBuffer implements ChannelBuffer {
     }
 
     @Override
-    public void discardReadBytes() {
+    public void discardReadBytes() { //弃用 discardable可丢弃的字节（即 0~readerIndex之间的字节）
         if (readerIndex == 0) {
             return;
         }
-        setBytes(0, this, readerIndex, writerIndex - readerIndex);
-        writerIndex -= readerIndex;
+        setBytes(0, this, readerIndex, writerIndex - readerIndex); //将当前可读的字节数写到新的缓冲区中
+        writerIndex -= readerIndex; //重新设置writerIndex下标
         markedReaderIndex = Math.max(markedReaderIndex - readerIndex, 0);
         markedWriterIndex = Math.max(markedWriterIndex - readerIndex, 0);
-        readerIndex = 0;
+        readerIndex = 0; //todo @pause 09-04
     }
 
     @Override
@@ -189,7 +189,7 @@ public abstract class AbstractChannelBuffer implements ChannelBuffer {
         if (readerIndex == writerIndex) {
             throw new IndexOutOfBoundsException();
         }
-        return getByte(readerIndex++);
+        return getByte(readerIndex++); //读字节后，readerIndex下标会自动加1
     }
 
     @Override
@@ -263,7 +263,7 @@ public abstract class AbstractChannelBuffer implements ChannelBuffer {
 
     @Override
     public void writeByte(int value) {
-        setByte(writerIndex++, value);
+        setByte(writerIndex++, value); //写入字节后，writerIndex下标会自动增加
     }
 
     @Override

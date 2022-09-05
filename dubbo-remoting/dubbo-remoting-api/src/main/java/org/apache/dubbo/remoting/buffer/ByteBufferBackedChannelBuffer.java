@@ -113,7 +113,7 @@ public class ByteBufferBackedChannelBuffer extends AbstractChannelBuffer { //jav
     public void getBytes(int index, ChannelBuffer dst, int dstIndex, int length) {
         if (dst instanceof ByteBufferBackedChannelBuffer) {
             ByteBufferBackedChannelBuffer bbdst = (ByteBufferBackedChannelBuffer) dst;
-            ByteBuffer data = bbdst.buffer.duplicate();
+            ByteBuffer data = bbdst.buffer.duplicate(); //从当前buffer中复制内容到新的buffer中
 
             data.limit(dstIndex + length).position(dstIndex);
             getBytes(index, data);

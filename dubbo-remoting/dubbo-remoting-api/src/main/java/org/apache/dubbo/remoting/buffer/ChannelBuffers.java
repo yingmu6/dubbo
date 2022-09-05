@@ -79,7 +79,7 @@ public final class ChannelBuffers { //ChannelBuffer的工具处理类，提供�
         }
     }
 
-    public static ChannelBuffer directBuffer(int capacity) {
+    public static ChannelBuffer directBuffer(int capacity) { //构建DirectByteBuffer
         if (capacity == 0) {
             return EMPTY_BUFFER;
         }

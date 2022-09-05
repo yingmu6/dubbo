@@ -30,12 +30,12 @@ import java.lang.reflect.Method;
 /**
  * InvokerHandler
  * 1）代理模式：通过代理间接的调用被代理对象的方法
- * 2）Java的反射包提供了一个Porxy类和InvokationHandler接口。它们结合在一起后可以创建动态代理类。Porxy类基于传递的参数创建动态代理类。
+ * 2）Java的反射包提供了一个Proxy类和InvocationHandler接口。它们结合在一起后可以创建动态代理类。Porxy类基于传递的参数创建动态代理类。
  * InvocationHandler则用于激发动态代理类的方法。这个过程是在程序执行过程中动态生成与处理的，所以叫动态代理
  * 3）动态代理就是Proxy的class文件在程序运行前是不存在，其字节码是在运行的时候自动生成的。
  * https://www.jianshu.com/p/4df6e4d7eb46
  */
-public class InvokerInvocationHandler implements InvocationHandler { //Proxy与InvocationHandler结合使用，创建动态代理类
+public class InvokerInvocationHandler implements InvocationHandler { //代理的调用处理类（Proxy与InvocationHandler结合使用，创建动态代理类）
     // InvocationHandler：每一个代理实例都与一个调用处理类关联，当代理实例上的方法被调用时，会调用InvocationHandler的invoke方法（方法回调）
     private static final Logger logger = LoggerFactory.getLogger(InvokerInvocationHandler.class);
     private final Invoker<?> invoker;
@@ -50,7 +50,7 @@ public class InvokerInvocationHandler implements InvocationHandler { //Proxy与I
     }
 
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable { //实现了InvocationHandler接口的invoke方法，可执行自定义的代理增强逻辑
         /**
          *  @csy 该方法的功能用途是什么？
          *  执行远程方法的调用（执行具体接口的方法调用时，会进入该方法）
@@ -61,7 +61,7 @@ public class InvokerInvocationHandler implements InvocationHandler { //Proxy与I
         }
         String methodName = method.getName();
         Class<?>[] parameterTypes = method.getParameterTypes();
-        if (parameterTypes.length == 0) { //调用无参的指定方法
+        if (parameterTypes.length == 0) { //toString()、hashCode()等方法，不做代理增强处理
             if ("toString".equals(methodName)) {
                 return invoker.toString();
             } else if ("$destroy".equals(methodName)) {

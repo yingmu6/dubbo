@@ -18,7 +18,7 @@ package org.apache.dubbo.remoting.buffer;
 
 import java.nio.ByteBuffer;
 
-public class ByteBufferBackedChannelBufferTest extends AbstractChannelBufferTest {
+public class ByteBufferBackedChannelBufferTest extends AbstractChannelBufferTest { //要测试的方法，继承于AbstractChannelBufferTest
 
     private ChannelBuffer buffer;
 

@@ -266,53 +266,70 @@ public abstract class AbstractChannelBufferTest {
     }
 
     @Test
-    public void testRandomByteAccess() {
+    public void testRandomByteAccess() { //测试随机数的访问
         for (int i = 0; i < buffer.capacity(); i++) {
             byte value = (byte) random.nextInt();
             buffer.setByte(i, value);
         }
 
-        random.setSeed(seed);
+        random.setSeed(seed); //此处若不设置，产生的随机值就不一致了（此处还待研究，有点神奇，为啥设置了 种子数，后续产生的值就一样了，随机数变为可预测的数了）
         for (int i = 0; i < buffer.capacity(); i++) {
             byte value = (byte) random.nextInt();
             assertEquals(value, buffer.getByte(i));
         }
+
+        System.out.println("随机数：" + Math.random());
+
+        /**
+         * Random生成的随机数都是伪随机数！！！
+         * 是由可确定的函数（常用线性同余），通过一个种子（常用时钟），产生的伪随机数。这意味着：如果知道了种子，或者已经产生的随机数，都可能获得接下来随机数序列的信息（可预测性）
+         * 只有通过真实的随机事件产生的随机数才是真随机！！比如，通过机器的硬件噪声产生随机数、通过大气噪声产生随机数
+         *
+         * https://juejin.cn/post/6976248310692577294
+         */
     }
 
     @Test
-    public void testSequentialByteAccess() {
+    public void testSequentialByteAccess() { //测试序列化读或写操作
         buffer.writerIndex(0);
         for (int i = 0; i < buffer.capacity(); i++) {
             byte value = (byte) random.nextInt();
             assertEquals(i, buffer.writerIndex());
             assertTrue(buffer.writable());
-            buffer.writeByte(value);
+            buffer.writeByte(value); //写操作执行后 writerIndex下标会自动+1
         }
 
-        assertEquals(0, buffer.readerIndex());
-        assertEquals(buffer.capacity(), buffer.writerIndex());
-        assertFalse(buffer.writable());
+        assertEquals(0, buffer.readerIndex()); //因为没有进行读操作，所以读下标未移动
+        assertEquals(buffer.capacity(), buffer.writerIndex()); //writerIndex最多可以写到capacity
+        assertFalse(buffer.writable()); //因为写满了，所以不能再写了
 
         random.setSeed(seed);
         for (int i = 0; i < buffer.capacity(); i++) {
             byte value = (byte) random.nextInt();
             assertEquals(i, buffer.readerIndex());
             assertTrue(buffer.readable());
-            assertEquals(value, buffer.readByte());
+            assertEquals(value, buffer.readByte()); //进行读操作以后，readerIndex会自动增加
         }
 
-        assertEquals(buffer.capacity(), buffer.readerIndex());
+        assertEquals(buffer.capacity(), buffer.readerIndex()); //读、写操作，只对应影响readerIndex或writerIndex，不会同时影响
         assertEquals(buffer.capacity(), buffer.writerIndex());
         assertFalse(buffer.readable());
         assertFalse(buffer.writable());
     }
 
     @Test
-    public void testByteArrayTransfer() {
+    public void testByteArrayTransfer() { //测试字节数组转换
         byte[] value = new byte[BLOCK_SIZE * 2];
         for (int i = 0; i < buffer.capacity() - BLOCK_SIZE + 1; i += BLOCK_SIZE) {
-            random.nextBytes(value);
-            buffer.setBytes(i, value, random.nextInt(BLOCK_SIZE), BLOCK_SIZE);
+            random.nextBytes(value); //将随机产生的字节数组，回填指定的字节数组
+
+            /**
+             * 此处处理的逻辑：
+             * 1）随机数产生的范围 0 ~ BLOCK_SIZE (todo @csy 是否等于BLOCK_SIZE，待测试)
+             * 2）数组拷贝下标是 0 ~ BLOCK_SIZE，长度为BLOCK_SIZE，而数组长度为BLOCK_SIZE*2，所以拷贝最大情况是BLOCK_SIZE ~ BLOCK_SIZE + BLOCK_SIZE，也不会出现数组越界
+             * 3）将输入的字节数组进行拷贝，相关元素写到当前buffer中的字节数组中
+             */
+            buffer.setBytes(i, value, random.nextInt(BLOCK_SIZE), BLOCK_SIZE); //将指定数组的元素设置到当前缓冲区的数组中
         }
 
         random.setSeed(seed);
@@ -328,11 +345,11 @@ public abstract class AbstractChannelBufferTest {
     }
 
     @Test
-    public void testRandomByteArrayTransfer1() {
+    public void testRandomByteArrayTransfer1() { //测试随机数组转换
         byte[] value = new byte[BLOCK_SIZE];
         for (int i = 0; i < buffer.capacity() - BLOCK_SIZE + 1; i += BLOCK_SIZE) {
             random.nextBytes(value);
-            buffer.setBytes(i, value);
+            buffer.setBytes(i, value); //将产生随机数组成的字节数组，设置到当前buffer的字节数组（此处value对应的字节数组会被随机数替换）
         }
 
         random.setSeed(seed);
@@ -340,7 +357,7 @@ public abstract class AbstractChannelBufferTest {
         ChannelBuffer expectedValue = wrappedBuffer(expectedValueContent);
         for (int i = 0; i < buffer.capacity() - BLOCK_SIZE + 1; i += BLOCK_SIZE) {
             random.nextBytes(expectedValueContent);
-            buffer.getBytes(i, value);
+            buffer.getBytes(i, value); //获取当前buffer中的字节数组，并写道输入的目标数组中
             for (int j = 0; j < BLOCK_SIZE; j++) {
                 assertEquals(expectedValue.getByte(j), value[j]);
             }
@@ -348,7 +365,7 @@ public abstract class AbstractChannelBufferTest {
     }
 
     @Test
-    public void testRandomByteArrayTransfer2() {
+    public void testRandomByteArrayTransfer2() { //测试数组转换
         byte[] value = new byte[BLOCK_SIZE * 2];
         for (int i = 0; i < buffer.capacity() - BLOCK_SIZE + 1; i += BLOCK_SIZE) {
             random.nextBytes(value);
@@ -361,7 +378,7 @@ public abstract class AbstractChannelBufferTest {
         for (int i = 0; i < buffer.capacity() - BLOCK_SIZE + 1; i += BLOCK_SIZE) {
             random.nextBytes(expectedValueContent);
             int valueOffset = random.nextInt(BLOCK_SIZE);
-            buffer.getBytes(i, value, valueOffset, BLOCK_SIZE);
+            buffer.getBytes(i, value, valueOffset, BLOCK_SIZE); //指定目标数组的处理下标
             for (int j = valueOffset; j < valueOffset + BLOCK_SIZE; j++) {
                 assertEquals(expectedValue.getByte(j), value[j]);
             }
@@ -369,7 +386,7 @@ public abstract class AbstractChannelBufferTest {
     }
 
     @Test
-    public void testRandomHeapBufferTransfer1() {
+    public void testRandomHeapBufferTransfer1() { //已阅读
         byte[] valueContent = new byte[BLOCK_SIZE];
         ChannelBuffer value = wrappedBuffer(valueContent);
         for (int i = 0; i < buffer.capacity() - BLOCK_SIZE + 1; i += BLOCK_SIZE) {
@@ -396,9 +413,9 @@ public abstract class AbstractChannelBufferTest {
     }
 
     @Test
-    public void testRandomHeapBufferTransfer2() {
+    public void testRandomHeapBufferTransfer2() { //已阅读
         byte[] valueContent = new byte[BLOCK_SIZE * 2];
-        ChannelBuffer value = wrappedBuffer(valueContent);
+        ChannelBuffer value = wrappedBuffer(valueContent); //封装的buffer实例为HeapChannelBuffer
         for (int i = 0; i < buffer.capacity() - BLOCK_SIZE + 1; i += BLOCK_SIZE) {
             random.nextBytes(valueContent);
             buffer.setBytes(i, value, random.nextInt(BLOCK_SIZE), BLOCK_SIZE);
@@ -418,7 +435,7 @@ public abstract class AbstractChannelBufferTest {
     }
 
     @Test
-    public void testRandomDirectBufferTransfer() {
+    public void testRandomDirectBufferTransfer() { //已调试
         byte[] tmp = new byte[BLOCK_SIZE * 2];
         ChannelBuffer value = directBuffer(BLOCK_SIZE * 2);
         for (int i = 0; i < buffer.capacity() - BLOCK_SIZE + 1; i += BLOCK_SIZE) {
@@ -441,7 +458,7 @@ public abstract class AbstractChannelBufferTest {
     }
 
     @Test
-    public void testRandomByteBufferTransfer() {
+    public void testRandomByteBufferTransfer() { //已阅读
         ByteBuffer value = ByteBuffer.allocate(BLOCK_SIZE * 2);
         for (int i = 0; i < buffer.capacity() - BLOCK_SIZE + 1; i += BLOCK_SIZE) {
             random.nextBytes(value.array());
@@ -465,7 +482,7 @@ public abstract class AbstractChannelBufferTest {
     }
 
     @Test
-    public void testSequentialByteArrayTransfer1() {
+    public void testSequentialByteArrayTransfer1() { //已阅读
         byte[] value = new byte[BLOCK_SIZE];
         buffer.writerIndex(0);
         for (int i = 0; i < buffer.capacity() - BLOCK_SIZE + 1; i += BLOCK_SIZE) {
@@ -489,7 +506,7 @@ public abstract class AbstractChannelBufferTest {
     }
 
     @Test
-    public void testSequentialByteArrayTransfer2() {
+    public void testSequentialByteArrayTransfer2() { //已阅读
         byte[] value = new byte[BLOCK_SIZE * 2];
         buffer.writerIndex(0);
         for (int i = 0; i < buffer.capacity() - BLOCK_SIZE + 1; i += BLOCK_SIZE) {
@@ -515,7 +532,7 @@ public abstract class AbstractChannelBufferTest {
     }
 
     @Test
-    public void testSequentialHeapBufferTransfer1() {
+    public void testSequentialHeapBufferTransfer1() { //已阅读
         byte[] valueContent = new byte[BLOCK_SIZE * 2];
         ChannelBuffer value = wrappedBuffer(valueContent);
         buffer.writerIndex(0);
@@ -546,7 +563,7 @@ public abstract class AbstractChannelBufferTest {
     }
 
     @Test
-    public void testSequentialHeapBufferTransfer2() {
+    public void testSequentialHeapBufferTransfer2() {//已阅读
         byte[] valueContent = new byte[BLOCK_SIZE * 2];
         ChannelBuffer value = wrappedBuffer(valueContent);
         buffer.writerIndex(0);
@@ -582,7 +599,7 @@ public abstract class AbstractChannelBufferTest {
     }
 
     @Test
-    public void testSequentialDirectBufferTransfer1() {
+    public void testSequentialDirectBufferTransfer1() {//已阅读
         byte[] valueContent = new byte[BLOCK_SIZE * 2];
         ChannelBuffer value = directBuffer(BLOCK_SIZE * 2);
         buffer.writerIndex(0);
@@ -615,7 +632,7 @@ public abstract class AbstractChannelBufferTest {
     }
 
     @Test
-    public void testSequentialDirectBufferTransfer2() {
+    public void testSequentialDirectBufferTransfer2() { //已阅读
         byte[] valueContent = new byte[BLOCK_SIZE * 2];
         ChannelBuffer value = directBuffer(BLOCK_SIZE * 2);
         buffer.writerIndex(0);
@@ -654,7 +671,7 @@ public abstract class AbstractChannelBufferTest {
     }
 
     @Test
-    public void testSequentialByteBufferBackedHeapBufferTransfer1() {
+    public void testSequentialByteBufferBackedHeapBufferTransfer1() { //已阅读
         byte[] valueContent = new byte[BLOCK_SIZE * 2];
         ChannelBuffer value = wrappedBuffer(ByteBuffer.allocate(BLOCK_SIZE * 2));
         value.writerIndex(0);
@@ -688,7 +705,7 @@ public abstract class AbstractChannelBufferTest {
     }
 
     @Test
-    public void testSequentialByteBufferBackedHeapBufferTransfer2() {
+    public void testSequentialByteBufferBackedHeapBufferTransfer2() { //已阅读
         byte[] valueContent = new byte[BLOCK_SIZE * 2];
         ChannelBuffer value = wrappedBuffer(ByteBuffer.allocate(BLOCK_SIZE * 2));
         value.writerIndex(0);
@@ -728,7 +745,7 @@ public abstract class AbstractChannelBufferTest {
     }
 
     @Test
-    public void testSequentialByteBufferTransfer() {
+    public void testSequentialByteBufferTransfer() { //已阅读
         buffer.writerIndex(0);
         ByteBuffer value = ByteBuffer.allocate(BLOCK_SIZE * 2);
         for (int i = 0; i < buffer.capacity() - BLOCK_SIZE + 1; i += BLOCK_SIZE) {
@@ -753,7 +770,7 @@ public abstract class AbstractChannelBufferTest {
     }
 
     @Test
-    public void testSequentialCopiedBufferTransfer1() {
+    public void testSequentialCopiedBufferTransfer1() { //已阅读
         buffer.writerIndex(0);
         for (int i = 0; i < buffer.capacity() - BLOCK_SIZE + 1; i += BLOCK_SIZE) {
             byte[] value = new byte[BLOCK_SIZE];
@@ -779,7 +796,7 @@ public abstract class AbstractChannelBufferTest {
     }
 
     @Test
-    public void testStreamTransfer1() throws Exception {
+    public void testStreamTransfer1() throws Exception { //已阅读
         byte[] expected = new byte[buffer.capacity()];
         random.nextBytes(expected);
 
@@ -798,7 +815,7 @@ public abstract class AbstractChannelBufferTest {
     }
 
     @Test
-    public void testStreamTransfer2() throws Exception {
+    public void testStreamTransfer2() throws Exception { //已阅读
         byte[] expected = new byte[buffer.capacity()];
         random.nextBytes(expected);
         buffer.clear();
@@ -821,7 +838,7 @@ public abstract class AbstractChannelBufferTest {
     }
 
     @Test
-    public void testCopy() {
+    public void testCopy() { //已阅读
         for (int i = 0; i < buffer.capacity(); i++) {
             byte value = (byte) random.nextInt();
             buffer.setByte(i, value);
@@ -848,7 +865,7 @@ public abstract class AbstractChannelBufferTest {
     }
 
     @Test
-    public void testToByteBuffer1() {
+    public void testToByteBuffer1() { //已阅读
         byte[] value = new byte[buffer.capacity()];
         random.nextBytes(value);
         buffer.clear();
@@ -858,7 +875,7 @@ public abstract class AbstractChannelBufferTest {
     }
 
     @Test
-    public void testToByteBuffer2() {
+    public void testToByteBuffer2() { //已阅读
         byte[] value = new byte[buffer.capacity()];
         random.nextBytes(value);
         buffer.clear();
@@ -870,7 +887,7 @@ public abstract class AbstractChannelBufferTest {
     }
 
     @Test
-    public void testSkipBytes1() {
+    public void testSkipBytes1() { //已阅读
         buffer.setIndex(CAPACITY / 4, CAPACITY / 2);
 
         buffer.skipBytes(CAPACITY / 4);
