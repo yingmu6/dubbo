@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 public class OverrideConfiguratorTest {
 
     @Test
-    public void testOverride_Application() { //todo @pause 22/07/12
+    public void testOverride_Application() {
         // 此处OverrideConfigurator中维护的configuratorUrl值为 "override://0.0.0.0/com.foo.BarService?timeout=200"，由于URL的toString()不显示用户名、密码，所以此处string中，没看到foo，但url中的username是有值的
         OverrideConfigurator configurator = new OverrideConfigurator(URL.valueOf("override://foo@0.0.0.0/com.foo.BarService?timeout=200"));
 

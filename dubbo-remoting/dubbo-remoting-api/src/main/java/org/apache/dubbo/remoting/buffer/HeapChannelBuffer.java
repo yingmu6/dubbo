@@ -158,8 +158,8 @@ public class HeapChannelBuffer extends AbstractChannelBuffer {
     public int setBytes(int index, InputStream in, int length) throws IOException {
         int readBytes = 0;
         do {
-            int localReadBytes = in.read(array, index, length);
-            if (localReadBytes < 0) {
+            int localReadBytes = in.read(array, index, length); //从输入流中读取指定数量的数据写到数组中（返回读取的字节数）
+            if (localReadBytes < 0) { //in.read()返回-1，表明没有可读的字节数（可能部分读取，比如总读取10个字节，结果读了5个，可进行下一次循环读取）
                 if (readBytes == 0) {
                     return -1;
                 } else {
@@ -168,7 +168,7 @@ public class HeapChannelBuffer extends AbstractChannelBuffer {
             }
             readBytes += localReadBytes;
             index += localReadBytes;
-            length -= localReadBytes;
+            length -= localReadBytes; //改变循环条件，将已读取的内容减去，读取剩余的内容
         } while (length > 0);
 
         return readBytes;

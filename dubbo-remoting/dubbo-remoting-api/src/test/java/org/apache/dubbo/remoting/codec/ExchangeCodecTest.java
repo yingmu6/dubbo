@@ -359,7 +359,7 @@ public class ExchangeCodecTest extends TelnetCodecTest { // Codec编码测试（
     }
 
     @Test
-    public void test_Encode_Response() throws IOException { //对响应对象Response进行编码（todo @pause）
+    public void test_Encode_Response() throws IOException { //对响应对象Response进行编码（todo @pause-debug）
         ChannelBuffer encodeBuffer = ChannelBuffers.dynamicBuffer(1024);
         Channel channel = getCliendSideChannel(url);
         Response response = new Response();

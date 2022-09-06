@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ChannelBufferStreamTest { //todo @pause 09-05
+public class ChannelBufferStreamTest { //todo @pause-debug 09-05
 
     @Test
     public void testAll() throws Exception {

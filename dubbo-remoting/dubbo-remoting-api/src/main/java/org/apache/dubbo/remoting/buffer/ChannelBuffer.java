@@ -778,7 +778,7 @@ public interface ChannelBuffer extends Comparable<ChannelBuffer> {
      * @throws IndexOutOfBoundsException if {@code length} is greater than
      *                                   {@code this.readableBytes}
      */
-    void skipBytes(int length);
+    void skipBytes(int length); //将当前的读下标，增长指定长度
 
     /**
      * Converts this buffer's readable bytes into a NIO buffer.  The returned

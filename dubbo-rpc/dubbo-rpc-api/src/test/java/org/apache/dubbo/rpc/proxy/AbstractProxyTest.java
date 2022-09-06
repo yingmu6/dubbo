@@ -24,7 +24,6 @@ import org.apache.dubbo.rpc.RpcInvocation;
 import org.apache.dubbo.rpc.support.DemoService;
 import org.apache.dubbo.rpc.support.DemoServiceImpl;
 import org.apache.dubbo.rpc.support.MyInvoker;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +32,7 @@ import java.util.Arrays;
 
 public abstract class AbstractProxyTest {
 
-    public static ProxyFactory factory;
+    public static ProxyFactory factory; //具体实现类，会初始化这个变量，如JdkProxyTest
 
     @Test
     public void testGetProxy() throws Exception {
@@ -41,7 +40,7 @@ public abstract class AbstractProxyTest {
 
         Invoker<DemoService> invoker = new MyInvoker<>(url);
 
-        DemoService proxy = factory.getProxy(invoker);
+        DemoService proxy = factory.getProxy(invoker); //todo @pause for debug-22/09/06
 
         Assertions.assertNotNull(proxy);
 

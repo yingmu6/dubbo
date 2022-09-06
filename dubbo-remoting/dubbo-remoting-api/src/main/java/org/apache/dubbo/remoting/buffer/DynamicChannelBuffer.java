@@ -22,7 +22,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
-public class DynamicChannelBuffer extends AbstractChannelBuffer {
+public class DynamicChannelBuffer extends AbstractChannelBuffer { //动态缓存区（可以动态扩容，也可以指定不同的缓存区工厂）  todo @pause-read 22/09/06
     /**
      * @csy 为啥称之为动态ChannelBuffer？莫非可以扩容吗？
      * 解：DynamicChannelBuffer可以认为是其他ChannelBuffer的装饰器，
@@ -34,7 +34,7 @@ public class DynamicChannelBuffer extends AbstractChannelBuffer {
     private ChannelBuffer buffer;
 
     public DynamicChannelBuffer(int estimatedLength) { //estimated：[ˈestɪmeɪtɪd] 估计的、预估的
-        this(estimatedLength, HeapChannelBufferFactory.getInstance());
+        this(estimatedLength, HeapChannelBufferFactory.getInstance()); //默认使用HeapChannelBufferFactory工厂
     }
 
     public DynamicChannelBuffer(int estimatedLength, ChannelBufferFactory factory) {
@@ -49,7 +49,7 @@ public class DynamicChannelBuffer extends AbstractChannelBuffer {
     }
 
     @Override
-    public void ensureWritableBytes(int minWritableBytes) {
+    public void ensureWritableBytes(int minWritableBytes) { //检测是否有可写入空间，若没有则进行自动扩容
         if (minWritableBytes <= writableBytes()) {
             return;
         }

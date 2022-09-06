@@ -50,7 +50,7 @@ public class InvokerInvocationHandler implements InvocationHandler { //代理的
     }
 
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable { //实现了InvocationHandler接口的invoke方法，可执行自定义的代理增强逻辑
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable { //实现了InvocationHandler接口的invoke方法，可执行自定义的代理增强逻辑（当被代理对象执行方法调用时，就会调用Handler的invoke方法）
         /**
          *  @csy 该方法的功能用途是什么？
          *  执行远程方法的调用（执行具体接口的方法调用时，会进入该方法）
@@ -74,7 +74,7 @@ public class InvokerInvocationHandler implements InvocationHandler { //代理的
             return invoker.equals(args[0]);
         }
 
-        // 调用包含多个参数的方法
+        // 调用包含多个参数的方法（构建调用信息）
         RpcInvocation rpcInvocation = new RpcInvocation(method, invoker.getInterface().getName(), args);
         String serviceKey = invoker.getUrl().getServiceKey();
         rpcInvocation.setTargetServiceUniqueName(serviceKey); //设置目标服务名

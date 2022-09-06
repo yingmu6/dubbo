@@ -108,7 +108,7 @@ public abstract class AbstractChannelBuffer implements ChannelBuffer {
     }
 
     @Override
-    public void markReaderIndex() { //把读下标赋值给读标记下标
+    public void markReaderIndex() { //把读下标赋值给读标记下标（把当前的readerIndex下标进行标记）
         markedReaderIndex = readerIndex;
     }
 
@@ -136,7 +136,7 @@ public abstract class AbstractChannelBuffer implements ChannelBuffer {
         writerIndex -= readerIndex; //重新设置writerIndex下标
         markedReaderIndex = Math.max(markedReaderIndex - readerIndex, 0);
         markedWriterIndex = Math.max(markedWriterIndex - readerIndex, 0);
-        readerIndex = 0; //todo @pause 09-04
+        readerIndex = 0;
     }
 
     @Override
