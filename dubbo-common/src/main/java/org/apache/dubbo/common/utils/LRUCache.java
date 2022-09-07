@@ -40,8 +40,8 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V> {
     }
 
     @Override
-    protected boolean removeEldestEntry(java.util.Map.Entry<K, V> eldest) {
-        return size() > maxCapacity;
+    protected boolean removeEldestEntry(java.util.Map.Entry<K, V> eldest) { //是否移除最年长的条目
+        return size() > maxCapacity; // 当Map中的条目，大于指定的最大容量时，需要移除最年长的条目
     }
 
     @Override
@@ -65,7 +65,7 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V> {
     }
 
     @Override
-    public V put(K key, V value) {
+    public V put(K key, V value) { //put的时候，会回调removeEldestEntry()方法，判断是否要移除最年长的元素（默认是不移除的），dubbo按照是否超过maxCapacity来做判断，超过了就使用LinkedHashMap的移除能力来处理
         lock.lock();
         try {
             return super.put(key, value);

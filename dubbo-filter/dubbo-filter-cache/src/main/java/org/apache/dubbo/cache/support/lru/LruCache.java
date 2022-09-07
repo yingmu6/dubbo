@@ -32,7 +32,7 @@ import java.util.Map;
  * </pre>
  * <pre>
  * LruCache uses url's <b>cache.size</b> value for its max store size, if nothing is provided then
- * default value will be 1000
+ * default value will be 1000（使用cache.size作为最大存储的大小，默认为1000）
  * </pre>
  *
  * @see Cache
@@ -62,21 +62,23 @@ public class LruCache implements Cache {
 
     /**
      * API to store value against a key in the calling thread scope.
-     * @param key  Unique identifier for the object being store.
+     *
+     * @param key   Unique identifier for the object being store.
      * @param value Value getting store
      */
     @Override
-    public void put(Object key, Object value) {
+    public void put(Object key, Object value) { //存储值
         store.put(key, value);
     }
 
     /**
      * API to return stored value using a key against the calling thread specific store.
+     *
      * @param key Unique identifier for cache lookup
      * @return Return stored object against key
      */
     @Override
-    public Object get(Object key) {
+    public Object get(Object key) { //获取值
         return store.get(key);
     }
 

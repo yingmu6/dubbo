@@ -41,6 +41,7 @@ public class DubboNamespaceHandler extends NamespaceHandlerSupport implements Co
      * 数据结构
      * 1）继承了spring的NamespaceHandlerSupport，可以解析自定义的元素
      * 2）实现ConfigurableSourceBeanMetadataElement
+     * （ConfigurableSourceBeanMetadataElement用途：）
      */
 
     static { //static在类加载时，Version中有静态方法，会先执行Version.checkDuplicate(Version.class)，再执行Version.checkDuplicate(DubboNamespaceHandler.class);

@@ -43,7 +43,7 @@ public final class DubboCountCodec implements Codec2 {
     @Override
     public Object decode(Channel channel, ChannelBuffer buffer) throws IOException {
         int save = buffer.readerIndex();
-        MultiMessage result = MultiMessage.create();
+        MultiMessage result = MultiMessage.create(); //todo 此处是为了解析粘包？
         do {
             Object obj = codec.decode(channel, buffer);
             if (Codec2.DecodeResult.NEED_MORE_INPUT == obj) {
