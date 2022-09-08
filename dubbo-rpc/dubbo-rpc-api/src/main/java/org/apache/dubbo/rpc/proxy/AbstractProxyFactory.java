@@ -47,7 +47,7 @@ public abstract class AbstractProxyFactory implements ProxyFactory {
     }
 
     /**
-     * 获取invoker对应的代理类
+     * 获取invoker对应的代理类（代理类：实现了目标接口的方法）
      * 1）创建代理前，先找出需要代理接口的Class集合
      * 2）调用代理实现类的方法获取代理（不同的代理方式：JavassistProxyFactory或JdkProxyFactory）
      */
@@ -58,12 +58,12 @@ public abstract class AbstractProxyFactory implements ProxyFactory {
          */
         Set<Class<?>> interfaces = new HashSet<>();
 
-        String config = invoker.getUrl().getParameter(INTERFACES); //查找url配置的接口信息
+        String config = invoker.getUrl().getParameter(INTERFACES); //从url中获取到需要代理的接口列表
         if (config != null && config.length() > 0) { //从url中获取配置的接口类型，设置到Class集合中
             String[] types = COMMA_SPLIT_PATTERN.split(config);
             for (String type : types) {
                 // TODO can we load successfully for a different classloader?.
-                interfaces.add(ReflectUtils.forName(type)); //生成指定类型的Class，并加到集合中
+                interfaces.add(ReflectUtils.forName(type)); //生成对应的Class对象，并加到需要代理的接口集合中
             }
         }
 
@@ -87,7 +87,7 @@ public abstract class AbstractProxyFactory implements ProxyFactory {
         /**
          * 对查找到的接口集合进行代理
          */
-        return getProxy(invoker, interfaces.toArray(new Class<?>[0])); //调用抽象方法，具体的实现交由子类执行
+        return getProxy(invoker, interfaces.toArray(new Class<?>[0])); //调用抽象方法，具体的实现交由子类执行（toArray()：Set集合转换为数组，返回包含Set集合所有元素组成的数组）
     }
 
     public abstract <T> T getProxy(Invoker<T> invoker, Class<?>[] types);

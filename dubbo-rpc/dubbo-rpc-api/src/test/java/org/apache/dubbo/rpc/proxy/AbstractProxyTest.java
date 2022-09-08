@@ -21,6 +21,7 @@ import org.apache.dubbo.common.URL;
 import org.apache.dubbo.rpc.Invoker;
 import org.apache.dubbo.rpc.ProxyFactory;
 import org.apache.dubbo.rpc.RpcInvocation;
+import org.apache.dubbo.rpc.service.EchoService;
 import org.apache.dubbo.rpc.support.DemoService;
 import org.apache.dubbo.rpc.support.DemoServiceImpl;
 import org.apache.dubbo.rpc.support.MyInvoker;
@@ -40,7 +41,7 @@ public abstract class AbstractProxyTest {
 
         Invoker<DemoService> invoker = new MyInvoker<>(url);
 
-        DemoService proxy = factory.getProxy(invoker); //todo @pause for debug-22/09/06
+        DemoService proxy = factory.getProxy(invoker);
 
         Assertions.assertNotNull(proxy);
 
@@ -50,8 +51,15 @@ public abstract class AbstractProxyTest {
         //Assertions.assertEquals(proxy.toString(), invoker.toString());
         //Assertions.assertEquals(proxy.hashCode(), invoker.hashCode());
 
-        Assertions.assertEquals(invoker.invoke(new RpcInvocation("echo", DemoService.class.getName(), new Class[]{String.class}, new Object[]{"aa"})).getValue()
-                , proxy.echo("aa"));
+        Assertions.assertTrue(proxy instanceof EchoService);
+
+        // 真实对象调用
+        System.out.println("真实调用：" + invoker.invoke(new RpcInvocation("echo", DemoService.class.getName(), new Class[] {String.class}, new Object[] {"aa"})).getValue());
+
+        System.out.println("代理调用：" + proxy.echo("aa"));
+
+        Assertions.assertEquals(invoker.invoke(new RpcInvocation("echo", DemoService.class.getName(), new Class[] {String.class}, new Object[] {"aa"})).getValue()
+                , proxy.echo("aa")); //invoker.invoke() 真实对象调用，  proxy.echo()代理对象调用
     }
 
     @Test

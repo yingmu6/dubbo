@@ -273,9 +273,9 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
 
         serviceMetadata.getAttachments().putAll(map);
 
-        ref = createProxy(map);
+        ref = createProxy(map); //带着从config获取的参数值，创建代理对象
 
-        serviceMetadata.setTarget(ref);
+        serviceMetadata.setTarget(ref); //将代理对象写到服务元数据中
         serviceMetadata.addAttribute(PROXY_CLASS_REF, ref);
         ConsumerModel consumerModel = repository.lookupReferredService(serviceMetadata.getServiceKey()); //从服务仓库中，根据服务key查找到消费模型ConsumerModel
         consumerModel.setProxyObject(ref);

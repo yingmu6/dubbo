@@ -22,7 +22,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
-public abstract class AbstractChannelBuffer implements ChannelBuffer {
+public abstract class AbstractChannelBuffer implements ChannelBuffer { //抽象ChannelBuffer，维护下标的处理
     /**
      * @csy 几个实现类都有？解：功能具体如下
      * ByteBufferBackedChannelBuffer：使用java 的ByteBuffer方式实现

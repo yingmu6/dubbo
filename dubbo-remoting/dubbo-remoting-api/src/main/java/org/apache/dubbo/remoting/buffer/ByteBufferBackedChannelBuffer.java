@@ -33,7 +33,7 @@ public class ByteBufferBackedChannelBuffer extends AbstractChannelBuffer { //jav
             throw new NullPointerException("buffer");
         }
 
-        this.buffer = buffer.slice();
+        this.buffer = buffer.slice(); //获取buffer的分片信息（即为当前buffer剩余可用的容量）
         capacity = buffer.remaining();
         writerIndex(capacity);
     }
@@ -46,7 +46,7 @@ public class ByteBufferBackedChannelBuffer extends AbstractChannelBuffer { //jav
 
     @Override
     public ChannelBufferFactory factory() {
-        if (buffer.isDirect()) {
+        if (buffer.isDirect()) { //直接内存：减少堆内存与直接内存之间转换，实现零拷贝
             return DirectChannelBufferFactory.getInstance();
         } else {
             return HeapChannelBufferFactory.getInstance();

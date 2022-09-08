@@ -36,7 +36,7 @@ public class JdkProxyFactory extends AbstractProxyFactory {
         /**
          * jdk方式创建代理
          * 1）获取类加载器Thread.currentThread().getContextClassLoader()
-         * 2）设置代理的接口列表interfaces
+         * 2）设置代理的接口列表interfaces（创建的代理类，需要实现传入的接口列表）
          * 3）设置调用处理类InvocationHandler
          */
         return (T) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), interfaces, new InvokerInvocationHandler(invoker)); //创建代理时：指定类加载器、代理的接口列表、处理器类

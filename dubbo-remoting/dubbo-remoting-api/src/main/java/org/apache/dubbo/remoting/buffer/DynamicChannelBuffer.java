@@ -22,7 +22,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
-public class DynamicChannelBuffer extends AbstractChannelBuffer { //动态缓存区（可以动态扩容，也可以指定不同的缓存区工厂）  todo @pause-read 22/09/06
+public class DynamicChannelBuffer extends AbstractChannelBuffer { //动态缓存区（可以动态扩容，也可以指定不同的缓存区工厂）
     /**
      * @csy 为啥称之为动态ChannelBuffer？莫非可以扩容吗？
      * 解：DynamicChannelBuffer可以认为是其他ChannelBuffer的装饰器，
