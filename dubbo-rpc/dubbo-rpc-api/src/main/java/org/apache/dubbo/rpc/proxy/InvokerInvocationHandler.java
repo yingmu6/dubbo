@@ -64,7 +64,7 @@ public class InvokerInvocationHandler implements InvocationHandler { //代理的
         if (parameterTypes.length == 0) { //toString()、hashCode()等方法，不做代理增强处理
             if ("toString".equals(methodName)) {
                 return invoker.toString();
-            } else if ("$destroy".equals(methodName)) {
+            } else if ("$destroy".equals(methodName)) { //处理Destroyable接口的$destroy()方法调用
                 invoker.destroy();
                 return null;
             } else if ("hashCode".equals(methodName)) {

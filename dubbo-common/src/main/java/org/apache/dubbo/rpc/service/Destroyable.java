@@ -16,7 +16,13 @@
  */
 package org.apache.dubbo.rpc.service;
 
-public interface Destroyable { //在哪里使用？为啥没有实现类，解：类似EchoService，所有类都会实现该接口，在AbstractProxyFactory加入的
+public interface Destroyable {
+    /**
+     * 在哪里使用？为啥没有实现类?
+     * 解：类似EchoService，所有类都会实现该接口，在AbstractProxyFactory加入的
+     * （产生的代理类会实现该接口，可以在InvokerInvocationHandler的invoke）
+     * 实现类为 动态生成的代理类
+     */
 
     void $destroy();
 

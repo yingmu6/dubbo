@@ -31,7 +31,7 @@ public class JavassistProxyFactory extends AbstractProxyFactory {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T getProxy(Invoker<T> invoker, Class<?>[] interfaces) {
+    public <T> T getProxy(Invoker<T> invoker, Class<?>[] interfaces) { //不管JDK还是Javassist方式，创建代理的方式不同，但是处理的Handler传入相同，都为InvokerInvocationHandler
         /**
          * 获取代理的实例对象
          * 1）获取代理对象Proxy，Proxy.getProxy(interfaces)
