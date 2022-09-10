@@ -40,6 +40,7 @@ public interface ProxyFactory {
 
     /**
      * create proxy.（根据调用对象invoker获取代理对象proxy）
+     * （动态代理类：会实现Invoker接口以及Invoker继承接口的所有方法）
      *
      * @param invoker
      * @return proxy

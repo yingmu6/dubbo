@@ -73,9 +73,9 @@ public abstract class AbstractProxyFactory implements ProxyFactory {
             }
 
             try {
-                // find the real interface from url
+                // find the real interface from url（从url中获取真实调用的接口）
                 String realInterface = invoker.getUrl().getParameter(Constants.INTERFACE);
-                interfaces.add(ReflectUtils.forName(realInterface));
+                interfaces.add(ReflectUtils.forName(realInterface)); //将真实调用的接口放入需要代理的集合中
             } catch (Throwable e) {
                 // ignore
             }

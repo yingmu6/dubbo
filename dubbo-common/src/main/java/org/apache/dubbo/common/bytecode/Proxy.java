@@ -101,7 +101,7 @@ public abstract class Proxy { //代理抽象类
                 throw new IllegalArgumentException(ics[i] + " is not visible from class loader");
             }
 
-            sb.append(itf).append(';'); //把满足条件的类名拼接
+            sb.append(itf).append(';'); //将所有要实现的接口用分号连起来
         }
 
         // use interface class name list as key.(使用接口Class名称列表作为键key)
@@ -109,7 +109,7 @@ public abstract class Proxy { //代理抽象类
 
         // get cache by class loader.
         final Map<String, Object> cache;
-        synchronized (PROXY_CACHE_MAP) {
+        synchronized (PROXY_CACHE_MAP) { //查看缓存中是否已经生成过这个代理，如果生成过直接返回，如果生成中则等待
             cache = PROXY_CACHE_MAP.computeIfAbsent(cl, k -> new HashMap<>());
         }
 

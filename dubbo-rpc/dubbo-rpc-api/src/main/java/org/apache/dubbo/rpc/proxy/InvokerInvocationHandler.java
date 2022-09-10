@@ -68,7 +68,7 @@ public class InvokerInvocationHandler implements InvocationHandler { //代理的
                 invoker.destroy();
                 return null;
             } else if ("hashCode".equals(methodName)) {
-                return invoker.hashCode();
+                return invoker.hashCode(); //直接调用本地方法，不发起远程调用
             }
         } else if (parameterTypes.length == 1 && "equals".equals(methodName)) { //调用equals方法
             return invoker.equals(args[0]);
@@ -77,7 +77,7 @@ public class InvokerInvocationHandler implements InvocationHandler { //代理的
         // 调用包含多个参数的方法（构建调用信息）
         RpcInvocation rpcInvocation = new RpcInvocation(method, invoker.getInterface().getName(), args);
         String serviceKey = invoker.getUrl().getServiceKey();
-        rpcInvocation.setTargetServiceUniqueName(serviceKey); //设置目标服务名
+        rpcInvocation.setTargetServiceUniqueName(serviceKey); //封装RpcInvocation信息，通过invoker发送出去
 
         if (consumerModel != null) { //将消费模型数据，设置到调用的RpcInvocation信息中
             rpcInvocation.put(Constants.CONSUMER_MODEL, consumerModel);
