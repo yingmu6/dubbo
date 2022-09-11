@@ -108,7 +108,7 @@ public abstract class Proxy { //代理抽象类
         String key = sb.toString();//构建的字符串如：org.apache.dubbo.demo.DemoService;org.apache.dubbo.rpc.service.Destroyable;com.alibaba.dubbo.rpc.service.EchoService;
 
         // get cache by class loader.
-        final Map<String, Object> cache;
+        final Map<String, Object> cache;//缓存
         synchronized (PROXY_CACHE_MAP) { //查看缓存中是否已经生成过这个代理，如果生成过直接返回，如果生成中则等待
             cache = PROXY_CACHE_MAP.computeIfAbsent(cl, k -> new HashMap<>());
         }
