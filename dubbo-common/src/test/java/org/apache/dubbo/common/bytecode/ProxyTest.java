@@ -29,7 +29,7 @@ public class ProxyTest {
     @Test
     public void testMain() throws Exception {
         Proxy proxy = Proxy.getProxy(ITest.class, ITest.class);
-        ITest instance = (ITest) proxy.newInstance((proxy1, method, args) -> {
+        ITest instance = (ITest) proxy.newInstance((proxy1, method, args) -> { //此处的lambda表达式，表示的是一个InvocationHandler实例
             if ("getName".equals(method.getName())) {
                 assertEquals(args.length, 0);
             } else if ("setName".equals(method.getName())) {
@@ -41,7 +41,7 @@ public class ProxyTest {
         });
 
         assertNull(instance.getName());
-        instance.setName("qianlei", "hello");
+        instance.setName("qianlei", "hello"); //执行具体实例的具体方法调用
     }
 
     @Test

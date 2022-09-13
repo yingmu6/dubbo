@@ -80,12 +80,12 @@ public abstract class Proxy { //代理抽象类
      * @return Proxy instance.
      */
     public static Proxy getProxy(ClassLoader cl, Class<?>... ics) { //创建代理具体的实现逻辑（通过javassist字节码操作，创建代理对象）
-        if (ics.length > MAX_PROXY_COUNT) {
+        if (ics.length > MAX_PROXY_COUNT) { //超过设置的最大代理数，即报出异常
             throw new IllegalArgumentException("interface limit exceeded");
         }
 
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < ics.length; i++) {
+        for (int i = 0; i < ics.length; i++) { //遍历被代理的接口列表，做检验并拼接缓存Map的key
             String itf = ics[i].getName(); //获取Class对应的名称，如：org.apache.dubbo.demo.DemoService
             if (!ics[i].isInterface()) { //代理的Class只能是接口，否则排除异常
                 throw new RuntimeException(itf + " is not a interface.");
@@ -93,11 +93,11 @@ public abstract class Proxy { //代理抽象类
 
             Class<?> tmp = null;
             try {
-                tmp = Class.forName(itf, false, cl);
+                tmp = Class.forName(itf, false, cl); //获取字符串对应的Class
             } catch (ClassNotFoundException e) {
             }
 
-            if (tmp != ics[i]) {//判断接口在否可由指定类加载器加载
+            if (tmp != ics[i]) {//判断接口在否可由指定类加载器加载（类加载器不同，产生的Class不同）
                 throw new IllegalArgumentException(ics[i] + " is not visible from class loader");
             }
 
@@ -105,10 +105,10 @@ public abstract class Proxy { //代理抽象类
         }
 
         // use interface class name list as key.(使用接口Class名称列表作为键key)
-        String key = sb.toString();//构建的字符串如：org.apache.dubbo.demo.DemoService;org.apache.dubbo.rpc.service.Destroyable;com.alibaba.dubbo.rpc.service.EchoService;
+        String key = sb.toString();//构建的字符串如（由多个Class名称对应的字符串组成）：org.apache.dubbo.demo.DemoService;org.apache.dubbo.rpc.service.Destroyable;com.alibaba.dubbo.rpc.service.EchoService;
 
         // get cache by class loader.
-        final Map<String, Object> cache;//缓存存储
+        final Map<String, Object> cache;
         synchronized (PROXY_CACHE_MAP) { //查看缓存中是否已经生成过这个代理，如果生成过直接返回，如果生成中则等待
             cache = PROXY_CACHE_MAP.computeIfAbsent(cl, k -> new HashMap<>());
         }
@@ -130,7 +130,7 @@ public abstract class Proxy { //代理抽象类
                     } catch (InterruptedException e) {
                     }
                 } else {
-                    cache.put(key, PENDING_GENERATION_MARKER);
+                    cache.put(key, PENDING_GENERATION_MARKER); //设置等待标志
                     break;
                 }
             }
@@ -288,9 +288,9 @@ public abstract class Proxy { //代理抽象类
     }
 
     /**
-     * get instance with special handler.（带着指定的处理类创建代理实例）
+     * get instance with special handler.
      *
      * @return instance.
      */
-    abstract public Object newInstance(InvocationHandler handler);
+    abstract public Object newInstance(InvocationHandler handler); //带着handler创建代理实例
 }

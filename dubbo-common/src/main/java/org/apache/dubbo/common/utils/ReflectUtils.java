@@ -429,9 +429,9 @@ public final class ReflectUtils { //JVM虚拟机中的类型描述符
         StringBuilder ret = new StringBuilder(m.getName()).append('(');
         Class<?>[] parameterTypes = m.getParameterTypes();
         for (int i = 0; i < parameterTypes.length; i++) {
-            ret.append(getDesc(parameterTypes[i]));
+            ret.append(getDesc(parameterTypes[i])); //依次处理参数类型
         }
-        ret.append(')').append(getDesc(m.getReturnType()));
+        ret.append(')').append(getDesc(m.getReturnType())); //处理方法的返回类型
         return ret.toString(); //如：hello()Ljava/lang/String;
     }
 

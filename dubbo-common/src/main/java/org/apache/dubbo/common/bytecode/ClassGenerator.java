@@ -69,7 +69,7 @@ public final class ClassGenerator { //@csy-001 该类的用途是什么？解：
         return ClassGenerator.DC.class.isAssignableFrom(cl);
     }
 
-    public static ClassPool getClassPool(ClassLoader loader) { //
+    public static ClassPool getClassPool(ClassLoader loader) { //获取javassist的ClassPool（先从缓存中获取，若没有则创建类池）
         if (loader == null) { //未指定类加载器时，返回默认类池
             return ClassPool.getDefault();
         }
