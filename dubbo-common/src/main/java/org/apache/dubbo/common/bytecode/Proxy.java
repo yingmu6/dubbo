@@ -178,11 +178,11 @@ public abstract class Proxy { //代理抽象类
                     Class<?> rt = method.getReturnType();
                     Class<?>[] pts = method.getParameterTypes();
 
-                    StringBuilder code = new StringBuilder("Object[] args = new Object[").append(pts.length).append("];");
+                    StringBuilder code = new StringBuilder("Object[] args = new Object[").append(pts.length).append("];"); //声明参数
                     for (int j = 0; j < pts.length; j++) { //为参数列表中参数一一赋值
                         code.append(" args[").append(j).append("] = ($w)$").append(j + 1).append(";"); //如：Object[] args = new Object[2]; args[0] = ($w)$1; args[1] = ($w)$2;
                     }
-                    code.append(" Object ret = handler.invoke(this, methods[").append(ix).append("], args);"); //执行方法的invoke调用
+                    code.append(" Object ret = handler.invoke(this, methods[").append(ix).append("], args);"); //最终会执行InvocationHandler对应实例的invoke方法
                     if (!Void.TYPE.equals(rt)) { //若方法返回类型不为void，处理方法返回语句
                         code.append(" return ").append(asArgument(rt, "ret")).append(";");
                     }

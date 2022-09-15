@@ -56,7 +56,7 @@ public class DubboInvoker<T> extends AbstractInvoker<T> {
     }
 
     public DubboInvoker(Class<T> serviceType, URL url, ExchangeClient[] clients, Set<Invoker<?>> invokers) {
-        super(serviceType, url, new String[]{INTERFACE_KEY, GROUP_KEY, TOKEN_KEY});
+        super(serviceType, url, new String[] {INTERFACE_KEY, GROUP_KEY, TOKEN_KEY}); //公共变量放到父类中
         this.clients = clients;
         // get version.
         this.version = url.getParameter(VERSION_KEY, "0.0.0");
@@ -67,7 +67,7 @@ public class DubboInvoker<T> extends AbstractInvoker<T> {
     protected Result doInvoke(final Invocation invocation) throws Throwable {
         RpcInvocation inv = (RpcInvocation) invocation;
         final String methodName = RpcUtils.getMethodName(invocation);
-        inv.setAttachment(PATH_KEY, getUrl().getPath());
+        inv.setAttachment(PATH_KEY, getUrl().getPath()); //使用当前维护的内容更新对应的参数值
         inv.setAttachment(VERSION_KEY, version);
 
         ExchangeClient currentClient;

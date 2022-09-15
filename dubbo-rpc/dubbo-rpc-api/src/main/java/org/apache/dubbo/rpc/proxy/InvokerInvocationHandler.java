@@ -56,12 +56,13 @@ public class InvokerInvocationHandler implements InvocationHandler { //代理的
          *  执行远程方法的调用（执行具体接口的方法调用时，会进入该方法）
          */
 
+        // 拦截定义在 Object 类中的方法（未被子类重写），比如 wait/notify（所有对象都继承了Object，所以都继承了Object中的所有方法）
         if (method.getDeclaringClass() == Object.class) {
             return method.invoke(invoker, args);
         }
         String methodName = method.getName();
         Class<?>[] parameterTypes = method.getParameterTypes();
-        if (parameterTypes.length == 0) { //toString()、hashCode()等方法，不做代理增强处理
+        if (parameterTypes.length == 0) { //toString()、$destroy()、hashCode()方法，不做代理增强处理，直接调用
             if ("toString".equals(methodName)) {
                 return invoker.toString();
             } else if ("$destroy".equals(methodName)) { //处理Destroyable接口的$destroy()方法调用
@@ -84,6 +85,7 @@ public class InvokerInvocationHandler implements InvocationHandler { //代理的
             rpcInvocation.put(Constants.METHOD_MODEL, consumerModel.getMethodModel(method));
         }
 
+        // 将 method和args封装到RpcInvocation中，并执行后续的调用
         return invoker.invoke(rpcInvocation).recreate(); //执行远程调用
     }
 }

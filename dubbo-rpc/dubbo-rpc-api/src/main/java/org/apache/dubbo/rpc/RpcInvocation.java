@@ -353,7 +353,7 @@ public class RpcInvocation implements Invocation, Serializable { //RpcInvocation
             return;
         }
         for (Map.Entry<String, Object> entry : attachments.entrySet()) {
-            setAttachmentIfAbsent(entry.getKey(), entry.getValue());
+            setAttachmentIfAbsent(entry.getKey(), entry.getValue()); //依次将输入的附加参数，设置到RpcInvocation的附加参数中
         }
     }
 

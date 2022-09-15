@@ -74,21 +74,21 @@ public class MockClusterInvoker<T> implements ClusterInvoker<T> {
     }
 
     @Override
-    public Result invoke(Invocation invocation) throws RpcException {
+    public Result invoke(Invocation invocation) throws RpcException { //封装了服务降级逻辑
         Result result = null;
 
         String value = getUrl().getMethodParameter(invocation.getMethodName(), MOCK_KEY, Boolean.FALSE.toString()).trim();
         if (value.length() == 0 || "false".equalsIgnoreCase(value)) {
             //no mock
-            result = this.invoker.invoke(invocation);
+            result = this.invoker.invoke(invocation); //未设置mock，直接发起远程调用
         } else if (value.startsWith("force")) {
             if (logger.isWarnEnabled()) {
                 logger.warn("force-mock: " + invocation.getMethodName() + " force-mock enabled , url : " + getUrl());
             }
             //force:direct mock
-            result = doMockInvoke(invocation, null);
+            result = doMockInvoke(invocation, null); //强制走mock逻辑，不发起远程调用
         } else {
-            //fail-mock
+            //fail-mock（调用失败，走mock逻辑）
             try {
                 result = this.invoker.invoke(invocation);
 
@@ -158,7 +158,7 @@ public class MockClusterInvoker<T> implements ClusterInvoker<T> {
      * @param invocation
      * @return
      */
-    private List<Invoker<T>> selectMockInvoker(Invocation invocation) {
+    private List<Invoker<T>> selectMockInvoker(Invocation invocation) { //选择进行Mock调用的Invoker列表
         List<Invoker<T>> invokers = null;
         //TODO generic invoker？
         if (invocation instanceof RpcInvocation) {
