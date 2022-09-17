@@ -53,7 +53,7 @@ public class ReferenceBean<T> extends ReferenceConfig<T> implements FactoryBean,
     }
 
     @Override
-    public Object getObject() {
+    public Object getObject() { //Spring从工厂中获取对象实例时进行回调
         return get(); //调用父类ReferenceConfig的get()
     }
 
@@ -98,7 +98,7 @@ public class ReferenceBean<T> extends ReferenceConfig<T> implements FactoryBean,
         }
 
         // eager init if necessary.
-        if (shouldInit()) {
+        if (shouldInit()) { //判断是否要在类属性完成后，就加载dubbo对象（应用于懒加载）
             getObject();
         }
     }

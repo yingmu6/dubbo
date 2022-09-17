@@ -100,6 +100,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
 
     /**
      * The invoker of the reference service
+     * todo @pause 09-17 此处为啥是MockClusterInvoker
      */
     private transient volatile Invoker<?> invoker; //此处的invoker是在哪里设置值的？ 解：构建Invoker对象，在许多地方有使用，如org.apache.dubbo.config.ReferenceConfig#createProxy中
 

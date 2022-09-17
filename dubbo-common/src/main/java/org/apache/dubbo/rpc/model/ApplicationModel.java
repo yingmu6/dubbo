@@ -93,7 +93,7 @@ public class ApplicationModel { //应用的数据模型
         return (ConfigManager) LOADER.getExtension(ConfigManager.NAME); //此处由于已经明确ConfigManager.NAME扩展名对应的类是ConfigManager，所以可以类型强转
     }
 
-    public static ServiceRepository getServiceRepository() {
+    public static ServiceRepository getServiceRepository() { //获取FrameworkExt对应的扩展实例ServiceRepository
         return (ServiceRepository) LOADER.getExtension(ServiceRepository.NAME);
     }
 

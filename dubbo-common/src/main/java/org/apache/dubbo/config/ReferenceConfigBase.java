@@ -99,9 +99,9 @@ public abstract class ReferenceConfigBase<T> extends AbstractReferenceConfig { /
         return shouldCheck;
     }
 
-    public boolean shouldInit() {
+    public boolean shouldInit() { //是否需要在启动的时候
         Boolean shouldInit = isInit();
-        if (shouldInit == null && getConsumer() != null) {
+        if (shouldInit == null && getConsumer() != null) { //
             shouldInit = getConsumer().isInit();
         }
         if (shouldInit == null) { //默认是需要初始化的init=true，若init=false，Spring会使用懒加载

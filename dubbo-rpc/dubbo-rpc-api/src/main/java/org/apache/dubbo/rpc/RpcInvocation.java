@@ -56,7 +56,7 @@ public class RpcInvocation implements Invocation, Serializable { //RpcInvocation
 
     private static final long serialVersionUID = -4355285085441097045L;
 
-    private String targetServiceUniqueName;
+    private String targetServiceUniqueName; //目标服务名称
 
     private String methodName; //调用的方法名
     private String serviceName; //调用的服务名

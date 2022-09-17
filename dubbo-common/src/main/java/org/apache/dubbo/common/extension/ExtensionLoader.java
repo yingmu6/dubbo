@@ -420,7 +420,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
     private Holder<Object> getOrCreateHolder(String name) {
         Holder<Object> holder = cachedInstances.get(name);
         if (holder == null) {
-            cachedInstances.putIfAbsent(name, new Holder<>());
+            cachedInstances.putIfAbsent(name, new Holder<>()); //缓存中没有值时，初始化Holder的值
             holder = cachedInstances.get(name);
         }
         return holder;
@@ -483,7 +483,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
         if (instance == null) {
             synchronized (holder) {
                 instance = holder.get();
-                if (instance == null) {
+                if (instance == null) { //没有从缓存中扩展实例对象时，则创建对应实例对象
                     instance = createExtension(name, wrap);
                     holder.set(instance);
                 }
