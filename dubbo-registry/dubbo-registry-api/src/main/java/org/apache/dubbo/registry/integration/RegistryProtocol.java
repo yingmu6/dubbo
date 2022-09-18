@@ -405,7 +405,7 @@ public class RegistryProtocol implements Protocol { //注册协议
             }
         }
 
-        Cluster cluster = Cluster.getCluster(qs.get(CLUSTER_KEY));
+        Cluster cluster = Cluster.getCluster(qs.get(CLUSTER_KEY)); //todo @pause 09-18
         return doRefer(cluster, registry, type, url);
     }
 

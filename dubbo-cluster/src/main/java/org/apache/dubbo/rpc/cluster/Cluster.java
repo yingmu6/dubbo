@@ -51,7 +51,7 @@ public interface Cluster {
     }
 
     static Cluster getCluster(String name, boolean wrap) {
-        if (StringUtils.isEmpty(name)) {
+        if (StringUtils.isEmpty(name)) { //若没有指定集群的方式，模式使用FailoverCluster
             name = Cluster.DEFAULT;
         }
         return ExtensionLoader.getExtensionLoader(Cluster.class).getExtension(name, wrap);

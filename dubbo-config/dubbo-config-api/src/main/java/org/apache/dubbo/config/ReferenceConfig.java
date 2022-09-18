@@ -66,7 +66,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
     public static final Logger logger = LoggerFactory.getLogger(ReferenceConfig.class);
 
     /**
-     * The {@link Protocol} implementation with adaptive functionality,it will be different in different scenarios.
+     * The {@link Protocol} implementation with adaptive functionality（功能）,it will be different in different scenarios（场景）.
      * A particular {@link Protocol} implementation is determined by the protocol attribute in the {@link URL}.
      * For example:
      *
@@ -78,6 +78,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
      * <p>
      * Actually，when the {@link ExtensionLoader} init the {@link Protocol} instants,it will automatically wraps two
      * layers, and eventually will get a <b>ProtocolFilterWrapper</b> or <b>ProtocolListenerWrapper</b>
+     * （Protocol的实例，会自动被ProtocolFilterWrapper、ProtocolListenerWrapper封装）
      */
     private static final Protocol REF_PROTOCOL = ExtensionLoader.getExtensionLoader(Protocol.class).getAdaptiveExtension();
 
@@ -300,7 +301,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
             }
         } else { //远程引用
             urls.clear();
-            if (url != null && url.length() > 0) { // user specified URL, could be peer-to-peer address, or register center's address.
+            if (url != null && url.length() > 0) { // user specified URL, could be peer-to-peer address, or register center's address. （点对点地址，或注册中心地址）
                 String[] us = SEMICOLON_SPLIT_PATTERN.split(url);
                 if (us != null && us.length > 0) {
                     for (String u : us) {
@@ -326,7 +327,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
                             if (monitorUrl != null) {
                                 map.put(MONITOR_KEY, URL.encode(monitorUrl.toFullString()));
                             }
-                            urls.add(u.addParameterAndEncoded(REFER_KEY, StringUtils.toQueryString(map)));
+                            urls.add(u.addParameterAndEncoded(REFER_KEY, StringUtils.toQueryString(map))); //将服务接口相关的参数编码后存入url的附加参数中
                         }
                     }
                     if (urls.isEmpty()) {
@@ -336,7 +337,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
             }
 
             if (urls.size() == 1) {
-                invoker = REF_PROTOCOL.refer(interfaceClass, urls.get(0));
+                invoker = REF_PROTOCOL.refer(interfaceClass, urls.get(0)); //此处REF_PROTOCOL是自适应类，会选择参数url设置的protocol，如protocol=registry，则进入RegistryProtol的refer()方法
             } else {
                 List<Invoker<?>> invokers = new ArrayList<Invoker<?>>();
                 URL registryURL = null;
@@ -450,7 +451,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
 
 
     /**
-     * Figure out should refer the service in the same JVM from configurations. The default behavior is true
+     * Figure out（断定） should refer the service in the same JVM from configurations. The default behavior is true
      * 1. if injvm is specified, then use it
      * 2. then if a url is specified, then assume it's a remote call
      * 3. otherwise, check scope parameter

@@ -1131,7 +1131,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
     }
 
     @SuppressWarnings("unchecked")
-    private T createAdaptiveExtension() {
+    private T createAdaptiveExtension() { //产生自适应类（对应的扩展实例，在自适应对象调用时，根据入参动态选择实例）
         try {
             return injectExtension((T) getAdaptiveExtensionClass().newInstance());
         } catch (Exception e) {
