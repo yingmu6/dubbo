@@ -104,7 +104,7 @@ public final class URLBuilder { //URL的构造器
         this.methodParameters = (methodParameters != null ? methodParameters : new HashMap<>());
     }
 
-    public static URLBuilder from(URL url) { //读取输入的url进行构建
+    public static URLBuilder from(URL url) { //读取url内容，创建构造器URLBuilder
         String protocol = url.getProtocol();
         String username = url.getUsername();
         String password = url.getPassword();

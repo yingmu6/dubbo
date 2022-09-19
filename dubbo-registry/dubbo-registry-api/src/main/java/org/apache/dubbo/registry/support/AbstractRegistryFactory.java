@@ -119,7 +119,7 @@ public abstract class AbstractRegistryFactory implements RegistryFactory { // �
             if (registry == null) {
                 throw new IllegalStateException("Can not create registry " + url);
             }
-            REGISTRIES.put(key, registry); //将注册实例设置到缓存中
+            REGISTRIES.put(key, registry); //将注册实例设置到缓存中，key为注册url对应的字符串，如：zookeeper://127.0.0.1:2181/org.apache.dubbo.registry.RegistryService?application=demo-consumer&check=false&dubbo=2.0.2&interface=org.apache.dubbo.registry.RegistryService&pid=2156&qos.port=33333&timestamp=1663551304920
             return registry;
         } finally {
             // Release the lock

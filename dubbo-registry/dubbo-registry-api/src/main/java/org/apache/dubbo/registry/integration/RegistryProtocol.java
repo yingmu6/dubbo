@@ -318,7 +318,7 @@ public class RegistryProtocol implements Protocol { //注册协议
         return registryUrl;
     }
 
-    protected URL getRegistryUrl(URL url) {
+    protected URL getRegistryUrl(URL url) { //构建具体注册协议对应的URL，如zookeeper://xxx
         return URLBuilder.from(url)
                 .setProtocol(url.getParameter(REGISTRY_KEY, DEFAULT_REGISTRY))
                 .removeParameter(REGISTRY_KEY)
@@ -391,7 +391,7 @@ public class RegistryProtocol implements Protocol { //注册协议
     @SuppressWarnings("unchecked")
     public <T> Invoker<T> refer(Class<T> type, URL url) throws RpcException {
         url = getRegistryUrl(url); //做协议转化，将registry://xxx协议转换为具体协议，如:zookeeper://xxx
-        Registry registry = registryFactory.getRegistry(url);
+        Registry registry = registryFactory.getRegistry(url); //registryFactory是自适应对象，根据url参数获取具体扩展实例
         if (RegistryService.class.equals(type)) {
             return proxyFactory.getInvoker((T) registry, type, url);
         }
@@ -405,7 +405,7 @@ public class RegistryProtocol implements Protocol { //注册协议
             }
         }
 
-        Cluster cluster = Cluster.getCluster(qs.get(CLUSTER_KEY)); //todo @pause 09-18
+        Cluster cluster = Cluster.getCluster(qs.get(CLUSTER_KEY));
         return doRefer(cluster, registry, type, url);
     }
 
@@ -420,7 +420,7 @@ public class RegistryProtocol implements Protocol { //注册协议
             directory.setRegisteredConsumerUrl(subscribeUrl);
             registry.register(directory.getRegisteredConsumerUrl());
         }
-        directory.buildRouterChain(subscribeUrl);
+        directory.buildRouterChain(subscribeUrl); //构建路由链
         directory.subscribe(toSubscribeUrl(subscribeUrl));
 
         Invoker<T> invoker = cluster.join(directory);

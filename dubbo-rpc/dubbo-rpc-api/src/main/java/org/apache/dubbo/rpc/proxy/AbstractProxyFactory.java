@@ -90,6 +90,6 @@ public abstract class AbstractProxyFactory implements ProxyFactory {
         return getProxy(invoker, interfaces.toArray(new Class<?>[0])); //调用抽象方法，具体的实现交由子类执行（toArray()：Set集合转换为数组，返回包含Set集合所有元素组成的数组）
     }
 
-    public abstract <T> T getProxy(Invoker<T> invoker, Class<?>[] types);
+    public abstract <T> T getProxy(Invoker<T> invoker, Class<?>[] types); //invoker：对应Invoker的实例对象，比如：MockClusterInvoker实例，属于目标对象，在InvokerInvocationHandler执行具体调用
 
 }

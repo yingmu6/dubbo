@@ -23,9 +23,8 @@ import org.apache.dubbo.rpc.cluster.Directory;
 
 /**
  * mock impl
- *
  */
-public class MockClusterWrapper implements Cluster {
+public class MockClusterWrapper implements Cluster { //Cluster的封装类
 
     private Cluster cluster;
 

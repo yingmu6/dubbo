@@ -46,7 +46,7 @@ public interface Cluster {
     @Adaptive
     <T> Invoker<T> join(Directory<T> directory) throws RpcException;
 
-    static Cluster getCluster(String name) {
+    static Cluster getCluster(String name) { //获取指定扩展名的Cluster实例，并且使用封装类封装，如：name为failover，最后返回的Cluster为MockClusterWrapper（成员属性实例为：FailoverCluster）
         return getCluster(name, true);
     }
 

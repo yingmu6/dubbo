@@ -703,7 +703,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
             injectExtension(instance);
 
             //注入封装类的实例（若需要封装的话，将扩展实例通过封装类列表，进行层层封装）
-            if (wrap) {
+            if (wrap) { //使用封装类对扩展实例进行封装
 
                 List<Class<?>> wrapperClassesList = new ArrayList<>();
                 if (cachedWrapperClasses != null) { //当前扩展接口对应的封装类列表，如WrappedExt的封装类列表为Ext5Wrapper1、Ext5Wrapper2

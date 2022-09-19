@@ -80,7 +80,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
      * layers, and eventually will get a <b>ProtocolFilterWrapper</b> or <b>ProtocolListenerWrapper</b>
      * （Protocol的实例，会自动被ProtocolFilterWrapper、ProtocolListenerWrapper封装）
      */
-    private static final Protocol REF_PROTOCOL = ExtensionLoader.getExtensionLoader(Protocol.class).getAdaptiveExtension();
+    private static final Protocol REF_PROTOCOL = ExtensionLoader.getExtensionLoader(Protocol.class).getAdaptiveExtension(); //REF_PROTOCOL：自适应类，在运行时动态选择具体实例
 
     /**
      * The {@link Cluster}'s implementation with adaptive functionality, and actually it will get a {@link Cluster}'s
@@ -103,7 +103,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
      * The invoker of the reference service
      * todo @pause 09-17 此处为啥是MockClusterInvoker
      */
-    private transient volatile Invoker<?> invoker; //此处的invoker是在哪里设置值的？ 解：构建Invoker对象，在许多地方有使用，如org.apache.dubbo.config.ReferenceConfig#createProxy中
+    private transient volatile Invoker<?> invoker; //此处的invoker是在哪里设置值的？ 解：如注册协议为Registry时，在RegistryProtocol#refer中设置为MockClusterInvoker
 
     /**
      * The flag whether the ReferenceConfig has been initialized （ [ɪˈnɪʃəlaɪzd] 初始化）
@@ -336,7 +336,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
                 }
             }
 
-            if (urls.size() == 1) {
+            if (urls.size() == 1) { //获取Invoker对象
                 invoker = REF_PROTOCOL.refer(interfaceClass, urls.get(0)); //此处REF_PROTOCOL是自适应类，会选择参数url设置的protocol，如protocol=registry，则进入RegistryProtol的refer()方法
             } else {
                 List<Invoker<?>> invokers = new ArrayList<Invoker<?>>();
@@ -374,7 +374,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
             URL consumerURL = new URL(CONSUMER_PROTOCOL, map.remove(REGISTER_IP_KEY), 0, map.get(INTERFACE_KEY), map);
             metadataService.publishServiceDefinition(consumerURL);
         }
-        // create service proxy
+        // create service proxy（为Invoker对象创建代理对象）
         return (T) PROXY_FACTORY.getProxy(invoker, ProtocolUtils.isGeneric(generic));
     }
 

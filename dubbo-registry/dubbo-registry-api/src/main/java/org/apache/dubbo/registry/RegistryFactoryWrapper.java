@@ -30,7 +30,7 @@ public class RegistryFactoryWrapper implements RegistryFactory { //注册中心�
     }
 
     @Override
-    public Registry getRegistry(URL url) {
+    public Registry getRegistry(URL url) { //使用ListenerRegistryWrapper封装注册实例Registry，将注册实例与注册服务监听器RegistryServiceListener列表进行绑定
         return new ListenerRegistryWrapper(registryFactory.getRegistry(url),
                 Collections.unmodifiableList(ExtensionLoader.getExtensionLoader(RegistryServiceListener.class)
                         .getActivateExtension(url, "registry.listeners")));
