@@ -47,7 +47,7 @@ import static org.apache.dubbo.rpc.Constants.RETURN_KEY;
 public class RpcContext {
 
     /**
-     * use internal thread local to improve performance
+     * use internal thread local to improve performance （使用内部的线程提高性能）
      */
     // FIXME REQUEST_CONTEXT
     private static final InternalThreadLocal<RpcContext> LOCAL = new InternalThreadLocal<RpcContext>() {

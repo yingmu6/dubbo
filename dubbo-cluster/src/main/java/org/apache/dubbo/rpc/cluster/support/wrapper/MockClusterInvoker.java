@@ -77,7 +77,7 @@ public class MockClusterInvoker<T> implements ClusterInvoker<T> {
     public Result invoke(Invocation invocation) throws RpcException { //封装了服务降级逻辑
         Result result = null;
 
-        String value = getUrl().getMethodParameter(invocation.getMethodName(), MOCK_KEY, Boolean.FALSE.toString()).trim();
+        String value = getUrl().getMethodParameter(invocation.getMethodName(), MOCK_KEY, Boolean.FALSE.toString()).trim(); //从url中获取mock设置的值，默认为false，即不处理mock
         if (value.length() == 0 || "false".equalsIgnoreCase(value)) {
             //no mock
             result = this.invoker.invoke(invocation); //未设置mock，直接发起远程调用

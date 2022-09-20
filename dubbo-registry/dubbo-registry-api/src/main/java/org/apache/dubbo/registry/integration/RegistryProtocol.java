@@ -160,7 +160,7 @@ public class RegistryProtocol implements Protocol { //注册协议
         final ExporterChangeableWrapper<T> exporter = doLocalExport(originInvoker, providerUrl); //做服务暴露
 
         // url to registry
-        final Registry registry = getRegistry(originInvoker); //创建注册实例
+        final Registry registry = getRegistry(originInvoker); //创建注册实例（注册实例会使用封装类ListenerRegistryWrapper封装）
         final URL registeredProviderUrl = getUrlToRegistry(providerUrl, registryUrl);
 
         // decide if we need to delay publish

@@ -25,7 +25,7 @@ import org.apache.dubbo.rpc.RpcInvocation;
 import org.apache.dubbo.rpc.cluster.support.AbstractClusterInvoker;
 
 @Activate
-public class ConsumerContextClusterInterceptor implements ClusterInterceptor, ClusterInterceptor.Listener { //
+public class ConsumerContextClusterInterceptor implements ClusterInterceptor, ClusterInterceptor.Listener { //消费者端的上下文拦截器
 
     @Override
     public void before(AbstractClusterInvoker<?> invoker, Invocation invocation) {

@@ -320,7 +320,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
                 // if protocols not injvm checkRegistry
                 if (!LOCAL_PROTOCOL.equalsIgnoreCase(getProtocol())) {
                     checkRegistry();
-                    List<URL> us = ConfigValidationUtils.loadRegistries(this, false);
+                    List<URL> us = ConfigValidationUtils.loadRegistries(this, false); //构建注册协议的url（协议为registry://xxx）
                     if (CollectionUtils.isNotEmpty(us)) {
                         for (URL u : us) {
                             URL monitorUrl = ConfigValidationUtils.loadMonitor(this, u);

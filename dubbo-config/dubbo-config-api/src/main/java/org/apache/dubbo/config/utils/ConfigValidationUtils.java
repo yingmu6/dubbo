@@ -143,7 +143,7 @@ public class ConfigValidationUtils {
 
                         url = URLBuilder.from(url)
                                 .addParameter(REGISTRY_KEY, url.getProtocol())
-                                .setProtocol(extractRegistryType(url)) //提取注册类型："service-discovery-registry"或"registry"
+                                .setProtocol(extractRegistryType(url)) //提取注册类型："service-discovery-registry"或"registry" （设置注册协议名，如registry://xxx）
                                 .build();
                         if ((provider && url.getParameter(REGISTER_KEY, true))
                                 || (!provider && url.getParameter(SUBSCRIBE_KEY, true))) {

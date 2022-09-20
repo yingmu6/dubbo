@@ -41,10 +41,10 @@ public class InvokerInvocationHandler implements InvocationHandler { //代理的
     private final Invoker<?> invoker;
     private ConsumerModel consumerModel; //@csy 此处为啥只有消费者模型，不用维护提供者模型吗？解：此处是由消费端发起的请求调用，所以不用维护提供者模型
 
-    public InvokerInvocationHandler(Invoker<?> handler) { //构造invoker对应的处理类
+    public InvokerInvocationHandler(Invoker<?> handler) { //构造invoker对应的处理类（在创建代理对象时，传入invoker的实例）
         this.invoker = handler;
         String serviceKey = invoker.getUrl().getServiceKey();
-        if (serviceKey != null) {
+        if (serviceKey != null) { //设置消费者模型
             this.consumerModel = ApplicationModel.getConsumerModel(serviceKey); //根据服务key获取消费者模型数据，并设置到当前成员变量中
         }
     }
@@ -86,6 +86,6 @@ public class InvokerInvocationHandler implements InvocationHandler { //代理的
         }
 
         // 将 method和args封装到RpcInvocation中，并执行后续的调用
-        return invoker.invoke(rpcInvocation).recreate(); //执行远程调用
+        return invoker.invoke(rpcInvocation).recreate(); //执行远程调用，此处的实例如：MockClusterInvoker
     }
 }

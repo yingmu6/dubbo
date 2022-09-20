@@ -36,7 +36,7 @@ public interface Cluster {
     String DEFAULT = FailoverCluster.NAME; //默认策略：失败重试
 
     /**
-     * Merge the directory invokers to a virtual invoker.
+     * Merge the directory invokers to a virtual invoker.（将目录中维护的invoker合并到一个虚拟的invoker中）
      *
      * @param <T>
      * @param directory
