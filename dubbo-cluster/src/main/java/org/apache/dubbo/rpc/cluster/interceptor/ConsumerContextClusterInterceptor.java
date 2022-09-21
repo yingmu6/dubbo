@@ -28,13 +28,13 @@ import org.apache.dubbo.rpc.cluster.support.AbstractClusterInvoker;
 public class ConsumerContextClusterInterceptor implements ClusterInterceptor, ClusterInterceptor.Listener { //消费者端的上下文拦截器
 
     @Override
-    public void before(AbstractClusterInvoker<?> invoker, Invocation invocation) {
+    public void before(AbstractClusterInvoker<?> invoker, Invocation invocation) { //在调用前处理上下文信息（将调用信息设置到上下文信息中）
         RpcContext context = RpcContext.getContext();
-        context.setInvocation(invocation).setLocalAddress(NetUtils.getLocalHost(), 0);
+        context.setInvocation(invocation).setLocalAddress(NetUtils.getLocalHost(), 0); //上下文RpcContext中的localAddress即为消费端的本地地址
         if (invocation instanceof RpcInvocation) {
-            ((RpcInvocation) invocation).setInvoker(invoker);
+            ((RpcInvocation) invocation).setInvoker(invoker); //将invoker设置到RpcInvocation中
         }
-        RpcContext.removeServerContext();
+        RpcContext.removeServerContext(); //移除服务端的上下文信息
     }
 
     @Override

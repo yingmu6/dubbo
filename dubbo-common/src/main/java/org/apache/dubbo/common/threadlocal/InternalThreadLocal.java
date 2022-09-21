@@ -142,7 +142,7 @@ public class InternalThreadLocal<V> { //是怎么对ThreadLocal进行封装的�
             return (V) v;
         }
 
-        return initialize(threadLocalMap);
+        return initialize(threadLocalMap); //若本地缓存Map中不存在值，则进行初始化操作
     }
 
     private V initialize(InternalThreadLocalMap threadLocalMap) {

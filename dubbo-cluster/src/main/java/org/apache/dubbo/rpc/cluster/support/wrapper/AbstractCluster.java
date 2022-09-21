@@ -88,8 +88,8 @@ public abstract class AbstractCluster implements Cluster { //抽象Cluster
         public Result invoke(Invocation invocation) throws RpcException {
             Result asyncResult;
             try {
-                interceptor.before(next, invocation); //进行拦截处理，interceptor实例如：ConsumerContextClusterInterceptor  todo @pause 09/20
-                asyncResult = interceptor.intercept(next, invocation);
+                interceptor.before(next, invocation); //进行拦截处理，interceptor实例如：ConsumerContextClusterInterceptor（设置上下文信息）
+                asyncResult = interceptor.intercept(next, invocation); //执行具体的invoker调用
             } catch (Exception e) {
                 // onError callback
                 if (interceptor instanceof ClusterInterceptor.Listener) {

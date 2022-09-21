@@ -695,12 +695,12 @@ public class RpcContext {
         return invocation;
     }
 
-    public RpcContext setInvocation(Invocation invocation) {
+    public RpcContext setInvocation(Invocation invocation) { //设置调用信息
         this.invocation = invocation;
         if (invocation != null) {
-            setMethodName(invocation.getMethodName());
-            setParameterTypes(invocation.getParameterTypes());
-            setArguments(invocation.getArguments());
+            setMethodName(invocation.getMethodName()); //方法名
+            setParameterTypes(invocation.getParameterTypes()); //参数类型列表
+            setArguments(invocation.getArguments()); //参数值列表
         }
         return this;
     }

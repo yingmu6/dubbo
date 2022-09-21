@@ -43,8 +43,8 @@ public interface ClusterInterceptor { //与Filter不同
      * @return
      * @throws RpcException
      */
-    default Result intercept(AbstractClusterInvoker<?> clusterInvoker, Invocation invocation) throws RpcException {
-        return clusterInvoker.invoke(invocation);
+    default Result intercept(AbstractClusterInvoker<?> clusterInvoker, Invocation invocation) throws RpcException { //拦截调用：该方法不需要SPI实例重写，由框架自行调用，SPI实例只需重写before()、after()方法
+        return clusterInvoker.invoke(invocation); //进入抽象类AbstractClusterInvoker执行调用，走通用逻辑 todo pause
     }
 
     interface Listener {
