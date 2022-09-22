@@ -100,7 +100,7 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> { /
 
     @Override
     public void destroy() {
-        if (destroyed.compareAndSet(false, true)) {
+        if (destroyed.compareAndSet(false, true)) { //销毁ClusterInvoker时，对应销毁目录
             directory.destroy();
         }
     }

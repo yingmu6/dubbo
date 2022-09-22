@@ -101,7 +101,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
 
     /**
      * The invoker of the reference service
-     * todo @pause 09-17 此处为啥是MockClusterInvoker
+     * 此处为啥是MockClusterInvoker：若有注册中心时，创建引用对象时，会进入RegistryProtocol#refer中，然后会基于Cluster封装Invoker
      */
     private transient volatile Invoker<?> invoker; //此处的invoker是在哪里设置值的？ 解：如注册协议为Registry时，在RegistryProtocol#refer中设置为MockClusterInvoker
 

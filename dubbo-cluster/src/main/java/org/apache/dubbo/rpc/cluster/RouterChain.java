@@ -42,7 +42,7 @@ public class RouterChain<T> { //路由链：由多个路由器组成
      */
 
     // full list of addresses from registry, classified by method name.
-    private List<Invoker<T>> invokers = Collections.emptyList(); //维护着从注册中心获取的invoker列表
+    private List<Invoker<T>> invokers = Collections.emptyList(); //维护着从注册中心获取的invoker列表（Invoker的类型如：RegistryDirectory$InvokerDelegate）
 
     // containing all routers, reconstruct every time 'route://' urls change.
     private volatile List<Router> routers = Collections.emptyList(); //维护着所有的路由规则列表
@@ -102,7 +102,7 @@ public class RouterChain<T> { //路由链：由多个路由器组成
      * @return
      */
     public List<Invoker<T>> route(URL url, Invocation invocation) { //将提供者invoker列表，依次通过路由列表进行路由
-        List<Invoker<T>> finalInvokers = invokers; //invokers值会RegistryDirectory.refreshInvoker中进行设置
+        List<Invoker<T>> finalInvokers = invokers; //invokers值会RegistryDirectory.refreshInvoker中进行设置 (todo @pause)
         for (Router router : routers) { //Router的实例是在哪里选择的？解：在RegistryDirectory#notify中会调用addRouters()方法添加路由列表
             finalInvokers = router.route(finalInvokers, url, invocation); //Router是如何选择invoker列表的？解：将invoker列表依次经过路由链做过滤处理
         }

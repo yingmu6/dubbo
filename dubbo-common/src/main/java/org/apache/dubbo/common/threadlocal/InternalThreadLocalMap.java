@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * The internal data structure that stores the threadLocal variables for Netty and all {@link InternalThread}s.
+ * The internal data structure that stores the threadLocal variables for Netty and all {@link InternalThread}s. （InternalThread设计思想来自于Netty）
  * Note that this class is for internal use only. Use {@link InternalThread}
  * unless you know what you are doing.
  */

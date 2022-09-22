@@ -78,7 +78,7 @@ public class ApolloDynamicConfiguration implements DynamicConfiguration {
     private URL url;
     private Config dubboConfig;
     private ConfigFile dubboConfigFile;
-    private ConcurrentMap<String, ApolloListener> listeners = new ConcurrentHashMap<>();
+    private ConcurrentMap<String, ApolloListener> listeners = new ConcurrentHashMap<>(); //缓存监听器
 
     ApolloDynamicConfiguration(URL url) {
         this.url = url;
@@ -140,9 +140,9 @@ public class ApolloDynamicConfiguration implements DynamicConfiguration {
      */
     @Override
     public void addListener(String key, String group, ConfigurationListener listener) { //添加监听器：将监听器缓存起来，且调用apollo的API接口在apollo添加监听器
-        ApolloListener apolloListener = listeners.computeIfAbsent(group + key, k -> createTargetListener(key, group));
+        ApolloListener apolloListener = listeners.computeIfAbsent(group + key, k -> createTargetListener(key, group)); //对自定义的监听器进行缓存
         apolloListener.addListener(listener);
-        dubboConfig.addChangeListener(apolloListener, Collections.singleton(key));
+        dubboConfig.addChangeListener(apolloListener, Collections.singleton(key)); //使用apollo客户端与服务端进行交互（需要确保本地数据与远程数据一致）
     }
 
     @Override

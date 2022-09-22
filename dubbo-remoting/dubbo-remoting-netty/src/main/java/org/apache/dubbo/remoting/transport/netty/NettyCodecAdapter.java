@@ -32,7 +32,7 @@ import static org.apache.dubbo.remoting.Constants.*;
 /**
  * NettyCodecAdapter.
  */
-final class NettyCodecAdapter { //todo @pause 处理拆包、粘包
+final class NettyCodecAdapter {
 
     private final ChannelHandler encoder = new InternalEncoder();
 
