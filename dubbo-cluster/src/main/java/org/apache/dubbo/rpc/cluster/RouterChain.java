@@ -101,10 +101,10 @@ public class RouterChain<T> { //路由链：由多个路由器组成
      * @param invocation
      * @return
      */
-    public List<Invoker<T>> route(URL url, Invocation invocation) { //将提供者invoker列表，依次通过路由列表进行路由
-        List<Invoker<T>> finalInvokers = invokers; //invokers值会RegistryDirectory.refreshInvoker中进行设置 (todo @pause)
+    public List<Invoker<T>> route(URL url, Invocation invocation) { //将invoker列表，依次按路由规则进行筛选过滤
+        List<Invoker<T>> finalInvokers = invokers; //invokers值会RegistryDirectory.refreshInvoker中进行设置
         for (Router router : routers) { //Router的实例是在哪里选择的？解：在RegistryDirectory#notify中会调用addRouters()方法添加路由列表
-            finalInvokers = router.route(finalInvokers, url, invocation); //Router是如何选择invoker列表的？解：将invoker列表依次经过路由链做过滤处理
+            finalInvokers = router.route(finalInvokers, url, invocation); //将invoker列表依次经过路由链做过滤筛选（依次将上次的处理结果，作为下次路由的输入）
         }
         return finalInvokers;
     }

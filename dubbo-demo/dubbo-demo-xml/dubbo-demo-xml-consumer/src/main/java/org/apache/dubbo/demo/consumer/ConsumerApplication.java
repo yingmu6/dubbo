@@ -33,8 +33,11 @@ public class ConsumerApplication {
 //        System.out.println("demoService 结果: " + response);
 
         GreetingService greetingService = context.getBean("greetingService", GreetingService.class);
-        System.out.println(greetingService.hello("GreetingService: 你好！")); //todo @pause 09-19
-        
+        System.out.println(greetingService.hello("GreetingService: 你好！"));
+
+        // practice 项目中的内容
+//        HelloService helloService = context.getBean("helloService", HelloService.class);
+//        System.out.println(helloService.sayHello("xxxxx"));
 
         // 泛化调用
 //        GenericService genericService = (GenericService) context.getBean("demoService");

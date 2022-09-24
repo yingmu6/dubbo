@@ -50,7 +50,7 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> { /
 
     protected boolean availablecheck; //可用性检查
 
-    private AtomicBoolean destroyed = new AtomicBoolean(false);
+    private AtomicBoolean destroyed = new AtomicBoolean(false); //是否已被销毁
 
     private volatile Invoker<T> stickyInvoker = null;
 
@@ -256,7 +256,7 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> { /
         return doInvoke(invocation, invokers, loadbalance);
     }
 
-    protected void checkWhetherDestroyed() {
+    protected void checkWhetherDestroyed() { //检查invoker是否已被销毁
         if (destroyed.get()) {
             throw new RpcException("Rpc cluster invoker for " + getInterface() + " on consumer " + NetUtils.getLocalHost()
                     + " use dubbo version " + Version.getVersion()

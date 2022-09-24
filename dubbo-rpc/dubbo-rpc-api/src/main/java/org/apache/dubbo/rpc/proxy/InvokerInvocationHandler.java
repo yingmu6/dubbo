@@ -38,7 +38,7 @@ import java.lang.reflect.Method;
 public class InvokerInvocationHandler implements InvocationHandler { //代理的调用处理类（Proxy与InvocationHandler结合使用，创建动态代理类）
     // InvocationHandler：每一个代理实例都与一个调用处理类关联，当代理实例上的方法被调用时，会调用InvocationHandler的invoke方法（方法回调）
     private static final Logger logger = LoggerFactory.getLogger(InvokerInvocationHandler.class);
-    private final Invoker<?> invoker;
+    private final Invoker<?> invoker; //成员变量的值：在引用对象初始化创建代理时指定的，即ReferenceConfig#init()的createProxy()
     private ConsumerModel consumerModel; //@csy 此处为啥只有消费者模型，不用维护提供者模型吗？解：此处是由消费端发起的请求调用，所以不用维护提供者模型
 
     public InvokerInvocationHandler(Invoker<?> handler) { //构造invoker对应的处理类（在创建代理对象时，传入invoker的实例）

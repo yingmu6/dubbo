@@ -88,7 +88,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
     private boolean shouldRegister;
     private boolean shouldSimplified; //是否需要简化
 
-    private volatile URL overrideDirectoryUrl; // Initialization at construction time, assertion not null, and always assign non null value
+    private volatile URL overrideDirectoryUrl; // Initialization at construction time, assertion not null, and always assign non null value（在构建当前对象时，就会进行初始化，所以值是不为空的）
 
     private volatile URL registeredConsumerUrl;
 
@@ -125,7 +125,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
         this.serviceType = serviceType;
         this.serviceKey = url.getServiceKey();
         this.queryMap = StringUtils.parseQueryString(url.getParameterAndDecoded(REFER_KEY)); //只是处理引用url对应refer的参数值
-        this.overrideDirectoryUrl = this.directoryUrl = turnRegistryUrlToConsumerUrl(url);
+        this.overrideDirectoryUrl = this.directoryUrl = turnRegistryUrlToConsumerUrl(url); //构造覆盖的url以及目录url，值如：zookeeper://127.0.0.1:2181/org.apache.dubbo.registry.RegistryService?xxx
         String group = directoryUrl.getParameter(GROUP_KEY, "");
         this.multiGroup = group != null && (ANY_VALUE.equals(group) || group.contains(","));
     }

@@ -44,7 +44,7 @@ public class FailoverClusterInvoker<T> extends AbstractClusterInvoker<T> { //调
 
     private static final Logger logger = LoggerFactory.getLogger(FailoverClusterInvoker.class);
 
-    public FailoverClusterInvoker(Directory<T> directory) {
+    public FailoverClusterInvoker(Directory<T> directory) { //执行调用的逻辑放在父类的invoke()方法中
         super(directory);
     }
 

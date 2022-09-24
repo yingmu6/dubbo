@@ -61,7 +61,7 @@ public interface Constants {
     /**
      * When this attribute appears in invocation's attachment, mock invoker will be used
      */
-    String INVOCATION_NEED_MOCK = "invocation.need.mock";
+    String INVOCATION_NEED_MOCK = "invocation.need.mock"; //是否使用Mock的标识
 
     /**
      * when ROUTER_KEY's value is set to ROUTER_TYPE_CLEAR, RegistryDirectory will clean all current routers
