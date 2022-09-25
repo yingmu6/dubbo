@@ -53,7 +53,7 @@ public class AsyncToSyncInvoker<T> implements Invoker<T> { //异步转同步调�
                  * must call {@link java.util.concurrent.CompletableFuture#get(long, TimeUnit)} because
                  * {@link java.util.concurrent.CompletableFuture#get()} was proved（证明） to have serious performance drop （被证明有严重的性能下降）.
                  */
-                asyncResult.get(Integer.MAX_VALUE, TimeUnit.MILLISECONDS);
+                asyncResult.get(Integer.MAX_VALUE, TimeUnit.MILLISECONDS); //todo @pause 09-25是怎么进入该类的
             }
         } catch (InterruptedException e) {
             throw new RpcException("Interrupted unexpectedly while waiting for remote result to return!  method: " +

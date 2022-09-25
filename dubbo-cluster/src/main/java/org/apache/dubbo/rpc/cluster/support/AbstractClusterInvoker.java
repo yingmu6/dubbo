@@ -110,7 +110,7 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> { /
      * a) Firstly, select an invoker using loadbalance. If this invoker is in previously selected list, or,
      * if this invoker is unavailable, then continue step b (reselect), otherwise return the first selected invoker</br>
      * <p>
-     * b) Reselection, the validation rule for reselection: selected > available. This rule guarantees that
+     * b) Reselection（重新选择）, the validation rule for reselection: selected > available. This rule guarantees that
      * the selected invoker has the minimum chance to be one in the previously selected list, and also
      * guarantees this invoker is available.
      *
@@ -129,7 +129,7 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> { /
         }
         String methodName = invocation == null ? StringUtils.EMPTY_STRING : invocation.getMethodName();
 
-        boolean sticky = invokers.get(0).getUrl()
+        boolean sticky = invokers.get(0).getUrl() //是否粘滞连接
                 .getMethodParameter(methodName, CLUSTER_STICKY_KEY, DEFAULT_CLUSTER_STICKY);
 
         //ignore overloaded method
@@ -149,7 +149,7 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> { /
 
         Invoker<T> invoker = doSelect(loadbalance, invocation, invokers, selected);
 
-        if (sticky) { //粘粘处理
+        if (sticky) { //粘粘处理（记住处理结果，下次粘滞连接使用）
             stickyInvoker = invoker;
         }
         return invoker;
@@ -253,7 +253,7 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> { /
         List<Invoker<T>> invokers = list(invocation); //获取调用信息对应的invoker列表
         LoadBalance loadbalance = initLoadBalance(invokers, invocation); //初始化负载均衡策略
         RpcUtils.attachInvocationIdIfAsync(getUrl(), invocation); //若是异步的话，设置ID值
-        return doInvoke(invocation, invokers, loadbalance);
+        return doInvoke(invocation, invokers, loadbalance); //构造调用信息Invocation、Invoker列表、LoadBalance，并执行远程调用
     }
 
     protected void checkWhetherDestroyed() { //检查invoker是否已被销毁
@@ -293,6 +293,9 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> { /
      * <p>
      * if invokers is not empty, init from the first invoke's url and invocation
      * if invokes is empty, init a default LoadBalance(RandomLoadBalance)
+     * （如果invoker列表不为空，就用列表中的第一个invoker的url和invocation获取负载均衡策略实例
+     * 否则用默认的负载均衡策略）
+     *
      * </p>
      *
      * @param invokers   invokers

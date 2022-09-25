@@ -32,7 +32,7 @@ public class GreetingServiceImpl implements GreetingService {
 //        } catch (Exception e) {
 //            System.out.println("异常：" + e.getMessage());
 //        }
-        return "hello " + msg;
+        return "hello222 " + msg;
     }
 
     @Override

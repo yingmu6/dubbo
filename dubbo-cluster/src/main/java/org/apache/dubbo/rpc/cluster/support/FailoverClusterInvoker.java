@@ -59,13 +59,13 @@ public class FailoverClusterInvoker<T> extends AbstractClusterInvoker<T> { //调
             len = 1;
         }
         // retry loop.
-        RpcException le = null; // last exception.
-        List<Invoker<T>> invoked = new ArrayList<Invoker<T>>(copyInvokers.size()); // invoked invokers.
+        RpcException le = null; // last exception.（记住最后一次异常信息）
+        List<Invoker<T>> invoked = new ArrayList<Invoker<T>>(copyInvokers.size()); // invoked invokers.（被选择的invoker列表）
         Set<String> providers = new HashSet<String>(len);
         for (int i = 0; i < len; i++) { //进行循环重试调用
             //Reselect before retry to avoid a change of candidate（候选） `invokers`.
             //NOTE: if `invokers` changed, then `invoked` also lose accuracy（准确性）.
-            if (i > 0) { //每次重试，都会取最新的提供者列表
+            if (i > 0) { //每次重试，都会取最新的提供者列表（避免在重试的时候，候选invoker列表有变更，i=0即第一次时，invoker为最新的，不用再去拉取）
                 checkWhetherDestroyed();
                 copyInvokers = list(invocation); //通过路由链RouterChain筛选到调用列表invokers
                 // check again
@@ -75,8 +75,8 @@ public class FailoverClusterInvoker<T> extends AbstractClusterInvoker<T> { //调
             invoked.add(invoker);
             RpcContext.getContext().setInvokers((List) invoked);
             try {
-                Result result = invoker.invoke(invocation);
-                if (le != null && logger.isWarnEnabled()) {
+                Result result = invoker.invoke(invocation); //将最终选择到的Invoker，执行远程调用（Invoker实例如：RegistryDirectory$InvokerDelegate）
+                if (le != null && logger.isWarnEnabled()) { //打印提示：虽然最终重试成功了，但期间是存在失败调用的逻辑
                     logger.warn("Although retry the method " + methodName
                             + " in the service " + getInterface().getName()
                             + " was successful by the provider " + invoker.getUrl().getAddress()
@@ -87,13 +87,13 @@ public class FailoverClusterInvoker<T> extends AbstractClusterInvoker<T> { //调
                             + " using the dubbo version " + Version.getVersion() + ". Last error is: "
                             + le.getMessage(), le);
                 }
-                return result;
-            } catch (RpcException e) {
-                if (e.isBiz()) { // biz exception.
+                return result; //执行成功，则返回结果
+            } catch (RpcException e) { //执行失败，捕获异常，进入下次循环，进行重试操作
+                if (e.isBiz()) { // biz exception.（业务异常）
                     throw e;
                 }
                 le = e;
-            } catch (Throwable e) {
+            } catch (Throwable e) { //捕获业务异常，并获取异常的错误信息（保存最近一次错误）
                 le = new RpcException(e.getMessage(), e);
             } finally {
                 providers.add(invoker.getUrl().getAddress());

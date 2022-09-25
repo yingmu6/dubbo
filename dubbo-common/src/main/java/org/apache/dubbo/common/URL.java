@@ -829,11 +829,11 @@ class URL implements Serializable {
         return URL.decode(getMethodParameter(method, key, defaultValue));
     }
 
-    public String getMethodParameter(String method, String key) {
-        Map<String, String> keyMap = methodParameters.get(method);
+    public String getMethodParameter(String method, String key) { //格式如<"sayHello2, <timeout, 3000>">
+        Map<String, String> keyMap = methodParameters.get(method); //获取方法名对应的参数
         String value = null;
         if (keyMap != null) {
-            value = keyMap.get(key);
+            value = keyMap.get(key); //获取参数对应的值
         }
         if (StringUtils.isEmpty(value)) { //若没在方法参数键值对，就从参数键值对里面查询
             value = parameters.get(key);

@@ -31,16 +31,16 @@ import static org.apache.dubbo.common.utils.ReflectUtils.defaultReturn;
 /**
  * This class represents an unfinished RPC call, it will hold some context information for this call, for example RpcContext and Invocation,
  * so that when the call finishes and the result returns, it can guarantee all the contexts being recovered as the same as when the call was made
- * before any callback is invoked.
+ * before any callback is invoked. （AsyncRpcResult表示未完成的调用，会保留上下文信息，当调用完成进行回调时，会根据上下文恢复信息）
  * <p>
- * TODO if it's reasonable or even right to keep a reference to Invocation?
+ * TODO if it's reasonable（合理的） or even right to keep a reference to Invocation?
  * <p>
- * As {@link Result} implements CompletionStage（完成阶段）, {@link AsyncRpcResult} allows you to easily build a async filter chain（异步过滤链） whose status will be
+ * As {@link Result} implements CompletionStage（完成阶段）, {@link AsyncRpcResult} allows you to easily（容易地） build a async filter chain（异步过滤链） whose status will be
  * driven entirely（完全） by the state of the underlying RPC call.
  * <p>
  * AsyncRpcResult does not contain any concrete（具体的） value (except the underlying value bring by CompletableFuture), consider it as a status transfer node.
  * {@link #getValue()} and {@link #getException()} are all inherited from {@link Result} interface, implementing them are mainly
- * for compatibility consideration. Because many legacy {@link Filter} implementation are most possibly to call getValue directly.
+ * for compatibility consideration（兼容性考虑）. Because many legacy {@link Filter} implementation are most possibly to call getValue directly.
  */
 public class AsyncRpcResult implements Result {
     private static final Logger logger = LoggerFactory.getLogger(AsyncRpcResult.class);
@@ -56,6 +56,7 @@ public class AsyncRpcResult implements Result {
     /**
      * RpcContext may already have been changed when callback happens, it happens when the same thread is used to execute another RPC call.
      * So we should keep the reference of current RpcContext instance and restore（恢复） it before callback being executed.
+     * （存储当前上下文信息，用于回调前的恢复）
      */
     private RpcContext storedContext;
     private RpcContext storedServerContext;
