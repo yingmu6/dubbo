@@ -67,7 +67,7 @@ public class RouterChain<T> { //路由链：由多个路由器组成
     }
 
     /**
-     * the resident routers must being initialized before address notification.
+     * the resident（常驻路由器） routers must being initialized before address notification.
      * FIXME: this method should not be public
      */
     public void initWithRouters(List<Router> builtinRouters) {

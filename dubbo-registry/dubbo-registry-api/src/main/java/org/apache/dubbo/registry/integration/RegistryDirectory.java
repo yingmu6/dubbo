@@ -56,7 +56,7 @@ import static org.apache.dubbo.rpc.cluster.Constants.ROUTER_KEY;
 /**
  * RegistryDirectory
  */
-public class RegistryDirectory<T> extends AbstractDirectory<T> implements NotifyListener { //注册目录
+public class RegistryDirectory<T> extends AbstractDirectory<T> implements NotifyListener { //注册目录（实现了NotifyListener接口，表明也是是一个通知监听器）
     /**
      * RegistryDirectory的数据结构以及用途待了解
      * 解答 ：
@@ -156,8 +156,8 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
     }
 
     public void subscribe(URL url) {
-        setConsumerUrl(url);
-        CONSUMER_CONFIGURATION_LISTENER.addNotifyListener(this);
+        setConsumerUrl(url); //保存消费端url
+        CONSUMER_CONFIGURATION_LISTENER.addNotifyListener(this); //添加消费端的配置监听器
         serviceConfigurationListener = new ReferenceConfigurationListener(this, url);
         registry.subscribe(url, this);
     }
@@ -712,7 +712,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
         }
     }
 
-    private static class ReferenceConfigurationListener extends AbstractConfiguratorListener {
+    private static class ReferenceConfigurationListener extends AbstractConfiguratorListener { //引用配置监听器
         private RegistryDirectory directory;
         private URL url;
 
@@ -740,12 +740,12 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
             this.initWith(ApplicationModel.getApplication() + CONFIGURATORS_SUFFIX);
         }
 
-        // 添加监听器
+        // 添加监听器（把监听器放入监听器列表中）
         void addNotifyListener(RegistryDirectory listener) {
             this.listeners.add(listener);
         }
 
-        // 移除监听器
+        // 移除监听器（把监听器从监听器列表中移除）
         void removeNotifyListener(RegistryDirectory listener) {
             this.listeners.remove(listener);
         }

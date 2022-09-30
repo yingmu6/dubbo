@@ -28,11 +28,11 @@ import java.util.List;
 public interface NotifyListener { //通知监听器
 
     /**
-     * Triggered when a service change notification is received.（收到服务变更通知时触发）
+     * Triggered when a service change notification is received.（在服务信息变更时会被触发通知）
      * <p>
-     * Notify needs to support the contract: <br> 需要满足的契约
+     * Notify needs to support the contract: <br> （通知需要满足的契约）
      * 1. Always notifications on the service interface and the dimension（维度） of the data type. that is（就是说）, won't notify part of（不会通知部分的数据） the same type data belonging to one service. Users do not need to compare the results of the previous notification.<br>
-     * 2. The first notification at a subscription must be a full notification （全量通知）of all types of data of a service.<br>
+     * 2. The first notification at a subscription must be a full notification （全量通知：也就是包含providers、consumers等全部目录）of all types of data of a service.<br>
      * 3. At the time of change, different types of data are allowed to be notified separately（按不同类型通知）, e.g.: providers, consumers, routers, overrides. It allows only one of these types to be notified, but the data of this type must be full, not incremental.（全量，非增量）<br>
      * 4. If a data type is empty（数据为空时）, need to notify a empty protocol with category parameter identification of url data.<br>
      * 5. The order of notifications to be guaranteed by the notifications（通知要保证顺序）(That is, the implementation of the registry). Such as: single thread push, queue serialization, and version comparison.<br>

@@ -65,7 +65,7 @@ public interface GovernanceRuleRepository { //治理规则仓库，governance [�
      * @param group    the group where the key belongs to
      * @param listener configuration listener
      */
-    void removeListener(String key, String group, ConfigurationListener listener);
+    void removeListener(String key, String group, ConfigurationListener listener); //将监听器移除，停止对指定路径内容变更的监听
 
     /**
      * Get the governance rule mapped to the given key and the given group

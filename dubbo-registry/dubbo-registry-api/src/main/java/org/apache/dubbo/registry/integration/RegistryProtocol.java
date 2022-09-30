@@ -421,7 +421,7 @@ public class RegistryProtocol implements Protocol { //注册协议
             registry.register(directory.getRegisteredConsumerUrl());
         }
         directory.buildRouterChain(subscribeUrl); //构建路由链
-        directory.subscribe(toSubscribeUrl(subscribeUrl));
+        directory.subscribe(toSubscribeUrl(subscribeUrl)); //订阅指定路径信息的变更
 
         Invoker<T> invoker = cluster.join(directory);
         // 查找注册协议监听器（RegistryProtocolListener：SPI接口）
@@ -458,7 +458,7 @@ public class RegistryProtocol implements Protocol { //注册协议
         invokerWrapper.setInvoker(invokerWrapper.getCluster().join(directory));
     }
 
-    private static URL toSubscribeUrl(URL url) {
+    private static URL toSubscribeUrl(URL url) { //消费者订阅的目录，providers、configurators、routers
         return url.addParameter(CATEGORY_KEY, PROVIDERS_CATEGORY + "," + CONFIGURATORS_CATEGORY + "," + ROUTERS_CATEGORY);
     }
 
