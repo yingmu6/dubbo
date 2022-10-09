@@ -47,11 +47,11 @@
                 <scope>import</scope>
             </dependency>
 
-            <dependency>
-                <groupId>com.csy</groupId>
-                <artifactId>api-interface</artifactId>
-                <version>1.0</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>com.csy</groupId>-->
+<!--                <artifactId>api-interface</artifactId>-->
+<!--                <version>1.0</version>-->
+<!--            </dependency>-->
 
         </dependencies>
     </dependencyManagement>
