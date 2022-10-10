@@ -34,15 +34,15 @@ import static org.apache.dubbo.common.constants.CommonConstants.REFERENCE_INTERC
 
 public abstract class AbstractCluster implements Cluster { //抽象Cluster
 
-    private <T> Invoker<T> buildClusterInterceptors(AbstractClusterInvoker<T> clusterInvoker, String key) {
+    private <T> Invoker<T> buildClusterInterceptors(AbstractClusterInvoker<T> clusterInvoker, String key) { // 为clusterInvoker实例创建拦截器
         AbstractClusterInvoker<T> last = clusterInvoker;
-        List<ClusterInterceptor> interceptors = ExtensionLoader.getExtensionLoader(ClusterInterceptor.class).getActivateExtension(clusterInvoker.getUrl(), key);
+        List<ClusterInterceptor> interceptors = ExtensionLoader.getExtensionLoader(ClusterInterceptor.class).getActivateExtension(clusterInvoker.getUrl(), key); // 根据SPI机制获取到ClusterInterceptor的实例列表
 
-        if (!interceptors.isEmpty()) {
-            for (int i = interceptors.size() - 1; i >= 0; i--) {
+        if (!interceptors.isEmpty()) { // 消费者端调用时，ClusterInterceptor的实例为ConsumerContextClusterInterceptor，因为该类的@Activate没有设置group、value能匹配通过
+            for (int i = interceptors.size() - 1; i >= 0; i--) { // 构造拦截器链
                 final ClusterInterceptor interceptor = interceptors.get(i);
                 final AbstractClusterInvoker<T> next = last;
-                last = new InterceptorInvokerNode<>(clusterInvoker, interceptor, next);
+                last = new InterceptorInvokerNode<>(clusterInvoker, interceptor, next); // 将拦截器按列表串联起来
             }
         }
         return last;
@@ -55,11 +55,11 @@ public abstract class AbstractCluster implements Cluster { //抽象Cluster
 
     protected abstract <T> AbstractClusterInvoker<T> doJoin(Directory<T> directory) throws RpcException;
 
-    protected class InterceptorInvokerNode<T> extends AbstractClusterInvoker<T> { //
+    protected class InterceptorInvokerNode<T> extends AbstractClusterInvoker<T> { //集群Invoker的拦截器
 
         private AbstractClusterInvoker<T> clusterInvoker;
-        private ClusterInterceptor interceptor;
-        private AbstractClusterInvoker<T> next; //下一个执行的Invoker，默认为FailoverClusterInvoker
+        private ClusterInterceptor interceptor; // 消费端调用时，值为ConsumerContextClusterInterceptor实例
+        private AbstractClusterInvoker<T> next; // 下一个执行的Invoker，默认为FailoverClusterInvoker
 
         public InterceptorInvokerNode(AbstractClusterInvoker<T> clusterInvoker,
                                       ClusterInterceptor interceptor,
