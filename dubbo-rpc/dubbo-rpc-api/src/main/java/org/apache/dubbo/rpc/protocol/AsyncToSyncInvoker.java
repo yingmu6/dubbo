@@ -47,13 +47,13 @@ public class AsyncToSyncInvoker<T> implements Invoker<T> { //异步转同步调�
         Result asyncResult = invoker.invoke(invocation);
 
         try {
-            if (InvokeMode.SYNC == ((RpcInvocation) invocation).getInvokeMode()) {
+            if (InvokeMode.SYNC == ((RpcInvocation) invocation).getInvokeMode()) { // 默认是同步调用方式
                 /**
                  * NOTICE!
                  * must call {@link java.util.concurrent.CompletableFuture#get(long, TimeUnit)} because
                  * {@link java.util.concurrent.CompletableFuture#get()} was proved（证明） to have serious performance drop （被证明有严重的性能下降）.
                  */
-                asyncResult.get(Integer.MAX_VALUE, TimeUnit.MILLISECONDS); //todo @pause 09-25是怎么进入该类的
+                asyncResult.get(Integer.MAX_VALUE, TimeUnit.MILLISECONDS); // 异步转同步逻辑：一直阻塞，直到获取值为止（阻塞时间为最大正整数）
             }
         } catch (InterruptedException e) {
             throw new RpcException("Interrupted unexpectedly while waiting for remote result to return!  method: " +

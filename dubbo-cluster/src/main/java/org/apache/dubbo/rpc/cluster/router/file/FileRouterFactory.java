@@ -67,7 +67,7 @@ public class FileRouterFactory implements RouterFactory {
                     .addParameterAndEncoded(RULE_KEY, rule)
                     .build();
 
-            return routerFactory.getRouter(script);
+            return routerFactory.getRouter(script); // 文件路由本质也是用的是 脚本路由
         } catch (IOException e) {
             throw new IllegalStateException(e.getMessage(), e);
         }

@@ -18,7 +18,7 @@ package org.apache.dubbo.rpc;
 
 import java.util.concurrent.TimeUnit;
 
-public final class TimeoutCountDown implements Comparable<TimeoutCountDown> { //TimeoutCountDown：超时倒计时
+public final class TimeoutCountDown implements Comparable<TimeoutCountDown> { // TimeoutCountDown：超时倒计时，用于判断调用超时情况
 
   public static TimeoutCountDown newCountDown(long timeout, TimeUnit unit) {
     return new TimeoutCountDown(timeout, unit);
@@ -26,7 +26,7 @@ public final class TimeoutCountDown implements Comparable<TimeoutCountDown> { //
 
   private final long timeoutInMillis; //超时时间
   private final long deadlineInNanos; //截止时间
-  private volatile boolean expired;
+  private volatile boolean expired; // 是否过期
 
   private TimeoutCountDown(long timeout, TimeUnit unit) {
     timeoutInMillis = TimeUnit.MILLISECONDS.convert(timeout, unit);
@@ -48,7 +48,7 @@ public final class TimeoutCountDown implements Comparable<TimeoutCountDown> { //
     return true;
   }
 
-  public long timeRemaining(TimeUnit unit) {
+  public long timeRemaining(TimeUnit unit) { // 计算剩余时间
     final long currentNanos = System.nanoTime();
     if (!expired && deadlineInNanos - currentNanos <= 0) {
       expired = true;

@@ -63,9 +63,9 @@ public class NettyClient extends AbstractClient {
     /**
      * current channel. Each successful invocation of {@link NettyClient#doConnect()} will
      * replace this with new channel and close old channel.
-     * <b>volatile, please copy reference to use.</b>
+     * <b>volatile（易变的）, please copy reference to use.</b>
      */
-    private volatile Channel channel;
+    private volatile Channel channel; // 维护的是Netty的Channel
 
     /**
      * The constructor of NettyClient.
@@ -198,7 +198,7 @@ public class NettyClient extends AbstractClient {
         if (c == null) {
             return null;
         }
-        return NettyChannel.getOrAddChannel(c, getUrl(), this);
+        return NettyChannel.getOrAddChannel(c, getUrl(), this); // 将Netty的Channel转换为Dubbo的Channel
     }
 
     Channel getNettyChannel() {

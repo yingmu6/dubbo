@@ -35,7 +35,7 @@ public class MockClusterWrapper implements Cluster { //Cluster的封装类
     @Override
     public <T> Invoker<T> join(Directory<T> directory) throws RpcException {
         return new MockClusterInvoker<T>(directory,
-                this.cluster.join(directory)); //cluster默认为FailoverCluster，执行this.cluster.join(directory)返回的值为AbstractCluster$InterceptorInvokerNode@xxx（后面会对ClusterInvoker进行拦截处理）
+                this.cluster.join(directory)); // cluster默认为FailoverCluster，执行this.cluster.join(directory)返回的值为AbstractCluster$InterceptorInvokerNode@xxx（后面会对ClusterInvoker进行拦截处理）
     }
 
 }

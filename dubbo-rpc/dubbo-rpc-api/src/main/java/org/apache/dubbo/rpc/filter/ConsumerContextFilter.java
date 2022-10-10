@@ -39,7 +39,7 @@ public class ConsumerContextFilter implements Filter { //消费端的上下文�
         context.setInvoker(invoker) //调用前设置RpcContext信息
                 .setInvocation(invocation)
                 .setLocalAddress(NetUtils.getLocalHost(), 0)
-                .setRemoteAddress(invoker.getUrl().getHost(), invoker.getUrl().getPort())
+                .setRemoteAddress(invoker.getUrl().getHost(), invoker.getUrl().getPort()) // 设置服务端地址
                 .setRemoteApplicationName(invoker.getUrl().getParameter(REMOTE_APPLICATION_KEY))
                 .setAttachment(REMOTE_APPLICATION_KEY, invoker.getUrl().getParameter(APPLICATION_KEY));
         if (invocation instanceof RpcInvocation) {
@@ -47,7 +47,7 @@ public class ConsumerContextFilter implements Filter { //消费端的上下文�
         }
 
         // pass default timeout set by end user (ReferenceConfig)
-        Object countDown = context.get(TIME_COUNTDOWN_KEY); //设置服务调用的倒计时
+        Object countDown = context.get(TIME_COUNTDOWN_KEY); // 获取上下文中的倒计时信息
         if (countDown != null) { //相比2.5.6增加的TIMEOUT_TERMINATE 超时终止的异常
             TimeoutCountDown timeoutCountDown = (TimeoutCountDown) countDown;
             if (timeoutCountDown.isExpired()) {

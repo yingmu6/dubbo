@@ -32,7 +32,7 @@ import static org.apache.dubbo.common.constants.RegistryConstants.REGISTRY_ZONE_
  *
  * active only when url has key 'cluster=zone-aware'
  */
-@Activate(value = "cluster:zone-aware")
+@Activate(value = "cluster:zone-aware") // 匹配扩展实例时，即ExtensionLoader#getActivateExtension，会将value值按key:value进行拆分，与url指定key对应的value进行比较
 public class ZoneAwareClusterInterceptor implements ClusterInterceptor {
 
     @Override

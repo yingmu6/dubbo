@@ -129,7 +129,7 @@ final class HeaderExchangeChannel implements ExchangeChannel {
         Request req = new Request();
         req.setVersion(Version.getProtocolVersion());
         req.setTwoWay(true); //设置双向通讯
-        req.setData(request); //设置请求体
+        req.setData(request); // 设置请求体，request对象类型为：RpcInvocation
         DefaultFuture future = DefaultFuture.newFuture(channel, req, timeout, executor);
         try {
             channel.send(req);

@@ -38,7 +38,7 @@ public interface RegistryProtocolListener { //注册协议监听器，为啥没�
     void onExport(RegistryProtocol registryProtocol, Exporter<?> exporter);
 
     /**
-     * Notify RegistryProtocol's listeners when a service is subscribed
+     * Notify RegistryProtocol's listeners when a service is subscribed（ 当服务被订阅时，回调监听器的onRefer方法）
      *
      * @param registryProtocol RegistryProtocol instance
      * @param invoker          invoker

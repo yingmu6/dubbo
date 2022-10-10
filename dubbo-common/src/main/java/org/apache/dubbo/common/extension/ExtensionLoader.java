@@ -284,7 +284,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
      */
     public List<T> getActivateExtension(URL url, String[] values, String group) { //将URL中配置的参数与@Activate配置的内容进行比较
         List<T> activateExtensions = new ArrayList<>();
-        List<String> names = values == null ? new ArrayList<>(0) : asList(values);
+        List<String> names = values == null ? new ArrayList<>(0) : asList(values); // 扩展名列表（values是从url中获取的指定key对应的参数值，并按分隔符分隔的值列表）
         /**
          * 在扩展名列表不包含-default时进行处理
          * @csy-007 此处-default是指什么？去除默认扩展吗？
@@ -293,8 +293,8 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
          * 如果Filter中不带有"-default"字段，就会加载系统扩展Filter对象。（系统的Filter对象）
          */
         if (!names.contains(REMOVE_VALUE_PREFIX + DEFAULT_KEY)) { // URL参数值列表不包含"-default"处理
-            getExtensionClasses(); //此处没有用到方法的返回值，主要使用方法中的loadExtensionClasses()，若缓存中没有对应的值，则对应加载并设置到缓存中
-            for (Map.Entry<String, Object> entry : cachedActivates.entrySet()) { //将成员变量cachedActivates的值进行遍历处理（需要扩展接口有包含@Active注解的实现类）
+            getExtensionClasses(); // 此处没有用到方法的返回值，主要使用方法中的loadExtensionClasses()，值存入成员变量中了，若缓存中没有对应的值，则对应加载并设置到缓存中
+            for (Map.Entry<String, Object> entry : cachedActivates.entrySet()) { // 遍历从SPI配置文件中加载的@Activate标识的扩展类列表（需要扩展接口有包含@Active注解的实现类）
                 String name = entry.getKey(); //扩展名
                 Object activate = entry.getValue(); // @Active对象
 
@@ -312,7 +312,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
 
                 /**
                  * 自动激活条件匹配逻辑（先比较group、再比较value）
-                 * 1）将查询参数group与注解中group值进行比较
+                 * 1）将查询参数group与注解中group列表值，依次进行比较
                  * 2）扩展名name没有加载过且不是"-"移除的扩展名
                  * 3）将注解中声明的value值与url中参数值进行比较
                  * 若都满足条件，则获取扩展名对应的实例，并加载到
@@ -322,7 +322,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
                         && !names.contains(name)
                         && !names.contains(REMOVE_VALUE_PREFIX + name)
                         && isActive(activateValue, url)) {
-                    activateExtensions.add(getExtension(name)); //若匹配，则创建扩展名对应的实例并加载到列表中
+                    activateExtensions.add(getExtension(name)); // 若匹配，则获取扩展名name对应的实例并加载到列表中
                 }
             }
             activateExtensions.sort(ActivateComparator.COMPARATOR); //将可激活扩展类列表进行排序
@@ -359,7 +359,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
         if (StringUtils.isEmpty(group)) { //若没有传入group查询条件，则可以匹配所有组，直接匹配成功
             return true;
         }
-        if (groups != null && groups.length > 0) { //若输入查询条件，且@Activate注解上也设置group值，则进行匹配比较，只要与其中一个group条件匹配即为匹配成功。若都没匹配成功，则匹配失败
+        if (groups != null && groups.length > 0) { // 若输入的查询条件不为空，且@Activate注解上也设置了group值，则进行匹配比较，只要查询条件中group与@Activate中申明的group列表的其中之一匹配即为匹配成功。若都没匹配成功，则匹配失败
             for (String g : groups) {
                 if (group.equals(g)) {
                     return true;
@@ -369,8 +369,8 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
         return false;
     }
 
-    private boolean isActive(String[] keys, URL url) { //比较值，keys是@Activate注解上的value值，将注解中value值与url的参数键值对进行比较
-        if (keys.length == 0) { //若@Activate注解上没设置value，则不进行value匹配限制
+    private boolean isActive(String[] keys, URL url) { // 比较值，keys是@Activate注解上的value值列表，将注解中value值列表与url的参数键值对进行比较
+        if (keys.length == 0) { //若@Activate注解上没设置value，直接匹配成功
             return true;
         }
         for (String key : keys) { //遍历注解上的所有key
@@ -387,12 +387,12 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
                 String v = entry.getValue(); //从url中取到的参数值value
                 /**
                  * @csy-007 此处比较逻辑待调试了解？
-                 * 将注解上的key与url的参数key进行比较
+                 * 将注解上的key与url的参数key进行比较 ( 既要比较key的值，也要比较value的值)
                  *  1）若url中的键与注解上的key相等或以注解的可以结尾，且注解上key对应的value与url中设置的value相同，则匹配通过
                  *  2）或者在注解上键对应值为空，但url设置的value不为空时，则匹配通过，即@Active(value="key1, key2") 这种格式
                  */
                 if ((k.equals(key) || k.endsWith("." + key))
-                        && ((keyValue != null && keyValue.equals(v)) || (keyValue == null && ConfigUtils.isNotEmpty(v)))) {
+                        && ((keyValue != null && keyValue.equals(v)) || (keyValue == null && ConfigUtils.isNotEmpty(v)))) { // keyValue==null， 兼容2.7.x之前的版本，之前的value为key1,key2形式，目前配置的形式为key1:value1,key2:value2
                     return true;
                 } // &&的优先级高于|| ，如System.out.println(false && true || true);
             }

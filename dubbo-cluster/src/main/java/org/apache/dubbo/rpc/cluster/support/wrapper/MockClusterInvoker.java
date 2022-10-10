@@ -37,7 +37,7 @@ public class MockClusterInvoker<T> implements ClusterInvoker<T> {
 
     private final Directory<T> directory; //编码风格：比较多的用成员变量、成员方法，比较少用方法返回值
 
-    private final Invoker<T> invoker;
+    private final Invoker<T> invoker; // 进行调用时，类型为AbstractCluster$InterceptorInvokerNode（在消费者启动初始化时，设置的值）
 
     public MockClusterInvoker(Directory<T> directory, Invoker<T> invoker) {
         this.directory = directory;

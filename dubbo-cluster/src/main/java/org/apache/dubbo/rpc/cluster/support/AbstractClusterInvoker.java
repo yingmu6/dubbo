@@ -241,7 +241,7 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> { /
     }
 
     @Override
-    public Result invoke(final Invocation invocation) throws RpcException { //执行服务调用
+    public Result invoke(final Invocation invocation) throws RpcException { // 执行服务调用（在具体调用时，选择合适的Invoker进行调用）
         checkWhetherDestroyed();
 
         // binding attachments into invocation.（将上下文中的附加参数绑定到invocation中）

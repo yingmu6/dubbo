@@ -89,8 +89,8 @@ public class HeaderExchangeClient implements ExchangeClient {
     }
 
     @Override
-    public CompletableFuture<Object> request(Object request, int timeout, ExecutorService executor) throws RemotingException {
-        return channel.request(request, timeout, executor);
+    public CompletableFuture<Object> request(Object request, int timeout, ExecutorService executor) throws RemotingException { // request实例为：RpcInvocation，包含请求调用信息
+        return channel.request(request, timeout, executor); // 使用通道发送信息
     }
 
     @Override

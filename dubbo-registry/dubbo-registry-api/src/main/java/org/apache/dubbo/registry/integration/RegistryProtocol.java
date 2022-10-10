@@ -405,7 +405,7 @@ public class RegistryProtocol implements Protocol { //注册协议
             }
         }
 
-        Cluster cluster = Cluster.getCluster(qs.get(CLUSTER_KEY));
+        Cluster cluster = Cluster.getCluster(qs.get(CLUSTER_KEY)); //获取集群Cluster实例
         return doRefer(cluster, registry, type, url);
     }
 
@@ -421,16 +421,16 @@ public class RegistryProtocol implements Protocol { //注册协议
             registry.register(directory.getRegisteredConsumerUrl());
         }
         directory.buildRouterChain(subscribeUrl); //构建路由链
-        directory.subscribe(toSubscribeUrl(subscribeUrl)); //订阅指定路径信息的变更
+        directory.subscribe(toSubscribeUrl(subscribeUrl)); // 订阅指定路径信息的变更（消费者端订阅监听providers、configurators、routers目录的变更）
 
-        Invoker<T> invoker = cluster.join(directory);
+        Invoker<T> invoker = cluster.join(directory); // 合并目录中的invoker列表（cluster的实例如：MockClusterWrapper，返回的Invoker实例为MockClusterInvoker，MockClusterInvoker#invoker的成员属性为AbstractClusterInvoker$InterceptorInvokerNode）
         // 查找注册协议监听器（RegistryProtocolListener：SPI接口）
         List<RegistryProtocolListener> listeners = findRegistryProtocolListeners(url);
         if (CollectionUtils.isEmpty(listeners)) {
             return invoker;
         }
 
-        // 如果有其监听器进行监听器onRefer()调用，并返回RegistryInvokerWrapper封装类型。
+        // 如果存在监听器，回调监听器的onRefer()方法， 并返回RegistryInvokerWrapper封装类型。
         RegistryInvokerWrapper<T> registryInvokerWrapper = new RegistryInvokerWrapper<>(directory, cluster, invoker);
         for (RegistryProtocolListener listener : listeners) {
             listener.onRefer(this, registryInvokerWrapper);

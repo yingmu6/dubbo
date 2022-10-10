@@ -74,7 +74,7 @@ public class DubboInvoker<T> extends AbstractInvoker<T> {
         if (clients.length == 1) {
             currentClient = clients[0];
         } else {
-            currentClient = clients[index.getAndIncrement() % clients.length];
+            currentClient = clients[index.getAndIncrement() % clients.length]; // 从数组中按取模方式取其中一个值
         }
         try {
             boolean isOneway = RpcUtils.isOneway(getUrl(), invocation);
@@ -84,7 +84,7 @@ public class DubboInvoker<T> extends AbstractInvoker<T> {
                 currentClient.send(inv, isSent);
                 return AsyncRpcResult.newDefaultAsyncResult(invocation);
             } else {
-                ExecutorService executor = getCallbackExecutor(getUrl(), inv);
+                ExecutorService executor = getCallbackExecutor(getUrl(), inv); // 双向调用，会对应产生线程池做后续执行
                 CompletableFuture<AppResponse> appResponseFuture =
                         currentClient.request(inv, timeout, executor).thenApply(obj -> (AppResponse) obj);
                 // save for 2.6.x compatibility, for example, TraceFilter in Zipkin uses com.alibaba.xxx.FutureAdapter
@@ -146,7 +146,7 @@ public class DubboInvoker<T> extends AbstractInvoker<T> {
         }
     }
 
-    private int calculateTimeout(Invocation invocation, String methodName) {
+    private int calculateTimeout(Invocation invocation, String methodName) { // 计算调用超时时间
         Object countdown = RpcContext.getContext().get(TIME_COUNTDOWN_KEY);
         int timeout = DEFAULT_TIMEOUT;
         if (countdown == null) {
