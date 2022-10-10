@@ -33,7 +33,7 @@ public class ConsumerApplication {
 //        System.out.println("demoService 结果: " + response);
 
         GreetingService greetingService = context.getBean("greetingService", GreetingService.class);
-        System.out.println(greetingService.hello("GreetingService: 你好！")); //test
+        System.out.println(greetingService.hello("GreetingService: 你好！")); //tes
 
         // practice 项目中的内容
 //        HelloService helloService = context.getBean("helloService", HelloService.class);
