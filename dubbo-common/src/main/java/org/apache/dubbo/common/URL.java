@@ -938,7 +938,7 @@ class URL implements Serializable {
         return null;
     }
 
-    private void updateCachedNumber(String method, String key, Number n) {
+    private void updateCachedNumber(String method, String key, Number n) { //更新缓存methodNumbers的值
         Map<String, Number> keyNumber = getMethodNumbers().computeIfAbsent(method, m -> new HashMap<>());
         keyNumber.put(key, n);
     }
@@ -948,7 +948,7 @@ class URL implements Serializable {
             throw new IllegalArgumentException("defaultValue <= 0");
         }
         double value = getMethodParameter(method, key, defaultValue);
-        return value <= 0 ? defaultValue : value;
+        return value <= 0 ? defaultValue : value; //获取对应正整数的值
     }
 
     public float getMethodPositiveParameter(String method, String key, float defaultValue) {

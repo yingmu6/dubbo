@@ -29,7 +29,7 @@ import org.apache.dubbo.remoting.transport.AbstractChannelHandlerDelegate;
 
 import static org.apache.dubbo.common.constants.CommonConstants.HEARTBEAT_EVENT;
 
-public class HeartbeatHandler extends AbstractChannelHandlerDelegate {
+public class HeartbeatHandler extends AbstractChannelHandlerDelegate { //心跳处理类
 
     private static final Logger logger = LoggerFactory.getLogger(HeartbeatHandler.class);
 
@@ -64,7 +64,7 @@ public class HeartbeatHandler extends AbstractChannelHandlerDelegate {
     @Override
     public void received(Channel channel, Object message) throws RemotingException {
         setReadTimestamp(channel);
-        if (isHeartbeatRequest(message)) {
+        if (isHeartbeatRequest(message)) { //todo @pause 22/10/13
             Request req = (Request) message;
             if (req.isTwoWay()) {
                 Response res = new Response(req.getId(), req.getVersion());
@@ -90,7 +90,7 @@ public class HeartbeatHandler extends AbstractChannelHandlerDelegate {
         handler.received(channel, message);
     }
 
-    private void setReadTimestamp(Channel channel) { //传入通道channel的实例
+    private void setReadTimestamp(Channel channel) { //设置从通道中读取内容的时间
         channel.setAttribute(KEY_READ_TIMESTAMP, System.currentTimeMillis());
     }
 

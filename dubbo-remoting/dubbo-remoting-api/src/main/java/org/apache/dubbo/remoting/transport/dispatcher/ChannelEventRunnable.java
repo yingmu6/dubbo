@@ -103,7 +103,7 @@ public class ChannelEventRunnable implements Runnable { //通道事件线程
      *
      *
      */
-    public enum ChannelState {
+    public enum ChannelState { //通道状态
 
         /**
          * CONNECTED

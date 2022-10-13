@@ -189,12 +189,12 @@ public class RpcUtils {
         }
     }
 
-    public static boolean isOneway(URL url, Invocation inv) {
+    public static boolean isOneway(URL url, Invocation inv) { //判断是否是单向通信
         boolean isOneway;
-        if (Boolean.FALSE.toString().equals(inv.getAttachment(RETURN_KEY))) {
+        if (Boolean.FALSE.toString().equals(inv.getAttachment(RETURN_KEY))) { //从调用信息的附加参数获取
             isOneway = true;
         } else {
-            isOneway = !url.getMethodParameter(getMethodName(inv), RETURN_KEY, true);
+            isOneway = !url.getMethodParameter(getMethodName(inv), RETURN_KEY, true); //从url的方法参数中获取
         }
         return isOneway;
     }

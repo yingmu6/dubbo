@@ -25,7 +25,7 @@ import org.apache.dubbo.remoting.exchange.support.MultiMessage;
  *
  * @see MultiMessage
  */
-public class MultiMessageHandler extends AbstractChannelHandlerDelegate {
+public class MultiMessageHandler extends AbstractChannelHandlerDelegate { //消息处理类
 
     public MultiMessageHandler(ChannelHandler handler) {
         super(handler);
@@ -36,7 +36,7 @@ public class MultiMessageHandler extends AbstractChannelHandlerDelegate {
     public void received(Channel channel, Object message) throws RemotingException {
         if (message instanceof MultiMessage) {
             MultiMessage list = (MultiMessage) message;
-            for (Object obj : list) {
+            for (Object obj : list) { //多消息处理：依次遍历处理
                 handler.received(channel, obj);
             }
         } else {

@@ -34,7 +34,7 @@ import java.util.concurrent.*;
  * （通过execute(Runnable)提交给这个执行器的任务不会被调度到特定的线程，尽管普通执行器总是执行调度。
  * 这些任务存储在阻塞队列中，只有当线程调用waitAndDrain()(执行任务的线程)时才会执行和调用waitAndDrain的是一样的吗）
  */
-public class ThreadlessExecutor extends AbstractExecutorService {
+public class ThreadlessExecutor extends AbstractExecutorService { //
     private static final Logger logger = LoggerFactory.getLogger(ThreadlessExecutor.class.getName());
 
     private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>(); //线程维护在阻塞队列中
@@ -69,7 +69,7 @@ public class ThreadlessExecutor extends AbstractExecutorService {
      * Waits until there is a task, executes the task and all queued tasks (if there're any). The task is either a normal
      * response or a timeout response.
      */
-    public void waitAndDrain() throws InterruptedException {
+    public void waitAndDrain() throws InterruptedException { //Drain:耗尽，该方法会同步等待响应请求的任务
         /**
          * Usually, {@link #waitAndDrain()} will only get called once. It blocks for the response for the first time,
          * once the response (the task) reached and being executed waitAndDrain will return, the whole request process
