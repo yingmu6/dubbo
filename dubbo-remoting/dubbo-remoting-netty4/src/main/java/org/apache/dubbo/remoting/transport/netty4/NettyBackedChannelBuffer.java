@@ -27,7 +27,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
-public class NettyBackedChannelBuffer implements ChannelBuffer {
+public class NettyBackedChannelBuffer implements ChannelBuffer { //对Netty的ByteBuf进行封装处理
 
     private ByteBuf buffer;
 

@@ -69,10 +69,10 @@ final public class NettyCodecAdapter { //Netty编码适配器
         }
     }
 
-    private class InternalDecoder extends ByteToMessageDecoder { //继承Netty的解码器
+    private class InternalDecoder extends ByteToMessageDecoder { //继承Netty的解码器（在NettyService#open时，会将编解码器Channel#pipeline加入到处理链中）
 
         @Override
-        protected void decode(ChannelHandlerContext ctx, ByteBuf input, List<Object> out) throws Exception {
+        protected void decode(ChannelHandlerContext ctx, ByteBuf input, List<Object> out) throws Exception { //对接收的内容进行解码操作
 
             ChannelBuffer message = new NettyBackedChannelBuffer(input);
 

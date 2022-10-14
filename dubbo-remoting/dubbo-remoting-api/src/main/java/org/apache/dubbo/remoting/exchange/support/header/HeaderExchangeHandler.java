@@ -94,7 +94,7 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
             } else {
                 msg = data.toString();
             }
-            res.setErrorMessage("Fail to decode request due to: " + msg);
+            res.setErrorMessage("Fail to decode request due to: " + msg); //解码请求对象失败
             res.setStatus(Response.BAD_REQUEST);
 
             channel.send(res);
@@ -171,7 +171,7 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
     @Override
     public void received(Channel channel, Object message) throws RemotingException { //对请求、响应、Telnet消息处理
         final ExchangeChannel exchangeChannel = HeaderExchangeChannel.getOrAddChannel(channel);
-        if (message instanceof Request) {
+        if (message instanceof Request) { //处理请求对象
             // handle request.
             Request request = (Request) message;
             if (request.isEvent()) {
@@ -183,7 +183,7 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
                     handler.received(exchangeChannel, request.getData());
                 }
             }
-        } else if (message instanceof Response) {
+        } else if (message instanceof Response) { //处理响应对象
             handleResponse(channel, (Response) message);
         } else if (message instanceof String) {
             if (isClientSide(channel)) {

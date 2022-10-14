@@ -133,11 +133,11 @@ public class WrappedChannelHandler implements ChannelHandlerDelegate {
     public ExecutorService getSharedExecutorService() { //@csy-02-26 什么是共享线程池？解：使用Map将线程池缓存起来，判断缓存中是否存在，若存在则不再创建
         ExecutorRepository executorRepository =
                 ExtensionLoader.getExtensionLoader(ExecutorRepository.class).getDefaultExtension();
-        ExecutorService executor = executorRepository.getExecutor(url);
+        ExecutorService executor = executorRepository.getExecutor(url); //一个url对应一个ExecutorService
         if (executor == null) {
             executor = executorRepository.createExecutorIfAbsent(url);
         }
-        return executor;
+        return executor; //线程池复用
     }
 
     @Deprecated

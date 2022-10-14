@@ -30,7 +30,7 @@ public class ChannelHandlers {
     protected ChannelHandlers() {
     }
 
-    public static ChannelHandler wrap(ChannelHandler handler, URL url) {
+    public static ChannelHandler wrap(ChannelHandler handler, URL url) { //消费者、提供者启动时，都会调用当前方法创ChannelHandler
         return ChannelHandlers.getInstance().wrapInternal(handler, url);
     }
 
@@ -42,7 +42,13 @@ public class ChannelHandlers {
         INSTANCE = instance;
     }
 
-    protected ChannelHandler wrapInternal(ChannelHandler handler, URL url) {
+    protected ChannelHandler wrapInternal(ChannelHandler handler, URL url) { //使用MultiMessageHandler做通道处理器
+        /**
+         * 构建通道处理器步骤
+         * 1）获取Dispatcher自适应类，并执行派发dispatch，返回ChannelHandler通道处理类
+         * 2）构建心跳处理器HeartbeatHandler
+         * 3）构建消息处理器MultiMessageHandler
+         */
         return new MultiMessageHandler(new HeartbeatHandler(ExtensionLoader.getExtensionLoader(Dispatcher.class)
                 .getAdaptiveExtension().dispatch(handler, url)));
     }

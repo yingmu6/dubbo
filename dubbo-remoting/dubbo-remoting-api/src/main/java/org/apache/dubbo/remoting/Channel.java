@@ -32,7 +32,7 @@ public interface Channel extends Endpoint { //通道（Dubbo网络通道的抽�
      *
      * @return remote address.
      */
-    InetSocketAddress getRemoteAddress();
+    InetSocketAddress getRemoteAddress(); // 远程地址：这是相对的，提供者的远程地址就是消费者的地址，反之亦然
 
     /**
      * is connected.

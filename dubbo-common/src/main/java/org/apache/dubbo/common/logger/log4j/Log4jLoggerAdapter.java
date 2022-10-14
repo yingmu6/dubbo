@@ -26,7 +26,7 @@ import org.apache.log4j.LogManager;
 import java.io.File;
 import java.util.Enumeration;
 
-public class Log4jLoggerAdapter implements LoggerAdapter {
+public class Log4jLoggerAdapter implements LoggerAdapter { //log4j实现的日志适配器
 
     private File file;
 

@@ -59,7 +59,7 @@ public class AllChannelHandler extends WrappedChannelHandler {
     public void received(Channel channel, Object message) throws RemotingException {
         ExecutorService executor = getPreferredExecutorService(message);
         try {
-            executor.execute(new ChannelEventRunnable(channel, handler, ChannelState.RECEIVED, message));
+            executor.execute(new ChannelEventRunnable(channel, handler, ChannelState.RECEIVED, message)); //将通道事件线程ChannelEventRunnable提交到线程池中，当线程获取到资源时，对应执行线程的run方法
         } catch (Throwable t) {
         	if(message instanceof Request && t instanceof RejectedExecutionException){
                 sendFeedback(channel, (Request) message, t);

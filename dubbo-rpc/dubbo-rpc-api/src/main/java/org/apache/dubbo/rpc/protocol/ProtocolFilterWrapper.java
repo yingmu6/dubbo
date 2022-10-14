@@ -88,7 +88,7 @@ public class ProtocolFilterWrapper implements Protocol { //org.apache.dubbo.rpc.
                     public Result invoke(Invocation invocation) throws RpcException {
                         Result asyncResult;
                         try {
-                            asyncResult = filter.invoke(next, invocation); //使用过滤器Filter执行调用
+                            asyncResult = filter.invoke(next, invocation); //使用过滤器Filter执行调用 （todo @pause 10/14）
                         } catch (Exception e) { // 对过滤器链中filter调用异常进行处理
                             /**
                              * 此处为什么会出现异常？都有哪些异常的？出现异常的处理逻辑是怎样的？
