@@ -124,7 +124,7 @@ public abstract class Wrapper {
      * 1）创建的封装类，做了哪些功能增强，还是说只是为了减少反射调用，只实现了目标类的方法调用？
      * 2）本地方法调用，底层原理是怎样的？是不是class的invoke方法
      */
-    private static Wrapper makeWrapper(Class<?> c) { //为指定class构建Wrapper封装类的实例
+    private static Wrapper makeWrapper(Class<?> c) { //为指定class构建Wrapper封装类的实例，c的实例如：org.apache.dubbo.demo.provider.GreetingServiceImpl
         if (c.isPrimitive()) { //基本类型不能创建封装类
             throw new IllegalArgumentException("Can not create wrapper for primitive type: " + c);
         }

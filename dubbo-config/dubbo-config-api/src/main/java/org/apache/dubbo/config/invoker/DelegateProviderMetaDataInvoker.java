@@ -31,11 +31,11 @@ import org.apache.dubbo.rpc.RpcException;
  * @csy 此类的功能用途是什么？解答：委派类，用于持有Invoker和ServiceConfig对象信息
  * Delegate： [ˈdelɪɡət] n. 代表，v. 授权，把……委托给
  */
-public class DelegateProviderMetaDataInvoker<T> implements Invoker {
+public class DelegateProviderMetaDataInvoker<T> implements Invoker { //提供者元数据的委派类
     protected final Invoker<T> invoker;
     private ServiceConfig<?> metadata;
 
-    public DelegateProviderMetaDataInvoker(Invoker<T> invoker, ServiceConfig<?> metadata) {
+    public DelegateProviderMetaDataInvoker(Invoker<T> invoker, ServiceConfig<?> metadata) { //将Invoker和ServiceConfig信息关联起来
         this.invoker = invoker;
         this.metadata = metadata;
     }

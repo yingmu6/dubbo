@@ -39,7 +39,7 @@ import static org.apache.dubbo.rpc.Constants.TOKEN_KEY;
 /**
  * DubboInvoker
  */
-public class DubboInvoker<T> extends AbstractInvoker<T> {
+public class DubboInvoker<T> extends AbstractInvoker<T> { //Dubbo协议对应的Invoker
 
     private final ExchangeClient[] clients;
 

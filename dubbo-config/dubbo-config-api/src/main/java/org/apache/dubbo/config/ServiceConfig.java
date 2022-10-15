@@ -457,7 +457,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
                             registryURL = registryURL.addParameter(PROXY_KEY, proxy);
                         }
 
-                        Invoker<?> invoker = PROXY_FACTORY.getInvoker(ref, (Class) interfaceClass, registryURL.addParameterAndEncoded(EXPORT_KEY, url.toFullString()));
+                        Invoker<?> invoker = PROXY_FACTORY.getInvoker(ref, (Class) interfaceClass, registryURL.addParameterAndEncoded(EXPORT_KEY, url.toFullString())); //通过自适应类获取到代理工厂ProxyFactory，最后通过代理工厂创建Invoker实例
                         DelegateProviderMetaDataInvoker wrapperInvoker = new DelegateProviderMetaDataInvoker(invoker, this);
 
                         Exporter<?> exporter = PROTOCOL.export(wrapperInvoker);
@@ -499,7 +499,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
         Exporter<?> exporter = PROTOCOL.export(
                 PROXY_FACTORY.getInvoker(ref, (Class) interfaceClass, local)); //方法中会选择具体实例，执行对应的方法，本处是InjvmProtocol实例，会执行对应的export()方法
         exporters.add(exporter);
-        logger.info("Export dubbo service " + interfaceClass.getName() + " to local registry url : " + local);
+        logger.info("Export dubbo service " + interfaceClass.getName() + " to local registry url : " + local); //暴露本地服务，对应打印的日志，此处local的值如：injvm://127.0.0.1/xxx.XxxService
     }
 
     /**

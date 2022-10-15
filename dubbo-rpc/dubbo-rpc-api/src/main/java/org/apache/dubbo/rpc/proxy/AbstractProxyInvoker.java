@@ -76,7 +76,7 @@ public abstract class AbstractProxyInvoker<T> implements Invoker<T> {
         try {
             Object value = doInvoke(proxy, invocation.getMethodName(), invocation.getParameterTypes(), invocation.getArguments());
 			CompletableFuture<Object> future = wrapWithFuture(value); //对调用返回的值，按异步进行封装
-            CompletableFuture<AppResponse> appResponseFuture = future.handle((obj, t) -> {
+            CompletableFuture<AppResponse> appResponseFuture = future.handle((obj, t) -> { //todo @pause 10-14
                 AppResponse result = new AppResponse();
                 if (t != null) { //异常对象不为空
                     if (t instanceof CompletionException) {

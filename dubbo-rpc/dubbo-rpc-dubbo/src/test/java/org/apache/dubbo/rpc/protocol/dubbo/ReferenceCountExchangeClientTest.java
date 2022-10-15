@@ -77,7 +77,7 @@ public class ReferenceCountExchangeClientTest {
     }
 
     public static <T> Exporter<T> export(T instance, Class<T> type, URL url) {
-        return protocol.export(proxy.getInvoker(instance, type, url));
+        return protocol.export(proxy.getInvoker(instance, type, url)); //通过代理工厂获取到Invoker，并进行服务暴露
     }
 
     @BeforeEach
@@ -219,8 +219,8 @@ public class ReferenceCountExchangeClientTest {
         helloExporter = export(new HelloServiceImpl(), IHelloService.class, helloUrl);
 
         demoServiceInvoker = (Invoker<IDemoService>) referInvoker(IDemoService.class, demoUrl);
-        demoService = proxy.getProxy(demoServiceInvoker);
-        Assertions.assertEquals("demo", demoService.demo());
+        demoService = proxy.getProxy(demoServiceInvoker); //获取Invoker对应的代理类
+        Assertions.assertEquals("demo", demoService.demo()); //判断调用执行
 
         helloServiceInvoker = (Invoker<IHelloService>) referInvoker(IHelloService.class, helloUrl);
         helloService = proxy.getProxy(helloServiceInvoker);

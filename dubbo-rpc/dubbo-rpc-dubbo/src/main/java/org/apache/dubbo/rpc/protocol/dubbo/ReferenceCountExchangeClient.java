@@ -41,7 +41,7 @@ import static org.apache.dubbo.rpc.protocol.dubbo.Constants.LAZY_CONNECT_INITIAL
 final class ReferenceCountExchangeClient implements ExchangeClient {
 
     private final URL url;
-    private final AtomicInteger referenceCount = new AtomicInteger(0);
+    private final AtomicInteger referenceCount = new AtomicInteger(0); // 引用计数变量，每当该对象被引用一次referenceCount都会进行自增。每当close方法被调用时，referenceCount进行自减
 
     private ExchangeClient client;
 

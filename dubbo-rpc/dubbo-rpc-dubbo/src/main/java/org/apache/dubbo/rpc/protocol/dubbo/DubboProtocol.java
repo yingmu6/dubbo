@@ -54,7 +54,7 @@ public class DubboProtocol extends AbstractProtocol {
 
     public static final int DEFAULT_PORT = 20880;
     private static final String IS_CALLBACK_SERVICE_INVOKE = "_isCallBackServiceInvoke";
-    private static DubboProtocol INSTANCE;
+    private static DubboProtocol INSTANCE; //DubboProtocol实例缓存
 
     /**
      * <host:port,Exchanger>
@@ -63,7 +63,7 @@ public class DubboProtocol extends AbstractProtocol {
     private final ConcurrentMap<String, Object> locks = new ConcurrentHashMap<>();
     private final Set<String> optimizers = new ConcurrentHashSet<>();
 
-    private ExchangeHandler requestHandler = new ExchangeHandlerAdapter() {
+    private ExchangeHandler requestHandler = new ExchangeHandlerAdapter() { //匿名内部类
 
         @Override
         public CompletableFuture<Object> reply(ExchangeChannel channel, Object message) throws RemotingException { //回复响应
@@ -75,7 +75,7 @@ public class DubboProtocol extends AbstractProtocol {
             }
 
             Invocation inv = (Invocation) message;
-            Invoker<?> invoker = getInvoker(channel, inv);
+            Invoker<?> invoker = getInvoker(channel, inv); //根据调用信息，从Export获取Invoker
             // need to consider backward-compatibility if it's a callback
             if (Boolean.TRUE.toString().equals(inv.getObjectAttachments().get(IS_CALLBACK_SERVICE_INVOKE))) {
                 String methodsStr = invoker.getUrl().getParameters().get("methods");
@@ -99,7 +99,7 @@ public class DubboProtocol extends AbstractProtocol {
                     return null;
                 }
             }
-            RpcContext.getContext().setRemoteAddress(channel.getRemoteAddress());
+            RpcContext.getContext().setRemoteAddress(channel.getRemoteAddress()); //更新远程地址
             Result result = invoker.invoke(inv); //执行具体的调用（此处Invoker实例为ProtocolFilterWrapper$1）
             return result.thenApply(Function.identity());
         }
@@ -191,7 +191,7 @@ public class DubboProtocol extends AbstractProtocol {
                         .equals(NetUtils.filterLocalHost(address.getAddress().getHostAddress()));
     }
 
-    Invoker<?> getInvoker(Channel channel, Invocation inv) throws RemotingException { //获取Invoker
+    Invoker<?> getInvoker(Channel channel, Invocation inv) throws RemotingException { //获取Invoker（从Exporter中查询到Invoker信息）
         boolean isCallBackServiceInvoke = false;
         boolean isStubServiceInvoke = false;
         int port = channel.getLocalAddress().getPort();
@@ -223,7 +223,7 @@ public class DubboProtocol extends AbstractProtocol {
                     ", channel: consumer: " + channel.getRemoteAddress() + " --> provider: " + channel.getLocalAddress() + ", message:" + getInvocationWithoutData(inv));
         }
 
-        return exporter.getInvoker(); //从Exporter中查询到Invoker信息
+        return exporter.getInvoker();
     }
 
     public Collection<Invoker<?>> getInvokers() {
@@ -366,28 +366,28 @@ public class DubboProtocol extends AbstractProtocol {
     }
 
     private ExchangeClient[] getClients(URL url) {
-        // whether to share connection
+        // whether to share connection（是否使用共享连接）
 
         boolean useShareConnect = false;
 
         int connections = url.getParameter(CONNECTIONS_KEY, 0);
         List<ReferenceCountExchangeClient> shareClients = null;
-        // if not configured, connection is shared, otherwise, one connection for one service
+        // if not configured, connection is shared, otherwise, one connection for one service（若没有配置，则使用共享连接，否则一个服务对应一个连接）
         if (connections == 0) {
             useShareConnect = true;
 
             /*
-             * The xml configuration should have a higher priority than properties.
+             * The xml configuration should have a higher priority（高优先级） than properties.
              */
             String shareConnectionsStr = url.getParameter(SHARE_CONNECTIONS_KEY, (String) null);
             connections = Integer.parseInt(StringUtils.isBlank(shareConnectionsStr) ? ConfigUtils.getProperty(SHARE_CONNECTIONS_KEY,
-                    DEFAULT_SHARE_CONNECTIONS) : shareConnectionsStr);
+                    DEFAULT_SHARE_CONNECTIONS) : shareConnectionsStr); //若url中设置的共享连接参数shareconnections，则取url值，否则取系统属性properties
             shareClients = getSharedClient(url, connections);
         }
 
         ExchangeClient[] clients = new ExchangeClient[connections];
         for (int i = 0; i < clients.length; i++) {
-            if (useShareConnect) {
+            if (useShareConnect) { //使用共享连接（在默认情况下 当消费端引用同一个服务提供机器上的多个服务时，这些服务复用一个Netty连接）
                 clients[i] = shareClients.get(i);
 
             } else {
@@ -405,8 +405,8 @@ public class DubboProtocol extends AbstractProtocol {
      * @param connectNum connectNum must be greater than or equal to 1
      */
     private List<ReferenceCountExchangeClient> getSharedClient(URL url, int connectNum) {
-        String key = url.getAddress();
-        List<ReferenceCountExchangeClient> clients = referenceClientMap.get(key);
+        String key = url.getAddress(); //以地址作为key
+        List<ReferenceCountExchangeClient> clients = referenceClientMap.get(key); //从缓存中获取client列表
 
         if (checkClientCanUse(clients)) {
             batchClientRefIncr(clients);
@@ -543,7 +543,7 @@ public class DubboProtocol extends AbstractProtocol {
         ExchangeClient client;
         try {
             // connection should be lazy
-            if (url.getParameter(LAZY_CONNECT_KEY, false)) {
+            if (url.getParameter(LAZY_CONNECT_KEY, false)) { //懒加载（调用发起时，再创建连接）
                 client = new LazyConnectExchangeClient(url, requestHandler);
 
             } else {

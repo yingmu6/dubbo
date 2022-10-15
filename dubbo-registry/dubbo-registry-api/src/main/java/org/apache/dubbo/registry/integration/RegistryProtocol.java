@@ -142,7 +142,7 @@ public class RegistryProtocol implements Protocol { //注册协议
     }
 
     @Override
-    public <T> Exporter<T> export(final Invoker<T> originInvoker) throws RpcException {
+    public <T> Exporter<T> export(final Invoker<T> originInvoker) throws RpcException { //入参类型为：DelegateProviderMetaDataInvoker
         URL registryUrl = getRegistryUrl(originInvoker); //获取具体的注册url，如zookeeper://xxx（默认注册协议为dubbo，如:dubbo://xxx）
         // url to export locally
         URL providerUrl = getProviderUrl(originInvoker); //获取具体的提供者url，如dubbo://xxx
