@@ -121,7 +121,7 @@ public class ProtocolFilterWrapper implements Protocol { //org.apache.dubbo.rpc.
                                 try {
                                     if (listener != null) {
                                         if (t == null) {
-                                            listener.onResponse(r, invoker, invocation);
+                                            listener.onResponse(r, invoker, invocation); //进行接口回调
                                         } else {
                                             listener.onError(t, invoker, invocation);
                                         }

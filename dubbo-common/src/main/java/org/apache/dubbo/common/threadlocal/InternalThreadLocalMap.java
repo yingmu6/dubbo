@@ -34,7 +34,7 @@ public final class InternalThreadLocalMap {
 
     public static final Object UNSET = new Object(); //@csy-03-02 该对象的功能用途是怎样的？解：当未取到值时，给出的默认值
 
-    public static InternalThreadLocalMap getIfSet() { //从InternalThread或成员变量中获取到InternalThreadLocalMap
+    public static InternalThreadLocalMap getIfSet() { //从本地线程ThreadLocal中获取到InternalThreadLocalMap实例
         Thread thread = Thread.currentThread();
         if (thread instanceof InternalThread) {
             return ((InternalThread) thread).threadLocalMap();

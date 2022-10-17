@@ -25,7 +25,7 @@ import org.apache.dubbo.rpc.RpcException;
 /**
  * InvokerWrapper
  */
-public class InvokerWrapper<T> implements Invoker<T> {
+public class InvokerWrapper<T> implements Invoker<T> { //Invoker的封装类
 
     private final Invoker<T> invoker;
 

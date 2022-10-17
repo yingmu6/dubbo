@@ -42,7 +42,7 @@ import static org.apache.dubbo.common.utils.ReflectUtils.defaultReturn;
  * {@link #getValue()} and {@link #getException()} are all inherited from {@link Result} interface, implementing them are mainly
  * for compatibility consideration（兼容性考虑）. Because many legacy {@link Filter} implementation are most possibly to call getValue directly.
  */
-public class AsyncRpcResult implements Result {
+public class AsyncRpcResult implements Result { //异步响应结果
     private static final Logger logger = LoggerFactory.getLogger(AsyncRpcResult.class);
 
     /**

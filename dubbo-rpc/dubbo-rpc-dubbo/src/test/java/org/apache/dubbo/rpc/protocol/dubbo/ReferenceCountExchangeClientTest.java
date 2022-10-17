@@ -208,6 +208,7 @@ public class ReferenceCountExchangeClientTest {
 
     @SuppressWarnings("unchecked")
     private void init(int connections, int shareConnections) { //flag
+        
         Assertions.assertTrue(connections >= 0);
         Assertions.assertTrue(shareConnections >= 1);
 
