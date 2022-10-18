@@ -31,7 +31,7 @@ import java.util.concurrent.CompletionException;
 public abstract class AbstractProxyInvoker<T> implements Invoker<T> {
     Logger logger = LoggerFactory.getLogger(AbstractProxyInvoker.class);
 
-    private final T proxy; //被代理的实例对象
+    private final T proxy; //被代理的实例对象，如GreetingServiceImpl@xxx
 
     private final Class<T> type; //被代理的接口Class
 

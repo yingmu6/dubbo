@@ -35,7 +35,7 @@ public interface AsyncContext {
     /**
      * @return true if the async context is started
      */
-    boolean isAsyncStarted();
+    boolean isAsyncStarted(); //判断异步上下文是否被启动
 
     /**
      * change the context state to stop
