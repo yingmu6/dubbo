@@ -50,7 +50,7 @@ public class RpcContext {
      * use internal thread local to improve performance （使用内部的线程提高性能）
      */
     // FIXME REQUEST_CONTEXT
-    private static final InternalThreadLocal<RpcContext> LOCAL = new InternalThreadLocal<RpcContext>() {
+    private static final InternalThreadLocal<RpcContext> LOCAL = new InternalThreadLocal<RpcContext>() { //客户端的上下文缓存
         @Override
         protected RpcContext initialValue() {
             return new RpcContext();
@@ -58,7 +58,7 @@ public class RpcContext {
     };
 
     // FIXME RESPONSE_CONTEXT
-    private static final InternalThreadLocal<RpcContext> SERVER_LOCAL = new InternalThreadLocal<RpcContext>() {
+    private static final InternalThreadLocal<RpcContext> SERVER_LOCAL = new InternalThreadLocal<RpcContext>() { //服务端的上下文缓存
         @Override
         protected RpcContext initialValue() {
             return new RpcContext();
@@ -130,7 +130,7 @@ public class RpcContext {
      *
      * @return context
      */
-    public static RpcContext getContext() {
+    public static RpcContext getContext() { //获取上下文
         return LOCAL.get();
     }
 
@@ -161,7 +161,7 @@ public class RpcContext {
      * @param checkCanRemove if need check before remove
      */
     public static void removeContext(boolean checkCanRemove) {
-        if (LOCAL.get().canRemove()) {
+        if (LOCAL.get().canRemove()) { //若能移除，则对应移除上下文
             LOCAL.remove();
         }
     }
@@ -761,7 +761,7 @@ public class RpcContext {
      * @throws IllegalStateException
      */
     @SuppressWarnings("unchecked")
-    public static AsyncContext startAsync() throws IllegalStateException {
+    public static AsyncContext startAsync() throws IllegalStateException { //启动异步上下文
         RpcContext currentContext = getContext();
         if (currentContext.asyncContext == null) {
             currentContext.asyncContext = new AsyncContextImpl();

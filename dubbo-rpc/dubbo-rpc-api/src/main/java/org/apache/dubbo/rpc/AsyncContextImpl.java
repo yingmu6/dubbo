@@ -21,10 +21,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class AsyncContextImpl implements AsyncContext {
 
-    private final AtomicBoolean started = new AtomicBoolean(false);
-    private final AtomicBoolean stopped = new AtomicBoolean(false);
+    private final AtomicBoolean started = new AtomicBoolean(false); //启动标志
+    private final AtomicBoolean stopped = new AtomicBoolean(false); //停止标志
 
-    private CompletableFuture<Object> future;
+    private CompletableFuture<Object> future; //内部维护的Future
 
     private RpcContext storedContext;
     private RpcContext storedServerContext;
@@ -36,8 +36,8 @@ public class AsyncContextImpl implements AsyncContext {
 
     @Override
     public void write(Object value) {
-        if (isAsyncStarted() && stop()) {
-            if (value instanceof Throwable) {
+        if (isAsyncStarted() && stop()) { //启动着且未停止
+            if (value instanceof Throwable) { //异常处理
                 Throwable bizExe = (Throwable) value;
                 future.completeExceptionally(bizExe);
             } else {
@@ -54,13 +54,13 @@ public class AsyncContextImpl implements AsyncContext {
     }
 
     @Override
-    public boolean stop() {
+    public boolean stop() { //更改结束标志
         return stopped.compareAndSet(false, true);
     }
 
     @Override
     public void start() {
-        if (this.started.compareAndSet(false, true)) {
+        if (this.started.compareAndSet(false, true)) { //更新启动标志
             this.future = new CompletableFuture<>();
         }
     }

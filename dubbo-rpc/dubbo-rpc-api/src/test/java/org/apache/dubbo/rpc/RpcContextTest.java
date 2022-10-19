@@ -142,24 +142,24 @@ public class RpcContextTest {
     }
 
     @Test
-    public void testAsync() {
+    public void testAsync() { //测试异步上下文
 
         RpcContext rpcContext = RpcContext.getContext();
         Assertions.assertFalse(rpcContext.isAsyncStarted());
 
-        AsyncContext asyncContext = RpcContext.startAsync();
+        AsyncContext asyncContext = RpcContext.startAsync(); //启动异步后，异步启动标志就会置为true
         Assertions.assertTrue(rpcContext.isAsyncStarted());
 
-        asyncContext.write(new Object());
-        Assertions.assertTrue(((AsyncContextImpl) asyncContext).getInternalFuture().isDone());
+        asyncContext.write(new Object()); //写入AsyncContextImpl.CompletableFuture<Object> 异步结果值
+        Assertions.assertTrue(((AsyncContextImpl) asyncContext).getInternalFuture().isDone()); //isDone()是按Cpmpletable中维护的result是否为空判断
 
         rpcContext.stopAsync();
-        Assertions.assertTrue(rpcContext.isAsyncStarted());
+        Assertions.assertTrue(rpcContext.isAsyncStarted()); //stopAsync()只影响结束标志，不影响开始标志
         RpcContext.removeContext();
     }
 
     @Test
-    public void testAsyncCall() {
+    public void testAsyncCall() { //todo @csy pause
         CompletableFuture<String> rpcFuture = RpcContext.getContext().asyncCall(() -> {
             throw new NullPointerException();
         });
