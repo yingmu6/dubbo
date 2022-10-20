@@ -30,7 +30,7 @@ public interface AsyncContext { //异步上下文
      *
      * @param value invoke result
      */
-    void write(Object value);
+    void write(Object value); //将值写到异步上下文中
 
     /**
      * @return true if the async context is started

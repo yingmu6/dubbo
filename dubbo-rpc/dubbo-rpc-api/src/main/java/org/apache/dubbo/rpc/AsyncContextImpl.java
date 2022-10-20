@@ -19,7 +19,7 @@ package org.apache.dubbo.rpc;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class AsyncContextImpl implements AsyncContext {
+public class AsyncContextImpl implements AsyncContext { //异步上下文的实现类
 
     private final AtomicBoolean started = new AtomicBoolean(false); //启动标志
     private final AtomicBoolean stopped = new AtomicBoolean(false); //停止标志
@@ -61,7 +61,7 @@ public class AsyncContextImpl implements AsyncContext {
     @Override
     public void start() {
         if (this.started.compareAndSet(false, true)) { //更新启动标志
-            this.future = new CompletableFuture<>();
+            this.future = new CompletableFuture<>(); //设置维护的CompletableFuture对象
         }
     }
 

@@ -151,7 +151,7 @@ public class RpcContextTest {
         Assertions.assertTrue(rpcContext.isAsyncStarted());
 
         asyncContext.write(new Object()); //写入AsyncContextImpl.CompletableFuture<Object> 异步结果值
-        Assertions.assertTrue(((AsyncContextImpl) asyncContext).getInternalFuture().isDone()); //isDone()是按Cpmpletable中维护的result是否为空判断
+        Assertions.assertTrue(((AsyncContextImpl) asyncContext).getInternalFuture().isDone()); //isDone()是按CompletableFuture中维护的result是否为空判断
 
         rpcContext.stopAsync();
         Assertions.assertTrue(rpcContext.isAsyncStarted()); //stopAsync()只影响结束标志，不影响开始标志
@@ -159,14 +159,15 @@ public class RpcContextTest {
     }
 
     @Test
-    public void testAsyncCall() { //todo @csy pause
+    public void testAsyncCall() { //异步调用
         CompletableFuture<String> rpcFuture = RpcContext.getContext().asyncCall(() -> {
-            throw new NullPointerException();
+            throw new NullPointerException(); //执行的线程出现异常，所以会返回带有异常的CompletableFuture
+//            return "hhaaaaa";
         });
 
-        rpcFuture.whenComplete((rpcResult, throwable) -> {
-            System.out.println(throwable.toString());
-            Assertions.assertNull(rpcResult);
+        rpcFuture.whenComplete((rpcResult, throwable) -> { //当异步处理完成，返回结果或异常信息
+            System.out.println("haha:" + throwable.toString());
+            Assertions.assertNull(rpcResult); //结果为空，因为有异常
             Assertions.assertTrue(throwable instanceof RpcException);
             Assertions.assertTrue(throwable.getCause() instanceof NullPointerException);
         });

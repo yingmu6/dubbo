@@ -712,26 +712,26 @@ public class RpcContext {
      * @return get the return result from <code>future.get()</code>
      */
     @SuppressWarnings("unchecked")
-    public <T> CompletableFuture<T> asyncCall(Callable<T> callable) {
+    public <T> CompletableFuture<T> asyncCall(Callable<T> callable) { //异步调用
         try {
             try {
-                setAttachment(ASYNC_KEY, Boolean.TRUE.toString());
-                final T o = callable.call();
+                setAttachment(ASYNC_KEY, Boolean.TRUE.toString()); //在执行前，设置参数async
+                final T o = callable.call(); //异步执行线程调用（执行线程体的内容，如call()方法 ）
                 //local invoke will return directly
                 if (o != null) {
                     if (o instanceof CompletableFuture) {
                         return (CompletableFuture<T>) o;
                     }
-                    return CompletableFuture.completedFuture(o);
+                    return CompletableFuture.completedFuture(o); //构建CompletableFuture对象
                 } else {
                     // The service has a normal sync method signature, should get future from RpcContext.
                 }
             } catch (Exception e) {
                 throw new RpcException(e);
             } finally {
-                removeAttachment(ASYNC_KEY);
+                removeAttachment(ASYNC_KEY); //在执行后，移除参数async
             }
-        } catch (final RpcException e) {
+        } catch (final RpcException e) { //有异常时，返回带有异常的CompletableFuture
             CompletableFuture<T> exceptionFuture = new CompletableFuture<>();
             exceptionFuture.completeExceptionally(e);
             return exceptionFuture;
