@@ -20,7 +20,7 @@ package org.apache.dubbo.common.threadlocal;
 /**
  * InternalThread
  */
-public class InternalThread extends Thread {
+public class InternalThread extends Thread { //内部线程
     /**
      * InternalThread：内部使用的线程（对线程进行封装）
      * 1）本身是一个线程，继承了Thread
@@ -63,7 +63,7 @@ public class InternalThread extends Thread {
 
     /**
      * Returns the internal data structure that keeps the threadLocal variables bound to this thread.
-     * Note that this method is for internal use only, and thus is subject to change at any time.
+     * Note that this method is for internal use only, and thus（因此） is subject to change at any time.
      */
     public final InternalThreadLocalMap threadLocalMap() {
         return threadLocalMap;

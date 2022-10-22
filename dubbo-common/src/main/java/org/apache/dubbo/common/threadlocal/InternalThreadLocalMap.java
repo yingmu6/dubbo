@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Note that this class is for internal use only. Use {@link InternalThread}
  * unless you know what you are doing.
  */
-public final class InternalThreadLocalMap {
+public final class InternalThreadLocalMap { //并不是一个Map，而是一个数组
 
     private Object[] indexedVariables; //数组实现
 
@@ -126,21 +126,21 @@ public final class InternalThreadLocalMap {
 
     private static Object[] newIndexedVariableTable() {
         Object[] array = new Object[32];
-        Arrays.fill(array, UNSET);
+        Arrays.fill(array, UNSET); //初始化时，填充UNSET对象
         return array;
     }
 
-    private static InternalThreadLocalMap fastGet(InternalThread thread) {
-        InternalThreadLocalMap threadLocalMap = thread.threadLocalMap();
+    private static InternalThreadLocalMap fastGet(InternalThread thread) { //比较快的获取InternalThreadLocalMap
+        InternalThreadLocalMap threadLocalMap = thread.threadLocalMap(); //直接返回成员变量的值
         if (threadLocalMap == null) {
             thread.setThreadLocalMap(threadLocalMap = new InternalThreadLocalMap());
         }
         return threadLocalMap;
     }
 
-    private static InternalThreadLocalMap slowGet() {
+    private static InternalThreadLocalMap slowGet() { //比较慢的获取InternalThreadLocalMap
         ThreadLocal<InternalThreadLocalMap> slowThreadLocalMap = InternalThreadLocalMap.slowThreadLocalMap;
-        InternalThreadLocalMap ret = slowThreadLocalMap.get();
+        InternalThreadLocalMap ret = slowThreadLocalMap.get(); //使用ThreadLocal的get()获取，内部是通过hashCode去获取值的
         if (ret == null) {
             ret = new InternalThreadLocalMap();
             slowThreadLocalMap.set(ret);

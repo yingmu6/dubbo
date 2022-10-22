@@ -29,7 +29,7 @@ import java.util.concurrent.ExecutionException;
 public class RpcContextTest {
 
     @Test
-    public void testGetContext() {
+    public void testGetContext() { //获取RpcContext
 
         RpcContext rpcContext = RpcContext.getContext();
         Assertions.assertNotNull(rpcContext);

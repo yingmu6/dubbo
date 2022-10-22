@@ -43,7 +43,7 @@ import java.util.Set;
  * b）https://blog.csdn.net/dbqb007/article/details/95243660
  * c）https://icode9.com/content-4-1054690.html
  */
-public class InternalThreadLocal<V> { //是怎么对ThreadLocal进行封装的？解：在InternalThreadLocalMap中维护ThreadLocal的数据
+public class InternalThreadLocal<V> { //是怎么对ThreadLocal进行封装的？解：在InternalThreadLocalMap中维护ThreadLocal的数据（V具体的类型包含RpcContext、FutureContext）
 
     /**
      * 在Java中，ThreadLocal是实现线程安全的一种手段，它的作用是对于同一个ThreadLocal变量，在每一个线程中都有一个副本，当修改任何一个线程的变量时，不会影响到其他线程。
@@ -206,7 +206,7 @@ public class InternalThreadLocal<V> { //是怎么对ThreadLocal进行封装的�
     /**
      * Returns the initial value for this thread-local variable.
      */
-    protected V initialValue() throws Exception {
+    protected V initialValue() throws Exception { //初始化的逻辑，交由具体子类实现
         return null;
     }
 

@@ -93,9 +93,9 @@ public class RpcContext {
 
     // now we don't use the 'values' map to hold these objects
     // we want these objects to be as generic as possible
-    private Object request;
-    private Object response;
-    private AsyncContext asyncContext;
+    private Object request; //请求信息
+    private Object response; //响应信息
+    private AsyncContext asyncContext; //异步上下文信息
 
     private boolean remove = true;
 
