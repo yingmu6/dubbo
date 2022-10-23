@@ -32,7 +32,7 @@ public class RpcContextTest {
     public void testGetContext() { //获取RpcContext
 
         RpcContext rpcContext = RpcContext.getContext();
-        Assertions.assertNotNull(rpcContext);
+        Assertions.assertNotNull(rpcContext); //若当前线程没有设置上下文信息，会进行初始化处理，所以不为null
 
         RpcContext.removeContext();
         // if null, will return the initialize value.

@@ -44,7 +44,7 @@ import static org.apache.dubbo.rpc.Constants.RETURN_KEY;
  * @export
  * @see org.apache.dubbo.rpc.filter.ContextFilter
  */
-public class RpcContext {
+public class RpcContext { //上下文信息
 
     /**
      * use internal thread local to improve performance （使用内部的线程提高性能）
@@ -52,7 +52,7 @@ public class RpcContext {
     // FIXME REQUEST_CONTEXT
     private static final InternalThreadLocal<RpcContext> LOCAL = new InternalThreadLocal<RpcContext>() { //客户端的上下文缓存
         @Override
-        protected RpcContext initialValue() {
+        protected RpcContext initialValue() { //重写了初始化方法
             return new RpcContext();
         }
     };
@@ -97,7 +97,7 @@ public class RpcContext {
     private Object response; //响应信息
     private AsyncContext asyncContext; //异步上下文信息
 
-    private boolean remove = true;
+    private boolean remove = true; //是否移除的标识
 
 
     protected RpcContext() {
@@ -130,7 +130,7 @@ public class RpcContext {
      *
      * @return context
      */
-    public static RpcContext getContext() { //获取上下文
+    public static RpcContext getContext() { //获取上下文信息
         return LOCAL.get();
     }
 
@@ -160,7 +160,7 @@ public class RpcContext {
      *
      * @param checkCanRemove if need check before remove
      */
-    public static void removeContext(boolean checkCanRemove) {
+    public static void removeContext(boolean checkCanRemove) { //没有根据传入的值来判断是否可移除
         if (LOCAL.get().canRemove()) { //若能移除，则对应移除上下文
             LOCAL.remove();
         }

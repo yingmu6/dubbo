@@ -27,7 +27,7 @@ public class InternalThread extends Thread { //内部线程
      * 2）使用InternalThreadLocalMap对ThreadLocal做了缓存
      */
 
-    private InternalThreadLocalMap threadLocalMap;
+    private InternalThreadLocalMap threadLocalMap; //内部使用数组实现
 
     public InternalThread() {
     }
@@ -73,7 +73,7 @@ public class InternalThread extends Thread { //内部线程
      * Sets the internal data structure that keeps the threadLocal variables bound to this thread.
      * Note that this method is for internal use only, and thus is subject to change at any time.
      */
-    public final void setThreadLocalMap(InternalThreadLocalMap threadLocalMap) {
+    public final void setThreadLocalMap(InternalThreadLocalMap threadLocalMap) { //设置为null，即为清空处理
         this.threadLocalMap = threadLocalMap;
     }
 }

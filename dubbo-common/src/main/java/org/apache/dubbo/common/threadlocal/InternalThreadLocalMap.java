@@ -24,17 +24,17 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Note that this class is for internal use only. Use {@link InternalThread}
  * unless you know what you are doing.
  */
-public final class InternalThreadLocalMap { //并不是一个Map，而是一个数组
+public final class InternalThreadLocalMap { //并不是一个Map，而是一个数组（快慢获取的元素，本质在于数组结构的不同）
 
     private Object[] indexedVariables; //数组实现
 
-    private static ThreadLocal<InternalThreadLocalMap> slowThreadLocalMap = new ThreadLocal<InternalThreadLocalMap>();
+    private static ThreadLocal<InternalThreadLocalMap> slowThreadLocalMap = new ThreadLocal<InternalThreadLocalMap>(); //退变为原生的ThreadLocal（原生的ThreadLocal使用get()获取值时，会通过计算hashCode进行查找处理）
 
     private static final AtomicInteger NEXT_INDEX = new AtomicInteger(); //@csy-03-01 该索引的功能用途是什么？解：记录数组下标位置
 
-    public static final Object UNSET = new Object(); //@csy-03-02 该对象的功能用途是怎样的？解：当未取到值时，给出的默认值
+    public static final Object UNSET = new Object(); //@csy-03-02 该对象的功能用途是怎样的？解：当未取到值时，给出的默认值（用于填充使用）
 
-    public static InternalThreadLocalMap getIfSet() { //从本地线程ThreadLocal中获取到InternalThreadLocalMap实例
+    public static InternalThreadLocalMap getIfSet() { //获取InternalThreadLocalMap，直接返回值，值可能为null
         Thread thread = Thread.currentThread();
         if (thread instanceof InternalThread) {
             return ((InternalThread) thread).threadLocalMap();
@@ -42,15 +42,15 @@ public final class InternalThreadLocalMap { //并不是一个Map，而是一个�
         return slowThreadLocalMap.get();
     }
 
-    public static InternalThreadLocalMap get() {
+    public static InternalThreadLocalMap get() { //获取InternalThreadLocalMap，返回的值若为空，会初始化对象返回
         Thread thread = Thread.currentThread();
         if (thread instanceof InternalThread) {
-            return fastGet((InternalThread) thread);
+            return fastGet((InternalThread) thread); //比较快的获取值
         }
-        return slowGet();
+        return slowGet(); //比较慢的获取值
     }
 
-    public static void remove() {
+    public static void remove() { //移除InternalThreadLocalMap
         Thread thread = Thread.currentThread();
         if (thread instanceof InternalThread) {
             ((InternalThread) thread).setThreadLocalMap(null);
@@ -80,7 +80,7 @@ public final class InternalThreadLocalMap { //并不是一个Map，而是一个�
         indexedVariables = newIndexedVariableTable();
     }
 
-    public Object indexedVariable(int index) { //取数组中指定索引的值
+    public Object indexedVariable(int index) { //从数组中获取指定下标对应的变量值
         Object[] lookup = indexedVariables;
         return index < lookup.length ? lookup[index] : UNSET; //若索引越界，返回一个默认的对象值
     }
@@ -88,14 +88,14 @@ public final class InternalThreadLocalMap { //并不是一个Map，而是一个�
     /**
      * @return {@code true} if and only if a new thread-local variable has been created
      */
-    public boolean setIndexedVariable(int index, Object value) {
+    public boolean setIndexedVariable(int index, Object value) { //设置线程局部变量的值（设置成功返回true）
         Object[] lookup = indexedVariables;
         if (index < lookup.length) {
             Object oldValue = lookup[index];
             lookup[index] = value;
             return oldValue == UNSET;
         } else {
-            expandIndexedVariableTableAndSet(index, value);
+            expandIndexedVariableTableAndSet(index, value); //扩容处理
             return true;
         }
     }
@@ -131,7 +131,7 @@ public final class InternalThreadLocalMap { //并不是一个Map，而是一个�
     }
 
     private static InternalThreadLocalMap fastGet(InternalThread thread) { //比较快的获取InternalThreadLocalMap
-        InternalThreadLocalMap threadLocalMap = thread.threadLocalMap(); //直接返回成员变量的值
+        InternalThreadLocalMap threadLocalMap = thread.threadLocalMap(); //从InternalThread直接获取
         if (threadLocalMap == null) {
             thread.setThreadLocalMap(threadLocalMap = new InternalThreadLocalMap());
         }
@@ -140,19 +140,19 @@ public final class InternalThreadLocalMap { //并不是一个Map，而是一个�
 
     private static InternalThreadLocalMap slowGet() { //比较慢的获取InternalThreadLocalMap
         ThreadLocal<InternalThreadLocalMap> slowThreadLocalMap = InternalThreadLocalMap.slowThreadLocalMap;
-        InternalThreadLocalMap ret = slowThreadLocalMap.get(); //使用ThreadLocal的get()获取，内部是通过hashCode去获取值的
+        InternalThreadLocalMap ret = slowThreadLocalMap.get(); //使用ThreadLocal获取，内部是通过hashCode去获取值的
         if (ret == null) {
             ret = new InternalThreadLocalMap();
-            slowThreadLocalMap.set(ret);
+            slowThreadLocalMap.set(ret); //初始值后，设置到ThreadLocal中
         }
         return ret;
     }
 
-    private void expandIndexedVariableTableAndSet(int index, Object value) { //expand：扩大
+    private void expandIndexedVariableTableAndSet(int index, Object value) { //扩容并设置线程变量的值，expand：扩大（扩展维护的数据容量）
         Object[] oldArray = indexedVariables;
         final int oldCapacity = oldArray.length;
         int newCapacity = index;
-        newCapacity |= newCapacity >>> 1;
+        newCapacity |= newCapacity >>> 1; //无符号右移
         newCapacity |= newCapacity >>> 2;
         newCapacity |= newCapacity >>> 4;
         newCapacity |= newCapacity >>> 8;

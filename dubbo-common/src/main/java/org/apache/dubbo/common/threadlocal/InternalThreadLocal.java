@@ -43,7 +43,7 @@ import java.util.Set;
  * b）https://blog.csdn.net/dbqb007/article/details/95243660
  * c）https://icode9.com/content-4-1054690.html
  */
-public class InternalThreadLocal<V> { //是怎么对ThreadLocal进行封装的？解：在InternalThreadLocalMap中维护ThreadLocal的数据（V具体的类型包含RpcContext、FutureContext）
+public class InternalThreadLocal<V> { //与ThreadLocal具有相似的功能，都是维护线程局部变量的值
 
     /**
      * 在Java中，ThreadLocal是实现线程安全的一种手段，它的作用是对于同一个ThreadLocal变量，在每一个线程中都有一个副本，当修改任何一个线程的变量时，不会影响到其他线程。
@@ -55,7 +55,7 @@ public class InternalThreadLocal<V> { //是怎么对ThreadLocal进行封装的�
 
     private static final int VARIABLES_TO_REMOVE_INDEX = InternalThreadLocalMap.nextVariableIndex();
 
-    private final int index;
+    private final int index; //当前线程维护的值对应的下标
 
     public InternalThreadLocal() {
         index = InternalThreadLocalMap.nextVariableIndex();
@@ -135,9 +135,9 @@ public class InternalThreadLocal<V> { //是怎么对ThreadLocal进行封装的�
      * Returns the current value for the current thread
      */
     @SuppressWarnings("unchecked")
-    public final V get() {
-        InternalThreadLocalMap threadLocalMap = InternalThreadLocalMap.get();
-        Object v = threadLocalMap.indexedVariable(index);
+    public final V get() { //从当前线程中获取当前维护的值
+        InternalThreadLocalMap threadLocalMap = InternalThreadLocalMap.get(); //使用InternalThreadLocalMap维护数据值
+        Object v = threadLocalMap.indexedVariable(index); //
         if (v != InternalThreadLocalMap.UNSET) {
             return (V) v;
         }
@@ -153,7 +153,7 @@ public class InternalThreadLocal<V> { //是怎么对ThreadLocal进行封装的�
             throw new RuntimeException(e);
         }
 
-        threadLocalMap.setIndexedVariable(index, v);
+        threadLocalMap.setIndexedVariable(index, v); //设置线程变量的值
         addToVariablesToRemove(threadLocalMap, this);
         return v;
     }
@@ -161,7 +161,7 @@ public class InternalThreadLocal<V> { //是怎么对ThreadLocal进行封装的�
     /**
      * Sets the value for the current thread.
      */
-    public final void set(V value) {
+    public final void set(V value) { //为当前线程设置值
         if (value == null || value == InternalThreadLocalMap.UNSET) {
             remove();
         } else {
@@ -186,7 +186,7 @@ public class InternalThreadLocal<V> { //是怎么对ThreadLocal进行封装的�
      * The specified thread local map must be for the current thread.
      */
     @SuppressWarnings("unchecked")
-    public final void remove(InternalThreadLocalMap threadLocalMap) {
+    public final void remove(InternalThreadLocalMap threadLocalMap) { //todo @csy pause-10-22
         if (threadLocalMap == null) {
             return;
         }
