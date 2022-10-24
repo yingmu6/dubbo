@@ -29,7 +29,7 @@ public class InternalThreadLocalTest {
 
     private static final int THREADS = 10;
 
-    private static final int PERFORMANCE_THREAD_COUNT = 1000;
+    private static final int PERFORMANCE_THREAD_COUNT = 1000; //performance: 高性能的
 
     private static final int GET_COUNT = 1000000;
 
@@ -37,10 +37,10 @@ public class InternalThreadLocalTest {
     public void testInternalThreadLocal() throws InterruptedException {
         final AtomicInteger index = new AtomicInteger(0);
 
-        final InternalThreadLocal<Integer> internalThreadLocal = new InternalThreadLocal<Integer>() {
+        final InternalThreadLocal<Integer> internalThreadLocal = new InternalThreadLocal<Integer>() { //使用匿名类的方式创建对象（此处只是声明定义，还未真正调用）
 
             @Override
-            protected Integer initialValue() throws Exception {
+            protected Integer initialValue() throws Exception { //此处InternalThreadLocal维护的值的类型为Integer
                 Integer v = index.getAndIncrement();
                 System.out.println("thread : " + Thread.currentThread().getName() + " init value : " + v);
                 return v;
@@ -48,7 +48,7 @@ public class InternalThreadLocalTest {
         };
 
         for (int i = 0; i < THREADS; i++) {
-            Thread t = new Thread(internalThreadLocal::get);
+            Thread t = new Thread(internalThreadLocal::get); //将internalThreadLocal放入线程中执行（internalThreadLocal::get方法会调用initialValue()方法）
             t.start();
         }
 
@@ -58,13 +58,28 @@ public class InternalThreadLocalTest {
     @Test
     public void testRemoveAll() throws InterruptedException {
         final InternalThreadLocal<Integer> internalThreadLocal = new InternalThreadLocal<Integer>();
-        internalThreadLocal.set(1);
-        Assertions.assertEquals(1, (int)internalThreadLocal.get(), "set failed");
+        internalThreadLocal.set(1); //设置int值
+        Assertions.assertEquals(1, (int)internalThreadLocal.get(), "set failed"); //获取值
 
         final InternalThreadLocal<String> internalThreadLocalString = new InternalThreadLocal<String>();
-        internalThreadLocalString.set("value");
+        internalThreadLocalString.set("value"); //设置String值
         Assertions.assertEquals("value", internalThreadLocalString.get(), "set failed");
 
+        final InternalThreadLocal<Double> internalThreadLocalDouble = new InternalThreadLocal<Double>();
+        internalThreadLocalDouble.set(22.11); //设置String值
+        Assertions.assertEquals(22.11, internalThreadLocalDouble.get(), "set failed");
+
+        /**
+         * 到此处时InternalThreadLocalMap中的元素类型为：
+         * 1）Collections$SetFromMap@1597
+         * 2）Integer@1598
+         * 3）"value"
+         * 4）Double@1600
+         * 5）UNSET对象，如Object@1601
+         * 6）UNSET对象，如Object@1601
+         * ......
+         * 31）UNSET对象，如Object@1601
+         */
         InternalThreadLocal.removeAll();
         Assertions.assertNull(internalThreadLocal.get(), "removeAll failed!");
         Assertions.assertNull(internalThreadLocalString.get(), "removeAll failed!");

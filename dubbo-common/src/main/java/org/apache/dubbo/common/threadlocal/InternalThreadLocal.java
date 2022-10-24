@@ -55,10 +55,10 @@ public class InternalThreadLocal<V> { //与ThreadLocal具有相似的功能，�
 
     private static final int VARIABLES_TO_REMOVE_INDEX = InternalThreadLocalMap.nextVariableIndex();
 
-    private final int index; //当前线程维护的值对应的下标
+    private final int index; //当前线程维护的值对应的下标（维护游标）
 
     public InternalThreadLocal() {
-        index = InternalThreadLocalMap.nextVariableIndex();
+        index = InternalThreadLocalMap.nextVariableIndex(); //设置游标值
     }
 
     /**
@@ -161,9 +161,9 @@ public class InternalThreadLocal<V> { //与ThreadLocal具有相似的功能，�
     /**
      * Sets the value for the current thread.
      */
-    public final void set(V value) { //为当前线程设置值
+    public final void set(V value) { //为当前线程设置值（通过InternalThreadLocalMap设置值）
         if (value == null || value == InternalThreadLocalMap.UNSET) {
-            remove();
+            remove(); //设置的值为空时，做移除处理
         } else {
             InternalThreadLocalMap threadLocalMap = InternalThreadLocalMap.get();
             if (threadLocalMap.setIndexedVariable(index, value)) {
@@ -181,12 +181,12 @@ public class InternalThreadLocal<V> { //与ThreadLocal具有相似的功能，�
     }
 
     /**
-     * Sets the value to uninitialized for the specified thread local map;
+     * Sets the value to uninitialized（未初始化的） for the specified thread local map;
      * a proceeding call to get() will trigger a call to initialValue().
      * The specified thread local map must be for the current thread.
      */
     @SuppressWarnings("unchecked")
-    public final void remove(InternalThreadLocalMap threadLocalMap) { //todo @csy pause-10-22
+    public final void remove(InternalThreadLocalMap threadLocalMap) { //从InternalThreadLocalMap中移除指定的值
         if (threadLocalMap == null) {
             return;
         }
@@ -213,6 +213,6 @@ public class InternalThreadLocal<V> { //与ThreadLocal具有相似的功能，�
     /**
      * Invoked when this thread local variable is removed by {@link #remove()}.
      */
-    protected void onRemoval(@SuppressWarnings("unused") V value) throws Exception {
+    protected void onRemoval(@SuppressWarnings("unused") V value) throws Exception { //清除指定的值，需要子类实现方法
     }
 }

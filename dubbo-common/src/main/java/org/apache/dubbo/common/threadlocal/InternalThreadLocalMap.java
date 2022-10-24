@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Note that this class is for internal use only. Use {@link InternalThread}
  * unless you know what you are doing.
  */
-public final class InternalThreadLocalMap { //并不是一个Map，而是一个数组（快慢获取的元素，本质在于数组结构的不同）
+public final class InternalThreadLocalMap { //用于存储线程的局部变量值，存储的结构是一个数组，而不是一个Map（快慢获取的元素，本质在于数组结构的不同）
 
     private Object[] indexedVariables; //数组实现
 
@@ -34,7 +34,7 @@ public final class InternalThreadLocalMap { //并不是一个Map，而是一个�
 
     public static final Object UNSET = new Object(); //@csy-03-02 该对象的功能用途是怎样的？解：当未取到值时，给出的默认值（用于填充使用）
 
-    public static InternalThreadLocalMap getIfSet() { //获取InternalThreadLocalMap，直接返回值，值可能为null
+    public static InternalThreadLocalMap getIfSet() { //获取在InternalThreadLocalMap中设置的值，值可能为null
         Thread thread = Thread.currentThread();
         if (thread instanceof InternalThread) {
             return ((InternalThread) thread).threadLocalMap();
@@ -76,8 +76,8 @@ public final class InternalThreadLocalMap { //并不是一个Map，而是一个�
         return NEXT_INDEX.get() - 1;
     }
 
-    private InternalThreadLocalMap() {
-        indexedVariables = newIndexedVariableTable();
+    private InternalThreadLocalMap() { //私有的构造函数
+        indexedVariables = newIndexedVariableTable(); //初始化维护的数组
     }
 
     public Object indexedVariable(int index) { //从数组中获取指定下标对应的变量值
@@ -89,18 +89,18 @@ public final class InternalThreadLocalMap { //并不是一个Map，而是一个�
      * @return {@code true} if and only if a new thread-local variable has been created
      */
     public boolean setIndexedVariable(int index, Object value) { //设置线程局部变量的值（设置成功返回true）
-        Object[] lookup = indexedVariables;
+        Object[] lookup = indexedVariables; //引用赋值，lookup数组改变，indexedVariables数组也对应改变
         if (index < lookup.length) {
             Object oldValue = lookup[index];
             lookup[index] = value;
-            return oldValue == UNSET;
+            return oldValue == UNSET; //@csy 此处是何意？解：若老的值为UNSET，说明值已经从UNSET -> value改变了
         } else {
             expandIndexedVariableTableAndSet(index, value); //扩容处理
             return true;
         }
     }
 
-    public Object removeIndexedVariable(int index) {
+    public Object removeIndexedVariable(int index) { //移除指定下标对应的值（将对应的值设置为UNSET对象）
         Object[] lookup = indexedVariables; //使用新的数组接收成员变量的值，避免对成员变量有影响
         if (index < lookup.length) {
             Object v = lookup[index];
@@ -142,8 +142,8 @@ public final class InternalThreadLocalMap { //并不是一个Map，而是一个�
         ThreadLocal<InternalThreadLocalMap> slowThreadLocalMap = InternalThreadLocalMap.slowThreadLocalMap;
         InternalThreadLocalMap ret = slowThreadLocalMap.get(); //使用ThreadLocal获取，内部是通过hashCode去获取值的
         if (ret == null) {
-            ret = new InternalThreadLocalMap();
-            slowThreadLocalMap.set(ret); //初始值后，设置到ThreadLocal中
+            ret = new InternalThreadLocalMap(); //初始化InternalThreadLocalMap
+            slowThreadLocalMap.set(ret); //将值设置到ThreadLocal中
         }
         return ret;
     }

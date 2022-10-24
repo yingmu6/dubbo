@@ -108,7 +108,7 @@ public class RpcContext { //上下文信息
      *
      * @return server context
      */
-    public static RpcContext getServerContext() {
+    public static RpcContext getServerContext() { //获取服务端的上下文
         return SERVER_LOCAL.get();
     }
 
