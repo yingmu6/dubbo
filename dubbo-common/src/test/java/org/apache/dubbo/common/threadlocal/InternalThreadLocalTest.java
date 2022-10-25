@@ -34,13 +34,13 @@ public class InternalThreadLocalTest {
     private static final int GET_COUNT = 1000000;
 
     @Test
-    public void testInternalThreadLocal() throws InterruptedException {
+    public void testInternalThreadLocal() throws InterruptedException { //测试InternalThreadLocal初始化以及使用
         final AtomicInteger index = new AtomicInteger(0);
 
         final InternalThreadLocal<Integer> internalThreadLocal = new InternalThreadLocal<Integer>() { //使用匿名类的方式创建对象（此处只是声明定义，还未真正调用）
 
             @Override
-            protected Integer initialValue() throws Exception { //此处InternalThreadLocal维护的值的类型为Integer
+            protected Integer initialValue() throws Exception { //重写初始化方法，此处InternalThreadLocal维护的值的类型为Integer
                 Integer v = index.getAndIncrement();
                 System.out.println("thread : " + Thread.currentThread().getName() + " init value : " + v);
                 return v;
@@ -56,7 +56,7 @@ public class InternalThreadLocalTest {
     }
 
     @Test
-    public void testRemoveAll() throws InterruptedException {
+    public void testRemoveAll() throws InterruptedException { //测试移除所有维护的InternalThreadLocal变量值
         final InternalThreadLocal<Integer> internalThreadLocal = new InternalThreadLocal<Integer>();
         internalThreadLocal.set(1); //设置int值
         Assertions.assertEquals(1, (int)internalThreadLocal.get(), "set failed"); //获取值
@@ -70,7 +70,7 @@ public class InternalThreadLocalTest {
         Assertions.assertEquals(22.11, internalThreadLocalDouble.get(), "set failed");
 
         /**
-         * 到此处时InternalThreadLocalMap中的元素类型为：
+         * 到此处时InternalThreadLocalMap中的元素类型为：（InternalThreadLocal设置的值，最终的都会放在InternalThreadLocalMap存储下来）
          * 1）Collections$SetFromMap@1597
          * 2）Integer@1598
          * 3）"value"
@@ -80,13 +80,13 @@ public class InternalThreadLocalTest {
          * ......
          * 31）UNSET对象，如Object@1601
          */
-        InternalThreadLocal.removeAll();
-        Assertions.assertNull(internalThreadLocal.get(), "removeAll failed!");
+        InternalThreadLocal.removeAll(); //移除了所有值后，InternalThreadLocalMap维护的值为UNSET
+        Assertions.assertNull(internalThreadLocal.get(), "removeAll failed!"); // 因为当前的InternalThreadLocal没有重新初始化方法initialize，所以默认值为null
         Assertions.assertNull(internalThreadLocalString.get(), "removeAll failed!");
     }
 
     @Test
-    public void testSize() throws InterruptedException {
+    public void testSize() throws InterruptedException { //测试数量
         final InternalThreadLocal<Integer> internalThreadLocal = new InternalThreadLocal<Integer>();
         internalThreadLocal.set(1);
         Assertions.assertEquals(1, InternalThreadLocal.size(), "size method is wrong!");
@@ -97,7 +97,7 @@ public class InternalThreadLocalTest {
     }
 
     @Test
-    public void testSetAndGet() {
+    public void testSetAndGet() { //测试设置值和获取值
         final Integer testVal = 10;
         final InternalThreadLocal<Integer> internalThreadLocal = new InternalThreadLocal<Integer>();
         internalThreadLocal.set(testVal);
@@ -105,7 +105,7 @@ public class InternalThreadLocalTest {
     }
 
     @Test
-    public void testRemove() {
+    public void testRemove() { //测试单个值移除
         final InternalThreadLocal<Integer> internalThreadLocal = new InternalThreadLocal<Integer>();
         internalThreadLocal.set(1);
         Assertions.assertEquals(1, (int)internalThreadLocal.get(), "get method false!");
@@ -115,11 +115,11 @@ public class InternalThreadLocalTest {
     }
 
     @Test
-    public void testOnRemove() {
+    public void testOnRemove() { //测试单个值移除（子类重写了onRemoval方法）
         final Integer[] valueToRemove = {null};
         final InternalThreadLocal<Integer> internalThreadLocal = new InternalThreadLocal<Integer>() {
             @Override
-            protected void onRemoval(Integer value) throws Exception {
+            protected void onRemoval(Integer value) throws Exception { //
                 //value calculate
                 valueToRemove[0] = value + 1;
             }
@@ -127,12 +127,12 @@ public class InternalThreadLocalTest {
         internalThreadLocal.set(1);
         Assertions.assertEquals(1, (int)internalThreadLocal.get(), "get method false!");
 
-        internalThreadLocal.remove();
+        internalThreadLocal.remove(); //进行移除，会回调子类重写的onRemoval方法
         Assertions.assertEquals(2, (int)valueToRemove[0], "onRemove method failed!");
     }
 
     @Test
-    public void testMultiThreadSetAndGet() throws InterruptedException {
+    public void testMultiThreadSetAndGet() throws InterruptedException { //测试多线程下的线程变量设置和获取
         final Integer testVal1 = 10;
         final Integer testVal2 = 20;
         final InternalThreadLocal<Integer> internalThreadLocal = new InternalThreadLocal<Integer>();
@@ -141,7 +141,7 @@ public class InternalThreadLocalTest {
             @Override
             public void run() {
 
-                internalThreadLocal.set(testVal1);
+                internalThreadLocal.set(testVal1); //各个线程维护自己的变量值，互不干扰
                 Assertions.assertEquals(testVal1, internalThreadLocal.get(), "set is not equals get");
                 countDownLatch.countDown();
             }
@@ -151,7 +151,7 @@ public class InternalThreadLocalTest {
         Thread t2 = new Thread(new Runnable() {
             @Override
             public void run() {
-                internalThreadLocal.set(testVal2);
+                internalThreadLocal.set(testVal2); //多线程下，使用同一个InternalThreadLocal设置值
                 Assertions.assertEquals(testVal2, internalThreadLocal.get(), "set is not equals get");
                 countDownLatch.countDown();
             }
@@ -167,7 +167,7 @@ public class InternalThreadLocalTest {
      * This test is based on a Machine with 4 core and 16g memory.
      */
     @Test
-    public void testPerformanceTradition() {
+    public void testPerformanceTradition() { //测试性能
         final ThreadLocal<String>[] caches1 = new ThreadLocal[PERFORMANCE_THREAD_COUNT];
         final Thread mainThread = Thread.currentThread();
         for (int i = 0; i < PERFORMANCE_THREAD_COUNT; i++) {
@@ -202,7 +202,7 @@ public class InternalThreadLocalTest {
      * This test is based on a Machine with 4 core and 16g memory.
      */
     @Test
-    public void testPerformance() {
+    public void testPerformance() { //测试InternalThreadLocal的性能
         final InternalThreadLocal<String>[] caches = new InternalThreadLocal[PERFORMANCE_THREAD_COUNT];
         final Thread mainThread = Thread.currentThread();
         for (int i = 0; i < PERFORMANCE_THREAD_COUNT; i++) {

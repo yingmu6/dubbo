@@ -28,11 +28,11 @@ public final class InternalThreadLocalMap { //用于存储线程的局部变量�
 
     private Object[] indexedVariables; //数组实现
 
-    private static ThreadLocal<InternalThreadLocalMap> slowThreadLocalMap = new ThreadLocal<InternalThreadLocalMap>(); //退变为原生的ThreadLocal（原生的ThreadLocal使用get()获取值时，会通过计算hashCode进行查找处理）
+    private static ThreadLocal<InternalThreadLocalMap> slowThreadLocalMap = new ThreadLocal<InternalThreadLocalMap>(); //退变为原生的ThreadLocal，每个线程维护各自的线程变量（原生的ThreadLocal使用get()获取值时，会通过计算hashCode进行查找处理）
 
-    private static final AtomicInteger NEXT_INDEX = new AtomicInteger(); //@csy-03-01 该索引的功能用途是什么？解：记录数组下标位置
+    private static final AtomicInteger NEXT_INDEX = new AtomicInteger(); //@csy-03-01 该索引的功能用途是什么？解：记录数组下标位置（）
 
-    public static final Object UNSET = new Object(); //@csy-03-02 该对象的功能用途是怎样的？解：当未取到值时，给出的默认值（用于填充使用）
+    public static final Object UNSET = new Object(); //@csy-03-02 该对象的功能用途是怎样的？解：当未设置值时，给出的默认值（用于填充使用）
 
     public static InternalThreadLocalMap getIfSet() { //获取在InternalThreadLocalMap中设置的值，值可能为null
         Thread thread = Thread.currentThread();
@@ -63,7 +63,7 @@ public final class InternalThreadLocalMap { //用于存储线程的局部变量�
         slowThreadLocalMap = null;
     }
 
-    public static int nextVariableIndex() { //获取下一次的数组下标
+    public static int nextVariableIndex() { //获取下一次的数组下标（每次创建，下标就会加1）
         int index = NEXT_INDEX.getAndIncrement();
         if (index < 0) {
             NEXT_INDEX.decrementAndGet();
@@ -111,7 +111,7 @@ public final class InternalThreadLocalMap { //用于存储线程的局部变量�
         }
     }
 
-    public int size() {
+    public int size() { //计算所有不为UNSET的元素（需要减掉第一个元素）
         int count = 0;
         for (Object o : indexedVariables) {
             if (o != UNSET) {
@@ -119,7 +119,7 @@ public final class InternalThreadLocalMap { //用于存储线程的局部变量�
             }
         }
 
-        //the fist element in `indexedVariables` is a set to keep all the InternalThreadLocal to remove
+        //the fist element in `indexedVariables` is a set to keep all the InternalThreadLocal to remove（第一个元素用于保存所有要删除的InternalThreadLocal元素）
         //look at method `addToVariablesToRemove`
         return count - 1;
     }

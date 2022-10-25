@@ -58,7 +58,7 @@ public class InternalThreadLocal<V> { //与ThreadLocal具有相似的功能，�
     private final int index; //当前线程维护的值对应的下标（维护游标）
 
     public InternalThreadLocal() {
-        index = InternalThreadLocalMap.nextVariableIndex(); //设置游标值
+        index = InternalThreadLocalMap.nextVariableIndex(); //设置下一个游标值，每使用一个InternalThreadLocal，游标就会+1
     }
 
     /**
@@ -67,19 +67,19 @@ public class InternalThreadLocal<V> { //与ThreadLocal具有相似的功能，�
      * manage.
      */
     @SuppressWarnings("unchecked")
-    public static void removeAll() {
+    public static void removeAll() { //移除所有绑定在当前线程的InternalThreadLocal变量值
         InternalThreadLocalMap threadLocalMap = InternalThreadLocalMap.getIfSet();
         if (threadLocalMap == null) {
             return;
         }
 
         try {
-            Object v = threadLocalMap.indexedVariable(VARIABLES_TO_REMOVE_INDEX);
+            Object v = threadLocalMap.indexedVariable(VARIABLES_TO_REMOVE_INDEX); //拿到InternalThreadLocalMap的第一个元素，即包含InternalThreadLocal实例列表的集合
             if (v != null && v != InternalThreadLocalMap.UNSET) {
                 Set<InternalThreadLocal<?>> variablesToRemove = (Set<InternalThreadLocal<?>>) v;
                 InternalThreadLocal<?>[] variablesToRemoveArray =
-                        variablesToRemove.toArray(new InternalThreadLocal[variablesToRemove.size()]);
-                for (InternalThreadLocal<?> tlv : variablesToRemoveArray) {
+                        variablesToRemove.toArray(new InternalThreadLocal[variablesToRemove.size()]); //将集合Set转换为Map
+                for (InternalThreadLocal<?> tlv : variablesToRemoveArray) { //将每个InternalThreadLocal做移除操作
                     tlv.remove(threadLocalMap);
                 }
             }
@@ -89,9 +89,9 @@ public class InternalThreadLocal<V> { //与ThreadLocal具有相似的功能，�
     }
 
     /**
-     * Returns the number of thread local variables bound to the current thread.
+     * Returns the number of thread local variables（线程局部变量） bound to the current thread.
      */
-    public static int size() {
+    public static int size() { //返回绑定在当前线程绑定的InternalThreadLocal数量
         InternalThreadLocalMap threadLocalMap = InternalThreadLocalMap.getIfSet();
         if (threadLocalMap == null) {
             return 0;
@@ -105,17 +105,17 @@ public class InternalThreadLocal<V> { //与ThreadLocal具有相似的功能，�
     }
 
     @SuppressWarnings("unchecked")
-    private static void addToVariablesToRemove(InternalThreadLocalMap threadLocalMap, InternalThreadLocal<?> variable) {
-        Object v = threadLocalMap.indexedVariable(VARIABLES_TO_REMOVE_INDEX);
-        Set<InternalThreadLocal<?>> variablesToRemove;
+    private static void addToVariablesToRemove(InternalThreadLocalMap threadLocalMap, InternalThreadLocal<?> variable) {//添加InternalThreadLocal变量到集合变量中（即处理第一个元素）
+        Object v = threadLocalMap.indexedVariable(VARIABLES_TO_REMOVE_INDEX); //获取第一个元素对应的值
+        Set<InternalThreadLocal<?>> variablesToRemove; //表示包含了多少个InternalThreadLocal实例
         if (v == InternalThreadLocalMap.UNSET || v == null) {
-            variablesToRemove = Collections.newSetFromMap(new IdentityHashMap<InternalThreadLocal<?>, Boolean>());
+            variablesToRemove = Collections.newSetFromMap(new IdentityHashMap<InternalThreadLocal<?>, Boolean>()); //将Map值转换为Set
             threadLocalMap.setIndexedVariable(VARIABLES_TO_REMOVE_INDEX, variablesToRemove);
         } else {
-            variablesToRemove = (Set<InternalThreadLocal<?>>) v;
+            variablesToRemove = (Set<InternalThreadLocal<?>>) v; //尽心类型强转
         }
 
-        variablesToRemove.add(variable);
+        variablesToRemove.add(variable); //InternalThreadLocalMap中的第一个元素是集合类型，如indexedVariables[0]为Collections$SetFromMap@1751
     }
 
     @SuppressWarnings("unchecked")
@@ -128,7 +128,7 @@ public class InternalThreadLocal<V> { //与ThreadLocal具有相似的功能，�
         }
 
         Set<InternalThreadLocal<?>> variablesToRemove = (Set<InternalThreadLocal<?>>) v;
-        variablesToRemove.remove(variable);
+        variablesToRemove.remove(variable); //set集合做指定值value移除（variablesToRemove改变，threadLocalMap的第一个集合元素也会对应改变）
     }
 
     /**
@@ -138,14 +138,14 @@ public class InternalThreadLocal<V> { //与ThreadLocal具有相似的功能，�
     public final V get() { //从当前线程中获取当前维护的值
         InternalThreadLocalMap threadLocalMap = InternalThreadLocalMap.get(); //使用InternalThreadLocalMap维护数据值
         Object v = threadLocalMap.indexedVariable(index); //
-        if (v != InternalThreadLocalMap.UNSET) {
+        if (v != InternalThreadLocalMap.UNSET) { //若值不为UNSET，则直接强转返回
             return (V) v;
         }
 
-        return initialize(threadLocalMap); //若本地缓存Map中不存在值，则进行初始化操作
+        return initialize(threadLocalMap); //若不存在值，则进行初始化操作
     }
 
-    private V initialize(InternalThreadLocalMap threadLocalMap) {
+    private V initialize(InternalThreadLocalMap threadLocalMap) { //做初始化，并返回初始化后的值
         V v = null;
         try {
             v = initialValue();
@@ -166,8 +166,8 @@ public class InternalThreadLocal<V> { //与ThreadLocal具有相似的功能，�
             remove(); //设置的值为空时，做移除处理
         } else {
             InternalThreadLocalMap threadLocalMap = InternalThreadLocalMap.get();
-            if (threadLocalMap.setIndexedVariable(index, value)) {
-                addToVariablesToRemove(threadLocalMap, this);
+            if (threadLocalMap.setIndexedVariable(index, value)) { //为当前线程设置对应的局部变量值
+                addToVariablesToRemove(threadLocalMap, this); //
             }
         }
     }
@@ -191,12 +191,12 @@ public class InternalThreadLocal<V> { //与ThreadLocal具有相似的功能，�
             return;
         }
 
-        Object v = threadLocalMap.removeIndexedVariable(index);
-        removeFromVariablesToRemove(threadLocalMap, this);
+        Object v = threadLocalMap.removeIndexedVariable(index); //移除指定下标对应的值（即置为UNSET）
+        removeFromVariablesToRemove(threadLocalMap, this); //将第一个元素对应的集合也移除对应的元素
 
         if (v != InternalThreadLocalMap.UNSET) {
             try {
-                onRemoval((V) v);
+                onRemoval((V) v); //看子类的具体实现
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -206,13 +206,13 @@ public class InternalThreadLocal<V> { //与ThreadLocal具有相似的功能，�
     /**
      * Returns the initial value for this thread-local variable.
      */
-    protected V initialValue() throws Exception { //初始化的逻辑，交由具体子类实现
+    protected V initialValue() throws Exception { //初始值操作，交由具体子类实现
         return null;
     }
 
     /**
      * Invoked when this thread local variable is removed by {@link #remove()}.
      */
-    protected void onRemoval(@SuppressWarnings("unused") V value) throws Exception { //清除指定的值，需要子类实现方法
+    protected void onRemoval(@SuppressWarnings("unused") V value) throws Exception { //清理值操作，交由具体子类实现
     }
 }
