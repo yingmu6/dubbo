@@ -286,9 +286,9 @@ public class AsyncRpcResult implements Result { //异步响应结果
     }
 
     /**
-     * tmp context to use when the thread switch to Dubbo thread.
+     * tmp context to use when the thread switch to Dubbo thread.（当线程转换到Dubbo线程时，会使用临时上下文）
      */
-    private RpcContext tmpContext;
+    private RpcContext tmpContext; //临时上下文
 
     private RpcContext tmpServerContext;
     private BiConsumer<Result, Throwable> beforeContext = (appResponse, t) -> {

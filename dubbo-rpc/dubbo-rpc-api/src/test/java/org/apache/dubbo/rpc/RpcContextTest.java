@@ -31,61 +31,70 @@ public class RpcContextTest {
     @Test
     public void testGetContext() { //获取RpcContext
 
+        /**
+         * 1）RpcContext.getContext()从InternalThreadLocal获取上下文实例，若值为UNSET，会回调initialValue()进行初始化
+         * 2）RpcContext.removeContext()或RpcContext.getServerContext()移除上下文，会将InternalThreadLocalMap中维护的对应index的值设置为UNSET
+         * 3）因为移除上下文后，InternalThreadLocalMap中维护的元素为UNSET元素，所以会回调initialValue()进行初始化，所以产生的RpcContext实例就不一样
+         *
+         * 特别说明：
+         * 如果在debug时，选择"Add to Watchers"查看方法的执行结果时，相当于会把方法执行一遍，所以debug时若对方法观察，需要对这一点进行注意
+         * （应该是启动了另外线程执行了，因为dubug时看不到对应的执行）
+         */
         RpcContext rpcContext = RpcContext.getContext();
         Assertions.assertNotNull(rpcContext); //若当前线程没有设置上下文信息，会进行初始化处理，所以不为null
 
-        RpcContext.removeContext();
+        RpcContext.removeContext(); //移除上下文以后，执行RpcContext.getContext()会产生新的RpcContext对象，不移除上下文的话，不管调用多少次RpcContext.getContext()，返回的都是同一个对象
         // if null, will return the initialize value.
         //Assertions.assertNull(RpcContext.getContext());
         Assertions.assertNotNull(RpcContext.getContext());
-        Assertions.assertNotEquals(rpcContext, RpcContext.getContext());
+        Assertions.assertNotEquals(rpcContext, RpcContext.getContext()); //RpcContext实例时不相同
 
-        RpcContext serverRpcContext = RpcContext.getServerContext();
+        RpcContext serverRpcContext = RpcContext.getServerContext(); //获取服务端对应的上下文
         Assertions.assertNotNull(serverRpcContext);
 
-        RpcContext.removeServerContext();
+        RpcContext.removeServerContext(); //移除服务端对应的上下文
         Assertions.assertNotEquals(serverRpcContext, RpcContext.getServerContext());
 
     }
 
     @Test
-    public void testAddress() {
-        RpcContext context = RpcContext.getContext();
-        context.setLocalAddress("127.0.0.1", 20880);
+    public void testAddress() { //测试RpcContext设置的地址信息
+        RpcContext context = RpcContext.getContext(); //获取RpcContext实例
+        context.setLocalAddress("127.0.0.1", 20880); //会创建一个InetSocketAddress进行存储
         Assertions.assertEquals(20880, context.getLocalAddress().getPort());
-        Assertions.assertEquals("127.0.0.1:20880", context.getLocalAddressString());
+        Assertions.assertEquals("127.0.0.1:20880", context.getLocalAddressString()); //获取本地地址，即hostname与port拼接的字符串
 
-        context.setRemoteAddress("127.0.0.1", 20880);
+        context.setRemoteAddress("127.0.0.1", 20880); //与LocalAddress处理方式相同
         Assertions.assertEquals(20880, context.getRemoteAddress().getPort());
         Assertions.assertEquals("127.0.0.1:20880", context.getRemoteAddressString());
 
-        context.setRemoteAddress("127.0.0.1", -1);
+        context.setRemoteAddress("127.0.0.1", -1); //端口号小于0，会被置为0
         context.setLocalAddress("127.0.0.1", -1);
         Assertions.assertEquals(0, context.getRemoteAddress().getPort());
-        Assertions.assertEquals(0, context.getLocalAddress().getPort());
-        Assertions.assertEquals("127.0.0.1", context.getRemoteHostName());
+        Assertions.assertEquals(0, context.getLocalAddress().getPort());   //获取port
+        Assertions.assertEquals("127.0.0.1", context.getRemoteHostName()); //获取hostname
         Assertions.assertEquals("127.0.0.1", context.getLocalHostName());
     }
 
     @Test
-    public void testCheckSide() {
+    public void testCheckSide() { //检查端侧
 
         RpcContext context = RpcContext.getContext();
 
         //TODO fix npe
         //context.isProviderSide();
 
-        context.setUrl(URL.valueOf("test://test:11/test?accesslog=true&group=dubbo&version=1.1"));
-        Assertions.assertFalse(context.isConsumerSide());
+        context.setUrl(URL.valueOf("test://test:11/test?accesslog=true&group=dubbo&version=1.1")); //设置调用的url信息
+        Assertions.assertFalse(context.isConsumerSide()); //url中没有设置side参数值，默认为provider，即提供者端
         Assertions.assertTrue(context.isProviderSide());
 
         context.setUrl(URL.valueOf("test://test:11/test?accesslog=true&group=dubbo&version=1.1&side=consumer"));
-        Assertions.assertTrue(context.isConsumerSide());
+        Assertions.assertTrue(context.isConsumerSide()); //url中设置了side参数值，取对应的参数值做判断
         Assertions.assertFalse(context.isProviderSide());
     }
 
     @Test
-    public void testAttachments() {
+    public void testAttachments() { //附加参数处理
 
         RpcContext context = RpcContext.getContext();
         Map<String, Object> map = new HashMap<>();
@@ -93,27 +102,27 @@ public class RpcContextTest {
         map.put("_22", "2222");
         map.put(".33", "3333");
 
-        context.setObjectAttachments(map);
-        Assertions.assertEquals(map, context.getObjectAttachments());
+        context.setObjectAttachments(map); //设置附加参数
+        Assertions.assertEquals(map, context.getObjectAttachments()); //map进行equals比较时，会通过AbstractMap中重写的equals()方法，对Map中的元素依次比较
 
         Assertions.assertEquals("1111", context.getAttachment("_11"));
-        context.setAttachment("_11", "11.11");
+        context.setAttachment("_11", "11.11"); //数据会进行更新
         Assertions.assertEquals("11.11", context.getAttachment("_11"));
 
-        context.setAttachment(null, "22222");
-        context.setAttachment("_22", null);
-        Assertions.assertEquals("22222", context.getAttachment(null));
+        context.setAttachment(null, "22222"); //key可以为null
+        context.setAttachment("_22", null); //值设置为null
+        Assertions.assertEquals("22222", context.getAttachment(null)); //附加参数使用的是HashMap，可以设置
         Assertions.assertNull(context.getAttachment("_22"));
 
         Assertions.assertNull(context.getAttachment("_33"));
         Assertions.assertEquals("3333", context.getAttachment(".33"));
 
-        context.clearAttachments();
+        context.clearAttachments(); //清除附加参数
         Assertions.assertNull(context.getAttachment("_11"));
     }
 
     @Test
-    public void testObject() {
+    public void testObject() { //设置对象值
 
         RpcContext context = RpcContext.getContext();
         Map<String, Object> map = new HashMap<String, Object>();
@@ -121,7 +130,7 @@ public class RpcContextTest {
         map.put("_22", "2222");
         map.put(".33", "3333");
 
-        map.forEach(context::set);
+        map.forEach(context::set); //
 
         Assertions.assertEquals(map, context.get());
 
