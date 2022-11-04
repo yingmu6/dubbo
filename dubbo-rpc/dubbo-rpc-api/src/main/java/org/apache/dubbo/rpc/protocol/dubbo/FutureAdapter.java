@@ -26,9 +26,9 @@ import java.util.concurrent.*;
  * 1. unwrap AppResponse in appResponseFuture and convert to plain biz result represented by FutureAdapter.
  * 2. customized（定制） behaviors meaningful for RPC, for example, {@link #cancel(boolean)}
  */
-public class FutureAdapter<V> extends CompletableFuture<V> {
+public class FutureAdapter<V> extends CompletableFuture<V> { //Future自适应类
 
-    private CompletableFuture<AppResponse> appResponseFuture;
+    private CompletableFuture<AppResponse> appResponseFuture; //对CompletableFuture进行封装
 
     public FutureAdapter(CompletableFuture<AppResponse> future) {
         this.appResponseFuture = future;

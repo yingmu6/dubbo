@@ -481,7 +481,7 @@ public class RpcContext { //上下文信息
      * @param key
      * @return attachment
      */
-    public String getAttachment(String key) {
+    public String getAttachment(String key) { //获取参数key对应的字符串值
         Object value = attachments.get(key);
         if (value instanceof String) {
             return (String) value;

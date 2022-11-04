@@ -189,20 +189,20 @@ public class RpcContextTest {
     }
 
     @Test
-    public void testObjectAttachment() {
+    public void testObjectAttachment() { //测试附加参数
         RpcContext rpcContext = RpcContext.getContext();
 
         rpcContext.setAttachment("objectKey1", "value1");
         rpcContext.setAttachment("objectKey2", "value2");
-        rpcContext.setAttachment("objectKey3", 1); // object
+        rpcContext.setAttachment("objectKey3", 1); // 设置附加参数值
 
         Assertions.assertEquals("value1", rpcContext.getObjectAttachment("objectKey1"));
-        Assertions.assertEquals("value2", rpcContext.getAttachment("objectKey2"));
-        Assertions.assertNull(rpcContext.getAttachment("objectKey3"));
+        Assertions.assertEquals("value2", rpcContext.getAttachment("objectKey2")); //获取参数对应的字符串值
+        Assertions.assertNull(rpcContext.getAttachment("objectKey3")); //因为key对应的value不是字符串类型，所以返回null
         Assertions.assertEquals(1, rpcContext.getObjectAttachment("objectKey3"));
         Assertions.assertEquals(3, rpcContext.getObjectAttachments().size());
 
-        rpcContext.clearAttachments();
+        rpcContext.clearAttachments(); //清除Map中参数值，size会被置为0
         Assertions.assertEquals(0, rpcContext.getObjectAttachments().size());
 
         HashMap<String, Object> map = new HashMap<>();
