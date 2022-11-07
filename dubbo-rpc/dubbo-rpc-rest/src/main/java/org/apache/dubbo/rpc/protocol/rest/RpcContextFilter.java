@@ -52,7 +52,7 @@ public class RpcContextFilter implements ContainerRequestFilter, ClientRequestFi
 
         RpcContext.getContext().setResponse(ResteasyProviderFactory.getContextData(HttpServletResponse.class));
 
-        String headers = requestContext.getHeaderString(DUBBO_ATTACHMENT_HEADER);
+        String headers = requestContext.getHeaderString(DUBBO_ATTACHMENT_HEADER); //获取请求头参数（Rest方式的附加参数）
         if (headers != null) {
             for (String header : headers.split(",")) {
                 int index = header.indexOf("=");
@@ -81,7 +81,7 @@ public class RpcContextFilter implements ContainerRequestFilter, ClientRequestFi
             if (value != null) {
                 size += value.getBytes(StandardCharsets.UTF_8).length;
             }
-            if (size > MAX_HEADER_SIZE) {
+            if (size > MAX_HEADER_SIZE) { //校验附加参数的大小
                 throw new IllegalArgumentException("The attachments of " + RpcContext.class.getSimpleName() + " is too big");
             }
 
