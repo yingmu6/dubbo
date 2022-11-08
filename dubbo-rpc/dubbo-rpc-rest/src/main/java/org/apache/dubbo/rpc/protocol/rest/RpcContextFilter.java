@@ -41,26 +41,26 @@ public class RpcContextFilter implements ContainerRequestFilter, ClientRequestFi
     private static final int MAX_HEADER_SIZE = 8 * 1024;
 
     @Override
-    public void filter(ContainerRequestContext requestContext) throws IOException {
-        HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
-        RpcContext.getContext().setRequest(request);
+    public void filter(ContainerRequestContext requestContext) throws IOException { //主要逻辑：将Http请求头的参数设置到Dubbo的RpcContext的附加参数中
+        HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class); //接收请求数据
+        RpcContext.getContext().setRequest(request);//使用Dubbo的RpcContext设置请求对象
 
         // this only works for servlet containers
         if (request != null && RpcContext.getContext().getRemoteAddress() == null) {
             RpcContext.getContext().setRemoteAddress(request.getRemoteAddr(), request.getRemotePort());
         }
 
-        RpcContext.getContext().setResponse(ResteasyProviderFactory.getContextData(HttpServletResponse.class));
+        RpcContext.getContext().setResponse(ResteasyProviderFactory.getContextData(HttpServletResponse.class)); //设置响应对象Response
 
         String headers = requestContext.getHeaderString(DUBBO_ATTACHMENT_HEADER); //获取请求头参数（Rest方式的附加参数）
         if (headers != null) {
-            for (String header : headers.split(",")) {
+            for (String header : headers.split(",")) { //拆分请求头的参数，依次设置到RpcContext的附加参数中
                 int index = header.indexOf("=");
                 if (index > 0) {
                     String key = header.substring(0, index);
                     String value = header.substring(index + 1);
                     if (!StringUtils.isEmpty(key)) {
-                        RpcContext.getContext().setAttachment(key.trim(), value.trim());
+                        RpcContext.getContext().setAttachment(key.trim(), value.trim()); //将Http请求中的数据，写入到Dubbo的RpcContext的附加参数中
                     }
                 }
             }
@@ -68,9 +68,9 @@ public class RpcContextFilter implements ContainerRequestFilter, ClientRequestFi
     }
 
     @Override
-    public void filter(ClientRequestContext requestContext) throws IOException {
+    public void filter(ClientRequestContext requestContext) throws IOException { //主要逻辑：将Dubbo的RpcContext的附加参数写到Http请求头的参数中
         int size = 0;
-        for (Map.Entry<String, Object> entry : RpcContext.getContext().getObjectAttachments().entrySet()) {
+        for (Map.Entry<String, Object> entry : RpcContext.getContext().getObjectAttachments().entrySet()) { //遍历Dubbo的RpcContext的附加参数
             String key = entry.getKey();
             String value = (String) entry.getValue();
             if (illegalHttpHeaderKey(key) || illegalHttpHeaderValue(value)) {
@@ -86,7 +86,7 @@ public class RpcContextFilter implements ContainerRequestFilter, ClientRequestFi
             }
 
             String attachments = key + "=" + value;
-            requestContext.getHeaders().add(DUBBO_ATTACHMENT_HEADER, attachments);
+            requestContext.getHeaders().add(DUBBO_ATTACHMENT_HEADER, attachments); //依次将RpcContext的附加参数值，写入到http请求头的参数中（类型为：MultivaluedMap，一个key允许对应0个或多个value值）
         }
     }
 
