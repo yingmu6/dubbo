@@ -37,11 +37,11 @@ import static org.apache.dubbo.common.constants.CommonConstants.ANYHOST_VALUE;
 /**
  * AbstractProxyProtocol
  */
-public abstract class AbstractProxyProtocol extends AbstractProtocol {
+public abstract class AbstractProxyProtocol extends AbstractProtocol { //抽象代理协议
 
-    private final List<Class<?>> rpcExceptions = new CopyOnWriteArrayList<Class<?>>();
+    private final List<Class<?>> rpcExceptions = new CopyOnWriteArrayList<Class<?>>(); //RpcException异常列表
 
-    protected ProxyFactory proxyFactory;
+    protected ProxyFactory proxyFactory; //代理工厂
 
     public AbstractProxyProtocol() {
     }

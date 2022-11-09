@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 /**
  *
@@ -28,11 +29,11 @@ public class FutureContextTest {
 
     @Test
     public void testFutureContext() throws Exception {
-        Thread thread1 = new Thread(() -> {
-            FutureContext.getContext().setFuture(CompletableFuture.completedFuture("future from thread1"));
+        Thread thread1 = new Thread(() -> { //线程执行体
+            FutureContext.getContext().setFuture(CompletableFuture.completedFuture("future from thread1")); //设置FutureContext维护的CompletableFuture变量值
             try {
                 Thread.sleep(500);
-                Assertions.assertEquals("future from thread1", FutureContext.getContext().getCompletableFuture().get());
+                Assertions.assertEquals("future from thread1", FutureContext.getContext().getCompletableFuture().get()); //因为设置了CompletableFuture的值，所以此处能取到值
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -43,8 +44,17 @@ public class FutureContextTest {
 
         Thread thread2 = new Thread(() -> {
             CompletableFuture future = FutureContext.getContext().getCompletableFuture();
-            Assertions.assertNull(future);
+            Assertions.assertNull(future); //此处因为没有设置CompletableFuture值，所以获取时值为null
             FutureContext.getContext().setFuture(CompletableFuture.completedFuture("future from thread2"));
+
+            // 此处时新增加的测试内容
+            try {
+                Assertions.assertEquals("future from thread2", FutureContext.getContext().getCompletableFuture().get());
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            } catch (ExecutionException e) {
+                throw new RuntimeException(e);
+            }
         });
         thread2.start();
 

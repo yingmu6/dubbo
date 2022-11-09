@@ -21,11 +21,11 @@ import org.apache.dubbo.common.utils.StringUtils;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-public class GroupServiceKeyCache {
+public class GroupServiceKeyCache { //服务路径的缓存
 
     private final String serviceGroup;
 
-    //ConcurrentMap<serviceName, ConcurrentMap<serviceVersion, ConcurrentMap<port, String>>>
+    //ConcurrentMap<serviceName, ConcurrentMap<serviceVersion, ConcurrentMap<port, String>>>  缓存key的数据格式
     private final ConcurrentMap<String, ConcurrentMap<String, ConcurrentMap<Integer, String>>> serviceKeyMap;
 
     public GroupServiceKeyCache(String serviceGroup) {
