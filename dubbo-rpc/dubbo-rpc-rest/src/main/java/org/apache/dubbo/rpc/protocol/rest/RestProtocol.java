@@ -60,23 +60,23 @@ import static org.apache.dubbo.remoting.Constants.DEFAULT_CONNECT_TIMEOUT;
 import static org.apache.dubbo.remoting.Constants.SERVER_KEY;
 import static org.apache.dubbo.rpc.protocol.rest.Constants.EXTENSION_KEY;
 
-public class RestProtocol extends AbstractProxyProtocol {
+public class RestProtocol extends AbstractProxyProtocol { //Rest协议
 
     private static final int DEFAULT_PORT = 80;
-    private static final String DEFAULT_SERVER = "jetty";
+    private static final String DEFAULT_SERVER = "jetty"; //默认的http服务器
 
-    private static final int HTTPCLIENTCONNECTIONMANAGER_MAXPERROUTE = 20;
+    private static final int HTTPCLIENTCONNECTIONMANAGER_MAXPERROUTE = 20; //最大的线路
     private static final int HTTPCLIENTCONNECTIONMANAGER_MAXTOTAL = 20;
-    private static final int HTTPCLIENT_KEEPALIVEDURATION = 30 * 1000;
+    private static final int HTTPCLIENT_KEEPALIVEDURATION = 30 * 1000; //保持存活的持续时间
     private static final int HTTPCLIENTCONNECTIONMANAGER_CLOSEWAITTIME_MS = 1000;
     private static final int HTTPCLIENTCONNECTIONMANAGER_CLOSEIDLETIME_S = 30;
 
-    private final RestServerFactory serverFactory = new RestServerFactory();
+    private final RestServerFactory serverFactory = new RestServerFactory(); //RestProtocolServer服务实例的创建工厂
 
-    // TODO in the future maybe we can just use a single rest client and connection manager
-    private final List<ResteasyClient> clients = Collections.synchronizedList(new LinkedList<>());
+    // TODO in the future maybe we can just use a single rest client and connection manager（在未来，也许我们可以只使用单一的rest客户端和连接管理器）
+    private final List<ResteasyClient> clients = Collections.synchronizedList(new LinkedList<>()); //rest的客户端连接器
 
-    private volatile ConnectionMonitor connectionMonitor;
+    private volatile ConnectionMonitor connectionMonitor; //连接监控器
 
     public RestProtocol() {
         super(WebApplicationException.class, ProcessingException.class);
@@ -259,7 +259,7 @@ public class RestProtocol extends AbstractProxyProtocol {
         }
     }
 
-    protected class ConnectionMonitor extends Thread {
+    protected class ConnectionMonitor extends Thread { //连接监控器
         private volatile boolean shutdown;
         private final List<PoolingHttpClientConnectionManager> connectionManagers = Collections.synchronizedList(new LinkedList<>());
 
