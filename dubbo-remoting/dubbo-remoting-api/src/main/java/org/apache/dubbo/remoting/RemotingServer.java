@@ -42,7 +42,7 @@ public interface RemotingServer extends Endpoint, Resetable, IdleSensible { //�
      *
      * @return channels
      */
-    Collection<Channel> getChannels();
+    Collection<Channel> getChannels(); //服务对应的Channel列表
 
     /**
      * get channel.
@@ -50,7 +50,7 @@ public interface RemotingServer extends Endpoint, Resetable, IdleSensible { //�
      * @param remoteAddress
      * @return channel
      */
-    Channel getChannel(InetSocketAddress remoteAddress);
+    Channel getChannel(InetSocketAddress remoteAddress); //获取指定地址对应的Channel
 
     @Deprecated
     void reset(org.apache.dubbo.common.Parameters parameters);

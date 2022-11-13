@@ -23,15 +23,15 @@ import javax.servlet.ServletContextListener;
  * This class must be defined before something like spring's ContextLoaderListener in web.xml
  *
  */
-public class BootstrapListener implements ServletContextListener {
+public class BootstrapListener implements ServletContextListener { //启动引导监听器， ServletContextListener：用于接收ServletContext生命周期更改的监听器。
 
     @Override
-    public void contextInitialized(ServletContextEvent servletContextEvent) {
+    public void contextInitialized(ServletContextEvent servletContextEvent) { //web应用初始化时，接收到的通知
         ServletManager.getInstance().addServletContext(ServletManager.EXTERNAL_SERVER_PORT, servletContextEvent.getServletContext());
     }
 
     @Override
-    public void contextDestroyed(ServletContextEvent servletContextEvent) {
+    public void contextDestroyed(ServletContextEvent servletContextEvent) { //web应用销毁时，接收到的通知
         ServletManager.getInstance().removeServletContext(ServletManager.EXTERNAL_SERVER_PORT);
     }
 }

@@ -22,15 +22,16 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * TODO this may not be a pretty elegant solution,
+ * (这可能不是一个优雅的解决方案）
  *
  */
-public class ServletManager {
+public class ServletManager { //Servlet管理器
 
     public static final int EXTERNAL_SERVER_PORT = -1234;
 
     private static final ServletManager INSTANCE = new ServletManager();
 
-    private final Map<Integer, ServletContext> contextMap = new ConcurrentHashMap<Integer, ServletContext>();
+    private final Map<Integer, ServletContext> contextMap = new ConcurrentHashMap<Integer, ServletContext>(); //缓存端口与Servlet上下文的映射
 
     public static ServletManager getInstance() {
         return INSTANCE;
@@ -40,7 +41,7 @@ public class ServletManager {
         contextMap.put(port, servletContext);
     }
 
-    public void removeServletContext(int port) {
+    public void removeServletContext(int port) { //移除缓存中的ServletContext
         contextMap.remove(port);
     }
 

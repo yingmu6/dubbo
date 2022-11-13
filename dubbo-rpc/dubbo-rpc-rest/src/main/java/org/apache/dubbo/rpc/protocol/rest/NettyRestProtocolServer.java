@@ -39,30 +39,31 @@ import static org.apache.dubbo.rpc.protocol.rest.Constants.KEEP_ALIVE_KEY;
 
 /**
  * Netty server can't support @Context injection of servlet objects since it's not a servlet container
+ * （Netty服务器不支持servlet对象的@Context注入，因为它不是servlet容器）
  *
  */
-public class NettyRestProtocolServer extends BaseRestProtocolServer {
+public class NettyRestProtocolServer extends BaseRestProtocolServer { //Netty方式实现的Rest服务
 
-    private final NettyJaxrsServer server = new NettyJaxrsServer();
+    private final NettyJaxrsServer server = new NettyJaxrsServer(); //Netty方式实现的Http服务
 
     @Override
-    protected void doStart(URL url) {
+    protected void doStart(URL url) { //设置Netty服务参数，启动服务，并绑定对应的端口
         String bindIp = url.getParameter(BIND_IP_KEY, url.getHost());
         if (!url.isAnyHost() && NetUtils.isValidLocalHost(bindIp)) {
             server.setHostname(bindIp);
         }
-        server.setPort(url.getParameter(BIND_PORT_KEY, url.getPort()));
+        server.setPort(url.getParameter(BIND_PORT_KEY, url.getPort())); //设置端口
         Map<ChannelOption, Object> channelOption = new HashMap<ChannelOption, Object>();
         channelOption.put(ChannelOption.SO_KEEPALIVE, url.getParameter(KEEP_ALIVE_KEY, DEFAULT_KEEP_ALIVE));
         server.setChildChannelOptions(channelOption);
         server.setExecutorThreadCount(url.getParameter(THREADS_KEY, DEFAULT_THREADS));
         server.setIoWorkerCount(url.getParameter(IO_THREADS_KEY, DEFAULT_IO_THREADS));
         server.setMaxRequestSize(url.getParameter(PAYLOAD_KEY, DEFAULT_PAYLOAD));
-        server.start();
+        server.start(); //启动Netty服务，打开对应的端口
     }
 
     @Override
-    public void close() {
+    public void close() { //停止服务
         server.stop();
     }
 

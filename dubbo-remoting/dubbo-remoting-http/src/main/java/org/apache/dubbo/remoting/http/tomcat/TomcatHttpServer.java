@@ -35,11 +35,11 @@ import static org.apache.dubbo.common.constants.CommonConstants.DEFAULT_THREADS;
 import static org.apache.dubbo.common.constants.CommonConstants.THREADS_KEY;
 import static org.apache.dubbo.remoting.Constants.ACCEPTS_KEY;
 
-public class TomcatHttpServer extends AbstractHttpServer {
+public class TomcatHttpServer extends AbstractHttpServer { //tomcat实现的http服务类
 
     private static final Logger logger = LoggerFactory.getLogger(TomcatHttpServer.class);
 
-    private final Tomcat tomcat;
+    private final Tomcat tomcat; //嵌入使用的tomcat启动器
 
     private final URL url;
 
@@ -51,8 +51,8 @@ public class TomcatHttpServer extends AbstractHttpServer {
         String baseDir = new File(System.getProperty("java.io.tmpdir")).getAbsolutePath();
         tomcat = new Tomcat();
 
-        Connector connector = tomcat.getConnector();
-        connector.setPort(url.getPort());
+        Connector connector = tomcat.getConnector(); //连接器创建
+        connector.setPort(url.getPort()); //连接器参数设置
         connector.setProperty("maxThreads", String.valueOf(url.getParameter(THREADS_KEY, DEFAULT_THREADS)));
         connector.setProperty("maxConnections", String.valueOf(url.getParameter(ACCEPTS_KEY, -1)));
         connector.setProperty("URIEncoding", "UTF-8");
@@ -62,7 +62,7 @@ public class TomcatHttpServer extends AbstractHttpServer {
         tomcat.setBaseDir(baseDir);
         tomcat.setPort(url.getPort());
 
-        Context context = tomcat.addContext("/", baseDir);
+        Context context = tomcat.addContext("/", baseDir); //tomcat上下文处理器
         Tomcat.addServlet(context, "dispatcher", new DispatcherServlet());
         // Issue : https://github.com/apache/dubbo/issues/6418
         // addServletMapping method will be removed since Tomcat 9
@@ -74,7 +74,7 @@ public class TomcatHttpServer extends AbstractHttpServer {
         System.setProperty("org.apache.catalina.startup.EXIT_ON_INIT_FAILURE", "true");
 
         try {
-            tomcat.start();
+            tomcat.start(); //启动tomcat
         } catch (LifecycleException e) {
             throw new IllegalStateException("Failed to start tomcat server at " + url.getAddress(), e);
         }

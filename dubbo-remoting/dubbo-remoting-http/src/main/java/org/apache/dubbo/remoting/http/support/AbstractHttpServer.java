@@ -30,11 +30,11 @@ import java.util.Collection;
 /**
  * AbstractHttpServer
  */
-public abstract class AbstractHttpServer implements HttpServer {
+public abstract class AbstractHttpServer implements HttpServer { //实现了HttpServer中的服务接口，子类可有选择的重写相关方法
 
     private final URL url;
 
-    private final HttpHandler handler;
+    private final HttpHandler handler; //http服务处理器
 
     private volatile boolean closed;
 
@@ -74,8 +74,8 @@ public abstract class AbstractHttpServer implements HttpServer {
     }
 
     @Override
-    public void close() {
-        closed = true;
+    public void close() { //关闭服务
+        closed = true; //更新closed标志
     }
 
     @Override

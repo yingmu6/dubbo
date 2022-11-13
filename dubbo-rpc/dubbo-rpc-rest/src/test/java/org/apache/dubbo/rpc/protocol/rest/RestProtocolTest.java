@@ -45,12 +45,12 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class RestProtocolTest {
+public class RestProtocolTest { //Rest协议测试类
     private Protocol protocol = ExtensionLoader.getExtensionLoader(Protocol.class).getExtension("rest");
     private ProxyFactory proxy = ExtensionLoader.getExtensionLoader(ProxyFactory.class).getAdaptiveExtension();
     private final int availablePort = NetUtils.getAvailablePort();
     private final URL exportUrl = URL.valueOf("rest://127.0.0.1:" + availablePort + "/rest?interface=org.apache.dubbo.rpc.protocol.rest.DemoService");
-    private final ServiceRepository repository = ApplicationModel.getServiceRepository();
+    private final ServiceRepository repository = ApplicationModel.getServiceRepository(); //服务仓库
 
     @AfterEach
     public void tearDown() {
@@ -62,9 +62,9 @@ public class RestProtocolTest {
         URL url = URL.valueOf("rest://127.0.0.1:" + NetUtils.getAvailablePort() + "/rest/say?version=1.0.0&interface=org.apache.dubbo.rpc.protocol.rest.DemoService");
         DemoServiceImpl server = new DemoServiceImpl();
 
-        this.registerProvider(url, server, DemoService.class);
+        this.registerProvider(url, server, DemoService.class); //注册提供者信息
 
-        Exporter<DemoService> exporter = protocol.export(proxy.getInvoker(server, DemoService.class, url));
+        Exporter<DemoService> exporter = protocol.export(proxy.getInvoker(server, DemoService.class, url)); //此处的protocol实例为RestProtocol，因为export()方法继承AbstractProxyProtocol，所以会先进入父类的export()方法
         Invoker<DemoService> invoker = protocol.refer(DemoService.class, url);
         Assertions.assertFalse(server.isCalled());
 
@@ -269,7 +269,7 @@ public class RestProtocolTest {
         exporter.unexport();
     }
 
-    private void registerProvider(URL url, Object impl, Class<?> interfaceClass) {
+    private void registerProvider(URL url, Object impl, Class<?> interfaceClass) { //注册提供者信息
         ServiceDescriptor serviceDescriptor = repository.registerService(interfaceClass);
         repository.registerProvider(
                 url.getServiceKey(),

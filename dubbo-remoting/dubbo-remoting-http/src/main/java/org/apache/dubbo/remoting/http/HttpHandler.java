@@ -24,7 +24,7 @@ import java.io.IOException;
 /**
  * http invocation handler.
  */
-public interface HttpHandler {
+public interface HttpHandler { //Http调用处理器
 
     /**
      * invoke.

@@ -32,8 +32,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 5766349180380479888L;
-    private static final Map<Integer, HttpHandler> HANDLERS = new ConcurrentHashMap<Integer, HttpHandler>();
-    private static DispatcherServlet INSTANCE;
+    private static final Map<Integer, HttpHandler> HANDLERS = new ConcurrentHashMap<Integer, HttpHandler>(); //端口号与处理器的缓存映射
+    private static DispatcherServlet INSTANCE; //将派发器的实例进行缓存
 
     public DispatcherServlet() {
         DispatcherServlet.INSTANCE = this;
@@ -54,7 +54,7 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpHandler handler = HANDLERS.get(request.getLocalPort());
+        HttpHandler handler = HANDLERS.get(request.getLocalPort()); //从缓存中获取派发器的实例，并进行服务派发处理
         if (handler == null) {// service not found.
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "Service not found.");
         } else {

@@ -36,7 +36,7 @@ public class ServiceDescriptor { //服务的描述信息
     public ServiceDescriptor(Class<?> interfaceClass) {
         this.serviceInterfaceClass = interfaceClass; //接口对应的class对象
         this.serviceName = interfaceClass.getName();
-        initMethods();
+        initMethods(); //设置方法信息
     }
 
     private void initMethods() { //遍历暴露接口中Class的Method列表，一一构建为MethodDescriptor对象

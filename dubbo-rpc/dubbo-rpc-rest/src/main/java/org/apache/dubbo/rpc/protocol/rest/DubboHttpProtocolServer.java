@@ -36,10 +36,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Enumeration;
 
-public class DubboHttpProtocolServer extends BaseRestProtocolServer {
+public class DubboHttpProtocolServer extends BaseRestProtocolServer { //dubbo实现的http协议
 
-    private final HttpServletDispatcher dispatcher = new HttpServletDispatcher();
-    private final ResteasyDeployment deployment = new ResteasyDeployment();
+    private final HttpServletDispatcher dispatcher = new HttpServletDispatcher(); //http服务派发器
+    private final ResteasyDeployment deployment = new ResteasyDeployment(); //用于配置和初始化Rest组件
     private HttpBinder httpBinder;
     private HttpServer httpServer;
 //    private boolean isExternalServer;
@@ -49,7 +49,7 @@ public class DubboHttpProtocolServer extends BaseRestProtocolServer {
     }
 
     @Override
-    protected void doStart(URL url) {
+    protected void doStart(URL url) { //启动服务
         // TODO jetty will by default enable keepAlive so the xml config has no effect now
         httpServer = httpBinder.bind(url, new RestHandler());
 
@@ -81,18 +81,18 @@ public class DubboHttpProtocolServer extends BaseRestProtocolServer {
         return deployment;
     }
 
-    private class RestHandler implements HttpHandler {
+    private class RestHandler implements HttpHandler { //Rest请求处理的内部类
 
         @Override
         public void handle(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-            RpcContext.getContext().setRemoteAddress(request.getRemoteAddr(), request.getRemotePort());
-            dispatcher.service(request, response);
+            RpcContext.getContext().setRemoteAddress(request.getRemoteAddr(), request.getRemotePort()); //设置Rpc上下文的地址信息
+            dispatcher.service(request, response); //将请求交由调度器进行服务调度（request：客户端请求信息，response：服务端响应给客户端的信息）
         }
     }
 
-    private static class SimpleServletConfig implements ServletConfig {
+    private static class SimpleServletConfig implements ServletConfig { //ServletConfig：servlet容器的配置对象，用于在初始化期间把信息传递给servlet
 
-        private final ServletContext servletContext;
+        private final ServletContext servletContext; //servlet的上下文信息，定义了一套servlet与servlet容器通信的方法
 
         public SimpleServletConfig(ServletContext servletContext) {
             this.servletContext = servletContext;

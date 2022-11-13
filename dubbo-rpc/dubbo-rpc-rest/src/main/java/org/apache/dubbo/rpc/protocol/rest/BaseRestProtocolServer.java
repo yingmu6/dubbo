@@ -39,13 +39,13 @@ public abstract class BaseRestProtocolServer implements RestProtocolServer {
 
         loadProviders(url.getParameter(EXTENSION_KEY, ""));
 
-        doStart(url);
+        doStart(url); //调用实现类的启动方法
     }
 
     @Override
     public void deploy(Class resourceDef, Object resourceInstance, String contextPath) {
         if (StringUtils.isEmpty(contextPath)) {
-            getDeployment().getRegistry().addResourceFactory(new DubboResourceFactory(resourceInstance, resourceDef));
+            getDeployment().getRegistry().addResourceFactory(new DubboResourceFactory(resourceInstance, resourceDef)); //添加自定义资源实现端点
         } else {
             getDeployment().getRegistry().addResourceFactory(new DubboResourceFactory(resourceInstance, resourceDef), contextPath);
         }

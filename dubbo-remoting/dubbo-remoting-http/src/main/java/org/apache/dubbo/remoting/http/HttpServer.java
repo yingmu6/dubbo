@@ -22,7 +22,7 @@ import org.apache.dubbo.remoting.RemotingServer;
 
 import java.net.InetSocketAddress;
 
-public interface HttpServer extends Resetable, RemotingServer {
+public interface HttpServer extends Resetable, RemotingServer { //提供http服务能力
 
     /**
      * get http handler.

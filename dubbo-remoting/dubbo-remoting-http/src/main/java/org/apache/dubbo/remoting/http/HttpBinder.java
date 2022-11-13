@@ -24,7 +24,7 @@ import org.apache.dubbo.remoting.Constants;
 /**
  * HttpBinder
  */
-@SPI("jetty")
+@SPI("jetty")   //默认使用jetty作为web服务器
 public interface HttpBinder {
 
     /**
@@ -34,6 +34,6 @@ public interface HttpBinder {
      * @return server.
      */
     @Adaptive({Constants.SERVER_KEY})
-    HttpServer bind(URL url, HttpHandler handler);
+    HttpServer bind(URL url, HttpHandler handler); //进行服务绑定
 
 }
