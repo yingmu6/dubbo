@@ -61,7 +61,7 @@ public interface ProxyFactory {
      * create invoker.（创建invoker对象）
      *
      * @param <T>
-     * @param proxy
+     * @param proxy 暴露接口对应的实现类，如：暴露的接口为HelloService，实现类为HelloServiceImpl，此处的proxy即为HelloServiceImpl对象实例
      * @param type
      * @param url
      * @return invoker

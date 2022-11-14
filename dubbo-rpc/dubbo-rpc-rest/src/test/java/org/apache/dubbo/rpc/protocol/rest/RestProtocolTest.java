@@ -64,12 +64,17 @@ public class RestProtocolTest { //Rest协议测试类
 
         this.registerProvider(url, server, DemoService.class); //注册提供者信息
 
-        Exporter<DemoService> exporter = protocol.export(proxy.getInvoker(server, DemoService.class, url)); //此处的protocol实例为RestProtocol，因为export()方法继承AbstractProxyProtocol，所以会先进入父类的export()方法
+        /**
+         * 对外提供的方式与其它协议不变，依然是Protocol的export()和refer()，只是会选择具体的协议执行
+         * export()：此处是Rest协议，所有会创建Rest服务，打开对应端口监听请求
+         * refer()：此处是Rest协议，通过rest客户端进行服务连接，并进行服务调用
+         */
+        Exporter<DemoService> exporter = protocol.export(proxy.getInvoker(server, DemoService.class, url)); //获取暴露的接口对应实现类DemoServiceImpl对应的代理类，并进行服务暴露（此处的protocol实例为RestProtocol，因为export()方法继承AbstractProxyProtocol，所以会先进入父类的export()方法）
         Invoker<DemoService> invoker = protocol.refer(DemoService.class, url);
         Assertions.assertFalse(server.isCalled());
 
-        DemoService client = proxy.getProxy(invoker);
-        String result = client.sayHello("haha");
+        DemoService client = proxy.getProxy(invoker); //获取invoker对应的代理对象
+        String result = client.sayHello("haha"); //通过代理对应执行对应的功能
         Assertions.assertTrue(server.isCalled());
         Assertions.assertEquals("Hello, haha", result);
         invoker.destroy();
@@ -110,7 +115,7 @@ public class RestProtocolTest { //Rest协议测试类
     public void testExport() {
         DemoService server = new DemoServiceImpl();
 
-        this.registerProvider(exportUrl, server, DemoService.class);
+        this.registerProvider(exportUrl, server, DemoService.class); //要先注册提供信息到服务模型中
 
         RpcContext.getContext().setAttachment("timeout", "200");
         Exporter<DemoService> exporter = protocol.export(proxy.getInvoker(server, DemoService.class, exportUrl));
@@ -129,7 +134,7 @@ public class RestProtocolTest { //Rest协议测试类
 
         this.registerProvider(exportUrl, server, DemoService.class);
 
-        URL nettyUrl = exportUrl.addParameter(SERVER_KEY, "netty");
+        URL nettyUrl = exportUrl.addParameter(SERVER_KEY, "netty"); //使用netty提供rest服务
         Exporter<DemoService> exporter = protocol.export(proxy.getInvoker(new DemoServiceImpl(), DemoService.class, nettyUrl));
 
         DemoService demoService = this.proxy.getProxy(protocol.refer(DemoService.class, nettyUrl));

@@ -116,7 +116,7 @@ public class RestProtocol extends AbstractProxyProtocol { //Rest协议
                     throw new RpcException("Since you are using server='servlet', " +
                             "make sure that the 'contextpath' property starts with the path of external webapp");
                 }
-                contextPath = contextPath.substring(webappPath.length());
+                contextPath = contextPath.substring(webappPath.length()); //去除掉webappPath字串
                 if (contextPath.startsWith("/")) {
                     contextPath = contextPath.substring(1);
                 }
