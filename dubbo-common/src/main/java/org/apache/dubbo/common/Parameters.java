@@ -33,6 +33,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.HIDE_KEY_PREFIX;
 
 /**
  * Parameters for backward compatibility for version prior to 2.0.5
+ * （用于2.0.5之前版本的向后兼容性的参数）
  *
  * @deprecated
  */
@@ -49,7 +50,7 @@ public class Parameters {
         this.parameters = Collections.unmodifiableMap(parameters != null ? new HashMap<>(parameters) : new HashMap<>(0));
     }
 
-    private static Map<String, String> toMap(String... pairs) {
+    private static Map<String, String> toMap(String... pairs) { //将key、value、key、value排列的字符串数组转换为Map
         return CollectionUtils.toStringMap(pairs);
     }
 

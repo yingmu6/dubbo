@@ -29,9 +29,9 @@ import java.util.Collection;
 /**
  * ExchangeServerDelegate
  */
-public class ExchangeServerDelegate implements ExchangeServer {
+public class ExchangeServerDelegate implements ExchangeServer { //ExchangeServer的委派类
 
-    private transient ExchangeServer server;
+    private transient ExchangeServer server; //持有ExchangeServer服务的实例
 
     public ExchangeServerDelegate() {
     }
@@ -61,7 +61,7 @@ public class ExchangeServerDelegate implements ExchangeServer {
     @Override
     @Deprecated
     public void reset(org.apache.dubbo.common.Parameters parameters) {
-        reset(getUrl().addParameters(parameters.getParameters()));
+        reset(getUrl().addParameters(parameters.getParameters())); //先将参数Map转换为URL，再做reset操作
     }
 
     @Override

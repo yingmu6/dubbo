@@ -35,7 +35,7 @@ public interface RemotingServer extends Endpoint, Resetable, IdleSensible { //�
      *
      * @return bound
      */
-    boolean isBound();
+    boolean isBound(); //判断服务是否已经绑定
 
     /**
      * get channels.

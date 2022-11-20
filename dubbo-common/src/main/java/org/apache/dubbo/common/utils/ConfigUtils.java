@@ -37,7 +37,7 @@ public class ConfigUtils {
     private static final Logger logger = LoggerFactory.getLogger(ConfigUtils.class);
     private static Pattern VARIABLE_PATTERN = Pattern.compile(
             "\\$\\s*\\{?\\s*([\\._0-9a-zA-Z]+)\\s*\\}?");
-    private static volatile Properties PROPERTIES;
+    private static volatile Properties PROPERTIES; //维护的系统属性实例
     private static int PID = -1;
 
     private ConfigUtils() {
@@ -204,10 +204,10 @@ public class ConfigUtils {
     }
 
     /**
-     * Load properties file to {@link Properties} from class path.
+     * Load properties file to {@link Properties} from class path. （从指定class路径下加载属性文件）
      *
      * @param fileName       properties file name. for example: <code>dubbo.properties</code>, <code>METE-INF/conf/foo.properties</code>
-     * @param allowMultiFile if <code>false</code>, throw {@link IllegalStateException} when found multi file on the class path.
+     * @param allowMultiFile if <code>false</code>, throw {@link IllegalStateException} when found multi file on the class path.（若允许多属性文件，需要将文件中的内容进行合并）
      * @param optional       is optional. if <code>false</code>, log warn when properties config file not found!s
      * @return loaded {@link Properties} content. <ul>
      * <li>return empty Properties if no file found.
@@ -218,7 +218,7 @@ public class ConfigUtils {
     public static Properties loadProperties(String fileName, boolean allowMultiFile, boolean optional) {
         Properties properties = new Properties();
         // add scene judgement in windows environment Fix 2557
-        if (checkFileNameExist(fileName)) {
+        if (checkFileNameExist(fileName)) { //若存在文件，则加载文件中的内容写到Properties
             try {
                 FileInputStream input = new FileInputStream(fileName);
                 try {
@@ -251,13 +251,13 @@ public class ConfigUtils {
         }
 
         if (!allowMultiFile) {
-            if (list.size() > 1) {
+            if (list.size() > 1) { //若不允许多个属性文件时，发现有多个问题，则进行日志提示
                 String errMsg = String.format("only 1 %s file is expected, but %d dubbo.properties files found on class path: %s",
                         fileName, list.size(), list.toString());
                 logger.warn(errMsg);
             }
 
-            // fall back to use method getResourceAsStream
+            // fall back（回退） to use method getResourceAsStream
             try {
                 properties.load(ClassUtils.getClassLoader().getResourceAsStream(fileName));
             } catch (Throwable e) {
