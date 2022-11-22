@@ -52,7 +52,7 @@ public class DefaultFuture extends CompletableFuture<Object> {
 
     private static final Map<Long, DefaultFuture> FUTURES = new ConcurrentHashMap<>(); //请求id与DefaultFuture实例的缓存映射
 
-    public static final Timer TIME_OUT_TIMER = new HashedWheelTimer(
+    public static final Timer TIME_OUT_TIMER = new HashedWheelTimer( //定时器
             new NamedThreadFactory("dubbo-future-timeout", true),
             30,
             TimeUnit.MILLISECONDS);
@@ -82,7 +82,7 @@ public class DefaultFuture extends CompletableFuture<Object> {
         this.id = request.getId();
         this.timeout = timeout > 0 ? timeout : channel.getUrl().getPositiveParameter(TIMEOUT_KEY, DEFAULT_TIMEOUT);
         // put into waiting map.
-        FUTURES.put(id, this);
+        FUTURES.put(id, this); //请求id与DefaultFuture映射起来
         CHANNELS.put(id, channel);
     }
 

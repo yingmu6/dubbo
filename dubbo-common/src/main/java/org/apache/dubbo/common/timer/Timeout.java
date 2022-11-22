@@ -30,7 +30,7 @@ public interface Timeout { //定时器处理类
     /**
      * Returns the {@link TimerTask} which is associated with this handle.
      */
-    TimerTask task();
+    TimerTask task(); //返回延时任务
 
     /**
      * Returns {@code true} if and only if the {@link TimerTask} associated
