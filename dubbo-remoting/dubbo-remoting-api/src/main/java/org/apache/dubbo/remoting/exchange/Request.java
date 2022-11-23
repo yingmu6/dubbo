@@ -25,7 +25,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.HEARTBEAT_EVENT;
 /**
  * Request.（包含请求id、版本version、是否双向通信mTwoWay、请求数据mData等）
  */
-public class Request { //请求内容
+public class Request { //请求对象
 
     private static final AtomicLong INVOKE_ID = new AtomicLong(0);
 

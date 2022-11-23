@@ -30,14 +30,14 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * A {@link Timer} optimized（优化） for approximated（近似） I/O timeout scheduling.
  *
- * <h3>Tick Duration</h3>
+ * <h3>Tick Duration（持续时间）</h3>
  * <p>
- * As described with 'approximated', this timer does not execute the scheduled
+ * As described with 'approximated'（接近的）, this timer does not execute the scheduled
  * {@link TimerTask} on time.  {@link HashedWheelTimer}, on every tick, will
- * check if there are any {@link TimerTask}s behind the schedule and execute
+ * check if there are any {@link TimerTask}s behind（在...后面） the schedule and execute
  * them.
  * <p>
- * You can increase or decrease the accuracy of the execution timing by
+ * You can increase or decrease the accuracy（准确、精准） of the execution timing by
  * specifying smaller or larger tick duration in the constructor.  In most
  * network applications, I/O timeout does not need to be accurate.  Therefore,
  * the default tick duration is 100 milliseconds and you will not need to try
@@ -69,6 +69,9 @@ import java.util.concurrent.atomic.AtomicLong;
  * <a href="http://www.cse.wustl.edu/~cdgill/courses/cs6874/TimingWheels.ppt">here</a>.
  */
 public class HashedWheelTimer implements Timer {
+    /**
+     * 该类是实现是从Netty中引入的
+     */
 
     /**
      * may be in spi?
@@ -239,7 +242,7 @@ public class HashedWheelTimer implements Timer {
                     "tickDuration: %d (expected: 0 < tickDuration in nanos < %d",
                     tickDuration, Long.MAX_VALUE / wheel.length));
         }
-        workerThread = threadFactory.newThread(worker);
+        workerThread = threadFactory.newThread(worker); //使用线程池工厂创建线程
 
         this.maxPendingTimeouts = maxPendingTimeouts;
 
@@ -430,7 +433,7 @@ public class HashedWheelTimer implements Timer {
             // Notify the other threads waiting for the initialization at start().
             startTimeInitialized.countDown();
 
-            do {
+            do { //无线循环来检测时间是否已经超时
                 final long deadline = waitForNextTick();
                 if (deadline > 0) {
                     int idx = (int) (tick & mask);
@@ -677,7 +680,7 @@ public class HashedWheelTimer implements Timer {
     }
 
     /**
-     * Bucket that stores HashedWheelTimeouts. These are stored in a linked-list like datastructure to allow easy
+     * Bucket that stores HashedWheelTimeouts（用于存储HashedWheelTimeout的桶）. These are stored in a linked-list（链表）like datastructure to allow easy（使用链表的数据结构，能够方便的从中间移除HashedWheelTimeout）
      * removal of HashedWheelTimeouts in the middle. Also the HashedWheelTimeout act as nodes themself and so no
      * extra object creation is needed.
      */
@@ -731,7 +734,7 @@ public class HashedWheelTimer implements Timer {
             }
         }
 
-        public HashedWheelTimeout remove(HashedWheelTimeout timeout) {
+        public HashedWheelTimeout remove(HashedWheelTimeout timeout) { //移除链表中的元素
             HashedWheelTimeout next = timeout.next;
             // remove timeout that was either processed or cancelled by updating the linked-list
             if (timeout.prev != null) {

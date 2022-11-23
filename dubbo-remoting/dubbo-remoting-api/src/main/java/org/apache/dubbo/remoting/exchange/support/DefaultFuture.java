@@ -48,22 +48,22 @@ public class DefaultFuture extends CompletableFuture<Object> {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultFuture.class);
 
-    private static final Map<Long, Channel> CHANNELS = new ConcurrentHashMap<>();
+    private static final Map<Long, Channel> CHANNELS = new ConcurrentHashMap<>(); //请求id与请求通道Channel实例的缓存映射
 
-    private static final Map<Long, DefaultFuture> FUTURES = new ConcurrentHashMap<>(); //请求id与DefaultFuture实例的缓存映射
+    private static final Map<Long, DefaultFuture> FUTURES = new ConcurrentHashMap<>(); //请求id与DefaultFuture实例的缓存映射（用来将请求与响应关联起来）
 
-    public static final Timer TIME_OUT_TIMER = new HashedWheelTimer(
+    public static final Timer TIME_OUT_TIMER = new HashedWheelTimer(      //设定定时器
             new NamedThreadFactory("dubbo-future-timeout", true),
             30,
             TimeUnit.MILLISECONDS);
 
     // invoke id.
     private final Long id;
-    private final Channel channel;
-    private final Request request;
+    private final Channel channel; //通道对象
+    private final Request request; //请求对象
     private final int timeout;
     private final long start = System.currentTimeMillis();
-    private volatile long sent;
+    private volatile long sent; //发送时对应的时间戳
     private Timeout timeoutCheckTask;
 
     private ExecutorService executor;
@@ -76,7 +76,7 @@ public class DefaultFuture extends CompletableFuture<Object> {
         this.executor = executor;
     }
 
-    private DefaultFuture(Channel channel, Request request, int timeout) {
+    private DefaultFuture(Channel channel, Request request, int timeout) { //构造函数是私有的，不能直接创建对象
         this.channel = channel;
         this.request = request;
         this.id = request.getId();
@@ -104,7 +104,7 @@ public class DefaultFuture extends CompletableFuture<Object> {
      * @param timeout timeout
      * @return a new DefaultFuture
      */
-    public static DefaultFuture newFuture(Channel channel, Request request, int timeout, ExecutorService executor) {
+    public static DefaultFuture newFuture(Channel channel, Request request, int timeout, ExecutorService executor) { //使用静态方法创建DefaultFuture（一个类，就一个对象）
         final DefaultFuture future = new DefaultFuture(channel, request, timeout);
         future.setExecutor(executor);
         // ThreadlessExecutor needs to hold the waiting future in case of circuit return.
@@ -137,7 +137,7 @@ public class DefaultFuture extends CompletableFuture<Object> {
      *
      * @param channel channel to close
      */
-    public static void closeChannel(Channel channel) {
+    public static void closeChannel(Channel channel) { //关闭通道
         for (Map.Entry<Long, Channel> entry : CHANNELS.entrySet()) {
             if (channel.equals(entry.getValue())) {
                 DefaultFuture future = getFuture(entry.getKey());
@@ -247,7 +247,7 @@ public class DefaultFuture extends CompletableFuture<Object> {
         sent = System.currentTimeMillis();
     }
 
-    private String getTimeoutMessage(boolean scan) {
+    private String getTimeoutMessage(boolean scan) { //超时提示信息（包含发送请求超时或等待服务响应超时）
         long nowTimestamp = System.currentTimeMillis();
         return (sent > 0 ? "Waiting server-side response timeout" : "Sending request timeout in client-side")
                 + (scan ? " by scan timer" : "") + ". start time: "
@@ -281,7 +281,7 @@ public class DefaultFuture extends CompletableFuture<Object> {
                 return;
             }
 
-            if (future.getExecutor() != null) {
+            if (future.getExecutor() != null) { //若线程池不为空，则使用线程池执行任务
                 future.getExecutor().execute(() -> notifyTimeout(future));
             } else {
                 notifyTimeout(future);
