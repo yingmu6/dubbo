@@ -32,16 +32,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class DefaultFutureTest {
 
-    private static final AtomicInteger index = new AtomicInteger();
+    private static final AtomicInteger index = new AtomicInteger(); //默认是0对应的原子对象
 
     @Test
-    public void newFuture() {
+    public void newFuture() { //使用DefaultFuture中的静态方法，创建对象实例
         DefaultFuture future = defaultFuture(3000);
         Assertions.assertNotNull(future, "new future return null");
     }
 
     @Test
-    public void isDone() {
+    public void isDone() { //todo @pause
         DefaultFuture future = defaultFuture(3000);
         Assertions.assertTrue(!future.isDone(), "init future is finished!");
 
@@ -121,7 +121,7 @@ public class DefaultFutureTest {
      */
     private DefaultFuture defaultFuture(int timeout) {
         Channel channel = new MockedChannel();
-        Request request = new Request(index.getAndIncrement());
+        Request request = new Request(index.getAndIncrement()); //getAndIncrement()：获取当前的值，并且将原子值加1
         return DefaultFuture.newFuture(channel, request, timeout, null);
     }
 

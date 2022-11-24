@@ -253,7 +253,7 @@ public class HashedWheelTimer implements Timer {
     }
 
     @Override
-    protected void finalize() throws Throwable {
+    protected void finalize() throws Throwable { //重写了Object的finalize方法（finalize：完成）
         try {
             super.finalize();
         } finally {

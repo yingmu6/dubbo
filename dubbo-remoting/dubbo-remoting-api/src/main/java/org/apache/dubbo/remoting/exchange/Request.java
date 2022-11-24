@@ -42,7 +42,7 @@ public class Request { //请求对象
     private Object mData; // 请求体（对象类型为：RpcInvocation、DecodeableRpcInvocation等）
 
     public Request() {
-        mId = newId();
+        mId = newId(); //若没指定请求id，则使用原子递增的值
     }
 
     public Request(long id) {
