@@ -76,7 +76,7 @@ public class DefaultFuture extends CompletableFuture<Object> {
         this.executor = executor;
     }
 
-    private DefaultFuture(Channel channel, Request request, int timeout) { //构造函数是私有的，不能直接创建对象
+    private DefaultFuture(Channel channel, Request request, int timeout) { //构造函数是私有的，外部不能直接调用创建对象，内部可以调用private方法
         this.channel = channel;
         this.request = request;
         this.id = request.getId();
@@ -193,7 +193,7 @@ public class DefaultFuture extends CompletableFuture<Object> {
         this.doReceived(errorResult);
         FUTURES.remove(id); //取消任务时，移除对应的缓存
         CHANNELS.remove(id);
-        return true;
+        return true; //处理过程中不抛出异常，能正常使用，即可正常取消
     }
 
     public void cancel() {
@@ -218,7 +218,7 @@ public class DefaultFuture extends CompletableFuture<Object> {
             ThreadlessExecutor threadlessExecutor = (ThreadlessExecutor) executor;
             if (threadlessExecutor.isWaiting()) {
                 threadlessExecutor.notifyReturn(new IllegalStateException("The result has returned, but the biz thread is still waiting" +
-                        " which is not an expected state, interrupt the thread manually by returning an exception."));
+                        " which is not an expected state, interrupt the thread manually by returning an exception."));  //返回异常信息，提示为：非期待的状态，返回异常终止线程
             }
         }
     }

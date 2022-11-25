@@ -41,12 +41,12 @@ public class DefaultFutureTest {
     }
 
     @Test
-    public void isDone() { //todo @pause
+    public void isDone() {
         DefaultFuture future = defaultFuture(3000);
         Assertions.assertTrue(!future.isDone(), "init future is finished!");
 
         //cancel a future
-        future.cancel();
+        future.cancel(); //执行取消操作后，future变为已完成状态
         Assertions.assertTrue(future.isDone(), "cancel a future failed!");
     }
 
@@ -61,13 +61,15 @@ public class DefaultFutureTest {
      */
     @Test
     @Disabled
-    public void timeoutNotSend() throws Exception {
+    public void timeoutNotSend() throws Exception { //todo @pause
         final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         System.out.println("before a future is create , time is : " + LocalDateTime.now().format(formatter));
         // timeout after 5 seconds.
-        DefaultFuture f = defaultFuture(5000);
-        while (!f.isDone()) {
+        DefaultFuture f = defaultFuture(5000); //设置了超时时间
+        int i = 0;
+        while (!f.isDone()) { //循环sleep，直到任务完成，触发超时
             //spin
+            System.out.println("循环的次数：" + (++i));
             Thread.sleep(100);
         }
         System.out.println("after a future is timeout , time is : " + LocalDateTime.now().format(formatter));

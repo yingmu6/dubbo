@@ -41,7 +41,7 @@ public class ThreadlessExecutor extends AbstractExecutorService { //
 
     private ExecutorService sharedExecutor;
 
-    private CompletableFuture<?> waitingFuture;
+    private CompletableFuture<?> waitingFuture; //用于通知正在等待的线程结束等待工作，避免无休止的等待
 
     private boolean finished = false;
 
@@ -138,9 +138,9 @@ public class ThreadlessExecutor extends AbstractExecutorService { //
     }
 
     /**
-     * tells the thread blocking on {@link #waitAndDrain()} to return, despite of the current status, to avoid endless waiting.
+     * tells the thread blocking on {@link #waitAndDrain()} to return, despite of the current status, to avoid endless（无休止） waiting.（告诉阻塞在waitAndDrain()上的线程返回，不管当前状态如何，以避免无休止的等待。）
      */
-    public void notifyReturn(Throwable t) {
+    public void notifyReturn(Throwable t) { //通知正在等待的线程结束等待工作
         // an empty runnable task.
         execute(() -> {
             waitingFuture.completeExceptionally(t);
