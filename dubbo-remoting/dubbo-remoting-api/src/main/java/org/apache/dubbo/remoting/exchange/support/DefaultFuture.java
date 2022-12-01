@@ -52,10 +52,10 @@ public class DefaultFuture extends CompletableFuture<Object> {
 
     private static final Map<Long, DefaultFuture> FUTURES = new ConcurrentHashMap<>(); //请求id与DefaultFuture实例的缓存映射（用来将请求与响应关联起来）
 
-    public static final Timer TIME_OUT_TIMER = new HashedWheelTimer(      //设置定时器
+    public static final Timer TIME_OUT_TIMER = new HashedWheelTimer(      //设置定时器（使用HashedWheelTimer管理定时器）
             new NamedThreadFactory("dubbo-future-timeout", true),
             30,
-            TimeUnit.MILLISECONDS);
+            TimeUnit.MILLISECONDS); //可以指定Future的超时时间
 
     // invoke id.
     private final Long id;
@@ -64,7 +64,7 @@ public class DefaultFuture extends CompletableFuture<Object> {
     private final int timeout;
     private final long start = System.currentTimeMillis();
     private volatile long sent; //发送时对应的时间戳
-    private Timeout timeoutCheckTask;
+    private Timeout timeoutCheckTask; //超时检测任务
 
     private ExecutorService executor;
 
@@ -90,7 +90,7 @@ public class DefaultFuture extends CompletableFuture<Object> {
      * check time out of the future
      */
     private static void timeoutCheck(DefaultFuture future) {
-        TimeoutCheckTask task = new TimeoutCheckTask(future.getId());
+        TimeoutCheckTask task = new TimeoutCheckTask(future.getId()); //创建超时检测任务
         future.timeoutCheckTask = TIME_OUT_TIMER.newTimeout(task, future.getTimeout(), TimeUnit.MILLISECONDS);
     }
 
@@ -112,7 +112,7 @@ public class DefaultFuture extends CompletableFuture<Object> {
             ((ThreadlessExecutor) executor).setWaitingFuture(future); //设置等待的DefaultFuture，避免循环地返回
         }
         // timeout check
-        timeoutCheck(future);
+        timeoutCheck(future); //启动定时检查任务
         return future;
     }
 
@@ -165,10 +165,10 @@ public class DefaultFuture extends CompletableFuture<Object> {
 
     public static void received(Channel channel, Response response, boolean timeout) {
         try {
-            DefaultFuture future = FUTURES.remove(response.getId());
+            DefaultFuture future = FUTURES.remove(response.getId()); //Future处理后要对应移除掉（Map的remove方法，能移除元素，并且返回之前值）
             if (future != null) {
                 Timeout t = future.timeoutCheckTask;
-                if (!timeout) {
+                if (!timeout) { //若任务没有超时，则尝试取消任务
                     // decrease Time
                     t.cancel();
                 }
@@ -181,7 +181,7 @@ public class DefaultFuture extends CompletableFuture<Object> {
                         + " -> " + channel.getRemoteAddress()) + ", please check provider side for detailed result.");
             }
         } finally {
-            CHANNELS.remove(response.getId());
+            CHANNELS.remove(response.getId()); //处理后，移除对应请求id对应的通道Channel
         }
     }
 
@@ -249,7 +249,7 @@ public class DefaultFuture extends CompletableFuture<Object> {
 
     private String getTimeoutMessage(boolean scan) { //超时提示信息（包含发送请求超时或等待服务响应超时）
         long nowTimestamp = System.currentTimeMillis();
-        return (sent > 0 ? "Waiting server-side response timeout" : "Sending request timeout in client-side")
+        return (sent > 0 ? "Waiting server-side response timeout" : "Sending request timeout in client-side")  //以sent是否有值来判断是响应超时还是请求超时
                 + (scan ? " by scan timer" : "") + ". start time: "
                 + (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date(start))) + ", end time: "
                 + (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date(nowTimestamp))) + ","
@@ -275,7 +275,7 @@ public class DefaultFuture extends CompletableFuture<Object> {
         }
 
         @Override
-        public void run(Timeout timeout) {
+        public void run(Timeout timeout) { //任务超时的时候，该方法会被调用
             DefaultFuture future = DefaultFuture.getFuture(requestID); //从缓存中获取请求id对应的DefaultFuture
             if (future == null || future.isDone()) {
                 return;
@@ -292,9 +292,9 @@ public class DefaultFuture extends CompletableFuture<Object> {
             // create exception response.
             Response timeoutResponse = new Response(future.getId()); //请求和响应维护着同一个id值
             // set timeout status.
-            timeoutResponse.setStatus(future.isSent() ? Response.SERVER_TIMEOUT : Response.CLIENT_TIMEOUT);
+            timeoutResponse.setStatus(future.isSent() ? Response.SERVER_TIMEOUT : Response.CLIENT_TIMEOUT); //判断是服务端超时，还是客户端超时
             timeoutResponse.setErrorMessage(future.getTimeoutMessage(true));
-            // handle response.
+            // handle response.（处理响应）
             DefaultFuture.received(future.getChannel(), timeoutResponse, true);
         }
     }

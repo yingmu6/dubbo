@@ -56,16 +56,16 @@ public class DefaultFutureTest {
      * after a future is timeout , time is : 2018-06-21 15:06:22
      * <p>
      * The exception info print like:
-     * Sending request timeout in client-side by scan timer.
+     * Sending request timeout in client-side by scan timer.（通过扫描计时器在客户端发送请求超时。）
      * start time: 2018-06-21 15:13:02.215, end time: 2018-06-21 15:13:07.231...
      */
     @Test
     @Disabled
-    public void timeoutNotSend() throws Exception { //todo @pause
+    public void timeoutNotSend() throws Exception {
         final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         System.out.println("before a future is create , time is : " + LocalDateTime.now().format(formatter));
         // timeout after 5 seconds.
-        DefaultFuture f = defaultFuture(5000); //设置了超时时间
+        DefaultFuture f = defaultFuture(5000); //设置了超时时间（会设置超时检查任务，检查超时）
         int i = 0;
         while (!f.isDone()) { //循环sleep，直到任务完成，触发超时
             //spin
@@ -76,10 +76,10 @@ public class DefaultFutureTest {
 
         // get operate will throw a timeout exception, because the future is timeout.
         try {
-            f.get();
+            f.get(); //阻塞着去获取结果
         } catch (Exception e) {
             Assertions.assertTrue(e.getCause() instanceof TimeoutException, "catch exception is not timeout exception!");
-            System.out.println(e.getMessage());
+            System.out.println(e.getMessage()); //输出的信息如："org.apache.dubbo.remoting.TimeoutException: Sending request timeout in client-side by scan timer. start time: 2022-11-28 13:49:32.347, end time: 2022-11-28 13:49:37.364, elapsed: 5017 ms, timeout: 5000 ms, request: Request [id=0, version=null, twoway=true, event=false, broken=false, data=null], channel: null -> null"
         }
     }
 
@@ -114,7 +114,7 @@ public class DefaultFutureTest {
             f.get();
         } catch (Exception e) {
             Assertions.assertTrue(e.getCause() instanceof TimeoutException, "catch exception is not timeout exception!");
-            System.out.println(e.getMessage());
+            System.out.println(e.getMessage()); //输出的信息如："org.apache.dubbo.remoting.TimeoutException: Waiting server-side response timeout by scan timer. start time: 2022-11-28 13:51:38.592, end time: 2022-11-28 13:51:43.609, client elapsed: 1 ms, server elapsed: 5016 ms, timeout: 5000 ms, request: Request [id=10, version=null, twoway=true, event=false, broken=false, data=null], channel: null -> null"
         }
     }
 

@@ -46,10 +46,10 @@ public interface Timeout { //定时器处理类
 
     /**
      * Attempts to cancel the {@link TimerTask} associated with this handle.
-     * If the task has been executed or cancelled already, it will return with
-     * no side effect.
+     * If the task has been executed or cancelled already, it will return with //如果已经被执行或取消，它将返回而没有副作用
+     * no side effect（没有副作用）.
      *
-     * @return True if the cancellation completed successfully, otherwise false
+     * @return True if the cancellation completed successfully, otherwise false（取消成功返回true，否则返回false）
      */
     boolean cancel();
 }
