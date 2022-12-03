@@ -124,7 +124,7 @@ public class DefaultFuture extends CompletableFuture<Object> {
         return CHANNELS.containsValue(channel);
     }
 
-    public static void sent(Channel channel, Request request) {
+    public static void sent(Channel channel, Request request) { //发送请求信息
         DefaultFuture future = FUTURES.get(request.getId());
         if (future != null) {
             future.doSent();
