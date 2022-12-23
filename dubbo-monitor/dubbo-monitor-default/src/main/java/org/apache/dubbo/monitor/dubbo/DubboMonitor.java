@@ -63,7 +63,7 @@ public class DubboMonitor implements Monitor {
 
     private final MonitorService monitorService;
 
-    private final ConcurrentMap<Statistics, AtomicReference<long[]>> statisticsMap = new ConcurrentHashMap<Statistics, AtomicReference<long[]>>();
+    private final ConcurrentMap<Statistics, AtomicReference<long[]>> statisticsMap = new ConcurrentHashMap<Statistics, AtomicReference<long[]>>(); //
 
     public DubboMonitor(Invoker<MonitorService> monitorInvoker, MonitorService monitorService) {
         this.monitorInvoker = monitorInvoker;
@@ -78,7 +78,7 @@ public class DubboMonitor implements Monitor {
             } catch (Throwable t) {
                 logger.error("Unexpected error occur at send statistic, cause: " + t.getMessage(), t);
             }
-        }, monitorInterval, monitorInterval, TimeUnit.MILLISECONDS);
+        }, monitorInterval, monitorInterval, TimeUnit.MILLISECONDS); //周期性执行任务
     }
 
     public void send() {
@@ -91,7 +91,7 @@ public class DubboMonitor implements Monitor {
             // get statistics data
             Statistics statistics = entry.getKey();
             AtomicReference<long[]> reference = entry.getValue();
-            long[] numbers = reference.get();
+            long[] numbers = reference.get();//提取各个元素的统计值
             long success = numbers[0];
             long failure = numbers[1];
             long input = numbers[2];
@@ -105,7 +105,7 @@ public class DubboMonitor implements Monitor {
             String protocol = getUrl().getParameter(DEFAULT_PROTOCOL);
 
             // send statistics data
-            URL url = statistics.getUrl()
+            URL url = statistics.getUrl() //按键值对的形式设置到URL参数中
                     .addParameters(MonitorService.TIMESTAMP, timestamp,
                             MonitorService.SUCCESS, String.valueOf(success),
                             MonitorService.FAILURE, String.valueOf(failure),
@@ -119,7 +119,7 @@ public class DubboMonitor implements Monitor {
                             MonitorService.MAX_CONCURRENT, String.valueOf(maxConcurrent),
                             DEFAULT_PROTOCOL, protocol
                     );
-            monitorService.collect(url);
+            monitorService.collect(url); //收集监控的数据
 
             // reset
             long[] current;
