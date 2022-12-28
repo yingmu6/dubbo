@@ -1413,7 +1413,7 @@ class URL implements Serializable {
             }
         }
         String path;
-        if (useService) { //是否使用服务key作为接口名称
+        if (useService) { //是否使用服务key作为path值
             path = getServiceKey();
         } else {
             path = getPath();

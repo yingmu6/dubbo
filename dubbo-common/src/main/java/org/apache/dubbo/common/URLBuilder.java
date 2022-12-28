@@ -333,7 +333,7 @@ public final class URLBuilder { //URL的构造器
         return this;
     }
 
-    public URLBuilder addParameters(String... pairs) {
+    public URLBuilder addParameters(String... pairs) { //添加多个键值对的参数
         if (pairs == null || pairs.length == 0) {
             return this;
         }

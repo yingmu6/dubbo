@@ -50,19 +50,25 @@ public class DubboMonitorFactoryTest {
     }
 
     @Test
-    public void testCreateMonitor() {
+    public void testCreateMonitor() { //测试监控器工厂创建监控器
         URL urlWithoutPath = URL.valueOf("http://10.10.10.11");
         Monitor monitor = dubboMonitorFactory.createMonitor(urlWithoutPath);
-        assertThat(monitor, not(nullValue()));
+        assertThat(monitor, not(nullValue())); //Monitor使用工厂模式创建了对象，所以此处不为null
 
-        URL urlWithFilterKey = URL.valueOf("http://10.10.10.11/").addParameter(REFERENCE_FILTER_KEY, "testFilter");
+        URL urlWithFilterKey = URL.valueOf("http://10.10.10.11/").addParameter(REFERENCE_FILTER_KEY, "testFilter"); //指定了过滤器
         monitor = dubboMonitorFactory.createMonitor(urlWithFilterKey);
 
         assertThat(monitor, not(nullValue()));
         ArgumentCaptor<Invoker> invokerArgumentCaptor = ArgumentCaptor.forClass(Invoker.class);
-        verify(proxyFactory, atLeastOnce()).getProxy(invokerArgumentCaptor.capture());
+        verify(proxyFactory, atLeastOnce()).getProxy(invokerArgumentCaptor.capture()); //
 
         Invoker invoker = invokerArgumentCaptor.getValue();
         assertThat(invoker.getUrl().getParameter(REFERENCE_FILTER_KEY), containsString("testFilter"));
     }
+
+    /**
+     * Mockito 的atLeastOnce至少一次地验证
+     * https://www.null123.com/article/detail-272821.html
+     * https://blog.csdn.net/hongchangfirst/article/details/80453203
+     */
 }

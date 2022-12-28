@@ -316,7 +316,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
                         }
                     }
                 }
-            } else { // assemble URL from register center's configuration
+            } else { // assemble（组装） URL from register center's configuration
                 // if protocols not injvm checkRegistry
                 if (!LOCAL_PROTOCOL.equalsIgnoreCase(getProtocol())) {
                     checkRegistry();
@@ -324,7 +324,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
                     if (CollectionUtils.isNotEmpty(us)) {
                         for (URL u : us) {
                             URL monitorUrl = ConfigValidationUtils.loadMonitor(this, u);
-                            if (monitorUrl != null) {
+                            if (monitorUrl != null) { //若配置了监控中心，则在url设置monitor参数
                                 map.put(MONITOR_KEY, URL.encode(monitorUrl.toFullString()));
                             }
                             urls.add(u.addParameterAndEncoded(REFER_KEY, StringUtils.toQueryString(map))); //将服务接口相关的参数编码后存入url的附加参数中

@@ -46,14 +46,14 @@ public abstract class AbstractMonitorFactory implements MonitorFactory {
     private static final Logger logger = LoggerFactory.getLogger(AbstractMonitorFactory.class);
 
     /**
-     * The lock for getting monitor center
+     * The lock for getting monitor center (用于获取监控中心的锁)
      */
     private static final ReentrantLock LOCK = new ReentrantLock();
 
     /**
      * The monitor centers Map<RegistryAddress, Registry>
      */
-    private static final Map<String, Monitor> MONITORS = new ConcurrentHashMap<String, Monitor>();
+    private static final Map<String, Monitor> MONITORS = new ConcurrentHashMap<String, Monitor>(); //服务key与监控器的缓存
 
     private static final Map<String, CompletableFuture<Monitor>> FUTURES = new ConcurrentHashMap<String, CompletableFuture<Monitor>>();
 
@@ -72,7 +72,7 @@ public abstract class AbstractMonitorFactory implements MonitorFactory {
         String key = url.toServiceStringWithoutResolving();
         Monitor monitor = MONITORS.get(key);
         Future<Monitor> future = FUTURES.get(key);
-        if (monitor != null || future != null) {
+        if (monitor != null || future != null) { //若缓存中存在，则从缓存中获取监控器
             return monitor;
         }
 
@@ -80,14 +80,14 @@ public abstract class AbstractMonitorFactory implements MonitorFactory {
         try {
             monitor = MONITORS.get(key);
             future = FUTURES.get(key);
-            if (monitor != null || future != null) {
+            if (monitor != null || future != null) { //再次尝试从缓存中获取监控器
                 return monitor;
             }
 
-            final URL monitorUrl = url;
-            final CompletableFuture<Monitor> completableFuture = CompletableFuture.supplyAsync(() -> AbstractMonitorFactory.this.createMonitor(monitorUrl));
+            final URL monitorUrl = url; //若缓存中不存在，则创建监控器
+            final CompletableFuture<Monitor> completableFuture = CompletableFuture.supplyAsync(() -> AbstractMonitorFactory.this.createMonitor(monitorUrl)); //异步地创建监控器
             FUTURES.put(key, completableFuture);
-            completableFuture.thenRunAsync(new MonitorListener(key), EXECUTOR);
+            completableFuture.thenRunAsync(new MonitorListener(key), EXECUTOR); //异步执行给定的动作
 
             return null;
         } finally {
@@ -96,10 +96,10 @@ public abstract class AbstractMonitorFactory implements MonitorFactory {
         }
     }
 
-    protected abstract Monitor createMonitor(URL url);
+    protected abstract Monitor createMonitor(URL url); //创建监控器的具体实现交由子类执行
 
 
-    class MonitorListener implements Runnable {
+    class MonitorListener implements Runnable { //监控中心的监听器
 
         private String key;
 
@@ -111,7 +111,7 @@ public abstract class AbstractMonitorFactory implements MonitorFactory {
         public void run() {
             try {
                 CompletableFuture<Monitor> completableFuture = AbstractMonitorFactory.FUTURES.get(key);
-                AbstractMonitorFactory.MONITORS.put(key, completableFuture.get());
+                AbstractMonitorFactory.MONITORS.put(key, completableFuture.get()); //异步获取到监听器，并设置到缓存中
                 AbstractMonitorFactory.FUTURES.remove(key);
             } catch (InterruptedException e) {
                 logger.warn("Thread was interrupted unexpectedly, monitor will never be got.");

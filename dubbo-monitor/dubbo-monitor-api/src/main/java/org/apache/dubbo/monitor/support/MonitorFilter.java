@@ -58,7 +58,7 @@ public class MonitorFilter implements Filter, Filter.Listener {
     private static final String MONITOR_FILTER_START_TIME = "monitor_filter_start_time";
 
     /**
-     * The Concurrent counter
+     * The Concurrent counter（并发的计数器）
      */
     private final ConcurrentMap<String, AtomicInteger> concurrents = new ConcurrentHashMap<String, AtomicInteger>();
 
@@ -84,7 +84,7 @@ public class MonitorFilter implements Filter, Filter.Listener {
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
         if (invoker.getUrl().hasParameter(MONITOR_KEY)) {
             invocation.put(MONITOR_FILTER_START_TIME, System.currentTimeMillis());
-            getConcurrent(invoker, invocation).incrementAndGet(); // count up
+            getConcurrent(invoker, invocation).incrementAndGet(); // count up（将计数器递增1）
         }
         return invoker.invoke(invocation); // proceed invocation chain
     }
@@ -97,7 +97,7 @@ public class MonitorFilter implements Filter, Filter.Listener {
 
     @Override
     public void onResponse(Result result, Invoker<?> invoker, Invocation invocation) {
-        if (invoker.getUrl().hasParameter(MONITOR_KEY)) {
+        if (invoker.getUrl().hasParameter(MONITOR_KEY)) { //参数MONITOR_KEY是在ReferenceConfig#createProxy设置的
             collect(invoker, invocation, result, RpcContext.getContext().getRemoteHost(), (long) invocation.get(MONITOR_FILTER_START_TIME), false);
             getConcurrent(invoker, invocation).decrementAndGet(); // count down
         }

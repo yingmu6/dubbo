@@ -34,7 +34,7 @@ public class AbstractMonitorFactoryTest {
     private MonitorFactory monitorFactory = new AbstractMonitorFactory() {
 
         protected Monitor createMonitor(final URL url) {
-            return new Monitor() {
+            return new Monitor() { //匿名类
 
                 public URL getUrl() {
                     return url;
@@ -61,7 +61,7 @@ public class AbstractMonitorFactoryTest {
     };
 
     @Test
-    public void testMonitorFactoryCache() throws Exception {
+    public void testMonitorFactoryCache() throws Exception { //todo @pause-2022/12/28
         URL url = URL.valueOf("dubbo://" + NetUtils.getLocalAddress().getHostAddress() + ":2233");
         Monitor monitor1 = monitorFactory.getMonitor(url);
         Monitor monitor2 = monitorFactory.getMonitor(url);
