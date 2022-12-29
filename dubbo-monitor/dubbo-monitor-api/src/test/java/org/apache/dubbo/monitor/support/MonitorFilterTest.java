@@ -59,7 +59,7 @@ public class MonitorFilterTest {
 
     private final Invoker<MonitorService> serviceInvoker = new Invoker<MonitorService>() {
         @Override
-        public Class<MonitorService> getInterface() {
+        public Class<MonitorService> getInterface() { //指明调用的接口
             return MonitorService.class;
         }
 
@@ -109,7 +109,7 @@ public class MonitorFilterTest {
                 }
 
                 public List<URL> lookup(URL query) {
-                    return Arrays.asList(MonitorFilterTest.this.lastStatistics);
+                    return Arrays.asList(MonitorFilterTest.this.lastStatistics); //返回一个测试url（测试时使用）
                 }
             };
         }
@@ -122,14 +122,14 @@ public class MonitorFilterTest {
         Invocation invocation = new RpcInvocation("aaa", MonitorService.class.getName(), new Class<?>[0], new Object[0]);
         RpcContext.getContext().setRemoteAddress(NetUtils.getLocalHost(), 20880).setLocalAddress(NetUtils.getLocalHost(), 2345);
         Result result = monitorFilter.invoke(serviceInvoker, invocation);
-        result.whenCompleteWithContext((r, t) -> {
+        result.whenCompleteWithContext((r, t) -> { //在完成调用时，主动进行方法回调
             if (t == null) {
                 monitorFilter.onResponse(r, serviceInvoker, invocation);
             } else {
                 monitorFilter.onError(t, serviceInvoker, invocation);
             }
         });
-        while (lastStatistics == null) {
+        while (lastStatistics == null) { //lastStatistics是在哪里设置的值？
             Thread.sleep(10);
         }
         Assertions.assertEquals("abc", lastStatistics.getParameter(MonitorService.APPLICATION));

@@ -70,7 +70,7 @@ public abstract class AbstractMonitorFactory implements MonitorFactory {
     public Monitor getMonitor(URL url) {
         url = url.setPath(MonitorService.class.getName()).addParameter(INTERFACE_KEY, MonitorService.class.getName());
         String key = url.toServiceStringWithoutResolving();
-        Monitor monitor = MONITORS.get(key);
+        Monitor monitor = MONITORS.get(key); //URL相同，对应的key也相同
         Future<Monitor> future = FUTURES.get(key);
         if (monitor != null || future != null) { //若缓存中存在，则从缓存中获取监控器
             return monitor;
@@ -89,7 +89,7 @@ public abstract class AbstractMonitorFactory implements MonitorFactory {
             FUTURES.put(key, completableFuture);
             completableFuture.thenRunAsync(new MonitorListener(key), EXECUTOR); //异步执行给定的动作
 
-            return null;
+            return null; //返回null值，要么等待一会儿从缓存中获取值，要么从缓存中获取CompletableFuture去获取值
         } finally {
             // unlock
             LOCK.unlock();

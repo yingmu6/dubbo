@@ -146,7 +146,7 @@ public class DubboMonitor implements Monitor {
     }
 
     @Override
-    public void collect(URL url) {
+    public void collect(URL url) { //todo @pause
         // data to collect from url
         int success = url.getParameter(MonitorService.SUCCESS, 0);
         int failure = url.getParameter(MonitorService.FAILURE, 0);

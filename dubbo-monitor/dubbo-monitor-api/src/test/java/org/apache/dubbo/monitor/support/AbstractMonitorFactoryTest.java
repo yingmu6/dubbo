@@ -61,11 +61,11 @@ public class AbstractMonitorFactoryTest {
     };
 
     @Test
-    public void testMonitorFactoryCache() throws Exception { //todo @pause-2022/12/28
+    public void testMonitorFactoryCache() throws Exception {
         URL url = URL.valueOf("dubbo://" + NetUtils.getLocalAddress().getHostAddress() + ":2233");
         Monitor monitor1 = monitorFactory.getMonitor(url);
         Monitor monitor2 = monitorFactory.getMonitor(url);
-        if (monitor1 == null || monitor2 == null) {
+        if (monitor1 == null || monitor2 == null) { //若直接去获取值的话，可能为空，需要等一会儿或用缓存中的CompletableFuture去获取值
             Thread.sleep(2000);
             monitor1 = monitorFactory.getMonitor(url);
             monitor2 = monitorFactory.getMonitor(url);
@@ -90,14 +90,14 @@ public class AbstractMonitorFactoryTest {
     public void testMonitorFactoryGroupCache() throws Exception {
         URL url1 = URL.valueOf("dubbo://" + NetUtils.getLocalHost() + ":2233?group=aaa");
         URL url2 = URL.valueOf("dubbo://" + NetUtils.getLocalHost() + ":2233?group=bbb");
-        Monitor monitor1 = monitorFactory.getMonitor(url1);
-        Monitor monitor2 = monitorFactory.getMonitor(url2);
+        Monitor monitor1 = monitorFactory.getMonitor(url1); //对应的缓存key：dubbo://192.168.1.114:2233/aaa/org.apache.dubbo.monitor.MonitorService
+        Monitor monitor2 = monitorFactory.getMonitor(url2); //对应的缓存key：dubbo://192.168.1.114:2233/bbb/org.apache.dubbo.monitor.MonitorService
         if (monitor1 == null || monitor2 == null) {
             Thread.sleep(2000);
             monitor1 = monitorFactory.getMonitor(url1);
             monitor2 = monitorFactory.getMonitor(url2);
         }
-        Assertions.assertNotSame(monitor1, monitor2);
+        Assertions.assertNotSame(monitor1, monitor2); //因为group不同，所以产生的url就不同，所以得到的缓存就不一样
     }
 
 }

@@ -189,7 +189,7 @@ public interface Result extends Serializable {
 
     /**
      * Add a callback which can be triggered when the RPC call finishes.
-     * (添加一个回调，在RPC完成调用后触发)
+     * (添加方法回调，在RPC完成调用后触发)
      * <p>
      * Just as the method name implies（意味着）, this method will guarantee the callback being triggered under the same context as when the call was started,
      * see implementation in {@link Result#whenCompleteWithContext(BiConsumer)}
@@ -197,7 +197,7 @@ public interface Result extends Serializable {
      * @param fn
      * @return
      */
-    Result whenCompleteWithContext(BiConsumer<Result, Throwable> fn); //该异步方法，在AsyncRpcResult中被实现
+    Result whenCompleteWithContext(BiConsumer<Result, Throwable> fn); //在完成调用时，主动进行方法回调
 
     <U> CompletableFuture<U> thenApply(Function<Result, ? extends U> fn); //在AsyncRpcResult中被实现
 

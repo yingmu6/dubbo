@@ -91,7 +91,7 @@ public class MonitorFilter implements Filter, Filter.Listener {
 
     // concurrent counter
     private AtomicInteger getConcurrent(Invoker<?> invoker, Invocation invocation) {
-        String key = invoker.getInterface().getName() + "." + invocation.getMethodName();
+        String key = invoker.getInterface().getName() + "." + invocation.getMethodName(); //接口名+方法名作为统计的key
         return concurrents.computeIfAbsent(key, k -> new AtomicInteger());
     }
 
@@ -128,8 +128,8 @@ public class MonitorFilter implements Filter, Filter.Listener {
             if (monitor == null) {
                 return;
             }
-            URL statisticsURL = createStatisticsUrl(invoker, invocation, result, remoteHost, start, error);
-            monitor.collect(statisticsURL);
+            URL statisticsURL = createStatisticsUrl(invoker, invocation, result, remoteHost, start, error); //URL的值如：count://192.168.45.154/org.apache.dubbo.monitor.MonitorService/aaa?application=abc&concurrent=1&elapsed=275921&group=&input=&interface=org.apache.dubbo.monitor.MonitorService&method=aaa&output=&provider=192.168.45.154:20880&success=1&version=
+            monitor.collect(statisticsURL); //使用当前监控器工厂创建监控器，并进行数据采集
         } catch (Throwable t) {
             logger.warn("Failed to monitor count service " + invoker.getUrl() + ", cause: " + t.getMessage(), t);
         }
@@ -148,7 +148,7 @@ public class MonitorFilter implements Filter, Filter.Listener {
      */
     private URL createStatisticsUrl(Invoker<?> invoker, Invocation invocation, Result result, String remoteHost, long start, boolean error) {
         // ---- service statistics ----
-        long elapsed = System.currentTimeMillis() - start; // invocation cost
+        long elapsed = System.currentTimeMillis() - start; // invocation cost（调用耗费的时间，start为在invoke调用前的时间戳）
         int concurrent = getConcurrent(invoker, invocation).get(); // current concurrent count
         String application = invoker.getUrl().getParameter(APPLICATION_KEY);
         String service = invoker.getInterface().getName(); // service name
@@ -158,7 +158,7 @@ public class MonitorFilter implements Filter, Filter.Listener {
 
         int localPort;
         String remoteKey, remoteValue;
-        if (CONSUMER_SIDE.equals(invoker.getUrl().getParameter(SIDE_KEY))) {
+        if (CONSUMER_SIDE.equals(invoker.getUrl().getParameter(SIDE_KEY))) { //todo @pause
             // ---- for service consumer ----
             localPort = 0;
             remoteKey = MonitorService.PROVIDER;

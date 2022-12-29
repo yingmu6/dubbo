@@ -1414,7 +1414,7 @@ class URL implements Serializable {
         }
         String path;
         if (useService) { //是否使用服务key作为path值
-            path = getServiceKey();
+            path = getServiceKey(); //服务key，在有group时，是会带上group值的，如group/xxx.service
         } else {
             path = getPath();
         }
@@ -1423,7 +1423,7 @@ class URL implements Serializable {
             buf.append(path);
         }
 
-        if (appendParameter) {
+        if (appendParameter) { //是否需要添加附加参数
             buildParameters(buf, true, parameters);
         }
         return buf.toString();
