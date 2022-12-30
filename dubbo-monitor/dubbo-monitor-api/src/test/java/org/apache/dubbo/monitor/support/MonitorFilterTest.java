@@ -129,16 +129,16 @@ public class MonitorFilterTest {
                 monitorFilter.onError(t, serviceInvoker, invocation);
             }
         });
-        while (lastStatistics == null) { //lastStatistics是在哪里设置的值？
-            Thread.sleep(10);
+        while (lastStatistics == null) { //lastStatistics是在哪里设置的值？ 解答：调用monitorFilter.onResponse时，会调用MonitorFilter#collect方法，最终会调用当前匿名类MonitorFactory中的collect方法进行url赋值
+            Thread.sleep(10); //lastStatistics 此处可能为空，是因为调用可能还没有完成，还没有回调onResponse()、onError()
         }
-        Assertions.assertEquals("abc", lastStatistics.getParameter(MonitorService.APPLICATION));
+        Assertions.assertEquals("abc", lastStatistics.getParameter(MonitorService.APPLICATION)); //URL信息是通过serviceInvoker的url信息构建的
         Assertions.assertEquals(MonitorService.class.getName(), lastStatistics.getParameter(MonitorService.INTERFACE));
         Assertions.assertEquals("aaa", lastStatistics.getParameter(MonitorService.METHOD));
         Assertions.assertEquals(NetUtils.getLocalHost() + ":20880", lastStatistics.getParameter(MonitorService.PROVIDER));
         Assertions.assertEquals(NetUtils.getLocalHost(), lastStatistics.getAddress());
         Assertions.assertNull(lastStatistics.getParameter(MonitorService.CONSUMER));
-        Assertions.assertEquals(1, lastStatistics.getParameter(MonitorService.SUCCESS, 0));
+        Assertions.assertEquals(1, lastStatistics.getParameter(MonitorService.SUCCESS, 0)); //todo @pause
         Assertions.assertEquals(0, lastStatistics.getParameter(MonitorService.FAILURE, 0));
         Assertions.assertEquals(1, lastStatistics.getParameter(MonitorService.CONCURRENT, 0));
         Assertions.assertEquals(invocation, lastInvocation);

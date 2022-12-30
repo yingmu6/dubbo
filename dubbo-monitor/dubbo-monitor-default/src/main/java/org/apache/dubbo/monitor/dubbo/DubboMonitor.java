@@ -146,7 +146,7 @@ public class DubboMonitor implements Monitor {
     }
 
     @Override
-    public void collect(URL url) { //todo @pause
+    public void collect(URL url) {
         // data to collect from url
         int success = url.getParameter(MonitorService.SUCCESS, 0);
         int failure = url.getParameter(MonitorService.FAILURE, 0);
@@ -162,7 +162,7 @@ public class DubboMonitor implements Monitor {
         long[] update = new long[LENGTH];
         do {
             current = reference.get();
-            if (current == null) {
+            if (current == null) { //缓存中不存在统计的值
                 update[0] = success;
                 update[1] = failure;
                 update[2] = input;
@@ -173,7 +173,7 @@ public class DubboMonitor implements Monitor {
                 update[7] = output;
                 update[8] = elapsed;
                 update[9] = concurrent;
-            } else {
+            } else {             //缓存中存在统计的值，则将url中的值与缓存中的值处理
                 update[0] = current[0] + success;
                 update[1] = current[1] + failure;
                 update[2] = current[2] + input;

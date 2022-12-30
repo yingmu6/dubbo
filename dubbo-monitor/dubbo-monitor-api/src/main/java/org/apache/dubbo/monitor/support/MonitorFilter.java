@@ -58,9 +58,9 @@ public class MonitorFilter implements Filter, Filter.Listener {
     private static final String MONITOR_FILTER_START_TIME = "monitor_filter_start_time";
 
     /**
-     * The Concurrent counter（并发的计数器）
+     * The Concurrent counter（数据格式：ConcurrentMap<serviceName+"."+methodName, AtomicInteger>）
      */
-    private final ConcurrentMap<String, AtomicInteger> concurrents = new ConcurrentHashMap<String, AtomicInteger>();
+    private final ConcurrentMap<String, AtomicInteger> concurrents = new ConcurrentHashMap<String, AtomicInteger>(); //并发调用的计数器
 
     /**
      * The MonitorFactory
@@ -84,7 +84,7 @@ public class MonitorFilter implements Filter, Filter.Listener {
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
         if (invoker.getUrl().hasParameter(MONITOR_KEY)) {
             invocation.put(MONITOR_FILTER_START_TIME, System.currentTimeMillis());
-            getConcurrent(invoker, invocation).incrementAndGet(); // count up（将计数器递增1）
+            getConcurrent(invoker, invocation).incrementAndGet(); // count up（获取服务对应的计数器，并递增1）
         }
         return invoker.invoke(invocation); // proceed invocation chain
     }
@@ -99,7 +99,7 @@ public class MonitorFilter implements Filter, Filter.Listener {
     public void onResponse(Result result, Invoker<?> invoker, Invocation invocation) {
         if (invoker.getUrl().hasParameter(MONITOR_KEY)) { //参数MONITOR_KEY是在ReferenceConfig#createProxy设置的
             collect(invoker, invocation, result, RpcContext.getContext().getRemoteHost(), (long) invocation.get(MONITOR_FILTER_START_TIME), false);
-            getConcurrent(invoker, invocation).decrementAndGet(); // count down
+            getConcurrent(invoker, invocation).decrementAndGet(); // count down（调用完成后，将服务对应的计数器减1）
         }
     }
 
@@ -136,7 +136,7 @@ public class MonitorFilter implements Filter, Filter.Listener {
     }
 
     /**
-     * Create statistics url
+     * Create statistics url（构建用于统计的URL）
      *
      * @param invoker
      * @param invocation
@@ -154,16 +154,16 @@ public class MonitorFilter implements Filter, Filter.Listener {
         String service = invoker.getInterface().getName(); // service name
         String method = RpcUtils.getMethodName(invocation); // method name
         String group = invoker.getUrl().getParameter(GROUP_KEY);
-        String version = invoker.getUrl().getParameter(VERSION_KEY);
+        String version = invoker.getUrl().getParameter(VERSION_KEY); //从调用者Invoker获取url信息，取出相关值，构建新的统计使用的url
 
         int localPort;
         String remoteKey, remoteValue;
-        if (CONSUMER_SIDE.equals(invoker.getUrl().getParameter(SIDE_KEY))) { //todo @pause
+        if (CONSUMER_SIDE.equals(invoker.getUrl().getParameter(SIDE_KEY))) { //消费端
             // ---- for service consumer ----
             localPort = 0;
             remoteKey = MonitorService.PROVIDER;
             remoteValue = invoker.getUrl().getAddress();
-        } else {
+        } else {                                                             //提供端
             // ---- for service provider ----
             localPort = invoker.getUrl().getPort();
             remoteKey = MonitorService.CONSUMER;
