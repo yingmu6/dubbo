@@ -138,7 +138,7 @@ public class MonitorFilterTest {
         Assertions.assertEquals(NetUtils.getLocalHost() + ":20880", lastStatistics.getParameter(MonitorService.PROVIDER));
         Assertions.assertEquals(NetUtils.getLocalHost(), lastStatistics.getAddress());
         Assertions.assertNull(lastStatistics.getParameter(MonitorService.CONSUMER));
-        Assertions.assertEquals(1, lastStatistics.getParameter(MonitorService.SUCCESS, 0)); //todo @pause
+        Assertions.assertEquals(1, lastStatistics.getParameter(MonitorService.SUCCESS, 0)); //此处成功的次数为啥为1？解：来自于MonitorFilter#createStatisticsUrl(invoker, invocation, result, remoteHost, start, error);
         Assertions.assertEquals(0, lastStatistics.getParameter(MonitorService.FAILURE, 0));
         Assertions.assertEquals(1, lastStatistics.getParameter(MonitorService.CONCURRENT, 0));
         Assertions.assertEquals(invocation, lastInvocation);
