@@ -130,7 +130,7 @@ public class MonitorFilter implements Filter, Filter.Listener {
             }
             URL statisticsURL = createStatisticsUrl(invoker, invocation, result, remoteHost, start, error); //URL的值如：count://192.168.45.154/org.apache.dubbo.monitor.MonitorService/aaa?application=abc&concurrent=1&elapsed=275921&group=&input=&interface=org.apache.dubbo.monitor.MonitorService&method=aaa&output=&provider=192.168.45.154:20880&success=1&version=
             monitor.collect(statisticsURL); //使用当前监控器工厂创建监控器，并进行数据采集
-        } catch (Throwable t) {
+        } catch (Throwable t) { //若有采集异常，则进行捕获做提示，但不终止流程
             logger.warn("Failed to monitor count service " + invoker.getUrl() + ", cause: " + t.getMessage(), t);
         }
     }

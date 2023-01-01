@@ -325,7 +325,7 @@ public class AsyncRpcResult implements Result { //异步响应结果
     public static AsyncRpcResult newDefaultAsyncResult(Object value, Throwable t, Invocation invocation) {
         CompletableFuture<AppResponse> future = new CompletableFuture<>();
         AppResponse result = new AppResponse();
-        if (t != null) {
+        if (t != null) { //判断是否有异常，设置结果值
             result.setException(t);
         } else {
             result.setValue(value);

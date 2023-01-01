@@ -106,7 +106,7 @@ public class DubboMonitorTest {
                 .addParameter(MonitorService.MAX_ELAPSED, 3)
                 .addParameter(MonitorService.CONCURRENT, 1)
                 .addParameter(MonitorService.MAX_CONCURRENT, 1)
-                .build();
+                .build(); //构建URL
         monitor.collect(statistics);
         monitor.send();
         while (lastStatistics == null) {
@@ -119,7 +119,7 @@ public class DubboMonitorTest {
         Assertions.assertEquals("MemberService", lastStatistics.getParameter(MonitorService.INTERFACE));
         Assertions.assertEquals("findPerson", lastStatistics.getParameter(MonitorService.METHOD));
         Assertions.assertEquals("10.20.153.11", lastStatistics.getParameter(MonitorService.CONSUMER));
-        Assertions.assertEquals("1", lastStatistics.getParameter(MonitorService.SUCCESS));
+        Assertions.assertEquals("1", lastStatistics.getParameter(MonitorService.SUCCESS)); //todo @pause 此处为啥run和debug的结果不一样？
         Assertions.assertEquals("0", lastStatistics.getParameter(MonitorService.FAILURE));
         Assertions.assertEquals("3", lastStatistics.getParameter(MonitorService.ELAPSED));
         Assertions.assertEquals("3", lastStatistics.getParameter(MonitorService.MAX_ELAPSED));

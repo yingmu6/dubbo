@@ -116,7 +116,7 @@ public class MonitorFilterTest {
     };
 
     @Test
-    public void testFilter() throws Exception {
+    public void testFilter() throws Exception { //测试MonitorFilter使用
         MonitorFilter monitorFilter = new MonitorFilter();
         monitorFilter.setMonitorFactory(monitorFactory);
         Invocation invocation = new RpcInvocation("aaa", MonitorService.class.getName(), new Class<?>[0], new Object[0]);
@@ -145,26 +145,26 @@ public class MonitorFilterTest {
     }
 
     @Test
-    public void testSkipMonitorIfNotHasKey() {
+    public void testSkipMonitorIfNotHasKey() { //测试url没有monitor参数时，跳过监控统计
         MonitorFilter monitorFilter = new MonitorFilter();
-        MonitorFactory mockMonitorFactory = mock(MonitorFactory.class);
+        MonitorFactory mockMonitorFactory = mock(MonitorFactory.class); //创建MonitorFactory的Mock对象
         monitorFilter.setMonitorFactory(mockMonitorFactory);
         Invocation invocation = new RpcInvocation("aaa", MonitorService.class.getName(), new Class<?>[0], new Object[0]);
         Invoker invoker = mock(Invoker.class);
-        given(invoker.getUrl()).willReturn(URL.valueOf("dubbo://" + NetUtils.getLocalHost() + ":20880?" + APPLICATION_KEY + "=abc&" + SIDE_KEY + "=" + CONSUMER_SIDE));
+        given(invoker.getUrl()).willReturn(URL.valueOf("dubbo://" + NetUtils.getLocalHost() + ":20880?" + APPLICATION_KEY + "=abc&" + SIDE_KEY + "=" + CONSUMER_SIDE)); //为Mock对象Invoker的getUrl方法设置返回值
 
-        monitorFilter.invoke(invoker, invocation);
+        monitorFilter.invoke(invoker, invocation); //url中没有monitor这个参数，MonitorFilter#concurrents的值
 
         verify(mockMonitorFactory, never()).getMonitor(any(URL.class));
     }
 
     @Test
-    public void testGenericFilter() throws Exception {
+    public void testGenericFilter() throws Exception { //测试泛化调用时的监控统计（与普通调用的统计一样）
         MonitorFilter monitorFilter = new MonitorFilter();
         monitorFilter.setMonitorFactory(monitorFactory);
         Invocation invocation = new RpcInvocation("$invoke", MonitorService.class.getName(), new Class<?>[]{String.class, String[].class, Object[].class}, new Object[]{"xxx", new String[]{}, new Object[]{}});
         RpcContext.getContext().setRemoteAddress(NetUtils.getLocalHost(), 20880).setLocalAddress(NetUtils.getLocalHost(), 2345);
-        Result result = monitorFilter.invoke(serviceInvoker, invocation);
+        Result result = monitorFilter.invoke(serviceInvoker, invocation); //此处的invoke调用，最终会调用当前内部类serviceInvoker的invoke方法
         result.whenCompleteWithContext((r, t) -> {
             if (t == null) {
                 monitorFilter.onResponse(r, serviceInvoker, invocation);
@@ -175,7 +175,7 @@ public class MonitorFilterTest {
         while (lastStatistics == null) {
             Thread.sleep(10);
         }
-        Assertions.assertEquals("abc", lastStatistics.getParameter(MonitorService.APPLICATION));
+        Assertions.assertEquals("abc", lastStatistics.getParameter(MonitorService.APPLICATION)); //lastStatistics值与testFilter类似
         Assertions.assertEquals(MonitorService.class.getName(), lastStatistics.getParameter(MonitorService.INTERFACE));
         Assertions.assertEquals("xxx", lastStatistics.getParameter(MonitorService.METHOD));
         Assertions.assertEquals(NetUtils.getLocalHost() + ":20880", lastStatistics.getParameter(MonitorService.PROVIDER));
@@ -188,16 +188,24 @@ public class MonitorFilterTest {
     }
 
     @Test
-    public void testSafeFailForMonitorCollectFail() {
+    public void testSafeFailForMonitorCollectFail() { //测试Monitor的collect进行采集时，发生异常处理（会捕获异常，仅做提示，不终止流程）
         MonitorFilter monitorFilter = new MonitorFilter();
         MonitorFactory mockMonitorFactory = mock(MonitorFactory.class);
         Monitor mockMonitor = mock(Monitor.class);
-        Mockito.doThrow(new RuntimeException()).when(mockMonitor).collect(any(URL.class));
+        Mockito.doThrow(new RuntimeException("test collect")).when(mockMonitor).collect(any(URL.class)); //在调用Mock对象collect方法时，抛出异常（当前只是声明方法，只有在调用时，mock逻辑才会生效）
 
         monitorFilter.setMonitorFactory(mockMonitorFactory);
-        given(mockMonitorFactory.getMonitor(any(URL.class))).willReturn(mockMonitor);
+        given(mockMonitorFactory.getMonitor(any(URL.class))).willReturn(mockMonitor); //调用MonitorFactory的getMonitor方法时，会返回Mock的Monitor对象
         Invocation invocation = new RpcInvocation("aaa", MonitorService.class.getName(), new Class<?>[0], new Object[0]);
 
-        monitorFilter.invoke(serviceInvoker, invocation);
+        Result result = monitorFilter.invoke(serviceInvoker, invocation); //此处会在哪里调用Monitor的collect方法？解答：collect方法在MonitorFilter的onResponse和onError方法中，而这些方法要主动设置回调才会调用的
+        // csy 新加的测试逻辑
+        result.whenCompleteWithContext((r, t) -> { //在完成调用时，主动进行方法回调
+            if (t == null) {
+                monitorFilter.onResponse(r, serviceInvoker, invocation);
+            } else {
+                monitorFilter.onError(t, serviceInvoker, invocation);
+            }
+        });
     }
 }

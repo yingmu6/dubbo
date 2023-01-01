@@ -63,7 +63,7 @@ public class DubboMonitor implements Monitor {
 
     private final MonitorService monitorService;
 
-    private final ConcurrentMap<Statistics, AtomicReference<long[]>> statisticsMap = new ConcurrentHashMap<Statistics, AtomicReference<long[]>>(); //
+    private final ConcurrentMap<Statistics, AtomicReference<long[]>> statisticsMap = new ConcurrentHashMap<Statistics, AtomicReference<long[]>>(); //统计信息与统计项数组的映射
 
     public DubboMonitor(Invoker<MonitorService> monitorInvoker, MonitorService monitorService) {
         this.monitorInvoker = monitorInvoker;
@@ -87,7 +87,7 @@ public class DubboMonitor implements Monitor {
         }
 
         String timestamp = String.valueOf(System.currentTimeMillis());
-        for (Map.Entry<Statistics, AtomicReference<long[]>> entry : statisticsMap.entrySet()) {
+        for (Map.Entry<Statistics, AtomicReference<long[]>> entry : statisticsMap.entrySet()) { //遍历缓存中统计值
             // get statistics data
             Statistics statistics = entry.getKey();
             AtomicReference<long[]> reference = entry.getValue();
@@ -126,7 +126,7 @@ public class DubboMonitor implements Monitor {
             long[] update = new long[LENGTH];
             do {
                 current = reference.get();
-                if (current == null) {
+                if (current == null) { //进行重置操作
                     update[0] = 0;
                     update[1] = 0;
                     update[2] = 0;
@@ -146,7 +146,7 @@ public class DubboMonitor implements Monitor {
     }
 
     @Override
-    public void collect(URL url) {
+    public void collect(URL url) { //收集监控数据（最终将统计的值写到缓存statisticsMap中）
         // data to collect from url
         int success = url.getParameter(MonitorService.SUCCESS, 0);
         int failure = url.getParameter(MonitorService.FAILURE, 0);
@@ -156,12 +156,12 @@ public class DubboMonitor implements Monitor {
         int concurrent = url.getParameter(MonitorService.CONCURRENT, 0);
         // init atomic reference
         Statistics statistics = new Statistics(url);
-        AtomicReference<long[]> reference = statisticsMap.computeIfAbsent(statistics, k -> new AtomicReference<>());
+        AtomicReference<long[]> reference = statisticsMap.computeIfAbsent(statistics, k -> new AtomicReference<>()); //若Map中不存在key，则创建对应的key/value，否则返回原有的值
         // use CompareAndSet to sum
         long[] current;
         long[] update = new long[LENGTH];
         do {
-            current = reference.get();
+            current = reference.get(); //从内存中获取缓存的值
             if (current == null) { //缓存中不存在统计的值
                 update[0] = success;
                 update[1] = failure;
@@ -185,7 +185,7 @@ public class DubboMonitor implements Monitor {
                 update[8] = current[8] > elapsed ? current[8] : elapsed;
                 update[9] = current[9] > concurrent ? current[9] : concurrent;
             }
-        } while (!reference.compareAndSet(current, update));
+        } while (!reference.compareAndSet(current, update));//当内存中的实际值与expect预期值不相等时，返回false，否则在相等情况下，可以进行更新操作（判断从缓存中获取的值是否被其它线程更新过，若已被更新，则循环去取最新的内存的值，并做计算，直到成功为止）
     }
 
     @Override
