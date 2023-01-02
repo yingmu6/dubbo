@@ -93,7 +93,7 @@ public class DubboMonitorTest {
     };
 
     @Test
-    public void testCount() throws Exception {
+    public void testCount() throws Exception { //测试次数统计
         DubboMonitor monitor = new DubboMonitor(monitorInvoker, monitorService);
         URL statistics = new URLBuilder(DUBBO_PROTOCOL, "10.20.153.10", 0)
                 .addParameter(MonitorService.APPLICATION, "morgan")
@@ -119,7 +119,7 @@ public class DubboMonitorTest {
         Assertions.assertEquals("MemberService", lastStatistics.getParameter(MonitorService.INTERFACE));
         Assertions.assertEquals("findPerson", lastStatistics.getParameter(MonitorService.METHOD));
         Assertions.assertEquals("10.20.153.11", lastStatistics.getParameter(MonitorService.CONSUMER));
-        Assertions.assertEquals("1", lastStatistics.getParameter(MonitorService.SUCCESS)); //todo @pause 此处为啥run和debug的结果不一样？
+        Assertions.assertEquals("1", lastStatistics.getParameter(MonitorService.SUCCESS));
         Assertions.assertEquals("0", lastStatistics.getParameter(MonitorService.FAILURE));
         Assertions.assertEquals("3", lastStatistics.getParameter(MonitorService.ELAPSED));
         Assertions.assertEquals("3", lastStatistics.getParameter(MonitorService.MAX_ELAPSED));
@@ -129,7 +129,7 @@ public class DubboMonitorTest {
     }
 
     @Test
-    public void testMonitorFactory() throws Exception {
+    public void testMonitorFactory() throws Exception { //测试监控器工厂创建监控器
         MockMonitorService monitorService = new MockMonitorService();
         URL statistics = new URLBuilder(DUBBO_PROTOCOL, "10.20.153.10", 0)
                 .addParameter(MonitorService.APPLICATION, "morgan")
@@ -144,27 +144,33 @@ public class DubboMonitorTest {
                 .addParameter(MonitorService.MAX_CONCURRENT, 1)
                 .build();
 
-        Protocol protocol = ExtensionLoader.getExtensionLoader(Protocol.class).getAdaptiveExtension();
+        Protocol protocol = ExtensionLoader.getExtensionLoader(Protocol.class).getAdaptiveExtension(); //获取Protocol的自适应类（在调用自适应@Adaptive方法时，才会选择具体的实例）
         ProxyFactory proxyFactory = ExtensionLoader.getExtensionLoader(ProxyFactory.class).getAdaptiveExtension();
         MonitorFactory monitorFactory = ExtensionLoader.getExtensionLoader(MonitorFactory.class).getAdaptiveExtension();
 
+        /**
+         * 自适应类的实例选择：
+         * 1）proxyFactory.getInvoker()中，因为url参数没有设置proxy参数，所以就会以@SPI参数设置的值，作为默认扩展名，即为JavassistProxyFactory
+         * 2）protocol.export()中，因为invoker.getUrl()的url为dubbo://xxx，实例为DubboProtocol
+         * 3）monitorFactory.getMonitor()，因为url的protocol的参数为dubbo，所以MonitorFactory的实例为DubboMonitorFactory
+         */
         Exporter<MonitorService> exporter = protocol.export(proxyFactory.getInvoker(monitorService, MonitorService.class, URL.valueOf("dubbo://127.0.0.1:17979/" + MonitorService.class.getName())));
         try {
             Monitor monitor = null;
             long start = System.currentTimeMillis();
-            while (System.currentTimeMillis() - start < 60000) {
-                monitor = monitorFactory.getMonitor(URL.valueOf("dubbo://127.0.0.1:17979?interval=10"));
-                if (monitor == null) {
+            while (System.currentTimeMillis() - start < 60000) { //循环进行60s
+                monitor = monitorFactory.getMonitor(URL.valueOf("dubbo://127.0.0.1:17979?interval=10")); //getMonitor() 是DubboMonitorFactory从AbstractMonitorFactory继承的，所以会先进入AbstractMonitorFactory的getMonitor方法
+                if (monitor == null) { //若创建的监控器为空，则进行尝试创建
                     continue;
                 }
                 try {
-                    monitor.collect(statistics);
+                    monitor.collect(statistics); //将获取到的监控对象，进行数据收集
                     int i = 0;
-                    while (monitorService.getStatistics() == null && i < 200) {
+                    while (monitorService.getStatistics() == null && i < 200) { //循环获取统计的url，直到不为null
                         i++;
                         Thread.sleep(10);
                     }
-                    URL result = monitorService.getStatistics();
+                    URL result = monitorService.getStatistics(); //此处的MockMonitorService.getStatistics()值是从哪里来的？解：因为DubboMonitor都构造方法中会创建周期性任务sendFuture，并周期性执行send()方法，而该方法中monitorService.collect(url);会通过代理方式进入MockMonitorService的collect方法
                     Assertions.assertEquals(1, result.getParameter(MonitorService.SUCCESS, 0));
                     Assertions.assertEquals(3, result.getParameter(MonitorService.ELAPSED, 0));
                 } finally {
@@ -179,7 +185,7 @@ public class DubboMonitorTest {
     }
 
     @Test
-    public void testAvailable() {
+    public void testAvailable() { //todo @pause
         Invoker invoker = mock(Invoker.class);
         MonitorService monitorService = mock(MonitorService.class);
 

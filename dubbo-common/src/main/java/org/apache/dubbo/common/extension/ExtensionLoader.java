@@ -630,7 +630,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
     }
 
     @SuppressWarnings("unchecked")
-    public T getAdaptiveExtension() { //获取自适应扩展实例，若不存在则创建
+    public T getAdaptiveExtension() { //获取自适应扩展实例，若不存在则创建（先产生自适应类，然后在运行时根据url中参数选择具体的实例调用）
         /**
          * 1）自适应扩展类，是根据字节码操作，在运行期间动态创建的，而不是声明的静态类
          * 2）先创建自适应类的实例，然后调用类的方法时，再从url中获取@Adaptive配置的参数值，实现调用的多态，是方法中实现多态，而不是类上实现多态

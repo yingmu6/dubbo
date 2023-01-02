@@ -58,7 +58,7 @@ public interface ProxyFactory {
     <T> T getProxy(Invoker<T> invoker, boolean generic) throws RpcException;
 
     /**
-     * create invoker.（创建invoker对象）
+     * create invoker.（为被代理的实例对象创建invoker对象）
      *
      * @param <T>
      * @param proxy 暴露接口对应的实现类，如：暴露的接口为HelloService，实现类为HelloServiceImpl，此处的proxy即为HelloServiceImpl对象实例
@@ -66,7 +66,7 @@ public interface ProxyFactory {
      * @param url
      * @return invoker
      */
-    @Adaptive({PROXY_KEY})
+    @Adaptive({PROXY_KEY}) //此处会取url的参数proxy作为扩展名，若没有该参数，则取@SPI注解中的值作为默认扩展名
     <T> Invoker<T> getInvoker(T proxy, Class<T> type, URL url) throws RpcException;
 
 }

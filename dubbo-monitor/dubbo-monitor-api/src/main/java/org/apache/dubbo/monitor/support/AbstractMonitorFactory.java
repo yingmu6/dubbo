@@ -78,7 +78,7 @@ public abstract class AbstractMonitorFactory implements MonitorFactory {
 
         LOCK.lock();
         try {
-            monitor = MONITORS.get(key);
+            monitor = MONITORS.get(key); //公共逻辑处理
             future = FUTURES.get(key);
             if (monitor != null || future != null) { //再次尝试从缓存中获取监控器
                 return monitor;
@@ -86,10 +86,10 @@ public abstract class AbstractMonitorFactory implements MonitorFactory {
 
             final URL monitorUrl = url; //若缓存中不存在，则创建监控器
             final CompletableFuture<Monitor> completableFuture = CompletableFuture.supplyAsync(() -> AbstractMonitorFactory.this.createMonitor(monitorUrl)); //异步地创建监控器
-            FUTURES.put(key, completableFuture);
+            FUTURES.put(key, completableFuture); //将创建监控器对应的Future缓存起来
             completableFuture.thenRunAsync(new MonitorListener(key), EXECUTOR); //异步执行给定的动作
 
-            return null; //返回null值，要么等待一会儿从缓存中获取值，要么从缓存中获取CompletableFuture去获取值
+            return null; //返回null值，要么等待一会儿从缓存中获取值，要么从缓存中获取CompletableFuture去获取值（因为是异步创建监控器的，此处是快速结束，接口使用Future去获取）
         } finally {
             // unlock
             LOCK.unlock();
