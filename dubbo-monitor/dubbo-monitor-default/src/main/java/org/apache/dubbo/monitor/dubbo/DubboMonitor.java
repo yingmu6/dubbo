@@ -63,7 +63,7 @@ public class DubboMonitor implements Monitor {
 
     private final MonitorService monitorService;
 
-    private final ConcurrentMap<Statistics, AtomicReference<long[]>> statisticsMap = new ConcurrentHashMap<Statistics, AtomicReference<long[]>>(); //统计信息与统计项数组的映射
+    private final ConcurrentMap<Statistics, AtomicReference<long[]>> statisticsMap = new ConcurrentHashMap<Statistics, AtomicReference<long[]>>(); //统计信息与统计项数组的映射（非static成员变量，属于各个对象私有，而非所有对象公有）
 
     public DubboMonitor(Invoker<MonitorService> monitorInvoker, MonitorService monitorService) {
         this.monitorInvoker = monitorInvoker;
@@ -81,7 +81,7 @@ public class DubboMonitor implements Monitor {
         }, monitorInterval, monitorInterval, TimeUnit.MILLISECONDS); //周期性执行任务
     }
 
-    public void send() {
+    public void send() { //将监控器DubboMonitor中统计的缓存信息发送给监控服务MonitorService做信息采集，采集好后将监控器中对应缓存重置
         if (logger.isDebugEnabled()) {
             logger.debug("Send statistics to monitor " + getUrl());
         }
@@ -119,21 +119,21 @@ public class DubboMonitor implements Monitor {
                             MonitorService.MAX_CONCURRENT, String.valueOf(maxConcurrent),
                             DEFAULT_PROTOCOL, protocol
                     );
-            monitorService.collect(url); //收集监控的数据
+            monitorService.collect(url); //收集监控的数据（此处若monitorService的实例为DubboMonitor，理论上collect()会做累加，而后面的逻辑会递减，是没有影响的）
 
-            // reset
+            // reset（交由监控服务采集以后，对当前监控器中对应的缓存做重置）
             long[] current;
             long[] update = new long[LENGTH];
             do {
                 current = reference.get();
-                if (current == null) { //进行重置操作
+                if (current == null) { //若缓存中没有值，直接将值置为0
                     update[0] = 0;
                     update[1] = 0;
                     update[2] = 0;
                     update[3] = 0;
                     update[4] = 0;
                     update[5] = 0;
-                } else {
+                } else { // 若缓存的存在值，就将缓存中的值减去当前已经采集计算的值（只处理前5个元素）
                     update[0] = current[0] - success;
                     update[1] = current[1] - failure;
                     update[2] = current[2] - input;
@@ -173,14 +173,14 @@ public class DubboMonitor implements Monitor {
                 update[7] = output;
                 update[8] = elapsed;
                 update[9] = concurrent;
-            } else {             //缓存中存在统计的值，则将url中的值与缓存中的值处理
-                update[0] = current[0] + success;
+            } else {             //缓存中存在统计的值，则将url中的值与缓存中的值处理（不同的元素处理方式不同，分为3个区间，第1~5，第6个，第7~10）
+                update[0] = current[0] + success; //第1~5个元素：在多次采集时的计算方式=将缓存中的值与输入的值累加
                 update[1] = current[1] + failure;
-                update[2] = current[2] + input;
+                update[2] = current[2] + input; //前5个元素是累加操作，后5个元素更倾向于占位操作
                 update[3] = current[3] + output;
                 update[4] = current[4] + elapsed;
-                update[5] = (current[5] + concurrent) / 2;
-                update[6] = current[6] > input ? current[6] : input;
+                update[5] = (current[5] + concurrent) / 2; //第6个元素_并发数：在多次采集时的计算方式=（当前缓存中的值+输入的值）/ 2
+                update[6] = current[6] > input ? current[6] : input; //第7~10个元素：在多次采集时的计算方式=取缓存中值与输入值的最大值
                 update[7] = current[7] > output ? current[7] : output;
                 update[8] = current[8] > elapsed ? current[8] : elapsed;
                 update[9] = current[9] > concurrent ? current[9] : concurrent;

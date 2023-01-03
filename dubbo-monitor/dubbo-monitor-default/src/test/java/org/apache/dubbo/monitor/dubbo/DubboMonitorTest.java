@@ -29,7 +29,8 @@ import org.apache.dubbo.rpc.Protocol;
 import org.apache.dubbo.rpc.ProxyFactory;
 import org.apache.dubbo.rpc.Result;
 import org.apache.dubbo.rpc.RpcException;
-
+import org.apache.dubbo.rpc.protocol.dubbo.DubboProtocol;
+import org.apache.dubbo.rpc.proxy.javassist.JavassistProxyFactory;
 import org.hamcrest.CustomMatcher;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -39,16 +40,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.apache.dubbo.common.constants.CommonConstants.DUBBO_PROTOCOL;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.not;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * DubboMonitorTest
@@ -185,20 +182,20 @@ public class DubboMonitorTest {
     }
 
     @Test
-    public void testAvailable() { //todo @pause
+    public void testAvailable() { //测试MonitorService的isAvailable方法
         Invoker invoker = mock(Invoker.class);
         MonitorService monitorService = mock(MonitorService.class);
 
-        given(invoker.isAvailable()).willReturn(true);
+        given(invoker.isAvailable()).willReturn(true); //设置Mock值
         given(invoker.getUrl()).willReturn(URL.valueOf("dubbo://127.0.0.1:7070?interval=20"));
         DubboMonitor dubboMonitor = new DubboMonitor(invoker, monitorService);
 
-        assertThat(dubboMonitor.isAvailable(), is(true));
+        assertThat(dubboMonitor.isAvailable(), is(true)); //DubboMonitor的isAvailable的方法，会调用其维护的invoker的isAvailable方法
         verify(invoker).isAvailable();
     }
 
     @Test
-    public void testSum() {
+    public void testSum() { //计算多次collect采集，进行求和统计
         URL statistics = new URLBuilder(DUBBO_PROTOCOL, "10.20.153.11", 0)
                 .addParameter(MonitorService.APPLICATION, "morgan")
                 .addParameter(MonitorService.INTERFACE, "MemberService")
@@ -219,10 +216,11 @@ public class DubboMonitorTest {
 
         dubboMonitor.collect(statistics);
         dubboMonitor.collect(statistics.addParameter(MonitorService.SUCCESS, 3).addParameter(MonitorService.CONCURRENT, 2)
-                .addParameter(MonitorService.INPUT, 1).addParameter(MonitorService.OUTPUT, 2));
+                .addParameter(MonitorService.INPUT, 1).addParameter(MonitorService.OUTPUT, 2)); //同一个统计url，多次调用collect时，会进行累加操作
         dubboMonitor.collect(statistics.addParameter(MonitorService.SUCCESS, 6).addParameter(MonitorService.ELAPSED, 2));
 
-        dubboMonitor.send();
+        // 将监控器中统计的缓存值，发送给具体的监控服务monitorService做处理
+        dubboMonitor.send(); //注意：因为DubboMonitor构建时，会创建一个周期性任务，周期的执行send()方法，所以在debug暂停时，可能已经被异步线程执行了send方法，而debug进入时，已经被reset清零了
 
         ArgumentCaptor<URL> summaryCaptor = ArgumentCaptor.forClass(URL.class);
         verify(monitorService, atLeastOnce()).collect(summaryCaptor.capture());
@@ -238,9 +236,41 @@ public class DubboMonitorTest {
             }
         }));
     }
+    @Test
+    public void testMonitorSend() { //csy自增得测试：目的DubboMonitor的send方法中monitorService实例为DubboMonitor时的场景
+        URL statistics = new URLBuilder(DUBBO_PROTOCOL, "10.20.153.11", 0)
+                .addParameter(MonitorService.APPLICATION, "morgan")
+                .addParameter(MonitorService.INTERFACE, "MemberService")
+                .addParameter(MonitorService.METHOD, "findPerson")
+                .addParameter(MonitorService.CONSUMER, "10.20.153.11")
+                .addParameter(MonitorService.SUCCESS, 1)
+                .addParameter(MonitorService.FAILURE, 0)
+                .addParameter(MonitorService.ELAPSED, 3)
+                .addParameter(MonitorService.MAX_ELAPSED, 3)
+                .addParameter(MonitorService.CONCURRENT, 1)
+                .addParameter(MonitorService.MAX_CONCURRENT, 1)
+                .build();
+        Invoker invoker = mock(Invoker.class);
+        given(invoker.getUrl()).willReturn(URL.valueOf("dubbo://127.0.0.1:7070?interval=20"));
+
+        ProxyFactory proxyFactory = new JavassistProxyFactory();
+        Invoker<MonitorService> monitorInvoker = new DubboProtocol().refer(MonitorService.class, statistics); //目前此处会报错，因为找不到对应的服务，报“java.net.BindException: Cannot assign requested address: connect”
+        MonitorService monitorService = proxyFactory.getProxy(monitorInvoker); //获取MonitorService的代理类
+
+        DubboMonitor dubboMonitor = new DubboMonitor(invoker, monitorService);
+        dubboMonitor.collect(statistics);
+        List<URL> urls = dubboMonitor.lookup(statistics);
+        System.out.println("send发送前:" + urls);
+
+        dubboMonitor.send();
+
+        List<URL> urls2 = dubboMonitor.lookup(statistics);
+        System.out.println("send发送后:" + urls2);
+
+    }
 
     @Test
-    public void testLookUp() {
+    public void testLookUp() { //测试查询统计数据
         Invoker invoker = mock(Invoker.class);
         MonitorService monitorService = mock(MonitorService.class);
 
@@ -250,6 +280,7 @@ public class DubboMonitorTest {
 
         dubboMonitor.lookup(queryUrl);
 
-        verify(monitorService).lookup(eq(queryUrl));
+        verify(monitorService).lookup(eq(queryUrl)); //此处的比较逻辑待了解
+
     }
 }

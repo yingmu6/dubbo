@@ -60,7 +60,7 @@ public class MonitorFilter implements Filter, Filter.Listener {
     /**
      * The Concurrent counter（数据格式：ConcurrentMap<serviceName+"."+methodName, AtomicInteger>）
      */
-    private final ConcurrentMap<String, AtomicInteger> concurrents = new ConcurrentHashMap<String, AtomicInteger>(); //并发调用的计数器
+    private final ConcurrentMap<String, AtomicInteger> concurrents = new ConcurrentHashMap<String, AtomicInteger>(); //并发调用的计数器（记录着当前方法调用的请求个数，调用前+1，调用完成后-1，类似活跃数）
 
     /**
      * The MonitorFactory
@@ -84,7 +84,7 @@ public class MonitorFilter implements Filter, Filter.Listener {
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
         if (invoker.getUrl().hasParameter(MONITOR_KEY)) {
             invocation.put(MONITOR_FILTER_START_TIME, System.currentTimeMillis());
-            getConcurrent(invoker, invocation).incrementAndGet(); // count up（获取服务对应的计数器，并递增1）
+            getConcurrent(invoker, invocation).incrementAndGet(); // count up（服务调用前，计数器加1）
         }
         return invoker.invoke(invocation); // proceed invocation chain
     }
@@ -99,7 +99,7 @@ public class MonitorFilter implements Filter, Filter.Listener {
     public void onResponse(Result result, Invoker<?> invoker, Invocation invocation) {
         if (invoker.getUrl().hasParameter(MONITOR_KEY)) { //参数MONITOR_KEY是在ReferenceConfig#createProxy设置的
             collect(invoker, invocation, result, RpcContext.getContext().getRemoteHost(), (long) invocation.get(MONITOR_FILTER_START_TIME), false);
-            getConcurrent(invoker, invocation).decrementAndGet(); // count down（调用完成后，将服务对应的计数器减1）
+            getConcurrent(invoker, invocation).decrementAndGet(); // count down（调用完成后，计数器减1）
         }
     }
 

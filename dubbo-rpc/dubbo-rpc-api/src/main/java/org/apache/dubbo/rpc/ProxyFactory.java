@@ -46,7 +46,7 @@ public interface ProxyFactory {
      * @return proxy
      */
     @Adaptive({PROXY_KEY})
-    <T> T getProxy(Invoker<T> invoker) throws RpcException; //获取调用接口对应的代理对象
+    <T> T getProxy(Invoker<T> invoker) throws RpcException; //获取调用接口对应的代理对象（返回的类型T与Invoker持有的类型T一致）
 
     /**
      * create proxy.
