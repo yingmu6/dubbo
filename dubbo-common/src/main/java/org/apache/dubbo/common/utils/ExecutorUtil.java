@@ -137,7 +137,7 @@ public class ExecutorUtil {
 
     public static void cancelScheduledFuture(ScheduledFuture<?> scheduledFuture) {
         ScheduledFuture<?> future = scheduledFuture;
-        if (future != null && !future.isCancelled()) {
+        if (future != null && !future.isCancelled()) { //若定时任务可以取消，则将Future设置为取消状态
             future.cancel(true);
         }
     }

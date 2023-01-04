@@ -50,20 +50,20 @@ public class DubboMonitor implements Monitor {
     private static final int LENGTH = 10;
 
     /**
-     * The timer for sending statistics
+     * The timer for sending statistics（发送统计信息的计时器）
      */
     private final ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(3, new NamedThreadFactory("DubboMonitorSendTimer", true));
 
     /**
      * The future that can cancel the <b>scheduledExecutorService</b>
      */
-    private final ScheduledFuture<?> sendFuture;
+    private final ScheduledFuture<?> sendFuture; //用于发送采集请求的Future
 
-    private final Invoker<MonitorService> monitorInvoker;
+    private final Invoker<MonitorService> monitorInvoker; //监控服务对应的Invoker
 
-    private final MonitorService monitorService;
+    private final MonitorService monitorService; //监控服务
 
-    private final ConcurrentMap<Statistics, AtomicReference<long[]>> statisticsMap = new ConcurrentHashMap<Statistics, AtomicReference<long[]>>(); //统计信息与统计项数组的映射（非static成员变量，属于各个对象私有，而非所有对象公有）
+    private final ConcurrentMap<Statistics, AtomicReference<long[]>> statisticsMap = new ConcurrentHashMap<Statistics, AtomicReference<long[]>>(); //统计信息与具体统计项的映射（非static成员变量，属于各个对象私有，而非所有对象公有）
 
     public DubboMonitor(Invoker<MonitorService> monitorInvoker, MonitorService monitorService) {
         this.monitorInvoker = monitorInvoker;
@@ -74,14 +74,14 @@ public class DubboMonitor implements Monitor {
         sendFuture = scheduledExecutorService.scheduleWithFixedDelay(() -> {
             try {
                 // collect data
-                send();
+                send(); //定时
             } catch (Throwable t) {
                 logger.error("Unexpected error occur at send statistic, cause: " + t.getMessage(), t);
             }
         }, monitorInterval, monitorInterval, TimeUnit.MILLISECONDS); //周期性执行任务
     }
 
-    public void send() { //将监控器DubboMonitor中统计的缓存信息发送给监控服务MonitorService做信息采集，采集好后将监控器中对应缓存重置
+    public void send() { //发送采集请求给监控服务（将监控中心DubboMonitor中统计的缓存信息发送给监控服务MonitorService做信息采集，采集好后将监控中心中对应缓存重置）
         if (logger.isDebugEnabled()) {
             logger.debug("Send statistics to monitor " + getUrl());
         }
@@ -121,7 +121,7 @@ public class DubboMonitor implements Monitor {
                     );
             monitorService.collect(url); //收集监控的数据（此处若monitorService的实例为DubboMonitor，理论上collect()会做累加，而后面的逻辑会递减，是没有影响的）
 
-            // reset（交由监控服务采集以后，对当前监控器中对应的缓存做重置）
+            // reset（交由监控服务采集以后，对当前监控中心中对应的缓存做重置）
             long[] current;
             long[] update = new long[LENGTH];
             do {
@@ -204,7 +204,7 @@ public class DubboMonitor implements Monitor {
     }
 
     @Override
-    public void destroy() {
+    public void destroy() { //在节点销毁时，取消定时任务
         try {
             ExecutorUtil.cancelScheduledFuture(sendFuture);
         } catch (Throwable t) {

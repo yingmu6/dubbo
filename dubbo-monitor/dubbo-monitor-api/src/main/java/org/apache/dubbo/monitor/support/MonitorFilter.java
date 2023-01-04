@@ -129,7 +129,7 @@ public class MonitorFilter implements Filter, Filter.Listener {
                 return;
             }
             URL statisticsURL = createStatisticsUrl(invoker, invocation, result, remoteHost, start, error); //URL的值如：count://192.168.45.154/org.apache.dubbo.monitor.MonitorService/aaa?application=abc&concurrent=1&elapsed=275921&group=&input=&interface=org.apache.dubbo.monitor.MonitorService&method=aaa&output=&provider=192.168.45.154:20880&success=1&version=
-            monitor.collect(statisticsURL); //使用当前监控器工厂创建监控器，并进行数据采集
+            monitor.collect(statisticsURL); //使用当前监控中心工厂创建监控中心，并进行数据采集
         } catch (Throwable t) { //若有采集异常，则进行捕获做提示，但不终止流程
             logger.warn("Failed to monitor count service " + invoker.getUrl() + ", cause: " + t.getMessage(), t);
         }
@@ -157,17 +157,17 @@ public class MonitorFilter implements Filter, Filter.Listener {
         String version = invoker.getUrl().getParameter(VERSION_KEY); //从调用者Invoker获取url信息，取出相关值，构建新的统计使用的url
 
         int localPort;
-        String remoteKey, remoteValue;
+        String remoteKey, remoteValue; //参数remoteHost的值来自于RpcContext.getContext().getRemoteHost()
         if (CONSUMER_SIDE.equals(invoker.getUrl().getParameter(SIDE_KEY))) { //消费端
             // ---- for service consumer ----
             localPort = 0;
             remoteKey = MonitorService.PROVIDER;
-            remoteValue = invoker.getUrl().getAddress();
+            remoteValue = invoker.getUrl().getAddress(); //提供端的地址（消费端目标调用url中的地址，即为提供端的地址）
         } else {                                                             //提供端
             // ---- for service provider ----
             localPort = invoker.getUrl().getPort();
             remoteKey = MonitorService.CONSUMER;
-            remoteValue = remoteHost;
+            remoteValue = remoteHost; //消费端的地址（因为当前是提供端，所以RpcContext.getContext().getRemoteHost() 上下文的远程地址就是消费端的地址）
         }
         String input = "", output = "";
         if (invocation.getAttachment(INPUT_KEY) != null) {

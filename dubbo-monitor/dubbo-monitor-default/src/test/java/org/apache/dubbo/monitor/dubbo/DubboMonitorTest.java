@@ -126,7 +126,7 @@ public class DubboMonitorTest {
     }
 
     @Test
-    public void testMonitorFactory() throws Exception { //测试监控器工厂创建监控器
+    public void testMonitorFactory() throws Exception { //测试监控中心工厂创建监控中心
         MockMonitorService monitorService = new MockMonitorService();
         URL statistics = new URLBuilder(DUBBO_PROTOCOL, "10.20.153.10", 0)
                 .addParameter(MonitorService.APPLICATION, "morgan")
@@ -157,7 +157,7 @@ public class DubboMonitorTest {
             long start = System.currentTimeMillis();
             while (System.currentTimeMillis() - start < 60000) { //循环进行60s
                 monitor = monitorFactory.getMonitor(URL.valueOf("dubbo://127.0.0.1:17979?interval=10")); //getMonitor() 是DubboMonitorFactory从AbstractMonitorFactory继承的，所以会先进入AbstractMonitorFactory的getMonitor方法
-                if (monitor == null) { //若创建的监控器为空，则进行尝试创建
+                if (monitor == null) { //若创建的监控中心为空，则进行尝试创建
                     continue;
                 }
                 try {
@@ -219,7 +219,7 @@ public class DubboMonitorTest {
                 .addParameter(MonitorService.INPUT, 1).addParameter(MonitorService.OUTPUT, 2)); //同一个统计url，多次调用collect时，会进行累加操作
         dubboMonitor.collect(statistics.addParameter(MonitorService.SUCCESS, 6).addParameter(MonitorService.ELAPSED, 2));
 
-        // 将监控器中统计的缓存值，发送给具体的监控服务monitorService做处理
+        // 将监控中心中统计的缓存值，发送给具体的监控服务monitorService做处理
         dubboMonitor.send(); //注意：因为DubboMonitor构建时，会创建一个周期性任务，周期的执行send()方法，所以在debug暂停时，可能已经被异步线程执行了send方法，而debug进入时，已经被reset清零了
 
         ArgumentCaptor<URL> summaryCaptor = ArgumentCaptor.forClass(URL.class);

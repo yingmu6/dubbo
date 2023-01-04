@@ -68,7 +68,7 @@ public interface MonitorService { //监控服务
      * Collect monitor data（收集监控数据）
      * 1. support invocation count: count://host/interface?application=foo&method=foo&provider=10.20.153.11:20880&success=12&failure=2&elapsed=135423423
      * 1.1 host,application,interface,group,version,method: record source host/application/interface/method
-     * 1.2 add provider address parameter if it's data sent from consumer, otherwise, add source consumer's address in parameters
+     * 1.2 add provider address parameter if it's data sent from consumer, otherwise, add source consumer's address in parameters（会记录消费端、提供端地址）
      * 1.3 success,failure,elapsed: record success count, failure count, and total cost for success invocations, average cost (total cost/success calls)
      *
      * @param statistics
