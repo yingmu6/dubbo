@@ -37,7 +37,7 @@ import static org.apache.dubbo.rpc.Constants.RETURN_KEY;
 /**
  * Thread local context. (API, ThreadLocal, ThreadSafe)
  * <p>
- * Note: RpcContext is a temporary state holder（临时状态记录器）. States in RpcContext changes every time when request is sent or received.
+ * Note: RpcContext is a temporary state holder（临时状态记录器）. States in RpcContext changes every time when request is sent or received.（每次发送或接收请求时，RpcContext中的状态都会发生变化。）
  * For example: A invokes B, then B invokes C. On service B, RpcContext saves invocation info from A to B before B
  * starts invoking C, and saves invocation info from B to C after B invokes C.
  *
@@ -72,11 +72,11 @@ public class RpcContext { //上下文信息
 
     private URL url; //调用的url信息
 
-    private String methodName;
+    private String methodName; // 来自于setInvocation(Invocation invocation) 设置
 
-    private Class<?>[] parameterTypes;
+    private Class<?>[] parameterTypes; //同上
 
-    private Object[] arguments;
+    private Object[] arguments; //同上
 
     private InetSocketAddress localAddress; //本地地址
 
@@ -100,7 +100,7 @@ public class RpcContext { //上下文信息
     private boolean remove = true; //是否移除的标识（是否在每次调用后移除上下文）
 
 
-    protected RpcContext() {
+    protected RpcContext() { //未提供公有的构造函数，可使用static方法getServerContext()获取
     }
 
     /**
