@@ -27,7 +27,7 @@ import java.util.Set;
  * <p></p>
  * Internally, a {@link InternalThread} uses a constant index in an array（使用数组索引）, instead of（替代） using hash code and hash table,
  * to look for a variable.  Although seemingly very subtle, it yields slight performance advantage over using a hash
- * table（性能优于使用hash table表）, and it is useful when accessed frequently.
+ * table（性能优于使用hash table表）, and it is useful when accessed frequently（频繁地）.
  * <p></p>
  * This design is learning from {@see io.netty.util.concurrent.FastThreadLocal} which is in Netty.
  * <p>
@@ -43,7 +43,7 @@ import java.util.Set;
  * b）https://blog.csdn.net/dbqb007/article/details/95243660
  * c）https://icode9.com/content-4-1054690.html
  */
-public class InternalThreadLocal<V> { //与ThreadLocal具有相似的功能，都是维护线程局部变量的值
+public class InternalThreadLocal<V> { //内部使用的线程局部变量（与ThreadLocal具有相似的功能，都是维护线程局部变量的值）
 
     /**
      * 在Java中，ThreadLocal是实现线程安全的一种手段，它的作用是对于同一个ThreadLocal变量，在每一个线程中都有一个副本，当修改任何一个线程的变量时，不会影响到其他线程。
