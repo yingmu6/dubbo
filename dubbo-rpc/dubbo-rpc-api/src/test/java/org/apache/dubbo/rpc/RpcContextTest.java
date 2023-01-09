@@ -43,7 +43,7 @@ public class RpcContextTest {
         RpcContext rpcContext = RpcContext.getContext();
         Assertions.assertNotNull(rpcContext); //若当前线程没有设置上下文信息，会进行初始化处理，所以不为null
 
-        Assertions.assertEquals(rpcContext, RpcContext.getContext()); //todo @pause
+        Assertions.assertEquals(rpcContext, RpcContext.getContext());
 
         RpcContext.removeContext(); //移除上下文以后，执行RpcContext.getContext()会产生新的RpcContext对象，不移除上下文的话，不管调用多少次RpcContext.getContext()，返回的都是同一个对象
         // if null, will return the initialize value.

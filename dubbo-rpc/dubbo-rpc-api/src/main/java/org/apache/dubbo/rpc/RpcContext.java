@@ -89,7 +89,7 @@ public class RpcContext { //上下文信息
     @Deprecated
     private Invoker<?> invoker;
     @Deprecated
-    private Invocation invocation; //调用信息 flag
+    private Invocation invocation; //调用信息
 
     // now we don't use the 'values' map to hold these objects
     // we want these objects to be as generic as possible （尽可能通用）

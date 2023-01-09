@@ -196,7 +196,7 @@ public class InternalThreadLocal<V> { //内部使用的线程局部变量（与T
 
         if (v != InternalThreadLocalMap.UNSET) {
             try {
-                onRemoval((V) v); // 3）看子类的具体移除实现
+                onRemoval((V) v); // 3）看子类的具体移除实现（回调子类的方法）
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

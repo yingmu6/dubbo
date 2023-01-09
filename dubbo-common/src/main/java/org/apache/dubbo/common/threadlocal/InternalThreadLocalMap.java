@@ -26,9 +26,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public final class InternalThreadLocalMap { //用于存储线程的局部变量值，存储的结构是一个数组，而不是一个Map（快慢获取的元素，本质在于数组结构的不同）
 
-    private Object[] indexedVariables; //数组实现（不是static变量，非共享，每个线程各自维护，是线程安全的）
+    private Object[] indexedVariables; //数组实现（不是static变量，非共享，每个对象各自维护，是线程安全的）
 
-    private static ThreadLocal<InternalThreadLocalMap> slowThreadLocalMap = new ThreadLocal<InternalThreadLocalMap>(); //退变为原生的ThreadLocal，每个线程维护各自的线程变量（原生的ThreadLocal使用get()获取值时，会通过计算hashCode进行查找处理）
+    private static ThreadLocal<InternalThreadLocalMap> slowThreadLocalMap = new ThreadLocal<InternalThreadLocalMap>(); //原生的ThreadLocal，每个线程维护各自的线程变量（原生的ThreadLocal使用get()获取值时，会通过计算hashCode进行查找处理）
 
     private static final AtomicInteger NEXT_INDEX = new AtomicInteger(); //@csy-03-01 该索引的功能用途是什么？解：记录数组可设值的下标
 
