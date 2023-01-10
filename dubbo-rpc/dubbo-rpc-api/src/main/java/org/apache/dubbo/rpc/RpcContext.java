@@ -52,7 +52,7 @@ public class RpcContext { //上下文信息
     // FIXME REQUEST_CONTEXT
     private static final InternalThreadLocal<RpcContext> LOCAL = new InternalThreadLocal<RpcContext>() { //客户端的上下文缓存（static变量：类加载时就会执行，静态变量为共享变量，类的所有对象都拥有）
         @Override
-        protected RpcContext initialValue() { //重写了初始化方法
+        protected RpcContext initialValue() { // 重写了初始化方法
             return new RpcContext();
         }
     };
