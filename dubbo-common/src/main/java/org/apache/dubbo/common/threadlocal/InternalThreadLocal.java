@@ -43,7 +43,7 @@ import java.util.Set;
  * b）https://blog.csdn.net/dbqb007/article/details/95243660
  * c）https://icode9.com/content-4-1054690.html
  */
-public class InternalThreadLocal<V> { //内部使用的线程局部变量（与ThreadLocal具有相似的功能，都是维护线程局部变量的值）
+public class InternalThreadLocal<V> { //内部的线程局部变量（与ThreadLocal具有相似的功能，都是维护线程局部变量的值）
 
     /**
      * 在Java中，ThreadLocal是实现线程安全的一种手段，它的作用是对于同一个ThreadLocal变量，在每一个线程中都有一个副本，当修改任何一个线程的变量时，不会影响到其他线程。
@@ -112,7 +112,7 @@ public class InternalThreadLocal<V> { //内部使用的线程局部变量（与T
             variablesToRemove = Collections.newSetFromMap(new IdentityHashMap<InternalThreadLocal<?>, Boolean>()); //将Map值转换为Set
             threadLocalMap.setIndexedVariable(VARIABLES_TO_REMOVE_INDEX, variablesToRemove);
         } else {
-            variablesToRemove = (Set<InternalThreadLocal<?>>) v; //尽心类型强转
+            variablesToRemove = (Set<InternalThreadLocal<?>>) v; //进行类型强转
         }
 
         variablesToRemove.add(variable); //InternalThreadLocalMap中的第一个元素是集合类型，如indexedVariables[0]为Collections$SetFromMap@1751

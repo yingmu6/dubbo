@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Note that this class is for internal use only. Use {@link InternalThread}
  * unless you know what you are doing.
  */
-public final class InternalThreadLocalMap { //用于存储线程的局部变量值，存储的结构是一个数组，而不是一个Map（快慢获取的元素，本质在于数组结构的不同）
+public final class InternalThreadLocalMap { //内部的线程局部变量的Map【用于存储线程的局部变量值，存储的结构是一个数组，而不是一个Map（快慢获取的元素，本质在于数组结构的不同）】
 
     private Object[] indexedVariables; //数组实现（不是static变量，非共享，每个对象各自维护，是线程安全的）
 

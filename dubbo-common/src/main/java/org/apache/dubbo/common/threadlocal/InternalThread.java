@@ -20,14 +20,14 @@ package org.apache.dubbo.common.threadlocal;
 /**
  * InternalThread
  */
-public class InternalThread extends Thread { //内部线程
+public class InternalThread extends Thread { //内部的线程
     /**
      * InternalThread：内部使用的线程（对线程进行封装）
      * 1）本身是一个线程，继承了Thread
      * 2）使用InternalThreadLocalMap对ThreadLocal做了缓存
      */
 
-    private InternalThreadLocalMap threadLocalMap; //内部使用数组实现
+    private InternalThreadLocalMap threadLocalMap; //内部的线程局部变量的Map（非static变量，每个InternalThread对象各自维护）
 
     public InternalThread() {
     }
@@ -63,9 +63,11 @@ public class InternalThread extends Thread { //内部线程
 
     /**
      * Returns the internal data structure that keeps the threadLocal variables bound to this thread.
+     * （返回将threadLocal变量绑定到该线程的内部数据结构）
      * Note that this method is for internal use only, and thus（因此） is subject to change at any time.
+     * （请注意，此方法仅供内部使用，因此随时可能更改）
      */
-    public final InternalThreadLocalMap threadLocalMap() {
+    public final InternalThreadLocalMap threadLocalMap() { //返回InternalThreadMap
         return threadLocalMap;
     }
 
@@ -73,7 +75,7 @@ public class InternalThread extends Thread { //内部线程
      * Sets the internal data structure that keeps the threadLocal variables bound to this thread.
      * Note that this method is for internal use only, and thus is subject to change at any time.
      */
-    public final void setThreadLocalMap(InternalThreadLocalMap threadLocalMap) { //设置为null，即为清空处理
+    public final void setThreadLocalMap(InternalThreadLocalMap threadLocalMap) { //设置InternalThreadMap，当值设置为null，即为清空处理
         this.threadLocalMap = threadLocalMap;
     }
 }
