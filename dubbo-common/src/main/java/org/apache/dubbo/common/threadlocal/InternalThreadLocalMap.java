@@ -59,7 +59,7 @@ public final class InternalThreadLocalMap { //内部的线程局部变量的Map�
         }
     }
 
-    public static void destroy() {
+    public static void destroy() { //销毁Map
         slowThreadLocalMap = null;
     }
 
