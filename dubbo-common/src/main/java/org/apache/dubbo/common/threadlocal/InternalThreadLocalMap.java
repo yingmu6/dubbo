@@ -34,12 +34,12 @@ public final class InternalThreadLocalMap { //内部的线程局部变量的Map�
 
     public static final Object UNSET = new Object(); //@csy-03-02 该对象的功能用途是怎样的？解：当未设置值时，给出的默认值（用于填充使用）
 
-    public static InternalThreadLocalMap getIfSet() { //获取在InternalThreadLocalMap中设置的值，值可能为null
+    public static InternalThreadLocalMap getIfSet() { //获取InternalThreadLocalMap
         Thread thread = Thread.currentThread();
-        if (thread instanceof InternalThread) {
-            return ((InternalThread) thread).threadLocalMap();
+        if (thread instanceof InternalThread) { //判断当前线程的类型
+            return ((InternalThread) thread).threadLocalMap(); //若是内部线程InternalThread，从内部线程中获取InternalThreadLocalMap
         }
-        return slowThreadLocalMap.get();
+        return slowThreadLocalMap.get(); //若不是内部线程，则取ThreadLocal维护的InternalThreadLocalMap
     }
 
     public static InternalThreadLocalMap get() { //获取InternalThreadLocalMap，返回的值若为空，会初始化对象返回
@@ -59,7 +59,7 @@ public final class InternalThreadLocalMap { //内部的线程局部变量的Map�
         }
     }
 
-    public static void destroy() { //销毁Map test
+    public static void destroy() { //销毁Map
         slowThreadLocalMap = null; //置为空
     }
 
