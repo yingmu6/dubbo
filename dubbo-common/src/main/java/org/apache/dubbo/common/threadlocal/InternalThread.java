@@ -72,7 +72,7 @@ public class InternalThread extends Thread { //内部的线程
     }
 
     /**
-     * Sets the internal data structure that keeps the threadLocal variables bound to this thread.
+     * Sets the internal data structure that keeps the threadLocal variables bound to this thread. （设置将线程局部变量绑定到当前线程的内部数据结构）
      * Note that this method is for internal use only, and thus is subject to change at any time.
      */
     public final void setThreadLocalMap(InternalThreadLocalMap threadLocalMap) { //设置InternalThreadMap，当值设置为null，即为清空处理

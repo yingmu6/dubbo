@@ -104,8 +104,8 @@ public final class InternalThreadLocalMap { //内部的线程局部变量的Map�
         Object[] lookup = indexedVariables; //使用新的数组接收成员变量的值，避免对成员变量有影响
         if (index < lookup.length) {
             Object v = lookup[index];
-            lookup[index] = UNSET;
-            return v;
+            lookup[index] = UNSET; //将元素的值设置为UNSET对象
+            return v; //返回元素移除前的值
         } else {
             return UNSET;
         }
