@@ -55,7 +55,7 @@ public class InternalThreadLocal<V> { //内部的线程局部变量（与ThreadL
 
     private static final int VARIABLES_TO_REMOVE_INDEX = InternalThreadLocalMap.nextVariableIndex(); //该下标存储集合元素的位置
 
-    private final int index; //当前线程维护的值对应的下标（维护游标）
+    private final int index; //当前线程维护的值对应的下标（维护游标），final修饰的变量为常量，表明已经赋值后，就不能再改动，所以可以看出是一个对象一个index值
 
     public InternalThreadLocal() {
         index = InternalThreadLocalMap.nextVariableIndex(); //设置下一个游标值，每使用一个InternalThreadLocal，游标就会+1
@@ -159,14 +159,14 @@ public class InternalThreadLocal<V> { //内部的线程局部变量（与ThreadL
     }
 
     /**
-     * Sets the value for the current thread.
+     * Sets the value for the current thread.（为当前线程设置值）
      */
-    public final void set(V value) { //为当前线程设置值（通过InternalThreadLocalMap设置值）
+    public final void set(V value) {
         if (value == null || value == InternalThreadLocalMap.UNSET) {
-            remove(); //设置的值为空时，做移除处理
+            remove(); //设置的值为空时，做移除处理（与调用remove()方法是等价的）
         } else {
             InternalThreadLocalMap threadLocalMap = InternalThreadLocalMap.get();
-            if (threadLocalMap.setIndexedVariable(index, value)) { //为当前线程设置对应的局部变量值
+            if (threadLocalMap.setIndexedVariable(index, value)) {
                 addToVariablesToRemove(threadLocalMap, this); //
             }
         }

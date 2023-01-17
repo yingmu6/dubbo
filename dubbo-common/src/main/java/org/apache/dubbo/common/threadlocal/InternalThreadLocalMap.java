@@ -30,7 +30,7 @@ public final class InternalThreadLocalMap { //内部的线程局部变量的Map�
 
     private static ThreadLocal<InternalThreadLocalMap> slowThreadLocalMap = new ThreadLocal<InternalThreadLocalMap>(); //原生的ThreadLocal，每个线程维护各自的线程变量（原生的ThreadLocal使用get()获取值时，会通过计算hashCode进行查找处理）
 
-    private static final AtomicInteger NEXT_INDEX = new AtomicInteger(); //@csy-03-01 该索引的功能用途是什么？解：记录数组可设值的下标
+    private static final AtomicInteger NEXT_INDEX = new AtomicInteger(); //@csy-03-01 该索引的功能用途是什么？解：记录数组可设值的下标（下一个设置的值，对应的下标，static变量，属于公共资源，初始值为0）
 
     public static final Object UNSET = new Object(); //@csy-03-02 该对象的功能用途是怎样的？解：当未设置值时，给出的默认值（用于填充使用）
 
@@ -64,7 +64,7 @@ public final class InternalThreadLocalMap { //内部的线程局部变量的Map�
     }
 
     public static int nextVariableIndex() { //获取下一次的数组下标（每次创建，下标就会加1）
-        int index = NEXT_INDEX.getAndIncrement();
+        int index = NEXT_INDEX.getAndIncrement(); //获取原子自增之前的值，并将原子变量自增1
         if (index < 0) {
             NEXT_INDEX.decrementAndGet();
             throw new IllegalStateException("Too many thread-local indexed variables");
