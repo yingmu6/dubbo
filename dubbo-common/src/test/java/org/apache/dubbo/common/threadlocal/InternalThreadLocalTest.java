@@ -61,6 +61,9 @@ public class InternalThreadLocalTest {
         internalThreadLocal.set(1); //设置int值
         Assertions.assertEquals(1, (int)internalThreadLocal.get(), "set failed"); //获取值
 
+        internalThreadLocal.set(3);
+        Assertions.assertEquals(3, (int)internalThreadLocal.get(), "set failed"); //获取值
+
         final InternalThreadLocal<String> internalThreadLocalString = new InternalThreadLocal<String>();
         internalThreadLocalString.set("value"); //设置String值
         Assertions.assertEquals("value", internalThreadLocalString.get(), "set failed");

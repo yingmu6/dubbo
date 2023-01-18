@@ -25,6 +25,11 @@ public class InternalThread extends Thread { //内部的线程
      * InternalThread：内部使用的线程（对线程进行封装）
      * 1）本身是一个线程，继承了Thread
      * 2）使用InternalThreadLocalMap对ThreadLocal做了缓存
+     *
+     * InternalThreadLocal与InternalThread、InternalThreadLocalMap三者之间是怎么关联的？
+     *  解答：InternalLocalThreadMap：负责值的存储以及下标的产生
+     *       InternalThreadLocal：按对象维度隔离数据，每个对象的值存储在InternalThreadLocalMap指定下标的元素中
+     *       InternalThread： 按线程维度隔离数据，每个线程各自的私有变量都存在各自的InternalThradLocalMap中
      */
 
     private InternalThreadLocalMap threadLocalMap; //内部的线程局部变量的Map（非static变量，每个InternalThread对象各自维护）

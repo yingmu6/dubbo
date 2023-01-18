@@ -53,9 +53,9 @@ public class InternalThreadLocal<V> { //内部的线程局部变量（与ThreadL
      * InternalThreadLocal 是 ThreadLocal 的增强版，所以他们的用途都是一样的，一言蔽之就是：传递信息。
      */
 
-    private static final int VARIABLES_TO_REMOVE_INDEX = InternalThreadLocalMap.nextVariableIndex(); //该下标存储集合元素的位置
+    private static final int VARIABLES_TO_REMOVE_INDEX = InternalThreadLocalMap.nextVariableIndex(); //用于总预览的下标，因为该下标对应的元素存储了当前线程所有的InternalThreadLocal
 
-    private final int index; //当前线程维护的值对应的下标（维护游标），final修饰的变量为常量，表明已经赋值后，就不能再改动，所以可以看出是一个对象一个index值
+    private final int index; //指的是当前InternalThreadLocal对象在InternalThreadLocalMap对应的下标（final修饰的变量为常量，表明一旦赋值后，就不能再改动，所以可以看出是一个对象一个index值（所以同一个InternalThreadLocal对象多次设值时，是会出现覆盖的）
 
     public InternalThreadLocal() {
         index = InternalThreadLocalMap.nextVariableIndex(); //设置下一个游标值，每使用一个InternalThreadLocal，游标就会+1
@@ -106,7 +106,7 @@ public class InternalThreadLocal<V> { //内部的线程局部变量（与ThreadL
 
     @SuppressWarnings("unchecked")
     private static void addToVariablesToRemove(InternalThreadLocalMap threadLocalMap, InternalThreadLocal<?> variable) {//添加InternalThreadLocal变量到集合变量中（即处理第一个元素）
-        Object v = threadLocalMap.indexedVariable(VARIABLES_TO_REMOVE_INDEX); //获取第一个元素对应的值
+        Object v = threadLocalMap.indexedVariable(VARIABLES_TO_REMOVE_INDEX); //获取总预览下标对应的值，即当前线程维护的所有InternalThreadLocal的值
         Set<InternalThreadLocal<?>> variablesToRemove; //表示包含了多少个InternalThreadLocal实例
         if (v == InternalThreadLocalMap.UNSET || v == null) {
             variablesToRemove = Collections.newSetFromMap(new IdentityHashMap<InternalThreadLocal<?>, Boolean>()); //将Map值转换为Set
@@ -166,8 +166,8 @@ public class InternalThreadLocal<V> { //内部的线程局部变量（与ThreadL
             remove(); //设置的值为空时，做移除处理（与调用remove()方法是等价的）
         } else {
             InternalThreadLocalMap threadLocalMap = InternalThreadLocalMap.get();
-            if (threadLocalMap.setIndexedVariable(index, value)) {
-                addToVariablesToRemove(threadLocalMap, this); //
+            if (threadLocalMap.setIndexedVariable(index, value)) { //将值设置到InternalThreadLocalMap维护的数组中
+                addToVariablesToRemove(threadLocalMap, this); //将当前的InternalThreadLocal对象，添加到总预览对应的集合中
             }
         }
     }
