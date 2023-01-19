@@ -100,7 +100,7 @@ public final class InternalThreadLocalMap { //内部的线程局部变量的Map�
         }
     }
 
-    public Object removeIndexedVariable(int index) { //移除指定下标对应的值（将对应的值设置为UNSET对象）
+    public Object removeIndexedVariable(int index) { //移除指定下标对应的值，并返回移除前的值
         Object[] lookup = indexedVariables; //使用新的数组接收成员变量的值，避免对成员变量有影响
         if (index < lookup.length) {
             Object v = lookup[index];

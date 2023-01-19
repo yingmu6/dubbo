@@ -32,6 +32,9 @@ public class InternalThread extends Thread { //内部的线程
      *       InternalThread： 按线程维度隔离数据，每个线程各自的私有变量都存在各自的InternalThradLocalMap中
      */
 
+    /**
+     * 此处是关键：表明每个线程维护各自的本地变量值
+     */
     private InternalThreadLocalMap threadLocalMap; //内部的线程局部变量的Map（非static变量，每个InternalThread对象各自维护）
 
     public InternalThread() {
