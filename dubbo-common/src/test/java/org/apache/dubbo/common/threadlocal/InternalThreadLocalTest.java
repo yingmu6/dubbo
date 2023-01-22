@@ -62,11 +62,11 @@ public class InternalThreadLocalTest {
         Assertions.assertEquals(1, (int)internalThreadLocal.get(), "set failed"); //获取值
 
         internalThreadLocal.set(3);
-        Assertions.assertEquals(3, (int)internalThreadLocal.get(), "set failed"); //获取值
+        Assertions.assertEquals(3, (int)internalThreadLocal.get(), "set failed"); //同一个InternalThreadLocal对象设值，值会被覆盖
 
         final InternalThreadLocal<String> internalThreadLocalString = new InternalThreadLocal<String>();
         internalThreadLocalString.set("value"); //设置String值
-        Assertions.assertEquals("value", internalThreadLocalString.get(), "set failed");
+        Assertions.assertEquals("value", internalThreadLocalString.get(), "set failed"); //不同的InternalThreadLocal对象维护的值互不干扰
 
         final InternalThreadLocal<Double> internalThreadLocalDouble = new InternalThreadLocal<Double>();
         internalThreadLocalDouble.set(22.11); //设置String值
@@ -74,7 +74,7 @@ public class InternalThreadLocalTest {
 
         /**
          * 到此处时InternalThreadLocalMap中的元素类型为：（InternalThreadLocal设置的值，最终的都会放在InternalThreadLocalMap存储下来）
-         * 1）Collections$SetFromMap@1597
+         * 1）Collections$SetFromMap@1597 （InternalThreadLocal类型的缓存集合）
          * 2）Integer@1598
          * 3）"value"
          * 4）Double@1600
@@ -89,7 +89,7 @@ public class InternalThreadLocalTest {
     }
 
     @Test
-    public void testSize() throws InterruptedException { //测试数量
+    public void testSize() throws InterruptedException { //测试缓存对象的数量
         final InternalThreadLocal<Integer> internalThreadLocal = new InternalThreadLocal<Integer>();
         internalThreadLocal.set(1);
         Assertions.assertEquals(1, InternalThreadLocal.size(), "size method is wrong!");

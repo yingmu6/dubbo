@@ -42,11 +42,11 @@ import static org.apache.dubbo.rpc.cluster.Constants.DEFAULT_FORKS;
 /**
  * NOTICE! This implementation does not work well with async call.
  *
- * Invoke a specific number of invokers concurrently, usually used for demanding real-time operations, but need to waste more service resources.
+ * Invoke a specific number of invokers concurrently, usually used for demanding real-time operations, but need to waste more service resources.（实时调用，会浪费更多的服务资源）
  *
  * <a href="http://en.wikipedia.org/wiki/Fork_(topology)">Fork</a>
  */
-public class ForkingClusterInvoker<T> extends AbstractClusterInvoker<T> {
+public class ForkingClusterInvoker<T> extends AbstractClusterInvoker<T> { //并发调用的Invoker
 
     /**
      * Use {@link NamedInternalThreadFactory} to produce {@link org.apache.dubbo.common.threadlocal.InternalThread}

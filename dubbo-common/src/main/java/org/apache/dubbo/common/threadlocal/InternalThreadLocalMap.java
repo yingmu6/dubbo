@@ -112,7 +112,7 @@ public final class InternalThreadLocalMap { //内部的线程局部变量的Map�
         }
     }
 
-    public int size() { //计算所有不为UNSET的元素（需要减掉第一个元素）
+    public int size() { //缓存的普通对象数量
         int count = 0;
         for (Object o : indexedVariables) {
             if (o != UNSET) {
@@ -122,7 +122,7 @@ public final class InternalThreadLocalMap { //内部的线程局部变量的Map�
 
         //the fist element in `indexedVariables` is a set to keep all the InternalThreadLocal to remove（第一个元素用于保存所有要删除的InternalThreadLocal元素）
         //look at method `addToVariablesToRemove`
-        return count - 1;
+        return count - 1; //第一个元素是用于保存所有的InternalThreadLocal对象的值，所以要减去第一个元素
     }
 
     private static Object[] newIndexedVariableTable() {
