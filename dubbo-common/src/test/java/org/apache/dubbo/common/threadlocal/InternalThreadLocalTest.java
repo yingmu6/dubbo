@@ -143,23 +143,33 @@ public class InternalThreadLocalTest {
         Thread t1 = new Thread(new Runnable() {
             @Override
             public void run() {
-
+                System.out.println("run第一处before值：" + internalThreadLocal.get() + "," + internalThreadLocal.toString());
                 internalThreadLocal.set(testVal1); //各个线程维护自己的变量值，互不干扰
                 Assertions.assertEquals(testVal1, internalThreadLocal.get(), "set is not equals get");
                 countDownLatch.countDown();
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                System.out.println("run第222一处after值：" + internalThreadLocal.get());
             }
         });
         t1.start();
+        System.out.println("第一处internalThreadLocal值：" + internalThreadLocal.get());
 
         Thread t2 = new Thread(new Runnable() {
             @Override
             public void run() {
+                System.out.println("run第二处before值=" + internalThreadLocal.get()+",对象=" + internalThreadLocal.toString() + ",下标=" + internalThreadLocal);
                 internalThreadLocal.set(testVal2); //多线程下，使用同一个InternalThreadLocal设置值
                 Assertions.assertEquals(testVal2, internalThreadLocal.get(), "set is not equals get");
                 countDownLatch.countDown();
+                System.out.println("run第二处after值：" + internalThreadLocal.get());
             }
         });
         t2.start();
+        System.out.println("第二处internalThreadLocal值：" + internalThreadLocal.get());
         countDownLatch.await();
     }
 
