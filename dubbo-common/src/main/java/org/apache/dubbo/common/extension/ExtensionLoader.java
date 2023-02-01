@@ -207,7 +207,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
 
     public static void destroyAll() {
         EXTENSION_INSTANCES.forEach((_type, instance) -> {
-            if (instance instanceof Lifecycle) {
+            if (instance instanceof Lifecycle) { //若实例为
                 Lifecycle lifecycle = (Lifecycle) instance;
                 try {
                     lifecycle.destroy();

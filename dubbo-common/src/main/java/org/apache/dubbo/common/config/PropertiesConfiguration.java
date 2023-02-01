@@ -43,7 +43,7 @@ public class PropertiesConfiguration implements Configuration {
 
         //order the propertiesProvider according the priority descending
         orderedPropertiesProviders.sort((OrderedPropertiesProvider a, OrderedPropertiesProvider b) -> {
-            return b.priority() - a.priority();
+            return b.priority() - a.priority(); //根据设置的优先级权重值进行排序
         });
 
         //load the default properties
