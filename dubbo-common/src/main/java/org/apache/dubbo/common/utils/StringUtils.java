@@ -926,7 +926,7 @@ public final class StringUtils {
     }
 
     public static String toOSStyleKey(String key) {
-        key = key.toUpperCase().replaceAll(DOT_REGEX, UNDERLINE_SEPARATOR);
+        key = key.toUpperCase().replaceAll(DOT_REGEX, UNDERLINE_SEPARATOR); //使用下划线"_"替换"."
         if (!key.startsWith("DUBBO_")) {
             key = "DUBBO_" + key;
         }

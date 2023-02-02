@@ -49,13 +49,13 @@ public class PropertiesConfiguration implements Configuration {
         //load the default properties
         Properties properties = ConfigUtils.getProperties();
 
-        //override the properties.
+        //override（覆盖） the properties.
         for (OrderedPropertiesProvider orderedPropertiesProvider :
                 orderedPropertiesProviders) {
-            properties.putAll(orderedPropertiesProvider.initProperties());
+            properties.putAll(orderedPropertiesProvider.initProperties()); //创建新的Properties覆盖之前的属性值
         }
 
-        ConfigUtils.setProperties(properties);
+        ConfigUtils.setProperties(properties); //将Properties对象缓存起来
     }
 
     @Override

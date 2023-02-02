@@ -185,7 +185,7 @@ public class DubboBootstrap extends GenericEventListener { //基于事件驱动
 
     private DubboBootstrap() {
         configManager = ApplicationModel.getConfigManager(); //config对象的本地配置
-        environment = ApplicationModel.getEnvironment();     //系统配置
+        environment = ApplicationModel.getEnvironment();     //获取环境信息
 
         DubboShutdownHook.getDubboShutdownHook().register();
         ShutdownHookCallbacks.INSTANCE.addCallback(new ShutdownHookCallback() { //注册钩子函数，当容器停止时，对DubboBootstrap进行销毁处理
