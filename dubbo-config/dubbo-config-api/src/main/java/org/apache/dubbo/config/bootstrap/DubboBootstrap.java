@@ -85,7 +85,7 @@ import static org.apache.dubbo.remoting.Constants.CLIENT_KEY;
  *
  * @since 2.7.5
  */
-public class DubboBootstrap extends GenericEventListener { //基于事件驱动
+public class DubboBootstrap extends GenericEventListener { //启动类：基于事件驱动
 
     /**
      * DubboBootstrap类是Dubbo中非常重要的启动类，主要功能包括：
