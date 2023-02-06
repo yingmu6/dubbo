@@ -30,7 +30,7 @@ import static org.apache.dubbo.common.utils.ReflectUtils.findParameterizedTypes;
  * the generic（通用的） {@link Event}.
  * <p>
  * The {@link #onEvent(Event) handle method} will be notified when the matched-type {@link Event Dubbo Event} is
- * published, whose priority could be changed by {@link #getPriority()} method.
+ * published, whose priority（优先级） could be changed by {@link #getPriority()} method.
  *
  * @param <E> the concrete class of {@link Event Dubbo Event}
  * @see Event
@@ -83,7 +83,7 @@ public interface EventListener<E extends Event> extends java.util.EventListener,
      * @param listenerClass the {@link Class class} of {@link EventListener Dubbo event listener}
      * @return <code>null</code> if not found
      */
-    static Class<? extends Event> findEventType(Class<?> listenerClass) { //查找监听器对应的事件类型
+    static Class<? extends Event> findEventType(Class<?> listenerClass) { //根据监听器Class查找对应的事件Class
         Class<? extends Event> eventType = null;
 
         if (listenerClass != null && EventListener.class.isAssignableFrom(listenerClass)) { //isAssignableFrom判断一个类或接口是否是另一个类超类或父接口
@@ -105,7 +105,7 @@ public interface EventListener<E extends Event> extends java.util.EventListener,
      * @param parameterizedType the {@link ParameterizedType} presents a class of {@link EventListener Dubbo event listener}
      * @return <code>null</code> if not found
      */
-    static Class<? extends Event> findEventType(ParameterizedType parameterizedType) { //查找事件类型
+    static Class<? extends Event> findEventType(ParameterizedType parameterizedType) { //根据参数化的类型找到事件类型
         Class<? extends Event> eventType = null;
 
         Type rawType = parameterizedType.getRawType();

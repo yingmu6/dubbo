@@ -44,9 +44,9 @@ public abstract class Event extends EventObject { //事件对象：包含事件�
      * @param source The object on which the Event initially occurred.
      * @throws IllegalArgumentException if source is null.
      */
-    public Event(Object source) { //EventObject:所有事件状态对象的父类
-        super(source); // 事件源对象由父类存储
-        this.timestamp = System.currentTimeMillis();
+    public Event(Object source) { //构建事件对象
+        super(source); //设置事件源对象
+        this.timestamp = System.currentTimeMillis(); //设置事件发生的时间
     }
 
     public long getTimestamp() {
