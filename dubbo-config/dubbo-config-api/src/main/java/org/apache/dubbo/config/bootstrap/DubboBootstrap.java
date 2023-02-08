@@ -123,9 +123,9 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private static volatile DubboBootstrap instance;
+    private static volatile DubboBootstrap instance; //缓存者启动类的实例对象
 
-    private final AtomicBoolean awaited = new AtomicBoolean(false);
+    private final AtomicBoolean awaited = new AtomicBoolean(false); //是否等待
 
     private final Lock lock = new ReentrantLock();
 
@@ -135,9 +135,9 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
 
     private final ExecutorService executorService = newSingleThreadExecutor();
 
-    private final EventDispatcher eventDispatcher = EventDispatcher.getDefaultExtension();
+    private final EventDispatcher eventDispatcher = EventDispatcher.getDefaultExtension(); //事件派发器
 
-    private final ExecutorRepository executorRepository = getExtensionLoader(ExecutorRepository.class).getDefaultExtension();
+    private final ExecutorRepository executorRepository = getExtensionLoader(ExecutorRepository.class).getDefaultExtension(); //线程池仓库
 
     private final ConfigManager configManager;
 
