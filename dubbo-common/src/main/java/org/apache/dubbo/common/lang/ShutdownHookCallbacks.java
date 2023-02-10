@@ -26,7 +26,7 @@ import static java.util.Collections.sort;
 import static org.apache.dubbo.common.function.ThrowableAction.execute;
 
 /**
- * The compose {@link ShutdownHookCallback} class to manipulate one and more {@link ShutdownHookCallback} instances
+ * The compose（组成） {@link ShutdownHookCallback} class to manipulate（操作） one and more {@link ShutdownHookCallback} instances
  *
  * @since 2.7.5
  */

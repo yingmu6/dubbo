@@ -31,12 +31,12 @@ import org.apache.dubbo.rpc.Protocol;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * The shutdown hook thread to do the clean up stuff.
+ * The shutdown hook thread to do the clean up stuff. (停机的钩子线程，用于做清除操作)
  * This is a singleton in order to ensure there is only one shutdown hook registered.
  * Because {@link ApplicationShutdownHooks} use {@link java.util.IdentityHashMap}
  * to store the shutdown hooks.
  */
-public class DubboShutdownHook extends Thread {
+public class DubboShutdownHook extends Thread { //dubbo停机的钩子线程
 
     private static final Logger logger = LoggerFactory.getLogger(DubboShutdownHook.class);
 

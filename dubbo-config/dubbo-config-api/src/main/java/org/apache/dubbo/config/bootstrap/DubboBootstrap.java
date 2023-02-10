@@ -172,7 +172,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
     /**
      * See {@link ApplicationModel} and {@link ExtensionLoader} for why DubboBootstrap is designed to be singleton.
      */
-    public static DubboBootstrap getInstance() { //获取实例：单例模式
+    public static DubboBootstrap getInstance() { //获取实例：单例模式（在nacos等启动时，可以获取DubboBootstrap启动dubbo服务）
         if (instance == null) {
             synchronized (DubboBootstrap.class) { // synchronized ['sɪŋkrənaɪzd] adj. 同步的；同步化的,v. 使协调,同时发生
                 if (instance == null) { //synchronized + 双重检查，线程安全且缩小锁的范围
@@ -183,7 +183,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
         return instance;
     }
 
-    private DubboBootstrap() {
+    private DubboBootstrap() { //私有的构造函数
         configManager = ApplicationModel.getConfigManager(); //config对象的本地配置
         environment = ApplicationModel.getEnvironment();     //获取环境信息
 
@@ -205,7 +205,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
         return registerConsumer == null || !registerConsumer;
     }
 
-    private String getMetadataType() { //
+    private String getMetadataType() { //获取元数据类型
         String type = getApplication().getMetadataType();
         if (StringUtils.isEmpty(type)) {
             type = DEFAULT_METADATA_STORAGE_TYPE;
@@ -1236,7 +1236,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
         return this.serviceInstance;
     }
 
-    public void destroy() {
+    public void destroy() { //做销毁清理工作
         if (destroyLock.tryLock()) {
             try {
                 DubboShutdownHook.destroyAll();
