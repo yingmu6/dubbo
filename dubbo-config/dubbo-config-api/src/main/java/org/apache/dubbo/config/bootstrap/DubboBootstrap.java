@@ -196,7 +196,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
         });
     }
 
-    public void unRegisterShutdownHook() {
+    public void unRegisterShutdownHook() { //取消钩子函数的注册
         DubboShutdownHook.getDubboShutdownHook().unregister();
     }
 
@@ -1110,7 +1110,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
         exportedServices.clear();
     }
 
-    private void referServices() {
+    private void referServices() { //引用服务
         if (cache == null) {
             cache = ReferenceConfigCache.getCache();
         }
@@ -1236,7 +1236,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
         return this.serviceInstance;
     }
 
-    public void destroy() { //做销毁清理工作
+    public void destroy() { //做销毁清理工作（包含关联的注册信息、元数据信息、暴露服务信息等）
         if (destroyLock.tryLock()) {
             try {
                 DubboShutdownHook.destroyAll();

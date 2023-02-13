@@ -47,7 +47,7 @@ public class DubboShutdownHook extends Thread { //dubbo停机的钩子线程
     /**
      * Has it already been registered or not?
      */
-    private final AtomicBoolean registered = new AtomicBoolean(false);
+    private final AtomicBoolean registered = new AtomicBoolean(false); //是否已经注册了钩子函数
 
     /**
      * Has it already been destroyed or not?
