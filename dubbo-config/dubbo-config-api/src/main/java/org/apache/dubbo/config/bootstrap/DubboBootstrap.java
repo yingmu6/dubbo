@@ -139,11 +139,11 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
 
     private final ExecutorRepository executorRepository = getExtensionLoader(ExecutorRepository.class).getDefaultExtension(); //线程池仓库
 
-    private final ConfigManager configManager;
+    private final ConfigManager configManager; //配置管理器
 
     private final Environment environment;
 
-    private ReferenceConfigCache cache;
+    private ReferenceConfigCache cache; //引用配置的缓存对象
 
     private volatile boolean exportAsync;
 
@@ -157,9 +157,9 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
 
     private AtomicBoolean destroyed = new AtomicBoolean(false);
 
-    private volatile ServiceInstance serviceInstance;
+    private volatile ServiceInstance serviceInstance; //服务实例
 
-    private volatile MetadataService metadataService;
+    private volatile MetadataService metadataService; //元数据服务
 
     private volatile Set<MetadataServiceExporter> metadataServiceExporters;
 

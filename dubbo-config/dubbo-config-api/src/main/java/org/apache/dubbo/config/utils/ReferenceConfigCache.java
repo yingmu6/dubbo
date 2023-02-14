@@ -33,7 +33,7 @@ import java.util.concurrent.ConcurrentMap;
  * A simple util class for cache {@link ReferenceConfigBase}.
  * <p>
  * {@link ReferenceConfigBase} is a heavy Object, it's necessary to cache these object
- * for the framework which create {@link ReferenceConfigBase} frequently.
+ * for the framework which create {@link ReferenceConfigBase} frequently.（ReferenceConfigBase比较重，有必要进行缓存）
  * <p>
  * You can implement and use your own {@link ReferenceConfigBase} cache if you need use complicate strategy.
  */

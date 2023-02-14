@@ -56,7 +56,7 @@ public class DubboShutdownHook extends Thread { //dubbo停机的钩子线程
 
     private final EventDispatcher eventDispatcher = EventDispatcher.getDefaultExtension();
 
-    private DubboShutdownHook(String name) {
+    private DubboShutdownHook(String name) { //构造方法是私有的，提供的对象是单实例
         super(name);
     }
 
@@ -92,7 +92,7 @@ public class DubboShutdownHook extends Thread { //dubbo停机的钩子线程
         if (registered.compareAndSet(false, true)) {
             DubboShutdownHook dubboShutdownHook = getDubboShutdownHook();
             Runtime.getRuntime().addShutdownHook(dubboShutdownHook);
-            dispatch(new DubboShutdownHookRegisteredEvent(dubboShutdownHook));
+            dispatch(new DubboShutdownHookRegisteredEvent(dubboShutdownHook)); //发布钩子函数注册的事件
         }
     }
 
