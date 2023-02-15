@@ -50,10 +50,10 @@ public class Environment extends LifecycleAdapter implements FrameworkExt { //�
     private final InmemoryConfiguration externalConfiguration;      //装载内部的配置信息，分为全局配置和应用级配置
     private final InmemoryConfiguration appExternalConfiguration;   //装载配置中心的配置信息
 
-    private CompositeConfiguration globalConfiguration;
+    private CompositeConfiguration globalConfiguration; //
 
-    private Map<String, String> externalConfigurationMap = new HashMap<>();
-    private Map<String, String> appExternalConfigurationMap = new HashMap<>();
+    private Map<String, String> externalConfigurationMap = new HashMap<>(); //从配置中心拉取的配置内容
+    private Map<String, String> appExternalConfigurationMap = new HashMap<>(); //按应用名做group隔离的配置内容
 
     private boolean configCenterFirst = true;
 

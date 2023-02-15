@@ -32,7 +32,7 @@ public class CompositeDynamicConfiguration implements DynamicConfiguration { //c
 
     public static final String NAME = "COMPOSITE";
 
-    private Set<DynamicConfiguration> configurations = new HashSet<>();
+    private Set<DynamicConfiguration> configurations = new HashSet<>(); //配置中心集合（之所以叫合成的配置，因为组合了多个配置中心）
 
     public void addConfiguration(DynamicConfiguration configuration) {
         if (configuration != null) {

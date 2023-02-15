@@ -589,7 +589,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
 
         useRegistryAsConfigCenterIfNecessary();
 
-        Collection<ConfigCenterConfig> configCenters = configManager.getConfigCenters();
+        Collection<ConfigCenterConfig> configCenters = configManager.getConfigCenters(); //获取缓存中的配置中心Config对象
 
         // check Config Center
         if (CollectionUtils.isEmpty(configCenters)) {
@@ -602,16 +602,16 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
         } else {
             for (ConfigCenterConfig configCenterConfig : configCenters) {
                 configCenterConfig.refresh();
-                ConfigValidationUtils.validateConfigCenterConfig(configCenterConfig); //校验配置中心的数据
+                ConfigValidationUtils.validateConfigCenterConfig(configCenterConfig); //校验配置中心Config对象
             }
         }
 
         if (CollectionUtils.isNotEmpty(configCenters)) {
             CompositeDynamicConfiguration compositeDynamicConfiguration = new CompositeDynamicConfiguration();
             for (ConfigCenterConfig configCenter : configCenters) {
-                compositeDynamicConfiguration.addConfiguration(prepareEnvironment(configCenter));
+                compositeDynamicConfiguration.addConfiguration(prepareEnvironment(configCenter)); //遍历配置中心Config对象，依次将配置中心Config对象添加到组合的配置中心集合中
             }
-            environment.setDynamicConfiguration(compositeDynamicConfiguration);
+            environment.setDynamicConfiguration(compositeDynamicConfiguration); //将合成的配置中心Config对象设置到Environment对象中
         }
         configManager.refreshAll();
     }
@@ -659,8 +659,8 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
                 .getDefaultRegistries()
                 .stream()
                 .filter(this::isUsedRegistryAsConfigCenter) //filer：筛选满足条件的元素
-                .map(this::registryAsConfigCenter)
-                .forEach(configManager::addConfigCenter);
+                .map(this::registryAsConfigCenter) //构建配置中心数据
+                .forEach(configManager::addConfigCenter); //将配置中心数据写到ConfigManager对应的本地缓存中
     }
 
     private boolean isUsedRegistryAsConfigCenter(RegistryConfig registryConfig) {
@@ -1020,21 +1020,21 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
             if (!configCenter.checkOrUpdateInited()) { //预期值为false，当inited=true时，checkOrUpdateInited()返回false，即已经初始化了，就不再初始化处理
                 return null;
             }
-            DynamicConfiguration dynamicConfiguration = getDynamicConfiguration(configCenter.toUrl()); //将Config对象的内容，转换为URL
-            String configContent = dynamicConfiguration.getProperties(configCenter.getConfigFile(), configCenter.getGroup());
+            DynamicConfiguration dynamicConfiguration = getDynamicConfiguration(configCenter.toUrl()); //根据指定的URL获取配置中心实例
+            String configContent = dynamicConfiguration.getProperties(configCenter.getConfigFile(), configCenter.getGroup()); //从配置中心获取指定的配置内容
 
             String appGroup = getApplication().getName();
             String appConfigContent = null;
-            if (isNotEmpty(appGroup)) {
+            if (isNotEmpty(appGroup)) { //按应用名进行隔离
                 appConfigContent = dynamicConfiguration.getProperties
                         (isNotEmpty(configCenter.getAppConfigFile()) ? configCenter.getAppConfigFile() : configCenter.getConfigFile(),
                                 appGroup
                         );
             }
             try {
-                environment.setConfigCenterFirst(configCenter.isHighestPriority());
-                environment.updateExternalConfigurationMap(parseProperties(configContent)); //按从配置中心拉取的配置，更新到本地缓存中
-                environment.updateAppExternalConfigurationMap(parseProperties(appConfigContent));
+                environment.setConfigCenterFirst(configCenter.isHighestPriority()); //指定当前配置中心是否是具有高优先级
+                environment.updateExternalConfigurationMap(parseProperties(configContent)); //将从配置中心拉取的配置，更新到本地缓存中
+                environment.updateAppExternalConfigurationMap(parseProperties(appConfigContent)); //将应用名为group从配置中心拉取的配置，更新到本地缓存中
             } catch (IOException e) {
                 throw new IllegalStateException("Failed to parse configurations from Config Center.", e);
             }

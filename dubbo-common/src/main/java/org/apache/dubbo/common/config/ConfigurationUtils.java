@@ -106,8 +106,8 @@ public class ConfigurationUtils {
             logger.warn("You specified the config center, but there's not even one single config item in it.");
         } else {
             Properties properties = new Properties();
-            properties.load(new StringReader(content));
-            properties.stringPropertyNames().forEach(
+            properties.load(new StringReader(content)); //从字符流中读取内容写到Properties中
+            properties.stringPropertyNames().forEach( //遍历属性名列表，依次写到Map中
                     k -> map.put(k, properties.getProperty(k))
             );
         }

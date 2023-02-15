@@ -59,7 +59,7 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
 
     // configsCache数据格式：Map<getTagName(config.getClass()), Map<getId(config), config>> 即数据为：Map<config标签名, Map<config的Id, config对象>>
     // 将config对象按标签名、id映射缓存起来
-    final Map<String, Map<String, AbstractConfig>> configsCache = newMap(); //配置缓存，key为标签名，如ConfigCenterConfig配置类的标签名为config-center，configsCache的值如：Map<"registry", Map<"org.apache.dubbo.config.RegistryConfig", RegistryConfig@xxx >>
+    final Map<String, Map<String, AbstractConfig>> configsCache = newMap(); //Config对象的本地缓存，key为标签名，如ConfigCenterConfig配置类的标签名为config-center，configsCache的值如：Map<"registry", Map<"org.apache.dubbo.config.RegistryConfig", RegistryConfig@xxx >>
 
     public ConfigManager() { //会调用父类构造函数初始化父类，此处会调用super()，执行父类无参的构造函数
     }
@@ -325,7 +325,7 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
     }
 
     public void refreshAll() {
-        write(() -> {
+        write(() -> { //构建线程体run()的执行内容
             // refresh all configs here,
             getApplication().ifPresent(ApplicationConfig::refresh);
             getMonitor().ifPresent(MonitorConfig::refresh);

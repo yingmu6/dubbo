@@ -56,7 +56,7 @@ public class ConfigCenterConfig extends AbstractConfig { //配置中心
 
     private String namespace = CommonConstants.DUBBO;
     /* The group of the config center, generally it's used to identify an isolated space for a batch of config items,
-    but it's real meaning depends on the actual Config Center you use.
+    but it's real meaning depends on the actual Config Center you use. （配置中心的组group，是用来隔离多个配置项的，具体使用依赖具体的配置中心）
     */
     private String group = CommonConstants.DUBBO;
     private String username;
@@ -64,19 +64,19 @@ public class ConfigCenterConfig extends AbstractConfig { //配置中心
     private Long timeout = 3000L;
 
     // If the Config Center is given the highest priority, it will override（覆盖） all the other configurations
-    private Boolean highestPriority = true;
+    private Boolean highestPriority = true; //是否是最高优先级（若指定为true，就会覆盖其它所有配置中心的拉取的配置）
 
     // Decide the behaviour when initial connection try fails, 'true' means interrupt the whole process once fail.
     private Boolean check = true;
 
     /* Used to specify the key that your properties file mapping to, most of the time you do not need to change this parameter.
-    Notice that for Apollo, this parameter is meaningless, set the 'namespace' is enough.
+    Notice that for Apollo, this parameter is meaningless（无意义的）, set the 'namespace' is enough.
     */
     private String configFile = CommonConstants.DEFAULT_DUBBO_PROPERTIES;
 
     /* the .properties file under 'configFile' is global shared while .properties under this one is limited only to this application
     */
-    private String appConfigFile;
+    private String appConfigFile; //全局共享配置文件
 
     /* If the Config Center product you use have some special parameters that is not covered by this class, you can add it to here.
     For example, with XML:
