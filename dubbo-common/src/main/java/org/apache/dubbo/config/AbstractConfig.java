@@ -460,7 +460,7 @@ public abstract class AbstractConfig implements Serializable {
     }
 
     public void refresh() { //从配置中心中获取最新的配置值，然后通过set方法或setParameters方法设置值
-        Environment env = ApplicationModel.getEnvironment();
+        Environment env = ApplicationModel.getEnvironment(); //获取环境信息
         try {
             CompositeConfiguration compositeConfiguration = env.getPrefixedConfiguration(this); //获取带有前缀的配置
             // loop methods, get override value and set the new value back to method

@@ -34,7 +34,7 @@ public class CompositeConfiguration implements Configuration { //合成的配置
     private Logger logger = LoggerFactory.getLogger(CompositeConfiguration.class);
 
     private String id;
-    private String prefix; //前缀
+    private String prefix; //前缀（一对多的关系，一个prefix对应一个Configuration列表，即多个Configuration实例）
 
     /**
      * List holding all the configuration

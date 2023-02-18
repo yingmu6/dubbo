@@ -613,7 +613,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
             }
             environment.setDynamicConfiguration(compositeDynamicConfiguration); //将合成的配置中心Config对象设置到Environment对象中
         }
-        configManager.refreshAll();
+        configManager.refreshAll(); //刷新所有配置
     }
 
     private void startMetadataCenter() {

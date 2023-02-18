@@ -50,7 +50,7 @@ public class Environment extends LifecycleAdapter implements FrameworkExt { //�
     private final InmemoryConfiguration externalConfiguration;      //装载内部的配置信息，分为全局配置和应用级配置
     private final InmemoryConfiguration appExternalConfiguration;   //装载配置中心的配置信息
 
-    private CompositeConfiguration globalConfiguration; //
+    private CompositeConfiguration globalConfiguration; //合成的配置信息
 
     private Map<String, String> externalConfigurationMap = new HashMap<>(); //从配置中心拉取的配置内容
     private Map<String, String> appExternalConfigurationMap = new HashMap<>(); //按应用名做group隔离的配置内容
@@ -113,11 +113,11 @@ public class Environment extends LifecycleAdapter implements FrameworkExt { //�
     }
 
     /**
-     * At start-up, Dubbo is driven by various configuration, such as Application, Registry, Protocol, etc.
-     * All configurations will be converged into a data bus - URL, and then drive the subsequent process.
+     * At start-up, Dubbo is driven by various（各种各样的） configuration, such as Application, Registry, Protocol, etc.
+     * All configurations will be converged（被聚集） into a data bus - URL, and then drive the subsequent（随后的） process. //在启动时，各种配置会被聚集到数据总线URL中，给后面的程序使用
      * <p>
-     * At present, there are many configuration sources, including AbstractConfig (API, XML, annotation), - D, config center, etc.
-     * This method helps us to filter out the most priority values from various configuration sources.
+     * At present（目前）, there are many configuration sources, including AbstractConfig (API, XML, annotation), - D, config center, etc.
+     * This method helps us to filter out the most priority values from various configuration sources. //配置的数据源有许多，比如：配置对象、JVM输入参数、配置中心等，该方法就是过滤出最高优先级的配置
      *
      * @param config
      * @return
@@ -125,7 +125,7 @@ public class Environment extends LifecycleAdapter implements FrameworkExt { //�
     public synchronized CompositeConfiguration getPrefixedConfiguration(AbstractConfig config) { //prefixed [ˈpriːfɪkst] adj. 有前缀的, v. 加……作为前缀；
         CompositeConfiguration prefixedConfiguration = new CompositeConfiguration(config.getPrefix(), config.getId());
         Configuration configuration = new ConfigConfigurationAdapter(config);
-        if (this.isConfigCenterFirst()) {
+        if (this.isConfigCenterFirst()) { //todo @pause 2023-02-18
             // The sequence would be: SystemConfiguration -> AppExternalConfiguration -> ExternalConfiguration -> AbstractConfig -> PropertiesConfiguration
             // Config center has the highest priority
             prefixedConfiguration.addConfiguration(systemConfiguration);
