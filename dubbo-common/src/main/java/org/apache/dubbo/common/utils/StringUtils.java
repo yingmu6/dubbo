@@ -1036,7 +1036,7 @@ public final class StringUtils {
      * @param rawParameters format like '[{a:b},{c:d}]'
      * @return
      */
-    public static Map<String, String> parseParameters(String rawParameters) {
+    public static Map<String, String> parseParameters(String rawParameters) { //将字符串解析为key/value的Map形式
 
         Matcher matcher = PARAMETERS_PATTERN.matcher(rawParameters);
         if (!matcher.matches()) {

@@ -125,7 +125,7 @@ public class Environment extends LifecycleAdapter implements FrameworkExt { //�
     public synchronized CompositeConfiguration getPrefixedConfiguration(AbstractConfig config) { //prefixed [ˈpriːfɪkst] adj. 有前缀的, v. 加……作为前缀；
         CompositeConfiguration prefixedConfiguration = new CompositeConfiguration(config.getPrefix(), config.getId());
         Configuration configuration = new ConfigConfigurationAdapter(config);
-        if (this.isConfigCenterFirst()) { //todo @pause 2023-02-18
+        if (this.isConfigCenterFirst()) {
             // The sequence would be: SystemConfiguration -> AppExternalConfiguration -> ExternalConfiguration -> AbstractConfig -> PropertiesConfiguration
             // Config center has the highest priority
             prefixedConfiguration.addConfiguration(systemConfiguration);
@@ -134,12 +134,12 @@ public class Environment extends LifecycleAdapter implements FrameworkExt { //�
             prefixedConfiguration.addConfiguration(externalConfiguration);
             prefixedConfiguration.addConfiguration(configuration);
             prefixedConfiguration.addConfiguration(propertiesConfiguration);
-        } else { //配置中心的位置不一样
+        } else {
             // The sequence would be: SystemConfiguration -> AbstractConfig -> AppExternalConfiguration -> ExternalConfiguration -> PropertiesConfiguration
             // Config center has the highest priority（配置中心有最高优先级）
             prefixedConfiguration.addConfiguration(systemConfiguration);
             prefixedConfiguration.addConfiguration(environmentConfiguration);
-            prefixedConfiguration.addConfiguration(configuration);
+            prefixedConfiguration.addConfiguration(configuration); //相比上面，配置信息加载的位置不一样
             prefixedConfiguration.addConfiguration(appExternalConfiguration);
             prefixedConfiguration.addConfiguration(externalConfiguration);
             prefixedConfiguration.addConfiguration(propertiesConfiguration);
