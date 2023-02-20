@@ -507,9 +507,9 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
 
         ApplicationModel.initFrameworkExts(); //初始化框架配置
 
-        startConfigCenter(); //
+        startConfigCenter(); //启动配置中心（拉取远程的配置写到本地缓存中）
 
-        loadRemoteConfigs();
+        loadRemoteConfigs(); //加载远程配置（包含RegistryConfig、ProtocolConfig）、并写到ConfigManager对应的缓存中
 
         checkGlobalConfigs();
 
@@ -813,10 +813,10 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
     private void loadRemoteConfigs() {
         // registry ids to registry configs
         List<RegistryConfig> tmpRegistries = new ArrayList<>();
-        Set<String> registryIds = configManager.getRegistryIds();
+        Set<String> registryIds = configManager.getRegistryIds(); //获取注册Config的id列表
         registryIds.forEach(id -> {
             if (tmpRegistries.stream().noneMatch(reg -> reg.getId().equals(id))) {
-                tmpRegistries.add(configManager.getRegistry(id).orElseGet(() -> {
+                tmpRegistries.add(configManager.getRegistry(id).orElseGet(() -> { //根据registryId，循环构建RegistryConfig对象，并依次设置到注册RegistryConfig列表中
                     RegistryConfig registryConfig = new RegistryConfig();
                     registryConfig.setId(id);
                     registryConfig.refresh();
@@ -825,14 +825,14 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
             }
         });
 
-        configManager.addRegistries(tmpRegistries);
+        configManager.addRegistries(tmpRegistries); //将RegistryConfig列表添加到ConfigManager的缓存中
 
         // protocol ids to protocol configs
         List<ProtocolConfig> tmpProtocols = new ArrayList<>();
-        Set<String> protocolIds = configManager.getProtocolIds();
+        Set<String> protocolIds = configManager.getProtocolIds(); //获取协议Config的id列表
         protocolIds.forEach(id -> {
             if (tmpProtocols.stream().noneMatch(prot -> prot.getId().equals(id))) {
-                tmpProtocols.add(configManager.getProtocol(id).orElseGet(() -> {
+                tmpProtocols.add(configManager.getProtocol(id).orElseGet(() -> { //根据protocolId，循环构建ProtocolConfig对象，并依次设置到ProtocolConfig列表中
                     ProtocolConfig protocolConfig = new ProtocolConfig();
                     protocolConfig.setId(id);
                     protocolConfig.refresh();

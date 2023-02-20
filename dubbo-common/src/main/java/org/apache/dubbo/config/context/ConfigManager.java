@@ -317,7 +317,7 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
         return getConfig(getTagName(ReferenceConfigBase.class), id);
     }
 
-    protected static Set<String> getSubProperties(Map<String, String> properties, String prefix) {
+    protected static Set<String> getSubProperties(Map<String, String> properties, String prefix) { //获取属性key集合
         return properties.keySet().stream().filter(k -> k.contains(prefix)).map(k -> { //若key包含指定的前缀，则对key进行处理
             k = k.substring(prefix.length());
             return k.substring(0, k.indexOf(".")); //将属性map的key进行遍历，去掉前缀、再去掉点号
