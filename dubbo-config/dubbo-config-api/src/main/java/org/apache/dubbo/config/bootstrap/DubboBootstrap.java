@@ -516,9 +516,9 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
         // @since 2.7.8
         startMetadataCenter();
 
-        initMetadataService();
+        initMetadataService(); //创建MetadataService实例（通过SPI接口WritableMetadataService的实例创建）
 
-        initMetadataServiceExports();
+        initMetadataServiceExports(); //创建MetadataServiceExporter实例的集合
 
         initEventListener();
 
@@ -536,7 +536,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
         if (CollectionUtils.isEmpty(metadatas)) {
             MetadataReportConfig metadataReportConfig = new MetadataReportConfig();
             metadataReportConfig.refresh();
-            if (metadataReportConfig.isValid()) {
+            if (metadataReportConfig.isValid()) { //判断是否存在有效的元数据地址
                 configManager.addMetadataReport(metadataReportConfig);
                 metadatas = configManager.getMetadataConfigs();
             }
@@ -616,7 +616,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
         configManager.refreshAll(); //刷新所有配置
     }
 
-    private void startMetadataCenter() {
+    private void startMetadataCenter() { //启动元数据中心
 
         useRegistryAsMetadataCenterIfNecessary();
 
@@ -632,7 +632,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
             return;
         }
         MetadataReportConfig metadataReportConfig = metadataReportConfigs.iterator().next();
-        ConfigValidationUtils.validateMetadataConfig(metadataReportConfig); //取其中一个实例校验
+        ConfigValidationUtils.validateMetadataConfig(metadataReportConfig); //取其中一个实例校验（元数据中心只使用一个，注册中心可以有多个）
         if (!metadataReportConfig.isValid()) {
             return;
         }
