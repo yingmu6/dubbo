@@ -100,7 +100,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
      */
     private transient volatile boolean unexported;
 
-    private DubboBootstrap bootstrap;
+    private DubboBootstrap bootstrap; //存储启动类的实例（DubboBootstrap与ServiceConfig是一对多的关系，可以用上启动类维护的相关变量值）
 
     /**
      * The exported services

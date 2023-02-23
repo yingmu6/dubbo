@@ -163,9 +163,9 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
 
     private volatile Set<MetadataServiceExporter> metadataServiceExporters;
 
-    private List<ServiceConfigBase<?>> exportedServices = new ArrayList<>();
+    private List<ServiceConfigBase<?>> exportedServices = new ArrayList<>(); //已经暴露的服务列表
 
-    private List<Future<?>> asyncExportingFutures = new ArrayList<>();
+    private List<Future<?>> asyncExportingFutures = new ArrayList<>(); //异步暴露时使用的Future列表
 
     private List<CompletableFuture<Object>> asyncReferringFutures = new ArrayList<>();
 
@@ -500,7 +500,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
     /**
      * Initialize
      */
-    public void initialize() { //服务暴露或引用前，做初始化工作
+    public void initialize() { //初始化
         if (!initialized.compareAndSet(false, true)) { //compareAndSet返回false，表明实际值与预期值不相等
             return; //此处initialized为true时进入，表明是已经初始化过来，就不在初始化
         }
@@ -520,7 +520,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
 
         initMetadataServiceExports(); //创建MetadataServiceExporter实例的集合
 
-        initEventListener();
+        initEventListener(); //将当前对象作为监听器加入到缓存中的监听器列表
 
         if (logger.isInfoEnabled()) {
             logger.info(NAME + " has been initialized!");
@@ -881,8 +881,8 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
      */
     public DubboBootstrap start() {
         if (started.compareAndSet(false, true)) {
-            ready.set(false);
-            initialize();
+            ready.set(false); //设置标志值
+            initialize();//初始化处理
             if (logger.isInfoEnabled()) {
                 logger.info(NAME + " is starting...");
             }
@@ -1079,7 +1079,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
         configManager.getServices().forEach(sc -> {
             // TODO, compatible with ServiceConfig.export()
             ServiceConfig serviceConfig = (ServiceConfig) sc;
-            serviceConfig.setBootstrap(this); //设置ServiceConfig对象的bootstrap属性值
+            serviceConfig.setBootstrap(this); //设置ServiceConfig与DubboBootstrap的关联关系
 
             if (exportAsync) { //异步暴露服务，使用线程池执行相关任务
                 ExecutorService executor = executorRepository.getServiceExporterExecutor();
@@ -1087,8 +1087,8 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
                     sc.export();
                     exportedServices.add(sc);
                 });
-                asyncExportingFutures.add(future);
-            } else {
+                asyncExportingFutures.add(future); //将Future将到列表中
+            } else { //同步暴露服务
                 sc.export();
                 exportedServices.add(sc);
             }
