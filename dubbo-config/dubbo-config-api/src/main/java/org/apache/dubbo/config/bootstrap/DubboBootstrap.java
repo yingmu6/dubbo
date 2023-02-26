@@ -145,15 +145,15 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
 
     private ReferenceConfigCache cache; //引用配置的缓存对象
 
-    private volatile boolean exportAsync;
+    private volatile boolean exportAsync; //是否异步暴露
 
-    private volatile boolean referAsync;
+    private volatile boolean referAsync; //是否异步引用
 
     private AtomicBoolean initialized = new AtomicBoolean(false); //初始化标识
 
     private AtomicBoolean started = new AtomicBoolean(false); //启动标识
 
-    private AtomicBoolean ready = new AtomicBoolean(true);
+    private AtomicBoolean ready = new AtomicBoolean(true); //是否已经准备好环境
 
     private AtomicBoolean destroyed = new AtomicBoolean(false);
 
@@ -867,7 +867,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
         addEventListener(this);
     }
 
-    private List<ServiceDiscovery> getServiceDiscoveries() {
+    private List<ServiceDiscovery> getServiceDiscoveries() { //获取满足条件的ServiceDiscovery实例
         return AbstractRegistryFactory.getRegistries()
                 .stream()
                 .filter(registry -> registry instanceof ServiceDiscoveryRegistry)
@@ -897,11 +897,11 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
                 registerServiceInstance();
             }
 
-            referServices();
-            if (asyncExportingFutures.size() > 0) {
+            referServices(); //引用服务
+            if (asyncExportingFutures.size() > 0) { //服务异步暴露后，更新启动标志
                 new Thread(() -> {
                     try {
-                        this.awaitFinish();
+                        this.awaitFinish(); //阻塞着等待异步任务完成
                     } catch (Exception e) {
                         logger.warn(NAME + " exportAsync occurred an exception.");
                     }
@@ -910,7 +910,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
                         logger.info(NAME + " is ready.");
                     }
                 }).start();
-            } else {
+            } else { //服务同步暴露后，更新启动标志
                 ready.set(true);
                 if (logger.isInfoEnabled()) {
                     logger.info(NAME + " is ready.");
@@ -953,11 +953,11 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
         return this;
     }
 
-    public DubboBootstrap awaitFinish() throws Exception {
+    public DubboBootstrap awaitFinish() throws Exception { //等待异步暴露和引用的服务完成
         logger.info(NAME + " waiting services exporting / referring ...");
         if (exportAsync && asyncExportingFutures.size() > 0) {
             CompletableFuture future = CompletableFuture.allOf(asyncExportingFutures.toArray(new CompletableFuture[0]));
-            future.get();
+            future.get(); //阻塞着等待服务完成
         }
         if (referAsync && asyncReferringFutures.size() > 0) {
             CompletableFuture future = CompletableFuture.allOf(asyncReferringFutures.toArray(new CompletableFuture[0]));
@@ -1149,7 +1149,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
     }
 
     private void registerServiceInstance() {
-        if (CollectionUtils.isEmpty(getServiceDiscoveries())) {
+        if (CollectionUtils.isEmpty(getServiceDiscoveries())) { //若缓存中的注册中心列表为空，则不进行后续处理
             return;
         }
 
@@ -1163,11 +1163,11 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
 
         int port = exportedURL.getPort();
 
-        ServiceInstance serviceInstance = createServiceInstance(serviceName, host, port);
+        ServiceInstance serviceInstance = createServiceInstance(serviceName, host, port); //创建服务实例ServiceInstance
 
-        preRegisterServiceInstance(serviceInstance);
+        preRegisterServiceInstance(serviceInstance); //预处理注册服务实例
 
-        getServiceDiscoveries().forEach(serviceDiscovery -> serviceDiscovery.register(serviceInstance));
+        getServiceDiscoveries().forEach(serviceDiscovery -> serviceDiscovery.register(serviceInstance)); //将创建的服务实例依次注册到各个注册中心里
     }
 
     /**
@@ -1196,7 +1196,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
         });
     }
 
-    private URL selectMetadataServiceExportedURL() {
+    private URL selectMetadataServiceExportedURL() { //
 
         URL selectedURL = null;
 

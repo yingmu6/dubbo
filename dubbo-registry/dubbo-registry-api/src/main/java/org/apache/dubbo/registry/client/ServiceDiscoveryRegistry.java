@@ -58,7 +58,7 @@ import static org.apache.dubbo.registry.client.ServiceDiscoveryFactory.getExtens
 import static org.apache.dubbo.registry.client.metadata.ServiceInstanceMetadataUtils.*;
 
 /**
- * Being different to the traditional registry, {@link ServiceDiscoveryRegistry} that is a new service-oriented
+ * Being different to（不通于） the traditional（传统的） registry, {@link ServiceDiscoveryRegistry} that is a new service-oriented
  * {@link Registry} based on {@link ServiceDiscovery}, it will not interact in the external registry directly,
  * but store the {@link URL urls} that Dubbo services exported and referenced into {@link WritableMetadataService}
  * when {@link #register(URL)} and {@link #subscribe(URL, NotifyListener)} methods are executed. After that the exported
