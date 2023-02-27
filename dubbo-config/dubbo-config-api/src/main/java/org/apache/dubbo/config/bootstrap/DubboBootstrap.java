@@ -1016,8 +1016,8 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
     /* serve for builder apis, end */
 
     private DynamicConfiguration prepareEnvironment(ConfigCenterConfig configCenter) {
-        if (configCenter.isValid()) {
-            if (!configCenter.checkOrUpdateInited()) { //预期值为false，当inited=true时，checkOrUpdateInited()返回false，即已经初始化了，就不再初始化处理
+        if (configCenter.isValid()) { //在配置中心有效时，进行处理（即配置地址address、协议protocol不为空时）
+            if (!configCenter.checkOrUpdateInited()) { //若配置中心已经初始化过，则不进行后续的初始化逻辑。预期值为false，当inited=true时，checkOrUpdateInited()返回false，即已经初始化了，就不再初始化处理
                 return null;
             }
             DynamicConfiguration dynamicConfiguration = getDynamicConfiguration(configCenter.toUrl()); //根据指定的URL获取配置中心实例
@@ -1060,8 +1060,8 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
     private void exportMetadataService() {
         metadataServiceExporters
                 .stream()
-                .filter(this::supports)
-                .forEach(MetadataServiceExporter::export);
+                .filter(this::supports) //筛选出支持的元数据类型
+                .forEach(MetadataServiceExporter::export); //进行元数据服务暴露
     }
 
     private void unexportMetadataService() {

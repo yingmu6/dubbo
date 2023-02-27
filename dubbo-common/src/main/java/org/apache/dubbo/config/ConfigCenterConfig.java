@@ -40,7 +40,7 @@ public class ConfigCenterConfig extends AbstractConfig { //配置中心
         System.out.println(inited.compareAndSet(false, false));
     }
 
-    private AtomicBoolean inited = new AtomicBoolean(false);
+    private AtomicBoolean inited = new AtomicBoolean(false); //是否已经被初始化
 
     private String protocol;
     private String address;
