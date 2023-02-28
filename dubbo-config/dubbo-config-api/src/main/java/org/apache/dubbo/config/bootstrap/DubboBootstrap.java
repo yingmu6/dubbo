@@ -1121,7 +1121,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
             referenceConfig.setBootstrap(this);
 
             if (rc.shouldInit()) {
-                if (referAsync) {
+                if (referAsync) { //异步引用服务（与暴露服务的同步、异步处理方式类似）
                     CompletableFuture<Object> future = ScheduledCompletableFuture.submit(
                             executorRepository.getServiceExporterExecutor(),
                             () -> cache.get(rc)
@@ -1239,7 +1239,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
     public void destroy() { //做销毁清理工作（包含关联的注册信息、元数据信息、暴露服务信息等）
         if (destroyLock.tryLock()) {
             try {
-                DubboShutdownHook.destroyAll();
+                DubboShutdownHook.destroyAll(); //停机钩子线程做销毁工作
 
                 if (started.compareAndSet(true, false)
                         && destroyed.compareAndSet(false, true)) {

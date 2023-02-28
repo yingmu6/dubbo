@@ -52,7 +52,7 @@ public class DubboShutdownHook extends Thread { //dubbo停机的钩子线程
     /**
      * Has it already been destroyed or not?
      */
-    private static final AtomicBoolean destroyed = new AtomicBoolean(false);
+    private static final AtomicBoolean destroyed = new AtomicBoolean(false); //是否已经销毁
 
     private final EventDispatcher eventDispatcher = EventDispatcher.getDefaultExtension();
 
@@ -123,7 +123,7 @@ public class DubboShutdownHook extends Thread { //dubbo停机的钩子线程
         return registered.get();
     }
 
-    public static void destroyAll() {
+    public static void destroyAll() { //销毁所有内容
         if (destroyed.compareAndSet(false, true)) {
             AbstractRegistryFactory.destroyAll();
             destroyProtocols();
@@ -139,7 +139,7 @@ public class DubboShutdownHook extends Thread { //dubbo停机的钩子线程
             try {
                 Protocol protocol = loader.getLoadedExtension(protocolName);
                 if (protocol != null) {
-                    protocol.destroy();
+                    protocol.destroy(); //各个协议进行销毁操作
                 }
             } catch (Throwable t) {
                 logger.warn(t.getMessage(), t);
