@@ -46,7 +46,7 @@ public class GenericImplFilter implements Filter, Filter.Listener { //实现消�
 
     private static final Logger logger = LoggerFactory.getLogger(GenericImplFilter.class);
 
-    private static final Class<?>[] GENERIC_PARAMETER_TYPES = new Class<?>[] {String.class, String[].class, Object[].class};
+    private static final Class<?>[] GENERIC_PARAMETER_TYPES = new Class<?>[] {String.class, String[].class, Object[].class}; // 泛化方法$invoke 对应的参数Class列表
 
     private static final String GENERIC_IMPL_MARKER = "GENERIC_IMPL";
 
@@ -123,7 +123,7 @@ public class GenericImplFilter implements Filter, Filter.Listener { //实现消�
 
     @Override
     public void onResponse(Result appResponse, Invoker<?> invoker, Invocation invocation) {
-        String generic = invoker.getUrl().getParameter(GENERIC_KEY);
+        String generic = invoker.getUrl().getParameter(GENERIC_KEY); // 获取泛化方式
         String methodName = invocation.getMethodName();
         Class<?>[] parameterTypes = invocation.getParameterTypes();
         Object genericImplMarker = invocation.get(GENERIC_IMPL_MARKER);

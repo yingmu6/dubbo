@@ -30,16 +30,16 @@ public interface GenericService {//泛化服务接口
      *
      * @param method         Method name, e.g. findPerson. If there are overridden methods, parameter info is
      *                       required, e.g. findPerson(java.lang.String)
-     * @param parameterTypes Parameter types
-     * @param args           Arguments
+     * @param parameterTypes Parameter types 参数类型列表
+     * @param args           Arguments       参数值列表
      * @return invocation return value
-     * @throws GenericException potential exception thrown from the invocation
+     * @throws GenericException potential（潜在的，可能的） exception thrown from the invocation
      */
     Object $invoke(String method, String[] parameterTypes, Object[] args) throws GenericException; //同步调用
 
     default CompletableFuture<Object> $invokeAsync(String method, String[] parameterTypes, Object[] args) throws GenericException { //异步调用
         Object object = $invoke(method, parameterTypes, args);
-        if (object instanceof CompletableFuture) {
+        if (object instanceof CompletableFuture) { //使用CompletableFuture做异步调用
             return (CompletableFuture<Object>) object;
         }
         return CompletableFuture.completedFuture(object);
