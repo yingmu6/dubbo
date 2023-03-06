@@ -54,7 +54,7 @@ public class GenericImplFilter implements Filter, Filter.Listener { //实现消�
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
         String generic = invoker.getUrl().getParameter(GENERIC_KEY); //获取泛化方式
         // calling a generic impl service
-        if (isCallingGenericImpl(generic, invocation)) { //泛化实现：用于服务提供端泛化
+        if (isCallingGenericImpl(generic, invocation)) { //泛化接口GenericService的实现类处理
             RpcInvocation invocation2 = new RpcInvocation(invocation);
 
             /**
@@ -78,7 +78,7 @@ public class GenericImplFilter implements Filter, Filter.Listener { //实现消�
                 for (int i = 0; i < arguments.length; i++) {
                     args[i] = JavaBeanSerializeUtil.serialize(arguments[i], JavaBeanAccessor.METHOD);
                 }
-            } else { //其它类型用PojoUtils进行序列化
+            } else { //其它类型用PojoUtils对参数列表直接进行序列化
                 args = PojoUtils.generalize(arguments);
             }
 
