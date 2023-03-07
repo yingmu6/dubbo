@@ -54,7 +54,7 @@ public class GenericImplFilter implements Filter, Filter.Listener { //实现消�
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
         String generic = invoker.getUrl().getParameter(GENERIC_KEY); //获取泛化方式
         // calling a generic impl service
-        if (isCallingGenericImpl(generic, invocation)) { //泛化接口GenericService的实现类处理
+        if (isCallingGenericImpl(generic, invocation)) { //泛化接口GenericService的实现类处理（非$invoke或$invokeAsync方法调用，即泛化实现类新增的方法）
             RpcInvocation invocation2 = new RpcInvocation(invocation);
 
             /**
@@ -87,25 +87,25 @@ public class GenericImplFilter implements Filter, Filter.Listener { //实现消�
             } else {
                 invocation2.setMethodName($INVOKE); //GenericService中的同步调用$invoke
             }
-            invocation2.setParameterTypes(GENERIC_PARAMETER_TYPES);
-            invocation2.setParameterTypesDesc(GENERIC_PARAMETER_DESC);
+            invocation2.setParameterTypes(GENERIC_PARAMETER_TYPES); //调用参数类型（即GenericService的$invoke方法的参数类型列表）
+            invocation2.setParameterTypesDesc(GENERIC_PARAMETER_DESC); //调用参数描述
             invocation2.setArguments(new Object[] {methodName, types, args}); //设置泛化接口方法中的参数列表
             return invoker.invoke(invocation2);
         }
         // making a generic call to a normal service
-        else if (isMakingGenericCall(generic, invocation)) { //泛化调用：用于服务消费端泛化
+        else if (isMakingGenericCall(generic, invocation)) { //泛化调用：用于服务消费端泛化（$invoke或$invokeAsync方法调用）
 
             Object[] args = (Object[]) invocation.getArguments()[2];
             if (ProtocolUtils.isJavaGenericSerialization(generic)) { //序列化方式：nativejava
 
                 for (Object arg : args) {
-                    if (!(byte[].class == arg.getClass())) {
+                    if (!(byte[].class == arg.getClass())) { // 每一个参数类型需要字节数组
                         error(generic, byte[].class.getName(), arg.getClass().getName());
                     }
                 }
             } else if (ProtocolUtils.isBeanGenericSerialization(generic)) {//序列化方式：bean
                 for (Object arg : args) {
-                    if (!(arg instanceof JavaBeanDescriptor)) {
+                    if (!(arg instanceof JavaBeanDescriptor)) { // 每一个参数类型需要JavaBeanDescriptor类型
                         error(generic, JavaBeanDescriptor.class.getName(), arg.getClass().getName());
                     }
                 }
@@ -205,13 +205,13 @@ public class GenericImplFilter implements Filter, Filter.Listener { //实现消�
 
     }
 
-    private boolean isCallingGenericImpl(String generic, Invocation invocation) {
+    private boolean isCallingGenericImpl(String generic, Invocation invocation) { //判断是否非$invoke或$invokeAsync方法
         return ProtocolUtils.isGeneric(generic) //是泛化类型
                 && (!$INVOKE.equals(invocation.getMethodName()) && !$INVOKE_ASYNC.equals(invocation.getMethodName())) //方法名不为$invoke且不为$invokeAsync
                 && invocation instanceof RpcInvocation; //invocation类型为RpcInvocation
     }
 
-    private boolean isMakingGenericCall(String generic, Invocation invocation) {
+    private boolean isMakingGenericCall(String generic, Invocation invocation) { //判断是否是$invoke或$invokeAsync方法
         return (invocation.getMethodName().equals($INVOKE) || invocation.getMethodName().equals($INVOKE_ASYNC)) //方法名为$invoke或为$invokeAsync
                 && invocation.getArguments() != null
                 && invocation.getArguments().length == 3
