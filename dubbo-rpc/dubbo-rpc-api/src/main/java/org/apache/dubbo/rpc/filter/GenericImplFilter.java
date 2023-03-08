@@ -105,7 +105,7 @@ public class GenericImplFilter implements Filter, Filter.Listener { //实现消�
                 }
             } else if (ProtocolUtils.isBeanGenericSerialization(generic)) {//序列化方式：bean
                 for (Object arg : args) {
-                    if (!(arg instanceof JavaBeanDescriptor)) { // 每一个参数类型需要JavaBeanDescriptor类型
+                    if (!(arg instanceof JavaBeanDescriptor)) { //对每一个参数类型进行判断，需要JavaBeanDescriptor类型
                         error(generic, JavaBeanDescriptor.class.getName(), arg.getClass().getName());
                     }
                 }
@@ -114,7 +114,7 @@ public class GenericImplFilter implements Filter, Filter.Listener { //实现消�
             invocation.setAttachment(
                     GENERIC_KEY, invoker.getUrl().getParameter(GENERIC_KEY)); //设置泛化类型
         }
-        return invoker.invoke(invocation);
+        return invoker.invoke(invocation); //过滤逻辑处理完后，执行方法调用
     }
 
     private void error(String generic, String expected, String actual) throws RpcException {
@@ -123,11 +123,11 @@ public class GenericImplFilter implements Filter, Filter.Listener { //实现消�
 
     @Override
     public void onResponse(Result appResponse, Invoker<?> invoker, Invocation invocation) {
-        String generic = invoker.getUrl().getParameter(GENERIC_KEY); // 获取泛化方式
+        String generic = invoker.getUrl().getParameter(GENERIC_KEY); //获取泛化方式
         String methodName = invocation.getMethodName();
         Class<?>[] parameterTypes = invocation.getParameterTypes();
-        Object genericImplMarker = invocation.get(GENERIC_IMPL_MARKER);
-        if (genericImplMarker != null && (boolean) invocation.get(GENERIC_IMPL_MARKER)) { //泛化实现才能进行响应操作
+        Object genericImplMarker = invocation.get(GENERIC_IMPL_MARKER); //获取泛化标识
+        if (genericImplMarker != null && (boolean) invocation.get(GENERIC_IMPL_MARKER)) { //非$invoke或非$invokeAsync方法的调用
             if (!appResponse.hasException()) { //响应没有异常信息
                 Object value = appResponse.getValue(); //获取响应结果
                 try {
@@ -205,13 +205,13 @@ public class GenericImplFilter implements Filter, Filter.Listener { //实现消�
 
     }
 
-    private boolean isCallingGenericImpl(String generic, Invocation invocation) { //判断是否非$invoke或$invokeAsync方法
+    private boolean isCallingGenericImpl(String generic, Invocation invocation) { //泛化调用中 非$invoke或非$invokeAsync方法
         return ProtocolUtils.isGeneric(generic) //是泛化类型
                 && (!$INVOKE.equals(invocation.getMethodName()) && !$INVOKE_ASYNC.equals(invocation.getMethodName())) //方法名不为$invoke且不为$invokeAsync
                 && invocation instanceof RpcInvocation; //invocation类型为RpcInvocation
     }
 
-    private boolean isMakingGenericCall(String generic, Invocation invocation) { //判断是否是$invoke或$invokeAsync方法
+    private boolean isMakingGenericCall(String generic, Invocation invocation) { //泛化调用中 $invoke或$invokeAsync方法
         return (invocation.getMethodName().equals($INVOKE) || invocation.getMethodName().equals($INVOKE_ASYNC)) //方法名为$invoke或为$invokeAsync
                 && invocation.getArguments() != null
                 && invocation.getArguments().length == 3
