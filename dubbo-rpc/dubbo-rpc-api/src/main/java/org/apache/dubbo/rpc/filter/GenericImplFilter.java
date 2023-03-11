@@ -133,18 +133,18 @@ public class GenericImplFilter implements Filter, Filter.Listener { //实现消�
                 try {
                     Class<?> invokerInterface = invoker.getInterface();
                     if (!$INVOKE.equals(methodName) && !$INVOKE_ASYNC.equals(methodName)
-                            && invokerInterface.isAssignableFrom(GenericService.class)) {
+                            && invokerInterface.isAssignableFrom(GenericService.class)) { //GenericService中 非$invoke以及非$invokeAsync方法
                         try {
                             // find the real interface from url
-                            String realInterface = invoker.getUrl().getParameter(Constants.INTERFACE); //查找真实的调用接口
-                            invokerInterface = ReflectUtils.forName(realInterface);
+                            String realInterface = invoker.getUrl().getParameter(Constants.INTERFACE); //查找目标接口对应的字符串
+                            invokerInterface = ReflectUtils.forName(realInterface); //获取目标接口对应的Class
                         } catch (Throwable e) {
                             // ignore
                         }
                     }
 
-                    Method method = invokerInterface.getMethod(methodName, parameterTypes);
-                    if (ProtocolUtils.isBeanGenericSerialization(generic)) {
+                    Method method = invokerInterface.getMethod(methodName, parameterTypes); //找到指定接口中，指定方法名、指定参数类型列表对应的Method对象
+                    if (ProtocolUtils.isBeanGenericSerialization(generic)) { //bean方式的序列化
                         if (value == null) {
                             appResponse.setValue(value);
                         } else if (value instanceof JavaBeanDescriptor) { //反序列化，并将值设置到响应结果appResponse中
@@ -152,14 +152,14 @@ public class GenericImplFilter implements Filter, Filter.Listener { //实现消�
                         } else {
                             throw new RpcException("The type of result value is " + value.getClass().getName() + " other than " + JavaBeanDescriptor.class.getName() + ", and the result is " + value);
                         }
-                    } else {
+                    } else { //非bean方式的序列化
                         Type[] types = ReflectUtils.getReturnTypes(method);
                         appResponse.setValue(PojoUtils.realize(value, (Class<?>) types[0], types[1])); //将响应结果值反序列化后，设置到Result中
                     }
                 } catch (NoSuchMethodException e) {
                     throw new RpcException(e.getMessage(), e);
                 }
-            } else if (appResponse.getException() instanceof com.alibaba.dubbo.rpc.service.GenericException) { //响应包含异常信息
+            } else if (appResponse.getException() instanceof com.alibaba.dubbo.rpc.service.GenericException) { //响应包含异常信息（兼容老版本的泛化异常）
                 com.alibaba.dubbo.rpc.service.GenericException exception = (com.alibaba.dubbo.rpc.service.GenericException) appResponse.getException();
                 try {
                     String className = exception.getExceptionClass();
@@ -170,7 +170,7 @@ public class GenericImplFilter implements Filter, Filter.Listener { //实现消�
                         targetException = (Throwable) clazz.newInstance(); //构建异常实例
                     } catch (Throwable e) {
                         lastException = e;
-                        for (Constructor<?> constructor : clazz.getConstructors()) {
+                        for (Constructor<?> constructor : clazz.getConstructors()) { //使用Class的newInstance()构建实例异常时，使用Constructor的newInstance()构建
                             try {
                                 targetException = (Throwable) constructor.newInstance(new Object[constructor.getParameterTypes().length]);
                                 break;
@@ -185,7 +185,7 @@ public class GenericImplFilter implements Filter, Filter.Listener { //实现消�
                             if (!field.isAccessible()) {
                                 field.setAccessible(true);
                             }
-                            field.set(targetException, exception.getExceptionMessage());
+                            field.set(targetException, exception.getExceptionMessage()); //将异常信息设置到Throwable的detailMessage字段中
                         } catch (Throwable e) {
                             logger.warn(e.getMessage(), e);
                         }
