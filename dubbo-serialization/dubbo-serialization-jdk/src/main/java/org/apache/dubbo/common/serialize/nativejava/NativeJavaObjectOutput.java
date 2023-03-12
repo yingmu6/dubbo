@@ -29,7 +29,7 @@ import java.io.OutputStream;
  */
 public class NativeJavaObjectOutput implements ObjectOutput {
 
-    private final ObjectOutputStream outputStream;
+    private final ObjectOutputStream outputStream; //使用Java的序列化、反序列化
 
     public NativeJavaObjectOutput(OutputStream os) throws IOException {
         this(new ObjectOutputStream(os));

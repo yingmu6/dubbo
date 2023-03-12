@@ -49,14 +49,14 @@ public class GenericFilter implements Filter, Filter.Listener { //泛化过滤�
     public Result invoke(Invoker<?> invoker, Invocation inv) throws RpcException {
         if ((inv.getMethodName().equals($INVOKE) || inv.getMethodName().equals($INVOKE_ASYNC))
                 && inv.getArguments() != null
-                && inv.getArguments().length == 3 //GenericService中的$invoke、$invokeAsync方法都是3个
-                && !GenericService.class.isAssignableFrom(invoker.getInterface())) {
-            String name = ((String) inv.getArguments()[0]).trim();
+                && inv.getArguments().length == 3 //GenericService中的$invoke、$invokeAsync方法参数都是3个
+                && !GenericService.class.isAssignableFrom(invoker.getInterface())) { //使用$invoke或$invokeAsync方法进行调用
+            String name = ((String) inv.getArguments()[0]).trim(); //解析调用相关参数
             String[] types = (String[]) inv.getArguments()[1];
             Object[] args = (Object[]) inv.getArguments()[2];
             try {
-                Method method = ReflectUtils.findMethodByMethodSignature(invoker.getInterface(), name, types); //根据方法签名找到对应的Method
-                Class<?>[] params = method.getParameterTypes();
+                Method method = ReflectUtils.findMethodByMethodSignature(invoker.getInterface(), name, types); //根据方法签名找到对应的Method（查找Method时，会建立缓存，减少反射开销）
+                Class<?>[] params = method.getParameterTypes(); //获取方法的参数类型列表
                 if (args == null) {
                     args = new Object[params.length];
                 }
@@ -70,11 +70,11 @@ public class GenericFilter implements Filter, Filter.Listener { //泛化过滤�
                     generic = RpcContext.getContext().getAttachment(GENERIC_KEY);
                 }
 
-                if (StringUtils.isEmpty(generic)
+                if (StringUtils.isEmpty(generic) //序列化和反序列化是成对出现的，消费端用什么序列化方式，提供端就对应用什么反序列化方式
                         || ProtocolUtils.isDefaultGenericSerialization(generic) //默认的序列化方式generic=true
                         || ProtocolUtils.isGenericReturnRawResult(generic)) {
                     args = PojoUtils.realize(args, params, method.getGenericParameterTypes());
-                } else if (ProtocolUtils.isJavaGenericSerialization(generic)) {
+                } else if (ProtocolUtils.isJavaGenericSerialization(generic)) {//nativejava序列化方式
                     for (int i = 0; i < args.length; i++) {
                         if (byte[].class == args[i].getClass()) { //使用java序列化方式时，需要参数为字节数组
                             try (UnsafeByteArrayInputStream is = new UnsafeByteArrayInputStream((byte[]) args[i])) {
@@ -108,7 +108,7 @@ public class GenericFilter implements Filter, Filter.Listener { //泛化过滤�
                                             args[i].getClass().getName());
                         }
                     }
-                } else if (ProtocolUtils.isProtobufGenericSerialization(generic)) {
+                } else if (ProtocolUtils.isProtobufGenericSerialization(generic)) { //protobuf的序列化方式
                     // as proto3 only accept one protobuf parameter
                     if (args.length == 1 && args[0] instanceof String) {
                         try (UnsafeByteArrayInputStream is =
@@ -134,7 +134,7 @@ public class GenericFilter implements Filter, Filter.Listener { //泛化过滤�
                 rpcInvocation.setInvoker(inv.getInvoker());
                 rpcInvocation.setTargetServiceUniqueName(inv.getTargetServiceUniqueName());
 
-                return invoker.invoke(rpcInvocation);
+                return invoker.invoke(rpcInvocation); //组装调用所需的信息，如接口名、方法参数等，然后实现Invoker的具体调用
             } catch (NoSuchMethodException | ClassNotFoundException e) {
                 throw new RpcException(e.getMessage(), e);
             }

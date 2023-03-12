@@ -786,7 +786,7 @@ public final class ReflectUtils { //JVM虚拟机中的类型描述符
             clazz = Class.forName(name, true, cl); //根据类名称获取Class对象
             NAME_CLASS_CACHE.put(name, clazz); //设置到缓存中
         }
-        return clazz;
+        return clazz; //借助缓存，减少反射的开销
     }
 
     /**
