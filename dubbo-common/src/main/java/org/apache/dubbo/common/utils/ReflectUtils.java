@@ -929,10 +929,10 @@ public final class ReflectUtils { //JVM虚拟机中的类型描述符
             for (int i = 0; i < parameterTypes.length; i++) {
                 types[i] = ReflectUtils.name2class(parameterTypes[i]); //依次将类型名称name转换为Class
             }
-            method = clazz.getMethod(methodName, types); //根据Class中的方法获取Method对象
+            method = clazz.getMethod(methodName, types); //根据方法名+参数类型列表获取Method对象
 
         }
-        SIGNATURE_METHODS_CACHE.put(signature, method);
+        SIGNATURE_METHODS_CACHE.put(signature, method); //放入缓存中，下次调用时可用上
         return method;
     }
 

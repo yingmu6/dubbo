@@ -35,7 +35,7 @@ import static org.apache.dubbo.common.serialize.Constants.NATIVE_JAVA_SERIALIZAT
  *     e.g. &lt;dubbo:protocol serialization="nativejava" /&gt;
  * </pre>
  */
-public class NativeJavaSerialization implements Serialization {
+public class NativeJavaSerialization implements Serialization { //JDK序列化
 
 
     @Override

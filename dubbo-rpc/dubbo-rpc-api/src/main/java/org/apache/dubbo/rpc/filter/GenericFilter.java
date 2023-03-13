@@ -61,19 +61,19 @@ public class GenericFilter implements Filter, Filter.Listener { //泛化过滤�
                     args = new Object[params.length];
                 }
 
-                if (args.length != types.length) { //参数类型个数与参数值个数比较
+                if (args.length != types.length) { //传入的类型个数与实际的参数值个数比较
                     throw new RpcException("args.length != types.length");
                 }
-                String generic = inv.getAttachment(GENERIC_KEY);
+                String generic = inv.getAttachment(GENERIC_KEY); //获取设置的泛化方式
 
-                if (StringUtils.isBlank(generic)) { //泛化类型为空时，从上下文参数获取
+                if (StringUtils.isBlank(generic)) { //泛化方式为空时，从上下文参数获取
                     generic = RpcContext.getContext().getAttachment(GENERIC_KEY);
                 }
 
-                if (StringUtils.isEmpty(generic) //序列化和反序列化是成对出现的，消费端用什么序列化方式，提供端就对应用什么反序列化方式
-                        || ProtocolUtils.isDefaultGenericSerialization(generic) //默认的序列化方式generic=true
+                if (StringUtils.isEmpty(generic)
+                        || ProtocolUtils.isDefaultGenericSerialization(generic) //默认的序列化方式generic=true（序列化和反序列化是成对出现的，消费端用什么序列化方式，提供端就对应用什么反序列化方式）
                         || ProtocolUtils.isGenericReturnRawResult(generic)) {
-                    args = PojoUtils.realize(args, params, method.getGenericParameterTypes());
+                    args = PojoUtils.realize(args, params, method.getGenericParameterTypes()); //将参数值列表按指定参数类型进行转换
                 } else if (ProtocolUtils.isJavaGenericSerialization(generic)) {//nativejava序列化方式
                     for (int i = 0; i < args.length; i++) {
                         if (byte[].class == args[i].getClass()) { //使用java序列化方式时，需要参数为字节数组
@@ -139,7 +139,7 @@ public class GenericFilter implements Filter, Filter.Listener { //泛化过滤�
                 throw new RpcException(e.getMessage(), e);
             }
         }
-        return invoker.invoke(inv);
+        return invoker.invoke(inv); //非泛化调用
     }
 
     @Override
