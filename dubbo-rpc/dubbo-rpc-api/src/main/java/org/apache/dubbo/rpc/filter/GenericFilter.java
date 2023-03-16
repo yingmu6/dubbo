@@ -97,7 +97,7 @@ public class GenericFilter implements Filter, Filter.Listener { //泛化过滤�
                 } else if (ProtocolUtils.isBeanGenericSerialization(generic)) { //bean方式泛化处理
                     for (int i = 0; i < args.length; i++) {
                         if (args[i] instanceof JavaBeanDescriptor) {
-                            args[i] = JavaBeanSerializeUtil.deserialize((JavaBeanDescriptor) args[i]);
+                            args[i] = JavaBeanSerializeUtil.deserialize((JavaBeanDescriptor) args[i]); //强转为JavaBeanDescriptor，再做反序列化
                         } else {
                             throw new RpcException(
                                     "Generic serialization [" +
@@ -110,7 +110,7 @@ public class GenericFilter implements Filter, Filter.Listener { //泛化过滤�
                     }
                 } else if (ProtocolUtils.isProtobufGenericSerialization(generic)) { //protobuf的序列化方式
                     // as proto3 only accept one protobuf parameter
-                    if (args.length == 1 && args[0] instanceof String) {
+                    if (args.length == 1 && args[0] instanceof String) { //proto3 只能接收一个String参数
                         try (UnsafeByteArrayInputStream is =
                                      new UnsafeByteArrayInputStream(((String) args[0]).getBytes())) {
                             args[0] = ExtensionLoader.getExtensionLoader(Serialization.class)
@@ -130,7 +130,7 @@ public class GenericFilter implements Filter, Filter.Listener { //泛化过滤�
                     }
                 }
 
-                RpcInvocation rpcInvocation = new RpcInvocation(method, invoker.getInterface().getName(), args, inv.getObjectAttachments(), inv.getAttributes());
+                RpcInvocation rpcInvocation = new RpcInvocation(method, invoker.getInterface().getName(), args, inv.getObjectAttachments(), inv.getAttributes()); //把反序列化的参数列表args，用来构建调用信息RpcInvocation
                 rpcInvocation.setInvoker(inv.getInvoker());
                 rpcInvocation.setTargetServiceUniqueName(inv.getTargetServiceUniqueName());
 
@@ -147,25 +147,25 @@ public class GenericFilter implements Filter, Filter.Listener { //泛化过滤�
         if ((inv.getMethodName().equals($INVOKE) || inv.getMethodName().equals($INVOKE_ASYNC))
                 && inv.getArguments() != null
                 && inv.getArguments().length == 3
-                && !GenericService.class.isAssignableFrom(invoker.getInterface())) {
+                && !GenericService.class.isAssignableFrom(invoker.getInterface())) { //处理$invoke、$invokeAsync方法调用对应的响应结果
 
             String generic = inv.getAttachment(GENERIC_KEY);
             if (StringUtils.isBlank(generic)) {
                 generic = RpcContext.getContext().getAttachment(GENERIC_KEY);
             }
 
-            if (appResponse.hasException()) { //异常处理
+            if (appResponse.hasException()) { //响应有异常时的处理
                 Throwable appException = appResponse.getException();
                 if (appException instanceof GenericException) {
                     GenericException tmp = (GenericException) appException;
                     appException = new com.alibaba.dubbo.rpc.service.GenericException(tmp.getExceptionClass(), tmp.getExceptionMessage());
                 }
-                if (!(appException instanceof com.alibaba.dubbo.rpc.service.GenericException)) {
+                if (!(appException instanceof com.alibaba.dubbo.rpc.service.GenericException)) { //兼容老版本的泛化异常
                     appException = new com.alibaba.dubbo.rpc.service.GenericException(appException);
                 }
-                appResponse.setException(appException);
+                appResponse.setException(appException); //设置异常信息
             }
-            if (ProtocolUtils.isJavaGenericSerialization(generic)) {
+            if (ProtocolUtils.isJavaGenericSerialization(generic)) { //java序列化方式（将响应的结果，按照不同方式进行序列化）
                 try {
                     UnsafeByteArrayOutputStream os = new UnsafeByteArrayOutputStream(512);
                     ExtensionLoader.getExtensionLoader(Serialization.class).getExtension(GENERIC_SERIALIZATION_NATIVE_JAVA).serialize(null, os).writeObject(appResponse.getValue());
@@ -178,7 +178,7 @@ public class GenericFilter implements Filter, Filter.Listener { //泛化过滤�
                 }
             } else if (ProtocolUtils.isBeanGenericSerialization(generic)) {
                 appResponse.setValue(JavaBeanSerializeUtil.serialize(appResponse.getValue(), JavaBeanAccessor.METHOD));
-            } else if (ProtocolUtils.isProtobufGenericSerialization(generic)) {
+            } else if (ProtocolUtils.isProtobufGenericSerialization(generic)) { //protobuf方式
                 try {
                     UnsafeByteArrayOutputStream os = new UnsafeByteArrayOutputStream(512);
                     ExtensionLoader.getExtensionLoader(Serialization.class)
@@ -190,7 +190,7 @@ public class GenericFilter implements Filter, Filter.Listener { //泛化过滤�
                             GENERIC_SERIALIZATION_PROTOBUF +
                             "] serialize result failed.", e);
                 }
-            } else if(ProtocolUtils.isGenericReturnRawResult(generic)) {
+            } else if(ProtocolUtils.isGenericReturnRawResult(generic)) { //该种序列化类型未做处理，应该是预留的
                 return;
             } else {
                 appResponse.setValue(PojoUtils.generalize(appResponse.getValue()));
