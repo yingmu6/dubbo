@@ -174,7 +174,7 @@ public class AsyncRpcResult implements Result { //异步响应结果
             ThreadlessExecutor threadlessExecutor = (ThreadlessExecutor) executor;
             threadlessExecutor.waitAndDrain();
         }
-        return responseFuture.get();
+        return responseFuture.get(); //按最大时间等待获取异步结果
     }
 
     @Override

@@ -32,14 +32,14 @@ import java.util.function.Function;
  * <p>
  * Known implementations are:
  * 1. {@link AsyncRpcResult}, it's a {@link CompletionStage} whose underlying value signifies（表示） the return value of an RPC call
- * 2. {@link AppResponse}, it inevitably inherits（不可避免地继承） {@link CompletionStage} and {@link Future}, but you should never treat AppResponse as a type of Future,
+ * 2. {@link AppResponse}, it inevitably inherits（不可避免地继承） {@link CompletionStage} and {@link Future}, but you should never treat（对待） AppResponse as a type of Future,
  * instead, it is a normal concrete（具体的） type.
  *
  * @serial Don't change the class name and package name.
  * @see org.apache.dubbo.rpc.Invoker#invoke(Invocation)
  * @see AppResponse
  */
-public interface Result extends Serializable {
+public interface Result extends Serializable { //RPC调用结果的接口
 
     /**
      * Result的几个实现类，各有什么用途？做下比较
@@ -67,9 +67,9 @@ public interface Result extends Serializable {
      *
      * @return result. if no result return null.
      */
-    Object getValue();
+    Object getValue(); //获取调用结果值
 
-    void setValue(Object value);
+    void setValue(Object value); //设置结果值
 
     /**
      * Get exception.
@@ -108,7 +108,7 @@ public interface Result extends Serializable {
      *
      * @return attachments.
      */
-    Map<String, String> getAttachments(); //获取附加参数信息
+    Map<String, String> getAttachments(); //获取附加参数（即AppResponse维护的成员属性值 Map<String, Object> attachments，将值转换为String格式）
 
     // ------以下是相对于2.5.6新增的内容------
     /**
@@ -117,7 +117,7 @@ public interface Result extends Serializable {
      * @return attachments.
      */
     @Experimental("Experiment api for supporting Object transmission")
-    Map<String, Object> getObjectAttachments();
+    Map<String, Object> getObjectAttachments(); //获取附加参数（即AppResponse维护的成员属性值 Map<String, Object> attachments，直接取值）
 
     /**
      * Add the specified map to existing attachments in this instance.
@@ -197,11 +197,11 @@ public interface Result extends Serializable {
      * @param fn
      * @return
      */
-    Result whenCompleteWithContext(BiConsumer<Result, Throwable> fn); //在完成调用时，主动进行方法回调
+    Result whenCompleteWithContext(BiConsumer<Result, Throwable> fn); //在完成调用时，主动进行方法回调（该方法的对应实现在AsyncRpcResult）
 
-    <U> CompletableFuture<U> thenApply(Function<Result, ? extends U> fn); //在AsyncRpcResult中被实现
+    <U> CompletableFuture<U> thenApply(Function<Result, ? extends U> fn); //返回异步调用的结果对应的CompletableFuture
 
-    Result get() throws InterruptedException, ExecutionException;
+    Result get() throws InterruptedException, ExecutionException; //获取异步调用的结果（该方法的对应实现在AsyncRpcResult）
 
-    Result get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException;
+    Result get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException; //按指定的等待时间获取异步调用的结果（该方法的对应实现在AsyncRpcResult）
 }
