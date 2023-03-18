@@ -45,15 +45,15 @@ import java.util.function.Function;
  *
  * @serial Do not change the class name and properties.
  */
-public class AppResponse implements Result { //同步调用的响应结果
+public class AppResponse implements Result { //RPC的调用结果（替换2.7以前的RpcResult）
 
     private static final long serialVersionUID = -6925924956850004727L;
 
-    private Object result;
+    private Object result; //调用结果值
 
-    private Throwable exception;
+    private Throwable exception; //异常信息
 
-    private Map<String, Object> attachments = new HashMap<>();
+    private Map<String, Object> attachments = new HashMap<>(); //附加参数值
 
     public AppResponse() {
     }
@@ -67,7 +67,7 @@ public class AppResponse implements Result { //同步调用的响应结果
     }
 
     @Override
-    public Object recreate() throws Throwable { //若有异常则设置异常栈信息并抛出，没有异常则返回具体值（方法名有些歧义，应该是重新设置异常栈信息）
+    public Object recreate() throws Throwable { //返回调用的结果值（若有异常则设置异常栈信息并抛出），方法名有些歧义，应该是重新设置异常栈信息
         if (exception != null) {
             // fix issue#619
             try {
