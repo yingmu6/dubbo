@@ -77,18 +77,18 @@ public class AppResponse implements Result { //RPC的调用结果（替换2.7以
                     clazz = clazz.getSuperclass(); //非Throwable类，则取异常类的父类（循环直到取到Throwable为止）
                 }
                 // get stackTrace value
-                Field stackTraceField = clazz.getDeclaredField("stackTrace"); // 获取stackTrace堆栈追踪的字段
+                Field stackTraceField = clazz.getDeclaredField("stackTrace"); // 获取包含堆栈信息的字段stackTrace
                 stackTraceField.setAccessible(true); //将字段置为可访问的（因为成员变量一般是用private修饰的，直接访问不了）
                 Object stackTrace = stackTraceField.get(exception); //获取exception对象中的stackTrace字段值
                 if (stackTrace == null) {
-                    exception.setStackTrace(new StackTraceElement[0]); //设置异常栈
+                    exception.setStackTrace(new StackTraceElement[0]); //初始化异常栈信息
                 }
             } catch (Exception e) {
                 // ignore
             }
             throw exception; //抛出异常
         }
-        return result;
+        return result; //返回RPC调用结果
     }
 
     @Override
@@ -132,7 +132,7 @@ public class AppResponse implements Result { //RPC的调用结果（替换2.7以
      *
      * @param map contains all key-value pairs to append
      */
-    public void setAttachments(Map<String, String> map) {
+    public void setAttachments(Map<String, String> map) { //设置附加参数值
         this.attachments = map == null ? new HashMap<>() : new HashMap<>(map);
     }
 
@@ -141,7 +141,7 @@ public class AppResponse implements Result { //RPC的调用结果（替换2.7以
         this.attachments = map == null ? new HashMap<>() : map;
     }
 
-    public void addAttachments(Map<String, String> map) {
+    public void addAttachments(Map<String, String> map) { //添加附加参数，值为String类型
         if (map == null) {
             return;
         }
@@ -152,7 +152,7 @@ public class AppResponse implements Result { //RPC的调用结果（替换2.7以
     }
 
     @Override
-    public void addObjectAttachments(Map<String, Object> map) { //map中按对象设置
+    public void addObjectAttachments(Map<String, Object> map) { //添加附加参数，值为Object类型
         if (map == null) {
             return;
         }
@@ -213,7 +213,7 @@ public class AppResponse implements Result { //RPC的调用结果（替换2.7以
     }
 
     @Override
-    public Result whenCompleteWithContext(BiConsumer<Result, Throwable> fn) { //该方法是异步执行处理的，而AppResponse是同步处理的，所以当前方法不支持（在AsyncRpcResult中有支持）
+    public Result whenCompleteWithContext(BiConsumer<Result, Throwable> fn) { //调用完成时，进行回调（具体的实现是在AsyncRpcResult，当前AppResponse不支持）
         throw new UnsupportedOperationException("AppResponse represents an concrete business response, there will be no status changes, you should get internal values directly.");
     }
 

@@ -42,7 +42,7 @@ import static org.apache.dubbo.common.utils.ReflectUtils.defaultReturn;
  * {@link #getValue()} and {@link #getException()} are all inherited from {@link Result} interface, implementing them are mainly
  * for compatibility consideration（兼容性考虑）. Because many legacy {@link Filter} implementation are most possibly to call getValue directly.
  */
-public class AsyncRpcResult implements Result { //异步响应结果
+public class AsyncRpcResult implements Result { //异步调用结果
     private static final Logger logger = LoggerFactory.getLogger(AsyncRpcResult.class);
 
     /**
@@ -58,11 +58,11 @@ public class AsyncRpcResult implements Result { //异步响应结果
      * So we should keep the reference of current RpcContext instance and restore（恢复） it before callback being executed.
      * （存储当前上下文信息，用于回调前的恢复）
      */
-    private RpcContext storedContext;
-    private RpcContext storedServerContext;
+    private RpcContext storedContext; //客户端存储的上下文
+    private RpcContext storedServerContext; //服务端存储的上下文
     private Executor executor;
 
-    private Invocation invocation;
+    private Invocation invocation; //调用信息
 
     private CompletableFuture<AppResponse> responseFuture; //包含异步响应的结果
 
@@ -94,7 +94,7 @@ public class AsyncRpcResult implements Result { //异步响应结果
      * @param value
      */
     @Override
-    public void setValue(Object value) {
+    public void setValue(Object value) { //todo @pause
         try {
             if (responseFuture.isDone()) {
                 responseFuture.get().setValue(value);

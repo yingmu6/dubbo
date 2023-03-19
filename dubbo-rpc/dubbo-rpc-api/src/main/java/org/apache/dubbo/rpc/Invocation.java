@@ -28,7 +28,7 @@ import java.util.stream.Stream;
  * @see org.apache.dubbo.rpc.Invoker#invoke(Invocation)
  * @see org.apache.dubbo.rpc.RpcInvocation
  */
-public interface Invocation { //会话域：包含调用信息
+public interface Invocation { //调用信息（会话域）
     /**
      * @csy-03-01 1）都维护了哪些调用信息？
      * 解：维护着调用的方法名、参数列表、返回值等信息
