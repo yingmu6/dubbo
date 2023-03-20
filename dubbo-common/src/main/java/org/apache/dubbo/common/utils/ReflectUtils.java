@@ -129,9 +129,9 @@ public final class ReflectUtils { //JVM虚拟机中的类型描述符
 
     private static final ConcurrentMap<String, Method> SIGNATURE_METHODS_CACHE = new ConcurrentHashMap<String, Method>();
 
-    private static Map<Class<?>, Object> primitiveDefaults = new HashMap<>();
+    private static Map<Class<?>, Object> primitiveDefaults = new HashMap<>(); //基本类型默认的值
 
-    static { //基本类型默认的值
+    static { //设置基本类型默认的值
         primitiveDefaults.put(int.class, 0);
         primitiveDefaults.put(long.class, 0L);
         primitiveDefaults.put(byte.class, (byte) 0);
@@ -1082,10 +1082,10 @@ public final class ReflectUtils { //JVM虚拟机中的类型描述符
     }
 
     public static Object defaultReturn(Class<?> classType) {
-        if (classType != null && classType.isPrimitive()) {
+        if (classType != null && classType.isPrimitive()) { //基本类型，返回缓存中已经设置的默认值
             return primitiveDefaults.get(classType);
         } else {
-            return null;
+            return null; //非基本类型，返回null
         }
     }
 
