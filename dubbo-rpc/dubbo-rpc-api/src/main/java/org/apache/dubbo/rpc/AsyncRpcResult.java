@@ -156,7 +156,7 @@ public class AsyncRpcResult implements Result { //异步调用结果
             throw new RpcException(e);
         }
 
-        return createDefaultValue(invocation);
+        return createDefaultValue(invocation); //任务未完成时，返回默认值
     }
 
     /**
@@ -206,13 +206,13 @@ public class AsyncRpcResult implements Result { //异步调用结果
     }
 
     @Override
-    public <U> CompletableFuture<U> thenApply(Function<Result, ? extends U> fn) {
+    public <U> CompletableFuture<U> thenApply(Function<Result, ? extends U> fn) { //产生CompletableFuture
         return this.responseFuture.thenApply(fn);
     }
 
     @Override
     @Deprecated
-    public Map<String, String> getAttachments() {
+    public Map<String, String> getAttachments() { //通过维护的AppResponse获取附加参数值
         return getAppResponse().getAttachments();
     }
 
@@ -322,15 +322,15 @@ public class AsyncRpcResult implements Result { //异步调用结果
         return newDefaultAsyncResult(null, t, invocation);
     }
 
-    public static AsyncRpcResult newDefaultAsyncResult(Object value, Throwable t, Invocation invocation) { //创建异步响应结果
+    public static AsyncRpcResult newDefaultAsyncResult(Object value, Throwable t, Invocation invocation) { //创建异步响应结果（static方法）
         CompletableFuture<AppResponse> future = new CompletableFuture<>();
         AppResponse result = new AppResponse();
-        if (t != null) { //判断是否有异常，设置结果值
-            result.setException(t);
+        if (t != null) {
+            result.setException(t); //有异常，设置异常信息
         } else {
-            result.setValue(value);
+            result.setValue(value); //没有异常，设置值信息
         }
-        future.complete(result);
+        future.complete(result); //设置AppResponse值
         return new AsyncRpcResult(future, invocation);
     }
 
