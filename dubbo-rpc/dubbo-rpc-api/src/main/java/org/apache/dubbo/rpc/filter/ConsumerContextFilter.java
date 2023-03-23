@@ -50,7 +50,7 @@ public class ConsumerContextFilter implements Filter { //消费端的上下文�
         Object countDown = context.get(TIME_COUNTDOWN_KEY); // 获取上下文中的倒计时信息
         if (countDown != null) { //相比2.5.6增加的TIMEOUT_TERMINATE 超时终止的异常
             TimeoutCountDown timeoutCountDown = (TimeoutCountDown) countDown;
-            if (timeoutCountDown.isExpired()) {
+            if (timeoutCountDown.isExpired()) { //使用AsyncRpcResult进行异步响应
                 return AsyncRpcResult.newDefaultAsyncResult(new RpcException(RpcException.TIMEOUT_TERMINATE,
                         "No time left for making the following call: " + invocation.getServiceName() + "."
                                 + invocation.getMethodName() + ", terminate directly."), invocation); //left：剩下的， 此处表明没有剩下时间进行服务调用

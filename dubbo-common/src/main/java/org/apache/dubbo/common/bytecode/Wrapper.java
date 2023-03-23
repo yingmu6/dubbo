@@ -31,18 +31,17 @@ import java.util.regex.Matcher;
 /**
  * Wrapper.
  */
-public abstract class Wrapper {
+public abstract class Wrapper { //封装类
     /**
      * 包装类，封装类的创建以及使用点是怎样的？
      * 解：Wrapper用于“包裹”目标类，Wrapper是一个抽象类，仅可通过 getWrapper(Class) 方法创建子类。在创建Wrapper子类的过程中，
      * 子类代码生成逻辑会对getWrapper方法传入的Class对象进行解析，拿到诸如类方法，类成员变量等信息。以及生成 invokeMethod
      * 方法代码和其他一些方法代码。代码生成完毕后，通过 Javassist 生成 Class 对象，最后再通过反射创建Wrapper实例
-     * https://dubbo.apache.org/zh/docs/v2.7/dev/source/export-service/（官网描述）
      */
     private static final Map<Class<?>, Wrapper> WRAPPER_MAP = new ConcurrentHashMap<Class<?>, Wrapper>(); //class wrapper map：类与Wrapper的缓存，当需要执行调用时，根据Class即可找到Wrapper，然后通过Wrapper调用目标对象中方法，减少反射调用
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
     private static final String[] OBJECT_METHODS = new String[] {"getClass", "hashCode", "toString", "equals"};
-    private static final Wrapper OBJECT_WRAPPER = new Wrapper() { //类加载时创建Wrapper实例
+    private static final Wrapper OBJECT_WRAPPER = new Wrapper() { //Object对应的封装类
         @Override
         public String[] getMethodNames() { //匿名内部类，对应实现抽象方法
             return OBJECT_METHODS;
