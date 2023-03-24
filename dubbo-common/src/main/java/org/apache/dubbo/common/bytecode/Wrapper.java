@@ -105,7 +105,7 @@ public abstract class Wrapper { //封装类
      * @param c Class instance.
      * @return Wrapper instance(not null).
      */
-    public static Wrapper getWrapper(Class<?> c) {
+    public static Wrapper getWrapper(Class<?> c) { //获取Wrapper的实例（先从缓存中获取，若没有则对应创建）
         while (ClassGenerator.isDynamicClass(c)) // can not wrapper on dynamic class.
         {
             c = c.getSuperclass(); //不能封装动态类，动态类取它的父类进行封装
@@ -288,7 +288,7 @@ public abstract class Wrapper { //封装类
         }
     }
 
-    private static String arg(Class<?> cl, String name) {
+    private static String arg(Class<?> cl, String name) { //将参数按指定的类型转换
         if (cl.isPrimitive()) {
             if (cl == Boolean.TYPE) {
                 return "((Boolean)" + name + ").booleanValue()"; //转换为封装类
