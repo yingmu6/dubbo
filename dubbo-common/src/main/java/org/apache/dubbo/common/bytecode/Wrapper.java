@@ -129,7 +129,7 @@ public abstract class Wrapper { //封装类
         }
 
         String name = c.getName(); //如：String.class.getName() 返回java.lang.String，再如：org.apache.dubbo.demo.GreetingService
-        ClassLoader cl = ClassUtils.getClassLoader(c);
+        ClassLoader cl = ClassUtils.getClassLoader(c); //获取类加载器
 
         // 拼接类代码对应的字符串 (对应Wrapper类中的抽象方法)
         StringBuilder c1 = new StringBuilder("public void setPropertyValue(Object o, String n, Object v){ "); //构建当前类中的setPropertyValue()抽象方法
@@ -147,14 +147,14 @@ public abstract class Wrapper { //封装类
 
         // get all public field.
         for (Field f : c.getFields()) { //处理被封装类的所有public字段
-            String fn = f.getName();
-            Class<?> ft = f.getType();
+            String fn = f.getName(); //获取字段名称
+            Class<?> ft = f.getType(); //获取字段类型
             if (Modifier.isStatic(f.getModifiers()) || Modifier.isTransient(f.getModifiers())) { //static、transient修饰的字段不处理
                 continue;
             }
 
             c1.append(" if( $2.equals(\"").append(fn).append("\") ){ w.").append(fn).append("=").append(arg(ft, "$3")).append("; return; }");
-            c2.append(" if( $2.equals(\"").append(fn).append("\") ){ return ($w)w.").append(fn).append("; }");
+            c2.append(" if( $2.equals(\"").append(fn).append("\") ){ return ($w)w.").append(fn).append("; }"); //通过$获取参数的值
             pts.put(fn, ft); //设置属性名与属性类型的关系
         }
 
