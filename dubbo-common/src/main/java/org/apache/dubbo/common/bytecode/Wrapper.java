@@ -160,10 +160,10 @@ public abstract class Wrapper { //封装类
 
         Method[] methods = c.getMethods();
         // get all public method.
-        boolean hasMethod = hasMethods(methods); //处理被封装类的所有public方法
+        boolean hasMethod = hasMethods(methods); //处理被封装类的所有public方法（判断是否有非Object中的方法）
         if (hasMethod) { //存在方法时处理
             c3.append(" try{");
-            for (Method m : methods) {
+            for (Method m : methods) { //对类中的方法依次封装处理
                 //ignore Object's method.（忽略Object对象中的方法）
                 if (m.getDeclaringClass() == Object.class) {
                     continue;
@@ -181,7 +181,7 @@ public abstract class Wrapper { //封装类
                         break;
                     }
                 }
-                if (override) { //若有重写的方法
+                if (override) { //若有重写的方法（按参数类型进行比较）
                     if (len > 0) { //方法参数个数
                         for (int l = 0; l < len; l++) {
                             c3.append(" && ").append(" $3[").append(l).append("].getName().equals(\"") //比较方法参数类型
@@ -192,7 +192,7 @@ public abstract class Wrapper { //封装类
 
                 c3.append(" ) { ");
 
-                if (m.getReturnType() == Void.TYPE) {
+                if (m.getReturnType() == Void.TYPE) { //包含了具体的方法调用
                     c3.append(" w.").append(mn).append('(').append(args(m.getParameterTypes(), "$4")).append(");").append(" return null;");
                 } else {
                     c3.append(" return ($w)w.").append(mn).append('(').append(args(m.getParameterTypes(), "$4")).append(");");
@@ -204,11 +204,11 @@ public abstract class Wrapper { //封装类
                 // try{ w = ((org.apache.dubbo.demo.GreetingService)$1); }catch(Throwable e){ throw new IllegalArgumentException(e); }
                 // try{ if( "hello".equals( $2 )  &&  $3.length == 0 ) {  return ($w)w.hello(); }
 
-                mns.add(mn);
+                mns.add(mn); //加入到方法名列表
                 if (m.getDeclaringClass() == c) {
                     dmns.add(mn);
                 }
-                ms.put(ReflectUtils.getDesc(m), m);
+                ms.put(ReflectUtils.getDesc(m), m); //将方法实例缓存起来
             }
             c3.append(" } catch(Throwable e) { ");
             c3.append("     throw new java.lang.reflect.InvocationTargetException(e); ");
@@ -217,7 +217,7 @@ public abstract class Wrapper { //封装类
 
         c3.append(" throw new " + NoSuchMethodException.class.getName() + "(\"Not found method \\\"\"+$2+\"\\\" in class " + c.getName() + ".\"); }");
 
-        // deal with get/set method.
+        // deal with get/set method.（处理set/get方法）
         Matcher matcher;
         for (Map.Entry<String, Method> entry : ms.entrySet()) {
             String md = entry.getKey(); //暴露接口中的方法描述信息，如hello(Lorg/apache/dubbo/demo/FruitEnum;)Ljava/lang/String;
@@ -246,7 +246,7 @@ public abstract class Wrapper { //封装类
         cc.setClassName((Modifier.isPublic(c.getModifiers()) ? Wrapper.class.getName() : c.getName() + "$sw") + id); //org.apache.dubbo.common.bytecode.Wrapper0，判断类是否是public，然后进行类名拼接
         cc.setSuperClass(Wrapper.class); //将Wrapper指定为父类
 
-        cc.addDefaultConstructor();
+        cc.addDefaultConstructor(); //添加默认构造函数
         cc.addField("public static String[] pns;"); // property name array.
         cc.addField("public static " + Map.class.getName() + " pts;"); // property type map.
         cc.addField("public static String[] mns;"); // all method name array.
@@ -272,7 +272,7 @@ public abstract class Wrapper { //封装类
             wc.getField("mns").set(null, mns.toArray(new String[0]));
             wc.getField("dmns").set(null, dmns.toArray(new String[0]));
             int ix = 0;
-            for (Method m : ms.values()) {
+            for (Method m : ms.values()) { //遍历方法参数列表
                 wc.getField("mts" + ix++).set(null, m.getParameterTypes());
             }
             return (Wrapper) wc.newInstance(); //使用Class对象创建实例，并强转为Wrapper类型
