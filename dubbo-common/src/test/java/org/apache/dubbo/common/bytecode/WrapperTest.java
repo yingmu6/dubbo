@@ -27,18 +27,18 @@ public class WrapperTest {
     @Test
     public void testMain() throws Exception {
         Wrapper w = Wrapper.getWrapper(I1.class);
-        String[] ns = w.getDeclaredMethodNames();
+        String[] ns = w.getDeclaredMethodNames();//获取被封装的类中声明的方法
         assertEquals(ns.length, 5);
-        ns = w.getMethodNames();
+        ns = w.getMethodNames();//获取被封装的类中的方法（包含继承的方法）
         assertEquals(ns.length, 6);
 
         Object obj = new Impl1();
-        assertEquals(w.getPropertyValue(obj, "name"), "you name");
+        assertEquals(w.getPropertyValue(obj, "name"), "you name"); //获取属性值
 
-        w.setPropertyValue(obj, "name", "changed");
+        w.setPropertyValue(obj, "name", "changed"); //设置属性值
         assertEquals(w.getPropertyValue(obj, "name"), "changed");
 
-        w.invokeMethod(obj, "hello", new Class<?>[]{String.class}, new Object[]{"qianlei"});
+        w.invokeMethod(obj, "hello", new Class<?>[]{String.class}, new Object[]{"qianlei"}); //调用目标类的目标方法
     }
 
     // bug: DUBBO-132
