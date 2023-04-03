@@ -424,14 +424,14 @@ public abstract class Wrapper { //封装类
     }
 
     /**
-     * get method name array.
+     * get method name array.（获取被封装的类中的方法（包含继承的方法））
      *
      * @return method name array.
      */
     abstract public String[] getMethodNames();
 
     /**
-     * get method name array.
+     * get method name array.（获取被封装的类中声明的方法）
      *
      * @return method name array.
      */
