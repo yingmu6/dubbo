@@ -16,16 +16,16 @@
  */
 package org.apache.dubbo.common.bytecode;
 
+import org.apache.dubbo.common.utils.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class WrapperTest {
+
     @Test
-    public void testMain() throws Exception {
+    public void testMain() throws Exception { //创建接口的Wrapper
         Wrapper w = Wrapper.getWrapper(I1.class);
         String[] ns = w.getDeclaredMethodNames();//获取被封装的类中声明的方法
         assertEquals(ns.length, 5);
@@ -43,7 +43,7 @@ public class WrapperTest {
 
     // bug: DUBBO-132
     @Test
-    public void test_unwantedArgument() throws Exception {
+    public void test_unwantedArgument() throws Exception { //测试 未找到对应参数的方法
         Wrapper w = Wrapper.getWrapper(I1.class);
         Object obj = new Impl1();
         try {
@@ -51,44 +51,46 @@ public class WrapperTest {
                     new Object[]{"qianlei", "badboy"});
             fail();
         } catch (NoSuchMethodException expected) {
+            System.out.println("未找到方法");
         }
     }
 
     //bug: DUBBO-425
     @Test
-    public void test_makeEmptyClass() throws Exception {
-        Wrapper.getWrapper(EmptyServiceImpl.class);
+    public void test_makeEmptyClass() throws Exception { //创建类的Wrapper
+        Wrapper wrapper = Wrapper.getWrapper(EmptyServiceImpl.class);
+        Assert.notNull(wrapper, "获取信息异常");
     }
 
     @Test
-    public void testHasMethod() throws Exception {
+    public void testHasMethod() throws Exception { //测试是否存在方法
         Wrapper w = Wrapper.getWrapper(I1.class);
         Assertions.assertTrue(w.hasMethod("setName"));
         Assertions.assertTrue(w.hasMethod("hello"));
         Assertions.assertTrue(w.hasMethod("showInt"));
         Assertions.assertTrue(w.hasMethod("getFloat"));
         Assertions.assertTrue(w.hasMethod("setFloat"));
-        Assertions.assertFalse(w.hasMethod("setFloatXXX"));
+        Assertions.assertFalse(w.hasMethod("setFloatXXX")); //不存在此方法
     }
 
     @Test
-    public void testWrapperObject() throws Exception {
-        Wrapper w = Wrapper.getWrapper(Object.class);
+    public void testWrapperObject() throws Exception { //测试Object对应的Wrapper
+        Wrapper w = Wrapper.getWrapper(Object.class); //对Object进行封装，返回特定的封装类
         Assertions.assertEquals(4, w.getMethodNames().length);
         Assertions.assertEquals(0, w.getPropertyNames().length);
         Assertions.assertNull(w.getPropertyType(null));
     }
 
     @Test
-    public void testGetPropertyValue() throws Exception {
-        Assertions.assertThrows(NoSuchPropertyException.class, () -> {
+    public void testGetPropertyValue() throws Exception { //调用Object对应的Wrapper的getPropertyValue方法会抛出异常
+        Assertions.assertThrows(NoSuchPropertyException.class, () -> {  //抛出预期的异常
             Wrapper w = Wrapper.getWrapper(Object.class);
             w.getPropertyValue(null, null);
         });
     }
 
     @Test
-    public void testSetPropertyValue() throws Exception {
+    public void testSetPropertyValue() throws Exception { //调用Object对应的Wrapper的setPropertyValue方法会抛出异常
         Assertions.assertThrows(NoSuchPropertyException.class, () -> {
             Wrapper w = Wrapper.getWrapper(Object.class);
             w.setPropertyValue(null, null, null);

@@ -58,7 +58,7 @@ public abstract class Wrapper { //封装类
         }
 
         @Override
-        public Class<?> getPropertyType(String pn) {
+        public Class<?> getPropertyType(String pn) { //Object的属性类型都返回null
             return null;
         }
 
