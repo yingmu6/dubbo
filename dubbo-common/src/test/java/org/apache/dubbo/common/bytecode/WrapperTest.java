@@ -98,8 +98,8 @@ public class WrapperTest {
     }
 
     @Test
-    public void testInvokeWrapperObject() throws Exception {
-        Wrapper w = Wrapper.getWrapper(Object.class);
+    public void testInvokeWrapperObject() throws Exception { //测试Object对应的封装类Wrapper
+        Wrapper w = Wrapper.getWrapper(Object.class); //Object对应的Wrapper，只对部分方法处理，如getClass()、hashCode()等，且未做额外业务处理
         Object instance = new Object();
         Assertions.assertEquals(instance.getClass(), (Class<?>) w.invokeMethod(instance, "getClass", null, null));
         Assertions.assertEquals(instance.hashCode(), (int) w.invokeMethod(instance, "hashCode", null, null));
@@ -108,7 +108,7 @@ public class WrapperTest {
     }
 
     @Test
-    public void testNoSuchMethod() throws Exception {
+    public void testNoSuchMethod() throws Exception { //测试未找到调用方法的场景
         Assertions.assertThrows(NoSuchMethodException.class, () -> {
             Wrapper w = Wrapper.getWrapper(Object.class);
             w.invokeMethod(new Object(), "__XX__", null, null);
@@ -116,15 +116,15 @@ public class WrapperTest {
     }
 
     @Test
-    public void test_getDeclaredMethodNames_ContainExtendsParentMethods() throws Exception {
-        assertArrayEquals(new String[]{"hello",}, Wrapper.getWrapper(Parent1.class).getMethodNames());
+    public void test_getDeclaredMethodNames_ContainExtendsParentMethods() throws Exception { //测试封装类的声明方法以及继承方法
+        assertArrayEquals(new String[]{"hello",}, Wrapper.getWrapper(Parent1.class).getMethodNames()); //获取封装类的方法（包含继承的方法）
 
-        assertArrayEquals(new String[]{}, Wrapper.getWrapper(Son.class).getDeclaredMethodNames());
+        assertArrayEquals(new String[]{}, Wrapper.getWrapper(Son.class).getDeclaredMethodNames()); //获取封装类中声明的方法（不包含继承的方法）
     }
 
     @Test
     public void test_getMethodNames_ContainExtendsParentMethods() throws Exception {
-        assertArrayEquals(new String[]{"hello", "world"}, Wrapper.getWrapper(Son.class).getMethodNames());
+        assertArrayEquals(new String[]{"hello", "world"}, Wrapper.getWrapper(Son.class).getMethodNames()); //Son继承了Parent1、Parent2，所以包含了父类的方法
     }
 
     public interface I0 {

@@ -82,7 +82,7 @@ public abstract class Wrapper { //封装类
             if ("getClass".equals(mn)) { //根据方法名选择执行不同的方法
                 return instance.getClass();
             }
-            if ("hashCode".equals(mn)) {
+            if ("hashCode".equals(mn)) { // Object的封装类Wrapper，只对部分的方法做处理，如getClass()、hashCode()等
                 return instance.hashCode();
             }
             if ("toString".equals(mn)) {
