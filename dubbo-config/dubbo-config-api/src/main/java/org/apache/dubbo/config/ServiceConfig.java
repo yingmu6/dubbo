@@ -383,7 +383,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
                 map.put(REVISION_KEY, revision);
             }
 
-            String[] methods = Wrapper.getWrapper(interfaceClass).getMethodNames(); //为暴露的接口创建封装类，且获取到方法名列表
+            String[] methods = Wrapper.getWrapper(interfaceClass).getMethodNames(); //为暴露的接口创建封装类（并且缓存到Wrapper的WRAPPER_MAP中）
             if (methods.length == 0) {
                 logger.warn("No method found in service interface " + interfaceClass.getName());
                 map.put(METHODS_KEY, ANY_VALUE);

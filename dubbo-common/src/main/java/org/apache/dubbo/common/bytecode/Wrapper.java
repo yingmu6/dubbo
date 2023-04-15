@@ -128,7 +128,7 @@ public abstract class Wrapper { //封装类
             throw new IllegalArgumentException("Can not create wrapper for primitive type: " + c);
         }
 
-        String name = c.getName(); //如：String.class.getName() 返回java.lang.String，再如：org.apache.dubbo.demo.GreetingService
+        String name = c.getName(); //被封装的类的全限定名，如：org.apache.dubbo.demo.GreetingService
         ClassLoader cl = ClassUtils.getClassLoader(c); //获取类加载器
 
         // 拼接类代码对应的字符串 (对应Wrapper类中的抽象方法)
@@ -136,9 +136,9 @@ public abstract class Wrapper { //封装类
         StringBuilder c2 = new StringBuilder("public Object getPropertyValue(Object o, String n){ ");
         StringBuilder c3 = new StringBuilder("public Object invokeMethod(Object o, String n, Class[] p, Object[] v) throws " + InvocationTargetException.class.getName() + "{ ");
 
-        c1.append(name).append(" w; try{ w = ((").append(name).append(")$1); }catch(Throwable e){ throw new IllegalArgumentException(e); }"); //如：(org.apache.dubbo.demo.GreetingService)$1 ; 做类型强制转换
-        c2.append(name).append(" w; try{ w = ((").append(name).append(")$1); }catch(Throwable e){ throw new IllegalArgumentException(e); }");
-        c3.append(name).append(" w; try{ w = ((").append(name).append(")$1); }catch(Throwable e){ throw new IllegalArgumentException(e); }");
+        c1.append(name).append(" w; try{ w = ((").append(name).append(")$1); }catch(Throwable e){ throw new IllegalArgumentException(e); }"); //将setPropertyValue方法中的Object强制转化为具体类型，如：(org.apache.dubbo.demo.GreetingService)$1
+        c2.append(name).append(" w; try{ w = ((").append(name).append(")$1); }catch(Throwable e){ throw new IllegalArgumentException(e); }"); //将getPropertyValue方法中的Object强制转化为具体类型
+        c3.append(name).append(" w; try{ w = ((").append(name).append(")$1); }catch(Throwable e){ throw new IllegalArgumentException(e); }"); //将invokeMethod方法中的Object强制转化为具体类型
 
         Map<String, Class<?>> pts = new HashMap<>(); // <property name, property types>
         Map<String, Method> ms = new LinkedHashMap<>(); // <method desc, Method instance> 方法名与方法实例的映射Map
@@ -148,14 +148,14 @@ public abstract class Wrapper { //封装类
         // get all public field.
         for (Field f : c.getFields()) { //处理被封装类的所有public字段
             String fn = f.getName(); //获取字段名称
-            Class<?> ft = f.getType(); //获取字段类型
-            if (Modifier.isStatic(f.getModifiers()) || Modifier.isTransient(f.getModifiers())) { //static、transient修饰的字段不处理
+            Class<?> ft = f.getType(); //获取字段类型，如 java.lang.String
+            if (Modifier.isStatic(f.getModifiers()) || Modifier.isTransient(f.getModifiers())) { //static、transient修饰的字段不处理（接口中的字段，都是public static final字段，所以不会处理，那这里处理就是对类封装时处理）
                 continue;
             }
 
-            c1.append(" if( $2.equals(\"").append(fn).append("\") ){ w.").append(fn).append("=").append(arg(ft, "$3")).append("; return; }");
-            c2.append(" if( $2.equals(\"").append(fn).append("\") ){ return ($w)w.").append(fn).append("; }"); //通过$获取参数的值
-            pts.put(fn, ft); //设置属性名与属性类型的关系
+            c1.append(" if( $2.equals(\"").append(fn).append("\") ){ w.").append(fn).append("=").append(arg(ft, "$3")).append("; return; }"); //通过setPropertyValue方法，为目标对象设置成员属性的值，如：if( $2.equals("employeeName") ){ w.employeeName=(java.lang.String)$3;
+            c2.append(" if( $2.equals(\"").append(fn).append("\") ){ return ($w)w.").append(fn).append("; }"); //通过getPropertyValue方法，获取目标对象的成员变量值，如：if( $2.equals("employeeName") ){ return ($w)w.employeeName; }
+            pts.put(fn, ft); //设置成员属性名与属性类型的关系，如Map<"employeeName,"java.lang.String">
         }
 
         Method[] methods = c.getMethods();

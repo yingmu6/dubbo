@@ -194,5 +194,15 @@ public class WrapperTest {
     }
 
     public static class EmptyServiceImpl implements EmptyService {
+
+        public String employeeName;
+
+        public String getEmployeeName() {
+            return employeeName;
+        }
+
+        public void setEmployeeName(String employeeName) {
+            this.employeeName = employeeName;
+        }
     }
 }
