@@ -389,7 +389,7 @@ public final class ReflectUtils { //JVM虚拟机中的类型描述符
             } else if ("short".equals(t)) {
                 ret.append(JVM_SHORT);
             }
-        } else { //对象类型
+        } else { //非基本类型，即对象类型（以"L"开头，并将类名中的"."替换为"/"，最后以";"分隔，如"Lorg/apache/dubbo/demo/Fruit; 或 Ljava/lang/String;"）
             ret.append('L');
             ret.append(c.getName().replace('.', '/'));
             ret.append(';');
@@ -425,14 +425,14 @@ public final class ReflectUtils { //JVM虚拟机中的类型描述符
      * @param m method.
      * @return desc.
      */
-    public static String getDesc(final Method m) {
+    public static String getDesc(final Method m) { //获取方法描述符（描述符可以唯一确定一个方法）
         StringBuilder ret = new StringBuilder(m.getName()).append('(');
         Class<?>[] parameterTypes = m.getParameterTypes();
         for (int i = 0; i < parameterTypes.length; i++) {
-            ret.append(getDesc(parameterTypes[i])); //依次处理参数类型
+            ret.append(getDesc(parameterTypes[i])); //拼接参数类型的描述符
         }
-        ret.append(')').append(getDesc(m.getReturnType())); //处理方法的返回类型
-        return ret.toString(); //如：hello()Ljava/lang/String;
+        ret.append(')').append(getDesc(m.getReturnType())); //拼接返回类型的描述符
+        return ret.toString(); //拼接的方法的描述符，如："hello(Lorg/apache/dubbo/demo/Fruit;)Ljava/lang/String;"
     }
 
     public static String[] getDescArray(final Method m) {

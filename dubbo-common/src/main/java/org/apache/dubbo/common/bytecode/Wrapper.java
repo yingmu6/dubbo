@@ -141,9 +141,9 @@ public abstract class Wrapper { //封装类
         c3.append(name).append(" w; try{ w = ((").append(name).append(")$1); }catch(Throwable e){ throw new IllegalArgumentException(e); }"); //将invokeMethod方法中的Object强制转化为具体类型
 
         Map<String, Class<?>> pts = new HashMap<>(); // <property name, property types>
-        Map<String, Method> ms = new LinkedHashMap<>(); // <method desc, Method instance> 方法名与方法实例的映射Map
+        Map<String, Method> ms = new LinkedHashMap<>(); // <method desc, Method instance> 方法对应的描述符与方法实例的映射Map
         List<String> mns = new ArrayList<>(); // method names. 方法名列表
-        List<String> dmns = new ArrayList<>(); // declaring method names.
+        List<String> dmns = new ArrayList<>(); // declaring method names. 被封装的类或接口中，声明的方法名列表
 
         // get all public field.
         for (Field f : c.getFields()) { //处理被封装类的所有public字段
@@ -161,40 +161,40 @@ public abstract class Wrapper { //封装类
         Method[] methods = c.getMethods();
         // get all public method.
         boolean hasMethod = hasMethods(methods); //处理被封装类的所有public方法（判断是否有非Object中的方法）
-        if (hasMethod) { //存在方法时处理
+        if (hasMethod) { //存在方法时处理（把被封装的类或接口中的声明方法，依次拼接起来）
             c3.append(" try{");
-            for (Method m : methods) { //对类中的方法依次封装处理
+            for (Method m : methods) { //对类中的方法依次封装处理（构造Wrapper中的invokeMethod方法，如org.apache.dubbo.demo.GreetingService中声明中的所有方法）
                 //ignore Object's method.（忽略Object对象中的方法）
                 if (m.getDeclaringClass() == Object.class) {
                     continue;
                 }
 
                 String mn = m.getName();
-                c3.append(" if( \"").append(mn).append("\".equals( $2 ) "); //$2指当前类中的invokeMethod()的第二个参数（比较方法名）
+                c3.append(" if( \"").append(mn).append("\".equals( $2 ) "); //$2指当前类中的invokeMethod()的第二个参数（比较方法名称）
                 int len = m.getParameterTypes().length;
-                c3.append(" && ").append(" $3.length == ").append(len);// 比较方法参数个数
+                c3.append(" && ").append(" $3.length == ").append(len);// 比较方法参数个数（需要方法名称和参数个数都相等）
 
-                boolean override = false;
+                boolean override = false; //判断同一个接口或类中是存在重载的方法
                 for (Method m2 : methods) { //按方法名，判断是否重写
                     if (m != m2 && m.getName().equals(m2.getName())) {
                         override = true;
                         break;
                     }
                 }
-                if (override) { //若有重写的方法（按参数类型进行比较）
+                if (override) { //若有重载的方法（只按方法名称不能匹配出方法，还得按参数类型进行匹配）
                     if (len > 0) { //方法参数个数
-                        for (int l = 0; l < len; l++) {
-                            c3.append(" && ").append(" $3[").append(l).append("].getName().equals(\"") //比较方法参数类型
+                        for (int l = 0; l < len; l++) { //
+                            c3.append(" && ").append(" $3[").append(l).append("].getName().equals(\"")
                                     .append(m.getParameterTypes()[l].getName()).append("\")");
                         }
                     }
                 }
 
-                c3.append(" ) { ");
+                c3.append(" ) { "); //组装出判断条件，如：if( "hello".equals( $2 )  &&  $3.length == 1 &&  $3[0].getName().equals("org.apache.dubbo.demo.Fruit"))
 
-                if (m.getReturnType() == Void.TYPE) { //包含了具体的方法调用
+                if (m.getReturnType() == Void.TYPE) { //返回类型为void
                     c3.append(" w.").append(mn).append('(').append(args(m.getParameterTypes(), "$4")).append(");").append(" return null;");
-                } else {
+                } else { //方法有返回类型（组装方法的返回类型，如：return ($w)w.hello((org.apache.dubbo.demo.Fruit)$4[0] ）
                     c3.append(" return ($w)w.").append(mn).append('(').append(args(m.getParameterTypes(), "$4")).append(");");
                 }
 
@@ -206,19 +206,19 @@ public abstract class Wrapper { //封装类
 
                 mns.add(mn); //加入到方法名列表
                 if (m.getDeclaringClass() == c) {
-                    dmns.add(mn);
+                    dmns.add(mn); //被封装的类或接口中声明的方法
                 }
-                ms.put(ReflectUtils.getDesc(m), m); //将方法实例缓存起来
+                ms.put(ReflectUtils.getDesc(m), m); //将方法描述符与方法实例缓存起来
             }
             c3.append(" } catch(Throwable e) { ");
             c3.append("     throw new java.lang.reflect.InvocationTargetException(e); ");
             c3.append(" }");
         }
 
-        c3.append(" throw new " + NoSuchMethodException.class.getName() + "(\"Not found method \\\"\"+$2+\"\\\" in class " + c.getName() + ".\"); }");
+        c3.append(" throw new " + NoSuchMethodException.class.getName() + "(\"Not found method \\\"\"+$2+\"\\\" in class " + c.getName() + ".\"); }"); //若没有找到方法，则抛出“未找到方法”的异常
 
         // deal with get/set method.（处理set/get方法）
-        Matcher matcher;
+        Matcher matcher; //todo @pause
         for (Map.Entry<String, Method> entry : ms.entrySet()) {
             String md = entry.getKey(); //暴露接口中的方法描述信息，如hello(Lorg/apache/dubbo/demo/FruitEnum;)Ljava/lang/String;
             Method method = entry.getValue();
@@ -338,7 +338,7 @@ public abstract class Wrapper { //封装类
         return pn.length() == 1 || Character.isLowerCase(pn.charAt(1)) ? Character.toLowerCase(pn.charAt(0)) + pn.substring(1) : pn;
     }
 
-    private static boolean hasMethods(Method[] methods) {
+    private static boolean hasMethods(Method[] methods) { //判断是否有非Object中的方法
         if (methods == null || methods.length == 0) {
             return false;
         }
@@ -456,9 +456,9 @@ public abstract class Wrapper { //封装类
      * invoke method.(调用实例中的对应方法)
      *
      * @param instance instance.
-     * @param mn       method name.
-     * @param types
-     * @param args     argument array.
+     * @param mn       method name.（方法名称）
+     * @param types （参数类型对应的数组）
+     * @param args     argument array.（参数值对应的数组）
      * @return return value.
      */
     abstract public Object invokeMethod(Object instance, String mn, Class<?>[] types, Object[] args) throws NoSuchMethodException, InvocationTargetException;
