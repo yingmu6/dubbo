@@ -31,21 +31,21 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * ClassGenerator（javassist方式产生代理对象）
+ * ClassGenerator（Class生成器，内部建立了与Javassist相对应的数据模型，并使用javassist动态生成Class）
  */
 public final class ClassGenerator { //@csy-001 该类的用途是什么？解：Class生成工具类，先将数据转换为Dubbo内部数据形式，再在底层进行转换，转换为javassist所需的数据形式
 
     private static final AtomicLong CLASS_NAME_COUNTER = new AtomicLong(0);
     private static final String SIMPLE_NAME_TAG = "<init>";
     private static final Map<ClassLoader, ClassPool> POOL_MAP = new ConcurrentHashMap<ClassLoader, ClassPool>(); //ClassLoader - ClassPool（类加载器与javassist中的类池对应缓存）
-    private ClassPool mPool; //类池
-    private CtClass mCtc;   //类class
-    private String mClassName;
-    private String mSuperClass;
-    private Set<String> mInterfaces; //存放
-    private List<String> mFields; //存放字段对应的字符串，如ccp.addField("public static java.lang.reflect.Method[] methods;");
-    private List<String> mConstructors; //存放构造函数对应的字符串
-    private List<String> mMethods; //存放方法对应的字符串
+    private ClassPool mPool; //javassist中的类池
+    private CtClass mCtc;   //javassist中的编译时类
+    private String mClassName;  //动态生成的类名
+    private String mSuperClass; //父类对应的名称
+    private Set<String> mInterfaces; //存放类实现的接口列表
+    private List<String> mFields; //存放字段对应的代码片段，如ccp.addField("public static java.lang.reflect.Method[] methods;");
+    private List<String> mConstructors; //存放构造函数对应的代码片段
+    private List<String> mMethods; //存放方法对应的代码片段
     private Map<String, Method> mCopyMethods; // <method desc,method instance>  方法描述符与方法实例的映射
     private Map<String, Constructor<?>> mCopyConstructors; // <constructor desc,constructor instance> 方法描述符与构造实例的映射
     private boolean mDefaultConstructor = false; //是否使用默认构造函数
@@ -57,7 +57,7 @@ public final class ClassGenerator { //@csy-001 该类的用途是什么？解：
         mPool = pool; //设置类池
     }
 
-    public static ClassGenerator newInstance() { //静态方法，创建实例对象
+    public static ClassGenerator newInstance() { //静态方法，创建类生成器的实例（指定ClassPool）
         return new ClassGenerator(getClassPool(Thread.currentThread().getContextClassLoader()));
     }
 
@@ -288,7 +288,7 @@ public final class ClassGenerator { //@csy-001 该类的用途是什么？解：
             mCtc.detach(); //detach:分离， 从ClassPool中移除CtClass
         }
         // 基于当前类维护的数据，进行逻辑处理
-        long id = CLASS_NAME_COUNTER.getAndIncrement();
+        long id = CLASS_NAME_COUNTER.getAndIncrement(); //todo @pause
         try {
             CtClass ctcs = mSuperClass == null ? null : mPool.get(mSuperClass); // 从类池ClassPool中获取类名mSuperClass对应的CtClass
             if (mClassName == null) { //若没显示设置类名时，自动生成对应的类名，如 org.apache.dubbo.common.bytecode.ClassGenerator0

@@ -36,28 +36,28 @@ public class ClassGeneratorTest { //类生成器测试
         Field fname = null, fs[] = Bean.class.getDeclaredFields();
         for (Field f : fs) {
             f.setAccessible(true); // 设置字段的可见性
-            if (f.getName().equals("name"))
+            if (f.getName().equals("name")) //找出名称为name的字段
                 fname = f;
         }
 
         ClassGenerator cg = ClassGenerator.newInstance();
-        cg.setClassName(Bean.class.getName() + "$Builder");
-        cg.addInterface(Builder.class);
+        cg.setClassName(Bean.class.getName() + "$Builder"); //指定Class名称
+        cg.addInterface(Builder.class); //指定Class实现的接口
 
-        cg.addField("public static java.lang.reflect.Field FNAME;");
+        cg.addField("public static java.lang.reflect.Field FNAME;"); //在Class中添加字段，即ClassGenerator#mFields字段中
 
         cg.addMethod("public Object getName(" + Bean.class.getName() + " o){ boolean[][][] bs = new boolean[0][][]; return (String)FNAME.get($1); }");
-        cg.addMethod("public void setName(" + Bean.class.getName() + " o, Object name){ FNAME.set($1, $2); }");
+        cg.addMethod("public void setName(" + Bean.class.getName() + " o, Object name){ FNAME.set($1, $2); }"); //在Class中添加方法
 
-        cg.addDefaultConstructor();
-        Class<?> cl = cg.toClass(); //转化为Class对象
-        cl.getField("FNAME").set(null, fname);
+        cg.addDefaultConstructor(); //添加默认构造函数
+        Class<?> cl = cg.toClass(); //转化为Class对象（重点逻辑）
+        cl.getField("FNAME").set(null, fname); //创建好Class对象后，可以按Class对应操作
 
-        System.out.println(cl.getName());
+        System.out.println("输出点一：" +cl.getName());
         Builder<String> builder = (Builder<String>) cl.newInstance();
-        System.out.println(b.getName());
+        System.out.println("输出点二：" + b.getName());
         builder.setName(b, "ok");
-        System.out.println(b.getName());
+        System.out.println("输出点三：" + b.getName());
 
 //        System.in.read();
     }
@@ -127,7 +127,7 @@ interface UserInfo {
 class Bean {
     int age = 30;
 
-    private String name = "qianlei";
+    private String name = "qianlei44";
 
     public int getAge() {
         return age;
