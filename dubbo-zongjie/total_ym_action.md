@@ -12,3 +12,4 @@
 | 006 | Zookeeper API使用   | 熟悉Zookeeper使用   | P2  | 0%   | 2023-03-31 |      |
 | 007 | Wrapper使用及测试      | 熟悉Wrapper原理     | P2  | 10%  | 2023-04-03 |      |
 | 008 | filter测试使用        | 熟悉使用Filter      | P1  | 0%   | 2023-04-04 |      |
+| 009 | ClassGenerator使用  | 了解其基本用途和功能      | P1  | 0%   | 2023-04-17 |      |

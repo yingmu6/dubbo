@@ -140,7 +140,7 @@ public abstract class Wrapper { //封装类
         c2.append(name).append(" w; try{ w = ((").append(name).append(")$1); }catch(Throwable e){ throw new IllegalArgumentException(e); }"); //将getPropertyValue方法中的Object强制转化为具体类型
         c3.append(name).append(" w; try{ w = ((").append(name).append(")$1); }catch(Throwable e){ throw new IllegalArgumentException(e); }"); //将invokeMethod方法中的Object强制转化为具体类型
 
-        Map<String, Class<?>> pts = new HashMap<>(); // <property name, property types>
+        Map<String, Class<?>> pts = new HashMap<>(); // <property name, property types> 属性名与属性类型的映射Map
         Map<String, Method> ms = new LinkedHashMap<>(); // <method desc, Method instance> 方法对应的描述符与方法实例的映射Map
         List<String> mns = new ArrayList<>(); // method names. 方法名列表
         List<String> dmns = new ArrayList<>(); // declaring method names. 被封装的类或接口中，声明的方法名列表
@@ -217,12 +217,12 @@ public abstract class Wrapper { //封装类
 
         c3.append(" throw new " + NoSuchMethodException.class.getName() + "(\"Not found method \\\"\"+$2+\"\\\" in class " + c.getName() + ".\"); }"); //若没有找到方法，则抛出“未找到方法”的异常
 
-        // deal with get/set method.（处理set/get方法）
-        Matcher matcher; //todo @pause
+        // deal with get/set method.（处理set/get方法，非规范的方法就不会处理了）
+        Matcher matcher;
         for (Map.Entry<String, Method> entry : ms.entrySet()) {
             String md = entry.getKey(); //暴露接口中的方法描述信息，如hello(Lorg/apache/dubbo/demo/FruitEnum;)Ljava/lang/String;
             Method method = entry.getValue();
-            if ((matcher = ReflectUtils.GETTER_METHOD_DESC_PATTERN.matcher(md)).matches()) { //判断是否匹配get方法对应的描述信息
+            if ((matcher = ReflectUtils.GETTER_METHOD_DESC_PATTERN.matcher(md)).matches()) { //判断是否匹配get方法对应的描述信息（描述信息可以确定唯一的方法）
                 String pn = propertyName(matcher.group(1));
                 c2.append(" if( $2.equals(\"").append(pn).append("\") ){ return ($w)w.").append(method.getName()).append("(); }");
                 pts.put(pn, method.getReturnType());
@@ -233,8 +233,8 @@ public abstract class Wrapper { //封装类
             } else if ((matcher = ReflectUtils.SETTER_METHOD_DESC_PATTERN.matcher(md)).matches()) { //匹配set方法
                 Class<?> pt = method.getParameterTypes()[0];
                 String pn = propertyName(matcher.group(1));
-                c1.append(" if( $2.equals(\"").append(pn).append("\") ){ w.").append(method.getName()).append("(").append(arg(pt, "$3")).append("); return; }");
-                pts.put(pn, pt);
+                c1.append(" if( $2.equals(\"").append(pn).append("\") ){ w.").append(method.getName()).append("(").append(arg(pt, "$3")).append("); return; }"); //拼接的内容如：" if( $2.equals("msg") ){ w.setMsg((java.lang.String)$3); return;"
+                pts.put(pn, pt); //设置属性名与属性Class的映射
             }
         }
         c1.append(" throw new " + NoSuchPropertyException.class.getName() + "(\"Not found property \\\"\"+$2+\"\\\" field or setter method in class " + c.getName() + ".\"); }");
@@ -242,7 +242,7 @@ public abstract class Wrapper { //封装类
 
         // make class（构建Class对象）
         long id = WRAPPER_CLASS_COUNTER.getAndIncrement();
-        ClassGenerator cc = ClassGenerator.newInstance(cl);
+        ClassGenerator cc = ClassGenerator.newInstance(cl); //创建ClassGenerator，todo @pause
         cc.setClassName((Modifier.isPublic(c.getModifiers()) ? Wrapper.class.getName() : c.getName() + "$sw") + id); //org.apache.dubbo.common.bytecode.Wrapper0，判断类是否是public，然后进行类名拼接
         cc.setSuperClass(Wrapper.class); //将Wrapper指定为父类
 
@@ -383,10 +383,10 @@ public abstract class Wrapper { //封装类
     abstract public Object getPropertyValue(Object instance, String pn) throws NoSuchPropertyException, IllegalArgumentException;
 
     /**
-     * set property value.
+     * set property value.（设置单个属性值）
      *
      * @param instance instance.
-     * @param pn       property name.
+     * @param pn       property name.（属性名）
      * @param pv       property value.
      */
     abstract public void setPropertyValue(Object instance, String pn, Object pv) throws NoSuchPropertyException, IllegalArgumentException;

@@ -33,11 +33,11 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * ClassGenerator（javassist方式产生代理对象）
  */
-public final class ClassGenerator { //@csy-001 该类的用途是什么？解：类产生工具类，现在数据转换为Dubbo内部数据形式，再在底层进行转换，转换为javassist所需的数据形式
+public final class ClassGenerator { //@csy-001 该类的用途是什么？解：Class生成工具类，先将数据转换为Dubbo内部数据形式，再在底层进行转换，转换为javassist所需的数据形式
 
     private static final AtomicLong CLASS_NAME_COUNTER = new AtomicLong(0);
     private static final String SIMPLE_NAME_TAG = "<init>";
-    private static final Map<ClassLoader, ClassPool> POOL_MAP = new ConcurrentHashMap<ClassLoader, ClassPool>(); //ClassLoader - ClassPool（类加载器与类池的对应缓存）
+    private static final Map<ClassLoader, ClassPool> POOL_MAP = new ConcurrentHashMap<ClassLoader, ClassPool>(); //ClassLoader - ClassPool（类加载器与javassist中的类池对应缓存）
     private ClassPool mPool; //类池
     private CtClass mCtc;   //类class
     private String mClassName;
@@ -53,7 +53,7 @@ public final class ClassGenerator { //@csy-001 该类的用途是什么？解：
     private ClassGenerator() { //私有的构造函数，不直接对外暴露
     }
 
-    private ClassGenerator(ClassPool pool) {
+    private ClassGenerator(ClassPool pool) { //私有的构造函数
         mPool = pool; //设置类池
     }
 
@@ -382,7 +382,7 @@ public final class ClassGenerator { //@csy-001 该类的用途是什么？解：
         return getCtClass(c.getDeclaringClass()).getConstructor(ReflectUtils.getDesc(c));
     }
 
-    public static interface DC { //空接口，动态类标识接口
+    public static interface DC { //空接口，动态类标识接口（Wrapper封装的类或接口，都会实现该接口）
 
     } // dynamic class tag interface
 }

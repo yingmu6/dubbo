@@ -27,7 +27,7 @@ interface Builder<T> {
     void setName(Bean bean, T name);
 }
 
-public class ClassGeneratorTest {
+public class ClassGeneratorTest { //类生成器测试
 
     @SuppressWarnings("unchecked")
     @Test
@@ -58,6 +58,8 @@ public class ClassGeneratorTest {
         System.out.println(b.getName());
         builder.setName(b, "ok");
         System.out.println(b.getName());
+
+//        System.in.read();
     }
 
     @Test

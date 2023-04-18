@@ -119,9 +119,9 @@ public final class ReflectUtils { //JVM虚拟机中的类型描述符
 
     public static final Pattern GETTER_METHOD_DESC_PATTERN = Pattern.compile("get([A-Z][_a-zA-Z0-9]*)\\(\\)(" + DESC_REGEX + ")"); //get方法的正则表达值：包含方法名+参数列表+返回值的描述
 
-    public static final Pattern SETTER_METHOD_DESC_PATTERN = Pattern.compile("set([A-Z][_a-zA-Z0-9]*)\\((" + DESC_REGEX + ")\\)V"); //正则表达式：那符合条件的表达式，对照一下表达式规则，即可明白表达式含义
+    public static final Pattern SETTER_METHOD_DESC_PATTERN = Pattern.compile("set([A-Z][_a-zA-Z0-9]*)\\((" + DESC_REGEX + ")\\)V"); //set方法的正则表达式（正则表达式：拿符合条件的表达式，对照一下表达式规则，即可明白表达式含义）
 
-    public static final Pattern IS_HAS_CAN_METHOD_DESC_PATTERN = Pattern.compile("(?:is|has|can)([A-Z][_a-zA-Z0-9]*)\\(\\)Z");
+    public static final Pattern IS_HAS_CAN_METHOD_DESC_PATTERN = Pattern.compile("(?:is|has|can)([A-Z][_a-zA-Z0-9]*)\\(\\)Z"); //boolean对应的方法（返回描述符Z表示boolean类型）
 
     private static final ConcurrentMap<String, Class<?>> DESC_CLASS_CACHE = new ConcurrentHashMap<String, Class<?>>();
 
