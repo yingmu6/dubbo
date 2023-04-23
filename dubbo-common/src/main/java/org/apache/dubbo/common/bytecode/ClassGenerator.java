@@ -31,9 +31,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * ClassGenerator（Class生成器，内部建立了与Javassist相对应的数据模型，并使用javassist动态生成Class）
+ * ClassGenerator（Class生成器，内部对Javassist的数据模型进行抽象，对外提供使用代码片段的方式创建Class）
  */
 public final class ClassGenerator { //@csy-001 该类的用途是什么？解：Class生成工具类，先将数据转换为Dubbo内部数据形式，再在底层进行转换，转换为javassist所需的数据形式
+
+    /**
+     * ClassGenerator：Class生成器（符合面向抽象编程思想）
+     * 1）对Class的产生信息做了抽象封装，内部的具体实现后续是可以改的，目前是使用javassist，后续也可以改为SPI，使用cglib等等
+     * 2）内部使用了Javassist做实现，对CtPool、CtClass等Javassist的原生组件做了封装，使用者不用关注javassist的内容
+     */
 
     private static final AtomicLong CLASS_NAME_COUNTER = new AtomicLong(0); //未指定类名时，默认产生类名，用到的下标
     private static final String SIMPLE_NAME_TAG = "<init>";
@@ -158,7 +164,7 @@ public final class ClassGenerator { //@csy-001 该类的用途是什么？解：
         return addField(sb.toString());
     }
 
-    public ClassGenerator addMethod(String code) {
+    public ClassGenerator addMethod(String code) { //执行方法对应的字符串，添加新方法
         if (mMethods == null) {
             mMethods = new ArrayList<String>();
         }
@@ -166,7 +172,7 @@ public final class ClassGenerator { //@csy-001 该类的用途是什么？解：
         return this;
     }
 
-    public ClassGenerator addMethod(String name, int mod, Class<?> rt, Class<?>[] pts, String body) {
+    public ClassGenerator addMethod(String name, int mod, Class<?> rt, Class<?>[] pts, String body) { //指定方法详细的参数，添加新方法
         return addMethod(name, mod, rt, pts, null, body);
     }
 
@@ -290,7 +296,7 @@ public final class ClassGenerator { //@csy-001 该类的用途是什么？解：
      * 3）使用javassist的CtClass.toClass()获取到动态生成的Class
      * （类似Mybatis的动态SQL，按字符串动态组装，最终形成SQL）
      */
-    public Class<?> toClass(ClassLoader loader, ProtectionDomain pd) { //将当前维护的成员方法、成员变量对应字符串转换为Class对象
+    public Class<?> toClass(ClassLoader loader, ProtectionDomain pd) { //创建Class对象（将当前维护的Class信息，创建Class对象）
         if (mCtc != null) {
             mCtc.detach(); //detach:分离， 从ClassPool中移除CtClass
         }

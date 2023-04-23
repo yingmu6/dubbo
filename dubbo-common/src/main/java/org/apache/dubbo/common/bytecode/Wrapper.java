@@ -161,7 +161,7 @@ public abstract class Wrapper { //封装类
         Method[] methods = c.getMethods();
         // get all public method.
         boolean hasMethod = hasMethods(methods); //处理被封装类的所有public方法（判断是否有非Object中的方法）
-        if (hasMethod) { //存在方法时处理（把被封装的类或接口中的声明方法，依次拼接起来）
+        if (hasMethod) { //拼接invokeMethod方法中的调用逻辑（把被封装的类或接口中的声明方法，依次拼接起来）
             c3.append(" try{");
             for (Method m : methods) { //对类中的方法依次封装处理（构造Wrapper中的invokeMethod方法，如org.apache.dubbo.demo.GreetingService中声明中的所有方法）
                 //ignore Object's method.（忽略Object对象中的方法）
@@ -242,9 +242,9 @@ public abstract class Wrapper { //封装类
 
         // make class（构建Class对象）
         long id = WRAPPER_CLASS_COUNTER.getAndIncrement();
-        ClassGenerator cc = ClassGenerator.newInstance(cl); //创建ClassGenerator，todo @pause
+        ClassGenerator cc = ClassGenerator.newInstance(cl); //使用ClassGenerator类生成器来生成Wrapper的Class
         cc.setClassName((Modifier.isPublic(c.getModifiers()) ? Wrapper.class.getName() : c.getName() + "$sw") + id); //org.apache.dubbo.common.bytecode.Wrapper0，判断类是否是public，然后进行类名拼接
-        cc.setSuperClass(Wrapper.class); //将Wrapper指定为父类
+        cc.setSuperClass(Wrapper.class); //将Wrapper指定为父类，创建其封装类
 
         cc.addDefaultConstructor(); //添加默认构造函数
         cc.addField("public static String[] pns;"); // property name array.
@@ -266,7 +266,7 @@ public abstract class Wrapper { //封装类
 
         try {
             Class<?> wc = cc.toClass(); //将CtClass转换为Class
-            // setup static field.
+            // setup static field.（设置静态字段值）
             wc.getField("pts").set(null, pts);
             wc.getField("pns").set(null, pts.keySet().toArray(new String[0]));
             wc.getField("mns").set(null, mns.toArray(new String[0]));
@@ -319,7 +319,7 @@ public abstract class Wrapper { //封装类
         return "(" + ReflectUtils.getName(cl) + ")" + name; //不是基本类型，做强制转换，如 (org.apache.dubbo.demo.FruitEnum)$4[0]
     }
 
-    private static String args(Class<?>[] cs, String name) {
+    private static String args(Class<?>[] cs, String name) { //将方法参数按指定类型转换
         int len = cs.length;
         if (len == 0) {
             return "";

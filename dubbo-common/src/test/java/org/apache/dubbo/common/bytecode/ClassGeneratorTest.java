@@ -29,6 +29,36 @@ interface Builder<T> {
 
 public class ClassGeneratorTest { //类生成器测试
 
+    /**
+     * 场景1：基本使用，能产生新的Class（通过传递代码字符串方式）
+     */
+    @Test
+    public void testGenerateClassByCode() throws Exception {
+        ClassGenerator cg = ClassGenerator.newInstance();
+        cg.setClassName(Bean.class.getName() + "$Test1");
+        cg.addInterface(Builder.class); //添加实现的接口
+        cg.addField("private String NAME;");
+
+        cg.addMethod("public Object getName(" + Bean.class.getName() + " bean) { return this.NAME;} "); //实现的接口Builder<T>是泛型的，使用到T的地方对应为Object
+        cg.addMethod("public void setName(" + Bean.class.getName() + " bean, Object name) { this.NAME = bean.getName() + name;}"); //todo @csy 怎么设置如$1、$2的值
+
+        Class cl = cg.toClass();
+        Builder<String> builder = (Builder<String>) cl.newInstance(); //向上转型
+        Bean bean = new Bean();
+        builder.setName(bean, "123");
+        System.out.println(builder.getName(bean));
+    }
+
+    /**
+     * 场景2：基本使用，能产生新的Class（通过指定详细参数方式）
+     */
+    public void testGenerateClassByParameter() {
+        ClassGenerator cg = ClassGenerator.newInstance();
+        cg.setClassName(Bean.class.getName() + "$Test2");
+        cg.addInterface(Builder.class); //添加实现的接口
+
+    }
+
     @SuppressWarnings("unchecked")
     @Test
     public void testMain() throws Exception {
@@ -47,19 +77,17 @@ public class ClassGeneratorTest { //类生成器测试
         cg.addField("public static java.lang.reflect.Field FNAME;"); //在Class中添加字段，即ClassGenerator#mFields字段中
 
         cg.addMethod("public Object getName(" + Bean.class.getName() + " o){ boolean[][][] bs = new boolean[0][][]; return (String)FNAME.get($1); }");
-        cg.addMethod("public void setName(" + Bean.class.getName() + " o, Object name){ FNAME.set($1, $2); }"); //在Class中添加方法
+        cg.addMethod("public void setName(" + Bean.class.getName() + " o, Object name){ FNAME.set($1, $2); }"); //在Class中添加方法（支持传入占位符$，内部javassist会使用$取参数值）
 
         cg.addDefaultConstructor(); //添加默认构造函数
-        Class<?> cl = cg.toClass(); //转化为Class对象（重点逻辑）
-        cl.getField("FNAME").set(null, fname); //创建好Class对象后，可以按Class对应操作
+        Class<?> cl = cg.toClass(); //创建Class对象（重点逻辑）
+        cl.getField("FNAME").set(null, fname); //创建好Class对象后，可以按Class做对应操作
 
         System.out.println("输出点一：" +cl.getName());
         Builder<String> builder = (Builder<String>) cl.newInstance();
         System.out.println("输出点二：" + b.getName());
         builder.setName(b, "ok");
         System.out.println("输出点三：" + b.getName());
-
-//        System.in.read();
     }
 
     @Test
@@ -85,7 +113,7 @@ public class ClassGeneratorTest { //类生成器测试
         cg.addDefaultConstructor();
 
         Class<?> cl = cg.toClass();
-        cl.getField("FNAME").set(null, fname);
+        cl.getField("FNAME").set(null, fname); //private变量不能直接访问，所以使用getField时需要变量是可访问的
 
         System.out.println(cl.getName());
         Builder<String> builder = (Builder<String>) cl.newInstance();
@@ -127,7 +155,7 @@ interface UserInfo {
 class Bean {
     int age = 30;
 
-    private String name = "qianlei44";
+    private String name = "qianlei";
 
     public int getAge() {
         return age;
