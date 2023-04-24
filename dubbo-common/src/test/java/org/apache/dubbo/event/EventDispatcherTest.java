@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class EventDispatcherTest {
 
-    private EventDispatcher defaultInstance = EventDispatcher.getDefaultExtension();
+    private EventDispatcher defaultInstance = EventDispatcher.getDefaultExtension(); //通过此处debug观察得知，junit单元测试时，在@Test进入方法前，会使用反射机制Constructor的newInstance创建实例，所以当前的成员变量赋值会被执行
 
     @Test
     public void testDefaultInstance() { //EventDispatcher的默认实例是DirectEventDispatcher（通过SPI机制获取的实例）
@@ -41,9 +41,9 @@ public class EventDispatcherTest {
     public void testDefaultMethods() {
         assertEquals(DIRECT_EXECUTOR, defaultInstance.getExecutor()); //DirectEventDispatcher实例创建时，调用super(DIRECT_EXECUTOR);指定的
 
-        defaultInstance.addEventListener(new EventListener<Event>() { //使用匿名类构建监听器
+        defaultInstance.addEventListener(new EventListener<Event>() { //添加事件监听器（EventListener是函数式结构，可以用lambda表示）
             @Override
-            public void onEvent(Event event) {
+            public void onEvent(Event event) { //todo @pause
                 System.out.println("收到事件" + event.getSource());
             }
         });

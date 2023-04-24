@@ -42,7 +42,7 @@ import static org.apache.dubbo.event.EventListener.findEventType;
  */
 public abstract class AbstractEventDispatcher implements EventDispatcher {
 
-    private final Object mutex = new Object();
+    private final Object mutex = new Object(); //mutex：互斥
 
     // 事件与事件监听器列表的映射关系
     private final ConcurrentMap<Class<? extends Event>, List<EventListener>> listenersCache = new ConcurrentHashMap<>();
