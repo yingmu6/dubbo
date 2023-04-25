@@ -92,7 +92,7 @@ public interface EventListener<E extends Event> extends java.util.EventListener,
                     .map(EventListener::findEventType)
                     .filter(Objects::nonNull)
                     .findAny()
-                    .orElse((Class) findEventType(listenerClass.getSuperclass()));
+                    .orElse((Class) findEventType(listenerClass.getSuperclass())); //若都没找到，则找它的父类对应的事件类型
         }
 
         return eventType;
@@ -114,7 +114,7 @@ public interface EventListener<E extends Event> extends java.util.EventListener,
             for (Type typeArgument : typeArguments) {
                 if (typeArgument instanceof Class) {
                     Class argumentClass = (Class) typeArgument;
-                    if (Event.class.isAssignableFrom(argumentClass)) {
+                    if (Event.class.isAssignableFrom(argumentClass)) { //找到事件类型
                         eventType = argumentClass;
                         break;
                     }

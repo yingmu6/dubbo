@@ -39,7 +39,7 @@ public abstract class Event extends EventObject { //事件对象：包含事件�
     private final long timestamp;
 
     /**
-     * Constructs a prototypical Event.
+     * Constructs a prototypical（原型的、典型的） Event.
      *
      * @param source The object on which the Event initially occurred.
      * @throws IllegalArgumentException if source is null.

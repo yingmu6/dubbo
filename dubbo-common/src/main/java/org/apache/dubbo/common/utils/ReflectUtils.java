@@ -1202,7 +1202,7 @@ public final class ReflectUtils { //JVM虚拟机中的类型描述符
      * @return non-null read-only {@link Set}
      * @since 2.7.5
      */
-    public static Set<ParameterizedType> findParameterizedTypes(Class<?> sourceClass) { //调试入口，可以从EventDispatcherTest#testDefaultMethods
+    public static Set<ParameterizedType> findParameterizedTypes(Class<?> sourceClass) { //获取参数化类型的集合（参数化类型如：Collection<String>）
         // Add Generic Interfaces
         List<Type> genericTypes = new LinkedList<>(asList(sourceClass.getGenericInterfaces())); //Type:是Java中所有类型的通用超接口，getGenericInterfaces()返回当前Class直接实现的接口
         // Add Generic Super Class
@@ -1213,7 +1213,7 @@ public final class ReflectUtils { //JVM虚拟机中的类型描述符
                 .map(type -> ParameterizedType.class.cast(type))  // cast to ParameterizedType
                 .collect(Collectors.toSet());
 
-        if (parameterizedTypes.isEmpty()) { // If not found, try to search super types recursively
+        if (parameterizedTypes.isEmpty()) { // If not found, try to search super types recursively（递归地）
             genericTypes.stream()
                     .filter(type -> type instanceof Class)
                     .map(type -> Class.class.cast(type))

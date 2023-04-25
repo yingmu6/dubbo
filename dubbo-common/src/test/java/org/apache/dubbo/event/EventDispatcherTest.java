@@ -39,17 +39,21 @@ public class EventDispatcherTest {
 
     @Test
     public void testDefaultMethods() {
-        assertEquals(DIRECT_EXECUTOR, defaultInstance.getExecutor()); //DirectEventDispatcher实例创建时，调用super(DIRECT_EXECUTOR);指定的
+        assertEquals(DIRECT_EXECUTOR, defaultInstance.getExecutor()); //DirectEventDispatcher实例创建时，调用super(DIRECT_EXECUTOR)指定的
 
-        defaultInstance.addEventListener(new EventListener<Event>() { //添加事件监听器（EventListener是函数式结构，可以用lambda表示）
+        defaultInstance.addEventListener(new EventListener<Event>() { //添加事件监听器（添加到AbstractEventDispatcher的缓存Map中）
             @Override
-            public void onEvent(Event event) { //todo @pause
+            public void onEvent(Event event) {
                 System.out.println("收到事件" + event.getSource());
             }
         });
 
+//        defaultInstance.addEventListener((event) -> { //todo @csy 此种使用lambda的写法为何不对
+//                System.out.println("收到事件" + event.getSource());
+//        });
+
         assertTrue(!defaultInstance.getAllEventListeners().isEmpty());
 
-        defaultInstance.dispatch(new EchoEvent("hhh")); //进行事件派发时，会调用事件关联监听器的onEvent()方法
+        defaultInstance.dispatch(new EchoEvent("hhh")); //进行事件派发时，会调用事件关联监听器的onEvent()方法 todo @pause
     }
 }

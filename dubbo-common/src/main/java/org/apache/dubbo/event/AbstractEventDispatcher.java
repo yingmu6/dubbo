@@ -42,9 +42,9 @@ import static org.apache.dubbo.event.EventListener.findEventType;
  */
 public abstract class AbstractEventDispatcher implements EventDispatcher {
 
-    private final Object mutex = new Object(); //mutex：互斥
+    private final Object mutex = new Object(); //mutex：互斥（当前类中doInListener()方法中使用synchronize加锁时用到）
 
-    // 事件与事件监听器列表的映射关系
+    // 事件与事件监听器列表的映射关系（事件与监听器关系 = 1：n）
     private final ConcurrentMap<Class<? extends Event>, List<EventListener>> listenersCache = new ConcurrentHashMap<>();
 
     private final Executor executor;
@@ -66,8 +66,8 @@ public abstract class AbstractEventDispatcher implements EventDispatcher {
     @Override
     public void addEventListener(EventListener<?> listener) throws NullPointerException, IllegalArgumentException { //将事件与监听器列表添加到本地缓存listenersCache中
         Listenable.assertListener(listener);
-        doInListener(listener, listeners -> { //将事件监听器添加到监听器列表中
-            addIfAbsent(listeners, listener);
+        doInListener(listener, listeners -> { //将事件监听器添加到监听器列表中（第2个参数是按函数式接口传递的）
+            addIfAbsent(listeners, listener); //把listener加入到集合中（此处相当于Consumer中的accept方法，定义了函数式接口中的操作，其它变量的值如listener会先保存起来，函数式接口回调时能使用）
         });
     }
 
@@ -103,8 +103,8 @@ public abstract class AbstractEventDispatcher implements EventDispatcher {
                 .sorted();
     }
 
-    private <E> void addIfAbsent(Collection<E> collection, E element) {
-        if (!collection.contains(element)) { // 集合中不存在元素时，添加元素
+    private <E> void addIfAbsent(Collection<E> collection, E element) { //在元素不存在于集合中时，添加到集合中
+        if (!collection.contains(element)) {
             collection.add(element);
         }
     }
@@ -138,13 +138,13 @@ public abstract class AbstractEventDispatcher implements EventDispatcher {
         return executor;
     }
 
-    protected void doInListener(EventListener<?> listener, Consumer<Collection<EventListener>> consumer) {
-        Class<? extends Event> eventType = findEventType(listener);
+    protected void doInListener(EventListener<?> listener, Consumer<Collection<EventListener>> consumer) { //添加监听器（Consumer使用：函数接口传递，封装好业务逻辑传递，调用accept()方法时，回调逻辑）
+        Class<? extends Event> eventType = findEventType(listener); //找到监听器对应的事件类型
         if (eventType != null) {
             synchronized (mutex) {
-                List<EventListener> listeners = listenersCache.computeIfAbsent(eventType, e -> new LinkedList<>());
+                List<EventListener> listeners = listenersCache.computeIfAbsent(eventType, e -> new LinkedList<>()); //查找到指定事件类型对应的监听器列表
                 // consume
-                consumer.accept(listeners);
+                consumer.accept(listeners); //将监听器listener加入到listeners监听器列表中
                 // sort
                 sort(listeners);
             }
