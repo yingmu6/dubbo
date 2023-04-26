@@ -47,7 +47,7 @@ public abstract class AbstractEventDispatcher implements EventDispatcher {
     // 事件与事件监听器列表的映射关系（事件与监听器关系 = 1：n）
     private final ConcurrentMap<Class<? extends Event>, List<EventListener>> listenersCache = new ConcurrentHashMap<>();
 
-    private final Executor executor;
+    private final Executor executor; //用于事件派发时的线程池
 
     /**
      * Constructor with an instance of {@link Executor}
@@ -85,19 +85,19 @@ public abstract class AbstractEventDispatcher implements EventDispatcher {
             addIfAbsent(listeners, listener);
         });
 
-        return unmodifiableList(listeners);
+        return unmodifiableList(listeners); //将原有的监听器列表，加到新的集合中，避免对原来集合变更
     }
 
     protected Stream<EventListener> sortedListeners() {
         return sortedListeners(e -> true);
     }
 
-    // 对监听器进行排序
+    // 筛选出缓存中的事件监听器，并进行排序
     protected Stream<EventListener> sortedListeners(Predicate<Map.Entry<Class<? extends Event>, List<EventListener>>> predicate) {
         return listenersCache
                 .entrySet()
                 .stream()
-                .filter(predicate)
+                .filter(predicate) //将缓存的内容进行过滤，保留key为Event类型的值（predicate函数的具体行为，回看传入的地方）
                 .map(Map.Entry::getValue) //获取到事件监听器EventListener列表
                 .flatMap(Collection::stream)
                 .sorted();
@@ -116,16 +116,16 @@ public abstract class AbstractEventDispatcher implements EventDispatcher {
 
         // execute in sequential or parallel execution model
         executor.execute(() -> { //将事件处理使用线程执行
-            sortedListeners(entry -> entry.getKey().isAssignableFrom(event.getClass()))
-                    .forEach(listener -> {
-                        if (listener instanceof ConditionalEventListener) {
+            sortedListeners(entry -> entry.getKey().isAssignableFrom(event.getClass())) //过滤出符合条件的监听器列表，并进行排序（把缓存listenersCache进行过滤，只获取事件类型Event对应缓存值，最后将监听器列表排序）
+                    .forEach(listener -> { //todo @csy 此处不按具体事件派发吗？还是一个事件触发，其它事件的监听器也会被触发吗？
+                        if (listener instanceof ConditionalEventListener) { //ConditionalEventListener与普通EventListener的执行方法不一样，使用的是accept()方法，而不是onEvent()，所以特殊判断下
                             ConditionalEventListener predicateEventListener = (ConditionalEventListener) listener;
                             if (!predicateEventListener.accept(event)) { // No accept（判断事件是否能被当前监听器处理）
                                 return;
                             }
                         }
                         // Handle the event
-                        listener.onEvent(event); //通过事件监听器处理事件
+                        listener.onEvent(event); //回调事件监听器的处理方法（接口回调）
                     });
         });
     }
@@ -141,7 +141,7 @@ public abstract class AbstractEventDispatcher implements EventDispatcher {
     protected void doInListener(EventListener<?> listener, Consumer<Collection<EventListener>> consumer) { //添加监听器（Consumer使用：函数接口传递，封装好业务逻辑传递，调用accept()方法时，回调逻辑）
         Class<? extends Event> eventType = findEventType(listener); //找到监听器对应的事件类型
         if (eventType != null) {
-            synchronized (mutex) {
+            synchronized (mutex) { //加锁处理
                 List<EventListener> listeners = listenersCache.computeIfAbsent(eventType, e -> new LinkedList<>()); //查找到指定事件类型对应的监听器列表
                 // consume
                 consumer.accept(listeners); //将监听器listener加入到listeners监听器列表中

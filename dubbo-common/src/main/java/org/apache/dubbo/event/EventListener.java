@@ -83,7 +83,7 @@ public interface EventListener<E extends Event> extends java.util.EventListener,
      * @param listenerClass the {@link Class class} of {@link EventListener Dubbo event listener}
      * @return <code>null</code> if not found
      */
-    static Class<? extends Event> findEventType(Class<?> listenerClass) { //根据监听器Class查找对应的事件Class
+    static Class<? extends Event> findEventType(Class<?> listenerClass) { //根据监听器Class查找对应的事件Class（就是查找 EventListener<E extends Event> 中的泛化类型）
         Class<? extends Event> eventType = null;
 
         if (listenerClass != null && EventListener.class.isAssignableFrom(listenerClass)) { //isAssignableFrom判断一个类或接口是否是另一个类超类或父接口

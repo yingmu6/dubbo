@@ -30,6 +30,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class EventDispatcherTest {
 
+    /**
+     * EventDispatcher事件派发：
+     * 1）事件派发：涉及到事件Event、事件监听器EventListener
+     * 2）事件与监听器，类似设计模式中的观察着模式，当事件触发时，回调与事件关联的所有监听器接口
+     * 3）实现步骤：
+     *    a）通过注册监听器的方式，将事件与事件监听器的关系建立起来，关系为1:n，如：AbstractEventDispatcher#listenersCache
+     *    b）事件派发时，EventDispatcher#dispatch(Event)时，会根据把listenersCache缓存的所有事件对应的监听器查出来，依次执行监听器中的方法
+     */
     private EventDispatcher defaultInstance = EventDispatcher.getDefaultExtension(); //通过此处debug观察得知，junit单元测试时，在@Test进入方法前，会使用反射机制Constructor的newInstance创建实例，所以当前的成员变量赋值会被执行
 
     @Test
@@ -48,12 +56,12 @@ public class EventDispatcherTest {
             }
         });
 
-//        defaultInstance.addEventListener((event) -> { //todo @csy 此种使用lambda的写法为何不对
+//        defaultInstance.addEventListener((event) -> { //@csy 此种使用lambda的写法有错吗，维护添加不了监听器？解答：写法是没有问题的，只是后续会查找EventListener的泛型参数作为缓存的Map，用lambda表示泛型类型会认为是Object，不是Event，所以添加不了监听器
 //                System.out.println("收到事件" + event.getSource());
 //        });
 
         assertTrue(!defaultInstance.getAllEventListeners().isEmpty());
 
-        defaultInstance.dispatch(new EchoEvent("hhh")); //进行事件派发时，会调用事件关联监听器的onEvent()方法 todo @pause
+        defaultInstance.dispatch(new EchoEvent("hhh")); //进行事件派发时，会调用事件关联监听器的onEvent()方法
     }
 }
