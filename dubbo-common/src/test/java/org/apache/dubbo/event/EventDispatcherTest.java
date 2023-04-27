@@ -37,6 +37,12 @@ public class EventDispatcherTest {
      * 3）实现步骤：
      *    a）通过注册监听器的方式，将事件与事件监听器的关系建立起来，关系为1:n，如：AbstractEventDispatcher#listenersCache
      *    b）事件派发时，EventDispatcher#dispatch(Event)时，会根据把listenersCache缓存的所有事件对应的监听器查出来，依次执行监听器中的方法
+     *
+     * 额外的测试场景：
+     * 1）自定义事件Event、事件监听器EventListener进行正常功能调试
+     * 2）通过两个方法加载事件监听器：
+     *    a）通过SPI配置文件
+     *    b）通过使用EventDispatcher#dispatch方法
      */
     private EventDispatcher defaultInstance = EventDispatcher.getDefaultExtension(); //通过此处debug观察得知，junit单元测试时，在@Test进入方法前，会使用反射机制Constructor的newInstance创建实例，所以当前的成员变量赋值会被执行
 

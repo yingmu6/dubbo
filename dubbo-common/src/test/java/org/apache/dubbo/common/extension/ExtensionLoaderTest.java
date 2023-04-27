@@ -63,6 +63,13 @@ import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ExtensionLoaderTest {
+
+    /**
+     * 测试的部分场景：
+     * 1）SPI配置文件路径在不同的maven模块（确定SPI文件正确的摆放位置）
+     */
+
+
     @Test
     public void test_getExtensionLoader_Null() throws Exception { //已测
         try {
