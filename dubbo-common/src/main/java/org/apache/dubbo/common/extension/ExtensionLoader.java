@@ -42,11 +42,13 @@ import static java.util.stream.StreamSupport.stream;
 import static org.apache.dubbo.common.constants.CommonConstants.*;
 
 /**
- * {@link org.apache.dubbo.rpc.model.ApplicationModel}, {@code DubboBootstrap} and this class are
+ * {@link org.apache.dubbo.rpc.model.ApplicationModel}, {@code DubboBootstrap} and this class（当前类） are
  * at present designed to be singleton or static (by itself totally（完全） static or uses some static fields).
  * So the instances returned from them are of process or classloader scope. If you want to support
  * multiple dubbo servers in a single process, you may need to refactor these three classes.
- * （ApplicationModel、DubboBootstrap、ExtensionLoader 被设计为单例模式，若想支持多实例的，就需要重构这三个类了）
+ *
+ * （翻译内容：ApplicationModel、DubboBootstrap和当前的类ExtensionLoader目前被设计为单例或静态(本身完全静态或使用一些静态字段)。
+ * 因此，从它们返回的实例属于进程或类加载器范围。如果你想支持在一个进程中有多个dubbo服务器，你可能需要重构这三个类）
  * <p>
  * Load dubbo extensions（ExtensionLoader用途：加载dubbo的扩展信息）
  * <ul>
@@ -60,10 +62,11 @@ import static org.apache.dubbo.common.constants.CommonConstants.*;
  * @see org.apache.dubbo.common.extension.Adaptive  自适应注解
  * @see org.apache.dubbo.common.extension.Activate  自动激活注解
  */
-public class ExtensionLoader<T> { //将配置文件中的信息，加载到内存缓存中
+public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信息，加载到缓存中）
     /**
-     * @csy-007 ExtensionLoader是单例模式吗？
+     * @csy-007 ExtensionLoader是单例模式吗？ 只能有一个实例吗？
      * 解：不是，每一个SPI接口对应一个ExtensionLoader实例，测试如org.apache.dubbo.common.extension.ExtensionLoaderTest#test_getDefaultExtension()
+     * 从
      */
 
     private static final Logger logger = LoggerFactory.getLogger(ExtensionLoader.class);
@@ -71,38 +74,39 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
     private static final Pattern NAME_SEPARATOR = Pattern.compile("\\s*[,]+\\s*"); //类变量：类的所有对象共同拥有，成员变量：对象独自拥有
 
     /**
-     * SPI接口Class与ExtensionLoader扩展加载类的映射
+     * 扩展接口与ExtensionLoader扩展加载器的映射（类共享变量）
      * 1）包含了ExtensionFactory接口与其它接口的映射
      * 2）每一个SPI接口对应一个ExtensionLoader
-     * 3）static 静态成员变量，对象之间共享
+     * 3）static 静态成员变量，对象之间共享（具体的对象时，EXTENSION_LOADERS、EXTENSION_INSTANCES等static变量是没有存值的）
+     *
      */
     private static final ConcurrentMap<Class<?>, ExtensionLoader<?>> EXTENSION_LOADERS = new ConcurrentHashMap<>(64);
 
     /**
-     * 扩展类Class与扩展实例的映射
+     * 扩展接口与扩展实例的映射（类共享变量）
      */
     private static final ConcurrentMap<Class<?>, Object> EXTENSION_INSTANCES = new ConcurrentHashMap<>(64);
 
-    private final Class<?> type;
+    private final Class<?> type; //扩展接口的类型
 
-    private final ExtensionFactory objectFactory;
+    private final ExtensionFactory objectFactory; //扩展实例的创建工厂（ExtensionFactory也是SPI接口，当type=ExtensionFactory.class时，objectFactory=null）
 
     private final ConcurrentMap<Class<?>, String> cachedNames = new ConcurrentHashMap<>(); //实例类Class与扩张名的映射
 
     private final Holder<Map<String, Class<?>>> cachedClasses = new Holder<>(); //当前扩展接口，所有扩展名与扩展类Class的映射
 
     private final Map<String, Object> cachedActivates = new ConcurrentHashMap<>(); //扩展名与@Active注解的映射，@csy-007 此处的Object是具体的实例吗？是怎么设置的？解：不是扩展实例，是@Active对象，在cacheActivateClass方法中设置的
-    private final ConcurrentMap<String, Holder<Object>> cachedInstances = new ConcurrentHashMap<>(); //扩展名与实例映射的键值对
-    private final Holder<Object> cachedAdaptiveInstance = new Holder<>();
-    private volatile Class<?> cachedAdaptiveClass = null;
+    private final ConcurrentMap<String, Holder<Object>> cachedInstances = new ConcurrentHashMap<>(); //扩展名与扩展实例的映射
+    private final Holder<Object> cachedAdaptiveInstance = new Holder<>(); //自适应类的实例对象
+    private volatile Class<?> cachedAdaptiveClass = null; //自适应对象的类型
     private String cachedDefaultName; //缓存默认的扩展名，即为SPI上声明的扩展名
     private volatile Throwable createAdaptiveInstanceError; //创建自适应扩展实例时发生的错误
 
-    private Set<Class<?>> cachedWrapperClasses;
+    private Set<Class<?>> cachedWrapperClasses; //扩展接口对应的封装类集合
 
-    private Map<String, IllegalStateException> exceptions = new ConcurrentHashMap<>(); //加载时扩展类时，扩展类字符串值与异常的映射Map
+    private Map<String, IllegalStateException> exceptions = new ConcurrentHashMap<>(); //加载时扩展类时，扩展类字符串值与异常的映射Map（把异常信息存储下拉）
 
-    private static volatile LoadingStrategy[] strategies = loadLoadingStrategies();
+    private static volatile LoadingStrategy[] strategies = loadLoadingStrategies(); //加载的策略
 
     public static void setLoadingStrategies(LoadingStrategy... strategies) {
         if (ArrayUtils.isNotEmpty(strategies)) {
@@ -152,7 +156,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
      * 2）若SPI接口非ExtensionFactory，则需要objectFactory实例的值，因为ExtensionFactory本身是SPI接口，所以还需要SPI的方式
      *    先获取到ExtensionLoader，再获取自适应的扩展实例
      */
-    private ExtensionLoader(Class<?> type) { //私有的构造方法，创建ExtensionLoader实例
+    private ExtensionLoader(Class<?> type) { //私有的构造方法，创建ExtensionLoader实例（指定扩展接口的类型和扩展工厂）
         this.type = type;
         objectFactory = (type == ExtensionFactory.class ? null : ExtensionLoader.getExtensionLoader(ExtensionFactory.class).getAdaptiveExtension());
     }
@@ -172,6 +176,9 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
      */
     @SuppressWarnings("unchecked")
     public static <T> ExtensionLoader<T> getExtensionLoader(Class<T> type) { //获取扩展加载器 ExtensionLoader（从缓存中获取，若不存在则重新创建）
+        /**
+         * 扩展类型：不为空且是SPI接口
+         */
         if (type == null) {
             throw new IllegalArgumentException("Extension type == null");
         }
@@ -483,7 +490,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
         if (instance == null) {
             synchronized (holder) {
                 instance = holder.get();
-                if (instance == null) { //没有从缓存中扩展实例对象时，则创建对应实例对象
+                if (instance == null) { //若缓存中没有扩展实例，则创建对应实例对象
                     instance = createExtension(name, wrap);
                     holder.set(instance);
                 }
@@ -862,7 +869,7 @@ public class ExtensionLoader<T> { //将配置文件中的信息，加载到内�
     private Map<String, Class<?>> loadExtensionClasses() {
         cacheDefaultExtensionName();
 
-        Map<String, Class<?>> extensionClasses = new HashMap<>(); //配置文件中，扩展名name以及扩展类Class的映射Map
+        Map<String, Class<?>> extensionClasses = new HashMap<>(); //扩展名name与扩展类Class的映射
 
         for (LoadingStrategy strategy : strategies) { //兼容加载老版本的SPI接口，如com.alibaba.*
             loadDirectory(extensionClasses, strategy.directory(), type.getName(), strategy.preferExtensionClassLoader(), strategy.overridden(), strategy.excludedPackages());

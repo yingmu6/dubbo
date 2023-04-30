@@ -69,7 +69,6 @@ public class ExtensionLoaderTest {
      * 1）SPI配置文件路径在不同的maven模块（确定SPI文件正确的摆放位置）
      */
 
-
     @Test
     public void test_getExtensionLoader_Null() throws Exception { //已测
         try {
@@ -95,7 +94,7 @@ public class ExtensionLoaderTest {
     @Test
     public void test_getExtensionLoader_NotSpiAnnotation() throws Exception { //已测
         try {
-            getExtensionLoader(NoSpiExt.class); //
+            getExtensionLoader(NoSpiExt.class); //扩展类需要带有@SPI的接口
             fail();
         } catch (IllegalArgumentException expected) {
             assertThat(expected.getMessage(),
@@ -127,7 +126,7 @@ public class ExtensionLoaderTest {
         assertThat(ext, instanceOf(SimpleExtImpl1.class)); //先构建IsInstanceOf的匹配，然后使用assertThat()进行匹配
 
         // 先获取扩展加载器，然后再执行相应的方法
-        ExtensionLoader<UseProtocolKeyExt> extensionLoader2 = getExtensionLoader(UseProtocolKeyExt.class);
+        ExtensionLoader<UseProtocolKeyExt> extensionLoader2 = getExtensionLoader(UseProtocolKeyExt.class); //@csy 此处为啥ExtensionLoader#EXTENSION_LOADERS中没有值？解答：经过调试以及代码分析，EXTENSION_LOADERS是存有值的
         UseProtocolKeyExt keyExt = extensionLoader2.getDefaultExtension();
 
         /**
@@ -135,7 +134,7 @@ public class ExtensionLoaderTest {
          *     ExtensionLoader<T> loader = (ExtensionLoader<T>) EXTENSION_LOADERS.get(type);
          */
         ExtensionLoader<UseProtocolKeyExt> extensionLoader3 = getExtensionLoader(UseProtocolKeyExt.class);
-        UseProtocolKeyExt keyExt2 = extensionLoader3.getDefaultExtension();
+        UseProtocolKeyExt keyExt2 = extensionLoader3.getDefaultExtension(); //此处的keyExt与keyExt2是同一个对象实例（同一个扩展接口，对应的ExtensionLoader是相同的）
 
         assertThat(keyExt, instanceOf(UseProtocolKeyExt.class));
         assertThat(keyExt2, instanceOf(UseProtocolKeyExt.class));
@@ -145,14 +144,14 @@ public class ExtensionLoaderTest {
 
     @Test
     public void test_getDefaultExtension_NULL() throws Exception {
-        Ext2 ext = getExtensionLoader(Ext2.class).getDefaultExtension();
+        Ext2 ext = getExtensionLoader(Ext2.class).getDefaultExtension(); //获取默认扩展实例
         /**
          * @csy-009 此处为啥没有获取到扩展实例，对应的配置文件有看到配置的
          * 解：是因为没有默认扩展名，getDefaultExtension()返回的就为空，默认扩展名是指SPI(value=) ，声明的value值
          */
         assertNull(ext);
 
-        String name = getExtensionLoader(Ext2.class).getDefaultExtensionName();
+        String name = getExtensionLoader(Ext2.class).getDefaultExtensionName(); //获取默认扩展名
         assertNull(name);
     }
 

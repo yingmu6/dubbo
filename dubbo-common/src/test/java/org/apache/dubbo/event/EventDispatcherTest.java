@@ -43,6 +43,9 @@ public class EventDispatcherTest {
      * 2）通过两个方法加载事件监听器：
      *    a）通过SPI配置文件
      *    b）通过使用EventDispatcher#dispatch方法
+     * 3）调用之前、调用之后、出现异常时，会触发 oninvoke、onreturn、onthrow 三个事件的调试
+     *
+     * 参考：https://cn.dubbo.apache.org/zh-cn/overview/mannual/java-sdk/advanced-features-and-usage/service/events-notify/ dubbo官网（调用触发事件通知）
      */
     private EventDispatcher defaultInstance = EventDispatcher.getDefaultExtension(); //通过此处debug观察得知，junit单元测试时，在@Test进入方法前，会使用反射机制Constructor的newInstance创建实例，所以当前的成员变量赋值会被执行
 
@@ -69,5 +72,21 @@ public class EventDispatcherTest {
         assertTrue(!defaultInstance.getAllEventListeners().isEmpty());
 
         defaultInstance.dispatch(new EchoEvent("hhh")); //进行事件派发时，会调用事件关联监听器的onEvent()方法
+    }
+
+    @Test
+    public void testCustomEventListener() {
+        assertEquals(DIRECT_EXECUTOR, defaultInstance.getExecutor());
+
+//        defaultInstance.addEventListener(new CustomEventListener<CustomEvent>() {
+//            @Override
+//            public void onEvent(CustomEvent event) {
+//                System.out.println("自定义事件监听器，收到事件" + event.getSource()); //todo @csy 此处会报cannot find symbol，找不到 event.getSource()
+//            }
+//        });
+
+        assertTrue(!defaultInstance.getAllEventListeners().isEmpty());
+//        defaultInstance.dispatch(new CustomEvent("haha"));// todo @csy 此处为啥 会报实参和形参参数不匹配 “reason: actual and formal argument lists differ in length”
+        defaultInstance.dispatch(new EchoEvent("haha"));
     }
 }
