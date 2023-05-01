@@ -67,6 +67,8 @@ public class ExtensionLoaderTest {
     /**
      * 测试的部分场景：
      * 1）SPI配置文件路径在不同的maven模块（确定SPI文件正确的摆放位置）
+     * 2）依赖注册测试，即IOC功能测试
+     * 3）封装类测试，即AOP功能测试
      */
 
     @Test
@@ -170,6 +172,9 @@ public class ExtensionLoaderTest {
         /**
          * @csy-010 此处配置文件中impl1明明配置的是org.apache.dubbo.common.extension.ext6_wrap.impl.Ext5Impl1，为啥会取到Ext5Wrapper1的实例？
          * 解：若需要封装的话，if (wrap) {instance = injectExtension((T) wrapperClass.getConstructor(type).newInstance(instance)); ....} 会先调用封装类，然后封装类中再调用目标类
+         * 因为创建扩展实例的时候，默认会使用封装类列表对扩展实例进行封装。此处的impl1、impl2实例都是Ext5Wrapper2，（扩展实例被封装类封装处理了，所以最终呈现的是封装类实例，然后封装类中的成员属性包含具体的封装类实例）
+         * a）impl1的依赖为：impl1 = Ext5Wrapper2@xxx -> 的instance属性为Ext5Wrapper1@xxx -> 的instance属性为Ext5Impl1@xx
+         * b）impl1的依赖为：impl2 = Ext5Wrapper2@xxx -> 的instance属性为Ext5Wrapper1@xxx -> 的instance属性为Ext5Impl2@xx
          */
         WrappedExt impl1 = getExtensionLoader(WrappedExt.class).getExtension("impl1");
         assertThat(impl1, anyOf(instanceOf(Ext5Wrapper1.class), instanceOf(Ext5Wrapper2.class)));
@@ -178,7 +183,7 @@ public class ExtensionLoaderTest {
         assertThat(impl2, anyOf(instanceOf(Ext5Wrapper1.class), instanceOf(Ext5Wrapper2.class)));
 
 
-        URL url = new URL("p1", "1.2.3.4", 1010, "path1");
+        URL url = new URL("p1", "1.2.3.4", 1010, "path1"); //todo @pause
         int echoCount1 = Ext5Wrapper1.echoCount.get();
         int echoCount2 = Ext5Wrapper2.echoCount.get();
 

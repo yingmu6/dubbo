@@ -199,7 +199,7 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
     }
 
     // For testing purposes only
-    public static void resetExtensionLoader(Class type) {
+    public static void resetExtensionLoader(Class type) { //重置扩展加载器（将缓存中的扩展加载器、扩展实例移除）
         ExtensionLoader loader = EXTENSION_LOADERS.get(type);
         if (loader != null) {
             // Remove all instances associated with this loader as well
@@ -214,7 +214,7 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
 
     public static void destroyAll() {
         EXTENSION_INSTANCES.forEach((_type, instance) -> {
-            if (instance instanceof Lifecycle) { //若实例为
+            if (instance instanceof Lifecycle) { //若为Lifecycle实例，则调用其destroy()方法
                 Lifecycle lifecycle = (Lifecycle) instance;
                 try {
                     lifecycle.destroy();
@@ -703,20 +703,20 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
             //通过Class的newInstance()创建实例（反射机制）
             T instance = (T) EXTENSION_INSTANCES.get(clazz);
             if (instance == null) {
-                EXTENSION_INSTANCES.putIfAbsent(clazz, clazz.newInstance());
+                EXTENSION_INSTANCES.putIfAbsent(clazz, clazz.newInstance()); //同一个扩展接口，第一次会创建实例放在缓存中，后续都从缓存中获取
                 instance = (T) EXTENSION_INSTANCES.get(clazz);
             }
-            //注入依赖的扩展实例
+            //注入依赖的扩展实例（类似IOC功能）
             injectExtension(instance);
 
             //注入封装类的实例（若需要封装的话，将扩展实例通过封装类列表，进行层层封装）
-            if (wrap) { //使用封装类对扩展实例进行封装
+            if (wrap) { //使用封装类对扩展实例进行封装（类似AOP功能）
 
                 List<Class<?>> wrapperClassesList = new ArrayList<>();
                 if (cachedWrapperClasses != null) { //当前扩展接口对应的封装类列表，如WrappedExt的封装类列表为Ext5Wrapper1、Ext5Wrapper2
                     wrapperClassesList.addAll(cachedWrapperClasses);
                     wrapperClassesList.sort(WrapperComparator.COMPARATOR);
-                    Collections.reverse(wrapperClassesList); //将列表中元素反向翻转
+                    Collections.reverse(wrapperClassesList); //将列表中元素反向翻转（即配置文件中，封装类的加载顺序会被翻转）
                 }
 
                 if (CollectionUtils.isNotEmpty(wrapperClassesList)) {
@@ -749,16 +749,16 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
 
     /**
      * @csy-009 注入扩展逻辑是怎样的？
-     * 解：创建扩展类的实例后，若该实例的属性中包含其他扩展类，会使用Set方法设置
+     * 解：创建扩展类的实例后，若该实例的属性中包含其他扩展类，会使用Set方法设置（即IOC功能）
      */
-    private T injectExtension(T instance) {
+    private T injectExtension(T instance) { //注入依赖的扩展
 
         if (objectFactory == null) {
             return instance;
         }
 
         try {
-            for (Method method : instance.getClass().getMethods()) { //@csy-009 待覆盖测试，解：调试类和方法，ExtensionLoader_Adaptive_Test.test_getAdaptiveExtension_inject
+            for (Method method : instance.getClass().getMethods()) {
                 if (!isSetter(method)) { //只处理set方法
                     continue;
                 }
