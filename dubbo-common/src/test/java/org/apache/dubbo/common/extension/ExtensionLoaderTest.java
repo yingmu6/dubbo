@@ -183,13 +183,14 @@ public class ExtensionLoaderTest {
         assertThat(impl2, anyOf(instanceOf(Ext5Wrapper1.class), instanceOf(Ext5Wrapper2.class)));
 
 
-        URL url = new URL("p1", "1.2.3.4", 1010, "path1"); //todo @pause
+        URL url = new URL("p1", "1.2.3.4", 1010, "path1");
         int echoCount1 = Ext5Wrapper1.echoCount.get();
         int echoCount2 = Ext5Wrapper2.echoCount.get();
 
         assertEquals("Ext5Impl1-echo", impl1.echo(url, "ha")); //先调用封装类，然后封装类中拦截处理，最后再调用具体实例方法
-        assertEquals(echoCount1 + 1, Ext5Wrapper1.echoCount.get());
+        assertEquals(echoCount1 + 1, Ext5Wrapper1.echoCount.get()); //impl的类型为Ext5Wrapper2@xxx，依赖关系见上面a），可推断出结果
         assertEquals(echoCount2 + 1, Ext5Wrapper2.echoCount.get());
+        assertEquals("Ext5Impl2-echo", impl2.echo(url, "hh"));
     }
 
     @Test
@@ -205,7 +206,7 @@ public class ExtensionLoaderTest {
     @Test
     public void test_getExtension_ExceptionNoExtension_WrapperNotAffactName() throws Exception {
         try {
-            getExtensionLoader(WrappedExt.class).getExtension("XXX");
+            getExtensionLoader(WrappedExt.class).getExtension("XXX"); //未找到指定的扩展名，会抛出异常
             fail();
         } catch (IllegalStateException expected) {
             assertThat(expected.getMessage(), containsString("No such extension org.apache.dubbo.common.extension.ext6_wrap.WrappedExt by name XXX"));
@@ -215,7 +216,7 @@ public class ExtensionLoaderTest {
     @Test
     public void test_getExtension_ExceptionNullArg() throws Exception {
         try {
-            getExtensionLoader(SimpleExt.class).getExtension(null);
+            getExtensionLoader(SimpleExt.class).getExtension(null); //扩展名不能为空
             fail();
         } catch (IllegalArgumentException expected) {
             assertThat(expected.getMessage(), containsString("Extension name == null"));
@@ -225,11 +226,11 @@ public class ExtensionLoaderTest {
     @Test
     public void test_hasExtension() throws Exception {
         assertTrue(getExtensionLoader(SimpleExt.class).hasExtension("impl1"));
-        assertFalse(getExtensionLoader(SimpleExt.class).hasExtension("impl1,impl2")); //扩展名只有单一一个，不支持类似这种分隔
+        assertFalse(getExtensionLoader(SimpleExt.class).hasExtension("impl1,impl2")); //扩展名只有单一一个，不支持类似这种分隔（没有对扩展名进行分隔解析）
         assertFalse(getExtensionLoader(SimpleExt.class).hasExtension("xxx"));
 
         try {
-            getExtensionLoader(SimpleExt.class).hasExtension(null);
+            getExtensionLoader(SimpleExt.class).hasExtension(null); //扩展名不能为空
             fail();
         } catch (IllegalArgumentException expected) {
             assertThat(expected.getMessage(), containsString("Extension name == null"));
@@ -244,10 +245,10 @@ public class ExtensionLoaderTest {
 
         /**
          * @csy-010 此处为啥没有wrapper1扩展实例？配置WrappedExt对应的配置文件是配置的（并不是配置文件中配置了，就存在扩展，要判断具体的类型，比如封装类等等）
-         * 解：是从cachedClasses缓存类中取值判断的，wrapper1对应的是封装类，设置在cachedWrapperClasses
-         * 所以wrapper1对应的类是封装类，在cachedClasses没有找到
+         * 解：是从cachedClasses缓存类中取值判断的，wrapper1对应的是封装类，设置在cachedWrapperClasses成员变量中
+         * 所以wrapper1对应的类是封装类，在cachedClasses成员变量中没有找到
          */
-        assertFalse(getExtensionLoader(WrappedExt.class).hasExtension("wrapper1"));
+        assertFalse(getExtensionLoader(WrappedExt.class).hasExtension("wrapper1")); //封装类，不是扩展类，没有在cachedClasses缓存中
 
         try {
             getExtensionLoader(WrappedExt.class).hasExtension(null);
@@ -259,7 +260,7 @@ public class ExtensionLoaderTest {
 
     @Test
     public void test_getSupportedExtensions() throws Exception {
-        Set<String> exts = getExtensionLoader(SimpleExt.class).getSupportedExtensions();
+        Set<String> exts = getExtensionLoader(SimpleExt.class).getSupportedExtensions(); //获取支持的扩展名集合，即成员变量cachedClasses对应的key值集合
 
         Set<String> expected = new HashSet<String>();
         expected.add("impl1");
@@ -271,7 +272,7 @@ public class ExtensionLoaderTest {
 
     @Test
     public void test_getSupportedExtensions_wrapperIsNotExt() throws Exception {
-        Set<String> exts = getExtensionLoader(WrappedExt.class).getSupportedExtensions();
+        Set<String> exts = getExtensionLoader(WrappedExt.class).getSupportedExtensions(); //封装类的扩展名不在支持的扩展名集合中
 
         Set<String> expected = new HashSet<String>();
         expected.add("impl1");
@@ -283,13 +284,13 @@ public class ExtensionLoaderTest {
     @Test
     public void test_AddExtension() throws Exception {
         try {
-            getExtensionLoader(AddExt1.class).getExtension("Manual1");
+            getExtensionLoader(AddExt1.class).getExtension("Manual1"); //配置文件中没有配置Manual1扩展，所以会抛出未找到扩展异常
             fail();
         } catch (IllegalStateException expected) {
             assertThat(expected.getMessage(), containsString("No such extension org.apache.dubbo.common.extension.ext8_add.AddExt1 by name Manual"));
         }
 
-        getExtensionLoader(AddExt1.class).addExtension("Manual1", AddExt1_ManualAdd1.class); //添加扩展信息
+        getExtensionLoader(AddExt1.class).addExtension("Manual1", AddExt1_ManualAdd1.class); //添加扩展信息（都过接口添加配置，与配置文件方式的目标相同，最终都是把扩展信息存入缓存中）
         AddExt1 ext = getExtensionLoader(AddExt1.class).getExtension("Manual1");
 
         assertThat(ext, instanceOf(AddExt1_ManualAdd1.class));
@@ -297,7 +298,7 @@ public class ExtensionLoaderTest {
     }
 
     @Test
-    public void test_AddExtension_NoExtend() throws Exception {
+    public void test_AddExtension_NoExtend() throws Exception { //todo @pause
 //        ExtensionLoader.getExtensionLoader(Ext9Empty.class).getSupportedExtensions();
         getExtensionLoader(Ext9Empty.class).addExtension("ext9", Ext9EmptyImpl.class);
         Ext9Empty ext = getExtensionLoader(Ext9Empty.class).getExtension("ext9");

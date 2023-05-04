@@ -62,7 +62,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.*;
  * @see org.apache.dubbo.common.extension.Adaptive  自适应注解
  * @see org.apache.dubbo.common.extension.Activate  自动激活注解
  */
-public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信息，加载到缓存中）
+public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信息，加载到缓存中，T为SPI接口对应的泛型）
     /**
      * @csy-007 ExtensionLoader是单例模式吗？ 只能有一个实例吗？
      * 解：不是，每一个SPI接口对应一个ExtensionLoader实例，测试如org.apache.dubbo.common.extension.ExtensionLoaderTest#test_getDefaultExtension()
@@ -95,14 +95,14 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
 
     private final Holder<Map<String, Class<?>>> cachedClasses = new Holder<>(); //当前扩展接口，所有扩展名与扩展类Class的映射
 
-    private final Map<String, Object> cachedActivates = new ConcurrentHashMap<>(); //扩展名与@Active注解的映射，@csy-007 此处的Object是具体的实例吗？是怎么设置的？解：不是扩展实例，是@Active对象，在cacheActivateClass方法中设置的
+    private final Map<String, Object> cachedActivates = new ConcurrentHashMap<>(); //扩展名与@Active注解对象的映射，@csy-007 此处的Object是具体的实例吗？是怎么设置的？解：不是扩展实例，是@Active对象，在cacheActivateClass方法中设置的
     private final ConcurrentMap<String, Holder<Object>> cachedInstances = new ConcurrentHashMap<>(); //扩展名与扩展实例的映射
     private final Holder<Object> cachedAdaptiveInstance = new Holder<>(); //自适应类的实例对象
     private volatile Class<?> cachedAdaptiveClass = null; //自适应对象的类型
     private String cachedDefaultName; //缓存默认的扩展名，即为SPI上声明的扩展名
     private volatile Throwable createAdaptiveInstanceError; //创建自适应扩展实例时发生的错误
 
-    private Set<Class<?>> cachedWrapperClasses; //扩展接口对应的封装类集合
+    private Set<Class<?>> cachedWrapperClasses; //扩展接口对应的封装类集合（封装类不是扩展类，所以没有在cachedClasses缓存中）
 
     private Map<String, IllegalStateException> exceptions = new ConcurrentHashMap<>(); //加载时扩展类时，扩展类字符串值与异常的映射Map（把异常信息存储下拉）
 
@@ -175,7 +175,7 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
      * 注明：因为SPI的处理都集中在当前ExtensionLoader中，所以进行SPI操作，需要先获取ExtensionLoader实例，再进行相关操作
      */
     @SuppressWarnings("unchecked")
-    public static <T> ExtensionLoader<T> getExtensionLoader(Class<T> type) { //获取扩展加载器 ExtensionLoader（从缓存中获取，若不存在则重新创建）
+    public static <T> ExtensionLoader<T> getExtensionLoader(Class<T> type) { //获取扩展接口对应的扩展加载器ExtensionLoader（从缓存中获取，若不存在则重新创建）
         /**
          * 扩展类型：不为空且是SPI接口
          */
@@ -198,7 +198,7 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
         return loader;
     }
 
-    // For testing purposes only
+    // For testing purposes only（移除扩展加载器的缓存，仅用于测试）
     public static void resetExtensionLoader(Class type) { //重置扩展加载器（将缓存中的扩展加载器、扩展实例移除）
         ExtensionLoader loader = EXTENSION_LOADERS.get(type);
         if (loader != null) {
@@ -225,7 +225,7 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
         });
     }
 
-    private static ClassLoader findClassLoader() {
+    private static ClassLoader findClassLoader() { //获取ExtensionLoader对应的类加载器ClassLoader
         return ClassUtils.getClassLoader(ExtensionLoader.class);
     }
 
@@ -239,14 +239,14 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
     }
 
     /**
-     * This is equivalent to {@code getActivateExtension(url, key, null)}
+     * This is equivalent（等同的） to {@code getActivateExtension(url, key, null)}
      *
      * @param url url
      * @param key url parameter key which used to get extension point names
      * @return extension list which are activated.
      * @see #getActivateExtension(org.apache.dubbo.common.URL, String, String)
      */
-    public List<T> getActivateExtension(URL url, String key) { //获取符合条件的扩展实例列表
+    public List<T> getActivateExtension(URL url, String key) { //获取自动激活的扩展实例列表
         return getActivateExtension(url, key, null);
     }
 
@@ -289,7 +289,7 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
     /**
      * 获取满足匹配条件的Activate对应的扩展类列表  ，获取Activate扩展实例，待实践测试？解：已单元测试
      */
-    public List<T> getActivateExtension(URL url, String[] values, String group) { //将URL中配置的参数与@Activate配置的内容进行比较
+    public List<T> getActivateExtension(URL url, String[] values, String group) { //获取自动激活的扩展列表（将URL中配置的参数与@Activate配置的内容进行比较）
         List<T> activateExtensions = new ArrayList<>();
         List<String> names = values == null ? new ArrayList<>(0) : asList(values); // 扩展名列表（values是从url中获取的指定key对应的参数值，并按分隔符分隔的值列表）
         /**
