@@ -32,7 +32,7 @@ import java.util.stream.IntStream;
 /**
  * Code generator for Adaptive class（为自适应类产生代码）
  */
-public class AdaptiveClassCodeGenerator { //自适应代码产生器
+public class AdaptiveClassCodeGenerator { //自适应扩展类代码产生器
 
     private static final Logger logger = LoggerFactory.getLogger(AdaptiveClassCodeGenerator.class);
 
@@ -88,7 +88,7 @@ public class AdaptiveClassCodeGenerator { //自适应代码产生器
      */
     public String generate() { //@csy-009 产生自适应扩展的逻辑是啥？与2.5.6有啥不同？解：逻辑就是为SPI接口产生自适应的实现类，相比2.5.6逻辑上是没有变更的，只是书写上变的更加简洁明了
         // no need to generate adaptive class since there's no adaptive method found.
-        if (!hasAdaptiveMethod()) {
+        if (!hasAdaptiveMethod()) { //判断是否有自适应方法，如无则抛出异常
             throw new IllegalStateException("No adaptive method exist on extension " + type.getName() + ", refuse to create the adaptive class!");
         }
 

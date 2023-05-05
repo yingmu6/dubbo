@@ -91,14 +91,14 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
 
     private final ExtensionFactory objectFactory; //扩展实例的创建工厂（ExtensionFactory也是SPI接口，当type=ExtensionFactory.class时，objectFactory=null）
 
-    private final ConcurrentMap<Class<?>, String> cachedNames = new ConcurrentHashMap<>(); //实例类Class与扩张名的映射
+    private final ConcurrentMap<Class<?>, String> cachedNames = new ConcurrentHashMap<>(); //实例类Class与扩张名的映射（去除自适应扩展和自动激活扩展）
 
-    private final Holder<Map<String, Class<?>>> cachedClasses = new Holder<>(); //当前扩展接口，所有扩展名与扩展类Class的映射
+    private final Holder<Map<String, Class<?>>> cachedClasses = new Holder<>(); //当前扩展接口中的扩展名与扩展类Class的映射（去除自适应扩展和自动激活扩展）
 
     private final Map<String, Object> cachedActivates = new ConcurrentHashMap<>(); //扩展名与@Active注解对象的映射，@csy-007 此处的Object是具体的实例吗？是怎么设置的？解：不是扩展实例，是@Active对象，在cacheActivateClass方法中设置的
     private final ConcurrentMap<String, Holder<Object>> cachedInstances = new ConcurrentHashMap<>(); //扩展名与扩展实例的映射
-    private final Holder<Object> cachedAdaptiveInstance = new Holder<>(); //自适应类的实例对象
-    private volatile Class<?> cachedAdaptiveClass = null; //自适应对象的类型
+    private final Holder<Object> cachedAdaptiveInstance = new Holder<>(); //自适应扩展类的实例
+    private volatile Class<?> cachedAdaptiveClass = null; //自适应扩展类（一个扩展接口最多只有一个自适应扩展类）
     private String cachedDefaultName; //缓存默认的扩展名，即为SPI上声明的扩展名
     private volatile Throwable createAdaptiveInstanceError; //创建自适应扩展实例时发生的错误
 
@@ -233,7 +233,7 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
         return getExtensionName(extensionInstance.getClass()); //转换为按扩展Class去取对应的扩展名
     }
 
-    public String getExtensionName(Class<?> extensionClass) { //获取扩展Class对应的扩展名
+    public String getExtensionName(Class<?> extensionClass) { //获取扩展实例Class对应的扩展名
         getExtensionClasses();// load class
         return cachedNames.get(extensionClass);
     }
@@ -555,13 +555,13 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
     }
 
     /**
-     * Register new extension via API
+     * Register new extension via（通过） API
      *
      * @param name  extension name
      * @param clazz extension class
      * @throws IllegalStateException when extension with the same name has already been registered.
      */
-    public void addExtension(String name, Class<?> clazz) { //添加扩展（动态添加，非配置文件中配置）
+    public void addExtension(String name, Class<?> clazz) { //添加扩展接口（通过API方式添加，非配置文件中配置）
         getExtensionClasses(); // load classes（加载扩展类）
 
         if (!type.isAssignableFrom(clazz)) {
@@ -573,7 +573,7 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
                     clazz + " can't be interface!");
         }
 
-        if (!clazz.isAnnotationPresent(Adaptive.class)) { //非自适应扩展时，需要对扩展名进行校验
+        if (!clazz.isAnnotationPresent(Adaptive.class)) { //非自适应扩展类时
             if (StringUtils.isBlank(name)) {
                 throw new IllegalStateException("Extension name is blank (Extension " + type + ")!");
             }
@@ -584,7 +584,7 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
 
             cachedNames.put(clazz, name); //符合条件后，设置到缓存中
             cachedClasses.get().put(name, clazz);
-        } else {
+        } else { //自适应扩展类，即类上带有@Adaptive注解（一个扩展接口，最多只有一个自适应扩展类）
             if (cachedAdaptiveClass != null) {
                 throw new IllegalStateException("Adaptive Extension already exists (Extension " + type + ")!");
             }
@@ -637,7 +637,7 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
     }
 
     @SuppressWarnings("unchecked")
-    public T getAdaptiveExtension() { //获取自适应扩展实例，若不存在则创建（先产生自适应类，然后在运行时根据url中参数选择具体的实例调用）
+    public T getAdaptiveExtension() { //获取自适应扩展实例，若不存在则创建（先产生自适应扩展类，然后在运行时根据url中参数选择具体的实例调用）
         /**
          * 1）自适应扩展类，是根据字节码操作，在运行期间动态创建的，而不是声明的静态类
          * 2）先创建自适应类的实例，然后调用类的方法时，再从url中获取@Adaptive配置的参数值，实现调用的多态，是方法中实现多态，而不是类上实现多态
@@ -650,12 +650,12 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
                         createAdaptiveInstanceError);
             }
 
-            synchronized (cachedAdaptiveInstance) {
+            synchronized (cachedAdaptiveInstance) { //注明：虽然cachedAdaptiveInstance是私有变量，但由于EXTENSION_LOADERS是共享变量，存有ExtensionLoader的缓存，所以还是会出现线程不安全问题，所以此处加锁了
                 instance = cachedAdaptiveInstance.get();
                 if (instance == null) {
                     try {
                         instance = createAdaptiveExtension();
-                        cachedAdaptiveInstance.set(instance); //创建自适应实例，并设置到缓存中
+                        cachedAdaptiveInstance.set(instance); //创建自适应扩展实例，并设置到缓存中
                     } catch (Throwable t) {
                         createAdaptiveInstanceError = t;
                         throw new IllegalStateException("Failed to create adaptive instance: " + t.toString(), t);
@@ -751,7 +751,7 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
      * @csy-009 注入扩展逻辑是怎样的？
      * 解：创建扩展类的实例后，若该实例的属性中包含其他扩展类，会使用Set方法设置（即IOC功能）
      */
-    private T injectExtension(T instance) { //注入依赖的扩展
+    private T injectExtension(T instance) { //注入依赖的扩展实例
 
         if (objectFactory == null) {
             return instance;
@@ -1032,10 +1032,10 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
 
             String[] names = NAME_SEPARATOR.split(name);
             if (ArrayUtils.isNotEmpty(names)) {
-                cacheActivateClass(clazz, names[0]); //
+                cacheActivateClass(clazz, names[0]); //尝试缓存自动激活类
                 for (String n : names) {
-                    cacheName(clazz, n);
-                    saveInExtensionClass(extensionClasses, clazz, n, overridden);
+                    cacheName(clazz, n); //缓存扩展类Class与扩展名的映射
+                    saveInExtensionClass(extensionClasses, clazz, n, overridden); //缓存扩展名与扩展类Class的映射
                 }
             }
         } //@csy-011 若不是类上带有@Adaptive注解，而是方法上带有注解，会进行怎样的处理逻辑？ 解：会生成自适应类，带上注解的，会根据url获取扩展名
@@ -1140,13 +1140,13 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
     @SuppressWarnings("unchecked")
     private T createAdaptiveExtension() { //产生自适应类（对应的扩展实例，在自适应对象调用时，根据入参动态选择实例）
         try {
-            return injectExtension((T) getAdaptiveExtensionClass().newInstance());
+            return injectExtension((T) getAdaptiveExtensionClass().newInstance()); //创建自适应类（调用无参的构造方法）
         } catch (Exception e) {
             throw new IllegalStateException("Can't create adaptive extension " + type + ", cause: " + e.getMessage(), e);
         }
     }
 
-    private Class<?> getAdaptiveExtensionClass() {
+    private Class<?> getAdaptiveExtensionClass() { //获取自适应扩展类（若存在直接返回，否则构建代码，并编译为对应Class）
         getExtensionClasses();
         if (cachedAdaptiveClass != null) { //若配置文件中有配置自适应扩展类，就使用配置文件的
             return cachedAdaptiveClass;

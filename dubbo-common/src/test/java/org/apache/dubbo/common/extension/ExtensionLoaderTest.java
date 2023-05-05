@@ -298,13 +298,13 @@ public class ExtensionLoaderTest {
     }
 
     @Test
-    public void test_AddExtension_NoExtend() throws Exception { //todo @pause
+    public void test_AddExtension_NoExtend() throws Exception {
 //        ExtensionLoader.getExtensionLoader(Ext9Empty.class).getSupportedExtensions();
         getExtensionLoader(Ext9Empty.class).addExtension("ext9", Ext9EmptyImpl.class);
         Ext9Empty ext = getExtensionLoader(Ext9Empty.class).getExtension("ext9");
 
         assertThat(ext, instanceOf(Ext9Empty.class));
-        assertEquals("ext9", getExtensionLoader(Ext9Empty.class).getExtensionName(Ext9EmptyImpl.class));
+        assertEquals("ext9", getExtensionLoader(Ext9Empty.class).getExtensionName(Ext9EmptyImpl.class)); //获取扩展实例对应的扩展名
     }
 
     @Test
@@ -312,7 +312,7 @@ public class ExtensionLoaderTest {
         SimpleExt ext = getExtensionLoader(SimpleExt.class).getExtension("impl1");
 
         try {
-            getExtensionLoader(AddExt1.class).addExtension("impl1", AddExt1_ManualAdd1.class);
+            getExtensionLoader(AddExt1.class).addExtension("impl1", AddExt1_ManualAdd1.class); //当扩展名已经存在时，就会抛出异常
             fail();
         } catch (IllegalStateException expected) {
             assertThat(expected.getMessage(), containsString("Extension name impl1 already exists (Extension interface org.apache.dubbo.common.extension.ext8_add.AddExt1)!"));
@@ -332,7 +332,7 @@ public class ExtensionLoaderTest {
     public void test_AddExtension_Adaptive_ExceptionWhenExistedAdaptive() throws Exception {
         ExtensionLoader<AddExt1> loader = getExtensionLoader(AddExt1.class);
 
-        loader.getAdaptiveExtension();
+        loader.getAdaptiveExtension(); //todo @pause
 
         try {
             loader.addExtension(null, AddExt1_ManualAdaptive.class);

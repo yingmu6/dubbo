@@ -8,3 +8,4 @@
 | 002 | EventDispatcher | 了解事件派发器 | P1  | 60%  | 2023-04-11 | xx         |
 | 003 | ClassGenerator  | 了解类产生过程 | P2  | 100% | 2023-04-12 | 2023-04-23 |
 | 004 | ExtensionLoader | 了解SPI机制 | P1  | 0%   | 2023-04-28 | xx         |
+| 005 | Compiler        | 了解编译过程  | P2  | 0%   | 2023-05-05 | xx         |
