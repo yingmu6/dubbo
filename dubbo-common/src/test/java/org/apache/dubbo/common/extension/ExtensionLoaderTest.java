@@ -22,7 +22,13 @@ import org.apache.dubbo.common.convert.StringToBooleanConverter;
 import org.apache.dubbo.common.convert.StringToDoubleConverter;
 import org.apache.dubbo.common.convert.StringToIntegerConverter;
 import org.apache.dubbo.common.extension.activate.ActivateExt1;
-import org.apache.dubbo.common.extension.activate.impl.*;
+import org.apache.dubbo.common.extension.activate.impl.ActivateExt1Impl1;
+import org.apache.dubbo.common.extension.activate.impl.GroupActivateExtImpl;
+import org.apache.dubbo.common.extension.activate.impl.OldActivateExt1Impl2;
+import org.apache.dubbo.common.extension.activate.impl.OldActivateExt1Impl3;
+import org.apache.dubbo.common.extension.activate.impl.OrderActivateExtImpl1;
+import org.apache.dubbo.common.extension.activate.impl.OrderActivateExtImpl2;
+import org.apache.dubbo.common.extension.activate.impl.ValueActivateExtImpl;
 import org.apache.dubbo.common.extension.convert.String2BooleanConverter;
 import org.apache.dubbo.common.extension.convert.String2DoubleConverter;
 import org.apache.dubbo.common.extension.convert.String2IntegerConverter;
@@ -40,7 +46,13 @@ import org.apache.dubbo.common.extension.ext8_add.AddExt1;
 import org.apache.dubbo.common.extension.ext8_add.AddExt2;
 import org.apache.dubbo.common.extension.ext8_add.AddExt3;
 import org.apache.dubbo.common.extension.ext8_add.AddExt4;
-import org.apache.dubbo.common.extension.ext8_add.impl.*;
+import org.apache.dubbo.common.extension.ext8_add.impl.AddExt1Impl1;
+import org.apache.dubbo.common.extension.ext8_add.impl.AddExt1_ManualAdaptive;
+import org.apache.dubbo.common.extension.ext8_add.impl.AddExt1_ManualAdd1;
+import org.apache.dubbo.common.extension.ext8_add.impl.AddExt1_ManualAdd2;
+import org.apache.dubbo.common.extension.ext8_add.impl.AddExt2_ManualAdaptive;
+import org.apache.dubbo.common.extension.ext8_add.impl.AddExt3_ManualAdaptive;
+import org.apache.dubbo.common.extension.ext8_add.impl.AddExt4_ManualAdaptive;
 import org.apache.dubbo.common.extension.ext9_empty.Ext9Empty;
 import org.apache.dubbo.common.extension.ext9_empty.impl.Ext9EmptyImpl;
 import org.apache.dubbo.common.extension.injection.InjectExt;
@@ -72,9 +84,9 @@ public class ExtensionLoaderTest {
      */
 
     @Test
-    public void test_getExtensionLoader_Null() throws Exception { //已测
+    public void test_getExtensionLoader_Null() throws Exception { //已测（扩展接口不能传入null）
         try {
-            getExtensionLoader(null); //扩展类不能传入null
+            getExtensionLoader(null);
             fail();
         } catch (IllegalArgumentException expected) {
             assertThat(expected.getMessage(),
@@ -83,7 +95,7 @@ public class ExtensionLoaderTest {
     }
 
     @Test
-    public void test_getExtensionLoader_NotInterface() throws Exception { //已测
+    public void test_getExtensionLoader_NotInterface() throws Exception { //已测（非接口类，不能获取扩展）
         try {
             getExtensionLoader(ExtensionLoaderTest.class); //扩展类型需要是一个接口
             fail();
@@ -94,7 +106,7 @@ public class ExtensionLoaderTest {
     }
 
     @Test
-    public void test_getExtensionLoader_NotSpiAnnotation() throws Exception { //已测
+    public void test_getExtensionLoader_NotSpiAnnotation() throws Exception { //已测（获取扩展时，扩展接口未带上@SPI注解会报错）
         try {
             getExtensionLoader(NoSpiExt.class); //扩展类需要带有@SPI的接口
             fail();
@@ -107,7 +119,7 @@ public class ExtensionLoaderTest {
     }
 
     @Test
-    public void test_getDefaultExtension() throws Exception {
+    public void test_getDefaultExtension() throws Exception { //已测（获取默认扩展实例）
         ExtensionLoader<SimpleExt> extensionLoader1 = getExtensionLoader(SimpleExt.class);
         /**
          * 默认扩展实例的处理流程
@@ -145,8 +157,8 @@ public class ExtensionLoaderTest {
     }
 
     @Test
-    public void test_getDefaultExtension_NULL() throws Exception {
-        Ext2 ext = getExtensionLoader(Ext2.class).getDefaultExtension(); //获取默认扩展实例
+    public void test_getDefaultExtension_NULL() throws Exception { //已测（获取默认扩展实例）
+        Ext2 ext = getExtensionLoader(Ext2.class).getDefaultExtension();
         /**
          * @csy-009 此处为啥没有获取到扩展实例，对应的配置文件有看到配置的
          * 解：是因为没有默认扩展名，getDefaultExtension()返回的就为空，默认扩展名是指SPI(value=) ，声明的value值
@@ -158,7 +170,7 @@ public class ExtensionLoaderTest {
     }
 
     @Test
-    public void test_getExtension() throws Exception {
+    public void test_getExtension() throws Exception { //已测（获取普通扩展）
         /**
          * @csy-009 扩展类的实例是怎么创建的？
          * 解：先加载扩展类，然后通过反射机制创建实例对象，并且处理依赖注入、封装类的实例化
@@ -168,7 +180,7 @@ public class ExtensionLoaderTest {
     }
 
     @Test
-    public void test_getExtension_WithWrapper() throws Exception {
+    public void test_getExtension_WithWrapper() throws Exception { //已测（扩展类，带有对应的封装类）
         /**
          * @csy-010 此处配置文件中impl1明明配置的是org.apache.dubbo.common.extension.ext6_wrap.impl.Ext5Impl1，为啥会取到Ext5Wrapper1的实例？
          * 解：若需要封装的话，if (wrap) {instance = injectExtension((T) wrapperClass.getConstructor(type).newInstance(instance)); ....} 会先调用封装类，然后封装类中再调用目标类
@@ -194,7 +206,7 @@ public class ExtensionLoaderTest {
     }
 
     @Test
-    public void test_getExtension_ExceptionNoExtension() throws Exception {
+    public void test_getExtension_ExceptionNoExtension() throws Exception { //已测（未找到扩展类）
         try {
             getExtensionLoader(SimpleExt.class).getExtension("XXX");
             fail();
@@ -204,17 +216,17 @@ public class ExtensionLoaderTest {
     }
 
     @Test
-    public void test_getExtension_ExceptionNoExtension_WrapperNotAffactName() throws Exception {
+    public void test_getExtension_ExceptionNoExtension_WrapperNotAffactName() throws Exception { //已测（封装类是不在普通扩展类的缓存中的）
         try {
-            getExtensionLoader(WrappedExt.class).getExtension("XXX"); //未找到指定的扩展名，会抛出异常
+            getExtensionLoader(WrappedExt.class).getExtension("wrapper1");
             fail();
         } catch (IllegalStateException expected) {
-            assertThat(expected.getMessage(), containsString("No such extension org.apache.dubbo.common.extension.ext6_wrap.WrappedExt by name XXX"));
+            assertThat(expected.getMessage(), containsString("No such extension org.apache.dubbo.common.extension.ext6_wrap.WrappedExt by name wrapper1"));
         }
     }
 
     @Test
-    public void test_getExtension_ExceptionNullArg() throws Exception {
+    public void test_getExtension_ExceptionNullArg() throws Exception { //已测（在扩展名为空时，获取扩展会抛出异常）
         try {
             getExtensionLoader(SimpleExt.class).getExtension(null); //扩展名不能为空
             fail();
@@ -224,7 +236,7 @@ public class ExtensionLoaderTest {
     }
 
     @Test
-    public void test_hasExtension() throws Exception {
+    public void test_hasExtension() throws Exception { //已测（判断是否存在指定扩展名的扩展类）
         assertTrue(getExtensionLoader(SimpleExt.class).hasExtension("impl1"));
         assertFalse(getExtensionLoader(SimpleExt.class).hasExtension("impl1,impl2")); //扩展名只有单一一个，不支持类似这种分隔（没有对扩展名进行分隔解析）
         assertFalse(getExtensionLoader(SimpleExt.class).hasExtension("xxx"));
@@ -238,7 +250,7 @@ public class ExtensionLoaderTest {
     }
 
     @Test
-    public void test_hasExtension_wrapperIsNotExt() throws Exception {
+    public void test_hasExtension_wrapperIsNotExt() throws Exception { //已测（判断是否存在指定扩展名的扩展类，封装类不在普通扩展类的集合中）
         assertTrue(getExtensionLoader(WrappedExt.class).hasExtension("impl1"));
         assertFalse(getExtensionLoader(WrappedExt.class).hasExtension("impl1,impl2"));
         assertFalse(getExtensionLoader(WrappedExt.class).hasExtension("xxx"));
@@ -259,7 +271,7 @@ public class ExtensionLoaderTest {
     }
 
     @Test
-    public void test_getSupportedExtensions() throws Exception {
+    public void test_getSupportedExtensions() throws Exception { //已测（获取支持的扩展名集合）
         Set<String> exts = getExtensionLoader(SimpleExt.class).getSupportedExtensions(); //获取支持的扩展名集合，即成员变量cachedClasses对应的key值集合
 
         Set<String> expected = new HashSet<String>();
@@ -271,8 +283,8 @@ public class ExtensionLoaderTest {
     }
 
     @Test
-    public void test_getSupportedExtensions_wrapperIsNotExt() throws Exception {
-        Set<String> exts = getExtensionLoader(WrappedExt.class).getSupportedExtensions(); //封装类的扩展名不在支持的扩展名集合中
+    public void test_getSupportedExtensions_wrapperIsNotExt() throws Exception { //已测（获取支持的扩展名集合，封装类的扩展名不在其中）
+        Set<String> exts = getExtensionLoader(WrappedExt.class).getSupportedExtensions();
 
         Set<String> expected = new HashSet<String>();
         expected.add("impl1");
@@ -282,7 +294,7 @@ public class ExtensionLoaderTest {
     }
 
     @Test
-    public void test_AddExtension() throws Exception {
+    public void test_AddExtension() throws Exception { //已测（添加扩展）
         try {
             getExtensionLoader(AddExt1.class).getExtension("Manual1"); //配置文件中没有配置Manual1扩展，所以会抛出未找到扩展异常
             fail();
@@ -298,7 +310,7 @@ public class ExtensionLoaderTest {
     }
 
     @Test
-    public void test_AddExtension_NoExtend() throws Exception {
+    public void test_AddExtension_NoExtend() throws Exception { //已测（正常的添加扩展，即缓存中没有对应扩展时，可以增加扩展）
 //        ExtensionLoader.getExtensionLoader(Ext9Empty.class).getSupportedExtensions();
         getExtensionLoader(Ext9Empty.class).addExtension("ext9", Ext9EmptyImpl.class);
         Ext9Empty ext = getExtensionLoader(Ext9Empty.class).getExtension("ext9");
@@ -308,11 +320,11 @@ public class ExtensionLoaderTest {
     }
 
     @Test
-    public void test_AddExtension_ExceptionWhenExistedExtension() throws Exception {
+    public void test_AddExtension_ExceptionWhenExistedExtension() throws Exception { //已测（当扩展名已经存在时，添加扩展就会抛出异常）
         SimpleExt ext = getExtensionLoader(SimpleExt.class).getExtension("impl1");
 
         try {
-            getExtensionLoader(AddExt1.class).addExtension("impl1", AddExt1_ManualAdd1.class); //当扩展名已经存在时，就会抛出异常
+            getExtensionLoader(AddExt1.class).addExtension("impl1", AddExt1_ManualAdd1.class);
             fail();
         } catch (IllegalStateException expected) {
             assertThat(expected.getMessage(), containsString("Extension name impl1 already exists (Extension interface org.apache.dubbo.common.extension.ext8_add.AddExt1)!"));
@@ -320,22 +332,26 @@ public class ExtensionLoaderTest {
     }
 
     @Test
-    public void test_AddExtension_Adaptive() throws Exception { //添加自适应扩展类
+    public void test_AddExtension_Adaptive() throws Exception { //已测（添加普通的扩展）
         ExtensionLoader<AddExt2> loader = getExtensionLoader(AddExt2.class);
-        loader.addExtension(null, AddExt2_ManualAdaptive.class);
+        loader.addExtension(null, AddExt2_ManualAdaptive.class); //添加自适应扩展类
 
         AddExt2 adaptive = loader.getAdaptiveExtension();
         assertTrue(adaptive instanceof AddExt2_ManualAdaptive);
     }
 
     @Test
-    public void test_AddExtension_Adaptive_ExceptionWhenExistedAdaptive() throws Exception {
+    public void test_AddExtension_Adaptive_ExceptionWhenExistedAdaptive() throws Exception { //已测（添加扩展时，自适应类已存在时抛出异常）
         ExtensionLoader<AddExt1> loader = getExtensionLoader(AddExt1.class);
 
-        loader.getAdaptiveExtension(); //todo @pause
+        /**
+         * 获取自适应类使用（若缓存中没有就会创建，扩展类会去加载SPI配置文件，若没有就产生自适应代码生成自适应类）
+         * 总之：调用getAdaptiveExtension后，自适应类的实例就会存在的
+         */
+        loader.getAdaptiveExtension();
 
         try {
-            loader.addExtension(null, AddExt1_ManualAdaptive.class);
+            loader.addExtension(null, AddExt1_ManualAdaptive.class); //添加扩展时，会判断自适应类是否存在
             fail();
         } catch (IllegalStateException expected) {
             assertThat(expected.getMessage(), containsString("Adaptive Extension already exists (Extension interface org.apache.dubbo.common.extension.ext8_add.AddExt1)!"));
@@ -343,7 +359,7 @@ public class ExtensionLoaderTest {
     }
 
     @Test
-    public void test_replaceExtension() throws Exception {
+    public void test_replaceExtension() throws Exception { //已测（替换普通的扩展）
         try {
             getExtensionLoader(AddExt1.class).getExtension("Manual2");
             fail();
@@ -355,10 +371,14 @@ public class ExtensionLoaderTest {
             AddExt1 ext = getExtensionLoader(AddExt1.class).getExtension("impl1");
 
             assertThat(ext, instanceOf(AddExt1Impl1.class));
-            assertEquals("impl1", getExtensionLoader(AddExt1.class).getExtensionName(AddExt1Impl1.class));
+            assertEquals("impl1", getExtensionLoader(AddExt1.class).getExtensionName(AddExt1Impl1.class)); //根据扩展实例Class找扩展名
         }
         {
-            // 替换已存在的扩展
+            /**
+             * 替换已存在的扩展（替换扩展类的功能已经不再推荐使用，仅用于测试）
+             * 1）替换缓存中扩展名与扩展类Class的关系
+             * 2）重新获取扩展实例时，就会根据新的扩展类Class，产生新的实例
+             */
             getExtensionLoader(AddExt1.class).replaceExtension("impl1", AddExt1_ManualAdd2.class);
             AddExt1 ext = getExtensionLoader(AddExt1.class).getExtension("impl1");
 
@@ -368,20 +388,20 @@ public class ExtensionLoaderTest {
     }
 
     @Test
-    public void test_replaceExtension_Adaptive() throws Exception { //替换带有@Adaptive注解的扩展类
-        ExtensionLoader<AddExt3> loader = getExtensionLoader(AddExt3.class);
+    public void test_replaceExtension_Adaptive() throws Exception { //已测（替换带有@Adaptive注解的自适应扩展类）
+        ExtensionLoader<AddExt3> loader = getExtensionLoader(AddExt3.class); //AddExt3没有对应的配置文件
 
-        AddExt3 adaptive = loader.getAdaptiveExtension();
+        AddExt3 adaptive = loader.getAdaptiveExtension(); //扩展实例为AddExt3$Adaptive@xxx，因为没有对应的配置文件，是通过产生自适应代码产生的
         assertFalse(adaptive instanceof AddExt3_ManualAdaptive);
 
         loader.replaceExtension(null, AddExt3_ManualAdaptive.class);
 
         adaptive = loader.getAdaptiveExtension();
-        assertTrue(adaptive instanceof AddExt3_ManualAdaptive);
+        assertTrue(adaptive instanceof AddExt3_ManualAdaptive); //自适应类替换后，扩展实例由AddExt3$Adaptive@xxx变为AddExt3_ManualAdaptive@xxx
     }
 
     @Test
-    public void test_replaceExtension_ExceptionWhenNotExistedExtension() throws Exception {
+    public void test_replaceExtension_ExceptionWhenNotExistedExtension() throws Exception { //已测（替换普通扩展类时，扩展名不存在，则抛出异常）
         AddExt1 ext = getExtensionLoader(AddExt1.class).getExtension("impl1");
 
         try {
@@ -393,11 +413,11 @@ public class ExtensionLoaderTest {
     }
 
     @Test
-    public void test_replaceExtension_Adaptive_ExceptionWhenNotExistedExtension() throws Exception {
-        ExtensionLoader<AddExt4> loader = getExtensionLoader(AddExt4.class); //AddExt4类没有对应的配置文件，所以缓存中没有对应配置
+    public void test_replaceExtension_Adaptive_ExceptionWhenNotExistedExtension() throws Exception { //已测（替换自适应类时，若不存在已有的自适应类，会抛出异常）
+        ExtensionLoader<AddExt4> loader = getExtensionLoader(AddExt4.class); //AddExt4类没有对应的配置文件，也没有通过getAdaptiveExtension创建自适应扩展实例
 
         try {
-            loader.replaceExtension(null, AddExt4_ManualAdaptive.class);
+            loader.replaceExtension(null, AddExt4_ManualAdaptive.class); //替换自适应类时，若缓存中没有自适应类，则抛出异常（即替换是对已有的类进行更换，没有已有的类，就会抛异常）
             fail();
         } catch (IllegalStateException expected) {
             assertThat(expected.getMessage(), containsString("Adaptive Extension doesn't exist (Extension interface org.apache.dubbo.common.extension.ext8_add.AddExt4)"));
@@ -405,17 +425,17 @@ public class ExtensionLoaderTest {
     }
 
     @Test
-    public void test_InitError() throws Exception {
+    public void test_InitError() throws Exception { //已测（加载SPI配置文件时，扩展类加载时发生异常）
         ExtensionLoader<InitErrorExt> loader = getExtensionLoader(InitErrorExt.class);
 
-        loader.getExtension("ok");
+        loader.getExtension("ok"); //在这里加载扩展文件时，就把加载时报错的信息缓存起来了，loader.getExtension("error")再次加载时，会根据扩展名模糊查找到异常信息
 
         try {
-            loader.getExtension("error"); //error对应的类Ext7InitErrorImpl，在初始化时会主动抛出异常
+            loader.getExtension("error"); //error对应的类Ext7InitErrorImpl，在加载SPI配置文件资源时，即ExtensionLoader#loadResource中的Class.forName时就会报ExceptionInInitializerError异常，并会记录到ExtensionLoader.exceptions变量中
             fail();
-        } catch (IllegalStateException expected) { //上层应用主动接口异常并进行处理
+        } catch (IllegalStateException expected) {
             assertThat(expected.getMessage(), containsString("Failed to load extension class (interface: interface org.apache.dubbo.common.extension.ext7.InitErrorExt"));
-            assertThat(expected.getCause(), instanceOf(ExceptionInInitializerError.class)); //ExceptionInInitializerError初始化时发生的异常
+            assertThat(expected.getCause(), instanceOf(ExceptionInInitializerError.class)); //ExceptionInInitializerError静态块初始化时发生的异常
         }
     }
 

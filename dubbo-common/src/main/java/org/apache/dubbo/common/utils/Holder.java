@@ -17,7 +17,7 @@
 package org.apache.dubbo.common.utils;
 
 /**
- * Helper Class for hold（持有） a value.
+ * Helper Class（帮组类） for hold（持有） a value.
  */
 public class Holder<T> {
     

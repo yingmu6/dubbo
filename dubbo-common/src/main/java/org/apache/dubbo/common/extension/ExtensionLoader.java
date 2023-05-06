@@ -89,9 +89,9 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
 
     private final Class<?> type; //扩展接口的类型
 
-    private final ExtensionFactory objectFactory; //扩展实例的创建工厂（ExtensionFactory也是SPI接口，当type=ExtensionFactory.class时，objectFactory=null）
+    private final ExtensionFactory objectFactory; //扩展实例的创建工厂（ExtensionFactory也是SPI接口，1）此处的实例为AdaptiveExtensionFactory@xxx，会用存储的多个扩展工厂查找扩展实例，2）当type=ExtensionFactory.class时，objectFactory=null）
 
-    private final ConcurrentMap<Class<?>, String> cachedNames = new ConcurrentHashMap<>(); //实例类Class与扩张名的映射（去除自适应扩展和自动激活扩展）
+    private final ConcurrentMap<Class<?>, String> cachedNames = new ConcurrentHashMap<>(); //扩展实例类Class与扩展名的映射（去除自适应扩展和自动激活扩展）
 
     private final Holder<Map<String, Class<?>>> cachedClasses = new Holder<>(); //当前扩展接口中的扩展名与扩展类Class的映射（去除自适应扩展和自动激活扩展）
 
@@ -104,7 +104,7 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
 
     private Set<Class<?>> cachedWrapperClasses; //扩展接口对应的封装类集合（封装类不是扩展类，所以没有在cachedClasses缓存中）
 
-    private Map<String, IllegalStateException> exceptions = new ConcurrentHashMap<>(); //加载时扩展类时，扩展类字符串值与异常的映射Map（把异常信息存储下拉）
+    private Map<String, IllegalStateException> exceptions = new ConcurrentHashMap<>(); //加载时扩展类时的异常信息
 
     private static volatile LoadingStrategy[] strategies = loadLoadingStrategies(); //加载的策略
 
@@ -193,7 +193,7 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
         ExtensionLoader<T> loader = (ExtensionLoader<T>) EXTENSION_LOADERS.get(type);
         if (loader == null) { //每个SPI接口，对应一个扩展加载器ExtensionLoader，若存在直接返回，否则创建ExtensionLoader
             EXTENSION_LOADERS.putIfAbsent(type, new ExtensionLoader<T>(type));
-            loader = (ExtensionLoader<T>) EXTENSION_LOADERS.get(type);
+            loader = (ExtensionLoader<T>) EXTENSION_LOADERS.get(type); //直接从Map中获取值，少了中间变量，更简洁些
         }
         return loader;
     }
@@ -482,12 +482,12 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
         if (StringUtils.isEmpty(name)) {
             throw new IllegalArgumentException("Extension name == null");
         }
-        if ("true".equals(name)) {
+        if ("true".equals(name)) { //扩展名为"true"，返回默认扩展实例
             return getDefaultExtension();
         }
-        final Holder<Object> holder = getOrCreateHolder(name);
+        final Holder<Object> holder = getOrCreateHolder(name); //获取扩展名对应实例持有类
         Object instance = holder.get();
-        if (instance == null) {
+        if (instance == null) { //使用双重判断+synchronized来确保单实例
             synchronized (holder) {
                 instance = holder.get();
                 if (instance == null) { //若缓存中没有扩展实例，则创建对应实例对象
@@ -585,7 +585,7 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
             cachedNames.put(clazz, name); //符合条件后，设置到缓存中
             cachedClasses.get().put(name, clazz);
         } else { //自适应扩展类，即类上带有@Adaptive注解（一个扩展接口，最多只有一个自适应扩展类）
-            if (cachedAdaptiveClass != null) {
+            if (cachedAdaptiveClass != null) { //添加扩展时，自适应类已存在，则抛出异常
                 throw new IllegalStateException("Adaptive Extension already exists (Extension " + type + ")!");
             }
 
@@ -614,7 +614,7 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
                     clazz + " can't be interface!");
         }
 
-        if (!clazz.isAnnotationPresent(Adaptive.class)) {
+        if (!clazz.isAnnotationPresent(Adaptive.class)) { //替换普通扩展类
             if (StringUtils.isBlank(name)) {
                 throw new IllegalStateException("Extension name is blank (Extension " + type + ")!");
             }
@@ -626,13 +626,13 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
             cachedNames.put(clazz, name); //替换缓存中扩展信息，并移除缓存实例
             cachedClasses.get().put(name, clazz);
             cachedInstances.remove(name);
-        } else {
+        } else { //替换自适应扩展类
             if (cachedAdaptiveClass == null) {
                 throw new IllegalStateException("Adaptive Extension doesn't exist (Extension " + type + ")!");
             }
 
             cachedAdaptiveClass = clazz;
-            cachedAdaptiveInstance.set(null);
+            cachedAdaptiveInstance.set(null); //自适应扩展实例替换后，调用getAdaptiveExtension时会创建实例
         }
     }
 
@@ -693,7 +693,7 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
     }
 
     @SuppressWarnings("unchecked")
-    private T createExtension(String name, boolean wrap) {
+    private T createExtension(String name, boolean wrap) { //创建普通的扩展实例
         // 先加载扩展接口对应的所有扩展类Class，然后在找出扩展名对应扩展类Class
         Class<?> clazz = getExtensionClasses().get(name);
         if (clazz == null) { //配置文件中，若没有查找到扩展名对应的Class类，则抛出扩展发现异常
@@ -703,20 +703,19 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
             //通过Class的newInstance()创建实例（反射机制）
             T instance = (T) EXTENSION_INSTANCES.get(clazz);
             if (instance == null) {
-                EXTENSION_INSTANCES.putIfAbsent(clazz, clazz.newInstance()); //同一个扩展接口，第一次会创建实例放在缓存中，后续都从缓存中获取
+                EXTENSION_INSTANCES.putIfAbsent(clazz, clazz.newInstance()); //创建扩展实例，并放入缓存中
                 instance = (T) EXTENSION_INSTANCES.get(clazz);
             }
             //注入依赖的扩展实例（类似IOC功能）
             injectExtension(instance);
 
-            //注入封装类的实例（若需要封装的话，将扩展实例通过封装类列表，进行层层封装）
             if (wrap) { //使用封装类对扩展实例进行封装（类似AOP功能）
 
                 List<Class<?>> wrapperClassesList = new ArrayList<>();
                 if (cachedWrapperClasses != null) { //当前扩展接口对应的封装类列表，如WrappedExt的封装类列表为Ext5Wrapper1、Ext5Wrapper2
                     wrapperClassesList.addAll(cachedWrapperClasses);
-                    wrapperClassesList.sort(WrapperComparator.COMPARATOR);
-                    Collections.reverse(wrapperClassesList); //将列表中元素反向翻转（即配置文件中，封装类的加载顺序会被翻转）
+                    wrapperClassesList.sort(WrapperComparator.COMPARATOR); //将封装类列表进行排序
+                    Collections.reverse(wrapperClassesList); //将已经排好序的封装类列表进行翻转
                 }
 
                 if (CollectionUtils.isNotEmpty(wrapperClassesList)) {
@@ -727,15 +726,21 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
                          * 可参考 https://github.com/apache/dubbo/issues/6946
                          */
                         Wrapper wrapper = wrapperClass.getAnnotation(Wrapper.class);
+
+                        /**
+                         * 判断是否使用封装类封装扩展实例
+                         * a）封装类没有带 @Wrapper注解
+                         * b）封装类带有 @Wrapper注解，且扩展名包含在匹配列表matches中，不在不匹配列表mismatches中
+                         */
                         if (wrapper == null
                                 || (ArrayUtils.contains(wrapper.matches(), name) && !ArrayUtils.contains(wrapper.mismatches(), name))) {
-                            instance = injectExtension((T) wrapperClass.getConstructor(type).newInstance(instance)); //用封装类覆盖扩展类的实例
+                            instance = injectExtension((T) wrapperClass.getConstructor(type).newInstance(instance)); //用封装类封装扩展类的实例
                         }
                     }
                 }
             }
 
-            initExtension(instance);
+            initExtension(instance); //若实例为Lifecycle类型，则调用Lifecycle#initialize进行初始化
             return instance;
         } catch (Throwable t) {
             throw new IllegalStateException("Extension instance (name: " + name + ", class: " +
@@ -753,7 +758,7 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
      */
     private T injectExtension(T instance) { //注入依赖的扩展实例
 
-        if (objectFactory == null) {
+        if (objectFactory == null) { //扩展工厂为空时，提前结束
             return instance;
         }
 
@@ -778,7 +783,7 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
                 }
 
                 try {
-                    String property = getSetterProperty(method);
+                    String property = getSetterProperty(method); //获取属性名（通过解析方法名称）
                     Object object = objectFactory.getExtension(pt, property);//@csy-009 此处是怎么获取对象的？解：通过扩展工厂获取扩展对象
                     if (object != null) { //获取到的扩展实例不为空时，则为对象属性设置值，如Ext6扩展接口的实现类Ext6Impl1
                         method.invoke(instance, object); //使用反射机制调用Set方法，进入扩展对象的依赖注入
@@ -792,7 +797,7 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
-        return instance;
+        return instance; //返回处理后的扩展实例
     }
 
     private void initExtension(T instance) {
@@ -842,7 +847,7 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
      * （缓存中不存在，可能是还没加载过，也可能是机器重启，内存中的内容被清除）
      */
     private Map<String, Class<?>> getExtensionClasses() {
-        Map<String, Class<?>> classes = cachedClasses.get();
+        Map<String, Class<?>> classes = cachedClasses.get(); //缓存的扩展类，即可能来自SPI配置文件，也能来自API的addExtension添加的
         if (classes == null) { //锁外判断
             synchronized (cachedClasses) {
                 classes = cachedClasses.get();
@@ -955,22 +960,22 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
                 String line;
                 while ((line = reader.readLine()) != null) {//读取每一行，对每一行进行解析
                     final int ci = line.indexOf('#');
-                    if (ci >= 0) { //若是注释的话，把注释内容去掉
-                        line = line.substring(0, ci);
+                    if (ci >= 0) { //若是注释的话，把注释内容去掉，#代表注释
+                        line = line.substring(0, ci); //取#号前面的子串
                     }
-                    line = line.trim();
+                    line = line.trim(); //去除字符串头部、尾部的空格
                     if (line.length() > 0) {//@csy-010 解析的时候，怎么去掉扫描行里面的空格？如SimpleExt对应的配置文件，解：调用trim()方法
                         try {
                             String name = null;
                             int i = line.indexOf('='); //按等号进行分隔
-                            if (i > 0) {
-                                name = line.substring(0, i).trim(); //扩展名（去空格）
-                                line = line.substring(i + 1).trim(); //扩展类对应的全路径类名
+                            if (i > 0) { //配置的格式为 extName = className，也可以为 className（不带扩展名）
+                                name = line.substring(0, i).trim(); //扩展名（去前后空格）
+                                line = line.substring(i + 1).trim(); //扩展类对应的全路径类名（去前后空格）
                             }
                             if (line.length() > 0 && !isExcluded(line, excludedPackages)) { //扩展类的全路径名称，如org.apache.dubbo.rpc.protocol.dubbo.filter.TraceFilter
-                                loadClass(extensionClasses, resourceURL, Class.forName(line, true, classLoader), name, overridden);
+                                loadClass(extensionClasses, resourceURL, Class.forName(line, true, classLoader), name, overridden); //根据扩展类名产生Class，并加载到缓存中
                             }
-                        } catch (Throwable t) { //捕获异常，并设置到异常Map中
+                        } catch (Throwable t) { //加载扩展类出现异常时，将异常信息按扩展类的全路径名存起来（某一扩展类加载异常，会把异常信息缓存起来，不影响其它扩展类的加载）
                             IllegalStateException e = new IllegalStateException("Failed to load extension class (interface: " + type + ", class line: " + line + ") in " + resourceURL + ", cause: " + t.getMessage(), t);
                             exceptions.put(line, e);
                         }
@@ -988,7 +993,7 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
      * 解：若指定排除的包，则加载类时，该包下的类不会加载到缓存中loadResource
      * 什么时候进行排除的话，这个主要看加载策略是否重写了LoadingStrategy#excludedPackages()，默认情况下不排除的
      */
-    private boolean isExcluded(String className, String... excludedPackages) {
+    private boolean isExcluded(String className, String... excludedPackages) { //判断扩展类是不是在被排除的包下
         if (excludedPackages != null) {
             for (String excludePackage : excludedPackages) {
                 if (className.startsWith(excludePackage + ".")) {
