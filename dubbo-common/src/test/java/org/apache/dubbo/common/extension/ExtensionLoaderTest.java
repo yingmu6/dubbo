@@ -440,11 +440,11 @@ public class ExtensionLoaderTest {
     }
 
     @Test
-    public void testLoadActivateExtension() throws Exception {
+    public void testLoadActivateExtension() throws Exception { //已测（按group匹配，即group有值、value无值的场景）
         // test default
         URL url = URL.valueOf("test://localhost/test");
         List<ActivateExt1> list = getExtensionLoader(ActivateExt1.class)
-                .getActivateExtension(url, new String[]{}, "default_group");
+                .getActivateExtension(url, new String[]{}, "default_group"); //按group匹配
         Assertions.assertEquals(1, list.size());
         Assertions.assertSame(list.get(0).getClass(), ActivateExt1Impl1.class); //找到一个符合条件的扩展类实例
 
@@ -488,10 +488,10 @@ public class ExtensionLoaderTest {
     @Test
     public void testLoadDefaultActivateExtension() throws Exception {
         // test default
-        URL url = URL.valueOf("test://localhost/test?ext=order1,default,order4");
+        URL url = URL.valueOf("test://localhost/test?ext=order1,default");
         List<ActivateExt1> list = getExtensionLoader(ActivateExt1.class)
                 .getActivateExtension(url, "ext", "default_group");
-        Assertions.assertEquals(2, list.size());
+        Assertions.assertEquals(2, list.size());  //todo @pause
         Assertions.assertSame(list.get(0).getClass(), OrderActivateExtImpl1.class);
         Assertions.assertSame(list.get(1).getClass(), ActivateExt1Impl1.class);
 

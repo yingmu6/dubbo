@@ -27,7 +27,7 @@ import java.lang.annotation.*;
  * multiple implementations.
  * <ol>
  * <li>{@link Activate#group()} specifies group criteria. Framework SPI defines the valid group values.
- * <li>{@link Activate#value()} specifies parameter key in {@link URL} criteria.
+ * <li>{@link Activate#value()} specifies parameter key in {@link URL} criteria（标准）.
  * </ol>
  * SPI provider can call {@link ExtensionLoader#getActivateExtension(URL, String, String)} to find out all activated
  * extensions with the given criteria.
@@ -57,7 +57,7 @@ public @interface Activate { //若带上自动激活类设置了group、value，
      * there's either <code>cache</code> or <code>validation</code> key appeared in the URL's parameters.
      * </p>
      *
-     * @return URL parameter keys
+     * @return URL parameter keys （value的值指的是URL中的参数key）
      * @see ExtensionLoader#getActivateExtension(URL, String)
      * @see ExtensionLoader#getActivateExtension(URL, String, String)
      */

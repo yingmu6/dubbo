@@ -52,8 +52,8 @@ import java.lang.annotation.Target;
  * instead of reporting which extract extension implementation fails and the extract reason.
  * </p>
  *
- * @deprecated because it's too general, switch to use {@link org.apache.dubbo.common.extension.SPI}
- * 因为含义广泛被废弃，使用@SPI代替
+ * @deprecated because it's too general（广泛的、笼统的）, switch to use {@link org.apache.dubbo.common.extension.SPI}
+ * 因为含义太笼统，所以被废弃，使用@SPI代替
  */
 @Deprecated
 @Documented
@@ -65,6 +65,6 @@ public @interface Extension {
      * @deprecated
      */
     @Deprecated
-    String value() default "";
+    String value() default ""; //指定扩展名
 
 }

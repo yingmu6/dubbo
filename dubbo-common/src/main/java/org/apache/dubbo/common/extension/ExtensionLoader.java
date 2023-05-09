@@ -272,8 +272,8 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
      * @see #getActivateExtension(org.apache.dubbo.common.URL, String[], String)
      */
     public List<T> getActivateExtension(URL url, String key, String group) { //如：获取filter列表时，key：service.filter，group：provider
-        String value = url.getParameter(key); //从url参数Map中获取key对应的值
-        return getActivateExtension(url, StringUtils.isEmpty(value) ? null : COMMA_SPLIT_PATTERN.split(value), group); //按分隔符拆分参数值并设置到数组中，如"order1,default,order4"，拆分映射为数组
+        String value = url.getParameter(key); //从url中获取参数key对应的值
+        return getActivateExtension(url, StringUtils.isEmpty(value) ? null : COMMA_SPLIT_PATTERN.split(value), group); //按分隔符拆分参数值，如"order1,default,order4"，拆分映射为数组
     }
 
     /**
@@ -281,7 +281,7 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
      *
      * @param url    url
      * @param values extension point names 扩展名列表
-     * @param group  group
+     * @param group  group 扩展名所属分组
      * @return extension list which are activated （返回匹配的扩展类列表）
      * @see org.apache.dubbo.common.extension.Activate
      */
@@ -319,14 +319,14 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
 
                 /**
                  * 自动激活条件匹配逻辑（先比较group、再比较value）
-                 * 1）将查询参数group与注解中group列表值，依次进行比较
+                 * 1）判断传入的group是否在注解中group的列表值中
                  * 2）扩展名name没有加载过且不是"-"移除的扩展名
                  * 3）将注解中声明的value值与url中参数值进行比较
                  * 若都满足条件，则获取扩展名对应的实例，并加载到
                  *    activateExtensions自动激活扩展的列表中
                  */
                 if (isMatchGroup(group, activateGroup)
-                        && !names.contains(name)
+                        && !names.contains(name) //todo @csy 为啥要有这个判断？
                         && !names.contains(REMOVE_VALUE_PREFIX + name)
                         && isActive(activateValue, url)) {
                     activateExtensions.add(getExtension(name)); // 若匹配，则获取扩展名name对应的实例并加载到列表中
@@ -1022,13 +1022,13 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
                     type + ", class line: " + clazz.getName() + "), class "
                     + clazz.getName() + " is not subtype of interface.");
         }
-        if (clazz.isAnnotationPresent(Adaptive.class)) { //判断扩展实现类是否包含@Adaptive注解（类上带有@Adaptive注解）
+        if (clazz.isAnnotationPresent(Adaptive.class)) { //缓存自适应扩展类（类上带有@Adaptive注解的扩展类）
             cacheAdaptiveClass(clazz, overridden);
-        } else if (isWrapperClass(clazz)) { //封装类型
+        } else if (isWrapperClass(clazz)) { //缓存封装类型扩展类（即存在包含以扩展接口为参数的构造方法）
             cacheWrapperClass(clazz);
-        } else { //@csy-003 此处是否是自动激活还有SPI指定扩展名的情况？解：SPI修饰的是扩展接口，这里的clazz是扩展实现类，所以此处扩展实现类带有@Activate、@Extension或没带注解都可进入
+        } else { //缓存自动激活扩展类或普通扩展类
             clazz.getConstructor();
-            if (StringUtils.isEmpty(name)) { //@csy-003 此处什么场景下会进入？解：扩展名为空的情况
+            if (StringUtils.isEmpty(name)) { //什么场景下扩展名为空？解：SPI配置文件中，扩展名为空的情况
                 name = findAnnotationName(clazz);
                 if (name.length() == 0) {
                     throw new IllegalStateException("No such extension name for the class " + clazz.getName() + " in the config " + resourceURL);
@@ -1037,7 +1037,7 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
 
             String[] names = NAME_SEPARATOR.split(name);
             if (ArrayUtils.isNotEmpty(names)) {
-                cacheActivateClass(clazz, names[0]); //尝试缓存自动激活类
+                cacheActivateClass(clazz, names[0]); //缓存扩展名与@Activate对象的映射（即将扩展名关联的@Activate对象缓存起来）
                 for (String n : names) {
                     cacheName(clazz, n); //缓存扩展类Class与扩展名的映射
                     saveInExtensionClass(extensionClasses, clazz, n, overridden); //缓存扩展名与扩展类Class的映射
@@ -1074,11 +1074,11 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
      * <p>
      * for compatibility, also cache class with old alibaba Activate annotation
      */
-    private void cacheActivateClass(Class<?> clazz, String name) { //缓存带有自动注解的类，@Activate
+    private void cacheActivateClass(Class<?> clazz, String name) { //缓存扩展名与@Activate对象的映射
         Activate activate = clazz.getAnnotation(Activate.class);
         if (activate != null) {
             cachedActivates.put(name, activate);
-        } else {//代码做兼容处理
+        } else {//代码做版本兼容处理
             // support com.alibaba.dubbo.common.extension.Activate
             com.alibaba.dubbo.common.extension.Activate oldActivate = clazz.getAnnotation(com.alibaba.dubbo.common.extension.Activate.class);
             if (oldActivate != null) {
@@ -1091,9 +1091,9 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
      * cache Adaptive class which is annotated with <code>Adaptive</code>
      */
     private void cacheAdaptiveClass(Class<?> clazz, boolean overridden) {
-        if (cachedAdaptiveClass == null || overridden) { //若缓存中自适应扩展Class为空，或自适应扩展Class不为空且overridden为true允许覆盖时，则将配置文件中的Class类设置到缓存中
+        if (cachedAdaptiveClass == null || overridden) { //若缓存中自适应扩展类为空，或自适应扩展类不为空且允许覆盖时，更新缓存中自适应扩展类
             cachedAdaptiveClass = clazz;
-        } else if (!cachedAdaptiveClass.equals(clazz)) { //若缓存中自适应扩展Class不为空，且不允许覆盖时，若出现不同的自适应扩展类，则抛出异常，只允许出现一个自适应扩展类
+        } else if (!cachedAdaptiveClass.equals(clazz)) { //若缓存中自适应扩展类不为空，且不允许覆盖时，则抛出异常，一个扩展类最多对应一个自适应扩展类
             throw new IllegalStateException("More than 1 adaptive class found: "
                     + cachedAdaptiveClass.getName()
                     + ", " + clazz.getName());
@@ -1105,7 +1105,7 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
      * <p>
      * like: ProtocolFilterWrapper, ProtocolListenerWrapper
      */
-    private void cacheWrapperClass(Class<?> clazz) { //缓存封装类
+    private void cacheWrapperClass(Class<?> clazz) { //缓存封装类型的扩展类
         if (cachedWrapperClasses == null) {
             cachedWrapperClasses = new ConcurrentHashSet<>();
         }
@@ -1127,15 +1127,24 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
         }
     }
 
+    /**
+     * 查找或构建缺失的扩展名
+     * 具体场景：通过SPI配置扩展信息时，未填写扩展名
+     * 对应逻辑：
+     * 1）判断扩展类型上是否带有注解@Extension，若有去注解中的value值（@Extension已被废弃，不推荐使用）
+     * 2）获取扩展类的简易名称，如org.apache.dubbo.common.extension.activate.impl.ActivateExt1Impl1的getSimpleName()为"ActivateExt1Impl1"
+     *    a）扩展类的简易名称以扩展接口的简易名称为后缀，如xxxActivateExt1，则把扩展接口的简易名称去掉，即取前半部分的子字符串，得到的扩展名为"xxx"
+     *    b）若不是a）中的形式，则直接将扩展名的简易名称直接小写作为扩展名，如ActivateExt1Impl1对应的扩展名为“activateext1impl1”
+     */
     @SuppressWarnings("deprecation")
     private String findAnnotationName(Class<?> clazz) {
         org.apache.dubbo.common.Extension extension = clazz.getAnnotation(org.apache.dubbo.common.Extension.class);
-        if (extension != null) { //若是使用@Extension注解的，则取注解上的值
+        if (extension != null) { //若是使用@Extension注解的，则取注解上的值作为扩展名
             return extension.value();
         }
 
         // 在配置文件中没有配置扩展名时，可将配置的类信息进行处理，获取扩展名。
-        String name = clazz.getSimpleName(); //@csy-012 当配置文件中没指定name，是怎么处理的，比如：ActivateExt1Impl1在配置文件中没有配置name，通过截取扩招类名来处理
+        String name = clazz.getSimpleName(); //@csy-012 当配置文件中没指定name，是怎么处理的，比如：ActivateExt1Impl1在配置文件中没有配置name，通过截取扩展类的类名来表示
         if (name.endsWith(type.getSimpleName())) { //若@SPI中没设置扩展名，对类名进行截取获取扩展名，@csy-009 待调试：已调试
             name = name.substring(0, name.length() - type.getSimpleName().length());
         }
