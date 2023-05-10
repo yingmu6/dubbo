@@ -277,7 +277,14 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
     }
 
     /**
-     * Get activate extensions.
+     * Get activate extensions.（获取自动激活的扩展类列表）
+     * 注明：自动激活的扩展分为两类
+     * a）系统激活的扩展类：带有@Activate注解，匹配注解中的group、value获取实例
+     * b）自定义激活的扩展类：由用户指定的扩展类，可以不带@Activate注解，不用比较group、value值
+     *
+     * 在指定扩展名时，如"aa,default,bb"，其中aa、bb是自定义扩展名，而default代表系统扩展类，可以是多个
+     * 并且指定的位置即为实际位置，不指定default时，自定义扩展名在default后，如"aa,bb"，
+     * 最终的扩展类为：default扩展类 -> aa扩展类 -> bb扩展类
      *
      * @param url    url
      * @param values extension point names 扩展名列表
@@ -285,22 +292,20 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
      * @return extension list which are activated （返回匹配的扩展类列表）
      * @see org.apache.dubbo.common.extension.Activate
      */
-
-    /**
-     * 获取满足匹配条件的Activate对应的扩展类列表  ，获取Activate扩展实例，待实践测试？解：已单元测试
-     */
     public List<T> getActivateExtension(URL url, String[] values, String group) { //获取自动激活的扩展列表（将URL中配置的参数与@Activate配置的内容进行比较）
         List<T> activateExtensions = new ArrayList<>();
         List<String> names = values == null ? new ArrayList<>(0) : asList(values); // 扩展名列表（values是从url中获取的指定key对应的参数值，并按分隔符分隔的值列表）
+
         /**
+         * 类型一：系统激活的扩展类
+         *
          * 在扩展名列表不包含-default时进行处理
          * @csy-007 此处-default是指什么？去除默认扩展吗？
          * 是的，"-"表式剔除的含义
-         *
          * 如果Filter中不带有"-default"字段，就会加载系统扩展Filter对象。（系统的Filter对象）
          */
-        if (!names.contains(REMOVE_VALUE_PREFIX + DEFAULT_KEY)) { // URL参数值列表不包含"-default"处理
-            getExtensionClasses(); // 此处没有用到方法的返回值，主要使用方法中的loadExtensionClasses()，值存入成员变量中了，若缓存中没有对应的值，则对应加载并设置到缓存中
+        if (!names.contains(REMOVE_VALUE_PREFIX + DEFAULT_KEY)) { // 系统激活的扩展类处理，即扩展名列表不包含"-default"
+            getExtensionClasses(); //加载扩展类。此处没有用到方法的返回值，主要使用方法中的loadExtensionClasses()，值存入成员变量中了，若缓存中没有对应的值，则对应加载并设置到缓存中
             for (Map.Entry<String, Object> entry : cachedActivates.entrySet()) { // 遍历从SPI配置文件中加载的@Activate标识的扩展类列表（需要扩展接口有包含@Active注解的实现类）
                 String name = entry.getKey(); //扩展名
                 Object activate = entry.getValue(); // @Active对象
@@ -320,14 +325,13 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
                 /**
                  * 自动激活条件匹配逻辑（先比较group、再比较value）
                  * 1）判断传入的group是否在注解中group的列表值中
-                 * 2）扩展名name没有加载过且不是"-"移除的扩展名
+                 * 2）扩展名name不在自定义的列表中（当前处理的扩展类是系统激活的扩展类）
                  * 3）将注解中声明的value值与url中参数值进行比较
-                 * 若都满足条件，则获取扩展名对应的实例，并加载到
-                 *    activateExtensions自动激活扩展的列表中
+                 * 若都满足条件，则获取扩展名对应的实例，并加载到自动激活扩展的列表中
                  */
                 if (isMatchGroup(group, activateGroup)
-                        && !names.contains(name) //todo @csy 为啥要有这个判断？
-                        && !names.contains(REMOVE_VALUE_PREFIX + name)
+                        && !names.contains(name) //为啥要有这个判断？解答：当前处理的是系统激活的扩展类，而names是自定义的扩展名列表，两者分开处理，所以要进行排除
+                        && !names.contains(REMOVE_VALUE_PREFIX + name) //对应场景：在设置扩展条件时，把系统激活的类去除，如"-order",即不加到扩展类列表中
                         && isActive(activateValue, url)) {
                     activateExtensions.add(getExtension(name)); // 若匹配，则获取扩展名name对应的实例并加载到列表中
                 }
@@ -335,18 +339,20 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
             activateExtensions.sort(ActivateComparator.COMPARATOR); //将可激活扩展类列表进行排序
         }
         List<T> loadedExtensions = new ArrayList<>();
+
         /**
+         * 类型二：自定义激活的扩展类
+         *
          * @csy-007 为啥提供者启动时，没有进入这个循环？消费端启动时，也没进入
          * 解：这里的@Activate注解不要求group设置为provider、consumer，所以提供端、消费端启动时没进入也是正常的
-         *
-         * 加载用户自定义扩展Filter对象（自定义的Filter对象）
+         * 加载用户自定义扩展Filter对象（自定义的Filter对象）-----因为这里是用户自定义的扩展类列表，用户指定才会进入
          */
         for (int i = 0; i < names.size(); i++) {
             String name = names.get(i);
             // 带有排除符号"-"的Filter不加载
             if (!name.startsWith(REMOVE_VALUE_PREFIX)
                     && !names.contains(REMOVE_VALUE_PREFIX + name)) { //@csy-007 此处逻辑会在什么场景下进入？解：处理不再cachedActivates缓存中的扩展，如ExtensionLoaderTest.testLoadDefaultActivateExtension
-                if (DEFAULT_KEY.equals(name)) { //扩展名为default时，加载
+                if (DEFAULT_KEY.equals(name)) { //若指定了"default"，则调整对应的顺序
                     if (!loadedExtensions.isEmpty()) {
                         activateExtensions.addAll(0, loadedExtensions); //@csy-0014 在指定位置加载列表，原来的值会被覆盖吗？不会覆盖，元素会向后移动
                         loadedExtensions.clear();

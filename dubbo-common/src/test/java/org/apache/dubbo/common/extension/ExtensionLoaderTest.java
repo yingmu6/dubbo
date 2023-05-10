@@ -488,12 +488,13 @@ public class ExtensionLoaderTest {
     @Test
     public void testLoadDefaultActivateExtension() throws Exception {
         // test default
-        URL url = URL.valueOf("test://localhost/test?ext=order1,default");
+        URL url = URL.valueOf("test://localhost/test?ext=order1,default,order2,-group");
         List<ActivateExt1> list = getExtensionLoader(ActivateExt1.class)
                 .getActivateExtension(url, "ext", "default_group");
-        Assertions.assertEquals(2, list.size());  //todo @pause
+        Assertions.assertEquals(3, list.size());
         Assertions.assertSame(list.get(0).getClass(), OrderActivateExtImpl1.class);
         Assertions.assertSame(list.get(1).getClass(), ActivateExt1Impl1.class);
+        Assertions.assertSame(list.get(2).getClass(), OrderActivateExtImpl2.class);
 
         url = URL.valueOf("test://localhost/test?ext=default,order1");
         list = getExtensionLoader(ActivateExt1.class)
@@ -501,6 +502,49 @@ public class ExtensionLoaderTest {
         Assertions.assertEquals(2, list.size());
         Assertions.assertSame(list.get(0).getClass(), ActivateExt1Impl1.class);
         Assertions.assertSame(list.get(1).getClass(), OrderActivateExtImpl1.class);
+    }
+
+    @Test
+    public void testActivateExtensionBySelf() throws Exception { //（self编写的用例）
+
+        /**
+         * 场景1：包含default的列表
+         * 此处输出为：order1 -> default -> order2 对应的扩展实例
+         */
+        URL url = URL.valueOf("test://localhost/test?ext=order1,default,order2");
+        List<ActivateExt1> list = getExtensionLoader(ActivateExt1.class)
+                .getActivateExtension(url, "ext", "default_group");
+        Assertions.assertEquals(3, list.size());
+
+        /**
+         * 场景2：没有指定扩展名"default"
+         * 此处输出为：default -> order1 -> order2 对应的扩展实例
+         */
+        URL url2 = URL.valueOf("test://localhost/test?ext=order1,order2");
+        List<ActivateExt1> list2 = getExtensionLoader(ActivateExt1.class)
+                .getActivateExtension(url2, "ext", "default_group");
+        Assertions.assertEquals(3, list2.size());
+
+        /**
+         * 场景3：指定的扩展名不存在
+         * order6是不存在的扩展，所以会抛出 "No such extension..."异常提醒
+         */
+        try {
+            URL url3 = URL.valueOf("test://localhost/test?ext=order1,order6");
+            getExtensionLoader(ActivateExt1.class)
+                    .getActivateExtension(url3, "ext", "default_group");
+            fail();
+        } catch (IllegalStateException expected) {
+            assertThat(expected.getMessage(), containsString("No such extension org.apache.dubbo.common.extension.activate.ActivateExt1 by name order6"));
+        }
+
+        /**
+         * 场景4：指定自定义的自动激活的扩展名（带不带@Activate注解都可以，只要是对应扩展接口的实现类即可）
+         */
+        URL url4 = URL.valueOf("test://localhost/test?ext=orderSelf1,orderSelf2");
+        List<ActivateExt1> list4 = getExtensionLoader(ActivateExt1.class)
+                .getActivateExtension(url4, "ext", "default_group");
+        Assertions.assertEquals(3, list2.size());
     }
 
     @Test
