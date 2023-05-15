@@ -91,9 +91,9 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
 
     private final ExtensionFactory objectFactory; //扩展实例的创建工厂（ExtensionFactory也是SPI接口，1）此处的实例为AdaptiveExtensionFactory@xxx，会用存储的多个扩展工厂查找扩展实例，2）当type=ExtensionFactory.class时，objectFactory=null）
 
-    private final ConcurrentMap<Class<?>, String> cachedNames = new ConcurrentHashMap<>(); //扩展实例类Class与扩展名的映射（去除自适应扩展和自动激活扩展）
+    private final ConcurrentMap<Class<?>, String> cachedNames = new ConcurrentHashMap<>(); //扩展实例类Class与扩展名的映射（该缓存中：多个扩展类可以对应同一个扩展名）
 
-    private final Holder<Map<String, Class<?>>> cachedClasses = new Holder<>(); //当前扩展接口中的扩展名与扩展类Class的映射（去除自适应扩展和自动激活扩展）
+    private final Holder<Map<String, Class<?>>> cachedClasses = new Holder<>(); //当前扩展接口中的扩展名与扩展类Class的映射（该缓存中，一个扩展名对应一个扩展类，根据加载策略中的overridden值判断是做覆盖还是抛出异常）
 
     private final Map<String, Object> cachedActivates = new ConcurrentHashMap<>(); //扩展名与@Active注解对象的映射，@csy-007 此处的Object是具体的实例吗？是怎么设置的？解：不是扩展实例，是@Active对象，在cacheActivateClass方法中设置的
     private final ConcurrentMap<String, Holder<Object>> cachedInstances = new ConcurrentHashMap<>(); //扩展名与扩展实例的映射
@@ -386,7 +386,7 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
         if (keys.length == 0) { //若@Activate注解上没设置value，直接匹配成功
             return true;
         }
-        for (String key : keys) { //遍历注解上的所有key
+        for (String key : keys) { //遍历注解上的所有key（只要有一个key匹配成功，即对应返回）
             // @Active(value="key1:value1, key2:value2")    2.5.6版本时没有key1:value1这种形式，直接用key来比较的
             String keyValue = null;
             if (key.contains(":")) { //分隔key中设置的值
@@ -406,7 +406,7 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
                  */
                 if ((k.equals(key) || k.endsWith("." + key))
                         && ((keyValue != null && keyValue.equals(v)) || (keyValue == null && ConfigUtils.isNotEmpty(v)))) { // keyValue==null， 兼容2.7.x之前的版本，之前的value为key1,key2形式，目前配置的形式为key1:value1,key2:value2
-                    return true;
+                    return true; //只要有一个键值对满足匹配，即认为是匹配成功
                 } // &&的优先级高于|| ，如System.out.println(false && true || true);
             }
         }
@@ -511,7 +511,7 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
      * @param name the name of extension
      * @return non-null
      */
-    public T getOrDefaultExtension(String name) {
+    public T getOrDefaultExtension(String name) { //获取指定扩展或默认扩展（SPI配置文件未配置指定扩展时，取默认扩展）
         return containsExtension(name) ? getExtension(name) : getDefaultExtension();
     }
 
@@ -779,7 +779,7 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
                 if (method.getAnnotation(DisableInject.class) != null) { //若方法上声明@DisableInject，则不进行注入处理
                     continue;
                 }
-                Class<?> pt = method.getParameterTypes()[0];
+                Class<?> pt = method.getParameterTypes()[0]; //取出set方法中的参数Class
                 /**
                  * @csy-009 参数类型只要不是基本类型就可以注入吗？非SPI类型的实例可以吗？
                  * 解：非SPI类型也不可以，使用ExtensionFactory工厂创建扩展对象时，明确指出是SPI接口
@@ -790,7 +790,7 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
 
                 try {
                     String property = getSetterProperty(method); //获取属性名（通过解析方法名称）
-                    Object object = objectFactory.getExtension(pt, property);//@csy-009 此处是怎么获取对象的？解：通过扩展工厂获取扩展对象
+                    Object object = objectFactory.getExtension(pt, property);//@csy-009 此处是怎么获取对象的？解：此处的objectFactory类型为自适应扩展工厂AdaptiveExtensionFactory，通过遍历其中维护的扩展工厂来获取扩展对象
                     if (object != null) { //获取到的扩展实例不为空时，则为对象属性设置值，如Ext6扩展接口的实现类Ext6Impl1
                         method.invoke(instance, object); //使用反射机制调用Set方法，进入扩展对象的依赖注入
                     }
@@ -1041,11 +1041,11 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
                 }
             }
 
-            String[] names = NAME_SEPARATOR.split(name);
+            String[] names = NAME_SEPARATOR.split(name); //多个扩展名可以对应一个扩展类，如xxx.Ext10MultiNames配置的内容，如impl,implMultiName=xxx.Ext10MultiNamesImpl
             if (ArrayUtils.isNotEmpty(names)) {
-                cacheActivateClass(clazz, names[0]); //缓存扩展名与@Activate对象的映射（即将扩展名关联的@Activate对象缓存起来）
+                cacheActivateClass(clazz, names[0]); //缓存扩展名与@Activate对象的映射。有多个扩展名时，取第一个扩展名作为自动激活缓存的key
                 for (String n : names) {
-                    cacheName(clazz, n); //缓存扩展类Class与扩展名的映射
+                    cacheName(clazz, n); //缓存扩展类Class与扩展名的映射（允许多个扩展类Class对应同一个扩展名）
                     saveInExtensionClass(extensionClasses, clazz, n, overridden); //缓存扩展名与扩展类Class的映射
                 }
             }
@@ -1066,9 +1066,9 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
      */
     private void saveInExtensionClass(Map<String, Class<?>> extensionClasses, Class<?> clazz, String name, boolean overridden) {
         Class<?> c = extensionClasses.get(name);
-        if (c == null || overridden) {
+        if (c == null || overridden) { //overridden来自于LoadingStrategy具体扩展实例overridden()方法返回值
             extensionClasses.put(name, clazz);
-        } else if (c != clazz) { //一个扩展名只能对应一个扩展类
+        } else if (c != clazz) { //不允许覆盖时，出现相同的扩展名则抛出异常
             String duplicateMsg = "Duplicate extension " + type.getName() + " name " + name + " on " + c.getName() + " and " + clazz.getName();
             logger.error(duplicateMsg);
             throw new IllegalStateException(duplicateMsg);
@@ -1180,7 +1180,7 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
      * 2）找到适合的编译器对代码字符串进行编译，生成对应的Class
      */
     private Class<?> createAdaptiveExtensionClass() {
-        String code = new AdaptiveClassCodeGenerator(type, cachedDefaultName).generate();
+        String code = new AdaptiveClassCodeGenerator(type, cachedDefaultName).generate(); //调试时，可以将产生的自适应代码打印出来
         ClassLoader classLoader = findClassLoader();
         org.apache.dubbo.common.compiler.Compiler compiler = ExtensionLoader.getExtensionLoader(org.apache.dubbo.common.compiler.Compiler.class).getAdaptiveExtension();
         return compiler.compile(code, classLoader);

@@ -22,6 +22,7 @@ import org.apache.dubbo.common.convert.StringToBooleanConverter;
 import org.apache.dubbo.common.convert.StringToDoubleConverter;
 import org.apache.dubbo.common.convert.StringToIntegerConverter;
 import org.apache.dubbo.common.extension.activate.ActivateExt1;
+import org.apache.dubbo.common.extension.activate.ActivateSelfExt;
 import org.apache.dubbo.common.extension.activate.impl.ActivateExt1Impl1;
 import org.apache.dubbo.common.extension.activate.impl.GroupActivateExtImpl;
 import org.apache.dubbo.common.extension.activate.impl.OldActivateExt1Impl2;
@@ -486,7 +487,7 @@ public class ExtensionLoaderTest {
     }
 
     @Test
-    public void testLoadDefaultActivateExtension() throws Exception {
+    public void testLoadDefaultActivateExtension() throws Exception { //已测（"default"对应系统激活的扩展）
         // test default
         URL url = URL.valueOf("test://localhost/test?ext=order1,default,order2,-group");
         List<ActivateExt1> list = getExtensionLoader(ActivateExt1.class)
@@ -496,7 +497,7 @@ public class ExtensionLoaderTest {
         Assertions.assertSame(list.get(1).getClass(), ActivateExt1Impl1.class);
         Assertions.assertSame(list.get(2).getClass(), OrderActivateExtImpl2.class);
 
-        url = URL.valueOf("test://localhost/test?ext=default,order1");
+        url = URL.valueOf("test://localhost/test?ext=default,order1"); //"default"表明系统激活的扩展
         list = getExtensionLoader(ActivateExt1.class)
                 .getActivateExtension(url, "ext", "default_group");
         Assertions.assertEquals(2, list.size());
@@ -505,13 +506,13 @@ public class ExtensionLoaderTest {
     }
 
     @Test
-    public void testActivateExtensionBySelf() throws Exception { //（self编写的用例）
+    public void testActivateExtensionBySelf() throws Exception { //已测（self编写的用例）
 
         /**
          * 场景1：包含default的列表
          * 此处输出为：order1 -> default -> order2 对应的扩展实例
          */
-        URL url = URL.valueOf("test://localhost/test?ext=order1,default,order2");
+        URL url = URL.valueOf("test://localhost/test?ext=order1,default,order2,-orderSelf2");
         List<ActivateExt1> list = getExtensionLoader(ActivateExt1.class)
                 .getActivateExtension(url, "ext", "default_group");
         Assertions.assertEquals(3, list.size());
@@ -520,7 +521,7 @@ public class ExtensionLoaderTest {
          * 场景2：没有指定扩展名"default"
          * 此处输出为：default -> order1 -> order2 对应的扩展实例
          */
-        URL url2 = URL.valueOf("test://localhost/test?ext=order1,order2");
+        URL url2 = URL.valueOf("test://localhost/test?ext=order1,order2,-orderSelf2");
         List<ActivateExt1> list2 = getExtensionLoader(ActivateExt1.class)
                 .getActivateExtension(url2, "ext", "default_group");
         Assertions.assertEquals(3, list2.size());
@@ -544,33 +545,76 @@ public class ExtensionLoaderTest {
         URL url4 = URL.valueOf("test://localhost/test?ext=orderSelf1,orderSelf2");
         List<ActivateExt1> list4 = getExtensionLoader(ActivateExt1.class)
                 .getActivateExtension(url4, "ext", "default_group");
-        Assertions.assertEquals(3, list2.size());
+        Assertions.assertEquals(3, list4.size());
+
+        /**
+         * 场景5：加载系统自动激活的扩展类（orderSelf2对应的扩展类带有符合条件@Activate注解，由系统自动激活）
+         * 注明：此处把orderSelf2作为系统扩展类，即default对应的扩展类列表就会增加了，其它相关地方会受到影响，所以为了消除影响，可以使用"-orderSelf2"去除，如url1中
+         */
+        URL url5 = URL.valueOf("test://localhost/test?ext=orderSelf1");
+        List<ActivateExt1> list5 = getExtensionLoader(ActivateExt1.class)
+                .getActivateExtension(url5, "ext", "default_group");
+        Assertions.assertEquals(3, list5.size());
     }
 
     @Test
-    public void testInjectExtension() {
+    public void testActivateExtensionBySelf_V2() { //已测（测试@Activate的value的两种形式比较，即value={key1,key2}和value={key1:value1,key2:value2}）
+
+        /**
+         * 场景1：@Activate注解中value的格式为普通字符串，如@Activate(value={"xxx"})
+         */
+        ExtensionLoader<ActivateSelfExt> extensionLoader = ExtensionLoader.getExtensionLoader(ActivateSelfExt.class);
+
+        URL url = URL.valueOf("dubbo://localhost/org.apache.dubbo.common.extension.activate.ActivateExt1?selfExt=selfImpl1&sysExt=sysImpl");
+        List<ActivateSelfExt> list = extensionLoader.getActivateExtension(url, "selfExt", "self_group");
+
+        /**
+         * 两个扩展实例来源：
+         * 1）入参指定的value列表，即key=selfExt指定值为自定义扩展名，直接加载对应的扩展实例（即使没有带上@Activate）
+         * 2）不在入参指定的value列表，即系统加载的自动激活实例，会根据@Activate中的group和value进行匹配，
+         *    此处的value为字符串形式，所以看做为url的参数key值，只要在url中的参数键值对的key中出现，就能被激活
+         */
+        assertEquals(2, list.size());
+
+        /**
+         * 场景2：@Activate注解中value的格式为键值对格式，如@Activate(value={"key1:value1","key2:value2"})
+         */
+        URL ur2 = URL.valueOf("dubbo://localhost/org.apache.dubbo.common.extension.activate.ActivateExt1?selfExt=selfImpl1&sysKeyExt=sysVal");
+        List<ActivateSelfExt> list2 = extensionLoader.getActivateExtension(ur2, "selfExt", "self_group");
+
+        /**
+         * 两个扩展实例来源：
+         * 1）入参指定的value列表，即key=selfExt指定值为自定义扩展名，直接加载对应的扩展实例（即使没有带上@Activate）
+         * 2）不在入参指定的value列表，即系统加载的自动激活实例，会根据@Activate中的group和value进行匹配，
+         *    此处的value为key:value形式，所以key、value要同时匹配url中的某个参数键值对，才能被激活
+         */
+        assertEquals(2, list2.size());
+    }
+
+    @Test
+    public void testInjectExtension() { //已测（依赖注入功能）
         // test default
         InjectExt injectExt = getExtensionLoader(InjectExt.class).getExtension("injection");
         InjectExtImpl injectExtImpl = (InjectExtImpl) injectExt;
-        Assertions.assertNotNull(injectExtImpl.getSimpleExt());
-        Assertions.assertNull(injectExtImpl.getSimpleExt1());
-        Assertions.assertNull(injectExtImpl.getGenericType());
+        Assertions.assertNotNull(injectExtImpl.getSimpleExt()); //对应的成员变量，是SPI扩展接口，会进行依赖注入
+        Assertions.assertNull(injectExtImpl.getSimpleExt1()); //对应的成员变量，是SPI扩展接口，但使用了@Disable注解，所以不会进行依赖注入
+        Assertions.assertNull(injectExtImpl.getGenericType()); //成员变量为普通类型，不会进行依赖注入
     }
 
     @Test
-    void testMultiNames() {
+    void testMultiNames() { //已测（SPI配置文件中，可以多个扩展名对应一个扩展类）
         Ext10MultiNames ext10MultiNames = getExtensionLoader(Ext10MultiNames.class).getExtension("impl");
         Assertions.assertNotNull(ext10MultiNames);
         ext10MultiNames = getExtensionLoader(Ext10MultiNames.class).getExtension("implMultiName");
-        Assertions.assertNotNull(ext10MultiNames);
+        Assertions.assertNotNull(ext10MultiNames); //在Ext10MultiNames对应的配置文件中，impl、implMultiName两个扩展名，对应同一个扩展类
         Assertions.assertThrows(
                 IllegalStateException.class,
-                () -> getExtensionLoader(Ext10MultiNames.class).getExtension("impl,implMultiName")
+                () -> getExtensionLoader(Ext10MultiNames.class).getExtension("impl,implMultiName") //getExtension(name)方法，会把输入的字符串传整体作为扩展名查找，不会用分隔符分隔
         );
     }
 
     @Test
-    public void testGetOrDefaultExtension() {
+    public void testGetOrDefaultExtension() { //已测（获取指定扩展或默认扩展）
         ExtensionLoader<InjectExt> loader = getExtensionLoader(InjectExt.class);
         InjectExt injectExt = loader.getOrDefaultExtension("non-exists");
         assertEquals(InjectExtImpl.class, injectExt.getClass());
@@ -578,7 +622,7 @@ public class ExtensionLoaderTest {
     }
 
     @Test
-    public void testGetSupported() {
+    public void testGetSupported() { //已测（获取支持的扩展名集合）
         ExtensionLoader<InjectExt> loader = getExtensionLoader(InjectExt.class);
         assertEquals(1, loader.getSupportedExtensions().size());
         assertEquals(Collections.singleton("injection"), loader.getSupportedExtensions());
@@ -588,11 +632,11 @@ public class ExtensionLoaderTest {
      * @since 2.7.7
      */
     @Test
-    public void testOverridden() {
+    public void testOverridden() { //已测（测试扩展名与扩展类关联的两个缓存处理，即ExtensionLoader#cachedNames，ExtensionLoader#cachedClasses缓存）
         ExtensionLoader<Converter> loader = getExtensionLoader(Converter.class);
 
-        Converter converter = loader.getExtension("string-to-boolean");
-        assertEquals(String2BooleanConverter.class, converter.getClass());
+        Converter converter = loader.getExtension("string-to-boolean"); //配置文件存在相同扩展名时，根据LoadingStrategy配置的overridden来判断是覆盖扩展名对应的扩展类，或者抛出异常
+        assertEquals(String2BooleanConverter.class, converter.getClass()); //ExtensionLoader#cachedClasses缓存中：相同扩展名时，会根据overridden进行覆盖或抛异常
 
         converter = loader.getExtension("string-to-double");
         assertEquals(String2DoubleConverter.class, converter.getClass());
@@ -600,7 +644,7 @@ public class ExtensionLoaderTest {
         converter = loader.getExtension("string-to-integer");
         assertEquals(String2IntegerConverter.class, converter.getClass());
 
-        assertEquals("string-to-boolean", loader.getExtensionName(String2BooleanConverter.class));
+        assertEquals("string-to-boolean", loader.getExtensionName(String2BooleanConverter.class)); //ExtensionLoader#cachedNames缓存中：多个扩展类可以对应同一个扩展名，不会被覆盖
         assertEquals("string-to-boolean", loader.getExtensionName(StringToBooleanConverter.class));
 
         assertEquals("string-to-double", loader.getExtensionName(String2DoubleConverter.class));
@@ -614,8 +658,8 @@ public class ExtensionLoaderTest {
      * @since 2.7.7
      */
     @Test
-    public void testGetLoadingStrategies() {
-        List<LoadingStrategy> strategies = getLoadingStrategies();
+    public void testGetLoadingStrategies() { //已测（获取SPI的加载策略）
+        List<LoadingStrategy> strategies = getLoadingStrategies(); //模块下src的resources与test的resources都能加载（使用java SPI加载）
 
         assertEquals(4, strategies.size());
 
