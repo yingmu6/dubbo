@@ -872,7 +872,7 @@ public final class StringUtils {
         return buf.toString();
     }
 
-    public static String camelToSplitName(String camelName, String split) { //驼峰的名称，使用分隔符分隔，如：abCdEf使用分隔符"-"，分隔后为：ab-cd-ef
+    public static String camelToSplitName(String camelName, String split) { //将驼峰的字符串转换为带有分隔符的字符串（使用分隔符分隔，如：abCdEf使用分隔符"-"，分隔后为：ab-cd-ef）
         if (isEmpty(camelName)) {
             return camelName;
         }

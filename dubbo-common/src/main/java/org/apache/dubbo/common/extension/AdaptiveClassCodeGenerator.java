@@ -38,7 +38,7 @@ public class AdaptiveClassCodeGenerator { //自适应扩展类代码产生器
 
     private static final String CLASSNAME_INVOCATION = "org.apache.dubbo.rpc.Invocation";
 
-    private static final String CODE_PACKAGE = "package %s;\n";
+    private static final String CODE_PACKAGE = "package %s;\n"; //使用字符串的占位符，来替换具体的值
 
     private static final String CODE_IMPORTS = "import %s;\n";
 
@@ -215,7 +215,7 @@ public class AdaptiveClassCodeGenerator { //自适应扩展类代码产生器
             // found parameter in URL type
             if (urlTypeIndex != -1) {
                 // Null Point check
-                code.append(generateUrlNullCheck(urlTypeIndex)); //产生URL非空产生URL非空检查的语句检查的语句
+                code.append(generateUrlNullCheck(urlTypeIndex)); //产生URL非空检查的语句
             } else {
                 // did not find parameter in URL type
                 //@csy-011 未找到url参数时的处理逻辑是怎样的？遍历参数Class列表，然后依次查看参数Class对应的方法，判断是否有返回值为URL的get方法，若有则进行相关处理
@@ -228,7 +228,7 @@ public class AdaptiveClassCodeGenerator { //自适应扩展类代码产生器
 
             code.append(generateInvocationArgumentNullCheck(method)); //产生Invocation类型参数的非空检查的语句
 
-            code.append(generateExtNameAssignment(value, hasInvocation)); //产生获取扩展名的语句
+            code.append(generateExtNameAssignment(value, hasInvocation)); //产生获取扩展名的语句（**重点逻辑**）
             // check extName == null?
             code.append(generateExtNameNullCheck(value)); //产生扩展名非空检查的语句
 
@@ -339,7 +339,7 @@ public class AdaptiveClassCodeGenerator { //自适应扩展类代码产生器
     private String[] getMethodAdaptiveValue(Adaptive adaptiveAnnotation) {
         String[] value = adaptiveAnnotation.value();
         // value is not set, use the value generated from class name as the key
-        if (value.length == 0) { //若自适应@Adaptive注解上没有声明值，则取SPI接口名处理生成自适应扩展名
+        if (value.length == 0) { //若自适应@Adaptive注解上没有声明value值，则取SPI接口名来生成，如SPI接口为HasAdaptiveExt，里面的@Adaptive没有设置值，经过处理后，对应的value值为has.adaptive.ext
             String splitName = StringUtils.camelToSplitName(type.getSimpleName(), "."); //如interface org.apache.dubbo.common.extension.ext8_add.AddExt1转换后的value为add.ext1
             value = new String[]{splitName};
         }
