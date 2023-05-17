@@ -30,14 +30,14 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * A {@link Timer} optimized（优化） for approximated（近似） I/O timeout scheduling.
  *
- * <h3>Tick Duration</h3>
+ * <h3>Tick Duration（持续时间）</h3>
  * <p>
- * As described with 'approximated', this timer does not execute the scheduled
+ * As described with 'approximated'（接近的）, this timer does not execute the scheduled
  * {@link TimerTask} on time.  {@link HashedWheelTimer}, on every tick, will
- * check if there are any {@link TimerTask}s behind the schedule and execute
+ * check if there are any {@link TimerTask}s behind（在...后面） the schedule and execute
  * them.
  * <p>
- * You can increase or decrease the accuracy of the execution timing by
+ * You can increase or decrease the accuracy（准确、精准） of the execution timing by
  * specifying smaller or larger tick duration in the constructor.  In most
  * network applications, I/O timeout does not need to be accurate.  Therefore,
  * the default tick duration is 100 milliseconds and you will not need to try
@@ -68,7 +68,23 @@ import java.util.concurrent.atomic.AtomicLong;
  * timer facility'</a>.  More comprehensive slides are located
  * <a href="http://www.cse.wustl.edu/~cdgill/courses/cs6874/TimingWheels.ppt">here</a>.
  */
-public class HashedWheelTimer implements Timer {
+public class HashedWheelTimer implements Timer { //基于时间轮的算法，来管理批量定时任务
+    /**
+     * 起因：
+     * 由于netty动辄管理100w+的连接，每一个连接都会有很多超时任务。比如发送超时、心跳检测间隔等，如果每一个定时任务都启动一个Timer,不仅低效，而且会消耗大量的资源。 后来被广泛应用于dubbo，以及Kafka等其他系统性演示任务。
+     *
+     * 为什么采用时间轮算法来处理调度：
+     * 大量的调度任务如果每一个都使用自己的调度器来管理任务的生命周期的话，浪费cpu的资源并且很低效。
+     *
+     * 时间轮：是一种高效来利用线程资源来进行批量化调度的一种调度模型。把大批量的调度任务全部都绑定到同一个的调度器上面，使用这一个调度器来进行所有任务的管理（manager），触发（trigger）以及运行（runnable）。能够高效的管理各种延时任务，周期任务，通知任务等等。
+     * 缺点：时间轮调度器的时间精度可能不是很高，对于精度要求特别高的调度任务可能不太适合。因为时间轮算法的精度取决于，时间段“指针”单元的最小粒度大小，比如时间轮的格子是一秒跳一次，那么调度精度小于一秒的任务就无法被时间轮所调度。而且时间轮算法没有做宕机备份，因此无法再宕机之后恢复任务重新调度。
+     *
+     * 原理：
+     * 时间轮其实就是一种环形的数据结构，可以想象成时钟，分成很多格子，一个格子代码一段时间（这个时间越短，Timer的精度越高）。并用一个链表报错在该格子上的到期任务，同时一个指针随着时间一格一格转动，并执行相应格子中的到期任务。任务通过取摸决定放入那个格子
+     *
+     * 参考：https://zhuanlan.zhihu.com/p/65835110
+     * https://www.javadoop.com/post/HashedWheelTimer
+     */
 
     /**
      * may be in spi?
@@ -239,7 +255,7 @@ public class HashedWheelTimer implements Timer {
                     "tickDuration: %d (expected: 0 < tickDuration in nanos < %d",
                     tickDuration, Long.MAX_VALUE / wheel.length));
         }
-        workerThread = threadFactory.newThread(worker);
+        workerThread = threadFactory.newThread(worker); //使用线程池工厂创建线程
 
         this.maxPendingTimeouts = maxPendingTimeouts;
 
@@ -250,7 +266,7 @@ public class HashedWheelTimer implements Timer {
     }
 
     @Override
-    protected void finalize() throws Throwable {
+    protected void finalize() throws Throwable { //重写了Object的finalize方法（finalize：完成）
         try {
             super.finalize();
         } finally {
@@ -313,7 +329,7 @@ public class HashedWheelTimer implements Timer {
                 throw new Error("Invalid WorkerState");
         }
 
-        // Wait until the startTime is initialized by the worker.
+        // Wait until the startTime is initialized by the worker. （等待直到startTime被worker初始化）
         while (startTime == 0) {
             try {
                 startTimeInitialized.await();
@@ -388,7 +404,7 @@ public class HashedWheelTimer implements Timer {
 
         // Add the timeout to the timeout queue which will be processed on the next tick.
         // During processing all the queued HashedWheelTimeouts will be added to the correct HashedWheelBucket.
-        long deadline = System.nanoTime() + unit.toNanos(delay) - startTime;
+        long deadline = System.nanoTime() + unit.toNanos(delay) - startTime; //计算终止时间
 
         // Guard against overflow.
         if (delay > 0 && deadline < 0) {
@@ -430,7 +446,7 @@ public class HashedWheelTimer implements Timer {
             // Notify the other threads waiting for the initialization at start().
             startTimeInitialized.countDown();
 
-            do {
+            do { //无线循环来检测时间是否已经超时
                 final long deadline = waitForNextTick();
                 if (deadline > 0) {
                     int idx = (int) (tick & mask);
@@ -542,7 +558,7 @@ public class HashedWheelTimer implements Timer {
         }
     }
 
-    private static final class HashedWheelTimeout implements Timeout { //基础Hash轮子实现的定时器
+    private static final class HashedWheelTimeout implements Timeout { //基础时间轮子实现的定时器
 
         private static final int ST_INIT = 0;
         private static final int ST_CANCELLED = 1;
@@ -677,7 +693,7 @@ public class HashedWheelTimer implements Timer {
     }
 
     /**
-     * Bucket that stores HashedWheelTimeouts. These are stored in a linked-list like datastructure to allow easy
+     * Bucket that stores HashedWheelTimeouts（用于存储HashedWheelTimeout的桶）. These are stored in a linked-list（链表）like datastructure to allow easy（使用链表的数据结构，能够方便的从中间移除HashedWheelTimeout）
      * removal of HashedWheelTimeouts in the middle. Also the HashedWheelTimeout act as nodes themself and so no
      * extra object creation is needed.
      */
@@ -731,7 +747,7 @@ public class HashedWheelTimer implements Timer {
             }
         }
 
-        public HashedWheelTimeout remove(HashedWheelTimeout timeout) {
+        public HashedWheelTimeout remove(HashedWheelTimeout timeout) { //移除链表中的元素
             HashedWheelTimeout next = timeout.next;
             // remove timeout that was either processed or cancelled by updating the linked-list
             if (timeout.prev != null) {

@@ -48,23 +48,23 @@ public class DefaultFuture extends CompletableFuture<Object> {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultFuture.class);
 
-    private static final Map<Long, Channel> CHANNELS = new ConcurrentHashMap<>();
+    private static final Map<Long, Channel> CHANNELS = new ConcurrentHashMap<>(); //请求id与请求通道Channel实例的缓存映射
 
-    private static final Map<Long, DefaultFuture> FUTURES = new ConcurrentHashMap<>(); //请求id与DefaultFuture实例的缓存映射
+    private static final Map<Long, DefaultFuture> FUTURES = new ConcurrentHashMap<>(); //请求id与DefaultFuture实例的缓存映射（用来将请求与响应关联起来）
 
-    public static final Timer TIME_OUT_TIMER = new HashedWheelTimer( //定时器
+    public static final Timer TIME_OUT_TIMER = new HashedWheelTimer(      //设置定时器（使用HashedWheelTimer管理定时器）
             new NamedThreadFactory("dubbo-future-timeout", true),
             30,
-            TimeUnit.MILLISECONDS);
+            TimeUnit.MILLISECONDS); //可以指定Future的超时时间
 
     // invoke id.
     private final Long id;
-    private final Channel channel;
-    private final Request request;
+    private final Channel channel; //通道对象
+    private final Request request; //请求对象
     private final int timeout;
     private final long start = System.currentTimeMillis();
-    private volatile long sent;
-    private Timeout timeoutCheckTask;
+    private volatile long sent; //发送时对应的时间戳
+    private Timeout timeoutCheckTask; //超时检测任务
 
     private ExecutorService executor;
 
@@ -76,21 +76,21 @@ public class DefaultFuture extends CompletableFuture<Object> {
         this.executor = executor;
     }
 
-    private DefaultFuture(Channel channel, Request request, int timeout) {
+    private DefaultFuture(Channel channel, Request request, int timeout) { //构造函数是私有的，外部不能直接调用创建对象，内部可以调用private方法
         this.channel = channel;
         this.request = request;
         this.id = request.getId();
-        this.timeout = timeout > 0 ? timeout : channel.getUrl().getPositiveParameter(TIMEOUT_KEY, DEFAULT_TIMEOUT);
+        this.timeout = timeout > 0 ? timeout : channel.getUrl().getPositiveParameter(TIMEOUT_KEY, DEFAULT_TIMEOUT); //若指定了超时时间，则使用指定的值，否则取通道url中设置的值
         // put into waiting map.
-        FUTURES.put(id, this); //请求id与DefaultFuture映射起来
-        CHANNELS.put(id, channel);
+        FUTURES.put(id, this); //每创建一个新的DefaultFuture对象，就将请求id与DefaultFuture缓存起来
+        CHANNELS.put(id, channel); //将请求id与指定的Channel信息进行缓存
     }
 
     /**
      * check time out of the future
      */
     private static void timeoutCheck(DefaultFuture future) {
-        TimeoutCheckTask task = new TimeoutCheckTask(future.getId());
+        TimeoutCheckTask task = new TimeoutCheckTask(future.getId()); //创建超时检测任务
         future.timeoutCheckTask = TIME_OUT_TIMER.newTimeout(task, future.getTimeout(), TimeUnit.MILLISECONDS);
     }
 
@@ -104,19 +104,19 @@ public class DefaultFuture extends CompletableFuture<Object> {
      * @param timeout timeout
      * @return a new DefaultFuture
      */
-    public static DefaultFuture newFuture(Channel channel, Request request, int timeout, ExecutorService executor) {
+    public static DefaultFuture newFuture(Channel channel, Request request, int timeout, ExecutorService executor) { //使用静态方法创建DefaultFuture（一个类，就一个对象）
         final DefaultFuture future = new DefaultFuture(channel, request, timeout);
         future.setExecutor(executor);
-        // ThreadlessExecutor needs to hold the waiting future in case of circuit return.
+        // threadlessexecutor needs to hold the waiting future in case of circuit return. （circuit：循环地）
         if (executor instanceof ThreadlessExecutor) {
-            ((ThreadlessExecutor) executor).setWaitingFuture(future);
+            ((ThreadlessExecutor) executor).setWaitingFuture(future); //设置等待的DefaultFuture，避免循环地返回
         }
         // timeout check
-        timeoutCheck(future);
+        timeoutCheck(future); //启动定时检查任务
         return future;
     }
 
-    public static DefaultFuture getFuture(long id) {
+    public static DefaultFuture getFuture(long id) { //从缓存中获取请求id对应的DefaultFuture
         return FUTURES.get(id);
     }
 
@@ -124,7 +124,7 @@ public class DefaultFuture extends CompletableFuture<Object> {
         return CHANNELS.containsValue(channel);
     }
 
-    public static void sent(Channel channel, Request request) {
+    public static void sent(Channel channel, Request request) { //发送请求信息
         DefaultFuture future = FUTURES.get(request.getId());
         if (future != null) {
             future.doSent();
@@ -137,7 +137,7 @@ public class DefaultFuture extends CompletableFuture<Object> {
      *
      * @param channel channel to close
      */
-    public static void closeChannel(Channel channel) {
+    public static void closeChannel(Channel channel) { //关闭通道
         for (Map.Entry<Long, Channel> entry : CHANNELS.entrySet()) {
             if (channel.equals(entry.getValue())) {
                 DefaultFuture future = getFuture(entry.getKey());
@@ -165,10 +165,10 @@ public class DefaultFuture extends CompletableFuture<Object> {
 
     public static void received(Channel channel, Response response, boolean timeout) {
         try {
-            DefaultFuture future = FUTURES.remove(response.getId());
+            DefaultFuture future = FUTURES.remove(response.getId()); //Future处理后要对应移除掉（Map的remove方法，能移除元素，并且返回之前值）
             if (future != null) {
                 Timeout t = future.timeoutCheckTask;
-                if (!timeout) {
+                if (!timeout) { //若任务没有超时，则尝试取消任务
                     // decrease Time
                     t.cancel();
                 }
@@ -181,35 +181,35 @@ public class DefaultFuture extends CompletableFuture<Object> {
                         + " -> " + channel.getRemoteAddress()) + ", please check provider side for detailed result.");
             }
         } finally {
-            CHANNELS.remove(response.getId());
+            CHANNELS.remove(response.getId()); //处理后，移除对应请求id对应的通道Channel
         }
     }
 
     @Override
-    public boolean cancel(boolean mayInterruptIfRunning) {
+    public boolean cancel(boolean mayInterruptIfRunning) { //重写了CompletableFuture的cancel()方法
         Response errorResult = new Response(id);
         errorResult.setStatus(Response.CLIENT_ERROR);
         errorResult.setErrorMessage("request future has been canceled.");
         this.doReceived(errorResult);
-        FUTURES.remove(id);
+        FUTURES.remove(id); //取消任务时，移除对应的缓存
         CHANNELS.remove(id);
-        return true;
+        return true; //处理过程中不抛出异常，能正常使用，即可正常取消
     }
 
     public void cancel() {
         this.cancel(true);
     }
 
-    private void doReceived(Response res) {
+    private void doReceived(Response res) { //接收响应的信息，并做处理
         if (res == null) {
             throw new IllegalStateException("response cannot be null");
         }
-        if (res.getStatus() == Response.OK) {
+        if (res.getStatus() == Response.OK) { //正常的响应
             this.complete(res.getResult());
-        } else if (res.getStatus() == Response.CLIENT_TIMEOUT || res.getStatus() == Response.SERVER_TIMEOUT) {
+        } else if (res.getStatus() == Response.CLIENT_TIMEOUT || res.getStatus() == Response.SERVER_TIMEOUT) { //带有超时异常的响应
             this.completeExceptionally(new TimeoutException(res.getStatus() == Response.SERVER_TIMEOUT, channel, res.getErrorMessage()));
         } else {
-            this.completeExceptionally(new RemotingException(channel, res.getErrorMessage()));
+            this.completeExceptionally(new RemotingException(channel, res.getErrorMessage())); //其它情况的响应，统一为：RemotingException
         }
 
         // the result is returning, but the caller thread may still waiting
@@ -218,7 +218,7 @@ public class DefaultFuture extends CompletableFuture<Object> {
             ThreadlessExecutor threadlessExecutor = (ThreadlessExecutor) executor;
             if (threadlessExecutor.isWaiting()) {
                 threadlessExecutor.notifyReturn(new IllegalStateException("The result has returned, but the biz thread is still waiting" +
-                        " which is not an expected state, interrupt the thread manually by returning an exception."));
+                        " which is not an expected state, interrupt the thread manually by returning an exception."));  //返回异常信息，提示为：非期待的状态，返回异常终止线程
             }
         }
     }
@@ -247,9 +247,9 @@ public class DefaultFuture extends CompletableFuture<Object> {
         sent = System.currentTimeMillis();
     }
 
-    private String getTimeoutMessage(boolean scan) {
+    private String getTimeoutMessage(boolean scan) { //超时提示信息（包含发送请求超时或等待服务响应超时）
         long nowTimestamp = System.currentTimeMillis();
-        return (sent > 0 ? "Waiting server-side response timeout" : "Sending request timeout in client-side")
+        return (sent > 0 ? "Waiting server-side response timeout" : "Sending request timeout in client-side")  //以sent是否有值来判断是响应超时还是请求超时
                 + (scan ? " by scan timer" : "") + ". start time: "
                 + (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date(start))) + ", end time: "
                 + (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date(nowTimestamp))) + ","
@@ -266,7 +266,7 @@ public class DefaultFuture extends CompletableFuture<Object> {
         return newRequest;
     }
 
-    private static class TimeoutCheckTask implements TimerTask {
+    private static class TimeoutCheckTask implements TimerTask { //超时检查任务
 
         private final Long requestID;
 
@@ -275,26 +275,26 @@ public class DefaultFuture extends CompletableFuture<Object> {
         }
 
         @Override
-        public void run(Timeout timeout) {
-            DefaultFuture future = DefaultFuture.getFuture(requestID);
+        public void run(Timeout timeout) { //任务超时的时候，该方法会被调用
+            DefaultFuture future = DefaultFuture.getFuture(requestID); //从缓存中获取请求id对应的DefaultFuture
             if (future == null || future.isDone()) {
                 return;
             }
 
-            if (future.getExecutor() != null) {
+            if (future.getExecutor() != null) { //若线程池不为空，则使用线程池异步进行超时的通知
                 future.getExecutor().execute(() -> notifyTimeout(future));
             } else {
-                notifyTimeout(future);
+                notifyTimeout(future); //未设置线程池，同步进行超时的通知
             }
         }
 
-        private void notifyTimeout(DefaultFuture future) { //通知超时
+        private void notifyTimeout(DefaultFuture future) { //超时对应的通知
             // create exception response.
-            Response timeoutResponse = new Response(future.getId());
+            Response timeoutResponse = new Response(future.getId()); //请求和响应维护着同一个id值
             // set timeout status.
-            timeoutResponse.setStatus(future.isSent() ? Response.SERVER_TIMEOUT : Response.CLIENT_TIMEOUT);
+            timeoutResponse.setStatus(future.isSent() ? Response.SERVER_TIMEOUT : Response.CLIENT_TIMEOUT); //判断是服务端超时，还是客户端超时
             timeoutResponse.setErrorMessage(future.getTimeoutMessage(true));
-            // handle response.
+            // handle response.（处理响应）
             DefaultFuture.received(future.getChannel(), timeoutResponse, true);
         }
     }

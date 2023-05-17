@@ -33,6 +33,9 @@ import java.util.concurrent.*;
  * <p>
  * （通过execute(Runnable)提交给这个执行器的任务不会被调度到特定的线程，尽管普通执行器总是执行调度。
  * 这些任务存储在阻塞队列中，只有当线程调用waitAndDrain()(执行任务的线程)时才会执行和调用waitAndDrain的是一样的吗）
+ *
+ * 参考：https://cloud.tencent.com/developer/article/1587137
+ *      https://www.jianshu.com/p/582784487b19
  */
 public class ThreadlessExecutor extends AbstractExecutorService { //
     private static final Logger logger = LoggerFactory.getLogger(ThreadlessExecutor.class.getName());
@@ -41,7 +44,7 @@ public class ThreadlessExecutor extends AbstractExecutorService { //
 
     private ExecutorService sharedExecutor;
 
-    private CompletableFuture<?> waitingFuture;
+    private CompletableFuture<?> waitingFuture; //用于通知正在等待的线程结束等待工作，避免无休止的等待
 
     private boolean finished = false;
 
@@ -138,9 +141,9 @@ public class ThreadlessExecutor extends AbstractExecutorService { //
     }
 
     /**
-     * tells the thread blocking on {@link #waitAndDrain()} to return, despite of the current status, to avoid endless waiting.
+     * tells the thread blocking on {@link #waitAndDrain()} to return, despite of the current status, to avoid endless（无休止） waiting.（告诉阻塞在waitAndDrain()上的线程返回，不管当前状态如何，以避免无休止的等待。）
      */
-    public void notifyReturn(Throwable t) {
+    public void notifyReturn(Throwable t) { //通知正在等待的线程结束等待工作
         // an empty runnable task.
         execute(() -> {
             waitingFuture.completeExceptionally(t);

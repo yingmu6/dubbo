@@ -50,20 +50,20 @@ public class DubboMonitor implements Monitor {
     private static final int LENGTH = 10;
 
     /**
-     * The timer for sending statistics
+     * The timer for sending statistics（发送统计信息的计时器）
      */
     private final ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(3, new NamedThreadFactory("DubboMonitorSendTimer", true));
 
     /**
      * The future that can cancel the <b>scheduledExecutorService</b>
      */
-    private final ScheduledFuture<?> sendFuture;
+    private final ScheduledFuture<?> sendFuture; //用于发送采集请求的Future
 
-    private final Invoker<MonitorService> monitorInvoker;
+    private final Invoker<MonitorService> monitorInvoker; //监控服务对应的Invoker
 
-    private final MonitorService monitorService;
+    private final MonitorService monitorService; //监控服务
 
-    private final ConcurrentMap<Statistics, AtomicReference<long[]>> statisticsMap = new ConcurrentHashMap<Statistics, AtomicReference<long[]>>();
+    private final ConcurrentMap<Statistics, AtomicReference<long[]>> statisticsMap = new ConcurrentHashMap<Statistics, AtomicReference<long[]>>(); //统计信息与具体统计项的映射（非static成员变量，属于各个对象私有，而非所有对象公有）
 
     public DubboMonitor(Invoker<MonitorService> monitorInvoker, MonitorService monitorService) {
         this.monitorInvoker = monitorInvoker;
@@ -74,24 +74,24 @@ public class DubboMonitor implements Monitor {
         sendFuture = scheduledExecutorService.scheduleWithFixedDelay(() -> {
             try {
                 // collect data
-                send();
+                send(); //定时
             } catch (Throwable t) {
                 logger.error("Unexpected error occur at send statistic, cause: " + t.getMessage(), t);
             }
-        }, monitorInterval, monitorInterval, TimeUnit.MILLISECONDS);
+        }, monitorInterval, monitorInterval, TimeUnit.MILLISECONDS); //周期性执行任务
     }
 
-    public void send() {
+    public void send() { //发送采集请求给监控服务（将监控中心DubboMonitor中统计的缓存信息发送给监控服务MonitorService做信息采集，采集好后将监控中心中对应缓存重置）
         if (logger.isDebugEnabled()) {
             logger.debug("Send statistics to monitor " + getUrl());
         }
 
         String timestamp = String.valueOf(System.currentTimeMillis());
-        for (Map.Entry<Statistics, AtomicReference<long[]>> entry : statisticsMap.entrySet()) {
+        for (Map.Entry<Statistics, AtomicReference<long[]>> entry : statisticsMap.entrySet()) { //遍历缓存中统计值
             // get statistics data
             Statistics statistics = entry.getKey();
             AtomicReference<long[]> reference = entry.getValue();
-            long[] numbers = reference.get();
+            long[] numbers = reference.get();//提取各个元素的统计值
             long success = numbers[0];
             long failure = numbers[1];
             long input = numbers[2];
@@ -105,7 +105,7 @@ public class DubboMonitor implements Monitor {
             String protocol = getUrl().getParameter(DEFAULT_PROTOCOL);
 
             // send statistics data
-            URL url = statistics.getUrl()
+            URL url = statistics.getUrl() //按键值对的形式设置到URL参数中
                     .addParameters(MonitorService.TIMESTAMP, timestamp,
                             MonitorService.SUCCESS, String.valueOf(success),
                             MonitorService.FAILURE, String.valueOf(failure),
@@ -119,21 +119,21 @@ public class DubboMonitor implements Monitor {
                             MonitorService.MAX_CONCURRENT, String.valueOf(maxConcurrent),
                             DEFAULT_PROTOCOL, protocol
                     );
-            monitorService.collect(url);
+            monitorService.collect(url); //收集监控的数据（此处若monitorService的实例为DubboMonitor，理论上collect()会做累加，而后面的逻辑会递减，是没有影响的）
 
-            // reset
+            // reset（交由监控服务采集以后，对当前监控中心中对应的缓存做重置）
             long[] current;
             long[] update = new long[LENGTH];
             do {
                 current = reference.get();
-                if (current == null) {
+                if (current == null) { //若缓存中没有值，直接将值置为0
                     update[0] = 0;
                     update[1] = 0;
                     update[2] = 0;
                     update[3] = 0;
                     update[4] = 0;
                     update[5] = 0;
-                } else {
+                } else { // 若缓存的存在值，就将缓存中的值减去当前已经采集计算的值（只处理前5个元素）
                     update[0] = current[0] - success;
                     update[1] = current[1] - failure;
                     update[2] = current[2] - input;
@@ -146,7 +146,7 @@ public class DubboMonitor implements Monitor {
     }
 
     @Override
-    public void collect(URL url) {
+    public void collect(URL url) { //收集监控数据（最终将统计的值写到缓存statisticsMap中）
         // data to collect from url
         int success = url.getParameter(MonitorService.SUCCESS, 0);
         int failure = url.getParameter(MonitorService.FAILURE, 0);
@@ -156,13 +156,13 @@ public class DubboMonitor implements Monitor {
         int concurrent = url.getParameter(MonitorService.CONCURRENT, 0);
         // init atomic reference
         Statistics statistics = new Statistics(url);
-        AtomicReference<long[]> reference = statisticsMap.computeIfAbsent(statistics, k -> new AtomicReference<>());
+        AtomicReference<long[]> reference = statisticsMap.computeIfAbsent(statistics, k -> new AtomicReference<>()); //若Map中不存在key，则创建对应的key/value，否则返回原有的值
         // use CompareAndSet to sum
         long[] current;
         long[] update = new long[LENGTH];
         do {
-            current = reference.get();
-            if (current == null) {
+            current = reference.get(); //从内存中获取缓存的值
+            if (current == null) { //缓存中不存在统计的值
                 update[0] = success;
                 update[1] = failure;
                 update[2] = input;
@@ -173,19 +173,19 @@ public class DubboMonitor implements Monitor {
                 update[7] = output;
                 update[8] = elapsed;
                 update[9] = concurrent;
-            } else {
-                update[0] = current[0] + success;
+            } else {             //缓存中存在统计的值，则将url中的值与缓存中的值处理（不同的元素处理方式不同，分为3个区间，第1~5，第6个，第7~10）
+                update[0] = current[0] + success; //第1~5个元素：在多次采集时的计算方式=将缓存中的值与输入的值累加
                 update[1] = current[1] + failure;
-                update[2] = current[2] + input;
+                update[2] = current[2] + input; //前5个元素是累加操作，后5个元素更倾向于占位操作
                 update[3] = current[3] + output;
                 update[4] = current[4] + elapsed;
-                update[5] = (current[5] + concurrent) / 2;
-                update[6] = current[6] > input ? current[6] : input;
+                update[5] = (current[5] + concurrent) / 2; //第6个元素_并发数：在多次采集时的计算方式=（当前缓存中的值+输入的值）/ 2
+                update[6] = current[6] > input ? current[6] : input; //第7~10个元素：在多次采集时的计算方式=取缓存中值与输入值的最大值
                 update[7] = current[7] > output ? current[7] : output;
                 update[8] = current[8] > elapsed ? current[8] : elapsed;
                 update[9] = current[9] > concurrent ? current[9] : concurrent;
             }
-        } while (!reference.compareAndSet(current, update));
+        } while (!reference.compareAndSet(current, update));//当内存中的实际值与expect预期值不相等时，返回false，否则在相等情况下，可以进行更新操作（判断从缓存中获取的值是否被其它线程更新过，若已被更新，则循环去取最新的内存的值，并做计算，直到成功为止）
     }
 
     @Override
@@ -204,7 +204,7 @@ public class DubboMonitor implements Monitor {
     }
 
     @Override
-    public void destroy() {
+    public void destroy() { //在节点销毁时，取消定时任务
         try {
             ExecutorUtil.cancelScheduledFuture(sendFuture);
         } catch (Throwable t) {

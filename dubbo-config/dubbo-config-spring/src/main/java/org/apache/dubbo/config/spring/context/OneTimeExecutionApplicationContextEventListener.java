@@ -26,8 +26,9 @@ import org.springframework.context.event.ApplicationContextEvent;
 import java.util.Objects;
 
 /**
- * The abstract class {@link ApplicationListener} for {@link ApplicationContextEvent} guarantees just one-time execution
+ * The abstract class {@link ApplicationListener} for {@link ApplicationContextEvent} guarantees just one-time（一次性） execution
  * and prevents the event propagation in the hierarchical {@link ApplicationContext ApplicationContexts}
+ * （该事件监听器只执行一次，在spring容器加载完成后）
  *
  * @since 2.7.5
  */

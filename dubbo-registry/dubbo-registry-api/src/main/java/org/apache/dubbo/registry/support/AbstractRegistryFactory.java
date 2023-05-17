@@ -47,9 +47,9 @@ public abstract class AbstractRegistryFactory implements RegistryFactory { // �
     protected static final ReentrantLock LOCK = new ReentrantLock();
 
     // Registry Collection Map<RegistryAddress, Registry>
-    protected static final Map<String, Registry> REGISTRIES = new HashMap<>(); //注册地址与注册实例的缓存
+    protected static final Map<String, Registry> REGISTRIES = new HashMap<>(); //注册地址与注册实例的缓存（会将子类创建的注册实例缓存起来）
 
-    private static final AtomicBoolean destroyed = new AtomicBoolean(false);
+    private static final AtomicBoolean destroyed = new AtomicBoolean(false); //注册工厂是否已被销毁
 
     /**
      * Get all registries
@@ -69,7 +69,7 @@ public abstract class AbstractRegistryFactory implements RegistryFactory { // �
      */
     public static void destroyAll() { //销毁所有的注册实例
         if (!destroyed.compareAndSet(false, true)) {
-            return;
+            return; //注册工厂已经被销毁了
         }
 
         if (LOGGER.isInfoEnabled()) {
@@ -80,12 +80,12 @@ public abstract class AbstractRegistryFactory implements RegistryFactory { // �
         try {
             for (Registry registry : getRegistries()) { //遍历缓存中的所有注册实例
                 try {
-                    registry.destroy(); //依次销毁注册实例
+                    registry.destroy(); //依次销毁注册实例（调用各个注册实现类的destroy()方法）
                 } catch (Throwable e) {
                     LOGGER.error(e.getMessage(), e);
                 }
             }
-            REGISTRIES.clear(); //清除本地缓存内容
+            REGISTRIES.clear(); //在所有注册实例都销毁后，清除本地缓存
         } finally {
             // Release the lock
             LOCK.unlock();

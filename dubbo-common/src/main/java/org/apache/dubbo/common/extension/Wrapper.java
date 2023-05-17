@@ -24,10 +24,10 @@ public @interface Wrapper {
     /**
      * the extension names that need to be wrapped.
      */
-    String[] matches() default {};
+    String[] matches() default {}; //匹配的扩展名列表
 
     /**
      * the extension names that need to be excluded.
      */
-    String[] mismatches() default {};
+    String[] mismatches() default {}; //不匹配的扩展名列表（即排除在外的扩展名列表）
 }

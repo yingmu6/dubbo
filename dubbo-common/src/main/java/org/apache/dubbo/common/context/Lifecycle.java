@@ -30,7 +30,7 @@ public interface Lifecycle { //dubbo组件的生命周期
      * @return current {@link Lifecycle}
      * @throws IllegalStateException
      */
-    void initialize() throws IllegalStateException;
+    void initialize() throws IllegalStateException; //初始化组件
 
     /**
      * Start the component（启动组件）

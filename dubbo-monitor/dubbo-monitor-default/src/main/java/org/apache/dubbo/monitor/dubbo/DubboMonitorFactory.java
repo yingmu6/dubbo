@@ -51,7 +51,7 @@ public class DubboMonitorFactory extends AbstractMonitorFactory {
     @Override
     protected Monitor createMonitor(URL url) {
         URLBuilder urlBuilder = URLBuilder.from(url);
-        urlBuilder.setProtocol(url.getParameter(PROTOCOL_KEY, DUBBO_PROTOCOL));
+        urlBuilder.setProtocol(url.getParameter(PROTOCOL_KEY, DUBBO_PROTOCOL)); //从url参数中获取protocol，默认为dubbo
         if (StringUtils.isEmpty(url.getPath())) {
             urlBuilder.setPath(MonitorService.class.getName());
         }
@@ -59,12 +59,12 @@ public class DubboMonitorFactory extends AbstractMonitorFactory {
         if (StringUtils.isEmpty(filter)) {
             filter = "";
         } else {
-            filter = filter + ",";
+            filter = filter + ","; //有多个过滤器，用","分隔
         }
         urlBuilder.addParameters(CHECK_KEY, String.valueOf(false),
-                REFERENCE_FILTER_KEY, filter + "-monitor");
+                REFERENCE_FILTER_KEY, filter + "-monitor"); //剔除监控monitor过滤器
         Invoker<MonitorService> monitorInvoker = protocol.refer(MonitorService.class, urlBuilder.build());
-        MonitorService monitorService = proxyFactory.getProxy(monitorInvoker);
+        MonitorService monitorService = proxyFactory.getProxy(monitorInvoker); //获取MonitorService的代理类
         return new DubboMonitor(monitorInvoker, monitorService);
     }
 

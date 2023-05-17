@@ -35,7 +35,7 @@ import java.util.Optional;
  * Environment类是Dubbo的环境信息类，主要的作用是加载配置信息，从配置文件中获取系统参数，从外部配置中心加载配置信息等。
  * https://blog.csdn.net/leisurelen/article/details/107317951
  */
-public class Environment extends LifecycleAdapter implements FrameworkExt { //环境信息类
+public class Environment extends LifecycleAdapter implements FrameworkExt { //环境信息
 
     /**
      * Environment也是存储配置信息，与ConfigManager不同的是，
@@ -50,10 +50,10 @@ public class Environment extends LifecycleAdapter implements FrameworkExt { //�
     private final InmemoryConfiguration externalConfiguration;      //装载内部的配置信息，分为全局配置和应用级配置
     private final InmemoryConfiguration appExternalConfiguration;   //装载配置中心的配置信息
 
-    private CompositeConfiguration globalConfiguration;
+    private CompositeConfiguration globalConfiguration; //合成的配置信息
 
-    private Map<String, String> externalConfigurationMap = new HashMap<>();
-    private Map<String, String> appExternalConfigurationMap = new HashMap<>();
+    private Map<String, String> externalConfigurationMap = new HashMap<>(); //从配置中心拉取的未按group隔离的配置内容
+    private Map<String, String> appExternalConfigurationMap = new HashMap<>(); //按应用名做group隔离的配置内容
 
     private boolean configCenterFirst = true;
 
@@ -113,11 +113,11 @@ public class Environment extends LifecycleAdapter implements FrameworkExt { //�
     }
 
     /**
-     * At start-up, Dubbo is driven by various configuration, such as Application, Registry, Protocol, etc.
-     * All configurations will be converged into a data bus - URL, and then drive the subsequent process.
+     * At start-up, Dubbo is driven by various（各种各样的） configuration, such as Application, Registry, Protocol, etc.
+     * All configurations will be converged（被聚集） into a data bus - URL, and then drive the subsequent（随后的） process. //在启动时，各种配置会被聚集到数据总线URL中，给后面的程序使用
      * <p>
-     * At present, there are many configuration sources, including AbstractConfig (API, XML, annotation), - D, config center, etc.
-     * This method helps us to filter out the most priority values from various configuration sources.
+     * At present（目前）, there are many configuration sources, including AbstractConfig (API, XML, annotation), - D, config center, etc.
+     * This method helps us to filter out the most priority values from various configuration sources. //配置的数据源有许多，比如：配置对象、JVM输入参数、配置中心等，该方法就是过滤出最高优先级的配置
      *
      * @param config
      * @return
@@ -134,12 +134,12 @@ public class Environment extends LifecycleAdapter implements FrameworkExt { //�
             prefixedConfiguration.addConfiguration(externalConfiguration);
             prefixedConfiguration.addConfiguration(configuration);
             prefixedConfiguration.addConfiguration(propertiesConfiguration);
-        } else { //配置中心的位置不一样
+        } else {
             // The sequence would be: SystemConfiguration -> AbstractConfig -> AppExternalConfiguration -> ExternalConfiguration -> PropertiesConfiguration
             // Config center has the highest priority（配置中心有最高优先级）
             prefixedConfiguration.addConfiguration(systemConfiguration);
             prefixedConfiguration.addConfiguration(environmentConfiguration);
-            prefixedConfiguration.addConfiguration(configuration);
+            prefixedConfiguration.addConfiguration(configuration); //相比上面，配置信息加载的位置不一样
             prefixedConfiguration.addConfiguration(appExternalConfiguration);
             prefixedConfiguration.addConfiguration(externalConfiguration);
             prefixedConfiguration.addConfiguration(propertiesConfiguration);

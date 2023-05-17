@@ -106,7 +106,7 @@ public interface Listenable<E extends EventListener<?>> { //对EventListener事�
      * @return non-null read-only ordered {@link EventListener Dubbo event listeners}
      * @see EventListener#getPriority()
      */
-    List<E> getAllEventListeners();
+    List<E> getAllEventListeners(); //获取所有已经注册过的Dubbo事件监听器
 
 
     /**

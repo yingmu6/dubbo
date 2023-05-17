@@ -27,4 +27,10 @@ public class HasAdaptiveExt_ManualAdaptive implements HasAdaptiveExt {
         HasAdaptiveExt addExt1 = ExtensionLoader.getExtensionLoader(HasAdaptiveExt.class).getExtension(url.getParameter("key"));
         return addExt1.echo(url, s);
     }
+
+    @Override
+    public String echoV2(URL url, String s) {
+        HasAdaptiveExt addExt1 = ExtensionLoader.getExtensionLoader(HasAdaptiveExt.class).getExtension(url.getParameter("key"));
+        return addExt1.echoV2(url, s);
+    }
 }

@@ -26,7 +26,7 @@ import static org.apache.dubbo.rpc.Constants.OUTPUT_KEY;
 /**
  * MonitorService. (SPI, Prototype, ThreadSafe)
  */
-public interface MonitorService {
+public interface MonitorService { //监控服务
 
     String APPLICATION = "application";
 
@@ -65,10 +65,10 @@ public interface MonitorService {
     String MAX_CONCURRENT = "max.concurrent";
 
     /**
-     * Collect monitor data
+     * Collect monitor data（收集监控数据）
      * 1. support invocation count: count://host/interface?application=foo&method=foo&provider=10.20.153.11:20880&success=12&failure=2&elapsed=135423423
      * 1.1 host,application,interface,group,version,method: record source host/application/interface/method
-     * 1.2 add provider address parameter if it's data sent from consumer, otherwise, add source consumer's address in parameters
+     * 1.2 add provider address parameter if it's data sent from consumer, otherwise, add source consumer's address in parameters（会记录消费端、提供端地址）
      * 1.3 success,failure,elapsed: record success count, failure count, and total cost for success invocations, average cost (total cost/success calls)
      *
      * @param statistics
@@ -76,10 +76,10 @@ public interface MonitorService {
     void collect(URL statistics);
 
     /**
-     * Lookup monitor data
+     * Lookup monitor data（查询监控数据）
      * 1. support lookup by day: count://host/interface?application=foo&method=foo&side=provider&view=chart&date=2012-07-03
-     * 1.1 host,application,interface,group,version,method: query criteria for looking up by host, application, interface, method. When one criterion is not present, it means ALL will be accepted, but 0.0.0.0 is ALL for host
-     * 1.2 side=consumer,provider: decide the data from which side, both provider and consumer are returned by default
+     * 1.1 host,application,interface,group,version,method: query criteria（查询标准） for looking up by host, application, interface, method. When one criterion is not present, it means ALL will be accepted, but 0.0.0.0 is ALL for host
+     * 1.2 side=consumer,provider: decide（决定） the data from which side, both provider and consumer are returned by default
      * 1.3 default value is view=summary, to return the summarized data for the whole day. view=chart will return the URL address showing the whole day trend which is convenient for embedding in other web page
      * 1.4 date=2012-07-03: specify the date to collect the data, today is the default value
      *

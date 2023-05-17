@@ -42,7 +42,7 @@ import static org.apache.dubbo.common.utils.ReflectUtils.defaultReturn;
  * {@link #getValue()} and {@link #getException()} are all inherited from {@link Result} interface, implementing them are mainly
  * for compatibility consideration（兼容性考虑）. Because many legacy {@link Filter} implementation are most possibly to call getValue directly.
  */
-public class AsyncRpcResult implements Result { //异步响应结果
+public class AsyncRpcResult implements Result { //异步调用结果
     private static final Logger logger = LoggerFactory.getLogger(AsyncRpcResult.class);
 
     /**
@@ -58,11 +58,11 @@ public class AsyncRpcResult implements Result { //异步响应结果
      * So we should keep the reference of current RpcContext instance and restore（恢复） it before callback being executed.
      * （存储当前上下文信息，用于回调前的恢复）
      */
-    private RpcContext storedContext;
-    private RpcContext storedServerContext;
+    private RpcContext storedContext; //客户端存储的上下文
+    private RpcContext storedServerContext; //服务端存储的上下文
     private Executor executor;
 
-    private Invocation invocation;
+    private Invocation invocation; //调用信息
 
     private CompletableFuture<AppResponse> responseFuture; //包含异步响应的结果
 
@@ -85,7 +85,7 @@ public class AsyncRpcResult implements Result { //异步响应结果
 
     /**
      * CompletableFuture can only be completed once, so try to update the result of one completed CompletableFuture will
-     * has no effect. To avoid this problem, we check the complete status of this future before update it's value.
+     * has no effect. To avoid this problem, we check the complete status of this future before update it's value.（在更新值前，会检查更新状态）
      *
      * But notice that trying to give an uncompleted CompletableFuture a new specified value may face a race condition,
      * because the background thread watching the real result will also change the status of this CompletableFuture.
@@ -94,14 +94,14 @@ public class AsyncRpcResult implements Result { //异步响应结果
      * @param value
      */
     @Override
-    public void setValue(Object value) {
+    public void setValue(Object value) { //设置结果值
         try {
-            if (responseFuture.isDone()) {
+            if (responseFuture.isDone()) { //任务已经完成时，将结果值直接设置到AppResponse
                 responseFuture.get().setValue(value);
             } else {
                 AppResponse appResponse = new AppResponse();
                 appResponse.setValue(value);
-                responseFuture.complete(appResponse);
+                responseFuture.complete(appResponse); //任务未完成时，将结果值设置AppResponse，并设置到CompletableFuture中
             }
         } catch (Exception e) {
             // This should not happen in normal request process;
@@ -116,14 +116,14 @@ public class AsyncRpcResult implements Result { //异步响应结果
     }
 
     @Override
-    public void setException(Throwable t) {
+    public void setException(Throwable t) { //设置异常信息
         try {
-            if (responseFuture.isDone()) {
+            if (responseFuture.isDone()) { //任务已经完成时，将异常信息直接设置到AppResponse
                 responseFuture.get().setException(t);
             } else {
                 AppResponse appResponse = new AppResponse();
                 appResponse.setException(t);
-                responseFuture.complete(appResponse);
+                responseFuture.complete(appResponse);//任务未完成时，将异常信息设置AppResponse，并设置到CompletableFuture中
             }
         } catch (Exception e) {
             // This should not happen in normal request process;
@@ -156,7 +156,7 @@ public class AsyncRpcResult implements Result { //异步响应结果
             throw new RpcException(e);
         }
 
-        return createDefaultValue(invocation);
+        return createDefaultValue(invocation); //任务未完成时，返回默认值
     }
 
     /**
@@ -172,14 +172,14 @@ public class AsyncRpcResult implements Result { //异步响应结果
     public Result get() throws InterruptedException, ExecutionException {
         if (executor != null && executor instanceof ThreadlessExecutor) {
             ThreadlessExecutor threadlessExecutor = (ThreadlessExecutor) executor;
-            threadlessExecutor.waitAndDrain();
+            threadlessExecutor.waitAndDrain(); //同步等待，直到获取结果
         }
-        return responseFuture.get();
+        return responseFuture.get(); //按最大时间等待获取异步结果
     }
 
     @Override
     public Result get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-        if (executor != null && executor instanceof ThreadlessExecutor) {
+        if (executor != null && executor instanceof ThreadlessExecutor) { //判断线程池是不是ThreadlessExecutor类型
             ThreadlessExecutor threadlessExecutor = (ThreadlessExecutor) executor;
             threadlessExecutor.waitAndDrain();
         }
@@ -196,23 +196,23 @@ public class AsyncRpcResult implements Result { //异步响应结果
         return getAppResponse().recreate();
     }
 
-    public Result whenCompleteWithContext(BiConsumer<Result, Throwable> fn) {
+    public Result whenCompleteWithContext(BiConsumer<Result, Throwable> fn) { //任务完成时，回调处理
         this.responseFuture = this.responseFuture.whenComplete((v, t) -> {
-            beforeContext.accept(v, t);
-            fn.accept(v, t);
-            afterContext.accept(v, t);
+            beforeContext.accept(v, t); //调用前处理上下文
+            fn.accept(v, t); //调用处理
+            afterContext.accept(v, t); //调用后处理上下文
         });
         return this;
     }
 
     @Override
-    public <U> CompletableFuture<U> thenApply(Function<Result, ? extends U> fn) {
+    public <U> CompletableFuture<U> thenApply(Function<Result, ? extends U> fn) { //产生CompletableFuture
         return this.responseFuture.thenApply(fn);
     }
 
     @Override
     @Deprecated
-    public Map<String, String> getAttachments() {
+    public Map<String, String> getAttachments() { //通过维护的AppResponse获取附加参数值
         return getAppResponse().getAttachments();
     }
 
@@ -288,17 +288,17 @@ public class AsyncRpcResult implements Result { //异步响应结果
     /**
      * tmp context to use when the thread switch to Dubbo thread.（当线程转换到Dubbo线程时，会使用临时上下文）
      */
-    private RpcContext tmpContext; //临时上下文
+    private RpcContext tmpContext; //客户端存储的临时上下文
 
-    private RpcContext tmpServerContext;
-    private BiConsumer<Result, Throwable> beforeContext = (appResponse, t) -> {
+    private RpcContext tmpServerContext; //服务端存储的临时上下文
+    private BiConsumer<Result, Throwable> beforeContext = (appResponse, t) -> { //调用前的上下文
         tmpContext = RpcContext.getContext();
         tmpServerContext = RpcContext.getServerContext();
         RpcContext.restoreContext(storedContext);
         RpcContext.restoreServerContext(storedServerContext);
     };
 
-    private BiConsumer<Result, Throwable> afterContext = (appResponse, t) -> {
+    private BiConsumer<Result, Throwable> afterContext = (appResponse, t) -> { //调用后的上下文
         RpcContext.restoreContext(tmpContext);
         RpcContext.restoreServerContext(tmpServerContext);
     };
@@ -322,19 +322,19 @@ public class AsyncRpcResult implements Result { //异步响应结果
         return newDefaultAsyncResult(null, t, invocation);
     }
 
-    public static AsyncRpcResult newDefaultAsyncResult(Object value, Throwable t, Invocation invocation) {
+    public static AsyncRpcResult newDefaultAsyncResult(Object value, Throwable t, Invocation invocation) { //创建异步响应结果（static方法）
         CompletableFuture<AppResponse> future = new CompletableFuture<>();
         AppResponse result = new AppResponse();
         if (t != null) {
-            result.setException(t);
+            result.setException(t); //有异常，设置异常信息
         } else {
-            result.setValue(value);
+            result.setValue(value); //没有异常，设置值信息
         }
-        future.complete(result);
-        return new AsyncRpcResult(future, invocation); //构建dubbo的异步响应结果模型
+        future.complete(result); //设置AppResponse值
+        return new AsyncRpcResult(future, invocation);
     }
 
-    private static Result createDefaultValue(Invocation invocation) {
+    private static Result createDefaultValue(Invocation invocation) { //创建带有默认值的响应结果
         ConsumerMethodModel method = (ConsumerMethodModel) invocation.get(Constants.METHOD_MODEL);
         return method != null ? new AppResponse(defaultReturn(method.getReturnClass())) : new AppResponse();
     }

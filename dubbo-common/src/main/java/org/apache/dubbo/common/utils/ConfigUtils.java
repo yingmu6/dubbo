@@ -37,7 +37,7 @@ public class ConfigUtils {
     private static final Logger logger = LoggerFactory.getLogger(ConfigUtils.class);
     private static Pattern VARIABLE_PATTERN = Pattern.compile(
             "\\$\\s*\\{?\\s*([\\._0-9a-zA-Z]+)\\s*\\}?");
-    private static volatile Properties PROPERTIES; //维护的系统属性实例
+    private static volatile Properties PROPERTIES; //缓存维护的系统属性实例
     private static int PID = -1;
 
     private ConfigUtils() {
@@ -47,7 +47,7 @@ public class ConfigUtils {
         return !isEmpty(value);
     }
 
-    public static boolean isEmpty(String value) {
+    public static boolean isEmpty(String value) { //判断配置是否为空
         return StringUtils.isEmpty(value)
                 || "false".equalsIgnoreCase(value)
                 || "0".equalsIgnoreCase(value)
@@ -140,14 +140,14 @@ public class ConfigUtils {
     }
 
     public static Properties getProperties() { //加载属性文件，生成属性对象
-        if (PROPERTIES == null) {
+        if (PROPERTIES == null) { //若缓存的属性对象为空，则去加载属性文件，生成属性对象
             synchronized (ConfigUtils.class) {
-                if (PROPERTIES == null) {
-                    String path = System.getProperty(CommonConstants.DUBBO_PROPERTIES_KEY);
+                if (PROPERTIES == null) { //重判断+synchronized
+                    String path = System.getProperty(CommonConstants.DUBBO_PROPERTIES_KEY); //1）先从属性变量中查找属性文件的配置
                     if (path == null || path.length() == 0) {
-                        path = System.getenv(CommonConstants.DUBBO_PROPERTIES_KEY);
+                        path = System.getenv(CommonConstants.DUBBO_PROPERTIES_KEY); //2）再从环境变量中查找属性文件的配置
                         if (path == null || path.length() == 0) {
-                            path = CommonConstants.DEFAULT_DUBBO_PROPERTIES;
+                            path = CommonConstants.DEFAULT_DUBBO_PROPERTIES; //3）若都没有找到，则从默认的属性文件dubbo.properties中去查找
                         }
                     }
                     PROPERTIES = ConfigUtils.loadProperties(path, false, true);
@@ -208,7 +208,7 @@ public class ConfigUtils {
      *
      * @param fileName       properties file name. for example: <code>dubbo.properties</code>, <code>METE-INF/conf/foo.properties</code>
      * @param allowMultiFile if <code>false</code>, throw {@link IllegalStateException} when found multi file on the class path.（若允许多属性文件，需要将文件中的内容进行合并）
-     * @param optional       is optional. if <code>false</code>, log warn when properties config file not found!s
+     * @param optional       is optional（可选择的）. if <code>false</code>, log warn when properties config file not found!s
      * @return loaded {@link Properties} content. <ul>
      * <li>return empty Properties if no file found.
      * <li>merge multi properties file if found multi file
@@ -218,7 +218,7 @@ public class ConfigUtils {
     public static Properties loadProperties(String fileName, boolean allowMultiFile, boolean optional) {
         Properties properties = new Properties();
         // add scene judgement in windows environment Fix 2557
-        if (checkFileNameExist(fileName)) { //若存在文件，则加载文件中的内容写到Properties
+        if (checkFileNameExist(fileName)) { //若存在文件，则加载文件中的内容写到Properties（需要指定文件的路径，如fileName值为"properties.load"，只给出文件名称，是找不到文件的）
             try {
                 FileInputStream input = new FileInputStream(fileName);
                 try {
@@ -234,7 +234,7 @@ public class ConfigUtils {
 
         List<java.net.URL> list = new ArrayList<java.net.URL>();
         try {
-            Enumeration<java.net.URL> urls = ClassUtils.getClassLoader().getResources(fileName);
+            Enumeration<java.net.URL> urls = ClassUtils.getClassLoader().getResources(fileName); //从资源目录中查找，如"properties.load从test/resources目录下能够查到"
             list = new ArrayList<java.net.URL>();
             while (urls.hasMoreElements()) {
                 list.add(urls.nextElement());
@@ -250,7 +250,7 @@ public class ConfigUtils {
             return properties;
         }
 
-        if (!allowMultiFile) {
+        if (!allowMultiFile) { //单个属性文件处理
             if (list.size() > 1) { //若不允许多个属性文件时，发现有多个问题，则进行日志提示
                 String errMsg = String.format("only 1 %s file is expected, but %d dubbo.properties files found on class path: %s",
                         fileName, list.size(), list.toString());
@@ -259,7 +259,7 @@ public class ConfigUtils {
 
             // fall back（回退） to use method getResourceAsStream
             try {
-                properties.load(ClassUtils.getClassLoader().getResourceAsStream(fileName));
+                properties.load(ClassUtils.getClassLoader().getResourceAsStream(fileName)); //回退到使用getResourceAsStream()方法，该方法可以读取指定的属性文件，并返回输入流
             } catch (Throwable e) {
                 logger.warn("Failed to load " + fileName + " file from " + fileName + "(ignore this file): " + e.getMessage(), e);
             }
@@ -268,14 +268,14 @@ public class ConfigUtils {
 
         logger.info("load " + fileName + " properties file from " + list);
 
-        for (java.net.URL url : list) {
+        for (java.net.URL url : list) { //多文件处理
             try {
                 Properties p = new Properties();
                 InputStream input = url.openStream();
                 if (input != null) {
                     try {
-                        p.load(input);
-                        properties.putAll(p);
+                        p.load(input); //加载每个文件对应的输入流，写到临时的Properties对象中
+                        properties.putAll(p); //多个文件的属性内容进行汇总
                     } finally {
                         try {
                             input.close();

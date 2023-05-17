@@ -17,6 +17,7 @@
 package org.apache.dubbo.common.extension;
 
 import org.apache.dubbo.common.extension.adaptive.HasAdaptiveExt;
+import org.apache.dubbo.common.extension.ext_self.animal.Animal;
 import org.apache.dubbo.common.utils.IOUtils;
 import org.junit.jupiter.api.Test;
 
@@ -35,13 +36,47 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class AdaptiveClassCodeGeneratorTest {
 
+    /**
+     * 场景1：@Adaptive中的value未指定，由系统根据SPI接口名称产生对应的value
+     */
     @Test
-    public void testGenerate() throws IOException { //test
+    public void testGenerate() throws IOException { //已测（测试打印产生的自适应类，以及产生的自适应字节码文件中读取内容）
         AdaptiveClassCodeGenerator generator = new AdaptiveClassCodeGenerator(HasAdaptiveExt.class, "adaptive");
-        String value = generator.generate();
+        String value = generator.generate(); //自适应生成的代码
         System.out.println("自适应类代码：" + value);
         URL url = getClass().getResource("/org/apache/dubbo/common/extension/adaptive/HasAdaptiveExt$Adaptive");
-        try (InputStream inputStream = url.openStream()) {
+        try (InputStream inputStream = url.openStream()) { //可以从产生的自适应字节码文件中，读取内容
+            String content = IOUtils.read(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+            // in Windows platform content get from resource contains \r delimiter
+            content = content.replaceAll("\r", "");
+            assertTrue(content.contains(value));
+        }
+    }
+
+    /**
+     * 场景2：@Adaptive中的value值指定多个
+     */
+    @Test
+    public void testGenerate_V2() throws IOException { //已测（测试打印产生的自适应类，以及产生的自适应字节码文件中读取内容）
+        AdaptiveClassCodeGenerator generator = new AdaptiveClassCodeGenerator(HasAdaptiveExt.class, "adaptive");
+        String value = generator.generate(); //自适应生成的代码
+        System.out.println("自适应类代码V2：" + value);
+        URL url = getClass().getResource("/org/apache/dubbo/common/extension/adaptive/HasAdaptiveExt$Adaptive");
+        try (InputStream inputStream = url.openStream()) { //可以从产生的自适应字节码文件中，读取内容
+            String content = IOUtils.read(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+            // in Windows platform content get from resource contains \r delimiter
+            content = content.replaceAll("\r", "");
+            assertTrue(content.contains(value));
+        }
+    }
+
+    @Test
+    public void testGenerate_V3() throws IOException {
+        AdaptiveClassCodeGenerator generator = new AdaptiveClassCodeGenerator(Animal.class, "");
+        String value = generator.generate(); //自适应生成的代码
+        System.out.println("自适应类代码V3：" + value);
+        URL url = getClass().getResource("/org/apache/dubbo/common/extension/ext_self/animal/Animal$Adaptive");
+        try (InputStream inputStream = url.openStream()) { //可以从产生的自适应字节码文件中，读取内容 （todo @csy 此处url为啥为null？加载不了自适应类）
             String content = IOUtils.read(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
             // in Windows platform content get from resource contains \r delimiter
             content = content.replaceAll("\r", "");

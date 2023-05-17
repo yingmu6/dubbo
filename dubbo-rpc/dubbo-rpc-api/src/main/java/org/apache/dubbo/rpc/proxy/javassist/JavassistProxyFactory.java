@@ -41,15 +41,15 @@ public class JavassistProxyFactory extends AbstractProxyFactory {
     }
 
     @Override
-    public <T> Invoker<T> getInvoker(T proxy, Class<T> type, URL url) { //proxy：被代理的实例类，如GreetingServiceImpl@xxx，type：被代理的接口class，如GreetingService
+    public <T> Invoker<T> getInvoker(T proxy, Class<T> type, URL url) { //proxy：被代理的实现类，如GreetingServiceImpl@xxx，type：被代理的接口class，如GreetingService
         // TODO Wrapper cannot handle this scenario correctly（在当前场景中不能正常处理，类名中包含$符号，表明是内部类）: the classname contains '$'
-        final Wrapper wrapper = Wrapper.getWrapper(proxy.getClass().getName().indexOf('$') < 0 ? proxy.getClass() : type); //为服务实现类创建封装对象Wrapper
-        return new AbstractProxyInvoker<T>(proxy, type, url) { //匿名类，将代理对象转换为Invoker
+        final Wrapper wrapper = Wrapper.getWrapper(proxy.getClass().getName().indexOf('$') < 0 ? proxy.getClass() : type); //为被代理服务类创建封装对象Wrapper（若被代理的实现类不包含$，则使用被代理实现类的Class类，否则使用被代理实现类对应接口的Class）
+        return new AbstractProxyInvoker<T>(proxy, type, url) { //匿名类，将代理对象转换为Invoker（使用封装类，调用目标被代理实例对象的方法）
             @Override
             protected Object doInvoke(T proxy, String methodName,
                                       Class<?>[] parameterTypes,
                                       Object[] arguments) throws Throwable {
-                return wrapper.invokeMethod(proxy, methodName, parameterTypes, arguments); //调用Wrapper的invokeMethod方法，invokeMethod最终会调用服务实现类对应的方法
+                return wrapper.invokeMethod(proxy, methodName, parameterTypes, arguments); //调用Wrapper的invokeMethod方法，invokeMethod最终会调用被代理的实现类对应的方法
             }
         };
     }

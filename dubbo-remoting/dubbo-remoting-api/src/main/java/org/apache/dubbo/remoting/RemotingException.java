@@ -29,13 +29,13 @@ import java.net.InetSocketAddress;
  * @see org.apache.dubbo.remoting.Transporter#bind(org.apache.dubbo.common.URL, ChannelHandler)
  * @see org.apache.dubbo.remoting.Transporter#connect(org.apache.dubbo.common.URL, ChannelHandler)
  */
-public class RemotingException extends Exception {
+public class RemotingException extends Exception { //Dubbo自定义的远程调用异常
 
     private static final long serialVersionUID = -3160452149606778709L;
 
-    private InetSocketAddress localAddress;
+    private InetSocketAddress localAddress; //本地地址
 
-    private InetSocketAddress remoteAddress;
+    private InetSocketAddress remoteAddress; //远程地址
 
     public RemotingException(Channel channel, String msg) {
         this(channel == null ? null : channel.getLocalAddress(), channel == null ? null : channel.getRemoteAddress(),

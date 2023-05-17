@@ -31,7 +31,7 @@ import org.springframework.core.Ordered;
  * @since 2.7.5
  */
 public class DubboBootstrapApplicationListener extends OneTimeExecutionApplicationContextEventListener
-        implements Ordered {
+        implements Ordered { //Dubbo启动类的监听器（监听spring容器启动事件）
 
     /**
      * The bean name of {@link DubboBootstrapApplicationListener}

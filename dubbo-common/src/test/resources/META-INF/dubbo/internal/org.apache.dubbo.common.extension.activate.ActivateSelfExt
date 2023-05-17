@@ -1,0 +1,3 @@
+selfImpl1=org.apache.dubbo.common.extension.activate.impl.ActivateSelfExtImpl1
+selfImpl2=org.apache.dubbo.common.extension.activate.impl.ActivateSelfExtImpl2
+selfImpl3=org.apache.dubbo.common.extension.activate.impl.ActivateSelfExtImpl3

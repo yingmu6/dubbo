@@ -54,7 +54,7 @@ public class ConfigUtilsTest {
     }
 
     @Test
-    public void testIsEmpty() throws Exception {
+    public void testIsEmpty() throws Exception { //判断指定的配置是否为空
         assertThat(ConfigUtils.isEmpty(null), is(true));
         assertThat(ConfigUtils.isEmpty(""), is(true));
         assertThat(ConfigUtils.isEmpty("false"), is(true));
@@ -118,9 +118,9 @@ public class ConfigUtilsTest {
     }
 
     @Test
-    public void testGetProperties1() throws Exception {
+    public void testGetProperties1() throws Exception { //获取属性文件中的内容
         try {
-            System.setProperty(CommonConstants.DUBBO_PROPERTIES_KEY, "properties.load");
+            System.setProperty(CommonConstants.DUBBO_PROPERTIES_KEY, "properties.load"); //指定加载的属性文件
             Properties p = ConfigUtils.getProperties();
             assertThat((String) p.get("a"), equalTo("12"));
             assertThat((String) p.get("b"), equalTo("34"));
@@ -131,14 +131,14 @@ public class ConfigUtilsTest {
     }
 
     @Test
-    public void testGetProperties2() throws Exception {
+    public void testGetProperties2() throws Exception { //未指定属性文件的位置，默认从dubbo.properties查找
         System.clearProperty(CommonConstants.DUBBO_PROPERTIES_KEY);
         Properties p = ConfigUtils.getProperties();
         assertThat((String) p.get("dubbo"), equalTo("properties"));
     }
 
     @Test
-    public void testAddProperties() throws Exception {
+    public void testAddProperties() throws Exception { //基于属性文件的内容，添加属性值
         Properties p = new Properties();
         p.put("key1", "value1");
         ConfigUtils.addProperties(p);

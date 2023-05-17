@@ -85,7 +85,7 @@ import static org.apache.dubbo.remoting.Constants.CLIENT_KEY;
  *
  * @since 2.7.5
  */
-public class DubboBootstrap extends GenericEventListener { //基于事件驱动
+public class DubboBootstrap extends GenericEventListener { //启动类：基于事件驱动
 
     /**
      * DubboBootstrap类是Dubbo中非常重要的启动类，主要功能包括：
@@ -123,9 +123,9 @@ public class DubboBootstrap extends GenericEventListener { //基于事件驱动
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private static volatile DubboBootstrap instance;
+    private static volatile DubboBootstrap instance; //缓存者启动类的实例对象，以static形式存储，便于其它类调用
 
-    private final AtomicBoolean awaited = new AtomicBoolean(false);
+    private final AtomicBoolean awaited = new AtomicBoolean(false); //是否等待
 
     private final Lock lock = new ReentrantLock();
 
@@ -135,44 +135,44 @@ public class DubboBootstrap extends GenericEventListener { //基于事件驱动
 
     private final ExecutorService executorService = newSingleThreadExecutor();
 
-    private final EventDispatcher eventDispatcher = EventDispatcher.getDefaultExtension();
+    private final EventDispatcher eventDispatcher = EventDispatcher.getDefaultExtension(); //事件派发器
 
-    private final ExecutorRepository executorRepository = getExtensionLoader(ExecutorRepository.class).getDefaultExtension();
+    private final ExecutorRepository executorRepository = getExtensionLoader(ExecutorRepository.class).getDefaultExtension(); //线程池仓库
 
-    private final ConfigManager configManager;
+    private final ConfigManager configManager; //配置管理器
 
     private final Environment environment;
 
-    private ReferenceConfigCache cache;
+    private ReferenceConfigCache cache; //引用配置的缓存对象
 
-    private volatile boolean exportAsync;
+    private volatile boolean exportAsync; //是否异步暴露
 
-    private volatile boolean referAsync;
+    private volatile boolean referAsync; //是否异步引用
 
     private AtomicBoolean initialized = new AtomicBoolean(false); //初始化标识
 
     private AtomicBoolean started = new AtomicBoolean(false); //启动标识
 
-    private AtomicBoolean ready = new AtomicBoolean(true);
+    private AtomicBoolean ready = new AtomicBoolean(true); //是否已经准备好环境
 
     private AtomicBoolean destroyed = new AtomicBoolean(false);
 
-    private volatile ServiceInstance serviceInstance;
+    private volatile ServiceInstance serviceInstance; //服务实例
 
-    private volatile MetadataService metadataService;
+    private volatile MetadataService metadataService; //元数据服务
 
     private volatile Set<MetadataServiceExporter> metadataServiceExporters;
 
-    private List<ServiceConfigBase<?>> exportedServices = new ArrayList<>();
+    private List<ServiceConfigBase<?>> exportedServices = new ArrayList<>(); //已经暴露的服务列表
 
-    private List<Future<?>> asyncExportingFutures = new ArrayList<>();
+    private List<Future<?>> asyncExportingFutures = new ArrayList<>(); //异步暴露时使用的Future列表
 
     private List<CompletableFuture<Object>> asyncReferringFutures = new ArrayList<>();
 
     /**
      * See {@link ApplicationModel} and {@link ExtensionLoader} for why DubboBootstrap is designed to be singleton.
      */
-    public static DubboBootstrap getInstance() { //获取实例：单例模式
+    public static DubboBootstrap getInstance() { //获取实例：单例模式（在nacos等启动时，可以获取DubboBootstrap启动dubbo服务）
         if (instance == null) {
             synchronized (DubboBootstrap.class) { // synchronized ['sɪŋkrənaɪzd] adj. 同步的；同步化的,v. 使协调,同时发生
                 if (instance == null) { //synchronized + 双重检查，线程安全且缩小锁的范围
@@ -183,9 +183,9 @@ public class DubboBootstrap extends GenericEventListener { //基于事件驱动
         return instance;
     }
 
-    private DubboBootstrap() {
+    private DubboBootstrap() { //私有的构造函数
         configManager = ApplicationModel.getConfigManager(); //config对象的本地配置
-        environment = ApplicationModel.getEnvironment();     //系统配置
+        environment = ApplicationModel.getEnvironment();     //获取环境信息
 
         DubboShutdownHook.getDubboShutdownHook().register();
         ShutdownHookCallbacks.INSTANCE.addCallback(new ShutdownHookCallback() { //注册钩子函数，当容器停止时，对DubboBootstrap进行销毁处理
@@ -196,7 +196,7 @@ public class DubboBootstrap extends GenericEventListener { //基于事件驱动
         });
     }
 
-    public void unRegisterShutdownHook() {
+    public void unRegisterShutdownHook() { //取消钩子函数的注册
         DubboShutdownHook.getDubboShutdownHook().unregister();
     }
 
@@ -205,7 +205,7 @@ public class DubboBootstrap extends GenericEventListener { //基于事件驱动
         return registerConsumer == null || !registerConsumer;
     }
 
-    private String getMetadataType() { //
+    private String getMetadataType() { //获取元数据类型
         String type = getApplication().getMetadataType();
         if (StringUtils.isEmpty(type)) {
             type = DEFAULT_METADATA_STORAGE_TYPE;
@@ -500,27 +500,27 @@ public class DubboBootstrap extends GenericEventListener { //基于事件驱动
     /**
      * Initialize
      */
-    public void initialize() { //服务暴露或引用前，做初始化工作
+    public void initialize() { //初始化
         if (!initialized.compareAndSet(false, true)) { //compareAndSet返回false，表明实际值与预期值不相等
             return; //此处initialized为true时进入，表明是已经初始化过来，就不在初始化
         }
 
         ApplicationModel.initFrameworkExts(); //初始化框架配置
 
-        startConfigCenter(); //
+        startConfigCenter(); //启动配置中心（拉取远程的配置写到本地缓存中）
 
-        loadRemoteConfigs();
+        loadRemoteConfigs(); //加载远程配置（包含RegistryConfig、ProtocolConfig）、并写到ConfigManager对应的缓存中
 
         checkGlobalConfigs();
 
         // @since 2.7.8
         startMetadataCenter();
 
-        initMetadataService();
+        initMetadataService(); //创建MetadataService实例（通过SPI接口WritableMetadataService的实例创建）
 
-        initMetadataServiceExports();
+        initMetadataServiceExports(); //创建MetadataServiceExporter实例的集合
 
-        initEventListener();
+        initEventListener(); //将当前对象作为监听器加入到缓存中的监听器列表
 
         if (logger.isInfoEnabled()) {
             logger.info(NAME + " has been initialized!");
@@ -536,7 +536,7 @@ public class DubboBootstrap extends GenericEventListener { //基于事件驱动
         if (CollectionUtils.isEmpty(metadatas)) {
             MetadataReportConfig metadataReportConfig = new MetadataReportConfig();
             metadataReportConfig.refresh();
-            if (metadataReportConfig.isValid()) {
+            if (metadataReportConfig.isValid()) { //判断是否存在有效的元数据地址
                 configManager.addMetadataReport(metadataReportConfig);
                 metadatas = configManager.getMetadataConfigs();
             }
@@ -589,7 +589,7 @@ public class DubboBootstrap extends GenericEventListener { //基于事件驱动
 
         useRegistryAsConfigCenterIfNecessary();
 
-        Collection<ConfigCenterConfig> configCenters = configManager.getConfigCenters();
+        Collection<ConfigCenterConfig> configCenters = configManager.getConfigCenters(); //获取缓存中的配置中心Config对象
 
         // check Config Center
         if (CollectionUtils.isEmpty(configCenters)) {
@@ -602,21 +602,21 @@ public class DubboBootstrap extends GenericEventListener { //基于事件驱动
         } else {
             for (ConfigCenterConfig configCenterConfig : configCenters) {
                 configCenterConfig.refresh();
-                ConfigValidationUtils.validateConfigCenterConfig(configCenterConfig); //校验配置中心的数据
+                ConfigValidationUtils.validateConfigCenterConfig(configCenterConfig); //校验配置中心Config对象
             }
         }
 
         if (CollectionUtils.isNotEmpty(configCenters)) {
             CompositeDynamicConfiguration compositeDynamicConfiguration = new CompositeDynamicConfiguration();
             for (ConfigCenterConfig configCenter : configCenters) {
-                compositeDynamicConfiguration.addConfiguration(prepareEnvironment(configCenter));
+                compositeDynamicConfiguration.addConfiguration(prepareEnvironment(configCenter)); //遍历配置中心Config对象，依次将配置中心Config对象添加到组合的配置中心集合中
             }
-            environment.setDynamicConfiguration(compositeDynamicConfiguration);
+            environment.setDynamicConfiguration(compositeDynamicConfiguration); //将合成的配置中心Config对象设置到Environment对象中
         }
-        configManager.refreshAll();
+        configManager.refreshAll(); //刷新所有配置
     }
 
-    private void startMetadataCenter() {
+    private void startMetadataCenter() { //启动元数据中心
 
         useRegistryAsMetadataCenterIfNecessary();
 
@@ -632,7 +632,7 @@ public class DubboBootstrap extends GenericEventListener { //基于事件驱动
             return;
         }
         MetadataReportConfig metadataReportConfig = metadataReportConfigs.iterator().next();
-        ConfigValidationUtils.validateMetadataConfig(metadataReportConfig); //取其中一个实例校验
+        ConfigValidationUtils.validateMetadataConfig(metadataReportConfig); //取其中一个实例校验（元数据中心只使用一个，注册中心可以有多个）
         if (!metadataReportConfig.isValid()) {
             return;
         }
@@ -659,8 +659,8 @@ public class DubboBootstrap extends GenericEventListener { //基于事件驱动
                 .getDefaultRegistries()
                 .stream()
                 .filter(this::isUsedRegistryAsConfigCenter) //filer：筛选满足条件的元素
-                .map(this::registryAsConfigCenter)
-                .forEach(configManager::addConfigCenter);
+                .map(this::registryAsConfigCenter) //构建配置中心数据
+                .forEach(configManager::addConfigCenter); //将配置中心数据写到ConfigManager对应的本地缓存中
     }
 
     private boolean isUsedRegistryAsConfigCenter(RegistryConfig registryConfig) {
@@ -813,10 +813,10 @@ public class DubboBootstrap extends GenericEventListener { //基于事件驱动
     private void loadRemoteConfigs() {
         // registry ids to registry configs
         List<RegistryConfig> tmpRegistries = new ArrayList<>();
-        Set<String> registryIds = configManager.getRegistryIds();
+        Set<String> registryIds = configManager.getRegistryIds(); //获取注册Config的id列表
         registryIds.forEach(id -> {
             if (tmpRegistries.stream().noneMatch(reg -> reg.getId().equals(id))) {
-                tmpRegistries.add(configManager.getRegistry(id).orElseGet(() -> {
+                tmpRegistries.add(configManager.getRegistry(id).orElseGet(() -> { //根据registryId，循环构建RegistryConfig对象，并依次设置到注册RegistryConfig列表中
                     RegistryConfig registryConfig = new RegistryConfig();
                     registryConfig.setId(id);
                     registryConfig.refresh();
@@ -825,14 +825,14 @@ public class DubboBootstrap extends GenericEventListener { //基于事件驱动
             }
         });
 
-        configManager.addRegistries(tmpRegistries);
+        configManager.addRegistries(tmpRegistries); //将RegistryConfig列表添加到ConfigManager的缓存中
 
         // protocol ids to protocol configs
         List<ProtocolConfig> tmpProtocols = new ArrayList<>();
-        Set<String> protocolIds = configManager.getProtocolIds();
+        Set<String> protocolIds = configManager.getProtocolIds(); //获取协议Config的id列表
         protocolIds.forEach(id -> {
             if (tmpProtocols.stream().noneMatch(prot -> prot.getId().equals(id))) {
-                tmpProtocols.add(configManager.getProtocol(id).orElseGet(() -> {
+                tmpProtocols.add(configManager.getProtocol(id).orElseGet(() -> { //根据protocolId，循环构建ProtocolConfig对象，并依次设置到ProtocolConfig列表中
                     ProtocolConfig protocolConfig = new ProtocolConfig();
                     protocolConfig.setId(id);
                     protocolConfig.refresh();
@@ -867,7 +867,7 @@ public class DubboBootstrap extends GenericEventListener { //基于事件驱动
         addEventListener(this);
     }
 
-    private List<ServiceDiscovery> getServiceDiscoveries() {
+    private List<ServiceDiscovery> getServiceDiscoveries() { //获取满足条件的ServiceDiscovery实例
         return AbstractRegistryFactory.getRegistries()
                 .stream()
                 .filter(registry -> registry instanceof ServiceDiscoveryRegistry)
@@ -881,8 +881,8 @@ public class DubboBootstrap extends GenericEventListener { //基于事件驱动
      */
     public DubboBootstrap start() {
         if (started.compareAndSet(false, true)) {
-            ready.set(false);
-            initialize();
+            ready.set(false); //设置标志值
+            initialize();//初始化处理
             if (logger.isInfoEnabled()) {
                 logger.info(NAME + " is starting...");
             }
@@ -897,11 +897,11 @@ public class DubboBootstrap extends GenericEventListener { //基于事件驱动
                 registerServiceInstance();
             }
 
-            referServices();
-            if (asyncExportingFutures.size() > 0) {
+            referServices(); //引用服务
+            if (asyncExportingFutures.size() > 0) { //服务异步暴露后，更新启动标志
                 new Thread(() -> {
                     try {
-                        this.awaitFinish();
+                        this.awaitFinish(); //阻塞着等待异步任务完成
                     } catch (Exception e) {
                         logger.warn(NAME + " exportAsync occurred an exception.");
                     }
@@ -910,7 +910,7 @@ public class DubboBootstrap extends GenericEventListener { //基于事件驱动
                         logger.info(NAME + " is ready.");
                     }
                 }).start();
-            } else {
+            } else { //服务同步暴露后，更新启动标志
                 ready.set(true);
                 if (logger.isInfoEnabled()) {
                     logger.info(NAME + " is ready.");
@@ -953,11 +953,11 @@ public class DubboBootstrap extends GenericEventListener { //基于事件驱动
         return this;
     }
 
-    public DubboBootstrap awaitFinish() throws Exception {
+    public DubboBootstrap awaitFinish() throws Exception { //等待异步暴露和引用的服务完成
         logger.info(NAME + " waiting services exporting / referring ...");
         if (exportAsync && asyncExportingFutures.size() > 0) {
             CompletableFuture future = CompletableFuture.allOf(asyncExportingFutures.toArray(new CompletableFuture[0]));
-            future.get();
+            future.get(); //阻塞着等待服务完成
         }
         if (referAsync && asyncReferringFutures.size() > 0) {
             CompletableFuture future = CompletableFuture.allOf(asyncReferringFutures.toArray(new CompletableFuture[0]));
@@ -1016,25 +1016,25 @@ public class DubboBootstrap extends GenericEventListener { //基于事件驱动
     /* serve for builder apis, end */
 
     private DynamicConfiguration prepareEnvironment(ConfigCenterConfig configCenter) {
-        if (configCenter.isValid()) {
-            if (!configCenter.checkOrUpdateInited()) { //预期值为false，当inited=true时，checkOrUpdateInited()返回false，即已经初始化了，就不再初始化处理
+        if (configCenter.isValid()) { //在配置中心有效时，进行处理（即配置地址address、协议protocol不为空时）
+            if (!configCenter.checkOrUpdateInited()) { //若配置中心已经初始化过，则不进行后续的初始化逻辑。预期值为false，当inited=true时，checkOrUpdateInited()返回false，即已经初始化了，就不再初始化处理
                 return null;
             }
-            DynamicConfiguration dynamicConfiguration = getDynamicConfiguration(configCenter.toUrl()); //将Config对象的内容，转换为URL
-            String configContent = dynamicConfiguration.getProperties(configCenter.getConfigFile(), configCenter.getGroup());
+            DynamicConfiguration dynamicConfiguration = getDynamicConfiguration(configCenter.toUrl()); //根据指定的URL获取配置中心实例
+            String configContent = dynamicConfiguration.getProperties(configCenter.getConfigFile(), configCenter.getGroup()); //从配置中心获取指定的配置内容
 
             String appGroup = getApplication().getName();
             String appConfigContent = null;
-            if (isNotEmpty(appGroup)) {
+            if (isNotEmpty(appGroup)) { //按应用名进行隔离
                 appConfigContent = dynamicConfiguration.getProperties
                         (isNotEmpty(configCenter.getAppConfigFile()) ? configCenter.getAppConfigFile() : configCenter.getConfigFile(),
                                 appGroup
                         );
             }
             try {
-                environment.setConfigCenterFirst(configCenter.isHighestPriority());
-                environment.updateExternalConfigurationMap(parseProperties(configContent)); //按从配置中心拉取的配置，更新到本地缓存中
-                environment.updateAppExternalConfigurationMap(parseProperties(appConfigContent));
+                environment.setConfigCenterFirst(configCenter.isHighestPriority()); //指定当前配置中心是否是具有高优先级
+                environment.updateExternalConfigurationMap(parseProperties(configContent)); //将从配置中心拉取的配置，更新到本地缓存中
+                environment.updateAppExternalConfigurationMap(parseProperties(appConfigContent)); //将应用名为group从配置中心拉取的配置，更新到本地缓存中
             } catch (IOException e) {
                 throw new IllegalStateException("Failed to parse configurations from Config Center.", e);
             }
@@ -1060,8 +1060,8 @@ public class DubboBootstrap extends GenericEventListener { //基于事件驱动
     private void exportMetadataService() {
         metadataServiceExporters
                 .stream()
-                .filter(this::supports)
-                .forEach(MetadataServiceExporter::export);
+                .filter(this::supports) //筛选出支持的元数据类型
+                .forEach(MetadataServiceExporter::export); //进行元数据服务暴露
     }
 
     private void unexportMetadataService() {
@@ -1079,7 +1079,7 @@ public class DubboBootstrap extends GenericEventListener { //基于事件驱动
         configManager.getServices().forEach(sc -> {
             // TODO, compatible with ServiceConfig.export()
             ServiceConfig serviceConfig = (ServiceConfig) sc;
-            serviceConfig.setBootstrap(this); //设置ServiceConfig对象的bootstrap属性值
+            serviceConfig.setBootstrap(this); //设置ServiceConfig与DubboBootstrap的关联关系
 
             if (exportAsync) { //异步暴露服务，使用线程池执行相关任务
                 ExecutorService executor = executorRepository.getServiceExporterExecutor();
@@ -1087,8 +1087,8 @@ public class DubboBootstrap extends GenericEventListener { //基于事件驱动
                     sc.export();
                     exportedServices.add(sc);
                 });
-                asyncExportingFutures.add(future);
-            } else {
+                asyncExportingFutures.add(future); //将Future将到列表中
+            } else { //同步暴露服务
                 sc.export();
                 exportedServices.add(sc);
             }
@@ -1110,7 +1110,7 @@ public class DubboBootstrap extends GenericEventListener { //基于事件驱动
         exportedServices.clear();
     }
 
-    private void referServices() {
+    private void referServices() { //引用服务
         if (cache == null) {
             cache = ReferenceConfigCache.getCache();
         }
@@ -1121,7 +1121,7 @@ public class DubboBootstrap extends GenericEventListener { //基于事件驱动
             referenceConfig.setBootstrap(this);
 
             if (rc.shouldInit()) {
-                if (referAsync) {
+                if (referAsync) { //异步引用服务（与暴露服务的同步、异步处理方式类似）
                     CompletableFuture<Object> future = ScheduledCompletableFuture.submit(
                             executorRepository.getServiceExporterExecutor(),
                             () -> cache.get(rc)
@@ -1149,7 +1149,7 @@ public class DubboBootstrap extends GenericEventListener { //基于事件驱动
     }
 
     private void registerServiceInstance() {
-        if (CollectionUtils.isEmpty(getServiceDiscoveries())) {
+        if (CollectionUtils.isEmpty(getServiceDiscoveries())) { //若缓存中的注册中心列表为空，则不进行后续处理
             return;
         }
 
@@ -1163,11 +1163,11 @@ public class DubboBootstrap extends GenericEventListener { //基于事件驱动
 
         int port = exportedURL.getPort();
 
-        ServiceInstance serviceInstance = createServiceInstance(serviceName, host, port);
+        ServiceInstance serviceInstance = createServiceInstance(serviceName, host, port); //创建服务实例ServiceInstance
 
-        preRegisterServiceInstance(serviceInstance);
+        preRegisterServiceInstance(serviceInstance); //预处理注册服务实例
 
-        getServiceDiscoveries().forEach(serviceDiscovery -> serviceDiscovery.register(serviceInstance));
+        getServiceDiscoveries().forEach(serviceDiscovery -> serviceDiscovery.register(serviceInstance)); //将创建的服务实例依次注册到各个注册中心里
     }
 
     /**
@@ -1196,7 +1196,7 @@ public class DubboBootstrap extends GenericEventListener { //基于事件驱动
         });
     }
 
-    private URL selectMetadataServiceExportedURL() {
+    private URL selectMetadataServiceExportedURL() { //
 
         URL selectedURL = null;
 
@@ -1236,10 +1236,10 @@ public class DubboBootstrap extends GenericEventListener { //基于事件驱动
         return this.serviceInstance;
     }
 
-    public void destroy() {
+    public void destroy() { //做销毁清理工作（包含关联的注册信息、元数据信息、暴露服务信息等）
         if (destroyLock.tryLock()) {
             try {
-                DubboShutdownHook.destroyAll();
+                DubboShutdownHook.destroyAll(); //停机钩子线程做销毁工作
 
                 if (started.compareAndSet(true, false)
                         && destroyed.compareAndSet(false, true)) {

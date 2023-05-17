@@ -27,14 +27,14 @@ import java.util.List;
 /**
  * This is an abstraction（抽象） specially customized（定制的） for the sequence Dubbo retrieves properties.
  */
-public class CompositeConfiguration implements Configuration { //Composite：[ˈkɒmpəzɪt] adj. 合成的，复合的；n. 合成物，复合材料；v. 合成
+public class CompositeConfiguration implements Configuration { //合成的配置中心，Composite：[ˈkɒmpəzɪt] adj. 合成的，复合的；n. 合成物，复合材料；v. 合成
     // CompositeConfiguration 就是一个从多个配置类中取得需要的配置值的工具类。作用就是组合多种配置，
     // 使得外部的使用者不用关心多个配置类， 并且不用关心优先级， 优先级就是顺序。
 
     private Logger logger = LoggerFactory.getLogger(CompositeConfiguration.class);
 
     private String id;
-    private String prefix; //前缀
+    private String prefix; //前缀（一对多的关系，一个prefix对应一个Configuration列表，即多个Configuration实例）
 
     /**
      * List holding all the configuration

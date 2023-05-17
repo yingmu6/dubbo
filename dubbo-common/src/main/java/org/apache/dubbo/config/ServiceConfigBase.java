@@ -51,7 +51,7 @@ public abstract class ServiceConfigBase<T> extends AbstractServiceConfig {
     /**
      * The interface class of the exported service
      */
-    protected Class<?> interfaceClass;
+    protected Class<?> interfaceClass; //暴露的服务接口对应的Class
 
     /**
      * The reference of the interface implementation

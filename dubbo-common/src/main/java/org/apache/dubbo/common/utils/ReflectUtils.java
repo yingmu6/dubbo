@@ -119,9 +119,9 @@ public final class ReflectUtils { //JVM虚拟机中的类型描述符
 
     public static final Pattern GETTER_METHOD_DESC_PATTERN = Pattern.compile("get([A-Z][_a-zA-Z0-9]*)\\(\\)(" + DESC_REGEX + ")"); //get方法的正则表达值：包含方法名+参数列表+返回值的描述
 
-    public static final Pattern SETTER_METHOD_DESC_PATTERN = Pattern.compile("set([A-Z][_a-zA-Z0-9]*)\\((" + DESC_REGEX + ")\\)V"); //正则表达式：那符合条件的表达式，对照一下表达式规则，即可明白表达式含义
+    public static final Pattern SETTER_METHOD_DESC_PATTERN = Pattern.compile("set([A-Z][_a-zA-Z0-9]*)\\((" + DESC_REGEX + ")\\)V"); //set方法的正则表达式（正则表达式：拿符合条件的表达式，对照一下表达式规则，即可明白表达式含义）
 
-    public static final Pattern IS_HAS_CAN_METHOD_DESC_PATTERN = Pattern.compile("(?:is|has|can)([A-Z][_a-zA-Z0-9]*)\\(\\)Z");
+    public static final Pattern IS_HAS_CAN_METHOD_DESC_PATTERN = Pattern.compile("(?:is|has|can)([A-Z][_a-zA-Z0-9]*)\\(\\)Z"); //boolean对应的方法（返回描述符Z表示boolean类型）
 
     private static final ConcurrentMap<String, Class<?>> DESC_CLASS_CACHE = new ConcurrentHashMap<String, Class<?>>();
 
@@ -129,9 +129,9 @@ public final class ReflectUtils { //JVM虚拟机中的类型描述符
 
     private static final ConcurrentMap<String, Method> SIGNATURE_METHODS_CACHE = new ConcurrentHashMap<String, Method>();
 
-    private static Map<Class<?>, Object> primitiveDefaults = new HashMap<>();
+    private static Map<Class<?>, Object> primitiveDefaults = new HashMap<>(); //基本类型默认的值
 
-    static { //基本类型默认的值
+    static { //设置基本类型默认的值
         primitiveDefaults.put(int.class, 0);
         primitiveDefaults.put(long.class, 0L);
         primitiveDefaults.put(byte.class, (byte) 0);
@@ -389,7 +389,7 @@ public final class ReflectUtils { //JVM虚拟机中的类型描述符
             } else if ("short".equals(t)) {
                 ret.append(JVM_SHORT);
             }
-        } else { //对象类型
+        } else { //非基本类型，即对象类型（以"L"开头，并将类名中的"."替换为"/"，最后以";"分隔，如"Lorg/apache/dubbo/demo/Fruit; 或 Ljava/lang/String;"）
             ret.append('L');
             ret.append(c.getName().replace('.', '/'));
             ret.append(';');
@@ -425,14 +425,14 @@ public final class ReflectUtils { //JVM虚拟机中的类型描述符
      * @param m method.
      * @return desc.
      */
-    public static String getDesc(final Method m) {
+    public static String getDesc(final Method m) { //获取方法描述符（描述符可以唯一确定一个方法）
         StringBuilder ret = new StringBuilder(m.getName()).append('(');
         Class<?>[] parameterTypes = m.getParameterTypes();
         for (int i = 0; i < parameterTypes.length; i++) {
-            ret.append(getDesc(parameterTypes[i])); //依次处理参数类型
+            ret.append(getDesc(parameterTypes[i])); //拼接参数类型的描述符
         }
-        ret.append(')').append(getDesc(m.getReturnType())); //处理方法的返回类型
-        return ret.toString(); //如：hello()Ljava/lang/String;
+        ret.append(')').append(getDesc(m.getReturnType())); //拼接返回类型的描述符
+        return ret.toString(); //拼接的方法的描述符，如："hello(Lorg/apache/dubbo/demo/Fruit;)Ljava/lang/String;"
     }
 
     public static String[] getDescArray(final Method m) {
@@ -786,7 +786,7 @@ public final class ReflectUtils { //JVM虚拟机中的类型描述符
             clazz = Class.forName(name, true, cl); //根据类名称获取Class对象
             NAME_CLASS_CACHE.put(name, clazz); //设置到缓存中
         }
-        return clazz;
+        return clazz; //借助缓存，减少反射的开销
     }
 
     /**
@@ -929,10 +929,10 @@ public final class ReflectUtils { //JVM虚拟机中的类型描述符
             for (int i = 0; i < parameterTypes.length; i++) {
                 types[i] = ReflectUtils.name2class(parameterTypes[i]); //依次将类型名称name转换为Class
             }
-            method = clazz.getMethod(methodName, types); //根据Class中的方法获取Method对象
+            method = clazz.getMethod(methodName, types); //根据方法名+参数类型列表获取Method对象
 
         }
-        SIGNATURE_METHODS_CACHE.put(signature, method);
+        SIGNATURE_METHODS_CACHE.put(signature, method); //放入缓存中，下次调用时可用上
         return method;
     }
 
@@ -1082,10 +1082,10 @@ public final class ReflectUtils { //JVM虚拟机中的类型描述符
     }
 
     public static Object defaultReturn(Class<?> classType) {
-        if (classType != null && classType.isPrimitive()) {
+        if (classType != null && classType.isPrimitive()) { //基本类型，返回缓存中已经设置的默认值
             return primitiveDefaults.get(classType);
         } else {
-            return null;
+            return null; //非基本类型，返回null
         }
     }
 
@@ -1202,7 +1202,7 @@ public final class ReflectUtils { //JVM虚拟机中的类型描述符
      * @return non-null read-only {@link Set}
      * @since 2.7.5
      */
-    public static Set<ParameterizedType> findParameterizedTypes(Class<?> sourceClass) { //调试入口，可以从EventDispatcherTest#testDefaultMethods
+    public static Set<ParameterizedType> findParameterizedTypes(Class<?> sourceClass) { //获取参数化类型的集合（参数化类型如：Collection<String>）
         // Add Generic Interfaces
         List<Type> genericTypes = new LinkedList<>(asList(sourceClass.getGenericInterfaces())); //Type:是Java中所有类型的通用超接口，getGenericInterfaces()返回当前Class直接实现的接口
         // Add Generic Super Class
@@ -1213,7 +1213,7 @@ public final class ReflectUtils { //JVM虚拟机中的类型描述符
                 .map(type -> ParameterizedType.class.cast(type))  // cast to ParameterizedType
                 .collect(Collectors.toSet());
 
-        if (parameterizedTypes.isEmpty()) { // If not found, try to search super types recursively
+        if (parameterizedTypes.isEmpty()) { // If not found, try to search super types recursively（递归地）
             genericTypes.stream()
                     .filter(type -> type instanceof Class)
                     .map(type -> Class.class.cast(type))

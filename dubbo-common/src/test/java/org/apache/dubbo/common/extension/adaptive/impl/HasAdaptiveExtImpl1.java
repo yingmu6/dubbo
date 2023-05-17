@@ -23,4 +23,9 @@ public class HasAdaptiveExtImpl1 implements HasAdaptiveExt {
     public String echo(URL url, String s) {
         return this.getClass().getSimpleName();
     }
+
+    @Override
+    public String echoV2(URL url, String s) {
+        return this.getClass().getSimpleName();
+    }
 }

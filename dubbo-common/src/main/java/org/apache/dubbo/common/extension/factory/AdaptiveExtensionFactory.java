@@ -28,7 +28,7 @@ import java.util.List;
  * AdaptiveExtensionFactory
  */
 @Adaptive
-public class AdaptiveExtensionFactory implements ExtensionFactory {
+public class AdaptiveExtensionFactory implements ExtensionFactory { //自适应扩展工厂
 
     private final List<ExtensionFactory> factories;
 

@@ -58,9 +58,9 @@ public class MonitorFilter implements Filter, Filter.Listener {
     private static final String MONITOR_FILTER_START_TIME = "monitor_filter_start_time";
 
     /**
-     * The Concurrent counter
+     * The Concurrent counter（数据格式：ConcurrentMap<serviceName+"."+methodName, AtomicInteger>）
      */
-    private final ConcurrentMap<String, AtomicInteger> concurrents = new ConcurrentHashMap<String, AtomicInteger>();
+    private final ConcurrentMap<String, AtomicInteger> concurrents = new ConcurrentHashMap<String, AtomicInteger>(); //并发调用的计数器（记录着当前方法调用的请求个数，调用前+1，调用完成后-1，类似活跃数）
 
     /**
      * The MonitorFactory
@@ -84,22 +84,22 @@ public class MonitorFilter implements Filter, Filter.Listener {
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
         if (invoker.getUrl().hasParameter(MONITOR_KEY)) {
             invocation.put(MONITOR_FILTER_START_TIME, System.currentTimeMillis());
-            getConcurrent(invoker, invocation).incrementAndGet(); // count up
+            getConcurrent(invoker, invocation).incrementAndGet(); // count up（服务调用前，计数器加1）
         }
         return invoker.invoke(invocation); // proceed invocation chain
     }
 
     // concurrent counter
     private AtomicInteger getConcurrent(Invoker<?> invoker, Invocation invocation) {
-        String key = invoker.getInterface().getName() + "." + invocation.getMethodName();
+        String key = invoker.getInterface().getName() + "." + invocation.getMethodName(); //接口名+方法名作为统计的key
         return concurrents.computeIfAbsent(key, k -> new AtomicInteger());
     }
 
     @Override
     public void onResponse(Result result, Invoker<?> invoker, Invocation invocation) {
-        if (invoker.getUrl().hasParameter(MONITOR_KEY)) {
+        if (invoker.getUrl().hasParameter(MONITOR_KEY)) { //参数MONITOR_KEY是在ReferenceConfig#createProxy设置的
             collect(invoker, invocation, result, RpcContext.getContext().getRemoteHost(), (long) invocation.get(MONITOR_FILTER_START_TIME), false);
-            getConcurrent(invoker, invocation).decrementAndGet(); // count down
+            getConcurrent(invoker, invocation).decrementAndGet(); // count down（调用完成后，计数器减1）
         }
     }
 
@@ -128,15 +128,15 @@ public class MonitorFilter implements Filter, Filter.Listener {
             if (monitor == null) {
                 return;
             }
-            URL statisticsURL = createStatisticsUrl(invoker, invocation, result, remoteHost, start, error);
-            monitor.collect(statisticsURL);
-        } catch (Throwable t) {
+            URL statisticsURL = createStatisticsUrl(invoker, invocation, result, remoteHost, start, error); //URL的值如：count://192.168.45.154/org.apache.dubbo.monitor.MonitorService/aaa?application=abc&concurrent=1&elapsed=275921&group=&input=&interface=org.apache.dubbo.monitor.MonitorService&method=aaa&output=&provider=192.168.45.154:20880&success=1&version=
+            monitor.collect(statisticsURL); //使用当前监控中心工厂创建监控中心，并进行数据采集
+        } catch (Throwable t) { //若有采集异常，则进行捕获做提示，但不终止流程
             logger.warn("Failed to monitor count service " + invoker.getUrl() + ", cause: " + t.getMessage(), t);
         }
     }
 
     /**
-     * Create statistics url
+     * Create statistics url（构建用于统计的URL）
      *
      * @param invoker
      * @param invocation
@@ -148,26 +148,26 @@ public class MonitorFilter implements Filter, Filter.Listener {
      */
     private URL createStatisticsUrl(Invoker<?> invoker, Invocation invocation, Result result, String remoteHost, long start, boolean error) {
         // ---- service statistics ----
-        long elapsed = System.currentTimeMillis() - start; // invocation cost
+        long elapsed = System.currentTimeMillis() - start; // invocation cost（调用耗费的时间，start为在invoke调用前的时间戳）
         int concurrent = getConcurrent(invoker, invocation).get(); // current concurrent count
         String application = invoker.getUrl().getParameter(APPLICATION_KEY);
         String service = invoker.getInterface().getName(); // service name
         String method = RpcUtils.getMethodName(invocation); // method name
         String group = invoker.getUrl().getParameter(GROUP_KEY);
-        String version = invoker.getUrl().getParameter(VERSION_KEY);
+        String version = invoker.getUrl().getParameter(VERSION_KEY); //从调用者Invoker获取url信息，取出相关值，构建新的统计使用的url
 
         int localPort;
-        String remoteKey, remoteValue;
-        if (CONSUMER_SIDE.equals(invoker.getUrl().getParameter(SIDE_KEY))) {
+        String remoteKey, remoteValue; //参数remoteHost的值来自于RpcContext.getContext().getRemoteHost()
+        if (CONSUMER_SIDE.equals(invoker.getUrl().getParameter(SIDE_KEY))) { //消费端
             // ---- for service consumer ----
             localPort = 0;
             remoteKey = MonitorService.PROVIDER;
-            remoteValue = invoker.getUrl().getAddress();
-        } else {
+            remoteValue = invoker.getUrl().getAddress(); //提供端的地址（消费端目标调用url中的地址，即为提供端的地址）
+        } else {                                                             //提供端
             // ---- for service provider ----
             localPort = invoker.getUrl().getPort();
             remoteKey = MonitorService.CONSUMER;
-            remoteValue = remoteHost;
+            remoteValue = remoteHost; //消费端的地址（因为当前是提供端，所以RpcContext.getContext().getRemoteHost() 上下文的远程地址就是消费端的地址）
         }
         String input = "", output = "";
         if (invocation.getAttachment(INPUT_KEY) != null) {

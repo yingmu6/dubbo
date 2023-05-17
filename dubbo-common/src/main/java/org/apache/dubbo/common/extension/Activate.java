@@ -27,7 +27,7 @@ import java.lang.annotation.*;
  * multiple implementations.
  * <ol>
  * <li>{@link Activate#group()} specifies group criteria. Framework SPI defines the valid group values.
- * <li>{@link Activate#value()} specifies parameter key in {@link URL} criteria.
+ * <li>{@link Activate#value()} specifies parameter key in {@link URL} criteria（标准）.
  * </ol>
  * SPI provider can call {@link ExtensionLoader#getActivateExtension(URL, String, String)} to find out all activated
  * extensions with the given criteria.
@@ -40,6 +40,20 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD}) //可以作用在类上、方法上
 public @interface Activate { //若带上自动激活类设置了group、value，则需要满足设置的条件，才能被激活（activate：使...活动，使...积极起来）
+
+    /**
+     * 自动激活机制_概述总结
+     * 1）不管是自适应扩展类@Adaptive、还是自动激活扩展类@Activate，最终都是找到明确的扩展名，然后通过getExtension(name)找到扩展实例
+     * 2）不过查找扩展名方式有些不同，
+     *  a）@Adaptive(value={"key1","key2"}),最终是通过url.getParameter("key1",getParameter("key2",defaultExtName)) 从url中查找到指定参数对应的扩展名，
+     *  b）@Activate有两种形式，一种是自定义激活，另一种是系统自动激活
+     *     b.1）自定义激活：ExtensionLoader#getActivateExtension(URL url, String key)，直接将url中key对应的值作为扩展名，不需要带上@Activate注解
+     *     b.2）自动自动激活：对@Activate注解中的group、value进行比较，满足条件了，就使用@Activate注解对应的扩展名，有两种形式
+     *         b.2.1）如@Activate(value={key1,key2}, group="default_group")，则满足group匹配且，key1、key2出现在url参数的key中。
+     *         b.2.2）如@Activate(value={key1:value1,key2:value2}, group="default_group")，则满足group匹配且，key1、value1或key2、value2任意一个键值对同时出现在url参数中，
+     *                即该@Activate注解对应的实例被匹配，然后再到缓存中找到注解对应的扩展名
+     */
+
     /**
      * Activate the current extension when one of the groups matches（匹配）. The group passed into
      * {@link ExtensionLoader#getActivateExtension(URL, String, String)} will be used for matching.
@@ -57,9 +71,12 @@ public @interface Activate { //若带上自动激活类设置了group、value，
      * there's either <code>cache</code> or <code>validation</code> key appeared in the URL's parameters.
      * </p>
      *
-     * @return URL parameter keys
+     * @return URL parameter keys （value的值指的是URL中的参数key）
      * @see ExtensionLoader#getActivateExtension(URL, String)
      * @see ExtensionLoader#getActivateExtension(URL, String, String)
+     *
+     * 注明：value的配置方式有两种
+     * a）@Activate(value="key1:value1, key2:value2")，
      */
     String[] value() default {};
 

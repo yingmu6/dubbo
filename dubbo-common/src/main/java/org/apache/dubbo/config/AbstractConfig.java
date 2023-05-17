@@ -459,19 +459,19 @@ public abstract class AbstractConfig implements Serializable {
         this.prefix = prefix;
     }
 
-    public void refresh() { //从配置中心中获取最新的配置值，然后通过set方法或setParameters方法设置值
-        Environment env = ApplicationModel.getEnvironment();
+    public void refresh() { //刷新Config对象的属性值（从配置中心中获取最新的配置值，然后通过set方法或setParameters方法设置到Config对象中）
+        Environment env = ApplicationModel.getEnvironment(); //获取环境信息
         try {
-            CompositeConfiguration compositeConfiguration = env.getPrefixedConfiguration(this); //获取带有前缀的配置
+            CompositeConfiguration compositeConfiguration = env.getPrefixedConfiguration(this); //获取带有前缀的合成配置中心
             // loop methods, get override value and set the new value back to method
             Method[] methods = getClass().getMethods();
             for (Method method : methods) { //遍历当前配置对象的方法，从配置中心获取值，通过set()方法或setParameters()方法设置到XxxConfig对象中
                 if (MethodUtils.isSetter(method)) { //是否是setXXX()方法
                     try {
-                        String value = StringUtils.trim(compositeConfiguration.getString(extractPropertyName(getClass(), method))); //从配置中心获取属性对应的值，发起了远程调用
+                        String value = StringUtils.trim(compositeConfiguration.getString(extractPropertyName(getClass(), method))); //从配置中心获取属性对应的值（若为远程的配置中心，则发起了远程调用）
                         // isTypeMatch() is called to avoid duplicate and incorrect update, for example, we have two 'setGeneric' methods in ReferenceConfig.
                         if (StringUtils.isNotEmpty(value) && ClassUtils.isTypeMatch(method.getParameterTypes()[0], value)) { //若值不为空，且参数类型与参数值能够匹配，则执行invoke调用
-                            method.invoke(this, ClassUtils.convertPrimitive(method.getParameterTypes()[0], value)); //将参数转换为指定类型的Object对象，然后再执行invoke调用
+                            method.invoke(this, ClassUtils.convertPrimitive(method.getParameterTypes()[0], value)); //调用set方法对Config对象的属性设置
                         }
                     } catch (NoSuchMethodException e) {
                         logger.info("Failed to override the property " + method.getName() + " in " +
@@ -481,10 +481,10 @@ public abstract class AbstractConfig implements Serializable {
                 } else if (isParametersSetter(method)) { //是否是setParameters()方法
                     String value = StringUtils.trim(compositeConfiguration.getString(extractPropertyName(getClass(), method)));
                     if (StringUtils.isNotEmpty(value)) {
-                        Map<String, String> map = invokeGetParameters(getClass(), this);
+                        Map<String, String> map = invokeGetParameters(getClass(), this); //获取getParameters()方法的返回值
                         map = map == null ? new HashMap<>() : map;
-                        map.putAll(convert(StringUtils.parseParameters(value), ""));
-                        invokeSetParameters(getClass(), this, map);
+                        map.putAll(convert(StringUtils.parseParameters(value), "")); //将属性值解析为Map形式，并设置到配置对象Config的Map
+                        invokeSetParameters(getClass(), this, map); //调用setParameters()方法，对Config对象的参数设值
                     }
                 }
             }

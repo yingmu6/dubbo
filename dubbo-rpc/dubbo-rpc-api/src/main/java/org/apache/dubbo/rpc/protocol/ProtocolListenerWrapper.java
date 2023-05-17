@@ -38,7 +38,7 @@ public class ProtocolListenerWrapper implements Protocol {
 
     private final Protocol protocol; //持有具体协议的实例，比如InjvmProtocol
 
-    public ProtocolListenerWrapper(Protocol protocol) {
+    public ProtocolListenerWrapper(Protocol protocol) { //Protocol的封装类
         if (protocol == null) {
             throw new IllegalArgumentException("protocol == null");
         }

@@ -31,21 +31,27 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * ClassGenerator（javassist方式产生代理对象）
+ * ClassGenerator（Class生成器，内部对Javassist的数据模型进行抽象，对外提供使用代码片段的方式创建Class）
  */
-public final class ClassGenerator { //@csy-001 该类的用途是什么？解：类产生工具类，现在数据转换为Dubbo内部数据形式，再在底层进行转换，转换为javassist所需的数据形式
+public final class ClassGenerator { //@csy-001 该类的用途是什么？解：Class生成工具类，先将数据转换为Dubbo内部数据形式，再在底层进行转换，转换为javassist所需的数据形式
 
-    private static final AtomicLong CLASS_NAME_COUNTER = new AtomicLong(0);
+    /**
+     * ClassGenerator：Class生成器（符合面向抽象编程思想）
+     * 1）对Class的产生信息做了抽象封装，内部的具体实现后续是可以改的，目前是使用javassist，后续也可以改为SPI，使用cglib等等
+     * 2）内部使用了Javassist做实现，对CtPool、CtClass等Javassist的原生组件做了封装，使用者不用关注javassist的内容
+     */
+
+    private static final AtomicLong CLASS_NAME_COUNTER = new AtomicLong(0); //未指定类名时，默认产生类名，用到的下标
     private static final String SIMPLE_NAME_TAG = "<init>";
-    private static final Map<ClassLoader, ClassPool> POOL_MAP = new ConcurrentHashMap<ClassLoader, ClassPool>(); //ClassLoader - ClassPool（类加载器与类池的对应缓存）
-    private ClassPool mPool; //类池
-    private CtClass mCtc;   //类class
-    private String mClassName;
-    private String mSuperClass;
-    private Set<String> mInterfaces; //存放
-    private List<String> mFields; //存放字段对应的字符串，如ccp.addField("public static java.lang.reflect.Method[] methods;");
-    private List<String> mConstructors; //存放构造函数对应的字符串
-    private List<String> mMethods; //存放方法对应的字符串
+    private static final Map<ClassLoader, ClassPool> POOL_MAP = new ConcurrentHashMap<ClassLoader, ClassPool>(); //ClassLoader - ClassPool（类加载器与javassist中的类池对应缓存）
+    private ClassPool mPool; //javassist中的类池
+    private CtClass mCtc;   //javassist中的编译时类
+    private String mClassName;  //动态生成的类名
+    private String mSuperClass; //父类对应的名称
+    private Set<String> mInterfaces; //存放类实现的接口列表
+    private List<String> mFields; //存放字段对应的代码片段，如ccp.addField("public static java.lang.reflect.Method[] methods;");
+    private List<String> mConstructors; //存放构造函数对应的代码片段
+    private List<String> mMethods; //存放方法对应的代码片段
     private Map<String, Method> mCopyMethods; // <method desc,method instance>  方法描述符与方法实例的映射
     private Map<String, Constructor<?>> mCopyConstructors; // <constructor desc,constructor instance> 方法描述符与构造实例的映射
     private boolean mDefaultConstructor = false; //是否使用默认构造函数
@@ -53,11 +59,11 @@ public final class ClassGenerator { //@csy-001 该类的用途是什么？解：
     private ClassGenerator() { //私有的构造函数，不直接对外暴露
     }
 
-    private ClassGenerator(ClassPool pool) {
+    private ClassGenerator(ClassPool pool) { //私有的构造函数
         mPool = pool; //设置类池
     }
 
-    public static ClassGenerator newInstance() { //静态方法，创建实例对象
+    public static ClassGenerator newInstance() { //静态方法，创建类生成器的实例（指定ClassPool）
         return new ClassGenerator(getClassPool(Thread.currentThread().getContextClassLoader()));
     }
 
@@ -158,7 +164,7 @@ public final class ClassGenerator { //@csy-001 该类的用途是什么？解：
         return addField(sb.toString());
     }
 
-    public ClassGenerator addMethod(String code) {
+    public ClassGenerator addMethod(String code) { //执行方法对应的字符串，添加新方法
         if (mMethods == null) {
             mMethods = new ArrayList<String>();
         }
@@ -166,7 +172,7 @@ public final class ClassGenerator { //@csy-001 该类的用途是什么？解：
         return this;
     }
 
-    public ClassGenerator addMethod(String name, int mod, Class<?> rt, Class<?>[] pts, String body) {
+    public ClassGenerator addMethod(String name, int mod, Class<?> rt, Class<?>[] pts, String body) { //指定方法详细的参数，添加新方法
         return addMethod(name, mod, rt, pts, null, body);
     }
 
@@ -283,7 +289,14 @@ public final class ClassGenerator { //@csy-001 该类的用途是什么？解：
                 getClass().getProtectionDomain());
     }
 
-    public Class<?> toClass(ClassLoader loader, ProtectionDomain pd) { //将当前维护的成员方法、成员变量对应字符串转换为Class对象
+    /**
+     * 动态创建Class的流程：
+     * 1）将设置的代码字符串，如继承的类、实现的接口、设置的方法、字段等转换javassist对应的数据模型，如CtMethod、CtFiled等
+     * 2）然后按类或接口的组成进行组装，如设置继承的类、设置实现的接口、设置类中的方法和字段等
+     * 3）使用javassist的CtClass.toClass()获取到动态生成的Class
+     * （类似Mybatis的动态SQL，按字符串动态组装，最终形成SQL）
+     */
+    public Class<?> toClass(ClassLoader loader, ProtectionDomain pd) { //创建Class对象（将当前维护的Class信息，创建Class对象）
         if (mCtc != null) {
             mCtc.detach(); //detach:分离， 从ClassPool中移除CtClass
         }
@@ -296,21 +309,21 @@ public final class ClassGenerator { //@csy-001 该类的用途是什么？解：
                         ? ClassGenerator.class.getName() : mSuperClass + "$sc") + id; //构建类名：取ClassGenerator名称或mSuperClass名称
             }
             mCtc = mPool.makeClass(mClassName); //根据类名className创建对应的CtClass对象
-            if (mSuperClass != null) { //若CtClass的父类不为空，则进行设置
+            if (mSuperClass != null) { // 设置继承的类（java是单继承，所以只会设置一个父类）
                 mCtc.setSuperclass(ctcs);
             }
             mCtc.addInterface(mPool.get(DC.class.getName())); // add dynamic class tag. (每一个动态类都实现了DC接口)
-            if (mInterfaces != null) { //设置接口
+            if (mInterfaces != null) { // 设置实现的接口
                 for (String cl : mInterfaces) {
-                    mCtc.addInterface(mPool.get(cl)); //
+                    mCtc.addInterface(mPool.get(cl));
                 }
             }
-            if (mFields != null) { //设置字段
+            if (mFields != null) { // 设置字段
                 for (String code : mFields) {
                     mCtc.addField(CtField.make(code, mCtc)); // 将字段对应的字符串，转换为CtField
                 }
             }
-            if (mMethods != null) { //设置方法
+            if (mMethods != null) { // 设置方法
                 for (String code : mMethods) {
                     if (code.charAt(0) == ':') {
                         mCtc.addMethod(CtNewMethod.copy(getCtMethod(mCopyMethods.get(code.substring(1))),
@@ -320,10 +333,10 @@ public final class ClassGenerator { //@csy-001 该类的用途是什么？解：
                     }
                 }
             }
-            if (mDefaultConstructor) { //处理默认的构造函数（无参的构造函数）
+            if (mDefaultConstructor) { // 设置默认的构造函数（无参的构造函数）
                 mCtc.addConstructor(CtNewConstructor.defaultConstructor(mCtc));
             }
-            if (mConstructors != null) { //处理构造函数
+            if (mConstructors != null) { // 处理构造函数
                 for (String code : mConstructors) {
                     if (code.charAt(0) == ':') {
                         mCtc.addConstructor(CtNewConstructor
@@ -335,6 +348,7 @@ public final class ClassGenerator { //@csy-001 该类的用途是什么？解：
                     }
                 }
             }
+            CtClass.debugDump = "./javassist-debug"; //设置javassist产生的字节码目录，方便查看动态生成的字节码文件
             return mCtc.toClass(loader, pd); //使用CtClass转换到Class
         } catch (RuntimeException e) {
             throw e;
@@ -382,7 +396,7 @@ public final class ClassGenerator { //@csy-001 该类的用途是什么？解：
         return getCtClass(c.getDeclaringClass()).getConstructor(ReflectUtils.getDesc(c));
     }
 
-    public static interface DC { //空接口，动态类标识接口
+    public static interface DC { //空接口，动态类标识接口（Wrapper或ClassGenerator封装的类或接口，都会实现该接口）
 
     } // dynamic class tag interface
 }

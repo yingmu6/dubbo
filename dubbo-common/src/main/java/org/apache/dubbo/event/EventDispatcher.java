@@ -30,7 +30,7 @@ import java.util.concurrent.Executor;
  * @since 2.7.5
  */
 @SPI("direct")
-public interface EventDispatcher extends Listenable<EventListener<?>> { //事件派发器
+public interface EventDispatcher extends Listenable<EventListener<?>> { //事件派发器接口（SPI接口）
 
     //Dispatcher: 派发器、调度器，interceptor：拦截器
 
@@ -54,7 +54,7 @@ public interface EventDispatcher extends Listenable<EventListener<?>> { //事件
      * {@link Executor}. If the return value is <code>null</code>, the behavior is same as default.
      * @see #DIRECT_EXECUTOR
      */
-    default Executor getExecutor() {
+    default Executor getExecutor() { //获取用于派发线程池
         return DIRECT_EXECUTOR;
     }
 
@@ -63,7 +63,7 @@ public interface EventDispatcher extends Listenable<EventListener<?>> { //事件
      *
      * @return the default extension of {@link EventDispatcher}
      */
-    static EventDispatcher getDefaultExtension() {
-        return ExtensionLoader.getExtensionLoader(EventDispatcher.class).getDefaultExtension();
+    static EventDispatcher getDefaultExtension() { //获取EventDispatcher默认的扩展实例
+        return ExtensionLoader.getExtensionLoader(EventDispatcher.class).getDefaultExtension(); //默认扩展实例为DirectEventDispatcher，所以会先进入对应的构造方法中
     }
 }

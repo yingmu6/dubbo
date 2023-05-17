@@ -24,7 +24,7 @@ import java.io.Serializable;
 /**
  * Statistics. (SPI, Prototype, ThreadSafe)
  */
-public class Statistics implements Serializable {
+public class Statistics implements Serializable { //统计的信息
 
     private static final long serialVersionUID = -6921183057683641441L;
 
@@ -40,9 +40,9 @@ public class Statistics implements Serializable {
 
     private String version;
 
-    private String client;
+    private String client; //客户端地址
 
-    private String server;
+    private String server; //服务端地址
 
     public Statistics(URL url) {
         this.url = url;
@@ -139,7 +139,7 @@ public class Statistics implements Serializable {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(Object obj) { //重写了equals方法
         if (this == obj) {
             return true;
         }

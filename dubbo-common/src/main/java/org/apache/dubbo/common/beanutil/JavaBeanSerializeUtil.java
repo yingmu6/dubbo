@@ -73,7 +73,7 @@ public final class JavaBeanSerializeUtil {
     }
 
     private static JavaBeanDescriptor createDescriptorForSerialize(Class<?> cl) {
-        if (cl.isEnum()) {
+        if (cl.isEnum()) { //判断各种类型
             return new JavaBeanDescriptor(cl.getName(), JavaBeanDescriptor.TYPE_ENUM);
         }
 

@@ -31,18 +31,17 @@ import java.util.regex.Matcher;
 /**
  * Wrapper.
  */
-public abstract class Wrapper {
+public abstract class Wrapper { //封装类
     /**
      * 包装类，封装类的创建以及使用点是怎样的？
      * 解：Wrapper用于“包裹”目标类，Wrapper是一个抽象类，仅可通过 getWrapper(Class) 方法创建子类。在创建Wrapper子类的过程中，
      * 子类代码生成逻辑会对getWrapper方法传入的Class对象进行解析，拿到诸如类方法，类成员变量等信息。以及生成 invokeMethod
      * 方法代码和其他一些方法代码。代码生成完毕后，通过 Javassist 生成 Class 对象，最后再通过反射创建Wrapper实例
-     * https://dubbo.apache.org/zh/docs/v2.7/dev/source/export-service/（官网描述）
      */
     private static final Map<Class<?>, Wrapper> WRAPPER_MAP = new ConcurrentHashMap<Class<?>, Wrapper>(); //class wrapper map：类与Wrapper的缓存，当需要执行调用时，根据Class即可找到Wrapper，然后通过Wrapper调用目标对象中方法，减少反射调用
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
     private static final String[] OBJECT_METHODS = new String[] {"getClass", "hashCode", "toString", "equals"};
-    private static final Wrapper OBJECT_WRAPPER = new Wrapper() { //类加载时创建Wrapper实例
+    private static final Wrapper OBJECT_WRAPPER = new Wrapper() { //Object对应的封装类
         @Override
         public String[] getMethodNames() { //匿名内部类，对应实现抽象方法
             return OBJECT_METHODS;
@@ -59,7 +58,7 @@ public abstract class Wrapper {
         }
 
         @Override
-        public Class<?> getPropertyType(String pn) {
+        public Class<?> getPropertyType(String pn) { //Object的属性类型都返回null
             return null;
         }
 
@@ -83,7 +82,7 @@ public abstract class Wrapper {
             if ("getClass".equals(mn)) { //根据方法名选择执行不同的方法
                 return instance.getClass();
             }
-            if ("hashCode".equals(mn)) {
+            if ("hashCode".equals(mn)) { // Object的封装类Wrapper，只对部分的方法做处理，如getClass()、hashCode()等
                 return instance.hashCode();
             }
             if ("toString".equals(mn)) {
@@ -106,7 +105,7 @@ public abstract class Wrapper {
      * @param c Class instance.
      * @return Wrapper instance(not null).
      */
-    public static Wrapper getWrapper(Class<?> c) {
+    public static Wrapper getWrapper(Class<?> c) { //获取Wrapper的实例（先从缓存中获取，若没有则对应创建）
         while (ClassGenerator.isDynamicClass(c)) // can not wrapper on dynamic class.
         {
             c = c.getSuperclass(); //不能封装动态类，动态类取它的父类进行封装
@@ -129,73 +128,73 @@ public abstract class Wrapper {
             throw new IllegalArgumentException("Can not create wrapper for primitive type: " + c);
         }
 
-        String name = c.getName(); //如：String.class.getName() 返回java.lang.String，再如：org.apache.dubbo.demo.GreetingService
-        ClassLoader cl = ClassUtils.getClassLoader(c);
+        String name = c.getName(); //被封装的类的全限定名，如：org.apache.dubbo.demo.GreetingService
+        ClassLoader cl = ClassUtils.getClassLoader(c); //获取类加载器
 
         // 拼接类代码对应的字符串 (对应Wrapper类中的抽象方法)
         StringBuilder c1 = new StringBuilder("public void setPropertyValue(Object o, String n, Object v){ "); //构建当前类中的setPropertyValue()抽象方法
         StringBuilder c2 = new StringBuilder("public Object getPropertyValue(Object o, String n){ ");
         StringBuilder c3 = new StringBuilder("public Object invokeMethod(Object o, String n, Class[] p, Object[] v) throws " + InvocationTargetException.class.getName() + "{ ");
 
-        c1.append(name).append(" w; try{ w = ((").append(name).append(")$1); }catch(Throwable e){ throw new IllegalArgumentException(e); }"); //如：(org.apache.dubbo.demo.GreetingService)$1 ; 做类型强制转换
-        c2.append(name).append(" w; try{ w = ((").append(name).append(")$1); }catch(Throwable e){ throw new IllegalArgumentException(e); }");
-        c3.append(name).append(" w; try{ w = ((").append(name).append(")$1); }catch(Throwable e){ throw new IllegalArgumentException(e); }");
+        c1.append(name).append(" w; try{ w = ((").append(name).append(")$1); }catch(Throwable e){ throw new IllegalArgumentException(e); }"); //将setPropertyValue方法中的Object强制转化为具体类型，如：(org.apache.dubbo.demo.GreetingService)$1
+        c2.append(name).append(" w; try{ w = ((").append(name).append(")$1); }catch(Throwable e){ throw new IllegalArgumentException(e); }"); //将getPropertyValue方法中的Object强制转化为具体类型
+        c3.append(name).append(" w; try{ w = ((").append(name).append(")$1); }catch(Throwable e){ throw new IllegalArgumentException(e); }"); //将invokeMethod方法中的Object强制转化为具体类型
 
-        Map<String, Class<?>> pts = new HashMap<>(); // <property name, property types>
-        Map<String, Method> ms = new LinkedHashMap<>(); // <method desc, Method instance> 方法名与方法实例的映射Map
+        Map<String, Class<?>> pts = new HashMap<>(); // <property name, property types> 属性名与属性类型的映射Map
+        Map<String, Method> ms = new LinkedHashMap<>(); // <method desc, Method instance> 方法对应的描述符与方法实例的映射Map
         List<String> mns = new ArrayList<>(); // method names. 方法名列表
-        List<String> dmns = new ArrayList<>(); // declaring method names.
+        List<String> dmns = new ArrayList<>(); // declaring method names. 被封装的类或接口中，声明的方法名列表
 
         // get all public field.
         for (Field f : c.getFields()) { //处理被封装类的所有public字段
-            String fn = f.getName();
-            Class<?> ft = f.getType();
-            if (Modifier.isStatic(f.getModifiers()) || Modifier.isTransient(f.getModifiers())) { //static、transient修饰的字段不处理
+            String fn = f.getName(); //获取字段名称
+            Class<?> ft = f.getType(); //获取字段类型，如 java.lang.String
+            if (Modifier.isStatic(f.getModifiers()) || Modifier.isTransient(f.getModifiers())) { //static、transient修饰的字段不处理（接口中的字段，都是public static final字段，所以不会处理，那这里处理就是对类封装时处理）
                 continue;
             }
 
-            c1.append(" if( $2.equals(\"").append(fn).append("\") ){ w.").append(fn).append("=").append(arg(ft, "$3")).append("; return; }");
-            c2.append(" if( $2.equals(\"").append(fn).append("\") ){ return ($w)w.").append(fn).append("; }");
-            pts.put(fn, ft); //设置属性名与属性类型的关系
+            c1.append(" if( $2.equals(\"").append(fn).append("\") ){ w.").append(fn).append("=").append(arg(ft, "$3")).append("; return; }"); //通过setPropertyValue方法，为目标对象设置成员属性的值，如：if( $2.equals("employeeName") ){ w.employeeName=(java.lang.String)$3;
+            c2.append(" if( $2.equals(\"").append(fn).append("\") ){ return ($w)w.").append(fn).append("; }"); //通过getPropertyValue方法，获取目标对象的成员变量值，如：if( $2.equals("employeeName") ){ return ($w)w.employeeName; }
+            pts.put(fn, ft); //设置成员属性名与属性类型的关系，如Map<"employeeName,"java.lang.String">
         }
 
         Method[] methods = c.getMethods();
         // get all public method.
-        boolean hasMethod = hasMethods(methods); //处理被封装类的所有public方法
-        if (hasMethod) { //存在方法时处理
+        boolean hasMethod = hasMethods(methods); //处理被封装类的所有public方法（判断是否有非Object中的方法）
+        if (hasMethod) { //拼接invokeMethod方法中的调用逻辑（把被封装的类或接口中的声明方法，依次拼接起来）
             c3.append(" try{");
-            for (Method m : methods) {
+            for (Method m : methods) { //对类中的方法依次封装处理（构造Wrapper中的invokeMethod方法，如org.apache.dubbo.demo.GreetingService中声明中的所有方法）
                 //ignore Object's method.（忽略Object对象中的方法）
                 if (m.getDeclaringClass() == Object.class) {
                     continue;
                 }
 
                 String mn = m.getName();
-                c3.append(" if( \"").append(mn).append("\".equals( $2 ) "); //$2指当前类中的invokeMethod()的第二个参数（比较方法名）
+                c3.append(" if( \"").append(mn).append("\".equals( $2 ) "); //$2指当前类中的invokeMethod()的第二个参数（比较方法名称）
                 int len = m.getParameterTypes().length;
-                c3.append(" && ").append(" $3.length == ").append(len);// 比较方法参数个数
+                c3.append(" && ").append(" $3.length == ").append(len);// 比较方法参数个数（需要方法名称和参数个数都相等）
 
-                boolean override = false;
+                boolean override = false; //判断同一个接口或类中是存在重载的方法
                 for (Method m2 : methods) { //按方法名，判断是否重写
                     if (m != m2 && m.getName().equals(m2.getName())) {
                         override = true;
                         break;
                     }
                 }
-                if (override) { //若有重写的方法
+                if (override) { //若有重载的方法（只按方法名称不能匹配出方法，还得按参数类型进行匹配）
                     if (len > 0) { //方法参数个数
-                        for (int l = 0; l < len; l++) {
-                            c3.append(" && ").append(" $3[").append(l).append("].getName().equals(\"") //比较方法参数类型
+                        for (int l = 0; l < len; l++) { //
+                            c3.append(" && ").append(" $3[").append(l).append("].getName().equals(\"")
                                     .append(m.getParameterTypes()[l].getName()).append("\")");
                         }
                     }
                 }
 
-                c3.append(" ) { ");
+                c3.append(" ) { "); //组装出判断条件，如：if( "hello".equals( $2 )  &&  $3.length == 1 &&  $3[0].getName().equals("org.apache.dubbo.demo.Fruit"))
 
-                if (m.getReturnType() == Void.TYPE) {
+                if (m.getReturnType() == Void.TYPE) { //返回类型为void
                     c3.append(" w.").append(mn).append('(').append(args(m.getParameterTypes(), "$4")).append(");").append(" return null;");
-                } else {
+                } else { //方法有返回类型（组装方法的返回类型，如：return ($w)w.hello((org.apache.dubbo.demo.Fruit)$4[0] ）
                     c3.append(" return ($w)w.").append(mn).append('(').append(args(m.getParameterTypes(), "$4")).append(");");
                 }
 
@@ -205,25 +204,25 @@ public abstract class Wrapper {
                 // try{ w = ((org.apache.dubbo.demo.GreetingService)$1); }catch(Throwable e){ throw new IllegalArgumentException(e); }
                 // try{ if( "hello".equals( $2 )  &&  $3.length == 0 ) {  return ($w)w.hello(); }
 
-                mns.add(mn);
+                mns.add(mn); //加入到方法名列表
                 if (m.getDeclaringClass() == c) {
-                    dmns.add(mn);
+                    dmns.add(mn); //被封装的类或接口中声明的方法
                 }
-                ms.put(ReflectUtils.getDesc(m), m);
+                ms.put(ReflectUtils.getDesc(m), m); //将方法描述符与方法实例缓存起来
             }
             c3.append(" } catch(Throwable e) { ");
             c3.append("     throw new java.lang.reflect.InvocationTargetException(e); ");
             c3.append(" }");
         }
 
-        c3.append(" throw new " + NoSuchMethodException.class.getName() + "(\"Not found method \\\"\"+$2+\"\\\" in class " + c.getName() + ".\"); }");
+        c3.append(" throw new " + NoSuchMethodException.class.getName() + "(\"Not found method \\\"\"+$2+\"\\\" in class " + c.getName() + ".\"); }"); //若没有找到方法，则抛出“未找到方法”的异常
 
-        // deal with get/set method.
+        // deal with get/set method.（处理set/get方法，非规范的方法就不会处理了）
         Matcher matcher;
         for (Map.Entry<String, Method> entry : ms.entrySet()) {
             String md = entry.getKey(); //暴露接口中的方法描述信息，如hello(Lorg/apache/dubbo/demo/FruitEnum;)Ljava/lang/String;
             Method method = entry.getValue();
-            if ((matcher = ReflectUtils.GETTER_METHOD_DESC_PATTERN.matcher(md)).matches()) { //判断是否匹配get方法对应的描述信息
+            if ((matcher = ReflectUtils.GETTER_METHOD_DESC_PATTERN.matcher(md)).matches()) { //判断是否匹配get方法对应的描述信息（描述信息可以确定唯一的方法）
                 String pn = propertyName(matcher.group(1));
                 c2.append(" if( $2.equals(\"").append(pn).append("\") ){ return ($w)w.").append(method.getName()).append("(); }");
                 pts.put(pn, method.getReturnType());
@@ -234,8 +233,8 @@ public abstract class Wrapper {
             } else if ((matcher = ReflectUtils.SETTER_METHOD_DESC_PATTERN.matcher(md)).matches()) { //匹配set方法
                 Class<?> pt = method.getParameterTypes()[0];
                 String pn = propertyName(matcher.group(1));
-                c1.append(" if( $2.equals(\"").append(pn).append("\") ){ w.").append(method.getName()).append("(").append(arg(pt, "$3")).append("); return; }");
-                pts.put(pn, pt);
+                c1.append(" if( $2.equals(\"").append(pn).append("\") ){ w.").append(method.getName()).append("(").append(arg(pt, "$3")).append("); return; }"); //拼接的内容如：" if( $2.equals("msg") ){ w.setMsg((java.lang.String)$3); return;"
+                pts.put(pn, pt); //设置属性名与属性Class的映射
             }
         }
         c1.append(" throw new " + NoSuchPropertyException.class.getName() + "(\"Not found property \\\"\"+$2+\"\\\" field or setter method in class " + c.getName() + ".\"); }");
@@ -243,11 +242,11 @@ public abstract class Wrapper {
 
         // make class（构建Class对象）
         long id = WRAPPER_CLASS_COUNTER.getAndIncrement();
-        ClassGenerator cc = ClassGenerator.newInstance(cl);
+        ClassGenerator cc = ClassGenerator.newInstance(cl); //使用ClassGenerator类生成器来生成Wrapper的Class
         cc.setClassName((Modifier.isPublic(c.getModifiers()) ? Wrapper.class.getName() : c.getName() + "$sw") + id); //org.apache.dubbo.common.bytecode.Wrapper0，判断类是否是public，然后进行类名拼接
-        cc.setSuperClass(Wrapper.class); //将Wrapper指定为父类
+        cc.setSuperClass(Wrapper.class); //将Wrapper指定为父类，创建其封装类
 
-        cc.addDefaultConstructor();
+        cc.addDefaultConstructor(); //添加默认构造函数
         cc.addField("public static String[] pns;"); // property name array.
         cc.addField("public static " + Map.class.getName() + " pts;"); // property type map.
         cc.addField("public static String[] mns;"); // all method name array.
@@ -267,13 +266,13 @@ public abstract class Wrapper {
 
         try {
             Class<?> wc = cc.toClass(); //将CtClass转换为Class
-            // setup static field.
+            // setup static field.（设置静态字段值）
             wc.getField("pts").set(null, pts);
             wc.getField("pns").set(null, pts.keySet().toArray(new String[0]));
             wc.getField("mns").set(null, mns.toArray(new String[0]));
             wc.getField("dmns").set(null, dmns.toArray(new String[0]));
             int ix = 0;
-            for (Method m : ms.values()) {
+            for (Method m : ms.values()) { //遍历方法参数列表
                 wc.getField("mts" + ix++).set(null, m.getParameterTypes());
             }
             return (Wrapper) wc.newInstance(); //使用Class对象创建实例，并强转为Wrapper类型
@@ -289,7 +288,7 @@ public abstract class Wrapper {
         }
     }
 
-    private static String arg(Class<?> cl, String name) {
+    private static String arg(Class<?> cl, String name) { //将参数按指定的类型转换
         if (cl.isPrimitive()) {
             if (cl == Boolean.TYPE) {
                 return "((Boolean)" + name + ").booleanValue()"; //转换为封装类
@@ -320,7 +319,7 @@ public abstract class Wrapper {
         return "(" + ReflectUtils.getName(cl) + ")" + name; //不是基本类型，做强制转换，如 (org.apache.dubbo.demo.FruitEnum)$4[0]
     }
 
-    private static String args(Class<?>[] cs, String name) {
+    private static String args(Class<?>[] cs, String name) { //将方法参数按指定类型转换
         int len = cs.length;
         if (len == 0) {
             return "";
@@ -339,7 +338,7 @@ public abstract class Wrapper {
         return pn.length() == 1 || Character.isLowerCase(pn.charAt(1)) ? Character.toLowerCase(pn.charAt(0)) + pn.substring(1) : pn;
     }
 
-    private static boolean hasMethods(Method[] methods) {
+    private static boolean hasMethods(Method[] methods) { //判断是否有非Object中的方法
         if (methods == null || methods.length == 0) {
             return false;
         }
@@ -384,10 +383,10 @@ public abstract class Wrapper {
     abstract public Object getPropertyValue(Object instance, String pn) throws NoSuchPropertyException, IllegalArgumentException;
 
     /**
-     * set property value.
+     * set property value.（设置单个属性值）
      *
      * @param instance instance.
-     * @param pn       property name.
+     * @param pn       property name.（属性名）
      * @param pv       property value.
      */
     abstract public void setPropertyValue(Object instance, String pn, Object pv) throws NoSuchPropertyException, IllegalArgumentException;
@@ -425,14 +424,14 @@ public abstract class Wrapper {
     }
 
     /**
-     * get method name array.
+     * get method name array.（获取被封装的类中的方法（包含继承的方法））
      *
      * @return method name array.
      */
     abstract public String[] getMethodNames();
 
     /**
-     * get method name array.
+     * get method name array.（获取被封装的类中声明的方法）
      *
      * @return method name array.
      */
@@ -457,9 +456,9 @@ public abstract class Wrapper {
      * invoke method.(调用实例中的对应方法)
      *
      * @param instance instance.
-     * @param mn       method name.
-     * @param types
-     * @param args     argument array.
+     * @param mn       method name.（方法名称）
+     * @param types （参数类型对应的数组）
+     * @param args     argument array.（参数值对应的数组）
      * @return return value.
      */
     abstract public Object invokeMethod(Object instance, String mn, Class<?>[] types, Object[] args) throws NoSuchMethodException, InvocationTargetException;

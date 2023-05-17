@@ -48,16 +48,16 @@ import static org.apache.dubbo.common.function.ThrowableFunction.execute;
  */
 public abstract class GenericEventListener implements EventListener<Event> { //通用的事件监听器，Generic：一般的；普通的；通用的
 
-    private final Method onEventMethod;
+    private final Method onEventMethod; //onEvent(Event)方法对应的Method
 
-    private final Map<Class<?>, Set<Method>> handleEventMethods; //维护着事件Class与Method的关联关系
+    private final Map<Class<?>, Set<Method>> handleEventMethods; //维护着事件与事件触发的方法的关系
 
     protected GenericEventListener() {
         this.onEventMethod = findOnEventMethod();
         this.handleEventMethods = findHandleEventMethods();
     }
 
-    private Method findOnEventMethod() {
+    private Method findOnEventMethod() { //查找onEvent方法对应的Method
         return execute(getClass(), listenerClass -> listenerClass.getMethod("onEvent", Event.class));
     }
 
@@ -97,7 +97,7 @@ public abstract class GenericEventListener implements EventListener<Event> { //�
      * @param method
      * @return
      */
-    private boolean isHandleEventMethod(Method method) {
+    private boolean isHandleEventMethod(Method method) { //判断是否是处理事件的方法
 
         if (onEventMethod.equals(method)) { // not {@link #onEvent(Event)} method
             return false;
@@ -118,7 +118,7 @@ public abstract class GenericEventListener implements EventListener<Event> { //�
         }
 
         Class[] paramTypes = method.getParameterTypes();
-        if (paramTypes.length != 1) { // not only one argument
+        if (paramTypes.length != 1) { // not only one argument（只包含一个参数）
             return false;
         }
 

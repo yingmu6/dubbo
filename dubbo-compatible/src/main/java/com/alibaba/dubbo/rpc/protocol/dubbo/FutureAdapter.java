@@ -37,9 +37,9 @@ import java.util.function.BiConsumer;
  * 2019-06-20
  */
 @Deprecated
-public class FutureAdapter<V> implements Future<V> {
+public class FutureAdapter<V> implements Future<V> { //Future适配器
 
-    private CompletableFuture<Object> future;
+    private CompletableFuture<Object> future; //对老版本的响应结果进行适配
 
     public FutureAdapter(CompletableFuture<Object> future) {
         this.future = future;
@@ -94,7 +94,7 @@ public class FutureAdapter<V> implements Future<V> {
                     }
                     callback.caught(t);
                 } else {
-                    AppResponse appResponse = (AppResponse)obj;
+                    AppResponse appResponse = (AppResponse)obj; //使用AppResponse存储异常信息或结果值
                     if (appResponse.hasException()) {
                         callback.caught(appResponse.getException());
                     } else {

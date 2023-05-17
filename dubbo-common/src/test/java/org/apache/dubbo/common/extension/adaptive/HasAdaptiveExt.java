@@ -25,4 +25,7 @@ import org.apache.dubbo.common.extension.SPI;
 public interface HasAdaptiveExt {
     @Adaptive
     String echo(URL url, String s);
+
+    @Adaptive(value = {"adaptive", "impl"})
+    String echoV2(URL url, String s);
 }

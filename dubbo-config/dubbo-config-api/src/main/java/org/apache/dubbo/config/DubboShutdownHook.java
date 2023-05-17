@@ -31,12 +31,12 @@ import org.apache.dubbo.rpc.Protocol;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * The shutdown hook thread to do the clean up stuff.
+ * The shutdown hook thread to do the clean up stuff. (停机的钩子线程，用于做清除操作)
  * This is a singleton in order to ensure there is only one shutdown hook registered.
  * Because {@link ApplicationShutdownHooks} use {@link java.util.IdentityHashMap}
  * to store the shutdown hooks.
  */
-public class DubboShutdownHook extends Thread {
+public class DubboShutdownHook extends Thread { //dubbo停机的钩子线程
 
     private static final Logger logger = LoggerFactory.getLogger(DubboShutdownHook.class);
 
@@ -47,16 +47,16 @@ public class DubboShutdownHook extends Thread {
     /**
      * Has it already been registered or not?
      */
-    private final AtomicBoolean registered = new AtomicBoolean(false);
+    private final AtomicBoolean registered = new AtomicBoolean(false); //是否已经注册了钩子函数
 
     /**
      * Has it already been destroyed or not?
      */
-    private static final AtomicBoolean destroyed = new AtomicBoolean(false);
+    private static final AtomicBoolean destroyed = new AtomicBoolean(false); //是否已经销毁
 
     private final EventDispatcher eventDispatcher = EventDispatcher.getDefaultExtension();
 
-    private DubboShutdownHook(String name) {
+    private DubboShutdownHook(String name) { //构造方法是私有的，提供的对象是单实例
         super(name);
     }
 
@@ -92,7 +92,7 @@ public class DubboShutdownHook extends Thread {
         if (registered.compareAndSet(false, true)) {
             DubboShutdownHook dubboShutdownHook = getDubboShutdownHook();
             Runtime.getRuntime().addShutdownHook(dubboShutdownHook);
-            dispatch(new DubboShutdownHookRegisteredEvent(dubboShutdownHook));
+            dispatch(new DubboShutdownHookRegisteredEvent(dubboShutdownHook)); //发布钩子函数注册的事件
         }
     }
 
@@ -123,7 +123,7 @@ public class DubboShutdownHook extends Thread {
         return registered.get();
     }
 
-    public static void destroyAll() {
+    public static void destroyAll() { //销毁所有内容
         if (destroyed.compareAndSet(false, true)) {
             AbstractRegistryFactory.destroyAll();
             destroyProtocols();
@@ -139,7 +139,7 @@ public class DubboShutdownHook extends Thread {
             try {
                 Protocol protocol = loader.getLoadedExtension(protocolName);
                 if (protocol != null) {
-                    protocol.destroy();
+                    protocol.destroy(); //各个协议进行销毁操作
                 }
             } catch (Throwable t) {
                 logger.warn(t.getMessage(), t);

@@ -20,9 +20,9 @@ package org.apache.dubbo.common.extension;
  * ExtensionFactory
  */
 @SPI
-public interface ExtensionFactory {
+public interface ExtensionFactory { //扩展实例的创建工厂
     /**
-     * @csy-003 扩展工厂是何时使用的？为啥默认扩展是SpiExtensionFactory？
+     * @csy-003 扩展实例的创建工厂是何时使用的？为啥默认扩展是SpiExtensionFactory？
      * ExtensionFactory的实现类AdaptiveExtensionFactory是带有@Adaptive注解的
      * ExtensionLoader中getExtensionLoader创建扩展加载器时，会获取ExtensionFactory getAdaptiveExtension()自适应类，即为AdaptiveExtensionFactory实例
      * 而AdaptiveExtensionFactory创建时会设置所有可支持的实例，然后依次尝试去获取实例，那个工厂能获取到实例，就用对应实例

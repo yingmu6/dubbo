@@ -22,11 +22,15 @@ import org.apache.dubbo.common.extension.injection.InjectExt;
 
 public class InjectExtImpl implements InjectExt {
 
-    private SimpleExt simpleExt;
+    /**
+     * 扩展接口实例中，包含其它的扩展接口
+     */
+
+    private SimpleExt simpleExt; //SPI扩展接口
 
     private SimpleExt simpleExt1;
 
-    private Object genericType;
+    private Object genericType; //普通对象
 
     public void setSimpleExt(SimpleExt simpleExt) {
         this.simpleExt = simpleExt;

@@ -47,7 +47,7 @@ public interface Prioritized extends Comparable<Prioritized> { //比较逻辑是
     };
 
     /**
-     * The maximum priority
+     * The maximum priority（最大优先级）
      */
     int MAX_PRIORITY = Integer.MIN_VALUE;
 

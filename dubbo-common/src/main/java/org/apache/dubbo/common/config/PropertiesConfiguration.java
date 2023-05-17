@@ -43,19 +43,19 @@ public class PropertiesConfiguration implements Configuration {
 
         //order the propertiesProvider according the priority descending
         orderedPropertiesProviders.sort((OrderedPropertiesProvider a, OrderedPropertiesProvider b) -> {
-            return b.priority() - a.priority();
+            return b.priority() - a.priority(); //根据设置的优先级权重值进行排序
         });
 
         //load the default properties
         Properties properties = ConfigUtils.getProperties();
 
-        //override the properties.
+        //override（覆盖） the properties.
         for (OrderedPropertiesProvider orderedPropertiesProvider :
                 orderedPropertiesProviders) {
-            properties.putAll(orderedPropertiesProvider.initProperties());
+            properties.putAll(orderedPropertiesProvider.initProperties()); //创建新的Properties覆盖之前的属性值
         }
 
-        ConfigUtils.setProperties(properties);
+        ConfigUtils.setProperties(properties); //将Properties对象缓存起来
     }
 
     @Override

@@ -325,7 +325,7 @@ public abstract class AbstractChannelBufferTest {
 
             /**
              * 此处处理的逻辑：
-             * 1）随机数产生的范围 0 ~ BLOCK_SIZE (todo @csy 是否等于BLOCK_SIZE，待测试)
+             * 1）随机数产生的范围 0 ~ BLOCK_SIZE
              * 2）数组拷贝下标是 0 ~ BLOCK_SIZE，长度为BLOCK_SIZE，而数组长度为BLOCK_SIZE*2，所以拷贝最大情况是BLOCK_SIZE ~ BLOCK_SIZE + BLOCK_SIZE，也不会出现数组越界
              * 3）将输入的字节数组进行拷贝，相关元素写到当前buffer中的字节数组中
              */

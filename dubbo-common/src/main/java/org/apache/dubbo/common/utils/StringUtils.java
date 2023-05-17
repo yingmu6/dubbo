@@ -872,7 +872,7 @@ public final class StringUtils {
         return buf.toString();
     }
 
-    public static String camelToSplitName(String camelName, String split) { //驼峰的名称，使用分隔符分隔，如：abCdEf使用分隔符"-"，分隔后为：ab-cd-ef
+    public static String camelToSplitName(String camelName, String split) { //将驼峰的字符串转换为带有分隔符的字符串（使用分隔符分隔，如：abCdEf使用分隔符"-"，分隔后为：ab-cd-ef）
         if (isEmpty(camelName)) {
             return camelName;
         }
@@ -897,7 +897,7 @@ public final class StringUtils {
         return buf == null ? camelName : buf.toString();
     }
 
-    public static String toArgumentString(Object[] args) { //todo @csy 待调试
+    public static String toArgumentString(Object[] args) {
         StringBuilder buf = new StringBuilder();
         for (Object arg : args) {
             if (buf.length() > 0) {
@@ -926,7 +926,7 @@ public final class StringUtils {
     }
 
     public static String toOSStyleKey(String key) {
-        key = key.toUpperCase().replaceAll(DOT_REGEX, UNDERLINE_SEPARATOR);
+        key = key.toUpperCase().replaceAll(DOT_REGEX, UNDERLINE_SEPARATOR); //使用下划线"_"替换"."
         if (!key.startsWith("DUBBO_")) {
             key = "DUBBO_" + key;
         }
@@ -1036,7 +1036,7 @@ public final class StringUtils {
      * @param rawParameters format like '[{a:b},{c:d}]'
      * @return
      */
-    public static Map<String, String> parseParameters(String rawParameters) {
+    public static Map<String, String> parseParameters(String rawParameters) { //将字符串解析为key/value的Map形式
 
         Matcher matcher = PARAMETERS_PATTERN.matcher(rawParameters);
         if (!matcher.matches()) {

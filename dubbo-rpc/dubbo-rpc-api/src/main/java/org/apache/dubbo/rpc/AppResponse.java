@@ -45,15 +45,15 @@ import java.util.function.Function;
  *
  * @serial Do not change the class name and properties.
  */
-public class AppResponse implements Result { //同步调用的响应结果
+public class AppResponse implements Result { //RPC的调用结果（替换2.7以前的RpcResult）
 
     private static final long serialVersionUID = -6925924956850004727L;
 
-    private Object result;
+    private Object result; //调用结果值
 
-    private Throwable exception;
+    private Throwable exception; //异常信息
 
-    private Map<String, Object> attachments = new HashMap<>();
+    private Map<String, Object> attachments = new HashMap<>(); //附加参数值
 
     public AppResponse() {
     }
@@ -67,7 +67,7 @@ public class AppResponse implements Result { //同步调用的响应结果
     }
 
     @Override
-    public Object recreate() throws Throwable { //若有异常则设置异常栈信息并抛出，没有异常则返回具体值（方法名有些歧义，应该是重新设置异常栈信息）
+    public Object recreate() throws Throwable { //返回调用的结果值（若有异常则设置异常栈信息并抛出），方法名有些歧义，应该是重新设置异常栈信息
         if (exception != null) {
             // fix issue#619
             try {
@@ -77,18 +77,18 @@ public class AppResponse implements Result { //同步调用的响应结果
                     clazz = clazz.getSuperclass(); //非Throwable类，则取异常类的父类（循环直到取到Throwable为止）
                 }
                 // get stackTrace value
-                Field stackTraceField = clazz.getDeclaredField("stackTrace"); // 获取stackTrace堆栈追踪的字段
+                Field stackTraceField = clazz.getDeclaredField("stackTrace"); // 获取包含堆栈信息的字段stackTrace
                 stackTraceField.setAccessible(true); //将字段置为可访问的（因为成员变量一般是用private修饰的，直接访问不了）
                 Object stackTrace = stackTraceField.get(exception); //获取exception对象中的stackTrace字段值
                 if (stackTrace == null) {
-                    exception.setStackTrace(new StackTraceElement[0]); //设置异常栈
+                    exception.setStackTrace(new StackTraceElement[0]); //初始化异常栈信息
                 }
             } catch (Exception e) {
                 // ignore
             }
             throw exception; //抛出异常
         }
-        return result;
+        return result; //返回RPC调用结果
     }
 
     @Override
@@ -132,7 +132,7 @@ public class AppResponse implements Result { //同步调用的响应结果
      *
      * @param map contains all key-value pairs to append
      */
-    public void setAttachments(Map<String, String> map) {
+    public void setAttachments(Map<String, String> map) { //设置附加参数值
         this.attachments = map == null ? new HashMap<>() : new HashMap<>(map);
     }
 
@@ -141,7 +141,7 @@ public class AppResponse implements Result { //同步调用的响应结果
         this.attachments = map == null ? new HashMap<>() : map;
     }
 
-    public void addAttachments(Map<String, String> map) {
+    public void addAttachments(Map<String, String> map) { //添加附加参数，值为String类型
         if (map == null) {
             return;
         }
@@ -152,7 +152,7 @@ public class AppResponse implements Result { //同步调用的响应结果
     }
 
     @Override
-    public void addObjectAttachments(Map<String, Object> map) { //map中按对象设置
+    public void addObjectAttachments(Map<String, Object> map) { //添加附加参数，值为Object类型
         if (map == null) {
             return;
         }
@@ -213,7 +213,7 @@ public class AppResponse implements Result { //同步调用的响应结果
     }
 
     @Override
-    public Result whenCompleteWithContext(BiConsumer<Result, Throwable> fn) { //该方法是异步执行处理的，而AppResponse是同步处理的，所以当前方法不支持（在AsyncRpcResult中有支持）
+    public Result whenCompleteWithContext(BiConsumer<Result, Throwable> fn) { //调用完成时，进行回调（具体的实现是在AsyncRpcResult，当前AppResponse不支持）
         throw new UnsupportedOperationException("AppResponse represents an concrete business response, there will be no status changes, you should get internal values directly.");
     }
 

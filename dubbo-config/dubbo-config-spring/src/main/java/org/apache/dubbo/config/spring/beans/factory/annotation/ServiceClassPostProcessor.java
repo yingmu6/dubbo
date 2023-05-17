@@ -126,7 +126,7 @@ public class ServiceClassPostProcessor implements BeanDefinitionRegistryPostProc
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
 
         // @since 2.7.5
-        registerInfrastructureBean(registry, DubboBootstrapApplicationListener.BEAN_NAME, DubboBootstrapApplicationListener.class);
+        registerInfrastructureBean(registry, DubboBootstrapApplicationListener.BEAN_NAME, DubboBootstrapApplicationListener.class); //创建DubboBootstrapApplicationListener对应的实例
 
         Set<String> resolvedPackagesToScan = resolvePackagesToScan(packagesToScan);
 
