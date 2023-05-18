@@ -14,11 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.dubbo.common.extension.ext9_empty;
+package org.apache.dubbo.common.extension.ext8_add.ext9_empty.impl;
 
-import org.apache.dubbo.common.extension.SPI;
+import org.apache.dubbo.common.extension.ext8_add.ext9_empty.Ext9Empty;
 
-@SPI
-public interface Ext9Empty {
-    void empty();
+public class Ext9EmptyImpl implements Ext9Empty {
+    @Override
+    public void empty() {
+
+    }
 }

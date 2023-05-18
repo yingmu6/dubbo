@@ -171,7 +171,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
             String name = setter.getName();
             if (name.length() > 3 && name.startsWith("set")
                     && Modifier.isPublic(setter.getModifiers())
-                    && setter.getParameterTypes().length == 1) { //遍历bean中的set方法，只处理一个参数的set方法
+                    && setter.getParameterTypes().length == 1) { //遍历bean中符合条件的set方法
                 Class<?> type = setter.getParameterTypes()[0];
                 String beanProperty = name.substring(3, 4).toLowerCase() + name.substring(4); //解析出属性名，如方法名为setName，属性名为name
                 String property = StringUtils.camelToSplitName(beanProperty, "-"); //按分隔符方式处理属性名称
@@ -179,7 +179,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
                 // check the setter/getter whether match (检查set、get方法是否匹配)
                 Method getter = null;
                 try {
-                    getter = beanClass.getMethod("get" + name.substring(3), new Class<?>[0]);//获取指定的方法对应的Method，如getName
+                    getter = beanClass.getMethod("get" + name.substring(3), new Class<?>[0]);//获取指定的属性对应的get方法，如getName
                 } catch (NoSuchMethodException e) {
                     try {
                         getter = beanClass.getMethod("is" + name.substring(3), new Class<?>[0]); //处理is开头的方法，比如ApplicationConfig中的isDefault()方法
@@ -202,7 +202,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
                 } else { //对常规属性做处理
                     String value = resolveAttribute(element, property, parserContext); //解析XML中元素对应的属性值
                     if (value != null) { //若值为null或者""，则不处理（即XML中没有设置对应的属性值）
-                        value = value.trim();
+                        value = value.trim(); //过滤字符串的前后空格
                         if (value.length() > 0) {
                             if ("registry".equals(property) && RegistryConfig.NO_AVAILABLE.equalsIgnoreCase(value)) {
                                 RegistryConfig registryConfig = new RegistryConfig();
@@ -240,11 +240,11 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
                                 } else { //解析ref属性<property name="ref">
                                     if ("ref".equals(property) && parserContext.getRegistry().containsBeanDefinition(value)) {
                                         BeanDefinition refBean = parserContext.getRegistry().getBeanDefinition(value);
-                                        if (!refBean.isSingleton()) {
+                                        if (!refBean.isSingleton()) { //检查暴露的服务是不是单例
                                             throw new IllegalStateException("The exported service ref " + value + " must be singleton! Please set the " + value + " bean scope to singleton, eg: <bean id=\"" + value + "\" scope=\"singleton\" ...>");
                                         }
                                     }
-                                    reference = new RuntimeBeanReference(value); //处理bean引用
+                                    reference = new RuntimeBeanReference(value); //创建指定名称的bean
                                 }
                                 beanDefinition.getPropertyValues().addPropertyValue(beanProperty, reference); //为bean添加属性名以及对应的属性值
                             }

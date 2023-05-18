@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class AdaptiveClassCodeGeneratorTest {
 
-    /**
+     /**
      * 场景1：@Adaptive中的value未指定，由系统根据SPI接口名称产生对应的value
      */
     @Test
@@ -53,11 +53,11 @@ public class AdaptiveClassCodeGeneratorTest {
         }
     }
 
-    /**
+     /**
      * 场景2：@Adaptive中的value值指定多个
      */
     @Test
-    public void testGenerate_V2() throws IOException { //已测（测试打印产生的自适应类，以及产生的自适应字节码文件中读取内容）
+    public void testGenerate_V2() throws IOException { //已测
         AdaptiveClassCodeGenerator generator = new AdaptiveClassCodeGenerator(HasAdaptiveExt.class, "adaptive");
         String value = generator.generate(); //自适应生成的代码
         System.out.println("自适应类代码V2：" + value);

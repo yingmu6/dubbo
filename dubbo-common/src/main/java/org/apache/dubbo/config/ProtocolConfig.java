@@ -191,7 +191,7 @@ public class ProtocolConfig extends AbstractConfig {
     /**
      * The customized parameters
      */
-    private Map<String, String> parameters;
+    private Map<String, String> parameters; //自定义参数
 
     /**
      * If it's default

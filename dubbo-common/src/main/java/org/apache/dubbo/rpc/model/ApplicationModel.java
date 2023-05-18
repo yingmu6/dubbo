@@ -28,7 +28,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-/**
+ /**
  * {@link ExtensionLoader}, {@code DubboBootstrap} （引导程序）and this class are at present designed to be
  * singleton（单例） or static（静态） (by itself totally static or uses some static fields). So the instances
  * returned from them are of process scope. If you want to support multiple dubbo servers in one

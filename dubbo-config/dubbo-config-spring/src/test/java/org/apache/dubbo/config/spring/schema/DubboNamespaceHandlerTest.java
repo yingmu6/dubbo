@@ -59,23 +59,23 @@ public class DubboNamespaceHandlerTest {
 
     @Configuration
     @PropertySource("classpath:/META-INF/demo-provider.properties")
-    @ImportResource(locations = "classpath:/org/apache/dubbo/config/spring/demo-provider.xml")
+    @ImportResource(locations = "classpath:/org/apache/dubbo/config/spring/demo-provider.xml") //xml中${...}对应的属性信息，来自上面的xx.properties属性文件中
     static class XmlConfiguration {
 
     }
 
     @Test
-    public void testProviderXmlOnConfigurationClass() {
-        AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext();
-        applicationContext.register(XmlConfiguration.class);
+    public void testProviderXmlOnConfigurationClass() { //已测（按注解配置类的方式，加载dubbo的xml文件）
+        AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext(); //标准的应用上下文
+        applicationContext.register(XmlConfiguration.class); //接收注解类
         applicationContext.refresh();
         testProviderXml(applicationContext);
     }
 
     @Test
-    public void testProviderXml() {
+    public void testProviderXml() { //已测（加载类路径下的xml方式，加载dubbo的xml文件）
         ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
-                ConfigTest.class.getPackage().getName().replace('.', '/') + "/demo-provider.xml",
+                ConfigTest.class.getPackage().getName().replace('.', '/') + "/demo-provider.xml", //会将属性文件中配置填充
                 ConfigTest.class.getPackage().getName().replace('.', '/') + "/demo-provider-properties.xml"
         );
         ctx.start();
@@ -83,8 +83,8 @@ public class DubboNamespaceHandlerTest {
         testProviderXml(ctx);
     }
 
-    private void testProviderXml(ApplicationContext context) {
-        ProtocolConfig protocolConfig = context.getBean(ProtocolConfig.class);
+    private void testProviderXml(ApplicationContext context) { //已测（加载xml内容，并转换为Dubbo的Config对象）
+        ProtocolConfig protocolConfig = context.getBean(ProtocolConfig.class); //解析xml后，已经把xml中内容转换为dubbo的Config对象了
         assertThat(protocolConfig, not(nullValue()));
         assertThat(protocolConfig.getName(), is("dubbo"));
         assertThat(protocolConfig.getPort(), is(20813));
@@ -98,11 +98,11 @@ public class DubboNamespaceHandlerTest {
     }
 
     @Test
-    public void testMultiProtocol() {
+    public void testMultiProtocol() { //已测（配置多个暴露的协议，即多个<dubbo:protocol/>对应的ProtocolConfig）
         ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(ConfigTest.class.getPackage().getName().replace('.', '/') + "/multi-protocol.xml");
         ctx.start();
 
-        Map<String, ProtocolConfig> protocolConfigMap = ctx.getBeansOfType(ProtocolConfig.class);
+        Map<String, ProtocolConfig> protocolConfigMap = ctx.getBeansOfType(ProtocolConfig.class); //获取指定类型Bean映射
         assertThat(protocolConfigMap.size(), is(2));
 
         ProtocolConfig rmiProtocolConfig = protocolConfigMap.get("rmi");
@@ -113,32 +113,33 @@ public class DubboNamespaceHandlerTest {
     }
 
     @Test
-    public void testDefaultProtocol() {
+    public void testDefaultProtocol() { //已测（<dubbo:protocol/>默认属性填充）
         ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(ConfigTest.class.getPackage().getName().replace('.', '/') + "/override-protocol.xml");
         ctx.start();
 
         ProtocolConfig protocolConfig = ctx.getBean(ProtocolConfig.class);
         protocolConfig.refresh();
-        assertThat(protocolConfig.getName(), is("dubbo"));
+        assertThat(protocolConfig.getName(), is("dubbo")); //<dubbo:protocol/> 没有配置name属性，系统默认填充的
     }
 
     @Test
-    public void testCustomParameter() {
+    public void testCustomParameter() { //已测试（标签中带上自定义属性）
         ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(ConfigTest.class.getPackage().getName().replace('.', '/') + "/customize-parameter.xml");
         ctx.start();
 
         ProtocolConfig protocolConfig = ctx.getBean(ProtocolConfig.class);
-        assertThat(protocolConfig.getParameters().size(), is(1));
-        assertThat(protocolConfig.getParameters().get("protocol-paramA"), is("protocol-paramA"));
+        assertThat(protocolConfig.getParameters().size(), is(2));
+        assertThat(protocolConfig.getParameters().get("protocol-keyA"), is("protocol-paramA-Name"));
+        assertThat(protocolConfig.getParameters().get("csy-protocol-keyA"), is("csy-protocol-Name")); //标签中自定义属性，如：<dubbo:protocol p:csy-protocol-keyA="xxx">
 
         ServiceBean serviceBean = ctx.getBean(ServiceBean.class);
         assertThat(serviceBean.getParameters().size(), is(1));
-        assertThat(serviceBean.getParameters().get("service-paramA"), is("service-paramA"));
+        assertThat(serviceBean.getParameters().get("service-keyA"), is("service-paramA-Name"));
     }
 
 
     @Test
-    public void testDelayFixedTime() {
+    public void testDelayFixedTime() { //已测（获取延迟时间）
         ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("classpath:/" + ConfigTest.class.getPackage().getName().replace('.', '/') + "/delay-fixed-time.xml");
         ctx.start();
 
@@ -146,7 +147,7 @@ public class DubboNamespaceHandlerTest {
     }
 
     @Test
-    public void testTimeoutConfig() {
+    public void testTimeoutConfig() { //todo @pause
         ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(ConfigTest.class.getPackage().getName().replace('.', '/') + "/provider-nested-service.xml");
         ctx.start();
 

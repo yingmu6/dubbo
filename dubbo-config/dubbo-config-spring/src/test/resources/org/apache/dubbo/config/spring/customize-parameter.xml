@@ -26,11 +26,11 @@
 
     <dubbo:registry address="N/A" id="naRegistry"/>
 
-    <dubbo:protocol p:protocol-paramA="protocol-paramA"/>
+    <dubbo:protocol p:protocol-keyA="protocol-paramA-Name" p:csy-protocol-keyA = "csy-protocol-Name"/>
 
     <bean id="demoService" class="org.apache.dubbo.config.spring.impl.DemoServiceImpl"/>
 
-    <dubbo:service id="demoServiceExport" p:service-paramA="service-paramA" registry="naRegistry" ref="demoService"
+    <dubbo:service id="demoServiceExport" p:service-keyA="service-paramA-Name" registry="naRegistry" ref="demoService"
                    interface="org.apache.dubbo.config.spring.api.DemoService"/>
 
 </beans>

@@ -88,7 +88,7 @@ public abstract class AbstractMethodConfig extends AbstractConfig {
     /**
      * The customized parameters
      */
-    protected Map<String, String> parameters;
+    protected Map<String, String> parameters; //自定义参数
 
     /**
      * Forks for forking cluster

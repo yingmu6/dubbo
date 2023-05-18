@@ -20,7 +20,12 @@ public class HasAdaptiveExt$Adaptive implements org.apache.dubbo.common.extensio
     }
 
     @Override
-    public String echoV2(URL url, String s) {
-        return null;
+    public java.lang.String echoV2(org.apache.dubbo.common.URL arg0, java.lang.String arg1)  {
+        if (arg0 == null) throw new IllegalArgumentException("url == null");
+        org.apache.dubbo.common.URL url = arg0;
+        String extName = url.getParameter("adaptive", url.getParameter("impl", "adaptive")); //@Adaptive配置多个值时，会从左到由，依次从url获取参数
+        if(extName == null) throw new IllegalStateException("Failed to get extension (org.apache.dubbo.common.extension.adaptive.HasAdaptiveExt) name from url (" + url.toString() + ") use keys([adaptive, impl])");
+        org.apache.dubbo.common.extension.adaptive.HasAdaptiveExt extension = (org.apache.dubbo.common.extension.adaptive.HasAdaptiveExt)ExtensionLoader.getExtensionLoader(org.apache.dubbo.common.extension.adaptive.HasAdaptiveExt.class).getExtension(extName);
+        return extension.echoV2(arg0, arg1);
     }
 }

@@ -30,7 +30,7 @@
     <!-- protocol configuration -->
     <dubbo:protocol name="dubbo" port="20881"/>
 
-    <dubbo:protocol name="rmi" port="10991"/>
+    <dubbo:protocol name="rmi" port="10991"/> <!-- 多个协议Protocol配置 -->
 
     <!-- service configuration -->
     <dubbo:service interface="org.apache.dubbo.config.spring.api.DemoService" ref="demoService" protocol="dubbo"/>
