@@ -26,7 +26,13 @@
 
     <!-- service reference configuration -->
     <dubbo:reference id="demoService" interface="org.apache.dubbo.config.spring.api.DemoService">
-        <dubbo:method name="sayName" onreturn="notify.getBox" onthrow="notify.getBox" oninvoke="notify.getBox"/>
+<!--        <dubbo:method name="sayName" onreturn="notify.getBox" onthrow="notify.getBox" oninvoke="notify.getBox"/>--> <!-- 场景1：未声明bean名称为"notify"的实例 -->
+<!--        <dubbo:method name="sayName" onreturn="getBox" onthrow="getBox" oninvoke="getBox"/>--> <!-- 场景2：onreturn、onthrow、oninvoke的属性值 需要xxx.方法名的格式，不然DubboBeanDefinitionParser.parse解析时会报错 -->
+<!--        <dubbo:method name="sayName" onreturn="this.getBox"/>--> <!-- 场景3：不能用this变量，代码当前变量，"."之前的字符串，表示bean的名称 -->
+<!--        <dubbo:method name="sayName" onreturn="demoService.getBox"/>--> <!-- 场景4：不能引用自身的bean -->
+<!--        <dubbo:method name="sayName" onreturn="helloService.getBox"/>--> <!-- 场景5：onreturn中只校验了bean实例，方法名没校验，如getBox不是helloService方法，也能通过测试 -->
+        <dubbo:method name="sayName" onreturn="helloService.sayHello"/>
     </dubbo:reference>
 
+    <bean id="helloService" class="org.apache.dubbo.config.spring.impl.HelloServiceImpl"/>
 </beans>

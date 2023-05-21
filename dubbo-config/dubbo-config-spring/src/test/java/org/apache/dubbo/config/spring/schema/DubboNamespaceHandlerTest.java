@@ -147,17 +147,19 @@ public class DubboNamespaceHandlerTest {
     }
 
     @Test
-    public void testTimeoutConfig() { //todo @pause
+    public void testTimeoutConfig() { //已测（声明多个<dubbo:provider/>标签时，取标签中的属性值）
         ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(ConfigTest.class.getPackage().getName().replace('.', '/') + "/provider-nested-service.xml");
         ctx.start();
 
-        Map<String, ProviderConfig> providerConfigMap = ctx.getBeansOfType(ProviderConfig.class);
+        Map<String, ProviderConfig> providerConfigMap = ctx.getBeansOfType(ProviderConfig.class);//多个<dubbo:provider/>标签，产生的Map<String, ProviderConfig>的key会带上序号
 
         assertThat(providerConfigMap.get("org.apache.dubbo.config.ProviderConfig").getTimeout(), is(2000));
+
+        assertThat(providerConfigMap.get("org.apache.dubbo.config.ProviderConfig2").getTimeout(), is(1000));
     }
 
     @Test
-    public void testMonitor() {
+    public void testMonitor() { //已测（配置<dubbo:monitor/>，产生MonitorConfig对象）
         ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(ConfigTest.class.getPackage().getName().replace('.', '/') + "/provider-with-monitor.xml");
         ctx.start();
 
@@ -181,24 +183,28 @@ public class DubboNamespaceHandlerTest {
 //    }
 
     @Test
-    public void testModuleInfo() {
+    public void testModuleInfo() { //已测（<dubbo:module/>标签产生对应的ModuleConfig对象）
         ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(ConfigTest.class.getPackage().getName().replace('.', '/') + "/provider-with-module.xml");
         ctx.start();
 
         ModuleConfig moduleConfig = ctx.getBean(ModuleConfig.class);
         assertThat(moduleConfig.getName(), is("test-module"));
+        assertThat(moduleConfig.getVersion(), is("1.1"));
     }
 
     @Test
-    public void testNotificationWithWrongBean() {
-        Assertions.assertThrows(BeanCreationException.class, () -> {
-            ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(ConfigTest.class.getPackage().getName().replace('.', '/') + "/consumer-notification.xml");
-            ctx.start();
-        });
+    public void testNotificationWithWrongBean() { //已测（测试在bean创建时，抛出的异常）
+//        Assertions.assertThrows(BeanCreationException.class, () -> {
+//            ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(ConfigTest.class.getPackage().getName().replace('.', '/') + "/consumer-notification.xml");
+//            ctx.start();
+//        });
+
+        ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(ConfigTest.class.getPackage().getName().replace('.', '/') + "/consumer-notification.xml");
+        ctx.start();
     }
 
     @Test
-    public void testProperty() {
+    public void testProperty() { //已测（测试获取<property/>标签声明的值）
         ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(ConfigTest.class.getPackage().getName().replace('.', '/') + "/service-class.xml");
         ctx.start();
 

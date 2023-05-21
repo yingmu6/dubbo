@@ -48,15 +48,15 @@ public class GenericServiceTest {
     }
 
     @Autowired
-    @Qualifier("demoServiceRef")
+    @Qualifier("demoServiceRef") //限定符，指定bean对应的名称
     private ReferenceBean referenceBean;
 
     @Autowired
-    @Qualifier("demoService")
+    @Qualifier("demoService") //从加载的xml读取指定的bean
     private ServiceBean serviceBean;
 
     @Test
-    public void testBeanDefinitionParser() {
+    public void testBeanDefinitionParser() { //已测
         assertNotNull(referenceBean);
         assertNotNull(serviceBean);
     }

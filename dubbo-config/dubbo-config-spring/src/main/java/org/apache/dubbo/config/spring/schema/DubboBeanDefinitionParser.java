@@ -233,7 +233,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
                                 // 对方法<dubbo:method>元素中的onreturn、onthrow、oninvoke属性进行处理
                                 } else if (ONRETURN.equals(property) || ONTHROW.equals(property) || ONINVOKE.equals(property)) {
                                     int index = value.lastIndexOf("."); //待覆盖调试：事件通知允许Consumer端在调用之前、调用之后或出现异常时，触发oninvoke、onreturn、onthrow三个事件。 https://dubbo.apache.org/zh/docs/advanced/events-notify/
-                                    String ref = value.substring(0, index);
+                                    String ref = value.substring(0, index); //onreturn、onthrow、oninvoke的属性值，必须要以 xxx.方法名形式，若没有"."，则会由于[0,-1)报字符串区间错误 "String index out of range: -1"
                                     String method = value.substring(index + 1);
                                     reference = new RuntimeBeanReference(ref);
                                     beanDefinition.getPropertyValues().addPropertyValue(property + METHOD, method);

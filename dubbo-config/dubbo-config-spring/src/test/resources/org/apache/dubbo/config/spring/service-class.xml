@@ -30,7 +30,8 @@
     <!-- service configuration -->
     <dubbo:service interface="org.apache.dubbo.config.spring.api.DemoService"
                    class="org.apache.dubbo.config.spring.impl.DemoServiceImpl">
-        <property name="prefix" value="welcome:"/>
+        <property name="prefix" value="welcome:"/> <!--场景1：<property/> 标签会在bean创建时，调用set方法，进行设置值，所以需要有对应的set方法-->
+<!--        <property name="prefix2" value="welcome2:"/>--> <!-- 场景2：属性名需要存在，不然会抛出异常 -->
     </dubbo:service>
 
 </beans>

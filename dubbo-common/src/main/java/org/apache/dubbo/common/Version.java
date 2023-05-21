@@ -248,13 +248,13 @@ public final class Version { // 获取版本号的工具类
             // duplicated jar is found
             if (files.size() > 1) {
                 String error = "Duplicate class " + path + " in " + files.size() + " jar " + files;
-                if (failOnError) { //若需要抛出异常，则抛异常，默认只打error日志，不终止服务
+                if (failOnError) { //若需要抛出异常，则抛异常，否则只打error日志，不终止服务
                     throw new IllegalStateException(error);
                 } else {
                     logger.error(error);
                 }
             }
-        } catch (Throwable e) {
+        } catch (Throwable e) { //Throwable能接收到IllegalStateException异常信息
             logger.error(e.getMessage(), e);
         }
     }

@@ -63,7 +63,7 @@ public class DubboNamespaceHandler extends NamespaceHandlerSupport implements Co
      * https://juejin.cn/post/6844903665262657544 NamespaceHandler使用
      */
     @Override
-    public void init() { //设置父类NamespaceHandlerSupport的Map<String, BeanDefinitionParser> parsers，即设置元素名与bean解析器的映射
+    public void init() { //在解析自定义元素前，进行初始化操作（设置父类NamespaceHandlerSupport的Map<String, BeanDefinitionParser> parsers，即设置元素名与bean解析器的映射）
         registerBeanDefinitionParser("application", new DubboBeanDefinitionParser(ApplicationConfig.class, true));
         registerBeanDefinitionParser("module", new DubboBeanDefinitionParser(ModuleConfig.class, true));
         registerBeanDefinitionParser("registry", new DubboBeanDefinitionParser(RegistryConfig.class, true));
@@ -127,7 +127,7 @@ public class DubboNamespaceHandler extends NamespaceHandlerSupport implements Co
 
 
     /**
-     * 注册注解配置
+     * 注册注解配置处理器
      * Register the processors for the Spring Annotation-Driven features
      *
      * @param registry {@link BeanDefinitionRegistry}

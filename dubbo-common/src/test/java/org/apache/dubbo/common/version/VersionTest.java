@@ -22,7 +22,7 @@ import org.apache.dubbo.common.Version;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class VersionTest {
+public class VersionTest { //todo @pause
 
     @Test
     public void testGetProtocolVersion() {

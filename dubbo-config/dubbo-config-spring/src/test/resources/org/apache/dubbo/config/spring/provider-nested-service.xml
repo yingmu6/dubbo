@@ -31,7 +31,7 @@
 
     <dubbo:service id="serviceConfig" interface="org.apache.dubbo.config.spring.api.DemoService" ref="demoService"/>
 
-    <!-- nested configuration -->
+    <!-- nested（嵌套的） configuration -->
     <dubbo:provider timeout="1000">
         <dubbo:service id="serviceConfig2" interface="org.apache.dubbo.config.spring.api.DemoService" ref="demoService"
                        group="demo2"/>
