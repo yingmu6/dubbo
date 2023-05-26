@@ -348,7 +348,7 @@ public final class ClassGenerator { //@csy-001 该类的用途是什么？解：
                     }
                 }
             }
-            CtClass.debugDump = "./javassist-debug"; //设置javassist产生的字节码目录，方便查看动态生成的字节码文件
+//            CtClass.debugDump = "./javassist-debug"; //设置javassist产生的字节码目录，方便查看动态生成的字节码文件
             return mCtc.toClass(loader, pd); //使用CtClass转换到Class
         } catch (RuntimeException e) {
             throw e;

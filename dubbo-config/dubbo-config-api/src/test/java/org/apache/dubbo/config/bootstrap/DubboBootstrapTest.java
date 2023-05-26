@@ -55,7 +55,7 @@ public class DubboBootstrapTest {
 
     @BeforeAll
     public static void setUp(@TempDir Path folder) {
-        dubboProperties = folder.resolve(CommonConstants.DUBBO_PROPERTIES_KEY).toFile();
+        dubboProperties = folder.resolve(CommonConstants.DUBBO_PROPERTIES_KEY).toFile(); //获取dubbo属性文件对应的File
         System.setProperty(CommonConstants.DUBBO_PROPERTIES_KEY, dubboProperties.getAbsolutePath());
     }
 
