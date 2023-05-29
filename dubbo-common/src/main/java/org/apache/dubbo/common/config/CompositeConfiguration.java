@@ -25,7 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * This is an abstraction（抽象） specially customized（定制的） for the sequence Dubbo retrieves properties.
+ * This is an abstraction（抽象） specially customized（定制的） for the sequence Dubbo retrieves（检索） properties.
  */
 public class CompositeConfiguration implements Configuration { //合成的配置中心，Composite：[ˈkɒmpəzɪt] adj. 合成的，复合的；n. 合成物，复合材料；v. 合成
     // CompositeConfiguration 就是一个从多个配置类中取得需要的配置值的工具类。作用就是组合多种配置，
@@ -79,7 +79,7 @@ public class CompositeConfiguration implements Configuration { //合成的配置
     @Override
     public Object getInternalProperty(String key) {
         Configuration firstMatchingConfiguration = null;
-        for (Configuration config : configList) {
+        for (Configuration config : configList) { //遍历配置实例列表，尝试获取属性key对应的值
             try {
                 if (config.containsKey(key)) {
                     firstMatchingConfiguration = config;

@@ -90,7 +90,7 @@ public abstract class AbstractConfig implements Serializable {
 
     public static String getTagName(Class<?> cls) { //获取Config类对应的标签名，比如ConfigCenter为config-center
         String tag = cls.getSimpleName(); //如ConfigCenterConfig，tag为ConfigCenterConfig
-        for (String suffix : SUFFIXES) { //若类名包含指定后缀名，则先去除掉
+        for (String suffix : SUFFIXES) { //若类名包含指定后缀名，则先去除掉后缀
             if (tag.endsWith(suffix)) { //把包含的后缀去掉，比如ConfigCenterConfig改为ConfigCenter
                 tag = tag.substring(0, tag.length() - suffix.length());
                 break;
@@ -299,7 +299,7 @@ public abstract class AbstractConfig implements Serializable {
         return null;
     }
 
-    private static boolean isParametersGetter(Method method) { //判断是否是有效的getParameters()方法
+    private static boolean isParametersGetter(Method method) { //判断是否是getParameters()方法
         String name = method.getName();
         return ("getParameters".equals(name)
                 && Modifier.isPublic(method.getModifiers())
@@ -315,20 +315,20 @@ public abstract class AbstractConfig implements Serializable {
                 && method.getReturnType() == void.class);
     }
 
-    /**
-     * @param parameters the raw parameters
+     /**
+     * @param parameters the raw（原始的） parameters
      * @param prefix     the prefix
      * @return the parameters whose raw key will replace "-" to "."
      * @revised 2.7.8 "private" to be "protected"（revised： [rɪ'vaɪzd] adj. 改进的，v. 修改；校订）
      */
-    protected static Map<String, String> convert(Map<String, String> parameters, String prefix) { //将参数Map的key转换为带上前缀
+    protected static Map<String, String> convert(Map<String, String> parameters, String prefix) { //将参数Map的key拼接上前缀
         if (parameters == null || parameters.isEmpty()) {
             return Collections.emptyMap();
         }
 
         Map<String, String> result = new HashMap<>();
         String pre = (prefix != null && prefix.length() > 0 ? prefix + "." : "");
-        for (Map.Entry<String, String> entry : parameters.entrySet()) { //若前缀不为空，则将参数的键带上前缀
+        for (Map.Entry<String, String> entry : parameters.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
             result.put(pre + key, value); //带上前缀处理
@@ -403,7 +403,7 @@ public abstract class AbstractConfig implements Serializable {
      * <p>
      * Notice! This method should include all properties in the returning map, treat @Parameter differently compared to appendParameters.（区别对待@Parameter和appendParameters）
      */
-    public Map<String, String> getMetaData() { //获取元数据对应的Map
+    public Map<String, String> getMetaData() { //获取Config对象中的元数据
         Map<String, String> metaData = new HashMap<>();
         Method[] methods = this.getClass().getMethods(); //this.getClass() 指的是AbstractConfig的实例对象，比如ConfigCenterConfig
         for (Method method : methods) {
@@ -432,14 +432,14 @@ public abstract class AbstractConfig implements Serializable {
                         continue;
                     }
 
-                    Object value = method.invoke(this); //方法反射调用，并接收返回值
+                    Object value = method.invoke(this); //使用反射调用对应方法，并接收返回值
                     String str = String.valueOf(value).trim();
                     if (value != null && str.length() > 0) {
-                        metaData.put(key, str);
+                        metaData.put(key, str); //将配置对象中的key、value设置到元数据中
                     } else {
                         metaData.put(key, null);
                     }
-                } else if (isParametersGetter(method)) { //判断是否是获取参数Map的方法
+                } else if (isParametersGetter(method)) { //判断是否是getParameters方法
                     Map<String, String> map = (Map<String, String>) method.invoke(this, new Object[0]); //调用getParameters()方法，new Object[0]表明没有参数
                     metaData.putAll(convert(map, ""));
                 }
@@ -451,7 +451,7 @@ public abstract class AbstractConfig implements Serializable {
     }
 
     @Parameter(excluded = true)
-    public String getPrefix() { //前缀名：没有设置前缀名，则设置默认的前缀名，如<dubbo:application> 对应dubbo:application
+    public String getPrefix() { //前缀名：没有设置前缀名，则设置默认的前缀名，如ApplicationConfig对应的前缀为"dubbo:application."
         return StringUtils.isNotEmpty(prefix) ? prefix : (CommonConstants.DUBBO + "." + getTagName(this.getClass()));
     }
 
@@ -459,7 +459,7 @@ public abstract class AbstractConfig implements Serializable {
         this.prefix = prefix;
     }
 
-    public void refresh() { //刷新Config对象的属性值（从配置中心中获取最新的配置值，然后通过set方法或setParameters方法设置到Config对象中）
+    public void refresh() { //刷新Config对象的属性值（获取最新的配置值，然后通过set方法或setParameters方法设置到Config对象中）
         Environment env = ApplicationModel.getEnvironment(); //获取环境信息
         try {
             CompositeConfiguration compositeConfiguration = env.getPrefixedConfiguration(this); //获取带有前缀的合成配置中心

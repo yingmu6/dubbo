@@ -32,6 +32,9 @@
     <!-- service configuration -->
     <dubbo:service interface="org.apache.dubbo.config.spring.api.DemoService" ref="demoService"/>
 
+    <!-- metrics服务 -->
+<!--    <dubbo:metrics port="" protocol=""/>-->
+
     <bean id="demoService" class="org.apache.dubbo.config.spring.impl.DemoServiceImpl"/>
 
 </beans>

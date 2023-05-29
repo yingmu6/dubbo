@@ -24,13 +24,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class receives an {@link AbstractConfig} and exposes its attributes through {@link Configuration}
+ * This class receives an {@link AbstractConfig} and exposes（暴露） its attributes through {@link Configuration}
+ * （这个类用于接收AbstractConfig，并且把它的属性值通过Configuration暴露出来）
  */
 public class ConfigConfigurationAdapter implements Configuration {
 
     private Map<String, String> metaData;
 
-    public ConfigConfigurationAdapter(AbstractConfig config) { //按元数据格式，构建元数据的参数Map
+    public ConfigConfigurationAdapter(AbstractConfig config) {
         Map<String, String> configMetadata = config.getMetaData();
         metaData = new HashMap<>(configMetadata.size());
         for (Map.Entry<String, String> entry : configMetadata.entrySet()) {
