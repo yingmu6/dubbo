@@ -122,13 +122,13 @@ public class Environment extends LifecycleAdapter implements FrameworkExt { //�
      * @param config
      * @return
      */
-    public synchronized CompositeConfiguration getPrefixedConfiguration(AbstractConfig config) { //prefixed [ˈpriːfɪkst] adj. 有前缀的, v. 加……作为前缀；
+    public synchronized CompositeConfiguration getPrefixedConfiguration(AbstractConfig config) { //获取Config对应的合成配置，prefixed [ˈpriːfɪkst] adj. 有前缀的, v. 加……作为前缀；
         CompositeConfiguration prefixedConfiguration = new CompositeConfiguration(config.getPrefix(), config.getId());
-        Configuration configuration = new ConfigConfigurationAdapter(config);
+        Configuration configuration = new ConfigConfigurationAdapter(config); //构建配置实例适配器对象
         if (this.isConfigCenterFirst()) {
             // The sequence would be: SystemConfiguration -> AppExternalConfiguration -> ExternalConfiguration -> AbstractConfig -> PropertiesConfiguration
             // Config center has the highest priority
-            prefixedConfiguration.addConfiguration(systemConfiguration);
+            prefixedConfiguration.addConfiguration(systemConfiguration); //systemConfiguration、environmentConfiguration等对象，在Environment构造函数中初始化的
             prefixedConfiguration.addConfiguration(environmentConfiguration);
             prefixedConfiguration.addConfiguration(appExternalConfiguration);
             prefixedConfiguration.addConfiguration(externalConfiguration);

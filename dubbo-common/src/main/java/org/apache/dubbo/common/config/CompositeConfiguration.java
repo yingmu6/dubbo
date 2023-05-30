@@ -28,8 +28,16 @@ import java.util.List;
  * This is an abstraction（抽象） specially customized（定制的） for the sequence Dubbo retrieves（检索） properties.
  */
 public class CompositeConfiguration implements Configuration { //合成的配置中心，Composite：[ˈkɒmpəzɪt] adj. 合成的，复合的；n. 合成物，复合材料；v. 合成
-    // CompositeConfiguration 就是一个从多个配置类中取得需要的配置值的工具类。作用就是组合多种配置，
-    // 使得外部的使用者不用关心多个配置类， 并且不用关心优先级， 优先级就是顺序。
+
+    /**
+     * CompositeConfiguration概述：
+     * a）At present, there are many configuration sources, including AbstractConfig (API, XML, annotation), - D, config center, etc.
+     * This method helps us to filter out the most priority values from various configuration sources
+     * （目前有许多的配置源，来自于API、XML、annotation、-D、配置中心等，CompositeConfiguration就是把所有数据源聚合起来，然后取出最高优先级的配置）
+     *
+     * b）CompositeConfiguration 就是一个从多个配置类中取得需要的配置值的工具类。作用就是组合多种配置，
+     * 使得外部的使用者不用关心多个配置类， 并且不用关心优先级， 优先级就是顺序。
+     */
 
     private Logger logger = LoggerFactory.getLogger(CompositeConfiguration.class);
 
@@ -82,7 +90,7 @@ public class CompositeConfiguration implements Configuration { //合成的配置
         for (Configuration config : configList) { //遍历配置实例列表，尝试获取属性key对应的值
             try {
                 if (config.containsKey(key)) {
-                    firstMatchingConfiguration = config;
+                    firstMatchingConfiguration = config; //找到第一个包含属性key的配置对象
                     break;
                 }
             } catch (Exception e) {

@@ -31,13 +31,13 @@ public class ConfigConfigurationAdapter implements Configuration {
 
     private Map<String, String> metaData;
 
-    public ConfigConfigurationAdapter(AbstractConfig config) {
+    public ConfigConfigurationAdapter(AbstractConfig config) { //适配Config中的元数据key，带上前缀prefix和id值
         Map<String, String> configMetadata = config.getMetaData();
         metaData = new HashMap<>(configMetadata.size());
         for (Map.Entry<String, String> entry : configMetadata.entrySet()) {
             String prefix = config.getPrefix().endsWith(".") ? config.getPrefix() : config.getPrefix() + "."; //在前缀加上点号
             String id = StringUtils.isEmpty(config.getId()) ? "" : config.getId() + "."; //若id不为空时，拼接上点号
-            metaData.put(prefix + id + entry.getKey(), entry.getValue()); //map中存储的key，拼接格式：prefix + id + entry.getKey()，如dubbo.application.demo-provider.qos-host
+            metaData.put(prefix + id + entry.getKey(), entry.getValue()); //map中存储的key，拼接格式：prefix + id + entry.getKey()，如dubbo.application.qos-host
         }
     }
 

@@ -18,15 +18,15 @@ package org.apache.dubbo.config.support;
 
 import java.lang.annotation.*;
 
-/**
+ /**
  * Parameter
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
-public @interface Parameter { //作用在方法上，对方法对应的属性进行处理
+public @interface Parameter { //作用在方法上（在处理方法时，可根据设置的参数做对应的逻辑处理）
 
-    String key() default ""; //对接的属性名称
+    String key() default ""; //参数key
 
     boolean required() default false;
 
@@ -38,7 +38,7 @@ public @interface Parameter { //作用在方法上，对方法对应的属性进
 
     boolean append() default false; //若参数key对应的值已存在，是否需要在原来的key对应的值附加，如protocol=dubbo,http
 
-    /**
+     /**
      * if {@link #key()} is specified, it will be used as the key for the annotated property when generating url.
      * by default, this key will also be used to retrieve the config value:
      * <pre>

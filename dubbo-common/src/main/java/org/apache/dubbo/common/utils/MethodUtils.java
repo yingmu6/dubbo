@@ -82,7 +82,7 @@ public interface MethodUtils {
      * @param method the method to check
      * @return whether the given method is meta method
      */
-    public static boolean isMetaMethod(Method method) { //是否是元数据方法
+    public static boolean isMetaMethod(Method method) { //是否是元数据方法（public的get/is方法，且返回值是基本类型）
         String name = method.getName();
         if (!(name.startsWith("get") || name.startsWith("is"))) { //需要是get、is为前缀的方法
             return false;

@@ -258,10 +258,10 @@ public abstract class AbstractConfig implements Serializable {
             getter = clazz.getMethod("is" + propertyName);
         }
         Parameter parameter = getter.getAnnotation(Parameter.class);
-        if (parameter != null && StringUtils.isNotEmpty(parameter.key()) && parameter.useKeyAsProperty()) { //使用注解上声明的名称作为属性名称
+        if (parameter != null && StringUtils.isNotEmpty(parameter.key()) && parameter.useKeyAsProperty()) { //若方法上带有@Parameter注解，则使用注解上声明的名称作为属性名称
             propertyName = parameter.key();
         } else {
-            propertyName = propertyName.substring(0, 1).toLowerCase() + propertyName.substring(1); //从方法名中提出属性名（首字母转换为小写）
+            propertyName = propertyName.substring(0, 1).toLowerCase() + propertyName.substring(1); //若方法上没有带有@Parameter注解或注解中未设置key值，从方法名中提出属性名（首字母转换为小写）
         }
         return propertyName;
     }
@@ -403,19 +403,19 @@ public abstract class AbstractConfig implements Serializable {
      * <p>
      * Notice! This method should include all properties in the returning map, treat @Parameter differently compared to appendParameters.（区别对待@Parameter和appendParameters）
      */
-    public Map<String, String> getMetaData() { //获取Config对象中的元数据
+    public Map<String, String> getMetaData() { //获取Config对象中的元数据（找到元数据方法或getParameters方法，进行方法调用并获取到返回值，最后设置到元数据Map中）
         Map<String, String> metaData = new HashMap<>();
         Method[] methods = this.getClass().getMethods(); //this.getClass() 指的是AbstractConfig的实例对象，比如ConfigCenterConfig
         for (Method method : methods) {
             try {
                 String name = method.getName();
-                if (MethodUtils.isMetaMethod(method)) { //判断是否是获取元数据方法
+                if (MethodUtils.isMetaMethod(method)) { //判断是否是获取元数据方法（public的get/is方法，且返回值是基本类型）
                     String key;
                     Parameter parameter = method.getAnnotation(Parameter.class);
                     if (parameter != null && parameter.key().length() > 0 && parameter.useKeyAsProperty()) {
                         key = parameter.key(); //若方法上带有@Parameter注解，则直接取注解中key的值
                     } else {
-                        key = calculateAttributeFromGetter(name); //从方法名中取出属性名
+                        key = calculateAttributeFromGetter(name); //若没有带有@Parameter注解或配置key，则从方法名中取出属性名
                     }
                     // treat url and configuration differently, the value should always present in configuration though it may not need to present in url.
                     //（区别对待url和配置，值应该总是在配置中呈现，尽管它可能不需要在url中呈现）
@@ -451,7 +451,7 @@ public abstract class AbstractConfig implements Serializable {
     }
 
     @Parameter(excluded = true)
-    public String getPrefix() { //前缀名：没有设置前缀名，则设置默认的前缀名，如ApplicationConfig对应的前缀为"dubbo:application."
+    public String getPrefix() { //获取Config的前缀名（若没有设置，则使用默认的前缀名，如ApplicationConfig对应的前缀为"dubbo.application"）
         return StringUtils.isNotEmpty(prefix) ? prefix : (CommonConstants.DUBBO + "." + getTagName(this.getClass()));
     }
 
@@ -462,10 +462,10 @@ public abstract class AbstractConfig implements Serializable {
     public void refresh() { //刷新Config对象的属性值（获取最新的配置值，然后通过set方法或setParameters方法设置到Config对象中）
         Environment env = ApplicationModel.getEnvironment(); //获取环境信息
         try {
-            CompositeConfiguration compositeConfiguration = env.getPrefixedConfiguration(this); //获取带有前缀的合成配置中心
+            CompositeConfiguration compositeConfiguration = env.getPrefixedConfiguration(this); //获取带有前缀的合成配置实例（包含多种配置源的实例对象）
             // loop methods, get override value and set the new value back to method
             Method[] methods = getClass().getMethods();
-            for (Method method : methods) { //遍历当前配置对象的方法，从配置中心获取值，通过set()方法或setParameters()方法设置到XxxConfig对象中
+            for (Method method : methods) { //遍历当前配置对象的方法，从合成的配置实例中获取值，通过set()方法或setParameters()方法设置到XxxConfig对象中
                 if (MethodUtils.isSetter(method)) { //是否是setXXX()方法
                     try {
                         String value = StringUtils.trim(compositeConfiguration.getString(extractPropertyName(getClass(), method))); //从配置中心获取属性对应的值（若为远程的配置中心，则发起了远程调用）
