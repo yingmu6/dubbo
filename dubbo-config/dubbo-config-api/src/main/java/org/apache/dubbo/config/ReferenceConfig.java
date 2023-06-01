@@ -452,14 +452,15 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
 
     /**
      * Figure out（断定） should refer the service in the same JVM from configurations. The default behavior is true
+     * (以下为判断是否为本地JVM引用的步骤：)
      * 1. if injvm is specified, then use it
-     * 2. then if a url is specified, then assume it's a remote call
+     * 2. then if a url is specified, then assume it's a remote call（若指定了url，则假定为远程调用）
      * 3. otherwise, check scope parameter
      * 4. if scope is not specified but the target service is provided in the same JVM, then prefer to make the local
      * call, which is the default behavior
      */
     protected boolean shouldJvmRefer(Map<String, String> map) {
-        URL tmpUrl = new URL("temp", "localhost", 0, map); //根据url参数构建temp临时协议（没有用到协议头temp，只是组装URL用于传递）
+        URL tmpUrl = new URL("temp", "localhost", 0, map); //根据url参数构建temp临时协议（协议头temp并没有被用到，只是用于组装完整URL来传递数据）
         boolean isJvmRefer;
         if (isInjvm() == null) { //成员变量injvm没有设置值
             // if a url is specified, don't do local reference

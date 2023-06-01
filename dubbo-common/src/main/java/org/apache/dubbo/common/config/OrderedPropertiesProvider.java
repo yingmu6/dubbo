@@ -24,10 +24,10 @@ import java.util.Properties;
 /**
  * 
  * The smaller value, the higher priority
- * 
+ * （order的值越小，优先级越高）
  */
 @SPI
-public interface OrderedPropertiesProvider {
+public interface OrderedPropertiesProvider { //带有排序的属性提供者
     /**
      * order（顺序）
      *
@@ -36,7 +36,7 @@ public interface OrderedPropertiesProvider {
     int priority();
 
     /**
-     * load the properties
+     * load the properties（加载属性值）
      *
      * @return
      */

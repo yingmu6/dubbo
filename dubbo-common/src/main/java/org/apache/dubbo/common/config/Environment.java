@@ -117,15 +117,15 @@ public class Environment extends LifecycleAdapter implements FrameworkExt { //�
      * All configurations will be converged（被聚集） into a data bus - URL, and then drive the subsequent（随后的） process. //在启动时，各种配置会被聚集到数据总线URL中，给后面的程序使用
      * <p>
      * At present（目前）, there are many configuration sources, including AbstractConfig (API, XML, annotation), - D, config center, etc.
-     * This method helps us to filter out the most priority values from various configuration sources. //配置的数据源有许多，比如：配置对象、JVM输入参数、配置中心等，该方法就是过滤出最高优先级的配置
+     * This method helps us to filter out the most priority values from various configuration sources. //配置的数据源有许多，比如：配置对象、JVM输入参数、配置中心等，该方法就是过滤出最高优先级的配
      *
      * @param config
      * @return
      */
     public synchronized CompositeConfiguration getPrefixedConfiguration(AbstractConfig config) { //获取Config对应的合成配置，prefixed [ˈpriːfɪkst] adj. 有前缀的, v. 加……作为前缀；
         CompositeConfiguration prefixedConfiguration = new CompositeConfiguration(config.getPrefix(), config.getId());
-        Configuration configuration = new ConfigConfigurationAdapter(config); //构建配置实例适配器对象
-        if (this.isConfigCenterFirst()) {
+        Configuration configuration = new ConfigConfigurationAdapter(config); //AbstractConfig对应的配置对象的实例
+        if (this.isConfigCenterFirst()) { //在CompositeConfiguration#getInternalProperty进行取值时，会依次遍历列表中的配置对象的实例，越靠前的配置，越先获取到配置值。
             // The sequence would be: SystemConfiguration -> AppExternalConfiguration -> ExternalConfiguration -> AbstractConfig -> PropertiesConfiguration
             // Config center has the highest priority
             prefixedConfiguration.addConfiguration(systemConfiguration); //systemConfiguration、environmentConfiguration等对象，在Environment构造函数中初始化的
@@ -147,17 +147,17 @@ public class Environment extends LifecycleAdapter implements FrameworkExt { //�
         return prefixedConfiguration;
     }
 
-    /**
-     * There are two ways to get configuration during exposure / reference or at runtime:
-     * 1. URL, The value in the URL is relatively fixed. we can get value directly.
-     * 2. The configuration exposed in this method is convenient for us to query the latest values from multiple
-     * prioritized sources, it also guarantees that configs changed dynamically can take effect on the fly.
+     /**
+     * There are two ways to get configuration during exposure（暴露） / reference or at runtime:
+     * 1. URL, The value in the URL is relatively fixed（相对固定的）. we can get value directly.
+     * 2. The configuration exposed in this method is convenient（方便的） for us to query the latest values from multiple
+     * prioritized sources, it also guarantees that configs changed dynamically can take effect on the fly.（它还保证了动态更改的配置可以即时生效）
      */
     public Configuration getConfiguration() {
         if (globalConfiguration == null) {
             globalConfiguration = new CompositeConfiguration();
             if (dynamicConfiguration != null) {
-                globalConfiguration.addConfiguration(dynamicConfiguration);
+                globalConfiguration.addConfiguration(dynamicConfiguration); //设置动态配置（将动态配置放在第一个位置，可以保证动态更改的配置及时生效）
             }
             globalConfiguration.addConfiguration(systemConfiguration);
             globalConfiguration.addConfiguration(environmentConfiguration);

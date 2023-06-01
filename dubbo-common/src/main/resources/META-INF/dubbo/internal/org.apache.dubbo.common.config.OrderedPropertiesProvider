@@ -1,0 +1,2 @@
+#self1=org.apache.dubbo.common.config.SelfOrderedPropertiesProvider1
+#self2=org.apache.dubbo.common.config.SelfOrderedPropertiesProvider2

@@ -65,10 +65,10 @@ public class DubboBootstrapTest {
     }
 
     @Test
-    public void checkApplication() {
+    public void checkApplication() { //已测试（从设置的系统属性中获取值，写到ApplicationConfig中）
         System.setProperty("dubbo.application.name", "demo");
         ApplicationConfig applicationConfig = new ApplicationConfig();
-        applicationConfig.refresh();
+        applicationConfig.refresh(); //会通过CompositeConfiguration合成配置，从系统属性、属性文件、内存中等获取到属性值，最后更新到Config对象中
         Assertions.assertEquals("demo", applicationConfig.getName());
         System.clearProperty("dubbo.application.name");
     }

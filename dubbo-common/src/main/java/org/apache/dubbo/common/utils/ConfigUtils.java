@@ -37,7 +37,7 @@ public class ConfigUtils {
     private static final Logger logger = LoggerFactory.getLogger(ConfigUtils.class);
     private static Pattern VARIABLE_PATTERN = Pattern.compile(
             "\\$\\s*\\{?\\s*([\\._0-9a-zA-Z]+)\\s*\\}?");
-    private static volatile Properties PROPERTIES; //缓存维护的系统属性实例
+    private static volatile Properties PROPERTIES; //缓存维护的系统属性实例（volatile修饰，是线程安全的）
     private static int PID = -1;
 
     private ConfigUtils() {
@@ -142,7 +142,7 @@ public class ConfigUtils {
     public static Properties getProperties() { //加载属性文件，生成属性对象
         if (PROPERTIES == null) { //若缓存的属性对象为空，则去加载属性文件，生成属性对象
             synchronized (ConfigUtils.class) {
-                if (PROPERTIES == null) { //重判断+synchronized
+                if (PROPERTIES == null) { //双重判断+synchronized
                     String path = System.getProperty(CommonConstants.DUBBO_PROPERTIES_KEY); //1）先从属性变量中查找属性文件的配置
                     if (path == null || path.length() == 0) {
                         path = System.getenv(CommonConstants.DUBBO_PROPERTIES_KEY); //2）再从环境变量中查找属性文件的配置

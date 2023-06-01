@@ -439,7 +439,7 @@ public class ApplicationConfig extends AbstractConfig {
         appendEnvironmentProperties();
     }
 
-    private void appendEnvironmentProperties() {
+    private void appendEnvironmentProperties() { //设置自定义参数的值
         if (parameters == null) {
             parameters = new HashMap<>();
         }
@@ -450,7 +450,7 @@ public class ApplicationConfig extends AbstractConfig {
             inputParameters.put(APPLICATION_KEY, getName());
             inputParameters.put(HOST_KEY, getHostname());
             for (InfraAdapter adapter : adapters) {
-                Map<String, String> extraParameters = adapter.getExtraAttributes(inputParameters);
+                Map<String, String> extraParameters = adapter.getExtraAttributes(inputParameters); //获取额外的参数值，如实例为EnvironmentAdapter时，获取的是操作系统和JVM的环境变量值
                 if (CollectionUtils.isNotEmptyMap(extraParameters)) {
                     parameters.putAll(extraParameters);
                 }

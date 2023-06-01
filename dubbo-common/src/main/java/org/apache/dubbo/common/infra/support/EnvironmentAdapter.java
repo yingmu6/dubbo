@@ -41,7 +41,7 @@ public class EnvironmentAdapter implements InfraAdapter {
     public Map<String, String> getExtraAttributes(Map<String, String> params) {
         Map<String, String> parameters = new HashMap<>();
 
-        String rawLabels = ConfigurationUtils.getProperty(DUBBO_LABELS);
+        String rawLabels = ConfigurationUtils.getProperty(DUBBO_LABELS); //获取操作系统环境相关的属性值
         if (StringUtils.isNotEmpty(rawLabels)) {
             String[] labelPairs = SEMICOLON_SPLIT_PATTERN.split(rawLabels);
             for (String pair : labelPairs) {
@@ -52,7 +52,7 @@ public class EnvironmentAdapter implements InfraAdapter {
             }
         }
 
-        String rawKeys = ConfigurationUtils.getProperty(DUBBO_ENV_KEYS);
+        String rawKeys = ConfigurationUtils.getProperty(DUBBO_ENV_KEYS); //获取JVM参数相关的值
         if (StringUtils.isNotEmpty(rawKeys)) {
             String[] keys = COMMA_SPLIT_PATTERN.split(rawKeys);
             for (String key : keys) {

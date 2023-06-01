@@ -22,15 +22,15 @@ import java.util.Map;
 
 /**
  * Used to interact with other systems. Typical use cases are:
- * 1. get extra attributes from underlying infrastructures related to the instance on which Dubbo is currently deploying.
+ * 1. get extra attributes from underlying infrastructures（基础设施） related to the instance on which Dubbo is currently deploying.
  * 2. get configurations from third-party systems which maybe useful for a specific component.
  */
 
 @SPI
-public interface InfraAdapter {
+public interface InfraAdapter { //用于与其它系统的属性值进行交互的适配器
 
     /**
-     * get extra attributes
+     * get extra（额外的） attributes
      *
      * @param params application name or hostname are most likely to be used as input params.
      * @return
