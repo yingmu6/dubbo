@@ -54,7 +54,7 @@ public class DubboBootstrapTest {
     private static File dubboProperties;
 
     @BeforeAll
-    public static void setUp(@TempDir Path folder) {
+    public static void setUp(@TempDir Path folder) { //@TempDir junit提供的临时地址
         dubboProperties = folder.resolve(CommonConstants.DUBBO_PROPERTIES_KEY).toFile(); //获取dubbo属性文件对应的File
         System.setProperty(CommonConstants.DUBBO_PROPERTIES_KEY, dubboProperties.getAbsolutePath());
     }
@@ -74,15 +74,15 @@ public class DubboBootstrapTest {
     }
 
     @Test
-    public void compatibleApplicationShutdown() {
+    public void compatibleApplicationShutdown() { //已测试（校验ApplicationConfig属性时，兼容系统停机时间）
         try {
             ConfigUtils.setProperties(null);
             System.clearProperty(SHUTDOWN_WAIT_KEY);
-            System.clearProperty(SHUTDOWN_WAIT_SECONDS_KEY);
+            System.clearProperty(SHUTDOWN_WAIT_SECONDS_KEY); //清理属性值
 
-            writeDubboProperties(SHUTDOWN_WAIT_KEY, "100");
-            ConfigValidationUtils.validateApplicationConfig(new ApplicationConfig("demo"));
-            Assertions.assertEquals("100", System.getProperty(SHUTDOWN_WAIT_KEY));
+            writeDubboProperties(SHUTDOWN_WAIT_KEY, "105"); //将属性写到属性文件中
+            ConfigValidationUtils.validateApplicationConfig(new ApplicationConfig("demo")); //在校验ApplicationConfig的属性值时，会兼容的把系统停机时间写到系统属性中
+            Assertions.assertEquals("105", System.getProperty(SHUTDOWN_WAIT_KEY));
 
             System.clearProperty(SHUTDOWN_WAIT_KEY);
             ConfigUtils.setProperties(null);
@@ -138,7 +138,7 @@ public class DubboBootstrapTest {
             os = new BufferedOutputStream(new FileOutputStream(dubboProperties));
             Properties properties = new Properties();
             properties.put(key, value);
-            properties.store(os, "");
+            properties.store(os, ""); //将属性值写到输出流对应的属性文件中
             os.close();
         } catch (IOException e) {
             if (os != null) {

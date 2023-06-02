@@ -407,7 +407,7 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
 
     protected <C extends AbstractConfig> C getConfig(String configType) throws IllegalStateException {
         return read(() -> {
-            Map<String, C> configsMap = (Map) configsCache.getOrDefault(configType, emptyMap());
+            Map<String, C> configsMap = (Map) configsCache.getOrDefault(configType, emptyMap()); //获取指定配置标签对应的缓存值，如"application"对应的值
             int size = configsMap.size();
             if (size < 1) {
 //                throw new IllegalStateException("No such " + configType.getName() + " is found");

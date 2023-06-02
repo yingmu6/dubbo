@@ -161,7 +161,7 @@ public class ApplicationConfig extends AbstractConfig {
 
     public void setName(String name) {
         this.name = name;
-        if (StringUtils.isEmpty(id)) {
+        if (StringUtils.isEmpty(id)) { //未设置id时，id与name值设为一样
             id = name;
         }
     }

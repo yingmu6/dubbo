@@ -114,7 +114,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig { //A
      * The id list of registries the service will register to
      * Also see {@link #registries}, only one of them will work.
      */
-    protected String registryIds;
+    protected String registryIds; //RegistryConfig对应的id列表（可以有多个注册中心）
 
     // connection events
     protected String onconnect;
@@ -256,11 +256,11 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig { //A
     }
 
     private void convertRegistryIdsToRegistries() {
-        computeValidRegistryIds(); //编程风格，很多方法没有直接返回值，而是直接处理属性值
+        computeValidRegistryIds(); //计算并设置有效的registryId列表（编程风格，很多方法没有直接返回值，而是直接处理属性值）
         if (StringUtils.isEmpty(registryIds)) {
-            if (CollectionUtils.isEmpty(registries)) {
+            if (CollectionUtils.isEmpty(registries)) { //若注册id列表或注册实例还为空，则取默认注册实例
                 List<RegistryConfig> registryConfigs = ApplicationModel.getConfigManager().getDefaultRegistries();
-                if (registryConfigs.isEmpty()) {
+                if (registryConfigs.isEmpty()) { //todo @pause
                     registryConfigs = new ArrayList<>();
                     RegistryConfig registryConfig = new RegistryConfig();
                     registryConfig.refresh();
@@ -329,7 +329,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig { //A
         }
     }
     
-    protected void computeValidRegistryIds() {
+    protected void computeValidRegistryIds() { //计算并设置有效的registryId列表（从ApplicationConfig中获取到值，并设置到当前缓存中）
         if (StringUtils.isEmpty(getRegistryIds())) {
             if (getApplication() != null && StringUtils.isNotEmpty(getApplication().getRegistryIds())) { //从ApplicationConfig中获取到registryIds
                 setRegistryIds(getApplication().getRegistryIds()); //编程风格：都是用方法获取值，很少看到用临时变量接收，看上去比较简洁
@@ -445,10 +445,10 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig { //A
     @Deprecated
     public void setApplication(ApplicationConfig application) {
         this.application = application;
-        if (application != null) { //在调用set方法设置成员变量值时，进行逻辑判断
+        if (application != null) {
             ConfigManager configManager = ApplicationModel.getConfigManager();
-            configManager.getApplication().orElseGet(() -> {
-                configManager.setApplication(application); //若configManager缓存的ApplicationConfig为空的话，回写到configManager
+            configManager.getApplication().orElseGet(() -> { //ConfigManager配置管理中获取ApplicationConfig对应的缓存，若没有缓存则对应设置
+                configManager.setApplication(application);
                 return application;
             });
         }

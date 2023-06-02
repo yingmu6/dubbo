@@ -316,7 +316,7 @@ public class ConfigValidationUtils {
         }
     }
 
-    public static void validateApplicationConfig(ApplicationConfig config) {
+    public static void validateApplicationConfig(ApplicationConfig config) { //校验应用配置值（会做兼容，将停机等待时间写入系统属性中）
         if (config == null) {
             return;
         }
@@ -329,7 +329,7 @@ public class ConfigValidationUtils {
         // backward compatibility（向后兼容）
         String wait = ConfigUtils.getProperty(SHUTDOWN_WAIT_KEY);
         if (wait != null && wait.trim().length() > 0) {
-            System.setProperty(SHUTDOWN_WAIT_KEY, wait.trim());
+            System.setProperty(SHUTDOWN_WAIT_KEY, wait.trim()); //会将停机等待时间，设置到系统属性中
         } else {
             wait = ConfigUtils.getProperty(SHUTDOWN_WAIT_SECONDS_KEY);
             if (wait != null && wait.trim().length() > 0) {
@@ -337,9 +337,9 @@ public class ConfigValidationUtils {
             }
         }
 
-        checkName(NAME, config.getName());
+        checkName(NAME, config.getName()); //按正则表达式，比较配置值的内容是否正确
         checkMultiName(OWNER, config.getOwner());
-        checkName(ORGANIZATION, config.getOrganization());
+        checkName(ORGANIZATION, config.getOrganization()); //未设置配置值时，不进行模式匹配，认为检查通过
         checkName(ARCHITECTURE, config.getArchitecture());
         checkName(ENVIRONMENT, config.getEnvironment());
         checkParameterName(config.getParameters());
@@ -513,7 +513,7 @@ public class ConfigValidationUtils {
     }
 
     public static void checkPathName(String property, String value) {
-        checkProperty(property, value, MAX_PATH_LENGTH, PATTERN_PATH);
+        checkProperty(property, value, MAX_PATH_LENGTH, PATTERN_PATH); //使用不同的模式进行比较
     }
 
     public static void checkMethodName(String property, String value) {
@@ -543,7 +543,7 @@ public class ConfigValidationUtils {
         }
         if (pattern != null) { //检查值value是否与正则表达式匹配
             Matcher matcher = pattern.matcher(value);
-            if (!matcher.matches()) {
+            if (!matcher.matches()) { //设置的属性值与给定的模式不匹配时，则抛出异常
                 throw new IllegalStateException("Invalid " + property + "=\"" + value + "\" contains illegal " +
                         "character, only digit, letter, '-', '_' or '.' is legal.");
             }
