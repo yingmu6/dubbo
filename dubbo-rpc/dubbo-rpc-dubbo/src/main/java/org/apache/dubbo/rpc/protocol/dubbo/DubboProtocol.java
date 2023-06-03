@@ -75,9 +75,9 @@ public class DubboProtocol extends AbstractProtocol {
             }
 
             Invocation inv = (Invocation) message;
-            Invoker<?> invoker = getInvoker(channel, inv); //根据调用信息，从Export获取Invoker
+            Invoker<?> invoker = getInvoker(channel, inv); //获取invoker实例
             // need to consider backward-compatibility if it's a callback
-            if (Boolean.TRUE.toString().equals(inv.getObjectAttachments().get(IS_CALLBACK_SERVICE_INVOKE))) {
+            if (Boolean.TRUE.toString().equals(inv.getObjectAttachments().get(IS_CALLBACK_SERVICE_INVOKE))) { //如果当前服务是回调服务，则校验回调方法是否存在
                 String methodsStr = invoker.getUrl().getParameters().get("methods");
                 boolean hasMethod = false;
                 if (methodsStr == null || !methodsStr.contains(",")) {
@@ -100,7 +100,7 @@ public class DubboProtocol extends AbstractProtocol {
                 }
             }
             RpcContext.getContext().setRemoteAddress(channel.getRemoteAddress()); //更新远程地址
-            Result result = invoker.invoke(inv); //执行具体的调用（此处Invoker实例为ProtocolFilterWrapper$1）
+            Result result = invoker.invoke(inv); //执行具体的调用
             return result.thenApply(Function.identity());
         }
 

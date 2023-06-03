@@ -120,8 +120,8 @@ public class ConfigValidationUtils {
     public static List<URL> loadRegistries(AbstractInterfaceConfig interfaceConfig, boolean provider) { //构造注册URL
         // check && override if necessary
         List<URL> registryList = new ArrayList<URL>();
-        ApplicationConfig application = interfaceConfig.getApplication();
-        List<RegistryConfig> registries = interfaceConfig.getRegistries();
+        ApplicationConfig application = interfaceConfig.getApplication(); //找到所属的应用信息
+        List<RegistryConfig> registries = interfaceConfig.getRegistries(); //获取注册实例列表
         if (CollectionUtils.isNotEmpty(registries)) {
             for (RegistryConfig config : registries) {
                 String address = config.getAddress();

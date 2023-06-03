@@ -104,8 +104,8 @@ public class DubboBootstrapTest {
         // FIXME: now we need to check first, then load
         interfaceConfig.setApplication(new ApplicationConfig("testLoadRegistries"));
         interfaceConfig.checkRegistry();
-        List<URL> urls = ConfigValidationUtils.loadRegistries(interfaceConfig, true);
-        Assertions.assertEquals(1, urls.size());
+        List<URL> urls = ConfigValidationUtils.loadRegistries(interfaceConfig, true); //todo 此处RegistryConfig中的port是怎么得到的？
+        Assertions.assertEquals(1, urls.size()); //此处RegistryConfig中的address属性为addr1，是通过合成配置，在SystemConfiguration取到的值
         URL url = urls.get(0);
         Assertions.assertEquals("registry", url.getProtocol());
         Assertions.assertEquals("addr1:9090", url.getAddress());

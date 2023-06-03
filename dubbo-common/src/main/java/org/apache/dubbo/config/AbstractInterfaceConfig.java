@@ -260,16 +260,16 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig { //A
         if (StringUtils.isEmpty(registryIds)) {
             if (CollectionUtils.isEmpty(registries)) { //若注册id列表或注册实例还为空，则取默认注册实例
                 List<RegistryConfig> registryConfigs = ApplicationModel.getConfigManager().getDefaultRegistries();
-                if (registryConfigs.isEmpty()) { //todo @pause
+                if (registryConfigs.isEmpty()) {
                     registryConfigs = new ArrayList<>();
                     RegistryConfig registryConfig = new RegistryConfig();
-                    registryConfig.refresh();
+                    registryConfig.refresh(); //刷新RegistryConfig的属性值
                     registryConfigs.add(registryConfig);
                 }
                 setRegistries(registryConfigs);
             }
         } else {
-            String[] ids = COMMA_SPLIT_PATTERN.split(registryIds);
+            String[] ids = COMMA_SPLIT_PATTERN.split(registryIds); //使用分隔符","分隔registry id值
             List<RegistryConfig> tmpRegistries = new ArrayList<>();
             Consumer<String> stringConsumer = id -> { //用lambda表达式构建Consumer的实例（也是通过匿名类方式）
                 if (tmpRegistries.stream().noneMatch(reg -> reg.getId().equals(id))) { //noneMatch如果流中没有匹配的元素，返回true

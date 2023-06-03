@@ -54,7 +54,7 @@ public interface CommonConstants {
 
     String DOT_SEPARATOR = ".";
 
-    Pattern COMMA_SPLIT_PATTERN = Pattern.compile("\\s*[,]+\\s*");
+    Pattern COMMA_SPLIT_PATTERN = Pattern.compile("\\s*[,]+\\s*"); //该正则表达式的含义为：出现1个或多个","，该符号前后可以出现0个或多个空格（"\s"：空格，"*"：出现0个或多个，"+"：出现1个或多个）
 
     String PATH_SEPARATOR = "/";
 
