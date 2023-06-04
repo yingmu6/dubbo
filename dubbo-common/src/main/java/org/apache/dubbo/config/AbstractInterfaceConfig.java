@@ -163,7 +163,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig { //A
      * Check whether the registry config is exists, and then conversion（转换） it to {@link RegistryConfig}
      */
     public void checkRegistry() {
-        convertRegistryIdsToRegistries();
+        convertRegistryIdsToRegistries(); //将注册id转换为注册实例
 
         for (RegistryConfig registryConfig : registries) {
             if (!registryConfig.isValid()) {
@@ -173,7 +173,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig { //A
         }
     }
 
-    public static void appendRuntimeParameters(Map<String, String> map) { //添加运行相关参数
+    public static void appendRuntimeParameters(Map<String, String> map) { //在指定的Map中添加运行相关参数
         map.put(DUBBO_VERSION_KEY, Version.getProtocolVersion());
         map.put(RELEASE_KEY, Version.getVersion());
         map.put(TIMESTAMP_KEY, String.valueOf(System.currentTimeMillis()));
@@ -255,7 +255,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig { //A
         }
     }
 
-    private void convertRegistryIdsToRegistries() {
+    private void convertRegistryIdsToRegistries() { //将注册id转换为注册实例
         computeValidRegistryIds(); //计算并设置有效的registryId列表（编程风格，很多方法没有直接返回值，而是直接处理属性值）
         if (StringUtils.isEmpty(registryIds)) {
             if (CollectionUtils.isEmpty(registries)) { //若注册id列表或注册实例还为空，则取默认注册实例
@@ -532,7 +532,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig { //A
         this.monitor = monitor;
         if (monitor != null) {
             ConfigManager configManager = ApplicationModel.getConfigManager();
-            configManager.getMonitor().orElseGet(() -> {
+            configManager.getMonitor().orElseGet(() -> { //从缓存中获取MonitorConfig，若缓存中没有则对应设置
                 configManager.setMonitor(monitor);
                 return monitor;
             });

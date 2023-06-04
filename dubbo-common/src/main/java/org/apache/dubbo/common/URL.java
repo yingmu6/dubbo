@@ -86,7 +86,7 @@ class URL implements Serializable {
     private final String host; //主机
 
     // by default, port to registry
-    private final int port; //端口
+    private final int port; //端口（默认值为0）
 
     private final String path; //接口名称
 

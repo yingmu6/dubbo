@@ -64,7 +64,7 @@ public interface CommonConstants {
 
     String REGISTRY_SEPARATOR = "|";
 
-    Pattern REGISTRY_SPLIT_PATTERN = Pattern.compile("\\s*[|;]+\\s*");
+    Pattern REGISTRY_SPLIT_PATTERN = Pattern.compile("\\s*[|;]+\\s*"); //该正则表达式的含义为：出现1个或多个'|' 或 ';'，该符号前后可以出现0个或多个空格
 
     Pattern D_REGISTRY_SPLIT_PATTERN = Pattern.compile("\\s*[|]+\\s*");
 

@@ -39,12 +39,12 @@ public class UrlUtils { //url处理工具
             return null;
         }
         String url;
-        if (address.contains("://") || address.contains(URL_PARAM_STARTING_SYMBOL)) {
+        if (address.contains("://") || address.contains(URL_PARAM_STARTING_SYMBOL)) { //address地址包含"://"或"?"，则作为URL字符串
             url = address;
         } else {
-            String[] addresses = COMMA_SPLIT_PATTERN.split(address);
+            String[] addresses = COMMA_SPLIT_PATTERN.split(address); //按分隔符','分隔出地址列表
             url = addresses[0];
-            if (addresses.length > 1) {
+            if (addresses.length > 1) { //若有多个地址，把第一个地址作为主地址，另外的地址按分隔符','进行拼接，并以url参数backup存起来
                 StringBuilder backup = new StringBuilder();
                 for (int i = 1; i < addresses.length; i++) {
                     if (i > 1) {
@@ -55,16 +55,16 @@ public class UrlUtils { //url处理工具
                 url += URL_PARAM_STARTING_SYMBOL + RemotingConstants.BACKUP_KEY + "=" + backup.toString();
             }
         }
-        String defaultProtocol = defaults == null ? null : defaults.get(PROTOCOL_KEY); //从存储默认值的Map中获取值
+        String defaultProtocol = defaults == null ? null : defaults.get(PROTOCOL_KEY); //获取默认协议名
         if (defaultProtocol == null || defaultProtocol.length() == 0) { //使用dubbo作为默认协议
             defaultProtocol = DUBBO_PROTOCOL;
         }
         String defaultUsername = defaults == null ? null : defaults.get(USERNAME_KEY);
         String defaultPassword = defaults == null ? null : defaults.get(PASSWORD_KEY);
-        int defaultPort = StringUtils.parseInteger(defaults == null ? null : defaults.get(PORT_KEY));
+        int defaultPort = StringUtils.parseInteger(defaults == null ? null : defaults.get(PORT_KEY)); //端口若没有设置，默认为0（URL中的port基本类型的默认值）
         String defaultPath = defaults == null ? null : defaults.get(PATH_KEY);
-        Map<String, String> defaultParameters = defaults == null ? null : new HashMap<>(defaults);
-        if (defaultParameters != null) {
+        Map<String, String> defaultParameters = defaults == null ? null : new HashMap<>(defaults); //基于传入的Map，构建参数Map
+        if (defaultParameters != null) { //移除指定的参数，使用最新处理后的值
             defaultParameters.remove(PROTOCOL_KEY);
             defaultParameters.remove(USERNAME_KEY);
             defaultParameters.remove(PASSWORD_KEY);
@@ -103,7 +103,7 @@ public class UrlUtils { //url处理工具
                 port = defaultPort;
             } else {
                 changed = true;
-                port = 9090;
+                port = 9090; //端口值为0是，URL的port设置为9090
             }
         }
         if (path == null || path.length() == 0) {
@@ -120,7 +120,7 @@ public class UrlUtils { //url处理工具
                     String value = parameters.get(key);
                     if (StringUtils.isEmpty(value)) {
                         changed = true;
-                        parameters.put(key, defaultValue);
+                        parameters.put(key, defaultValue); //参数设置
                     }
                 }
             }
@@ -135,12 +135,12 @@ public class UrlUtils { //url处理工具
         if (address == null || address.length() == 0) {
             return null;
         }
-        String[] addresses = REGISTRY_SPLIT_PATTERN.split(address); //可能有多个注册地址，按分隔符进行分隔
+        String[] addresses = REGISTRY_SPLIT_PATTERN.split(address); //可能有多个注册地址，按分隔符'|' 或 ';'进行分隔
         if (addresses == null || addresses.length == 0) {
             return null; //here won't be empty
         }
         List<URL> registries = new ArrayList<URL>();
-        for (String addr : addresses) {
+        for (String addr : addresses) { //依次构建URL实例
             registries.add(parseURL(addr, defaults));
         }
         return registries;

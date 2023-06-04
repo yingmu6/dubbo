@@ -98,15 +98,15 @@ public class DubboBootstrapTest {
     }
 
     @Test
-    public void testLoadRegistries() {
+    public void testLoadRegistries() { //已测（通过AbstractInterfaceConfig检查以及加载RegistryConfig信息）
         System.setProperty("dubbo.registry.address", "addr1");
         AbstractInterfaceConfigTest.InterfaceConfig interfaceConfig = new AbstractInterfaceConfigTest.InterfaceConfig();
         // FIXME: now we need to check first, then load
         interfaceConfig.setApplication(new ApplicationConfig("testLoadRegistries"));
-        interfaceConfig.checkRegistry();
-        List<URL> urls = ConfigValidationUtils.loadRegistries(interfaceConfig, true); //todo 此处RegistryConfig中的port是怎么得到的？
+        interfaceConfig.checkRegistry(); //在检查注册实例时，也会根据注册id构建注册实例
+        List<URL> urls = ConfigValidationUtils.loadRegistries(interfaceConfig, true); //此处涉及的RegistryConfig中的port=0是怎么得到的？解答：是在RegistryConfig#setAddress中会取url的port（默认值为0）来设置
         Assertions.assertEquals(1, urls.size()); //此处RegistryConfig中的address属性为addr1，是通过合成配置，在SystemConfiguration取到的值
-        URL url = urls.get(0);
+        URL url = urls.get(0); //URL的数据内容为：registry://addr1:9090/org.apache.dubbo.registry.RegistryService?application=testLoadRegistries&dubbo=2.0.2&pid=3814&registry=dubbo&timestamp=1685883255111
         Assertions.assertEquals("registry", url.getProtocol());
         Assertions.assertEquals("addr1:9090", url.getAddress());
         Assertions.assertEquals(RegistryService.class.getName(), url.getPath());

@@ -117,7 +117,7 @@ public class ConfigValidationUtils {
     private static final Pattern PATTERN_KEY = Pattern.compile("[*,\\-._0-9a-zA-Z]+");
 
 
-    public static List<URL> loadRegistries(AbstractInterfaceConfig interfaceConfig, boolean provider) { //构造注册URL
+    public static List<URL> loadRegistries(AbstractInterfaceConfig interfaceConfig, boolean provider) { //加载注册实例，并返回对应的URL列表
         // check && override if necessary
         List<URL> registryList = new ArrayList<URL>();
         ApplicationConfig application = interfaceConfig.getApplication(); //找到所属的应用信息
@@ -133,7 +133,7 @@ public class ConfigValidationUtils {
                     AbstractConfig.appendParameters(map, application); //将ApplicationConfig中的属性值，设置到参数Map中
                     AbstractConfig.appendParameters(map, config); //将RegistryConfig中的属性值，设置到参数Map中
                     map.put(PATH_KEY, RegistryService.class.getName()); //path对应接口名，如：path -> org.apache.dubbo.registry.RegistryService
-                    AbstractInterfaceConfig.appendRuntimeParameters(map);
+                    AbstractInterfaceConfig.appendRuntimeParameters(map); //在指定的Map中添加运行相关参数
                     if (!map.containsKey(PROTOCOL_KEY)) { //未指定协议时，默认设置为dubbo协议
                         map.put(PROTOCOL_KEY, DUBBO_PROTOCOL);
                     }
