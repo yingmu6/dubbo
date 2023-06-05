@@ -753,7 +753,7 @@ public class AbstractConfigTest {
         }
     }
 
-    private static class ParameterConfig {
+    private static class ParameterConfig { //用于测试的静态内部类
         private int number;
         private String name;
         private int age;

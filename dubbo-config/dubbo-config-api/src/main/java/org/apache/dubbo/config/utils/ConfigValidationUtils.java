@@ -163,7 +163,7 @@ public class ConfigValidationUtils {
         //set ip
         String hostToRegistry = ConfigUtils.getSystemProperty(DUBBO_IP_TO_REGISTRY);
         if (StringUtils.isEmpty(hostToRegistry)) {
-            hostToRegistry = NetUtils.getLocalHost();
+            hostToRegistry = NetUtils.getLocalHost(); //获取本地IP地址
         } else if (NetUtils.isInvalidLocalHost(hostToRegistry)) {
             throw new IllegalArgumentException("Specified invalid registry ip from property:" +
                     DUBBO_IP_TO_REGISTRY + ", value:" + hostToRegistry);
@@ -179,20 +179,20 @@ public class ConfigValidationUtils {
         if (sysaddress != null && sysaddress.length() > 0) {
             address = sysaddress;
         } else if (monitor != null) {
-            address = monitor.getAddress();
+            address = monitor.getAddress(); //取监控配置的地址
         }
         if (ConfigUtils.isNotEmpty(address)) {
             if (!map.containsKey(PROTOCOL_KEY)) {
-                if (getExtensionLoader(MonitorFactory.class).hasExtension(LOGSTAT_PROTOCOL)) {
+                if (getExtensionLoader(MonitorFactory.class).hasExtension(LOGSTAT_PROTOCOL)) { //看是否配置"logstat"协议
                     map.put(PROTOCOL_KEY, LOGSTAT_PROTOCOL);
                 } else {
-                    map.put(PROTOCOL_KEY, DUBBO_PROTOCOL);
+                    map.put(PROTOCOL_KEY, DUBBO_PROTOCOL); //若没有配置"logstat"协议，使用"dubbo"作为默认协议
                 }
             }
             return UrlUtils.parseURL(address, map);
         } else if (monitor != null &&
                 (REGISTRY_PROTOCOL.equals(monitor.getProtocol()) || SERVICE_REGISTRY_PROTOCOL.equals(monitor.getProtocol()))
-                && registryURL != null) {
+                && registryURL != null) { //
             return URLBuilder.from(registryURL)
                     .setProtocol(DUBBO_PROTOCOL)
                     .addParameter(PROTOCOL_KEY, monitor.getProtocol())

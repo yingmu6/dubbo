@@ -30,7 +30,7 @@ public @interface Parameter { //作用在方法上（在处理方法时，可根
 
     boolean required() default false;
 
-    boolean excluded() default false; //排除在外，不会暴露在url的参数中
+    boolean excluded() default false; //排除在外，即对应的参数不参与逻辑处理
 
     boolean escaped() default false; //表明参数是否需要编码
 

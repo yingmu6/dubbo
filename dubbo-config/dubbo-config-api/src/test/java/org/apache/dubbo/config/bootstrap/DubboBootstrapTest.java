@@ -118,14 +118,14 @@ public class DubboBootstrapTest {
 
 
     @Test
-    public void testLoadMonitor() {
+    public void testLoadMonitor() { //已测（加载监控配置，并且返回监控配置对应的URL）
         System.setProperty("dubbo.monitor.address", "monitor-addr:12080");
         System.setProperty("dubbo.monitor.protocol", "monitor");
         AbstractInterfaceConfigTest.InterfaceConfig interfaceConfig = new AbstractInterfaceConfigTest.InterfaceConfig();
         interfaceConfig.setApplication(new ApplicationConfig("testLoadMonitor"));
         interfaceConfig.setMonitor(new MonitorConfig());
         URL url = ConfigValidationUtils.loadMonitor(interfaceConfig, new URL("dubbo", "addr1", 9090));
-        Assertions.assertEquals("monitor-addr:12080", url.getAddress());
+        Assertions.assertEquals("monitor-addr:12080", url.getAddress()); //URL的数据内容为：dubbo://monitor-addr:12080?application=testLoadMonitor&dubbo=2.0.2&interface=org.apache.dubbo.monitor.MonitorService&pid=2901&register.ip=192.168.1.109&timestamp=1685971760582
         Assertions.assertEquals(MonitorService.class.getName(), url.getParameter("interface"));
         Assertions.assertNotNull(url.getParameter("dubbo"));
         Assertions.assertNotNull(url.getParameter("pid"));

@@ -518,7 +518,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig { //A
         if (monitor != null) {
             return monitor;
         }
-        // FIXME: instead of return null, we should set default monitor when getMonitor() return null in ConfigManager
+        // FIXME: instead of return null, we should set default monitor when getMonitor() return null in ConfigManager（待修复的点：不应该返回null，返回默认的Monitor）
         return ApplicationModel.getConfigManager().getMonitor().orElse(null);
     }
 
