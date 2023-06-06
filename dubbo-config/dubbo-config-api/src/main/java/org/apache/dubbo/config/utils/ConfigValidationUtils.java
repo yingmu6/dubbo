@@ -89,7 +89,7 @@ public class ConfigValidationUtils {
     /**
      * The rule qualification for <b>name</b>
      */
-    private static final Pattern PATTERN_NAME = Pattern.compile("[\\-._0-9a-zA-Z]+");
+    private static final Pattern PATTERN_NAME = Pattern.compile("[\\-._0-9a-zA-Z]+"); // 出现一个或多个 "-"、"."、"_"、0到9 或 a到z 或 A到Z 的字符
 
     /**
      * The rule qualification for <b>multiply name</b>
@@ -106,8 +106,8 @@ public class ConfigValidationUtils {
      */
     private static final Pattern PATTERN_PATH = Pattern.compile("[/\\-$._0-9a-zA-Z]+");
 
-    /**
-     * The pattern matches a value who has a symbol
+     /**
+     * The pattern matches a value who has a symbol（该模式匹配带有符号的值）
      */
     private static final Pattern PATTERN_NAME_HAS_SYMBOL = Pattern.compile("[:*,\\s/\\-._0-9a-zA-Z]+");
 
@@ -454,7 +454,7 @@ public class ConfigValidationUtils {
         return isServiceDiscoveryRegistryType(url) ? SERVICE_REGISTRY_PROTOCOL : REGISTRY_PROTOCOL;
     }
 
-    public static void checkExtension(Class<?> type, String property, String value) {
+    public static void checkExtension(Class<?> type, String property, String value) { //检查属性对应的扩展名是否正确
         checkName(property, value);
         if (StringUtils.isNotEmpty(value)
                 && !ExtensionLoader.getExtensionLoader(type).hasExtension(value)) {
@@ -462,8 +462,8 @@ public class ConfigValidationUtils {
         }
     }
 
-    /**
-     * Check whether there is a <code>Extension</code> who's name (property) is <code>value</code> (special treatment is
+     /**
+     * Check whether there is a <code>Extension</code> who's name (property) is <code>value</code> (special treatment（处理） is
      * required)
      *
      * @param type     The Extension type
@@ -475,10 +475,10 @@ public class ConfigValidationUtils {
         if (StringUtils.isNotEmpty(value)) {
             String[] values = value.split("\\s*[,]+\\s*"); //按分隔符拆分出多个扩展名
             for (String v : values) {
-                if (v.startsWith(REMOVE_VALUE_PREFIX)) {
+                if (v.startsWith(REMOVE_VALUE_PREFIX)) { //若包含"-"（剔除的含义），则将"-"去掉做扩展名
                     v = v.substring(1);
                 }
-                if (DEFAULT_KEY.equals(v)) {
+                if (DEFAULT_KEY.equals(v)) { //若为"default"（默认扩展名），则不进行后续判断
                     continue;
                 }
                 if (!ExtensionLoader.getExtensionLoader(type).hasExtension(v)) { //依次判断扩展名是否有对应的扩展
@@ -496,7 +496,7 @@ public class ConfigValidationUtils {
         checkProperty(property, value, MAX_PATH_LENGTH, null);
     }
 
-    public static void checkName(String property, String value) {
+    public static void checkName(String property, String value) { //检查属性名 长度以及格式是否正确
         checkProperty(property, value, MAX_LENGTH, PATTERN_NAME);
     }
 

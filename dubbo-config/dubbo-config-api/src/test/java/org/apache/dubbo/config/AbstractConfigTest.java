@@ -107,37 +107,41 @@ public class AbstractConfigTest {
     }*/
 
     @Test
-    public void testAppendParameters1() throws Exception {
+    public void testAppendParameters1() throws Exception { //已测（将Config对象的属性进行处理后，添加到参数Map中）
         Map<String, String> parameters = new HashMap<String, String>();
         parameters.put("num", "ONE");
         AbstractConfig.appendParameters(parameters, new ParameterConfig(1, "hello/world", 30, "password"), "prefix");
-        Assertions.assertEquals("one", parameters.get("prefix.key.1"));
-        Assertions.assertEquals("two", parameters.get("prefix.key.2"));
-        Assertions.assertEquals("ONE,1", parameters.get("prefix.num"));
-        Assertions.assertEquals("hello%2Fworld", parameters.get("prefix.naming"));
-        Assertions.assertEquals("30", parameters.get("prefix.age"));
+        Assertions.assertEquals("one", parameters.get("prefix.key.1")); //值的来源：AbstractConfigTest$ParameterConfig#getParameters中参数key.1，参数key加上了前缀prefix
+        Assertions.assertEquals("two", parameters.get("prefix.key.2")); //值的来源：AbstractConfigTest$ParameterConfig#getParameters中参数key-2，由于做了兼容性处理，"-"会被替换为"."
+        Assertions.assertEquals("ONE,1", parameters.get("prefix.num")); //值的来源：由于AbstractConfigTest$ParameterConfig#getNumber上的@Parameter注解中的append=true，在相同key对应多个值时，使用分隔符","进行拼接
+        Assertions.assertEquals("hello%2Fworld", parameters.get("prefix.naming")); //值的来源：由于AbstractConfigTest$ParameterConfig#getName的@Parameter的key配置为"naming"，会以注解上的配置为主；又因为escaped=true，所以会进行url编码
+        Assertions.assertEquals("30", parameters.get("prefix.age")); //值得来源：AbstractConfigTest$ParameterConfig#getAge方法上没有配置@Parameter注解，直接从方法名中取出属性名age，再对应加上前缀
         Assertions.assertTrue(parameters.containsKey("prefix.key-2"));
-        Assertions.assertTrue(parameters.containsKey("prefix.key.2"));
-        Assertions.assertFalse(parameters.containsKey("prefix.secret"));
+        Assertions.assertTrue(parameters.containsKey("prefix.key.2")); //虽然会做兼容，将"-"替换为"."，但"-"对应的key也会存在，也就是新建了key，对应的value是相同的
+        Assertions.assertFalse(parameters.containsKey("prefix.secret")); //由于AbstractConfigTest$ParameterConfig#getSecret上配置的@Paramter注解中的exclued=true，所以该值不会出现在Map中
     }
 
     @Test
-    public void testAppendParameters2() throws Exception {
-        Assertions.assertThrows(IllegalStateException.class, () -> {
-            Map<String, String> parameters = new HashMap<String, String>();
-            AbstractConfig.appendParameters(parameters, new ParameterConfig());
-        });
+    public void testAppendParameters2() throws Exception { //已测（在@Parameter中的required=true时，若参数为空，则会抛出IllegalStateException异常）
+        try {
+            Assertions.assertThrows(IllegalStateException.class, () -> {
+                Map<String, String> parameters = new HashMap<String, String>();
+                AbstractConfig.appendParameters(parameters, new ParameterConfig()); //因为定义的@Parameter中有些参数设置了required=true，即值是非空的。若为空，即会抛出异常
+            });
+        } catch (Exception e) {
+            System.out.println(e.getMessage()); //因为Assertions.assertThrows内部已经捕获了异常，所以没有再把异常抛出来，所以此处新加的try/catch其实没有用到
+        }
     }
 
     @Test
-    public void testAppendParameters3() throws Exception {
+    public void testAppendParameters3() throws Exception { //已测（config对象为空时，不处理）
         Map<String, String> parameters = new HashMap<String, String>();
         AbstractConfig.appendParameters(parameters, null);
         assertTrue(parameters.isEmpty());
     }
 
     @Test
-    public void testAppendParameters4() throws Exception {
+    public void testAppendParameters4() throws Exception { //已测（附加参数时，可以不指定前缀，若不指定，则参数Map中的key就没有对应的前缀）
         Map<String, String> parameters = new HashMap<String, String>();
         AbstractConfig.appendParameters(parameters, new ParameterConfig(1, "hello/world", 30, "password"));
         Assertions.assertEquals("one", parameters.get("key.1"));
@@ -148,16 +152,16 @@ public class AbstractConfigTest {
     }
 
     @Test
-    public void testAppendAttributes1() throws Exception {
+    public void testAppendAttributes1() throws Exception { //已测（将Config对象中的属性，添加到参数Map中，AbstractConfig#appendAttributes方法，已被标记为弃用）
         Map<String, Object> parameters = new HashMap<String, Object>();
         AbstractConfig.appendAttributes(parameters, new AttributeConfig('l', true, (byte) 0x01), "prefix");
-        Assertions.assertEquals('l', parameters.get("prefix.let"));
-        Assertions.assertEquals(true, parameters.get("prefix.activate"));
-        Assertions.assertFalse(parameters.containsKey("prefix.flag"));
+        Assertions.assertEquals('l', parameters.get("prefix.let")); //方法上配置的注解为：@Parameter(attribute = true, key = "let")
+        Assertions.assertEquals(true, parameters.get("prefix.activate")); //方法上配置的注解为：@Parameter(attribute = true)
+        Assertions.assertFalse(parameters.containsKey("prefix.flag")); //此处是因为getFlag()方法上，没有配置@Parameter，所以没设值处理
     }
 
     @Test
-    public void testAppendAttributes2() throws Exception {
+    public void testAppendAttributes2() throws Exception { //已测（添加属性时，没有指定前缀）
         Map<String, Object> parameters = new HashMap<String, Object>();
         AbstractConfig.appendAttributes(parameters, new AttributeConfig('l', true, (byte) 0x01));
         Assertions.assertEquals('l', parameters.get("let"));
@@ -166,22 +170,22 @@ public class AbstractConfigTest {
     }
 
     @Test
-    public void checkExtension() throws Exception {
+    public void checkExtension() throws Exception { //已测（检查属性对应的扩展名是否正确）
         Assertions.assertThrows(IllegalStateException.class, () -> ConfigValidationUtils.checkExtension(Greeting.class, "hello", "world"));
     }
 
     @Test
-    public void checkMultiExtension1() throws Exception {
+    public void checkMultiExtension1() throws Exception { //已测（检查属性对应的多个扩展名是否正确）
         Assertions.assertThrows(IllegalStateException.class, () -> ConfigValidationUtils.checkMultiExtension(Greeting.class, "hello", "default,world"));
     }
 
     @Test
-    public void checkMultiExtension2() throws Exception {
+    public void checkMultiExtension2() throws Exception { //已测（检查扩展名包含 "-"、"default"时的处理方式）
         Assertions.assertThrows(IllegalStateException.class, () -> ConfigValidationUtils.checkMultiExtension(Greeting.class, "hello", "default,-world"));
     }
 
     @Test
-    public void checkLength() throws Exception {
+    public void checkLength() throws Exception { //todo @pause
         Assertions.assertThrows(IllegalStateException.class, () -> {
             StringBuilder builder = new StringBuilder();
             for (int i = 0; i <= 200; i++) {

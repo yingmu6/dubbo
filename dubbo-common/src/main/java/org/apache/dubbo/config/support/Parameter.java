@@ -30,11 +30,11 @@ public @interface Parameter { //作用在方法上（在处理方法时，可根
 
     boolean required() default false;
 
-    boolean excluded() default false; //排除在外，即对应的参数不参与逻辑处理
+    boolean excluded() default false; //排除在外的参数（间接体现：对应的参数不在参数Map中，也不在URL的参数中）
 
     boolean escaped() default false; //表明参数是否需要编码
 
-    boolean attribute() default false;
+    boolean attribute() default false; //按属性处理，如AbstractConfig#appendAttributes方法中的使用
 
     boolean append() default false; //若参数key对应的值已存在，是否需要在原来的key对应的值附加，如protocol=dubbo,http
 

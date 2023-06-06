@@ -112,7 +112,7 @@ public abstract class AbstractConfig implements Serializable {
         if (config == null) { //config对象不一定要继承AbstractConfig，如AbstractConfigTest#ParameterConfig内部类，并没有继承AbstractConfig
             return;
         }
-        Method[] methods = config.getClass().getMethods();
+        Method[] methods = config.getClass().getMethods(); //利用反射，获取config对象中的所有public方法
         for (Method method : methods) { //遍历Config对象的方法，找到getXxx()、isXxx()或getParameters()方法进行处理
             try {
                 String name = method.getName();
@@ -133,22 +133,22 @@ public abstract class AbstractConfig implements Serializable {
                         if (parameter != null && parameter.escaped()) {
                             str = URL.encode(str); //若escaped指定是需要编码的，则编码字符串
                         }
-                        if (parameter != null && parameter.append()) { //若属性key对应的值有多个，是否要在原来的值上附加
+                        if (parameter != null && parameter.append()) { //若相同的key对应多个值，且@Parameter注解中的append=true，则通过分隔符","将多个值拼接
                             String pre = parameters.get(key);
                             if (pre != null && pre.length() > 0) {
                                 str = pre + "," + str; //带上分隔符，附加到原有的值value上
                             }
                         }
                         if (prefix != null && prefix.length() > 0) {
-                            key = prefix + "." + key; //若有指定分隔符，附加到属性key上
+                            key = prefix + "." + key; //使用前缀与参数key进行拼接
                         }
-                        parameters.put(key, str); //处理好属性key、value后，写入参数Map中
+                        parameters.put(key, str); //将参数key、value，写入到参数Map中
                     } else if (parameter != null && parameter.required()) { //在值value为空，且@parameter注解required声明为必须时，报出异常信息
                         throw new IllegalStateException(config.getClass().getSimpleName() + "." + key + " == null");
                     }
                 } else if (isParametersGetter(method)) { //若是getParameters()方法，则可以将该方法的返回值Map<String, String>直接设置到处理的参数map中
                     Map<String, String> map = (Map<String, String>) method.invoke(config, new Object[0]);
-                    parameters.putAll(convert(map, prefix));
+                    parameters.putAll(convert(map, prefix)); //map中的参数依次带上前缀
                 }
             } catch (Exception e) {
                 throw new IllegalStateException(e.getMessage(), e);
@@ -271,7 +271,7 @@ public abstract class AbstractConfig implements Serializable {
         return StringUtils.camelToSplitName(name.substring(i, i + 1).toLowerCase() + name.substring(i + 1), ".");
     }
 
-    private static String calculateAttributeFromGetter(String getter) { //从get方法中计算属性名
+    private static String calculateAttributeFromGetter(String getter) { //从get方法中计算属性名（相比calculatePropertyFromGetter处理，不需要将驼峰格式使用分隔符处理）
         int i = getter.startsWith("get") ? 3 : 2; //判断是否以"get"开头，可以判断是get方法还是is方法
         return getter.substring(i, i + 1).toLowerCase() + getter.substring(i + 1); //去除get或is后，将第一个字母小写后，再拼接后续的字符串
     }
@@ -333,7 +333,7 @@ public abstract class AbstractConfig implements Serializable {
             String value = entry.getValue();
             result.put(pre + key, value); //带上前缀处理
             // For compatibility [kəmˌpætəˈbɪləti] n.兼容性 , key like "registry-type" will has a duplicate key "registry.type"
-            // (出于兼容性，若带有中划线的key，会产生带上点号的key，即会有两个key)
+            // (出于兼容性，若带有"-"的key，用"."号来替换。【是会产生新的key，但值是相同的，如prefix.key-2=a, 也会有一个prefix.key.2=a】)
             if (key.contains("-")) {
                 result.put(pre + key.replace('-', '.'), value);
             }
