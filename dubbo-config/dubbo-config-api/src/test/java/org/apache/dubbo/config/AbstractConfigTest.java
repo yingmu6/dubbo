@@ -185,7 +185,7 @@ public class AbstractConfigTest {
     }
 
     @Test
-    public void checkLength() throws Exception { //todo @pause
+    public void checkLength() throws Exception { //已测（检查属性值的最大长度，最大字符长度不超过300个）
         Assertions.assertThrows(IllegalStateException.class, () -> {
             StringBuilder builder = new StringBuilder();
             for (int i = 0; i <= 200; i++) {
@@ -196,25 +196,25 @@ public class AbstractConfigTest {
     }
 
     @Test
-    public void checkPathLength() throws Exception {
+    public void checkPathLength() throws Exception { //已测（校验路径长度）
         Assertions.assertThrows(IllegalStateException.class, () -> {
             StringBuilder builder = new StringBuilder();
             for (int i = 0; i <= 200; i++) {
-                builder.append("a");
+                builder.append("a"); //附加了201个字符
             }
-            ConfigValidationUtils.checkPathLength("hello", builder.toString());
+            ConfigValidationUtils.checkPathLength("hello", builder.toString()); //路径长度也不能超过200个字符
         });
     }
 
     @Test
-    public void checkName() throws Exception {
+    public void checkName() throws Exception { //已测（检查属性名是否正确，'%'符号不包含属性名的正则表达式中 [\-._0-9a-zA-Z]+ ）
         Assertions.assertThrows(IllegalStateException.class, () -> ConfigValidationUtils.checkName("hello", "world%"));
     }
 
     @Test
-    public void checkNameHasSymbol() throws Exception {
+    public void checkNameHasSymbol() throws Exception { //已测（匹配的正则表达式为：[:*,\s/\-._0-9a-zA-Z]+）
         try {
-            ConfigValidationUtils.checkNameHasSymbol("hello", ":*,/ -0123\tabcdABCD");
+            ConfigValidationUtils.checkNameHasSymbol("hello", ":*,/ -0123\tabcdABCD"); //非打印字符'\t' 能匹配上，即使正则表达式中没有
             ConfigValidationUtils.checkNameHasSymbol("mock", "force:return world");
         } catch (Exception e) {
             fail("the value should be legal.");
@@ -222,16 +222,16 @@ public class AbstractConfigTest {
     }
 
     @Test
-    public void checkKey() throws Exception {
+    public void checkKey() throws Exception { //已测（检查key的正确性）
         try {
             ConfigValidationUtils.checkKey("hello", "*,-0123abcdABCD");
         } catch (Exception e) {
-            fail("the value should be legal.");
+            fail("the value should be legal."); //捕获到异常，再次抛出异常（所以此处：预期是不抛出异常的）
         }
     }
 
     @Test
-    public void checkMultiName() throws Exception {
+    public void checkMultiName() throws Exception { //已测（正则表达式为：[,\-._0-9a-zA-Z]+，多个扩展名是用","分隔的）
         try {
             ConfigValidationUtils.checkMultiName("hello", ",-._0123abcdABCD");
         } catch (Exception e) {
