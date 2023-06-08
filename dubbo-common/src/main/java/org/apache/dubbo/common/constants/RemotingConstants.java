@@ -22,5 +22,5 @@ package org.apache.dubbo.common.constants;
  */
 public interface RemotingConstants {
 
-    String BACKUP_KEY = "backup";
+    String BACKUP_KEY = "backup"; //备份地址
 }

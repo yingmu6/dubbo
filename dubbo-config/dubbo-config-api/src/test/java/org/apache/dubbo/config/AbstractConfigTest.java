@@ -240,7 +240,7 @@ public class AbstractConfigTest {
     }
 
     @Test
-    public void checkPathName() throws Exception {
+    public void checkPathName() throws Exception { //已测（路径的正则表达式为 [/\-$._0-9a-zA-Z]+ ）
         try {
             ConfigValidationUtils.checkPathName("hello", "/-$._0123abcdABCD");
         } catch (Exception e) {
@@ -249,7 +249,7 @@ public class AbstractConfigTest {
     }
 
     @Test
-    public void checkMethodName() throws Exception {
+    public void checkMethodName() throws Exception { //已测（方法名对应的正则表达式为 [a-zA-Z][0-9a-zA-Z]* ）
         try {
             ConfigValidationUtils.checkMethodName("hello", "abcdABCD0123abcd");
         } catch (Exception e) {
@@ -265,8 +265,8 @@ public class AbstractConfigTest {
     }
 
     @Test
-    public void checkParameterName() throws Exception {
-        Map<String, String> parameters = Collections.singletonMap("hello", ":*,/-._0123abcdABCD");
+    public void checkParameterName() throws Exception { //已测（检查参数名称是否正确，正则表达式为[:*,\s/\-._0-9a-zA-Z]+ ）
+        Map<String, String> parameters = Collections.singletonMap("hello", ":*,/-._0123abcdABCD"); //构建一个不可变的Map
         try {
             ConfigValidationUtils.checkParameterName(parameters);
         } catch (Exception e) {
@@ -277,22 +277,22 @@ public class AbstractConfigTest {
     @Test
     @Config(interfaceClass = Greeting.class, filter = {"f1, f2"}, listener = {"l1, l2"},
             parameters = {"k1", "v1", "k2", "v2"})
-    public void appendAnnotation() throws Exception {
+    public void appendAnnotation() throws Exception { //已测（模拟解析注解中配置的值，然后附加到对应Config对象的过程，如@Reference、@Service等注解）
         Config config = getClass().getMethod("appendAnnotation").getAnnotation(Config.class);
-        AnnotationConfig annotationConfig = new AnnotationConfig();
+        AnnotationConfig annotationConfig = new AnnotationConfig(); //AnnotationConfig的属性与@Config的属性相对应
         annotationConfig.appendAnnotation(Config.class, config);
-        Assertions.assertSame(Greeting.class, annotationConfig.getInterface());
-        Assertions.assertEquals("f1, f2", annotationConfig.getFilter());
+        Assertions.assertSame(Greeting.class, annotationConfig.getInterface()); //对于"interfaceClass" 或 "interfaceName"，都会按 "interface"来处理
+        Assertions.assertEquals("f1, f2", annotationConfig.getFilter()); //AbstractConfig#appendAnnotation中会将filter、listener对应的数组值转换为字符串，并使用分隔符拼接
         Assertions.assertEquals("l1, l2", annotationConfig.getListener());
         Assertions.assertEquals(2, annotationConfig.getParameters().size());
-        Assertions.assertEquals("v1", annotationConfig.getParameters().get("k1"));
+        Assertions.assertEquals("v1", annotationConfig.getParameters().get("k1")); //对于"parameters"，会按照参数Map来处理
         Assertions.assertEquals("v2", annotationConfig.getParameters().get("k2"));
         assertThat(annotationConfig.toString(), Matchers.containsString("filter=\"f1, f2\" "));
-        assertThat(annotationConfig.toString(), Matchers.containsString("listener=\"l1, l2\" "));
+        assertThat(annotationConfig.toString(), Matchers.containsString("listener=\"l1, l2\" ")); //annotationConfig.toString()获取到的字符串值为："<dubbo:annotation listener="l1, l2" filter="f1, f2" />"
     }
 
     @Test
-    public void testRefreshAll() {
+    public void testRefreshAll() { //todo @pause
         try {
             OverrideConfig overrideConfig = new OverrideConfig();
             overrideConfig.setAddress("override-config://127.0.0.1:2181");
@@ -572,13 +572,13 @@ public class AbstractConfigTest {
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.METHOD, ElementType.ANNOTATION_TYPE})
     public @interface Config {
-        Class<?> interfaceClass() default void.class;
+        Class<?> interfaceClass() default void.class; //对应的接口Class
 
         String interfaceName() default "";
 
         String[] filter() default {};
 
-        String[] listener() default {};
+        String[]  listener() default {};
 
         String[] parameters() default {};
 
@@ -854,7 +854,7 @@ public class AbstractConfigTest {
         }
     }
 
-    private static class AnnotationConfig extends AbstractConfig {
+    private static class AnnotationConfig extends AbstractConfig { //与@Config注解中属性是相对应的
         private Class interfaceClass;
         private String filter;
         private String listener;

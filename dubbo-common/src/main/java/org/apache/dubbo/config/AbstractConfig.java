@@ -356,33 +356,33 @@ public abstract class AbstractConfig implements Serializable {
         }
     }
 
-    protected void appendAnnotation(Class<?> annotationClass, Object annotation) {
+    protected void appendAnnotation(Class<?> annotationClass, Object annotation) { //将注解的内容附加到对应的Config对象中（annotationClass为注解对应的Class，annotation为注解对应的对象实例）
         Method[] methods = annotationClass.getMethods();
         for (Method method : methods) {
             if (method.getDeclaringClass() != Object.class
                     && method.getReturnType() != void.class
                     && method.getParameterTypes().length == 0
                     && Modifier.isPublic(method.getModifiers())
-                    && !Modifier.isStatic(method.getModifiers())) {
+                    && !Modifier.isStatic(method.getModifiers())) { //找出注解中 公有的、非静态的，且有返回值的方法
                 try {
                     String property = method.getName();
                     if ("interfaceClass".equals(property) || "interfaceName".equals(property)) {
                         property = "interface";
                     }
-                    String setter = "set" + property.substring(0, 1).toUpperCase() + property.substring(1);
-                    Object value = method.invoke(annotation);
-                    if (value != null && !value.equals(method.getDefaultValue())) {
-                        Class<?> parameterType = ReflectUtils.getBoxedClass(method.getReturnType());
-                        if ("filter".equals(property) || "listener".equals(property)) {
+                    String setter = "set" + property.substring(0, 1).toUpperCase() + property.substring(1); //将注解中的方法名，组装为config对象实例的set方法名，如setListener
+                    Object value = method.invoke(annotation); //获取注解中方法对应的值
+                    if (value != null && !value.equals(method.getDefaultValue())) { //注解方法中值不为空且不为默认值时，将注解方法中的返回值写到Config对象中
+                        Class<?> parameterType = ReflectUtils.getBoxedClass(method.getReturnType()); //获取返回类型的封装类型
+                        if ("filter".equals(property) || "listener".equals(property)) { //属性为filter（过滤器）、listener（监听器）时，是按数组配置的
                             parameterType = String.class;
-                            value = StringUtils.join((String[]) value, ",");
-                        } else if ("parameters".equals(property)) {
+                            value = StringUtils.join((String[]) value, ","); //将字符串数组按分隔符拼接为字符串
+                        } else if ("parameters".equals(property)) { //属性为parameters，是按Map配置的（字符数组是按key、value形式依次存储的）
                             parameterType = Map.class;
                             value = CollectionUtils.toStringMap((String[]) value);
                         }
                         try {
-                            Method setterMethod = getClass().getMethod(setter, parameterType);
-                            setterMethod.invoke(this, value);
+                            Method setterMethod = getClass().getMethod(setter, parameterType); //获取Config对象对应的setter方法
+                            setterMethod.invoke(this, value); //使用反射机制，调用setter方法，将注解方法中的返回值写到Config对象中
                         } catch (NoSuchMethodException e) {
                             // ignore
                         }
@@ -494,11 +494,11 @@ public abstract class AbstractConfig implements Serializable {
     }
 
     @Override
-    public String toString() {
+    public String toString() { //将config对象按字符串输出（输出的内容如："<dubbo:annotation listener="l1, l2" filter="f1, f2" />"）
         try {
             StringBuilder buf = new StringBuilder();
             buf.append("<dubbo:");
-            buf.append(getTagName(getClass()));
+            buf.append(getTagName(getClass())); //获取config对象对应的标签名
             Method[] methods = getClass().getMethods();
             for (Method method : methods) {
                 try {
@@ -507,18 +507,18 @@ public abstract class AbstractConfig implements Serializable {
                         String key = calculateAttributeFromGetter(name);
 
                         try {
-                            getClass().getDeclaredField(key);
+                            getClass().getDeclaredField(key); //获取声明的字段的值
                         } catch (NoSuchFieldException e) {
                             // ignore
-                            continue;
+                            continue; //若没有找到对应字段，则处理下一个
                         }
 
-                        Object value = method.invoke(this);
+                        Object value = method.invoke(this); //调用get或is方法获取值
                         if (value != null) {
-                            buf.append(" ");
-                            buf.append(key);
+                            buf.append(" "); //多个属性值，用空格分隔
+                            buf.append(key); //以属性名作为key
                             buf.append("=\"");
-                            buf.append(value);
+                            buf.append(value); //以get或is方法的返回值作为value
                             buf.append("\"");
                         }
                     }

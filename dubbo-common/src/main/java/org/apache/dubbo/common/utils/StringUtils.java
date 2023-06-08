@@ -769,7 +769,7 @@ public final class StringUtils {
      * @param split split
      * @return String.
      */
-    public static String join(String[] array, String split) {
+    public static String join(String[] array, String split) { //将字符数组按分隔符拼接成字符串
         if (ArrayUtils.isEmpty(array)) {
             return EMPTY_STRING;
         }

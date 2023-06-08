@@ -158,7 +158,7 @@ public final class ReflectUtils { //JVM虚拟机中的类型描述符
                 || Number.class.isAssignableFrom(cls) || Date.class.isAssignableFrom(cls);
     }
 
-    public static Class<?> getBoxedClass(Class<?> c) { //获取基本类型的封装类型
+    public static Class<?> getBoxedClass(Class<?> c) { //获取基本类型的封装类型（Boxed：装箱）
         if (c == int.class) {
             c = Integer.class;
         } else if (c == boolean.class) {

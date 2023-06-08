@@ -513,7 +513,7 @@ public class ConfigValidationUtils {
     }
 
     public static void checkPathName(String property, String value) {
-        checkProperty(property, value, MAX_PATH_LENGTH, PATTERN_PATH); //使用不同的模式进行比较
+        checkProperty(property, value, MAX_PATH_LENGTH, PATTERN_PATH); //使用不同的正则表达式进行比较
     }
 
     public static void checkMethodName(String property, String value) {
@@ -525,8 +525,8 @@ public class ConfigValidationUtils {
             return;
         }
         for (Map.Entry<String, String> entry : parameters.entrySet()) {
-            if (!entry.getKey().equals(BACKUP_KEY)) {
-                checkNameHasSymbol(entry.getKey(), entry.getValue()); //按正则表达式，检查属性值
+            if (!entry.getKey().equals(BACKUP_KEY)) { //非备份地址时，检查参数名称是否正确
+                checkNameHasSymbol(entry.getKey(), entry.getValue());
             }
         }
     }
