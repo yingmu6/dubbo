@@ -292,7 +292,7 @@ public class AbstractConfigTest {
     }
 
     @Test
-    public void testRefreshAll() { //todo @pause
+    public void testRefreshAll() { //todo
         try {
             OverrideConfig overrideConfig = new OverrideConfig();
             overrideConfig.setAddress("override-config://127.0.0.1:2181");
