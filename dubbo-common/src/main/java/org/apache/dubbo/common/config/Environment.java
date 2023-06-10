@@ -52,7 +52,7 @@ public class Environment extends LifecycleAdapter implements FrameworkExt { //�
 
     private CompositeConfiguration globalConfiguration; //合成的配置信息
 
-    private Map<String, String> externalConfigurationMap = new HashMap<>(); //从配置中心拉取的未按group隔离的配置内容
+    private Map<String, String> externalConfigurationMap = new HashMap<>(); //（额外的配置信息）从配置中心拉取的未按group隔离的配置内容
     private Map<String, String> appExternalConfigurationMap = new HashMap<>(); //按应用名做group隔离的配置内容
 
     private boolean configCenterFirst = true;

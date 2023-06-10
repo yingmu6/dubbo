@@ -292,7 +292,7 @@ public class AbstractConfigTest {
     }
 
     @Test
-    public void testRefreshAll() { //todo
+    public void testRefreshAll() { //已测（测试config的refresh() ）
         try {
             OverrideConfig overrideConfig = new OverrideConfig();
             overrideConfig.setAddress("override-config://127.0.0.1:2181");
@@ -308,16 +308,16 @@ public class AbstractConfigTest {
             external.put("dubbo.override.key", "external");
             // @Parameter(key="key2", useKeyAsProperty=true)
             external.put("dubbo.override.key2", "external");
-            ApplicationModel.getEnvironment().setExternalConfigMap(external);
+            ApplicationModel.getEnvironment().setExternalConfigMap(external); //设置额外的配置信息
             ApplicationModel.getEnvironment().initialize();
 
             System.setProperty("dubbo.override.address", "system://127.0.0.1:2181");
             System.setProperty("dubbo.override.protocol", "system");
             // this will not override, use 'key' instead, @Parameter(key="key1", useKeyAsProperty=false)
             System.setProperty("dubbo.override.key1", "system");
-            System.setProperty("dubbo.override.key2", "system");
+            System.setProperty("dubbo.override.key2", "system"); //设置系统变量
 
-            // Load configuration from  system properties -> externalConfiguration -> RegistryConfig -> dubbo.properties
+            // Load configuration from  system properties -> externalConfiguration -> RegistryConfig -> dubbo.properties（配置源加载的顺序）
             overrideConfig.refresh();
 
             Assertions.assertEquals("system://127.0.0.1:2181", overrideConfig.getAddress());
@@ -335,7 +335,7 @@ public class AbstractConfigTest {
     }
 
     @Test
-    public void testRefreshSystem() {
+    public void testRefreshSystem() { //
         try {
             OverrideConfig overrideConfig = new OverrideConfig();
             overrideConfig.setAddress("override-config://127.0.0.1:2181");
