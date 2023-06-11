@@ -335,7 +335,7 @@ public class AbstractConfigTest {
     }
 
     @Test
-    public void testRefreshSystem() { //
+    public void testRefreshSystem() { //已测（System设置的变量值 优于 Config对象设置的值）
         try {
             OverrideConfig overrideConfig = new OverrideConfig();
             overrideConfig.setAddress("override-config://127.0.0.1:2181");
@@ -350,7 +350,7 @@ public class AbstractConfigTest {
             overrideConfig.refresh();
 
             Assertions.assertEquals("system://127.0.0.1:2181", overrideConfig.getAddress());
-            Assertions.assertEquals("system", overrideConfig.getProtocol());
+            Assertions.assertEquals("system", overrideConfig.getProtocol()); //SystemConfiguration > AbstractConfig，所以会取System设置的值
             Assertions.assertEquals("override-config://", overrideConfig.getEscape());
             Assertions.assertEquals("system", overrideConfig.getKey());
         } finally {
@@ -363,6 +363,19 @@ public class AbstractConfigTest {
 
     @Test
     public void testRefreshProperties() throws Exception {
+        /**
+         * 调试问题解答：
+         * 1）ConfigUtils.setProperties(properties)是设置到ConfigUtils的共享变量中，为啥refresh()后，config对象能获取到值？
+         *    解答：是因为在提取属性配置CompositeConfiguration#getInternalProperty时会遍历配置源，当遍历到PropertiesConfiguration配置源时，
+         *         会调用getInternalProperty方法获取属性值，里面会调用ConfigUtils.getProperty(key)获取值，所有最终是取ConfigUtils#PROPERTIES值
+         *
+         * 2）PropertiesConfiguration配置源的优先级是怎样的？
+         *    解答：根据Environment#getPrefixedConfiguration配置源的列表排列。
+         *         1）if::this.isConfigCenterFirst()
+         *              排列顺序：SystemConfiguration -> AppExternalConfiguration -> ExternalConfiguration -> AbstractConfig -> PropertiesConfiguration
+         *         2）else
+         *              排列顺序：SystemConfiguration -> AbstractConfig -> AppExternalConfiguration -> ExternalConfiguration -> PropertiesConfiguration
+         */
         try {
             ApplicationModel.getEnvironment().setExternalConfigMap(new HashMap<>());
             OverrideConfig overrideConfig = new OverrideConfig();
@@ -371,7 +384,7 @@ public class AbstractConfigTest {
             overrideConfig.setEscape("override-config://");
 
             Properties properties = new Properties();
-            properties.load(this.getClass().getResourceAsStream("/dubbo.properties"));
+            properties.load(this.getClass().getResourceAsStream("/dubbo.properties")); //从当前类所在模块中，查找资源文件（即从test的resources目录下查找）
             ConfigUtils.setProperties(properties);
 
             overrideConfig.refresh();
