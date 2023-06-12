@@ -1267,7 +1267,7 @@ public final class ReflectUtils { //JVM虚拟机中的类型描述符
         T propertyValue = null;
 
         /**
-         * java 中的内省Introspector
+         * java 中的内省IntroSpector
          * 内省【读xing】 (IntroSpector)：是Java语言对JavaBean类属性、事件的一种处理方法。
          * Java中提供了一套API用来访问某个属性的getter/setter方法，不用通过反射机制来访问属性
          * https://www.jianshu.com/p/604d411067c8
@@ -1281,7 +1281,7 @@ public final class ReflectUtils { //JVM虚拟机中的类型描述符
          * https://www.debugger.wiki/article/html/1615353480414538
          *
          * 内省常用类说明
-         * 1）Introspector： 类提供了的 getBeanInfo()方法获取BeanInfo对象，可以拿到一个 JavaBean 的所有信息
+         * 1）IntroSpector： 类提供了的 getBeanInfo()方法获取BeanInfo对象，可以拿到一个 JavaBean 的所有信息
          * 2）BeanInfo 通过getPropertyDescriptors() 方法和 getMethodDescriptors()方法可以获取到PropertyDescriptors、MethodDescriptors对象
          * 3）MethodDescriptor 类可以获得方法的元信息，比如方法名，参数个数，参数字段类型等
          *    a）getMethod()获取方法的Method对象

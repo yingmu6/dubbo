@@ -35,10 +35,6 @@ import static org.apache.dubbo.config.Constants.ZOOKEEPER_PROTOCOL;
  * ConfigCenterConfig
  */
 public class ConfigCenterConfig extends AbstractConfig { //配置中心
-    public static void main(String[] args) {
-        AtomicBoolean inited = new AtomicBoolean(false);
-        System.out.println(inited.compareAndSet(false, false));
-    }
 
     private AtomicBoolean inited = new AtomicBoolean(false); //是否已经被初始化
 
@@ -64,7 +60,7 @@ public class ConfigCenterConfig extends AbstractConfig { //配置中心
     private Long timeout = 3000L;
 
     // If the Config Center is given the highest priority, it will override（覆盖） all the other configurations
-    private Boolean highestPriority = true; //是否是最高优先级（若指定为true，就会覆盖其它所有配置中心的拉取的配置）
+    private Boolean highestPriority = true; //是否是最高优先级（若指定为true，就会覆盖其它所有的配置）
 
     // Decide the behaviour when initial connection try fails, 'true' means interrupt the whole process once fail.
     private Boolean check = true;

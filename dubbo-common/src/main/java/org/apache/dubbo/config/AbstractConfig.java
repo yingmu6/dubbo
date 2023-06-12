@@ -121,13 +121,13 @@ public abstract class AbstractConfig implements Serializable {
                     if (method.getReturnType() == Object.class || parameter != null && parameter.excluded()) { //方法返回值为对象或在声明@Parameter且参数被排除时，跳过不处理
                         continue;
                     }
-                    String key;
+                    String key; //Config对象的属性名
                     if (parameter != null && parameter.key().length() > 0) { //若方法使用了@Parameter注解声明，且设置了key的值，则将该值作为参数key
                         key = parameter.key();
                     } else { //没有带@Parameter注解
                         key = calculatePropertyFromGetter(name); //提取属性名，如getProtocol()方法的属性名为protocol(若属性名是驼峰的，则按分隔符处理，如getProtocolName(),若分隔符为"."，则最终的属性名为protocol.name)
                     }
-                    Object value = method.invoke(config); //使用反射机制，获取config中get方法的返回值
+                    Object value = method.invoke(config); //使用反射机制，获取config中get或is方法的返回值
                     String str = String.valueOf(value).trim();
                     if (value != null && str.length() > 0) {
                         if (parameter != null && parameter.escaped()) {
@@ -148,7 +148,7 @@ public abstract class AbstractConfig implements Serializable {
                     }
                 } else if (isParametersGetter(method)) { //若是getParameters()方法，则可以将该方法的返回值Map<String, String>直接设置到处理的参数map中
                     Map<String, String> map = (Map<String, String>) method.invoke(config, new Object[0]);
-                    parameters.putAll(convert(map, prefix)); //map中的参数依次带上前缀
+                    parameters.putAll(convert(map, prefix)); //map中的参数依次带上前缀，并添加到参数Map中
                 }
             } catch (Exception e) {
                 throw new IllegalStateException(e.getMessage(), e);
@@ -162,7 +162,7 @@ public abstract class AbstractConfig implements Serializable {
     }
 
     @Deprecated
-    protected static void appendAttributes(Map<String, Object> parameters, Object config, String prefix) {
+    protected static void appendAttributes(Map<String, Object> parameters, Object config, String prefix) { //将Config对象方法上的注解@Parameter中的属性，设置到参数Map中
         if (config == null) {
             return;
         }
@@ -181,12 +181,12 @@ public abstract class AbstractConfig implements Serializable {
                     } else {
                         key = calculateAttributeFromGetter(name);
                     }
-                    Object value = method.invoke(config);
+                    Object value = method.invoke(config); //调用get或is方法获取值
                     if (value != null) {
                         if (prefix != null && prefix.length() > 0) {
                             key = prefix + "." + key;
                         }
-                        parameters.put(key, value);
+                        parameters.put(key, value); //设置到参数Map中
                     }
                 }
             } catch (Exception e) {
@@ -358,16 +358,16 @@ public abstract class AbstractConfig implements Serializable {
 
     protected void appendAnnotation(Class<?> annotationClass, Object annotation) { //将注解的内容附加到对应的Config对象中（annotationClass为注解对应的Class，annotation为注解对应的对象实例）
         Method[] methods = annotationClass.getMethods();
-        for (Method method : methods) {
+        for (Method method : methods) { //遍历注解Class中的所有方法
             if (method.getDeclaringClass() != Object.class
                     && method.getReturnType() != void.class
                     && method.getParameterTypes().length == 0
                     && Modifier.isPublic(method.getModifiers())
                     && !Modifier.isStatic(method.getModifiers())) { //找出注解中 公有的、非静态的，且有返回值的方法
                 try {
-                    String property = method.getName();
+                    String property = method.getName(); //获取方法名（即为注解的属性名）
                     if ("interfaceClass".equals(property) || "interfaceName".equals(property)) {
-                        property = "interface";
+                        property = "interface"; //归总表示接口的属性名
                     }
                     String setter = "set" + property.substring(0, 1).toUpperCase() + property.substring(1); //将注解中的方法名，组装为config对象实例的set方法名，如setListener
                     Object value = method.invoke(annotation); //获取注解中方法对应的值
@@ -468,7 +468,7 @@ public abstract class AbstractConfig implements Serializable {
             for (Method method : methods) { //遍历当前配置对象的方法，从合成的配置实例中获取值，通过set()方法或setParameters()方法设置到XxxConfig对象中
                 if (MethodUtils.isSetter(method)) { //是否是setXXX()方法
                     try {
-                        String value = StringUtils.trim(compositeConfiguration.getString(extractPropertyName(getClass(), method))); //从配置中心获取属性对应的值（若为远程的配置中心，则发起了远程调用）
+                        String value = StringUtils.trim(compositeConfiguration.getString(extractPropertyName(getClass(), method))); //从配置源获取属性对应的值
                         // isTypeMatch() is called to avoid duplicate and incorrect update, for example, we have two 'setGeneric' methods in ReferenceConfig.
                         if (StringUtils.isNotEmpty(value) && ClassUtils.isTypeMatch(method.getParameterTypes()[0], value)) { //若值不为空，且参数类型与参数值能够匹配，则执行invoke调用
                             method.invoke(this, ClassUtils.convertPrimitive(method.getParameterTypes()[0], value)); //调用set方法对Config对象的属性设置

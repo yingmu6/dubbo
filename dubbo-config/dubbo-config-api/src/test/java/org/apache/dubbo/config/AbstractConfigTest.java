@@ -309,7 +309,7 @@ public class AbstractConfigTest {
             // @Parameter(key="key2", useKeyAsProperty=true)
             external.put("dubbo.override.key2", "external");
             ApplicationModel.getEnvironment().setExternalConfigMap(external); //设置额外的配置信息
-            ApplicationModel.getEnvironment().initialize();
+            ApplicationModel.getEnvironment().initialize(); //从配置中心拉取配置做初始化（若有配置中心，则会覆盖Environment#externalConfigurationMap的值）
 
             System.setProperty("dubbo.override.address", "system://127.0.0.1:2181");
             System.setProperty("dubbo.override.protocol", "system");
@@ -335,7 +335,7 @@ public class AbstractConfigTest {
     }
 
     @Test
-    public void testRefreshSystem() { //已测（System设置的变量值 优于 Config对象设置的值）
+    public void testRefreshSystem() { //已测（从系统配置中获取配置值，System设置的变量值 优于 Config对象设置的值）
         try {
             OverrideConfig overrideConfig = new OverrideConfig();
             overrideConfig.setAddress("override-config://127.0.0.1:2181");
@@ -362,7 +362,7 @@ public class AbstractConfigTest {
     }
 
     @Test
-    public void testRefreshProperties() throws Exception {
+    public void testRefreshProperties() throws Exception { //已测（从属性文件中配置值）
         /**
          * 调试问题解答：
          * 1）ConfigUtils.setProperties(properties)是设置到ConfigUtils的共享变量中，为啥refresh()后，config对象能获取到值？
@@ -400,7 +400,18 @@ public class AbstractConfigTest {
     }
 
     @Test
-    public void testRefreshExternal() {
+    public void testRefreshExternal() { //已测（从配置中心获取配置值，若没指定配置中心，则取设置的Map值）
+        /**
+         * 调试问题解答：
+         * 1）Environment#setExternalConfigMap设置值时，是设置到Environment#externalConfigurationMap，对应哪个Configuration，是怎么取到值的？
+         *   解答：在Environment#initialize()有进行设值，
+         *         this.externalConfiguration.setProperties(externalConfigurationMap); //externalConfiguration对应externalConfigurationMap
+         *         this.appExternalConfiguration.setProperties(appExternalConfigurationMap);
+         *        对应的本地缓存类型为InmemoryConfiguration，在compositeConfiguration.getString(...) 取配置值时，会依次遍历配置源列表去获取值
+         *
+         * 2）ApplicationModel.getEnvironment().initialize();有什么作用？不调用的话，是不是不能获取值？
+         *   解答：从方法执行逻辑来看，是将远程配置的值，加载到本地缓存中
+         */
         try {
             OverrideConfig overrideConfig = new OverrideConfig();
             overrideConfig.setAddress("override-config://127.0.0.1:2181");
@@ -423,7 +434,7 @@ public class AbstractConfigTest {
 
             overrideConfig.refresh();
 
-            Assertions.assertEquals("external://127.0.0.1:2181", overrideConfig.getAddress());
+            Assertions.assertEquals("external://127.0.0.1:2181", overrideConfig.getAddress()); //默认情况下，Environment#configCenterFirst值为true，即默认 配置中心的配置优先，即ExternalConfigMap、AppExternalConfigMap优于Config对象的配置
             Assertions.assertEquals("external", overrideConfig.getProtocol());
             Assertions.assertEquals("external://", overrideConfig.getEscape());
             Assertions.assertEquals("external", overrideConfig.getExclude());
@@ -435,7 +446,7 @@ public class AbstractConfigTest {
     }
 
     @Test
-    public void testRefreshById() {
+    public void testRefreshById() { //todo pause
         try {
             OverrideConfig overrideConfig = new OverrideConfig();
             overrideConfig.setId("override-id");

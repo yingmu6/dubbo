@@ -57,7 +57,7 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
 
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
-    // configsCache数据格式：Map<getTagName(config.getClass()), Map<getId(config), config>> 即数据为：Map<config标签名, Map<config的Id, config对象>>
+    // configsCache数据格式：Map<getTagName(config.getClass()), Map<getId(config), config>> 即数据为：Map<config标签名, Map<config的Id, config对象实例>>
     // 将config对象按标签名、id映射缓存起来
     final Map<String, Map<String, AbstractConfig>> configsCache = newMap(); //Config对象的本地缓存，key为标签名，如ConfigCenterConfig配置类的标签名为config-center，configsCache的值如：Map<"registry", Map<"org.apache.dubbo.config.RegistryConfig", RegistryConfig@xxx >>
 
@@ -502,12 +502,12 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
                 config.getClass().getSimpleName() + "#" + DEFAULT_KEY : null; //判断config的id是否为空，若为空再判断是否为默认config
     }
 
-    static <C extends AbstractConfig> boolean isDefaultConfig(C config) {
+    static <C extends AbstractConfig> boolean isDefaultConfig(C config) { //判断是否为默认的Config对象
         Boolean isDefault = getProperty(config, "isDefault"); //获取config对象中isDefault()方法的对应的属性值
-        return isDefault == null || TRUE.equals(isDefault); //若不包含isDefault属性或isDefault属性值为true，则为默认配置（反义：包含isDefault属性，且为false）
+        return isDefault == null || TRUE.equals(isDefault); //若不包含isDefault()方法或isDefault返回值值为true，则为默认的Config对象
     }
 
-    static <C extends AbstractConfig> List<C> getDefaultConfigs(Map<String, C> configsMap) { //获取默认Config列表（对map中的值列表进行过滤，configsMap值如<类的全路径名：对象实例>=<"org.apache.dubbo.config.spring.ConfigCenterBean", ConfigCenterBean@3154>）
+    static <C extends AbstractConfig> List<C> getDefaultConfigs(Map<String, C> configsMap) { //获取默认Config列表（对map中的值列表进行过滤，configsMap值如<config对象Id：config对象实例>=<"org.apache.dubbo.config.spring.ConfigCenterBean", ConfigCenterBean@3154>）
         return configsMap.values()
                 .stream()
                 .filter(ConfigManager::isDefaultConfig) //Predicate: 谓语，filter：过滤出满足条件的元素

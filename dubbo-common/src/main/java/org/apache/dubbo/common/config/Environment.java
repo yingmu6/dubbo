@@ -47,15 +47,15 @@ public class Environment extends LifecycleAdapter implements FrameworkExt { //�
     private final PropertiesConfiguration propertiesConfiguration; //装载"dubbo.properties"文件的配置信息
     private final SystemConfiguration systemConfiguration;         //装载System的properties配置系信息
     private final EnvironmentConfiguration environmentConfiguration;//装载JVM环境变量的配置信息
-    private final InmemoryConfiguration externalConfiguration;      //装载内部的配置信息，分为全局配置和应用级配置
-    private final InmemoryConfiguration appExternalConfiguration;   //装载配置中心的配置信息
+    private final InmemoryConfiguration externalConfiguration;      //配置中心的额外配置（装载配置中心配置，存入到本地缓存中）
+    private final InmemoryConfiguration appExternalConfiguration;   //配置中心按group隔离的配置（装载配置中心的配置信息）
 
     private CompositeConfiguration globalConfiguration; //合成的配置信息
 
-    private Map<String, String> externalConfigurationMap = new HashMap<>(); //（额外的配置信息）从配置中心拉取的未按group隔离的配置内容
-    private Map<String, String> appExternalConfigurationMap = new HashMap<>(); //按应用名做group隔离的配置内容
+    private Map<String, String> externalConfigurationMap = new HashMap<>(); //配置中心的额外配置对应的Map（从配置中心拉取的未按group隔离的配置内容）
+    private Map<String, String> appExternalConfigurationMap = new HashMap<>(); //配置中心按group隔离的配置对应的Map（按应用名做group隔离的配置内容）
 
-    private boolean configCenterFirst = true;
+    private boolean configCenterFirst = true; //配置中心的配置是否优先
 
     private DynamicConfiguration dynamicConfiguration; //动态配置实例
 
@@ -68,11 +68,11 @@ public class Environment extends LifecycleAdapter implements FrameworkExt { //�
     }
 
     @Override
-    public void initialize() throws IllegalStateException { //initialize：[ɪˈnɪʃəlaɪz]： 初始化，对当前对象的属性进行初始化
-        ConfigManager configManager = ApplicationModel.getConfigManager(); //通过SPI机制获取对象实例
-        Optional<Collection<ConfigCenterConfig>> defaultConfigs = configManager.getDefaultConfigCenter();
+    public void initialize() throws IllegalStateException { //用配置中心的配置做初始化（initialize：[ɪˈnɪʃəlaɪz]： 初始化，对当前对象的属性进行初始化）
+        ConfigManager configManager = ApplicationModel.getConfigManager(); //获取配置管理对象实例（通过SPI机制获取）
+        Optional<Collection<ConfigCenterConfig>> defaultConfigs = configManager.getDefaultConfigCenter(); //获取默认配置中心列表
         defaultConfigs.ifPresent(configs -> { //ifPresent：若值存在时，带着值执行对应的动作，否则什么都不做
-            for (ConfigCenterConfig config : configs) {
+            for (ConfigCenterConfig config : configs) { //从默认配置中心获取配置值，设置到当前的缓存中（若有多个默认的配置中心，会出现值覆盖）
                 this.setExternalConfigMap(config.getExternalConfiguration());
                 this.setAppExternalConfigMap(config.getAppExternalConfiguration());
             }
@@ -125,16 +125,16 @@ public class Environment extends LifecycleAdapter implements FrameworkExt { //�
     public synchronized CompositeConfiguration getPrefixedConfiguration(AbstractConfig config) { //获取Config对应的合成配置，prefixed [ˈpriːfɪkst] adj. 有前缀的, v. 加……作为前缀；
         CompositeConfiguration prefixedConfiguration = new CompositeConfiguration(config.getPrefix(), config.getId());
         Configuration configuration = new ConfigConfigurationAdapter(config); //AbstractConfig对应的配置对象的实例
-        if (this.isConfigCenterFirst()) { //在CompositeConfiguration#getInternalProperty进行取值时，会依次遍历列表中的配置对象的实例，越靠前的配置，越先获取到配置值。
+        if (this.isConfigCenterFirst()) { //配置中心的配置优先（即配置中心的配置高于Config的配置）
             // The sequence would be: SystemConfiguration -> AppExternalConfiguration -> ExternalConfiguration -> AbstractConfig -> PropertiesConfiguration
-            // Config center has the highest priority
+            // Config center has the highest priority（ 在CompositeConfiguration#getInternalProperty进行取值时，会依次遍历列表中的配置对象的实例，越靠前的配置，越先获取到配置值。）
             prefixedConfiguration.addConfiguration(systemConfiguration); //systemConfiguration、environmentConfiguration等对象，在Environment构造函数中初始化的
             prefixedConfiguration.addConfiguration(environmentConfiguration);
-            prefixedConfiguration.addConfiguration(appExternalConfiguration);
+            prefixedConfiguration.addConfiguration(appExternalConfiguration); //appExternalConfiguration、externalConfiguration的值来源于配置中心（在initialize方法中设置的值）
             prefixedConfiguration.addConfiguration(externalConfiguration);
             prefixedConfiguration.addConfiguration(configuration);
             prefixedConfiguration.addConfiguration(propertiesConfiguration);
-        } else {
+        } else { //systemConfiguration、environmentConfiguration、propertiesConfiguration位置固定，主要根据isConfigCenterFirst()的值来调整 配置中心的位置
             // The sequence would be: SystemConfiguration -> AbstractConfig -> AppExternalConfiguration -> ExternalConfiguration -> PropertiesConfiguration
             // Config center has the highest priority（配置中心有最高优先级）
             prefixedConfiguration.addConfiguration(systemConfiguration);
