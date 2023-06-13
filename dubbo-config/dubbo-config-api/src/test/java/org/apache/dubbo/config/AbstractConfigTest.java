@@ -446,7 +446,7 @@ public class AbstractConfigTest {
     }
 
     @Test
-    public void testRefreshById() { //todo pause
+    public void testRefreshById() { //todo
         try {
             OverrideConfig overrideConfig = new OverrideConfig();
             overrideConfig.setId("override-id");
