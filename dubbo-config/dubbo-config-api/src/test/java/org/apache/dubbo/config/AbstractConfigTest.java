@@ -446,7 +446,7 @@ public class AbstractConfigTest {
     }
 
     @Test
-    public void testRefreshById() { //todo
+    public void testRefreshById() { //已测（设置externalConfiguration配置）
         try {
             OverrideConfig overrideConfig = new OverrideConfig();
             overrideConfig.setId("override-id");
@@ -483,17 +483,29 @@ public class AbstractConfigTest {
     }
 
     @Test
-    public void testRefreshParameters() {
+    public void testRefreshParameters() { //已测（测试parameters参数Map的设置以及值获取）
+        /**
+         * 调试问题解答：
+         * 1）参数key是怎么与Config对象的属性对应起来的，如dubbo.override.parameters与OverrideConfig#parameters？
+         *    解答：是在CompositeConfiguration#getProperty获取属性值，带上前缀prefix的，如OverrideConfig对应的前缀为dubbo.override，
+         *         所以Config属性parameters对应的参数Map的key就为"dubbo.override.parameters"
+         *
+         * 2）参数的value有多个值，是怎么解析并设置到Config的属性中的？
+         *    解答：因为value值是按"[{key1:value1},{key2:value2}...]"，在StringUtils#parseParameters做对应解析的
+         *
+         * 3）CompositeConfiguration#prefix是什么时候设值值的？
+         *    解答：在调用AbstractConfig#refresh刷新Config配置值时，会调用Environment#getPrefixedConfiguration创建CompositeConfiguration时，会调用AbstractConfig#getPrefix
+         *         获取config对象对应的前缀名，处理逻辑为：StringUtils.isNotEmpty(prefix) ? prefix : (CommonConstants.DUBBO + "." + getTagName(this.getClass()));
+         */
         try {
             Map<String, String> parameters = new HashMap<>();
             parameters.put("key1", "value1");
             parameters.put("key2", "value2");
             OverrideConfig overrideConfig = new OverrideConfig();
-            overrideConfig.setParameters(parameters);
-
+            overrideConfig.setParameters(parameters); //自定义参数定义
 
             Map<String, String> external = new HashMap<>();
-            external.put("dubbo.override.parameters", "[{key3:value3},{key4:value4},{key2:value5}]");
+            external.put("dubbo.override.parameters", "[{key3:value3},{key4:value4},{key2:value5}]"); //自定义参数的数据格式
             ApplicationModel.getEnvironment().setExternalConfigMap(external);
             ApplicationModel.getEnvironment().initialize();
 
@@ -519,7 +531,7 @@ public class AbstractConfigTest {
     }
 
     @Test
-    public void testOnlyPrefixedKeyTakeEffect() {
+    public void testOnlyPrefixedKeyTakeEffect() { //todo @pause
         try {
             OverrideConfig overrideConfig = new OverrideConfig();
             overrideConfig.setNotConflictKey("value-from-config");

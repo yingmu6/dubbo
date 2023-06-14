@@ -479,9 +479,9 @@ public abstract class AbstractConfig implements Serializable {
                                 ", please make sure every property has getter/setter method provided.");
                     }
                 } else if (isParametersSetter(method)) { //是否是setParameters()方法
-                    String value = StringUtils.trim(compositeConfiguration.getString(extractPropertyName(getClass(), method)));
+                    String value = StringUtils.trim(compositeConfiguration.getString(extractPropertyName(getClass(), method))); //value的格式如："[{key1:value1},{key2:value2}...]"
                     if (StringUtils.isNotEmpty(value)) {
-                        Map<String, String> map = invokeGetParameters(getClass(), this); //获取getParameters()方法的返回值
+                        Map<String, String> map = invokeGetParameters(getClass(), this); //获取Config对象中getParameters()方法的返回值
                         map = map == null ? new HashMap<>() : map;
                         map.putAll(convert(StringUtils.parseParameters(value), "")); //将属性值解析为Map形式，并设置到配置对象Config的Map
                         invokeSetParameters(getClass(), this, map); //调用setParameters()方法，对Config对象的参数设值

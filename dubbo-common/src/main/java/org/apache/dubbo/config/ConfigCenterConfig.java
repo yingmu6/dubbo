@@ -34,7 +34,7 @@ import static org.apache.dubbo.config.Constants.ZOOKEEPER_PROTOCOL;
 /**
  * ConfigCenterConfig
  */
-public class ConfigCenterConfig extends AbstractConfig { //配置中心
+public class ConfigCenterConfig extends AbstractConfig { //配置中心的配置
 
     private AtomicBoolean inited = new AtomicBoolean(false); //是否已经被初始化
 

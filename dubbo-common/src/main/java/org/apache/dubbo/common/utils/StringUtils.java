@@ -44,7 +44,7 @@ public final class StringUtils {
     private static final Logger logger = LoggerFactory.getLogger(StringUtils.class);
     private static final Pattern KVP_PATTERN = Pattern.compile("([_.a-zA-Z0-9][-_.a-zA-Z0-9]*)[=](.*)"); //key value pair pattern.
     private static final Pattern INT_PATTERN = Pattern.compile("^\\d+$");
-    private static final Pattern PARAMETERS_PATTERN = Pattern.compile("^\\[((\\s*\\{\\s*[\\w_\\-\\.]+\\s*:\\s*.+?\\s*\\}\\s*,?\\s*)+)\\s*\\]$");
+    private static final Pattern PARAMETERS_PATTERN = Pattern.compile("^\\[((\\s*\\{\\s*[\\w_\\-\\.]+\\s*:\\s*.+?\\s*\\}\\s*,?\\s*)+)\\s*\\]$"); //能匹配的字符串如：[{key1:value1},{key2:value2}...]
     private static final Pattern PAIR_PARAMETERS_PATTERN = Pattern.compile("^\\{\\s*([\\w-_\\.]+)\\s*:\\s*(.+)\\s*\\}$");
     private static final int PAD_LIMIT = 8192;
     private static final byte[] HEX2B;
@@ -1039,18 +1039,18 @@ public final class StringUtils {
     public static Map<String, String> parseParameters(String rawParameters) { //将字符串解析为key/value的Map形式
 
         Matcher matcher = PARAMETERS_PATTERN.matcher(rawParameters);
-        if (!matcher.matches()) {
+        if (!matcher.matches()) { //校验参数格式是否正确
             return Collections.emptyMap();
         }
 
         String pairs = matcher.group(1);
-        String[] pairArr = pairs.split("\\s*,\\s*");
+        String[] pairArr = pairs.split("\\s*,\\s*"); //按分隔符 "," 分隔键值对
 
         Map<String, String> parameters = new HashMap<>();
         for (String pair : pairArr) {
-            Matcher pairMatcher = PAIR_PARAMETERS_PATTERN.matcher(pair);
+            Matcher pairMatcher = PAIR_PARAMETERS_PATTERN.matcher(pair); //按键值对的方式解析，如pair的值为："{key1:value1}"
             if (pairMatcher.matches()) {
-                parameters.put(pairMatcher.group(1), pairMatcher.group(2));
+                parameters.put(pairMatcher.group(1), pairMatcher.group(2)); //取解析的字符串，第一个值为key、第二个值为value，并设置到参数Map中
             }
         }
         return parameters;
