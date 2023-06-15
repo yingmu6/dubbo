@@ -37,7 +37,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig { //A
 
     private static final long serialVersionUID = -1559314110797223229L;
 
-    /**
+     /**
      * Local impl class name for the service interface
      */
     protected String local;
@@ -204,13 +204,13 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig { //A
                 methodBean.setServiceId(this.getId());
                 methodBean.refresh();
                 String methodName = methodBean.getName();
-                if (StringUtils.isEmpty(methodName)) {
+                if (StringUtils.isEmpty(methodName)) { //方法配置中名称是必填的
                     throw new IllegalStateException("<dubbo:method> name attribute is required! Please check: " +
                             "<dubbo:service interface=\"" + interfaceClass.getName() + "\" ... >" +
                             "<dubbo:method name=\"\" ... /></<dubbo:reference>");
                 }
 
-                boolean hasMethod = Arrays.stream(interfaceClass.getMethods()).anyMatch(method -> method.getName().equals(methodName)); //判断方法名，是否存在于接口的方法列表中
+                boolean hasMethod = Arrays.stream(interfaceClass.getMethods()).anyMatch(method -> method.getName().equals(methodName)); //判断接口的方法列表中，是否包含MethodConfig中的方法名
                 if (!hasMethod) {
                     throw new IllegalStateException("The interface " + interfaceClass.getName()
                             + " not found method " + methodName);
@@ -255,15 +255,15 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig { //A
         }
     }
 
-    private void convertRegistryIdsToRegistries() { //将注册id转换为注册实例
+    private void convertRegistryIdsToRegistries() { //通过注册id构建注册实例
         computeValidRegistryIds(); //计算并设置有效的registryId列表（编程风格，很多方法没有直接返回值，而是直接处理属性值）
         if (StringUtils.isEmpty(registryIds)) {
-            if (CollectionUtils.isEmpty(registries)) { //若注册id列表或注册实例还为空，则取默认注册实例
+            if (CollectionUtils.isEmpty(registries)) { //若注册id列表和注册实例都为空，则取默认注册实例
                 List<RegistryConfig> registryConfigs = ApplicationModel.getConfigManager().getDefaultRegistries();
                 if (registryConfigs.isEmpty()) {
                     registryConfigs = new ArrayList<>();
                     RegistryConfig registryConfig = new RegistryConfig();
-                    registryConfig.refresh(); //刷新RegistryConfig的属性值
+                    registryConfig.refresh(); //刷新RegistryConfig的属性值（从各种配置源获取属性值）
                     registryConfigs.add(registryConfig);
                 }
                 setRegistries(registryConfigs);
@@ -329,7 +329,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig { //A
         }
     }
     
-    protected void computeValidRegistryIds() { //计算并设置有效的registryId列表（从ApplicationConfig中获取到值，并设置到当前缓存中）
+    protected void computeValidRegistryIds() { //计算并设置有效的registryId列表（若注册id列表为空，尝试从ApplicationConfig中获取到值，并设置到当前缓存中）
         if (StringUtils.isEmpty(getRegistryIds())) {
             if (getApplication() != null && StringUtils.isNotEmpty(getApplication().getRegistryIds())) { //从ApplicationConfig中获取到registryIds
                 setRegistryIds(getApplication().getRegistryIds()); //编程风格：都是用方法获取值，很少看到用临时变量接收，看上去比较简洁

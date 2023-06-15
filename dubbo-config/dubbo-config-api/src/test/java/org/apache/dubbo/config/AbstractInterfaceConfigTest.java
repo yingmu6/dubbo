@@ -57,11 +57,17 @@ public class AbstractInterfaceConfigTest {
 
     @Test
     public void testCheckRegistry1() {
+        /**
+         * 调试问题点：
+         * 1）为什么调用了interfaceConfig.checkRegistry()后，注册列表中AbstractInterfaceConfig#registries就有值了？
+         *    解答：在调用checkRegistry()时，会调用convertRegistryIdsToRegistries()，里面会调用AbstractConfig#refresh()从配置源中获取值，
+         *         因为有使用System.setProperty(...)设置了注册地址，从而创建了注册实例，注册列表就不为空
+         */
         System.setProperty("dubbo.registry.address", "addr1");
         try {
             InterfaceConfig interfaceConfig = new InterfaceConfig();
             interfaceConfig.setApplication(new ApplicationConfig("testCheckRegistry1"));
-            interfaceConfig.checkRegistry();
+            interfaceConfig.checkRegistry(); //检查注册配置是否存在，并会转换为RegistryConfig
             Assertions.assertEquals(1, interfaceConfig.getRegistries().size());
             Assertions.assertEquals("addr1", interfaceConfig.getRegistries().get(0).getAddress());
         } finally {
@@ -70,15 +76,28 @@ public class AbstractInterfaceConfigTest {
     }
 
     @Test
-    public void testCheckRegistry2() {
+    public void testCheckRegistry2() { //已测（检查注册配置时，若应用配置信息ApplicationConfig为空时，会抛出异常）
+        /**
+         * 调试问题答疑：
+         * 1）为什么此处会抛出异常？是在哪里抛出的异常？
+         *    解答：因为AbstractInterfaceConfig#computeValidRegistryIds中获取应用配置 ConfigManager#getApplicationOrElseThrow()时，
+         *         若应用配置没有设置，即AbstractInterfaceConfig#application属性值为null时，会抛出异常
+         *
+         * 注明：查看assertThrows抛出的异常轨迹方式
+         * 1）可去掉Assertions.assertThrows运行，看异常的轨迹
+         * 2）也可以在AssertThrows#assertThrows打断点，查看异常信息（推荐方式）
+         */
         Assertions.assertThrows(IllegalStateException.class, () -> {
             InterfaceConfig interfaceConfig = new InterfaceConfig();
             interfaceConfig.checkRegistry();
         });
+
+//        InterfaceConfig interfaceConfig = new InterfaceConfig();
+//        interfaceConfig.checkRegistry();
     }
 
     @Test
-    public void checkInterfaceAndMethods1() {
+    public void checkInterfaceAndMethods1() { //已测（参数interfaceClass不能为空）
         Assertions.assertThrows(IllegalStateException.class, () -> {
             InterfaceConfig interfaceConfig = new InterfaceConfig();
             interfaceConfig.checkInterfaceAndMethods(null, null);
@@ -86,7 +105,7 @@ public class AbstractInterfaceConfigTest {
     }
 
     @Test
-    public void checkInterfaceAndMethods2() {
+    public void checkInterfaceAndMethods2() { //已测（输入的interfaceClass需要接口类型）
         Assertions.assertThrows(IllegalStateException.class, () -> {
             InterfaceConfig interfaceConfig = new InterfaceConfig();
             interfaceConfig.checkInterfaceAndMethods(AbstractInterfaceConfigTest.class, null);
@@ -94,26 +113,26 @@ public class AbstractInterfaceConfigTest {
     }
 
     @Test
-    public void checkInterfaceAndMethod3() {
-        Assertions.assertThrows(IllegalStateException.class, () -> {
+    public void checkInterfaceAndMethod3() { //已测（MethodConfig中的name属性是必填的）
+        Assertions.assertThrows(IllegalStateException.class, () -> { //抛出的异常信息为：java.lang.IllegalStateException: <dubbo:method> name attribute is required!....
             MethodConfig methodConfig = new MethodConfig();
             InterfaceConfig interfaceConfig = new InterfaceConfig();
-            interfaceConfig.checkInterfaceAndMethods(Greeting.class, Collections.singletonList(methodConfig));
+            interfaceConfig.checkInterfaceAndMethods(Greeting.class, Collections.singletonList(methodConfig)); //singletonList：产生单例列表
         });
     }
 
     @Test
-    public void checkInterfaceAndMethod4() {
-        Assertions.assertThrows(IllegalStateException.class, () -> {
+    public void checkInterfaceAndMethod4() { //已测（判断接口中是否包含指定的方法）
+        Assertions.assertThrows(IllegalStateException.class, () -> { //抛出的异常信息：The interface org.apache.dubbo.config.api.Greeting not found method nihao
             MethodConfig methodConfig = new MethodConfig();
             methodConfig.setName("nihao");
-            InterfaceConfig interfaceConfig = new InterfaceConfig();
+            InterfaceConfig interfaceConfig = new InterfaceConfig(); //因为Greeting类中，不包含方法名为"nihao"的方法，所以会抛出异常
             interfaceConfig.checkInterfaceAndMethods(Greeting.class, Collections.singletonList(methodConfig));
         });
     }
 
     @Test
-    public void checkInterfaceAndMethod5() {
+    public void checkInterfaceAndMethod5() { //已测（接口与方法能匹配，即Greeting类中，包含"hello"的方法 ）
         MethodConfig methodConfig = new MethodConfig();
         methodConfig.setName("hello");
         InterfaceConfig interfaceConfig = new InterfaceConfig();
@@ -121,7 +140,11 @@ public class AbstractInterfaceConfigTest {
     }
 
     @Test
-    public void checkStubAndMock1() {
+    public void checkStubAndMock1() { //todo @pause
+        /**
+         * 调试问题答疑：
+         * 1）AbstractInterfaceConfig#local成员属性的功能用途是什么？
+         */
         Assertions.assertThrows(IllegalStateException.class, () -> {
             InterfaceConfig interfaceConfig = new InterfaceConfig();
             interfaceConfig.setLocal(GreetingLocal1.class.getName());

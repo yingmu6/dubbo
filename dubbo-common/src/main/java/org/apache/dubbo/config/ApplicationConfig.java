@@ -88,7 +88,7 @@ public class ApplicationConfig extends AbstractConfig {
      * Registry centers
      */
     private List<RegistryConfig> registries; //一个应用信息可以注册到多个注册中心
-    private String registryIds;
+    private String registryIds; //注册对象id组成的字符串
 
     /**
      * Monitor center

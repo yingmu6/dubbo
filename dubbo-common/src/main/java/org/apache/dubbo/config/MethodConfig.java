@@ -39,7 +39,7 @@ public class MethodConfig extends AbstractMethodConfig { // <dubbo:method> 方�
     /**
      * The method name
      */
-    private String name;
+    private String name; //方法名是必填的
 
     /**
      * Stat

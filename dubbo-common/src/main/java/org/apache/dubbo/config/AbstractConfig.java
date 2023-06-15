@@ -545,12 +545,11 @@ public abstract class AbstractConfig implements Serializable {
 
     @Override
     public boolean equals(Object obj) { //config对象比较
-        if (obj == null || !(obj.getClass().getName().equals(this.getClass().getName()))) { //判断对象是否为空或待比较的config对象与当前config对象的类名是否相等
+        if (obj == null || !(obj.getClass().getName().equals(this.getClass().getName()))) { //Config对象的类名不相等，则两个Config对象不想等
             return false;
         }
 
-        // 依次遍历当前this.config对象的get、is方法，然后根据方法名找到待比较config对象中的方法，
-        // 依次获取返回值进行比较，只要有一个返回值不匹配，则认为不想等。只有所有get、is方法的返回值相等时，两个config对象相等
+        // 依次比较Config对象的属性值，只要有一个属性不相等，则两个Config对象不想等。
         Method[] methods = this.getClass().getMethods();
         for (Method method1 : methods) {
             if (MethodUtils.isGetter(method1)) {

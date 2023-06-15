@@ -531,7 +531,7 @@ public class AbstractConfigTest {
     }
 
     @Test
-    public void testOnlyPrefixedKeyTakeEffect() { //todo @pause
+    public void testOnlyPrefixedKeyTakeEffect() { //已测
         try {
             OverrideConfig overrideConfig = new OverrideConfig();
             overrideConfig.setNotConflictKey("value-from-config");
@@ -562,7 +562,14 @@ public class AbstractConfigTest {
     }
 
     @Test
-    public void tetMetaData() {
+    public void tetMetaData() { //已测（获取元数据）
+        /**
+         * 调试问题点：
+         * 1）元数据是哪里设置的？为什么此处getMetaData()能够获取到值？
+         *    解答：在AbstractConfig#getMetaData中会找到元数据方法（public且返回类型为基本类型的get/is方法）、
+         *         以及getParameters方法，并取值设置到元数据Map中，最终对应返回
+         *
+         */
         OverrideConfig overrideConfig = new OverrideConfig();
         overrideConfig.setId("override-id");
         overrideConfig.setAddress("override-config://127.0.0.1:2181");
@@ -570,33 +577,33 @@ public class AbstractConfigTest {
         overrideConfig.setEscape("override-config://");
         overrideConfig.setExclude("override-config");
 
-        Map<String, String> metaData = overrideConfig.getMetaData();
+        Map<String, String> metaData = overrideConfig.getMetaData(); //getMetaData()有些歧义，表面是获取元数据Map，实质是创建Map并返回
         Assertions.assertEquals("override-config://127.0.0.1:2181", metaData.get("address"));
         Assertions.assertEquals("override-config", metaData.get("protocol"));
         Assertions.assertEquals("override-config://", metaData.get("escape"));
         Assertions.assertEquals("override-config", metaData.get("exclude"));
-        Assertions.assertNull(metaData.get("key"));
-        Assertions.assertNull(metaData.get("key2"));
+        Assertions.assertNull(metaData.get("key")); //属性值为空
+        Assertions.assertNull(metaData.get("key2")); //没有对应的key
     }
 
     @Test
-    public void testEquals() {
+    public void testEquals() { //已测（比较两个对象是否相等）
         ApplicationConfig application1 = new ApplicationConfig();
         ApplicationConfig application2 = new ApplicationConfig();
         application1.setName("app1");
-        application2.setName("app2");
+        application2.setName("app2"); // 依次比较Config对象的属性值，只要有一个属性不相等，则两个Config对象不想等。
         Assertions.assertNotEquals(application1, application2);
         application1.setName("sameName");
         application2.setName("sameName");
-        Assertions.assertEquals(application1, application2);
+        Assertions.assertEquals(application1, application2); //两个对象的name属性相等，其它属性都为null，也能匹配，所以两个Config对象相等
 
         ProtocolConfig protocol1 = new ProtocolConfig();
-        protocol1.setHost("127.0.0.1");// excluded
+        protocol1.setHost("127.0.0.1");// excluded （因为对应的getHost()方法上的注解@Parameter的exclued=true，所以该属性不参与比较）
         protocol1.setName("dubbo");
         ProtocolConfig protocol2 = new ProtocolConfig();
         protocol2.setHost("127.0.0.2");// excluded
         protocol2.setName("dubbo");
-        Assertions.assertEquals(protocol1, protocol2);
+        Assertions.assertEquals(protocol1, protocol2); //name属性相同，host属性排除比较，所以两个对象相等
     }
 
     @Retention(RetentionPolicy.RUNTIME)
