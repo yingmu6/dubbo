@@ -140,27 +140,36 @@ public class AbstractInterfaceConfigTest {
     }
 
     @Test
-    public void checkStubAndMock1() { //todo @pause
+    public void checkStubAndMock1() { //已测（检查服务接口与本地实现类即stub的关系）
         /**
          * 调试问题答疑：
          * 1）AbstractInterfaceConfig#local成员属性的功能用途是什么？
+         *    解答：是服务接口对应的本地实现类的类名，已被弃用，用stub代替
          */
-        Assertions.assertThrows(IllegalStateException.class, () -> {
+        Assertions.assertThrows(IllegalStateException.class, () -> { //抛出的异常：java.lang.IllegalStateException: The local implementation class org.apache.dubbo.config.mock.GreetingLocal1 not implement...
             InterfaceConfig interfaceConfig = new InterfaceConfig();
-            interfaceConfig.setLocal(GreetingLocal1.class.getName());
-            interfaceConfig.checkStubAndLocal(Greeting.class);
+            interfaceConfig.setLocal(GreetingLocal1.class.getName()); //设置服务接口的本地实现类类名
+            interfaceConfig.checkStubAndLocal(Greeting.class); //此处会检查AbstractInterfaceConfig#verify接口与实现类的关系，因为Greeting与GreetingLocal1没有关联，所以会报出异常
             ConfigValidationUtils.checkMock(Greeting.class, interfaceConfig);
         });
     }
 
     @Test
-    public void checkStubAndMock2() {
+    public void checkStubAndMock2() { //已测（检查本地存根stud中的构造方法是否正确）
         Assertions.assertThrows(IllegalStateException.class, () -> {
             InterfaceConfig interfaceConfig = new InterfaceConfig();
             interfaceConfig.setLocal(GreetingLocal2.class.getName());
-            interfaceConfig.checkStubAndLocal(Greeting.class);
+            interfaceConfig.checkStubAndLocal(Greeting.class); //因为GreetingLocal2是Greeting的实现类，满足 Greeting.class.isAssignFrom(GreetingLocal2.class)，因为GreetingLocal2是Greeting实现类，所以可以进行赋值。
             ConfigValidationUtils.checkMock(Greeting.class, interfaceConfig);
         });
+
+        /**
+         * 结果分析:
+         * 1）会抛出异常： "java.lang.IllegalStateException: No such constructor "public GreetingLocal2..."
+         *
+         * 2）原因分析：因为checkStubAndLocal检查本地存根时，会调用ReflectUtils.findConstructor(localClass, interfaceClass);
+         *           来检查类中是否包含指定参数的构造方法。因为GreetingLocal2中不包含Greeting为参数的构造方法，所以抛出异常
+         */
     }
 
     @Test

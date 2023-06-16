@@ -40,7 +40,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig { //A
      /**
      * Local impl class name for the service interface
      */
-    protected String local;
+    protected String local; //服务接口对应的本地实现类类名
 
     /**
      * Local stub class name for the service interface
@@ -221,34 +221,34 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig { //A
 
 
 
-    /**
-     * Legitimacy check of stub, note that: the local will deprecated, and replace with <code>stub</code>
+     /**
+     * Legitimacy（合法性） check of stub, note that: the local will deprecated, and replace with <code>stub</code> （local将被stub替换）
      *
      * @param interfaceClass for provider side, it is the {@link Class} of the service that will be exported; for consumer
      *                       side, it is the {@link Class} of the remote service interface
      */
-    public void checkStubAndLocal(Class<?> interfaceClass) {
+    public void checkStubAndLocal(Class<?> interfaceClass) { //检查本地存根的合法性
         verifyStubAndLocal(local, "Local", interfaceClass);
         verifyStubAndLocal(stub, "Stub", interfaceClass);
     }
     
     public void verifyStubAndLocal(String className, String label, Class<?> interfaceClass){
     	if (ConfigUtils.isNotEmpty(className)) {
-            Class<?> localClass = ConfigUtils.isDefault(className) ?
+            Class<?> localClass = ConfigUtils.isDefault(className) ? //默认类名："true" 或 "default"
                     ReflectUtils.forName(interfaceClass.getName() + label) : ReflectUtils.forName(className);
-                        verify(interfaceClass, localClass);
+                        verify(interfaceClass, localClass); //校验接口与实现类的关系
             }
     }
 
-    private void verify(Class<?> interfaceClass, Class<?> localClass) {
-        if (!interfaceClass.isAssignableFrom(localClass)) {
+    private void verify(Class<?> interfaceClass, Class<?> localClass) { //localClass：接口的实现类，interfaceClass：被实现的接口
+        if (!interfaceClass.isAssignableFrom(localClass)) { //检查localClass是否能赋值给interfaceClass
             throw new IllegalStateException("The local implementation class " + localClass.getName() +
                     " not implement interface " + interfaceClass.getName());
         }
 
         try {
             //Check if the localClass a constructor with parameter who's type is interfaceClass
-            ReflectUtils.findConstructor(localClass, interfaceClass);
+            ReflectUtils.findConstructor(localClass, interfaceClass); //检查类中是否包含指定参数的构造方法
         } catch (NoSuchMethodException e) {
             throw new IllegalStateException("No such constructor \"public " + localClass.getSimpleName() +
                     "(" + interfaceClass.getName() + ")\" in local implementation class " + localClass.getName());

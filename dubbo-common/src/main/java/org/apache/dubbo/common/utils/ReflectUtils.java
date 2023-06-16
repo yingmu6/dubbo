@@ -941,7 +941,7 @@ public final class ReflectUtils { //JVM虚拟机中的类型描述符
         return findMethodByMethodSignature(clazz, methodName, null);
     }
 
-    public static Constructor<?> findConstructor(Class<?> clazz, Class<?> paramType) throws NoSuchMethodException {//查找
+    public static Constructor<?> findConstructor(Class<?> clazz, Class<?> paramType) throws NoSuchMethodException {//查找类中是否包含指定参数的的构造方法
         Constructor<?> targetConstructor;
         try {
             targetConstructor = clazz.getConstructor(new Class<?>[] {paramType});
