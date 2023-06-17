@@ -210,9 +210,9 @@ public class ConfigValidationUtils {
      * @param interfaceClass for provider side, it is the {@link Class} of the service that will be exported; for consumer
      *                       side, it is the {@link Class} of the remote service interface that will be referenced
      */
-    public static void checkMock(Class<?> interfaceClass, AbstractInterfaceConfig config) { //
+    public static void checkMock(Class<?> interfaceClass, AbstractInterfaceConfig config) { //检查Mock类是否正确
         String mock = config.getMock();
-        if (ConfigUtils.isEmpty(mock)) {
+        if (ConfigUtils.isEmpty(mock)) { //mock未配置，不做处理
             return;
         }
 

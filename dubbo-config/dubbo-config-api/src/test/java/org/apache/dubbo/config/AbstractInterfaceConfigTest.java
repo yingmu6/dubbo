@@ -173,7 +173,7 @@ public class AbstractInterfaceConfigTest {
     }
 
     @Test
-    public void checkStubAndMock3() {
+    public void checkStubAndMock3() { //已测（测试Mock类设置，）
         InterfaceConfig interfaceConfig = new InterfaceConfig();
         interfaceConfig.setLocal(GreetingLocal3.class.getName());
         interfaceConfig.checkStubAndLocal(Greeting.class);
@@ -181,17 +181,26 @@ public class AbstractInterfaceConfigTest {
     }
 
     @Test
-    public void checkStubAndMock4() {
+    public void checkStubAndMock4() { //已测（检查接口与实现类关系）
         Assertions.assertThrows(IllegalStateException.class, () -> {
             InterfaceConfig interfaceConfig = new InterfaceConfig();
             interfaceConfig.setStub(GreetingLocal1.class.getName());
             interfaceConfig.checkStubAndLocal(Greeting.class);
             ConfigValidationUtils.checkMock(Greeting.class, interfaceConfig);
         });
+
+        /**
+         * 输出结果：
+         * java.lang.IllegalStateException: The local implementation class
+         * org.apache.dubbo.config.mock.GreetingLocal1 not implement interface org.apache.dubbo.config.api.Greeting
+         *
+         * 结果分析：
+         * 由于AbstractInterfaceConfig#checkStubAndLocal 会检查接口与实现类的关系
+         */
     }
 
     @Test
-    public void checkStubAndMock5() {
+    public void checkStubAndMock5() { //已测（校验ReflectUtils.findConstructor 检查类中是否包含指定参数的构造方法）
         Assertions.assertThrows(IllegalStateException.class, () -> {
             InterfaceConfig interfaceConfig = new InterfaceConfig();
             interfaceConfig.setStub(GreetingLocal2.class.getName());
@@ -201,7 +210,7 @@ public class AbstractInterfaceConfigTest {
     }
 
     @Test
-    public void checkStubAndMock6() {
+    public void checkStubAndMock6() { //todo @pause
         InterfaceConfig interfaceConfig = new InterfaceConfig();
         interfaceConfig.setStub(GreetingLocal3.class.getName());
         interfaceConfig.checkStubAndLocal(Greeting.class);
