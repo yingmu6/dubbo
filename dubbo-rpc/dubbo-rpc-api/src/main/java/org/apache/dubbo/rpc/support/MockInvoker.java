@@ -48,7 +48,7 @@ final public class MockInvoker<T> implements Invoker<T> {
         return parseMockValue(mock, null);
     }
 
-    public static Object parseMockValue(String mock, Type[] returnTypes) throws Exception { //检查mock的值是否符合要求
+    public static Object parseMockValue(String mock, Type[] returnTypes) throws Exception { //解析mock字符串值（若解析失败，会抛出异常）
         Object value = null;
         if ("empty".equals(mock)) {
             value = ReflectUtils.getEmptyObject(returnTypes != null && returnTypes.length > 0 ? (Class<?>) returnTypes[0] : null);
@@ -58,16 +58,16 @@ final public class MockInvoker<T> implements Invoker<T> {
             value = true;
         } else if ("false".equals(mock)) {
             value = false;
-        } else if (mock.length() >= 2 && (mock.startsWith("\"") && mock.endsWith("\"") //此处的mock为2时，为"\"\""
+        } else if (mock.length() >= 2 && (mock.startsWith("\"") && mock.endsWith("\"") //mock字符串长度大于2时，且包含双引号或单引号时，去除单引号或双引号
                 || mock.startsWith("\'") && mock.endsWith("\'"))) {
-            value = mock.subSequence(1, mock.length() - 1); //将字符串对应的双引号或单引号去除，如"\"foo\""，去除引号后的字符串为 "foo"
+            value = mock.subSequence(1, mock.length() - 1); //将字符串对应的双引号或单引号去除，如"foo"或'f'，去除引号后的字符串为 foo或f
         } else if (returnTypes != null && returnTypes.length > 0 && returnTypes[0] == String.class) {
             value = mock; //返回值的类型为String，直接取mock的值
         } else if (StringUtils.isNumeric(mock, false)) {
             value = JSON.parse(mock);
-        } else if (mock.startsWith("{")) {
+        } else if (mock.startsWith("{")) { //按Map对象解析
             value = JSON.parseObject(mock, Map.class);
-        } else if (mock.startsWith("[")) {
+        } else if (mock.startsWith("[")) { //按List列表解析
             value = JSON.parseObject(mock, List.class);
         } else { //普通字符串
             value = mock;
@@ -164,7 +164,7 @@ final public class MockInvoker<T> implements Invoker<T> {
     public static Object getMockObject(String mockService, Class serviceType) {
         boolean isDefault = ConfigUtils.isDefault(mockService);
         if (isDefault) {
-            mockService = serviceType.getName() + "Mock";
+            mockService = serviceType.getName() + "Mock"; //默认的mock类
         }
 
         Class<?> mockClass;
@@ -184,13 +184,13 @@ final public class MockInvoker<T> implements Invoker<T> {
                     + ", please check if there's mock class or instance implementing interface "
                     + serviceType.getName(), e);
         }
-        if (mockClass == null || !serviceType.isAssignableFrom(mockClass)) {
+        if (mockClass == null || !serviceType.isAssignableFrom(mockClass)) { //检查mock类是否实现了指定接口
             throw new IllegalStateException("The mock class " + mockClass.getName() +
                     " not implement interface " + serviceType.getName());
         }
 
         try {
-            return mockClass.newInstance();
+            return mockClass.newInstance(); //创建mock类实例
         } catch (InstantiationException e) {
             throw new IllegalStateException("No default constructor from mock class " + mockClass.getName(), e);
         } catch (IllegalAccessException e) {
@@ -200,7 +200,7 @@ final public class MockInvoker<T> implements Invoker<T> {
 
 
     /**
-     * Normalize mock string:
+     * Normalize mock string:（标准化mock字符串）
      *
      * <ol>
      * <li>return => return null</li>
@@ -213,34 +213,34 @@ final public class MockInvoker<T> implements Invoker<T> {
      * @param mock mock string
      * @return normalized mock string
      */
-    public static String normalizeMock(String mock) { //按标准化补全mock值
+    public static String normalizeMock(String mock) { //标准化mock字符串（将不标准的字符串标准化）
         if (mock == null) {
             return mock;
         }
 
-        mock = mock.trim();
+        mock = mock.trim(); //去掉头尾的空格
 
         if (mock.length() == 0) {
             return mock;
         }
 
-        if (RETURN_KEY.equalsIgnoreCase(mock)) {
+        if (RETURN_KEY.equalsIgnoreCase(mock)) { //用户定义内容为："return" -> 标准化后的内容为："return null" (忽略大小写)
             return RETURN_PREFIX + "null";
         }
 
         if (ConfigUtils.isDefault(mock) || "fail".equalsIgnoreCase(mock) || "force".equalsIgnoreCase(mock)) {
-            return "default";
+            return "default"; //用户定义内容为："true" 或 "default" 或 "fail" 或 "force" -> 标准化后的内容为："default"
         }
 
         if (mock.startsWith(FAIL_PREFIX)) { //fail:  做为前缀
-            mock = mock.substring(FAIL_PREFIX.length()).trim();
+            mock = mock.substring(FAIL_PREFIX.length()).trim(); //截取"fail:" 后面的字串，作为mock字符串
         }
 
         if (mock.startsWith(FORCE_PREFIX)) { //force:  做为前缀
-            mock = mock.substring(FORCE_PREFIX.length()).trim();
+            mock = mock.substring(FORCE_PREFIX.length()).trim(); //截取"force:" 后面的字串，作为mock字符串
         }
 
-        if (mock.startsWith(RETURN_PREFIX) || mock.startsWith(THROW_PREFIX)) {
+        if (mock.startsWith(RETURN_PREFIX) || mock.startsWith(THROW_PREFIX)) { //以"return "或"throw"，将字符串中的'`' 符号 替换为 '"'
             mock = mock.replace('`', '"');
         }
 

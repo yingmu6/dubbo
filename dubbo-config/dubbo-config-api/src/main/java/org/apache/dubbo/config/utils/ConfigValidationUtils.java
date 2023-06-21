@@ -210,23 +210,23 @@ public class ConfigValidationUtils {
      * @param interfaceClass for provider side, it is the {@link Class} of the service that will be exported; for consumer
      *                       side, it is the {@link Class} of the remote service interface that will be referenced
      */
-    public static void checkMock(Class<?> interfaceClass, AbstractInterfaceConfig config) { //检查Mock类是否正确
+    public static void checkMock(Class<?> interfaceClass, AbstractInterfaceConfig config) { //检查mock字符串是否正确
         String mock = config.getMock();
         if (ConfigUtils.isEmpty(mock)) { //mock未配置，不做处理
             return;
         }
 
-        String normalizedMock = MockInvoker.normalizeMock(mock);
-        if (normalizedMock.startsWith(RETURN_PREFIX)) {
-            normalizedMock = normalizedMock.substring(RETURN_PREFIX.length()).trim();
+        String normalizedMock = MockInvoker.normalizeMock(mock); //将mock字符串标准化
+        if (normalizedMock.startsWith(RETURN_PREFIX)) { // 以"return"开头的mock字符串
+            normalizedMock = normalizedMock.substring(RETURN_PREFIX.length()).trim(); //取"return" 后面的字串，作为mock字符串
             try {
                 //Check whether the mock value is legal, if it is illegal, throw exception
-                MockInvoker.parseMockValue(normalizedMock);
+                MockInvoker.parseMockValue(normalizedMock); //解析mock字符串值，判断是否非法
             } catch (Exception e) {
                 throw new IllegalStateException("Illegal mock return in <dubbo:service/reference ... " +
                         "mock=\"" + mock + "\" />");
             }
-        } else if (normalizedMock.startsWith(THROW_PREFIX)) {
+        } else if (normalizedMock.startsWith(THROW_PREFIX)) { //以"throw"开头的mock字符串
             normalizedMock = normalizedMock.substring(THROW_PREFIX.length()).trim(); //字符串去除"throw"
             if (ConfigUtils.isNotEmpty(normalizedMock)) {
                 try {
@@ -237,7 +237,7 @@ public class ConfigValidationUtils {
                             "mock=\"" + mock + "\" />");
                 }
             }
-        } else {
+        } else { //非"return"和"throw"开头的mock字符串
             //Check whether the mock class is a implementation of the interfaceClass, and if it has a default constructor
             MockInvoker.getMockObject(normalizedMock, interfaceClass);
         }

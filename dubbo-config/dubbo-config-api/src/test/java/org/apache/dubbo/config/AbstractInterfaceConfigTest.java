@@ -210,7 +210,7 @@ public class AbstractInterfaceConfigTest {
     }
 
     @Test
-    public void checkStubAndMock6() { //todo @pause
+    public void checkStubAndMock6() { //已测（检查接口与本地存根的关系，未设置Mock类，不检查接口是Mock的关系）
         InterfaceConfig interfaceConfig = new InterfaceConfig();
         interfaceConfig.setStub(GreetingLocal3.class.getName());
         interfaceConfig.checkStubAndLocal(Greeting.class);
@@ -218,43 +218,81 @@ public class AbstractInterfaceConfigTest {
     }
 
     @Test
-    public void checkStubAndMock7() {
+    public void checkStubAndMock7() { //已测（mock字符串的合法性检查）
         Assertions.assertThrows(IllegalStateException.class, () -> {
             InterfaceConfig interfaceConfig = new InterfaceConfig();
             interfaceConfig.setMock("return {a, b}");
+//            interfaceConfig.setMock("return {\"a\":\"b\"}"); //此mock字符串，能通过校验
             interfaceConfig.checkStubAndLocal(Greeting.class);
             ConfigValidationUtils.checkMock(Greeting.class, interfaceConfig);
         });
+
+        /**
+         * 结果输出：
+         * 1）会抛出：com.alibaba.fastjson.JSONException: expect ':' at 0, actual ,
+         * 2）抛异常的位置：MockInvoker#parseMockValue中
+         *  else if (mock.startsWith("{")) { //按Map对象解析
+         *      value = JSON.parseObject(mock, Map.class);
+         *  }
+         *
+         * 结果分析：
+         * mock配置的字符串为"return {a, b}"，解析的mock字符串为"{a, b}"，按代码逻辑，若"{"开头，会按Map进行解析
+         * "{a, b}"不是Map的key、value形式，所以会报错，mock字符串可改为 "return {\"a\":\"b\"}"
+         */
     }
 
     @Test
-    public void checkStubAndMock8() {
+    public void checkStubAndMock8() { //已测（检查mock=Mock类名时，校验服务接口与Mock类名关系）
         Assertions.assertThrows(IllegalStateException.class, () -> {
             InterfaceConfig interfaceConfig = new InterfaceConfig();
             interfaceConfig.setMock(GreetingMock1.class.getName());
             interfaceConfig.checkStubAndLocal(Greeting.class);
             ConfigValidationUtils.checkMock(Greeting.class, interfaceConfig);
         });
+
+        /**
+         * 结果输出：
+         * 1）抛出的异常：java.lang.IllegalStateException: The mock class org.apache.dubbo.config.mock.GreetingMock1 not implement interface org.apache.dubbo.config.api.Greeting
+         * 2）异常的位置：MockInvoker#getMockObject中的
+         *      if (mockClass == null || !serviceType.isAssignableFrom(mockClass)) { //检查mock类是否实现了指定接口
+         *           throw new IllegalStateException("The mock class " + mockClass.getName() +
+         *                " not implement interface " + serviceType.getName());
+         *      }
+         *
+         * 结果分析：
+         * 当mock字符串设置的是Mock实现类的类名，则会检查服务接口与Mock实现类的关系是否正确，即Mock类需实现服务接口
+         */
     }
 
     @Test
-    public void checkStubAndMock9() {
+    public void checkStubAndMock9() { //已测（因为创建mock实例对象时，构造方法是private，所以创建异常）
         Assertions.assertThrows(IllegalStateException.class, () -> {
             InterfaceConfig interfaceConfig = new InterfaceConfig();
             interfaceConfig.setMock(GreetingMock2.class.getName());
             interfaceConfig.checkStubAndLocal(Greeting.class);
             ConfigValidationUtils.checkMock(Greeting.class, interfaceConfig);
         });
+
+        /**
+         * 结果输出：
+         * 1）抛出的异常：java.lang.IllegalStateException: java.lang.IllegalAccessException: Class org.apache.dubbo.rpc.support.MockInvoker
+         *              can not access a member of class org.apache.dubbo.config.mock.GreetingMock2 with modifiers "private"
+         *
+         * 2）异常的位置：MockInvoker#getMockObject
+         *
+         * 结果分析：
+         * 1）因为getMockObject会创建实例，mockClass.newInstance()，因为构造方法是private，所以不能创建对象
+         */
     }
 
     @Test
-    public void testLocal() {
+    public void testLocal() { //已测（设置本地实现类Local）
         InterfaceConfig interfaceConfig = new InterfaceConfig();
         interfaceConfig.setLocal((Boolean) null);
         Assertions.assertNull(interfaceConfig.getLocal());
-        interfaceConfig.setLocal(true);
+        interfaceConfig.setLocal(true); //可以设置true
         Assertions.assertEquals("true", interfaceConfig.getLocal());
-        interfaceConfig.setLocal("GreetingMock");
+        interfaceConfig.setLocal("GreetingMock"); //可以设置Local实现类
         Assertions.assertEquals("GreetingMock", interfaceConfig.getLocal());
     }
 
