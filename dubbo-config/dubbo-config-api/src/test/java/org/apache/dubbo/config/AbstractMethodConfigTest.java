@@ -27,16 +27,16 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.sameInstance;
 
-public class AbstractMethodConfigTest {
+public class AbstractMethodConfigTest { //方法配置Config测试，对应<dubbo:method/> 配置
     @Test
-    public void testTimeout() throws Exception {
+    public void testTimeout() throws Exception { //设置接口调用超时时间
         MethodConfig methodConfig = new MethodConfig();
         methodConfig.setTimeout(10);
         assertThat(methodConfig.getTimeout(), equalTo(10));
     }
 
     @Test
-    public void testForks() throws Exception {
+    public void testForks() throws Exception { //todo @pause
         MethodConfig methodConfig = new MethodConfig();
         methodConfig.setForks(10);
         assertThat(methodConfig.getForks(), equalTo(10));

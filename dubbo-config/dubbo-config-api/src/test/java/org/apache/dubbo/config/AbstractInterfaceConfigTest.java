@@ -36,7 +36,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Collections;
 
-public class AbstractInterfaceConfigTest {
+public class AbstractInterfaceConfigTest { //接口配置Config测试，对应<dubbo:interface/> 配置
     private static File dubboProperties;
 
     @BeforeAll
@@ -286,7 +286,7 @@ public class AbstractInterfaceConfigTest {
     }
 
     @Test
-    public void testLocal() { //已测（设置本地实现类Local）
+    public void testLocal() { //已测（测试local的值，可以是Boolean类型，也可以是类名）
         InterfaceConfig interfaceConfig = new InterfaceConfig();
         interfaceConfig.setLocal((Boolean) null);
         Assertions.assertNull(interfaceConfig.getLocal());
@@ -297,7 +297,7 @@ public class AbstractInterfaceConfigTest {
     }
 
     @Test
-    public void testStub() {
+    public void testStub() { //已测（测试stub的值，可以是Boolean类型，也可以是类名）
         InterfaceConfig interfaceConfig = new InterfaceConfig();
         interfaceConfig.setStub((Boolean) null);
         Assertions.assertNull(interfaceConfig.getStub());
@@ -308,49 +308,49 @@ public class AbstractInterfaceConfigTest {
     }
 
     @Test
-    public void testCluster() {
+    public void testCluster() { //已测（集群类型的值，为String字符串）
         InterfaceConfig interfaceConfig = new InterfaceConfig();
         interfaceConfig.setCluster("mockcluster");
         Assertions.assertEquals("mockcluster", interfaceConfig.getCluster());
     }
 
     @Test
-    public void testProxy() {
+    public void testProxy() { //已测（动态代理策略proxy的值，为字符串）
         InterfaceConfig interfaceConfig = new InterfaceConfig();
         interfaceConfig.setProxy("mockproxyfactory");
         Assertions.assertEquals("mockproxyfactory", interfaceConfig.getProxy());
     }
 
     @Test
-    public void testConnections() {
+    public void testConnections() { //已测（连接限制数connections的值，为int数值）
         InterfaceConfig interfaceConfig = new InterfaceConfig();
         interfaceConfig.setConnections(1);
         Assertions.assertEquals(1, interfaceConfig.getConnections().intValue());
     }
 
     @Test
-    public void testFilter() {
+    public void testFilter() { //已测（过滤器的值，为字符串）
         InterfaceConfig interfaceConfig = new InterfaceConfig();
         interfaceConfig.setFilter("mockfilter");
         Assertions.assertEquals("mockfilter", interfaceConfig.getFilter());
     }
 
     @Test
-    public void testListener() {
+    public void testListener() { //已测（监听器的值，为字符串）
         InterfaceConfig interfaceConfig = new InterfaceConfig();
         interfaceConfig.setListener("mockinvokerlistener");
         Assertions.assertEquals("mockinvokerlistener", interfaceConfig.getListener());
     }
 
     @Test
-    public void testLayer() {
+    public void testLayer() { //已测（服务提供者层次，为字符串）
         InterfaceConfig interfaceConfig = new InterfaceConfig();
         interfaceConfig.setLayer("layer");
         Assertions.assertEquals("layer", interfaceConfig.getLayer());
     }
 
     @Test
-    public void testApplication() {
+    public void testApplication() { //已测（接口配置Config中，设置归属的应用配置Config）
         InterfaceConfig interfaceConfig = new InterfaceConfig();
         ApplicationConfig applicationConfig = new ApplicationConfig();
         interfaceConfig.setApplication(applicationConfig);
@@ -358,7 +358,7 @@ public class AbstractInterfaceConfigTest {
     }
 
     @Test
-    public void testModule() {
+    public void testModule() { //已测（接口配置Config中，设置归属的模块配置Config）
         InterfaceConfig interfaceConfig = new InterfaceConfig();
         ModuleConfig moduleConfig = new ModuleConfig();
         interfaceConfig.setModule(moduleConfig);
@@ -366,7 +366,7 @@ public class AbstractInterfaceConfigTest {
     }
 
     @Test
-    public void testRegistry() {
+    public void testRegistry() { //已测（接口配置Config中，按单个设置归属的注册中心配置Config）
         InterfaceConfig interfaceConfig = new InterfaceConfig();
         RegistryConfig registryConfig = new RegistryConfig();
         interfaceConfig.setRegistry(registryConfig);
@@ -374,7 +374,7 @@ public class AbstractInterfaceConfigTest {
     }
 
     @Test
-    public void testRegistries() {
+    public void testRegistries() { //已测（接口配置Config中，按列表设置归属的注册中心配置Config）
         InterfaceConfig interfaceConfig = new InterfaceConfig();
         RegistryConfig registryConfig = new RegistryConfig();
         interfaceConfig.setRegistries(Collections.singletonList(registryConfig));
@@ -383,45 +383,45 @@ public class AbstractInterfaceConfigTest {
     }
 
     @Test
-    public void testMonitor() {
+    public void testMonitor() { //已测（设置监控中心配置，使用重载方法）
         InterfaceConfig interfaceConfig = new InterfaceConfig();
-        interfaceConfig.setMonitor("monitor-addr");
+        interfaceConfig.setMonitor("monitor-addr"); //按监控地址设置
         Assertions.assertEquals("monitor-addr", interfaceConfig.getMonitor().getAddress());
         MonitorConfig monitorConfig = new MonitorConfig();
-        interfaceConfig.setMonitor(monitorConfig);
+        interfaceConfig.setMonitor(monitorConfig); //按监控中心Config设置
         Assertions.assertSame(monitorConfig, interfaceConfig.getMonitor());
     }
 
     @Test
-    public void testOwner() {
+    public void testOwner() { //已测（设置服务提供者的拥有者）
         InterfaceConfig interfaceConfig = new InterfaceConfig();
         interfaceConfig.setOwner("owner");
         Assertions.assertEquals("owner", interfaceConfig.getOwner());
     }
 
     @Test
-    public void testCallbacks() {
+    public void testCallbacks() { //已测（设置回调限制数）
         InterfaceConfig interfaceConfig = new InterfaceConfig();
         interfaceConfig.setCallbacks(2);
         Assertions.assertEquals(2, interfaceConfig.getCallbacks().intValue());
     }
 
     @Test
-    public void testOnconnect() {
+    public void testOnconnect() { //已测（设置连接事件）
         InterfaceConfig interfaceConfig = new InterfaceConfig();
         interfaceConfig.setOnconnect("onConnect");
         Assertions.assertEquals("onConnect", interfaceConfig.getOnconnect());
     }
 
     @Test
-    public void testOndisconnect() {
+    public void testOndisconnect() { //已测（设置拒绝事件）
         InterfaceConfig interfaceConfig = new InterfaceConfig();
         interfaceConfig.setOndisconnect("onDisconnect");
         Assertions.assertEquals("onDisconnect", interfaceConfig.getOndisconnect());
     }
 
     @Test
-    public void testScope() {
+    public void testScope() { //已测（设置服务范围）
         InterfaceConfig interfaceConfig = new InterfaceConfig();
         interfaceConfig.setScope("scope");
         Assertions.assertEquals("scope", interfaceConfig.getScope());

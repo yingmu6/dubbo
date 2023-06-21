@@ -45,7 +45,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig { //A
     /**
      * Local stub class name for the service interface
      */
-    protected String stub;
+    protected String stub; //服务接口对应的本地存根的实现类类名（可以存 "true"或"false"）
 
     /**
      * Service monitor
@@ -55,18 +55,18 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig { //A
     /**
      * Strategies for generating dynamic agents，there are two strategies can be choosed: jdk and javassist
      */
-    protected String proxy;
+    protected String proxy; //动态代理的策略
 
     /**
      * Cluster type
      */
-    protected String cluster;
+    protected String cluster; //集群的类型
 
     /**
      * The {@code Filter} when the provider side exposed a service or the customer side references a remote service used,
-     * if there are more than one, you can use commas to separate them
+     * if there are more than one, you can use commas to separate them（超过多个，使用分隔符分隔）
      */
-    protected String filter;
+    protected String filter; //过滤器
 
     /**
      * The Listener when the provider side exposes a service or the customer side references a remote service used
@@ -77,17 +77,17 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig { //A
     /**
      * The owner of the service providers
      */
-    protected String owner;
+    protected String owner; //设置服务提供者的拥有者
 
     /**
      * Connection limits, 0 means shared connection, otherwise it defines the connections delegated to the current service
      */
-    protected Integer connections;
+    protected Integer connections; //连接限制数
 
     /**
      * The layer of service providers
      */
-    protected String layer;
+    protected String layer; //服务提供者层
 
     /**
      * The application info
@@ -117,12 +117,12 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig { //A
     protected String registryIds; //RegistryConfig对应的id列表（可以有多个注册中心）
 
     // connection events
-    protected String onconnect;
+    protected String onconnect; //连接事件
 
     /**
      * Disconnection events
      */
-    protected String ondisconnect;
+    protected String ondisconnect; //拒绝事件
 
     /**
      * The metrics configuration
@@ -135,7 +135,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig { //A
     // callback limits
     private Integer callbacks;
     // the scope for referring/exporting a service, if it's local, it means searching in current JVM only.
-    private String scope;
+    private String scope; //服务范围
 
     protected String tag;
 
@@ -372,7 +372,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig { //A
         return stub;
     }
 
-    public void setStub(Boolean stub) {
+    public void setStub(Boolean stub) { //设置stub的重载方法
         if (stub == null) {
             setStub((String) null);
         } else {

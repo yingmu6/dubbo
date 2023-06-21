@@ -32,7 +32,7 @@ public abstract class AbstractMethodConfig extends AbstractConfig {
     /**
      * The timeout for remote invocation in milliseconds
      */
-    protected Integer timeout;
+    protected Integer timeout; //远程调用的超时时间
 
     /**
      * The retry times

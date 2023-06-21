@@ -40,7 +40,7 @@ public class MonitorConfig extends AbstractConfig {
     /**
      * The monitor address
      */
-    private String address;
+    private String address; //监控中心地址
 
     /**
      * The monitor user name
