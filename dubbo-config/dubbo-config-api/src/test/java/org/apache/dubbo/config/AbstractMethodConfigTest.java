@@ -36,7 +36,7 @@ public class AbstractMethodConfigTest { //方法配置Config测试，对应<dubb
     }
 
     @Test
-    public void testForks() throws Exception { //todo @pause
+    public void testForks() throws Exception { //todo @pause 测试fork数
         MethodConfig methodConfig = new MethodConfig();
         methodConfig.setForks(10);
         assertThat(methodConfig.getForks(), equalTo(10));
