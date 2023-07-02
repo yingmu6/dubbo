@@ -42,7 +42,7 @@ public abstract class AbstractMethodConfig extends AbstractConfig {
     /**
      * max concurrent invocations
      */
-    protected Integer actives;
+    protected Integer actives; //最大并发调用数
 
     /**
      * The load balance
@@ -51,14 +51,14 @@ public abstract class AbstractMethodConfig extends AbstractConfig {
 
     /**
      * Whether to async
-     * note that: it is an unreliable asynchronism that ignores return values and does not block threads.
+     * note that: it is an unreliable（不可靠的）asynchronism（异步） that ignores return values and does not block threads.
      */
     protected Boolean async;
 
-    /**
+     /**
      * Whether to ack async-sent
      */
-    protected Boolean sent;
+    protected Boolean sent; //是否等待消息发出
 
     /**
      * The name of mock class which gets called when a service fails to execute
@@ -93,7 +93,7 @@ public abstract class AbstractMethodConfig extends AbstractConfig {
     /**
      * Forks for forking cluster
      */
-    protected Integer forks;
+    protected Integer forks; //并行调用数
 
     public Integer getForks() {
         return forks;

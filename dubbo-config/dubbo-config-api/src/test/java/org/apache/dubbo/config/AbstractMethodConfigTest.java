@@ -29,51 +29,51 @@ import static org.hamcrest.Matchers.sameInstance;
 
 public class AbstractMethodConfigTest { //方法配置Config测试，对应<dubbo:method/> 配置
     @Test
-    public void testTimeout() throws Exception { //设置接口调用超时时间
+    public void testTimeout() throws Exception { //已测（设置接口调用超时时间）
         MethodConfig methodConfig = new MethodConfig();
         methodConfig.setTimeout(10);
         assertThat(methodConfig.getTimeout(), equalTo(10));
     }
 
     @Test
-    public void testForks() throws Exception { //todo @pause 测试fork数
+    public void testForks() throws Exception { //已测（测试并行调用数）
         MethodConfig methodConfig = new MethodConfig();
         methodConfig.setForks(10);
         assertThat(methodConfig.getForks(), equalTo(10));
     }
 
     @Test
-    public void testRetries() throws Exception {
+    public void testRetries() throws Exception { //已测（测试重试次数）
         MethodConfig methodConfig = new MethodConfig();
         methodConfig.setRetries(3);
         assertThat(methodConfig.getRetries(), equalTo(3));
     }
 
     @Test
-    public void testLoadbalance() throws Exception {
+    public void testLoadbalance() throws Exception { //已测（AbstractMethodConfig#loadbalance负载均衡值是字符串）
         MethodConfig methodConfig = new MethodConfig();
         methodConfig.setLoadbalance("mockloadbalance");
         assertThat(methodConfig.getLoadbalance(), equalTo("mockloadbalance"));
     }
 
     @Test
-    public void testAsync() throws Exception {
+    public void testAsync() throws Exception { //已测（测试 async是否异步）
         MethodConfig methodConfig = new MethodConfig();
         methodConfig.setAsync(true);
         assertThat(methodConfig.isAsync(), is(true));
     }
 
     @Test
-    public void testActives() throws Exception {
+    public void testActives() throws Exception { //已测（最大并发调用数activates）
         MethodConfig methodConfig = new MethodConfig();
         methodConfig.setActives(10);
         assertThat(methodConfig.getActives(), equalTo(10));
     }
 
     @Test
-    public void testSent() throws Exception {
+    public void testSent() throws Exception { //已测（是否等待消息发出sent）
         MethodConfig methodConfig = new MethodConfig();
-        methodConfig.setSent(true);
+        methodConfig.setSent(true); //sent="true" 等待消息发出，消息发送失败将抛出异常。sent="false" 不等待消息发出，将消息放入 IO 队列，即刻返回。
         assertThat(methodConfig.getSent(), is(true));
     }
 
