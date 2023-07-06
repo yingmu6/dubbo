@@ -52,12 +52,12 @@ public abstract class AbstractReferenceConfig extends AbstractInterfaceConfig {
     /**
      * Whether to eagle-init
      */
-    protected Boolean init;
+    protected Boolean init; //是否为惰性初始化
 
-    /**
+     /**
      * Whether to use generic interface
      */
-    protected String generic;
+    protected String generic; //是否使用泛化接口
 
     /**
      * Whether to find reference's instance from the current JVM （当前JVM）

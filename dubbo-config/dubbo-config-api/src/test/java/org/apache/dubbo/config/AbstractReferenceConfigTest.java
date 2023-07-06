@@ -48,21 +48,21 @@ import static org.mockito.Mockito.when;
 public class AbstractReferenceConfigTest {
 
     @Test
-    public void testCheck() throws Exception {
+    public void testCheck() throws Exception { //已测（检查提供的服务是否存在）
         ReferenceConfig referenceConfig = new ReferenceConfig();
         referenceConfig.setCheck(true);
         assertThat(referenceConfig.isCheck(), is(true));
     }
 
     @Test
-    public void testInit() throws Exception {
+    public void testInit() throws Exception { //已测（init：是否为惰性初始化）
         ReferenceConfig referenceConfig = new ReferenceConfig();
         referenceConfig.setInit(true);
         assertThat(referenceConfig.isInit(), is(true));
     }
 
     @Test
-    public void testGeneric() throws Exception {
+    public void testGeneric() throws Exception { //已测（generic：是否使用泛化接口）
         ReferenceConfig referenceConfig = new ReferenceConfig();
         referenceConfig.setGeneric(true);
         assertThat(referenceConfig.isGeneric(), is(true));
@@ -73,14 +73,14 @@ public class AbstractReferenceConfigTest {
     }
 
     @Test
-    public void testInjvm() throws Exception {
+    public void testInjvm() throws Exception { //已测（init：测试）
         ReferenceConfig referenceConfig = new ReferenceConfig();
         referenceConfig.setInit(true);
         assertThat(referenceConfig.isInit(), is(true));
     }
 
     @Test
-    public void testFilter() throws Exception {
+    public void testFilter() throws Exception { //已测（定义多个Filter，值进行拼接）
         ReferenceConfig referenceConfig = new ReferenceConfig();
         referenceConfig.setFilter("mockfilter");
         assertThat(referenceConfig.getFilter(), equalTo("mockfilter"));
@@ -88,19 +88,21 @@ public class AbstractReferenceConfigTest {
         parameters.put(REFERENCE_FILTER_KEY, "prefilter");
         AbstractInterfaceConfig.appendParameters(parameters, referenceConfig);
         assertThat(parameters, hasValue("prefilter,mockfilter"));
+        // 因为AbstractReferenceConfig.getFilter方法上@Parameter参数配置的key为REFERENCE_FILTER_KEY，
+        // 而ReferenceConfig的filter属性也设置了值，所以会进行拼接
     }
 
     @Test
-    public void testRouter() throws Exception {
+    public void testRouter() throws Exception { //todo @pause 07/06
         ReferenceConfig referenceConfig = new ReferenceConfig();
         referenceConfig.setRouter("condition");
         assertThat(referenceConfig.getRouter(), equalTo("condition"));
         Map<String, String> parameters = new HashMap<String, String>();
         parameters.put(ROUTER_KEY, "tag");
         AbstractInterfaceConfig.appendParameters(parameters, referenceConfig);
-        assertThat(parameters, hasValue("tag,condition"));
-        URL url = mock(URL.class);
-        when(url.getParameter(ROUTER_KEY)).thenReturn("condition");
+        assertThat(parameters, hasValue("tag,condition")); //AbstractReferenceConfig#getRouter方法上的注解@Parameter的key为ROUTER_KEY，自定义参数的值与Config属性进行合并
+        URL url = mock(URL.class); //使用Mockito创建Mock对象
+        when(url.getParameter(ROUTER_KEY)).thenReturn("condition"); //在调用url.getParameter(ROUTER_KEY))方法时，返回mock值
         List<RouterFactory> routerFactories = ExtensionLoader.getExtensionLoader(RouterFactory.class).getActivateExtension(url, ROUTER_KEY);
         assertThat(routerFactories.stream().anyMatch(routerFactory -> routerFactory.getClass().equals(ConditionRouterFactory.class)), is(true));
         when(url.getParameter(ROUTER_KEY)).thenReturn("-tag,-app");

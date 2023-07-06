@@ -67,7 +67,7 @@ public class ForkingClusterInvoker<T> extends AbstractClusterInvoker<T> { //并�
             final List<Invoker<T>> selected;
             final int forks = getUrl().getParameter(FORKS_KEY, DEFAULT_FORKS); //并行调用数
             final int timeout = getUrl().getParameter(TIMEOUT_KEY, DEFAULT_TIMEOUT);
-            if (forks <= 0 || forks >= invokers.size()) {
+            if (forks <= 0 || forks >= invokers.size()) { //未设置forks数，或forks数不在指定范围内
                 selected = invokers;
             } else {
                 selected = new ArrayList<>(forks);

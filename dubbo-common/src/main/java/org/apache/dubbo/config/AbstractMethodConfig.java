@@ -64,14 +64,15 @@ public abstract class AbstractMethodConfig extends AbstractConfig {
      * The name of mock class which gets called when a service fails to execute
      * <p>
      * note that: the mock doesn't support on the provider side，and the mock is executed when a non-business exception
-     * occurs after a remote service call
+     * occurs after a remote service call (mock不支持提供端)
      */
     protected String mock; //mock字符串（可以是Mock类名，也可以是Mock表达式，在非业务异常时，执行调用）
 
     /**
      * Merger
+     * 官网链接：https://cn.dubbo.apache.org/zh-cn/docsv2.7/user/examples/group-merger/
      */
-    protected String merger;
+    protected String merger; //用于分组聚合（即对指定组中的接口，按照合并策略，合并结果）
 
     /**
      * Cache the return result with the call parameter as key, the following options are available: lru, threadlocal,
@@ -82,10 +83,12 @@ public abstract class AbstractMethodConfig extends AbstractConfig {
     /**
      * Whether JSR303 standard annotation validation is enabled or not, if enabled, annotations on method parameters will
      * be validated
+     *
+     * 参考链接：https://cn.dubbo.apache.org/zh-cn/docs/advanced/parameter-validation  参数验证
      */
-    protected String validation;
+    protected String validation; //参数验证
 
-    /**
+     /**
      * The customized parameters
      */
     protected Map<String, String> parameters; //自定义参数

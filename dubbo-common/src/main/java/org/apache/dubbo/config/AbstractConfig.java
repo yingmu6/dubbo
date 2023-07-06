@@ -134,7 +134,7 @@ public abstract class AbstractConfig implements Serializable {
                             str = URL.encode(str); //若escaped指定是需要编码的，则编码字符串
                         }
                         if (parameter != null && parameter.append()) { //若相同的key对应多个值，且@Parameter注解中的append=true，则通过分隔符","将多个值拼接
-                            String pre = parameters.get(key);
+                            String pre = parameters.get(key); //将自定义参数Map中的值与Config中的属性值，进行拼接
                             if (pre != null && pre.length() > 0) {
                                 str = pre + "," + str; //带上分隔符，附加到原有的值value上
                             }

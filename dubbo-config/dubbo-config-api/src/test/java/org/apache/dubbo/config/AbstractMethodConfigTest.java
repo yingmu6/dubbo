@@ -78,7 +78,7 @@ public class AbstractMethodConfigTest { //方法配置Config测试，对应<dubb
     }
 
     @Test
-    public void testMock() throws Exception {
+    public void testMock() throws Exception { //已测（Mock的值类型）
         MethodConfig methodConfig = new MethodConfig();
         methodConfig.setMock((Boolean) null);
         assertThat(methodConfig.getMock(), isEmptyOrNullString());
@@ -91,28 +91,28 @@ public class AbstractMethodConfigTest { //方法配置Config测试，对应<dubb
     }
 
     @Test
-    public void testMerger() throws Exception {
+    public void testMerger() throws Exception { //已测（分组合并，值设置）
         MethodConfig methodConfig = new MethodConfig();
         methodConfig.setMerger("merger");
         assertThat(methodConfig.getMerger(), equalTo("merger"));
     }
 
     @Test
-    public void testCache() throws Exception {
+    public void testCache() throws Exception { //已测（结果缓存设置）
         MethodConfig methodConfig = new MethodConfig();
         methodConfig.setCache("cache");
         assertThat(methodConfig.getCache(), equalTo("cache"));
     }
 
     @Test
-    public void testValidation() throws Exception {
+    public void testValidation() throws Exception { //已测（参数验证测试）
         MethodConfig methodConfig = new MethodConfig();
         methodConfig.setValidation("validation");
         assertThat(methodConfig.getValidation(), equalTo("validation"));
     }
 
     @Test
-    public void testParameters() throws Exception {
+    public void testParameters() throws Exception { //已测（自定义参数设置）
         MethodConfig methodConfig = new MethodConfig();
         Map<String, String> parameters = new HashMap<String, String>();
         parameters.put("key", "value");
