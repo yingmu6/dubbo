@@ -88,7 +88,7 @@ class URL implements Serializable {
     // by default, port to registry
     private final int port; //端口（默认值为0）
 
-    private final String path; //接口名称
+    private final String path; //路径（通常为接口名称）
 
     private final Map<String, String> parameters; //参数键值对：存的是url中的参数键值，即?与&分隔的键值对
 
@@ -227,7 +227,7 @@ class URL implements Serializable {
         int port = 0;
         String path = null;
         Map<String, String> parameters = null;
-        int i = url.indexOf('?'); // separator between body and parameters
+        int i = url.indexOf('?'); // separator between body and parameters（使用"?" 来分隔出 url的主体和参数）
         if (i >= 0) { //（url的参数parameters处理）判断是否包含参数，若url中包含"?"，则先把参数解析出来，把"?"后面的字符串先处理掉
             String[] parts = url.substring(i + 1).split("&"); //去除?后面的字符串，并按&符号分隔参数
             parameters = new HashMap<>();
@@ -243,7 +243,7 @@ class URL implements Serializable {
                         if (key.startsWith(DEFAULT_KEY_PREFIX)) { //若参数名是"default."开头的，则把这个前缀去掉存储，即这个值会有两个不同的key
                             parameters.putIfAbsent(key.substring(DEFAULT_KEY_PREFIX.length()), value);
                         }
-                    } else {
+                    } else { //若没有带上等号的，则键值对都存一样的值
                         parameters.put(part, part); //若没有带上等号，则键值都存为一样的（如?k0&k1=v1，则k0的值存为k0）
                     }
                 }
@@ -257,7 +257,7 @@ class URL implements Serializable {
             }
             protocol = url.substring(0, i); //如：zookeeper
             url = url.substring(i + 3); //如：127.0.0.1:2181
-        } else {
+        } else { //未设置协议（系统没有设置默认协议，若没设定，则protocol=null）
             // case: file:/path/to/file.txt
             i = url.indexOf(":/");
             if (i >= 0) {
@@ -274,7 +274,7 @@ class URL implements Serializable {
             path = url.substring(i + 1); //接口路径，即接口路径，如com.foo.BarService，path中没有"?"后面带的参数
             url = url.substring(0, i);
         }
-        i = url.lastIndexOf('@'); //根据@解析用户名、密码
+        i = url.lastIndexOf('@'); //根据@解析用户名、密码（未设置用户名、密码，则为null）
         if (i >= 0) {
             username = url.substring(0, i);
             int j = username.indexOf(':');
@@ -385,7 +385,7 @@ class URL implements Serializable {
             return "";
         }
         try {
-            return URLEncoder.encode(value, "UTF-8");
+            return URLEncoder.encode(value, "UTF-8"); //使用Java的URL编码处理
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e.getMessage(), e);
         }

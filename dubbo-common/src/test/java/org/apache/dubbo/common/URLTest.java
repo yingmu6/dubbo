@@ -38,7 +38,7 @@ public class URLTest {
         URL url = URL.valueOf("/context/path?version=1.0.0&application=morgan"); //没有protocol、host
         assertURLStrDecoder(url);
         assertNull(url.getProtocol());
-        assertNull(url.getUsername());
+        assertNull(url.getUsername()); //protocol、username、password、host等主体信息，若没有设置，系统不会设置默认值，即值会为null
         assertNull(url.getPassword());
         assertNull(url.getHost());
         assertNull(url.getAddress());
@@ -48,7 +48,7 @@ public class URLTest {
         assertEquals("1.0.0", url.getParameter("version"));
         assertEquals("morgan", url.getParameter("application"));
 
-        url = URL.valueOf("context/path?version=1.0.0&application=morgan");
+        url = URL.valueOf("context/path?version=1.0.0&application=morgan"); //即使String url值一样，经过URL.valueOf(...)创建后的对象也不一样，每次调用都是以new一个URL对象
         //                 ^^^^^^^ Caution , parse as host
         assertURLStrDecoder(url);
         assertNull(url.getProtocol());
@@ -60,9 +60,16 @@ public class URLTest {
         assertEquals(2, url.getParameters().size());
         assertEquals("1.0.0", url.getParameter("version"));
         assertEquals("morgan", url.getParameter("application"));
+
+        /**
+         * 调试分析：
+         *
+         * 参考链接：
+         * a）https://blog.csdn.net/Danalee_Py/article/details/108083038  URL特殊字符编码对照表
+         */
     }
 
-    private void assertURLStrDecoder(URL url) {
+    private void assertURLStrDecoder(URL url) { //先将Url对应的字符串编码，再进行解码，验证编码、解码是否正确
         String fullURLStr = url.toFullString();
         URL newUrl = URLStrParser.parseEncodedStr(URL.encode(fullURLStr)); //将编码后的url字符串，解析为URL对象
         assertEquals(URL.valueOf(fullURLStr), newUrl);
