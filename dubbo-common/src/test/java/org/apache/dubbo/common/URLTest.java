@@ -42,7 +42,7 @@ public class URLTest {
         assertNull(url.getPassword());
         assertNull(url.getHost());
         assertNull(url.getAddress());
-        assertEquals(0, url.getPort()); //端口默认为0
+        assertEquals(0, url.getPort()); //端口号，系统默认设置为0
         assertEquals("context/path", url.getPath());
         assertEquals(2, url.getParameters().size());
         assertEquals("1.0.0", url.getParameter("version"));
@@ -66,6 +66,8 @@ public class URLTest {
          *
          * 参考链接：
          * a）https://blog.csdn.net/Danalee_Py/article/details/108083038  URL特殊字符编码对照表
+         * b）https://tool.oschina.net/commons?type=4 ASCII对照表
+         * c）https://www.liaoxuefeng.com/wiki/1252599548343744/1304227703947297 URL编码算法
          */
     }
 

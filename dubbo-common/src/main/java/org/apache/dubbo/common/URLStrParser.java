@@ -28,7 +28,7 @@ public final class URLStrParser {
 
     private static final char SPACE = 0x20;
 
-    private static final ThreadLocal<TempBuf> DECODE_TEMP_BUF = ThreadLocal.withInitial(() -> new TempBuf(1024));
+    private static final ThreadLocal<TempBuf> DECODE_TEMP_BUF = ThreadLocal.withInitial(() -> new TempBuf(1024)); //对字符数组或字节数组做临时缓存
 
     private URLStrParser() {
         //empty
@@ -155,14 +155,14 @@ public final class URLStrParser {
     /**
      * @param encodedURLStr : after {@link URL#encode(String)} string
      *                      encodedURLStr after decode format: protocol://username:password@host:port/path?k1=v1&k2=v2
-     *                      [protocol://][username:password@][host:port]/[path][?k1=v1&k2=v2]
+     *                      [protocol://][username:password@][host:port]/[path][?k1=v1&k2=v2] （解码后的数据格式）
      */
     public static URL parseEncodedStr(String encodedURLStr) { //解析编码后的URL字符串，产生对应的URL对象
         Map<String, String> parameters = null; //编码前的字符串/context/path?version=1.0.0&application=morgan，编码后的字符串：%2Fcontext%2Fpath%3Fapplication%3Dmorgan%26version%3D1.0.0
-        int pathEndIdx = encodedURLStr.indexOf("%3F");// '?'  查找参数分隔符
-        if (pathEndIdx >= 0) { //解析编码后的参数键值对
+        int pathEndIdx = encodedURLStr.indexOf("%3F");// '?'  查找参数分隔符（%3F对应的ASCII值为'?'）
+        if (pathEndIdx >= 0) { //url中包含参数
             parameters = parseEncodedParams(encodedURLStr, pathEndIdx + 3); //取%3F后面的字符串处理
-        } else {
+        } else { //url中不包含参数
             pathEndIdx = encodedURLStr.length();
         }
 
@@ -172,7 +172,7 @@ public final class URLStrParser {
     }
 
     private static Map<String, String> parseEncodedParams(String str, int from) { //解析出编码url中的参数键值对
-        int len = str.length();
+        int len = str.length(); //取出字符串长度
         if (from >= len) { //起始位置不能超过字符串长度
             return Collections.emptyMap();
         }
@@ -182,30 +182,30 @@ public final class URLStrParser {
         int nameStart = from;
         int valueStart = -1;
         int i;
-        for (i = from; i < len; i++) {
+        for (i = from; i < len; i++) { //遍历url字符串的字符（from为参数起始位置）
             char ch = str.charAt(i);
-            if (ch == '%') { //遇到百分号分隔符，解码得到原始的字符
+            if (ch == '%') { //遇到百分号分隔符，解码得到原始的字符（ASCII中的字符，经过url编码后，都是类似 %xx，即%后面带上两个16进制字符）
                 if (i + 3 > len) { //分隔符不是完整的情况，抛出异常，比如%3、%等，应该是%3D，百分号后面带两个十六进制数
                     throw new IllegalArgumentException("unterminated escape sequence at index " + i + " of: " + str);
                 }
-                ch = (char) decodeHexByte(str, i + 1); //解码为16进制字符
+                ch = (char) decodeHexByte(str, i + 1); //解码16进制字符，得到原有字符，如"3D"处理后，得到字符'='
                 i += 2;
             }
 
             switch (ch) { //找到指定的分隔符，做对应的处理
-                case '=':
-                    if (nameStart == i) {
+                case '=': //按键值对处理
+                    if (nameStart == i) { //url未经过编码时，进入此处
                         nameStart = i + 1;
                     } else if (valueStart < nameStart) {
-                        valueStart = i + 1;
+                        valueStart = i + 1; //记录值的下标
                     }
                     break;
                 case ';':
-                case '&': //进行参数拼接
+                case '&': //多个参数时，进行参数拼接
                     addParam(str, true, nameStart, valueStart, i - 2, params, tempBuf);
                     nameStart = i + 1;
                     break;
-                default:
+                default: //非分隔符，不做处理
                     // continue
             }
         }
@@ -215,7 +215,7 @@ public final class URLStrParser {
 
     private static boolean addParam(String str, boolean isEncoded, int nameStart, int valueStart, int valueEnd, Map<String, String> params,
                                     TempBuf tempBuf) {
-        if (nameStart >= valueEnd) {
+        if (nameStart >= valueEnd) { //键与值的下标不正确，返回false
             return false;
         }
 
@@ -223,11 +223,11 @@ public final class URLStrParser {
             valueStart = valueEnd + 1;
         }
 
-        if (isEncoded) {
+        if (isEncoded) { //键值对被编码过，需要解码
             String name = decodeComponent(str, nameStart, valueStart - 3, false, tempBuf);
             String value = decodeComponent(str, valueStart, valueEnd, false, tempBuf);
             params.put(name, value);
-        } else {
+        } else { //键值对未被编码，直接截取url字符串中的值，设置到参数Map中
             String name = str.substring(nameStart, valueStart -1);
             String value = str.substring(valueStart, valueEnd);
             params.put(name, value);
@@ -329,15 +329,15 @@ public final class URLStrParser {
             this.bytes = new byte[bufSize];
         }
 
-        public char[] charBuf(int size) {
+        public char[] charBuf(int size) { //构建字符数组
             char[] chars = this.chars;
-            if (size <= chars.length) {
+            if (size <= chars.length) { //若构建的字符数，不超过当前字符数组的数量，则使用当前的字符数组
                 return chars;
             }
             return new char[size];
         }
 
-        public byte[] byteBuf(int size) {
+        public byte[] byteBuf(int size) { //构建字节数组
             byte[] bytes = this.bytes;
             if (size <= bytes.length) {
                 return bytes;

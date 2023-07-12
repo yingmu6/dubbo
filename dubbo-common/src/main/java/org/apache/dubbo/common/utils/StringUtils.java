@@ -79,24 +79,24 @@ public final class StringUtils {
 
     static {
         HEX2B = new byte[128];
-        Arrays.fill(HEX2B, (byte) -1);
-        HEX2B['0'] = (byte) 0;
-        HEX2B['1'] = (byte) 1;
+        Arrays.fill(HEX2B, (byte) -1); //先将数组中的元素，都初始化为-1
+        HEX2B['0'] = (byte) 0; // '0'字符对应的ASCII值为48
+        HEX2B['1'] = (byte) 1; // '1'字符对应的ASCII值为49
         HEX2B['2'] = (byte) 2;
         HEX2B['3'] = (byte) 3;
-        HEX2B['4'] = (byte) 4;
+        HEX2B['4'] = (byte) 4; //将16进制字符对应的byte值关联映射（将字符作为下标存储，好处就是：可以通过字符做下标，直接读取）
         HEX2B['5'] = (byte) 5;
         HEX2B['6'] = (byte) 6;
         HEX2B['7'] = (byte) 7;
         HEX2B['8'] = (byte) 8;
         HEX2B['9'] = (byte) 9;
-        HEX2B['A'] = (byte) 10;
+        HEX2B['A'] = (byte) 10; //'A'字符对应的ASCII值为65
         HEX2B['B'] = (byte) 11;
         HEX2B['C'] = (byte) 12;
         HEX2B['D'] = (byte) 13;
         HEX2B['E'] = (byte) 14;
         HEX2B['F'] = (byte) 15;
-        HEX2B['a'] = (byte) 10;
+        HEX2B['a'] = (byte) 10; //'a'字符对应的ASCII值为97
         HEX2B['b'] = (byte) 11;
         HEX2B['c'] = (byte) 12;
         HEX2B['d'] = (byte) 13;
@@ -1056,24 +1056,24 @@ public final class StringUtils {
         return parameters;
     }
 
-    public static int decodeHexNibble(final char c) { //解码16进制数
+    public static int decodeHexNibble(final char c) { //解码16进制数（Nibble：半字节）
         // Character.digit() is not used here, as it addresses a larger（这里不使用Character.digit()，因为它指向更大的字符集(包括ASCII和全宽拉丁字母)）
         // set of characters (both ASCII and full-width latin letters).
         byte[] hex2b = HEX2B;
-        return c < hex2b.length ? hex2b[c] : -1; //或者指定位置的16进制数
+        return c < hex2b.length ? hex2b[c] : -1; //获取指定位置的16进制数（字符值为超过hex2b数组大小，可直接作为下标读取内容）
     }
 
     /**
      * Decode a 2-digit hex byte from within a string.（从字符串中解码一个2位数的十六进制字节）
      */
-    public static byte decodeHexByte(CharSequence s, int pos) { //解析
-        int hi = decodeHexNibble(s.charAt(pos));
-        int lo = decodeHexNibble(s.charAt(pos + 1));
+    public static byte decodeHexByte(CharSequence s, int pos) { //获取2位的十六进制字符对应的byte值（解析16进制的字符，得到对应的byte值）
+        int hi = decodeHexNibble(s.charAt(pos)); //高位对应的整数
+        int lo = decodeHexNibble(s.charAt(pos + 1)); //低位对应的整数（一个字节=2个16进制字符，如16进制字符'D'，对应的字节值为13）
         if (hi == -1 || lo == -1) {
             throw new IllegalArgumentException(String.format(
                     "invalid hex byte '%s' at index %d of '%s'", s.subSequence(pos, pos + 2), pos, s));
         }
-        return (byte) ((hi << 4) + lo);
+        return (byte) ((hi << 4) + lo); //将高位对应的整数左移4位 + 低位整数，即为对应的ASCII值，如 hi=3，lo=13，hi<<4等于48，所以hi<<4+lo=61，对应的ASCII的字符为'='
     }
 
     /**
