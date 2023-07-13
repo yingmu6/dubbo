@@ -34,15 +34,15 @@ import static org.junit.jupiter.api.Assertions.*;
 public class URLTest {
 
     @Test
-    public void test_valueOf_noProtocolAndHost() throws Exception {
+    public void test_valueOf_noProtocolAndHost() throws Exception { //已测（测试url没有protocol、host的场景）
         URL url = URL.valueOf("/context/path?version=1.0.0&application=morgan"); //没有protocol、host
-        assertURLStrDecoder(url);
+        assertURLStrDecoder(url); //URL编解码测试
         assertNull(url.getProtocol());
-        assertNull(url.getUsername()); //protocol、username、password、host等主体信息，若没有设置，系统不会设置默认值，即值会为null
+        assertNull(url.getUsername());
         assertNull(url.getPassword());
         assertNull(url.getHost());
         assertNull(url.getAddress());
-        assertEquals(0, url.getPort()); //端口号，系统默认设置为0
+        assertEquals(0, url.getPort());
         assertEquals("context/path", url.getPath());
         assertEquals(2, url.getParameters().size());
         assertEquals("1.0.0", url.getParameter("version"));
@@ -63,6 +63,9 @@ public class URLTest {
 
         /**
          * 调试分析：
+         * 1）protocol、username、password、host等主体信息，若没有设置，系统不会设置默认值，即值会为null
+         * 2）端口号，系统默认设置为0
+         * 3）编解码，可以使用Java提供的URL编解码能力，Dubbo做了封装，也可以使用Dubbo自行实现的URLStrParser.parseDecodedStr(...)处理
          *
          * 参考链接：
          * a）https://blog.csdn.net/Danalee_Py/article/details/108083038  URL特殊字符编码对照表
@@ -76,30 +79,30 @@ public class URLTest {
         URL newUrl = URLStrParser.parseEncodedStr(URL.encode(fullURLStr)); //将编码后的url字符串，解析为URL对象
         assertEquals(URL.valueOf(fullURLStr), newUrl);
 
-        URL newUrl2 = URLStrParser.parseDecodedStr(fullURLStr); //将未编码的字符串，解析为URL对象
+        URL newUrl2 = URLStrParser.parseDecodedStr(fullURLStr); //解析未编码的URL字符串（调用的方法不同）
         assertEquals(URL.valueOf(fullURLStr), newUrl2);
     }
 
     @Test
-    public void test_valueOf_noProtocol() throws Exception {
-        URL url = URL.valueOf("10.20.130.230");
+    public void test_valueOf_noProtocol() throws Exception { //已测（url中的host、port、username、password等解析）
+        URL url = URL.valueOf("10.20.130.230"); // "10.20.130.230"经处理后，为host值
         assertURLStrDecoder(url);
         assertNull(url.getProtocol());
         assertNull(url.getUsername());
         assertNull(url.getPassword());
         assertEquals("10.20.130.230", url.getHost());
-        assertEquals("10.20.130.230", url.getAddress());
+        assertEquals("10.20.130.230", url.getAddress()); //address时构建URL对象时创建的，由host、port组成（port<=0时，只包含host）
         assertEquals(0, url.getPort());
         assertNull(url.getPath());
         assertEquals(0, url.getParameters().size());
 
-        url = URL.valueOf("10.20.130.230:20880");
+        url = URL.valueOf("10.20.130.230:20880"); //能解析出host、port
         assertURLStrDecoder(url);
         assertNull(url.getProtocol());
         assertNull(url.getUsername());
         assertNull(url.getPassword());
         assertEquals("10.20.130.230", url.getHost());
-        assertEquals("10.20.130.230:20880", url.getAddress());
+        assertEquals("10.20.130.230:20880", url.getAddress()); //端口号不为空，所以address为host、port组成
         assertEquals(20880, url.getPort());
         assertNull(url.getPath());
         assertEquals(0, url.getParameters().size());
@@ -112,7 +115,7 @@ public class URLTest {
         assertEquals("10.20.130.230", url.getHost());
         assertEquals("10.20.130.230", url.getAddress());
         assertEquals(0, url.getPort());
-        assertEquals("context/path", url.getPath());
+        assertEquals("context/path", url.getPath()); // '/'符号后的，为资源路径（去除参数'?'部分的内容）
         assertEquals(0, url.getParameters().size());
 
         url = URL.valueOf("10.20.130.230:20880/context/path");
@@ -130,7 +133,7 @@ public class URLTest {
         assertURLStrDecoder(url);
         assertNull(url.getProtocol());
         assertEquals("admin", url.getUsername());
-        assertEquals("hello1234", url.getPassword());
+        assertEquals("hello1234", url.getPassword()); // '@'字符前字符串为用户名、密码组合
         assertEquals("10.20.130.230", url.getHost());
         assertEquals("10.20.130.230:20880", url.getAddress());
         assertEquals(20880, url.getPort());

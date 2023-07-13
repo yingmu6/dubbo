@@ -43,10 +43,10 @@ public final class Utf8Utils {
     }
 
     // 按UTF-8解码
-    public static int decodeUtf8(byte[] srcBytes, int srcIdx, int srcSize, char[] destChars, int destIdx) {
+    public static int decodeUtf8(byte[] srcBytes, int srcIdx, int srcSize, char[] destChars, int destIdx) { //从原字节数组中取出字节，存入到目标字符数组中
         // Bitwise OR combines the sign bits so any negative value fails the check.
         if ((srcIdx | srcSize | srcBytes.length - srcIdx - srcSize) < 0
-                || (destIdx | destChars.length - destIdx - srcSize) < 0) {
+                || (destIdx | destChars.length - destIdx - srcSize) < 0) { //按位组合运算，只要有一个数为负数，都会失败抛出异常
             String exMsg = String.format("buffer srcBytes.length=%d, srcIdx=%d, srcSize=%d, destChars.length=%d, " +
                     "destIdx=%d", srcBytes.length, srcIdx, srcSize, destChars.length, destIdx);
             throw new ArrayIndexOutOfBoundsException(
@@ -59,18 +59,18 @@ public final class Utf8Utils {
 
         // Optimize for 100% ASCII (Hotspot loves small simple top-level loops like this).
         // This simple loop stops when we encounter a byte >= 0x80 (i.e. non-ASCII).
-        while (offset < limit) {
+        while (offset < limit) { //ASCII相关的字符值处理
             byte b = srcBytes[offset];
-            if (!DecodeUtil.isOneByte(b)) {
+            if (!DecodeUtil.isOneByte(b)) { //过滤掉非ASCII的字符
                 break;
             }
             offset++;
-            DecodeUtil.handleOneByteSafe(b, destChars, destIdx++);
+            DecodeUtil.handleOneByteSafe(b, destChars, destIdx++); //将字节转换为字符，存入目标字符数组的指定位置
         }
 
-        while (offset < limit) {
+        while (offset < limit) { //若全是ASCII字符，就不进入此循环了，上一个循环已经处理了
             byte byte1 = srcBytes[offset++];
-            if (DecodeUtil.isOneByte(byte1)) {
+            if (DecodeUtil.isOneByte(byte1)) { // "测试"两个字，在字节数组中的存放为，[-26,-75,-117,-24,-81,-107]
                 DecodeUtil.handleOneByteSafe(byte1, destChars, destIdx++);
                 // It's common for there to be multiple ASCII characters in a run mixed in, so add an
                 // extra optimized loop to take care of these runs.
@@ -82,12 +82,12 @@ public final class Utf8Utils {
                     offset++;
                     DecodeUtil.handleOneByteSafe(b, destChars, destIdx++);
                 }
-            } else if (DecodeUtil.isTwoBytes(byte1)) {
+            } else if (DecodeUtil.isTwoBytes(byte1)) { //按两字节处理（根据字节值范围，判断按几个字节处理）
                 if (offset >= limit) {
                     throw new IllegalArgumentException("invalid UTF-8.");
                 }
                 DecodeUtil.handleTwoBytesSafe(byte1, /* byte2 */ srcBytes[offset++], destChars, destIdx++);
-            } else if (DecodeUtil.isThreeBytes(byte1)) {
+            } else if (DecodeUtil.isThreeBytes(byte1)) { //按三字节处理（比如含有中文，如中文 "测试"，编码后为 "%E6%B5%8B%E8%AF%95"，一个中文3个字节）
                 if (offset >= limit - 1) {
                     throw new IllegalArgumentException("invalid UTF-8.");
                 }
@@ -118,24 +118,24 @@ public final class Utf8Utils {
     private static class DecodeUtil {
 
         /**
-         * Returns whether this is a single-byte codepoint (i.e., ASCII) with the form '0XXXXXXX'.
+         * Returns whether this is a single-byte codepoint 单字节码点 (i.e., ASCII) with the form '0XXXXXXX'.
          */
         private static boolean isOneByte(byte b) {
-            return b >= 0;
+            return b >= 0; //即为0~127之间的值
         }
 
         /**
          * Returns whether this is a two-byte codepoint with the form '10XXXXXX'.
          */
         private static boolean isTwoBytes(byte b) {
-            return b < (byte) 0xE0;
+            return b < (byte) 0xE0; //0xEO的值为224，(byte) 0xE0值为 -32
         }
 
         /**
          * Returns whether this is a three-byte codepoint with the form '110XXXXX'.
          */
         private static boolean isThreeBytes(byte b) {
-            return b < (byte) 0xF0;
+            return b < (byte) 0xF0; //0xFO的值为240，(byte) 0xF0值为-16
         }
 
         private static void handleOneByteSafe(byte byte1, char[] resultArr, int resultPos) {
@@ -202,14 +202,14 @@ public final class Utf8Utils {
         }
 
         /**
-         * Returns whether the byte is not a valid continuation of the form '10XXXXXX'.
+         * Returns whether the byte is not a valid continuation of the form '10XXXXXX'. （返回该字节是否不是'10XXXXXX'的有效延续）
          */
         private static boolean isNotTrailingByte(byte b) {
             return b > (byte) 0xBF;
         }
 
         /**
-         * Returns the actual value of the trailing byte (removes the prefix '10') for composition.
+         * Returns the actual value of the trailing byte (removes the prefix '10') for composition.（返回合成末尾字节的实际值(移除前缀'10')）
          */
         private static int trailingByteValue(byte b) {
             return b & 0x3F;

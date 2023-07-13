@@ -39,7 +39,7 @@ public final class URLStrParser {
      *                      decodedURLStr format: protocol://username:password@host:port/path?k1=v1&k2=v2
      *                      [protocol://][username:password@][host:port]/[path][?k1=v1&k2=v2]
      */
-    public static URL parseDecodedStr(String decodedURLStr) {
+    public static URL parseDecodedStr(String decodedURLStr) { //解析解码后的url字符串（即url未被编码）
         Map<String, String> parameters = null;
         int pathEndIdx = decodedURLStr.indexOf('?');
         if (pathEndIdx >= 0) {
@@ -223,7 +223,7 @@ public final class URLStrParser {
             valueStart = valueEnd + 1;
         }
 
-        if (isEncoded) { //键值对被编码过，需要解码
+        if (isEncoded) { //键值对被编码过，需要解码（从方法入口判定的，如URLStrParser#parseDecodedStr方法时，isEncoded=false）
             String name = decodeComponent(str, nameStart, valueStart - 3, false, tempBuf);
             String value = decodeComponent(str, valueStart, valueEnd, false, tempBuf);
             params.put(name, value);
@@ -244,7 +244,7 @@ public final class URLStrParser {
         int firstEscaped = -1;
         for (int i = from; i < toExcluded; i++) {
             char c = s.charAt(i);
-            if (c == '%' || c == '+' && !isPath) {
+            if (c == '%' || c == '+' && !isPath) { //判断指定区间 from ~ toExcluded，是否包含 '%'、'+'等字符
                 firstEscaped = i;
                 break;
             }

@@ -187,7 +187,7 @@ class URL implements Serializable {
         this.password = password;
         this.host = host;
         this.port = Math.max(port, 0);
-        this.address = getAddress(this.host, this.port); //如：127.0.0.1:2181
+        this.address = getAddress(this.host, this.port); //构建地址，由host、port组成，如：127.0.0.1:2181（port<=0时，只包含host值）
 
         // trim the beginning "/"
         while (path != null && path.startsWith("/")) {
@@ -204,7 +204,7 @@ class URL implements Serializable {
     }
 
     private static String getAddress(String host, int port) { //构建地址信息，包含host、port
-        return port <= 0 ? host : host + ':' + port;
+        return port <= 0 ? host : host + ':' + port; //端口值大于0时，使用host、port拼接作为address
     }
 
     /**
@@ -284,7 +284,7 @@ class URL implements Serializable {
             }
             url = url.substring(i + 1);
         }
-        i = url.lastIndexOf(':'); //url如：127.0.0.1:2181
+        i = url.lastIndexOf(':'); //分隔出host与port，url如：127.0.0.1:2181
         if (i >= 0 && i < url.length() - 1) {  //解析host、ip
             if (url.lastIndexOf('%') > i) { //ipv6 忽略不处理
                 // ipv6 address with scope id
@@ -296,7 +296,7 @@ class URL implements Serializable {
                 url = url.substring(0, i);
             }
         }
-        if (url.length() > 0) {
+        if (url.length() > 0) { //若url字符串经过前面处理后，还存在字符，则设置为host，如url="10.20.130.230"
             host = url;
         }
 
@@ -396,7 +396,7 @@ class URL implements Serializable {
             return "";
         }
         try {
-            return URLDecoder.decode(value, "UTF-8");
+            return URLDecoder.decode(value, "UTF-8"); //使用Java的URL解码处理
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
