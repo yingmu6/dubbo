@@ -144,16 +144,16 @@ public class URLTest {
     }
 
     @Test
-    public void test_valueOf_noHost() throws Exception {
+    public void test_valueOf_noHost() throws Exception { //已测（测试protocol、path、parameters的获取）
         URL url = URL.valueOf("file:///home/user1/router.js");
         assertURLStrDecoder(url);
-        assertEquals("file", url.getProtocol());
+        assertEquals("file", url.getProtocol()); //会根据 "://" 拆分出协议
         assertNull(url.getUsername());
         assertNull(url.getPassword());
         assertNull(url.getHost());
         assertNull(url.getAddress());
         assertEquals(0, url.getPort());
-        assertEquals("home/user1/router.js", url.getPath());
+        assertEquals("home/user1/router.js", url.getPath()); // 会根据 "/" 拆分出路径
         assertEquals(0, url.getParameters().size());
 
         // Caution!!
@@ -165,11 +165,11 @@ public class URLTest {
         assertNull(url.getPassword());
         assertEquals("home", url.getHost());
         assertEquals(0, url.getPort());
-        assertEquals("user1/router.js", url.getPath());
+        assertEquals("user1/router.js", url.getPath()); //会取第一个 "/" 后面内容为path，因为home/user1/router.js，第一个"/"后的内容为user1/router.js
         assertEquals(0, url.getParameters().size());
 
 
-        url = URL.valueOf("file:/home/user1/router.js");
+        url = URL.valueOf("file:/home/user1/router.js"); //这种是不规范写法，但已做了兼容处理，如根据 "://"找到协议，会根据 ":/"找到协议
         assertURLStrDecoder(url);
         assertEquals("file", url.getProtocol());
         assertNull(url.getUsername());
@@ -182,13 +182,13 @@ public class URLTest {
 
         url = URL.valueOf("file:///d:/home/user1/router.js");
         assertURLStrDecoder(url);
-        assertEquals("file", url.getProtocol());
+        assertEquals("file", url.getProtocol()); // "://"前的是protocol
         assertNull(url.getUsername());
         assertNull(url.getPassword());
         assertNull(url.getHost());
         assertNull(url.getAddress());
         assertEquals(0, url.getPort());
-        assertEquals("d:/home/user1/router.js", url.getPath());
+        assertEquals("d:/home/user1/router.js", url.getPath()); // "/"后的是path
         assertEquals(0, url.getParameters().size());
 
         url = URL.valueOf("file:///home/user1/router.js?p1=v1&p2=v2");
@@ -204,7 +204,7 @@ public class URLTest {
         Map<String, String> params = new HashMap<String, String>();
         params.put("p1", "v1");
         params.put("p2", "v2");
-        assertEquals(params, url.getParameters());
+        assertEquals(params, url.getParameters()); // "?" 后面是参数信息，多个参数用 "&"分隔
 
         url = URL.valueOf("file:/home/user1/router.js?p1=v1&p2=v2");
         assertURLStrDecoder(url);
@@ -223,14 +223,14 @@ public class URLTest {
     }
 
     @Test
-    public void test_valueOf_WithProtocolHost() throws Exception {
+    public void test_valueOf_WithProtocolHost() throws Exception { //已测（测试带有protocol、host的url解析）
         URL url = URL.valueOf("dubbo://10.20.130.230");
         assertURLStrDecoder(url);
         assertEquals("dubbo", url.getProtocol());
         assertNull(url.getUsername());
         assertNull(url.getPassword());
         assertEquals("10.20.130.230", url.getHost());
-        assertEquals("10.20.130.230", url.getAddress());
+        assertEquals("10.20.130.230", url.getAddress()); //端口号未设置时，host即为address
         assertEquals(0, url.getPort());
         assertNull(url.getPath());
         assertEquals(0, url.getParameters().size());
@@ -242,13 +242,13 @@ public class URLTest {
         assertNull(url.getPassword());
         assertEquals("10.20.130.230", url.getHost());
         assertEquals("10.20.130.230:20880", url.getAddress());
-        assertEquals(20880, url.getPort());
+        assertEquals(20880, url.getPort()); // 会通过 ":" 解析出端口号
         assertEquals("context/path", url.getPath());
         assertEquals(0, url.getParameters().size());
 
         url = URL.valueOf("dubbo://admin:hello1234@10.20.130.230:20880");
         assertURLStrDecoder(url);
-        assertEquals("dubbo", url.getProtocol());
+        assertEquals("dubbo", url.getProtocol()); //会根据 "@" 和 ":" 解析出用户名和密码
         assertEquals("admin", url.getUsername());
         assertEquals("hello1234", url.getPassword());
         assertEquals("10.20.130.230", url.getHost());
@@ -267,7 +267,7 @@ public class URLTest {
         assertEquals(20880, url.getPort());
         assertNull(url.getPath());
         assertEquals(1, url.getParameters().size());
-        assertEquals("1.0.0", url.getParameter("version"));
+        assertEquals("1.0.0", url.getParameter("version")); //解析出参数
 
         url = URL.valueOf("dubbo://admin:hello1234@10.20.130.230:20880/context/path?version=1.0.0&application=morgan");
         assertURLStrDecoder(url);
@@ -282,6 +282,10 @@ public class URLTest {
         assertEquals("1.0.0", url.getParameter("version"));
         assertEquals("morgan", url.getParameter("application"));
 
+        /**
+         * URL字符串：dubbo://admin:hello1234@10.20.130.230:20880/context/path?version=1.0.0&application=morgan&noValue
+         * URL解析： protocol=>dubbo，username=>admin，password=>hello123，host=>10.20.130.230，port=>20880，path=>context/path，parameters=>{version=1.0.0,application=morgan,noValue=noValue}
+         */
         url = URL.valueOf("dubbo://admin:hello1234@10.20.130.230:20880/context/path?version=1.0.0&application=morgan&noValue");
         assertURLStrDecoder(url);
         assertEquals("dubbo", url.getProtocol());
@@ -299,29 +303,29 @@ public class URLTest {
 
     // TODO Do not want to use spaces? See: DUBBO-502, URL class handles special conventions for special characters.
     @Test
-    public void test_valueOf_spaceSafe() throws Exception {
+    public void test_valueOf_spaceSafe() throws Exception { //已测（参数值中带有空格的输出）
         URL url = URL.valueOf("http://1.2.3.4:8080/path?key=value1 value2");
         assertURLStrDecoder(url);
-        assertEquals("http://1.2.3.4:8080/path?key=value1 value2", url.toString());
+        assertEquals("http://1.2.3.4:8080/path?key=value1 value2", url.toString()); //valueOf(...)处理时，未对key、value的空格做处理，即会原样输出
         assertEquals("value1 value2", url.getParameter("key"));
     }
 
     @Test
-    public void test_noValueKey() throws Exception {
+    public void test_noValueKey() throws Exception { //已测（测试参数没有value的场景）
         URL url = URL.valueOf("http://1.2.3.4:8080/path?k0&k1=v1");
 
         assertURLStrDecoder(url);
         assertTrue(url.hasParameter("k1"));
         assertTrue(url.hasParameter("k0"));
 
-        // If a Key has no corresponding Value, then the Key also used as the Value.
+        // If a Key has no corresponding（相应的） Value, then the Key also used as the Value. (若key没有相应的值时，key也作为value)
         assertEquals("k0", url.getParameter("k0")); //只有key时，value为key的值
     }
 
     @Test
-    public void test_valueOf_Exception_noProtocol() throws Exception {
+    public void test_valueOf_Exception_noProtocol() throws Exception { //已测（测试在解析URL时，没有设置protocol，抛出异常的场景）
         try {
-            URL.valueOf("://1.2.3.4:8080/path");
+            URL.valueOf("://1.2.3.4:8080/path"); // 解析URL字符串时，"://"前面没有设置protocol，所以会抛出异常
             fail();
         } catch (IllegalStateException expected) {
             assertEquals("url missing protocol: \"://1.2.3.4:8080/path\"", expected.getMessage());
@@ -329,14 +333,14 @@ public class URLTest {
 
         try {
             String encodedURLStr = URL.encode("://1.2.3.4:8080/path");
-            URLStrParser.parseEncodedStr(encodedURLStr);
+            URLStrParser.parseEncodedStr(encodedURLStr); // 解析编码的url字符串时，会判断是否设置protocol
             fail();
         } catch (IllegalStateException expected) {
             assertEquals("url missing protocol: \"://1.2.3.4:8080/path\"", URL.decode(expected.getMessage()));
         }
 
         try {
-            URLStrParser.parseDecodedStr("://1.2.3.4:8080/path");
+            URLStrParser.parseDecodedStr("://1.2.3.4:8080/path"); // 解析已编码的url字符串时，会判断是否设置protocol
             fail();
         } catch (IllegalStateException expected) {
             assertEquals("url missing protocol: \"://1.2.3.4:8080/path\"", expected.getMessage());
@@ -344,25 +348,25 @@ public class URLTest {
     }
 
     @Test
-    public void test_getAddress() throws Exception {
+    public void test_getAddress() throws Exception { //已测（测试Address的设置，即为host、post组合）
         URL url1 = URL.valueOf("dubbo://admin:hello1234@10.20.130.230:20880/context/path?version=1.0.0&application=morgan");
         assertURLStrDecoder(url1);
         assertEquals("10.20.130.230:20880", url1.getAddress());
     }
 
     @Test
-    public void test_getAbsolutePath() throws Exception {
+    public void test_getAbsolutePath() throws Exception { //已测（绝对路径 = "/" + path）
         URL url = new URL("p1", "1.2.2.2", 33);
         assertURLStrDecoder(url);
         assertNull(url.getAbsolutePath());
 
         url = new URL("file", null, 90, "/home/user1/route.js");
         assertURLStrDecoder(url);
-        assertEquals("/home/user1/route.js", url.getAbsolutePath());
+        assertEquals("/home/user1/route.js", url.getAbsolutePath()); //绝对路径，path前加上"/"
     }
 
     @Test
-    public void test_equals() throws Exception {
+    public void test_equals() throws Exception { //已测（比较URL是否相等，比较内容参见URL#equals）
         URL url1 = URL.valueOf("dubbo://admin:hello1234@10.20.130.230:20880/context/path?version=1.0.0&application=morgan");
         assertURLStrDecoder(url1);
 
@@ -372,21 +376,32 @@ public class URLTest {
         URL url2 = new URL("dubbo", "admin", "hello1234", "10.20.130.230", 20880, "context/path", params);
 
         assertURLStrDecoder(url2);
-        assertEquals(url1, url2);
+        assertEquals(url1, url2); //最终调用是Object的equals()，URL重写了equals()方法，所以会进入URL的equals()方法
+        /**
+         * URL重写的equals方法中：
+         * 会以protocol、username、password、host、port、path、parameters等URL组成要素来进行比较，全部内容都相等，即两个URL就相等
+         */
     }
 
     @Test
-    public void test_toString() throws Exception {
+    public void test_toString() throws Exception { //已测（测试URL转换为url字符串）
         URL url1 = URL.valueOf("dubbo://admin:hello1234@10.20.130.230:20880/context/path?version=1.0.0&application=morgan");
         assertURLStrDecoder(url1);
-        assertThat(url1.toString(), anyOf(
+        assertThat(url1.toString(), anyOf( //url1.toString()对应的值可能是其中的一个字符串，因为不同hash算法计算的hash值结果不同，可能参数Map的顺序有所不同
                 equalTo("dubbo://10.20.130.230:20880/context/path?version=1.0.0&application=morgan"),
                 equalTo("dubbo://10.20.130.230:20880/context/path?application=morgan&version=1.0.0"))
         );
+
+        /**
+         * 调试中问题：
+         * 1）为啥参数Map中，为{application=morgan,version=1.0.0}，与url中"?version=1.0.0&application=morgan"顺序不一样，是在哪里设置的？
+         *    解答：并不是HashMap对key排序，而是HashMap会计算key的hash值进行插入元素，有时候key计算出了hash值像是排序的，其实不是排序的，是hash值计算的结果
+         * 参考链接：https://zhuanlan.zhihu.com/p/494172384
+         */
     }
 
     @Test
-    public void test_toFullString() throws Exception {
+    public void test_toFullString() throws Exception { //已测（测试URL转换为字符串，带有用户名和密码的）
         URL url1 = URL.valueOf("dubbo://admin:hello1234@10.20.130.230:20880/context/path?version=1.0.0&application=morgan");
         assertURLStrDecoder(url1);
         assertThat(url1.toFullString(), anyOf(
@@ -396,7 +411,7 @@ public class URLTest {
     }
 
     @Test
-    public void test_set_methods() throws Exception {
+    public void test_set_methods() throws Exception { //todo @pause
         URL url = URL.valueOf("dubbo://admin:hello1234@10.20.130.230:20880/context/path?version=1.0.0&application=morgan");
         assertURLStrDecoder(url);
 

@@ -49,7 +49,7 @@ import static org.apache.dubbo.common.utils.StringUtils.isBlank;
  * <li>registry://192.168.1.7:9090/org.apache.dubbo.service1?param1=value1&amp;param2=value2
  * </ul>
  * <p>
- * Some strange example below:
+ * Some strange example below:（一些奇怪的URL例子）
  * <ul>
  * <li>192.168.1.3:20880<br>
  * for this case, url protocol = null, url host = 192.168.1.3, port = 20880, url path = null
@@ -83,7 +83,7 @@ class URL implements Serializable {
     private final String password; //密码
 
     // by default, host to registry
-    private final String host; //主机
+    private final String host; //主机号
 
     // by default, port to registry
     private final int port; //端口（默认值为0）
@@ -237,7 +237,7 @@ class URL implements Serializable {
                     int j = part.indexOf('='); //按等号解析，解析出参数的键值对
                     if (j >= 0) {
                         String key = part.substring(0, j); //key如：name
-                        String value = part.substring(j + 1);//value如：test
+                        String value = part.substring(j + 1);//value如：test （dubbo不会对key、value去空格，若有空格，原样输出，如key=value1 value2，那么值就为"value1 value2"）
                         parameters.put(key, value); //设置到url的参数map集合中
                         // compatible with lower versions registering "default." keys
                         if (key.startsWith(DEFAULT_KEY_PREFIX)) { //若参数名是"default."开头的，则把这个前缀去掉存储，即这个值会有两个不同的key
@@ -252,13 +252,13 @@ class URL implements Serializable {
         }
         i = url.indexOf("://"); //（参数前的字符处理）
         if (i >= 0) { //解析协议，如：zookeeper://127.0.0.1:2181
-            if (i == 0) {
+            if (i == 0) { // "://"前面没有设置协议时，就会抛出异常
                 throw new IllegalStateException("url missing protocol: \"" + url + "\"");
             }
             protocol = url.substring(0, i); //如：zookeeper
             url = url.substring(i + 3); //如：127.0.0.1:2181
         } else { //未设置协议（系统没有设置默认协议，若没设定，则protocol=null）
-            // case: file:/path/to/file.txt
+            // case: file:/path/to/file.txt（兼容不规范的写法）
             i = url.indexOf(":/");
             if (i >= 0) {
                 if (i == 0) {
@@ -538,7 +538,7 @@ class URL implements Serializable {
         return new URL(protocol, username, password, host, port, path, getParameters());
     }
 
-    public String getAbsolutePath() {
+    public String getAbsolutePath() { //绝对路径，即为path前加上"/"，例如："/path"
         if (path != null && !path.startsWith("/")) {
             return "/" + path;
         }
@@ -1307,7 +1307,7 @@ class URL implements Serializable {
     }
 
     @Override
-    public String toString() { //重写的toString()方法，不显示用户名、密码
+    public String toString() { //获取带有URL信息的字符串（不显示用户名、密码）
         if (string != null) {
             return string;
         }
@@ -1330,7 +1330,7 @@ class URL implements Serializable {
         return buildString(true, false, parameters); // only return identity message, see the method "equals" and "hashCode"
     }
 
-    public String toFullString() { //将URL对象转换为带有完整信息的URL字符串
+    public String toFullString() { //获取带有URL完成信息的字符串 (包含用户名、密码)
         if (full != null) { //若当前成员变量中有值，则直接返回
             return full;
         }
@@ -1637,7 +1637,7 @@ class URL implements Serializable {
 
     @Override
     public boolean equals(Object obj) { //比较两个URL是否相等
-        if (this == obj) {
+        if (this == obj) { //引用相同，即内存地址相同
             return true;
         }
         if (obj == null) {
@@ -1654,7 +1654,7 @@ class URL implements Serializable {
             if (other.parameters != null) {
                 return false;
             }
-        } else if (!parameters.equals(other.parameters)) {
+        } else if (!parameters.equals(other.parameters)) { //比较参数
             return false;
         }
         if (!StringUtils.isEquals(password, other.password)) {

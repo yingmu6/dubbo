@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public final class URLBuilder { //URL的构造器
+public final class URLBuilder { //URL的辅助构造类
     private String protocol;
 
     private String username;

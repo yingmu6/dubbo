@@ -39,7 +39,7 @@ public final class URLStrParser {
      *                      decodedURLStr format: protocol://username:password@host:port/path?k1=v1&k2=v2
      *                      [protocol://][username:password@][host:port]/[path][?k1=v1&k2=v2]
      */
-    public static URL parseDecodedStr(String decodedURLStr) { //解析解码后的url字符串（即url未被编码）
+    public static URL parseDecodedStr(String decodedURLStr) { //解析已解码的url字符串（即url未被编码）
         Map<String, String> parameters = null;
         int pathEndIdx = decodedURLStr.indexOf('?');
         if (pathEndIdx >= 0) {
@@ -96,7 +96,7 @@ public final class URLStrParser {
         int starIdx = 0, endIdx = decodedBody.length();
         String protocol = null;
         int protoEndIdx = decodedBody.indexOf("://");
-        if (protoEndIdx >= 0) {
+        if (protoEndIdx >= 0) { //解析url内容时，会判断是否设置protocol，未设置则抛出异常
             if (protoEndIdx == 0) {
                 throw new IllegalStateException("url missing protocol: \"" + fullURLStr + "\"");
             }
