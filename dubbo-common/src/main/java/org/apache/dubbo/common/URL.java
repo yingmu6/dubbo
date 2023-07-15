@@ -190,7 +190,7 @@ class URL implements Serializable {
         this.address = getAddress(this.host, this.port); //构建地址，由host、port组成，如：127.0.0.1:2181（port<=0时，只包含host值）
 
         // trim the beginning "/"
-        while (path != null && path.startsWith("/")) {
+        while (path != null && path.startsWith("/")) { //循环去掉path前的"/"
             path = path.substring(1);
         }
         this.path = path;
@@ -229,9 +229,9 @@ class URL implements Serializable {
         Map<String, String> parameters = null;
         int i = url.indexOf('?'); // separator between body and parameters（使用"?" 来分隔出 url的主体和参数）
         if (i >= 0) { //（url的参数parameters处理）判断是否包含参数，若url中包含"?"，则先把参数解析出来，把"?"后面的字符串先处理掉
-            String[] parts = url.substring(i + 1).split("&"); //去除?后面的字符串，并按&符号分隔参数
+            String[] parts = url.substring(i + 1).split("&"); //按&符号分隔出参数键值对
             parameters = new HashMap<>();
-            for (String part : parts) { //参数的元素值，如name=test
+            for (String part : parts) { //遍历参数键值对，如name=test
                 part = part.trim();
                 if (part.length() > 0) {
                     int j = part.indexOf('='); //按等号解析，解析出参数的键值对
@@ -250,7 +250,7 @@ class URL implements Serializable {
             }
             url = url.substring(0, i); //截取参数前的url，如zookeeper://127.0.0.1:2181
         }
-        i = url.indexOf("://"); //（参数前的字符处理）
+        i = url.indexOf("://"); //解析出protocol值
         if (i >= 0) { //解析协议，如：zookeeper://127.0.0.1:2181
             if (i == 0) { // "://"前面没有设置协议时，就会抛出异常
                 throw new IllegalStateException("url missing protocol: \"" + url + "\"");
@@ -269,12 +269,12 @@ class URL implements Serializable {
             }
         }
 
-        i = url.indexOf('/'); //资源路径，如127.0.0.1:2181/all的 path为all
+        i = url.indexOf('/'); //解析出资源路径，如127.0.0.1:2181/all的 path为all
         if (i >= 0) {
             path = url.substring(i + 1); //接口路径，即接口路径，如com.foo.BarService，path中没有"?"后面带的参数
             url = url.substring(0, i);
         }
-        i = url.lastIndexOf('@'); //根据@解析用户名、密码（未设置用户名、密码，则为null）
+        i = url.lastIndexOf('@'); //解析出用户名、密码（未设置用户名、密码，则为null）
         if (i >= 0) {
             username = url.substring(0, i);
             int j = username.indexOf(':');
@@ -284,7 +284,7 @@ class URL implements Serializable {
             }
             url = url.substring(i + 1);
         }
-        i = url.lastIndexOf(':'); //分隔出host与port，url如：127.0.0.1:2181
+        i = url.lastIndexOf(':'); //解析出host与port，url如：127.0.0.1:2181
         if (i >= 0 && i < url.length() - 1) {  //解析host、ip
             if (url.lastIndexOf('%') > i) { //ipv6 忽略不处理
                 // ipv6 address with scope id
@@ -300,7 +300,7 @@ class URL implements Serializable {
             host = url;
         }
 
-        return new URL(protocol, username, password, host, port, path, parameters); //构建URL对象
+        return new URL(protocol, username, password, host, port, path, parameters); //构建新的URL对象
     }
 
     public static Map<String, Map<String, String>> toMethodParameters(Map<String, String> parameters) {
@@ -1099,13 +1099,13 @@ class URL implements Serializable {
         return addParameter(key, String.valueOf(value));
     }
 
-    public URL addParameter(String key, String value) { //返回新的对象，不会对原有的URL对象影响
+    public URL addParameter(String key, String value) { //添加URL中的参数（返回新的对象，不会对原有的URL对象影响）
         if (StringUtils.isEmpty(key)
                 || StringUtils.isEmpty(value)) {
             return this;
         }
-        // if value doesn't change, return immediately （值没有变更，立即返回）
-        if (value.equals(getParameters().get(key))) { // value != null
+        // if value doesn't change, return immediately （值没有变更，立即返回，即key、value在URL已经存在了，就不构建新的URL了）
+        if (value.equals(getParameters().get(key))) {
             return this;
         }
 
@@ -1168,21 +1168,21 @@ class URL implements Serializable {
      * @param parameters parameters in key-value pairs
      * @return A new URL
      */
-    public URL addParameters(Map<String, String> parameters) { //相比URL#addParameters()方法
+    public URL addParameters(Map<String, String> parameters) { //按参数Map形式添加参数
         if (CollectionUtils.isEmptyMap(parameters)) {
             return this;
         }
 
         boolean hasAndEqual = true;
-        for (Map.Entry<String, String> entry : parameters.entrySet()) {
-            String value = getParameters().get(entry.getKey()); //将当前URL维护的参数Map与输入的参数Map进行比较，判断是否存在变更
+        for (Map.Entry<String, String> entry : parameters.entrySet()) { //判断添加的参数Map与当前URL中参数Map是否相同
+            String value = getParameters().get(entry.getKey());
             if (value == null) {
-                if (entry.getValue() != null) { //若当前URL中的参数Map没有值，而传入参数存在值，判定两个Map不相等
+                if (entry.getValue() != null) {
                     hasAndEqual = false;
-                    break; //依次比较两个url中的参数，只要有一个参数值不相等，则认为两者就不相等
+                    break;
                 }
             } else {
-                if (!value.equals(entry.getValue())) { //若当前URL和指定的url都存在指定key对应的值，若值不相等，判定两个Map不相等
+                if (!value.equals(entry.getValue())) {
                     hasAndEqual = false;
                     break;
                 }
@@ -1194,17 +1194,17 @@ class URL implements Serializable {
         }
 
         Map<String, String> map = new HashMap<>(getParameters());
-        map.putAll(parameters); // 先放入当前url对应的参数Map，然后再放进传入的参数，传入的参数会把当前url中具体相同key的参数覆盖
+        map.putAll(parameters); // 放入所有的参数（相同key的参数，值会覆盖）
         return new URL(protocol, username, password, host, port, path, map);
     }
 
-    public URL addParametersIfAbsent(Map<String, String> parameters) {
+    public URL addParametersIfAbsent(Map<String, String> parameters) { //按参数Map形式添加参数（不判断参数是否存在，直接全部添加）
         if (CollectionUtils.isEmptyMap(parameters)) {
             return this;
         }
         Map<String, String> map = new HashMap<>(parameters);
-        map.putAll(getParameters()); //想比：URL.addParameters()，此处处理刚好相反，是把当前url的参数覆盖传入的相同key的参数
-        return new URL(protocol, username, password, host, port, path, map);
+        map.putAll(getParameters());
+        return new URL(protocol, username, password, host, port, path, map); //使用产生新的URL
     }
 
     public URL addParameters(String... pairs) { //将多个参数以数组形式传入，格式如key1,value1,key2,value2
@@ -1243,7 +1243,7 @@ class URL implements Serializable {
         return removeParameters(keys.toArray(new String[0]));
     }
 
-    public URL removeParameters(String... keys) { //从url中移除指定key对应的参数
+    public URL removeParameters(String... keys) { //从URL参数Map中移除多个参数
         if (keys == null || keys.length == 0) {
             return this;
         }

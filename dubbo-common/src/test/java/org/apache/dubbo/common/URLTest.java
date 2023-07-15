@@ -411,11 +411,11 @@ public class URLTest {
     }
 
     @Test
-    public void test_set_methods() throws Exception { //todo @pause
+    public void test_set_methods() throws Exception { //已测（测试调用set方法，更新URL对应成员变量值）
         URL url = URL.valueOf("dubbo://admin:hello1234@10.20.130.230:20880/context/path?version=1.0.0&application=morgan");
         assertURLStrDecoder(url);
 
-        url = url.setHost("host");
+        url = url.setHost("host"); //设置host
 
         assertURLStrDecoder(url);
         assertEquals("dubbo", url.getProtocol());
@@ -429,7 +429,7 @@ public class URLTest {
         assertEquals("1.0.0", url.getParameter("version"));
         assertEquals("morgan", url.getParameter("application"));
 
-        url = url.setPort(1);
+        url = url.setPort(1); //设置port
 
         assertURLStrDecoder(url);
         assertEquals("dubbo", url.getProtocol());
@@ -457,7 +457,7 @@ public class URLTest {
         assertEquals("1.0.0", url.getParameter("version"));
         assertEquals("morgan", url.getParameter("application"));
 
-        url = url.setProtocol("protocol");
+        url = url.setProtocol("protocol"); //设置protocol，值由"dubbo" -》"protocol"
 
         assertURLStrDecoder(url);
         assertEquals("protocol", url.getProtocol());
@@ -501,11 +501,11 @@ public class URLTest {
     }
 
     @Test
-    public void test_removeParameters() throws Exception {
+    public void test_removeParameters() throws Exception { // 已测（测试移除URL中指定参数）
         URL url = URL.valueOf("dubbo://admin:hello1234@10.20.130.230:20880/context/path?version=1.0.0&application=morgan&k1=v1&k2=v2");
         assertURLStrDecoder(url);
 
-        url = url.removeParameter("version");
+        url = url.removeParameter("version"); //移除指定参数
         assertURLStrDecoder(url);
         assertEquals("dubbo", url.getProtocol());
         assertEquals("admin", url.getUsername());
@@ -518,10 +518,10 @@ public class URLTest {
         assertEquals("morgan", url.getParameter("application"));
         assertEquals("v1", url.getParameter("k1"));
         assertEquals("v2", url.getParameter("k2"));
-        assertNull(url.getParameter("version"));
+        assertNull(url.getParameter("version")); //参数已被移除
 
         url = URL.valueOf("dubbo://admin:hello1234@10.20.130.230:20880/context/path?version=1.0.0&application=morgan&k1=v1&k2=v2");
-        url = url.removeParameters("version", "application", "NotExistedKey");
+        url = url.removeParameters("version", "application", "NotExistedKey"); //移除多个参数（"NotExistedKey"是不存在的参数）
         assertURLStrDecoder(url);
         assertEquals("dubbo", url.getProtocol());
         assertEquals("admin", url.getUsername());
@@ -537,7 +537,7 @@ public class URLTest {
         assertNull(url.getParameter("application"));
 
         url = URL.valueOf("dubbo://admin:hello1234@10.20.130.230:20880/context/path?version=1.0.0&application=morgan&k1=v1&k2=v2");
-        url = url.removeParameters(Arrays.asList("version", "application"));
+        url = url.removeParameters(Arrays.asList("version", "application")); //移除多个参数（按列表指定移除的key）
         assertURLStrDecoder(url);
         assertEquals("dubbo", url.getProtocol());
         assertEquals("admin", url.getUsername());
@@ -554,7 +554,7 @@ public class URLTest {
     }
 
     @Test
-    public void test_addParameter() throws Exception {
+    public void test_addParameter() throws Exception { // 已测（添加URL的参数）
         URL url = URL.valueOf("dubbo://admin:hello1234@10.20.130.230:20880/context/path?application=morgan");
         url = url.addParameter("k1", "v1");
 
@@ -568,21 +568,27 @@ public class URLTest {
         assertEquals("context/path", url.getPath());
         assertEquals(2, url.getParameters().size());
         assertEquals("morgan", url.getParameter("application"));
-        assertEquals("v1", url.getParameter("k1"));
+        assertEquals("v1", url.getParameter("k1")); //新添加的参数
     }
 
     @Test
-    public void test_addParameter_sameKv() throws Exception {
+    public void test_addParameter_sameKv() throws Exception { //已测（添加参数时，若key、value已存在，则不产生新的URL）
         URL url = URL.valueOf("dubbo://admin:hello1234@10.20.130.230:20880/context/path?application=morgan&k1=v1");
-        URL newUrl = url.addParameter("k1", "v1");
+        URL newUrl = url.addParameter("k1", "v1"); // k1、v1已在URL参数Map存在，所以不会产生新的URL
 
         assertURLStrDecoder(url);
-        assertSame(newUrl, url);
+        assertSame(newUrl, url); //URL保持原来的，没有重新生成
+
+        URL newUrl2 = url.addParameters(CollectionUtils.toStringMap("k1", "v1")); //添加参数时，会判断参数Map是否与URL参数Map相等，若相等，返回原有的URL
+        assertTrue(newUrl2 == url, "两个URL相等");
+
+        URL newUrl3 = url.addParametersIfAbsent(CollectionUtils.toStringMap("k1", "v1")); //addParametersIfAbsent：添加参数时，不会判断参数Map与URL参数Map是否相等，直接生成新的URL
+        assertTrue(newUrl3 != url, "两个URL不相等");
     }
 
 
     @Test
-    public void test_addParameters() throws Exception {
+    public void test_addParameters() throws Exception { //已测（按参数Map形式，添加到URL的参数）
         URL url = URL.valueOf("dubbo://admin:hello1234@10.20.130.230:20880/context/path?application=morgan");
         url = url.addParameters(CollectionUtils.toStringMap("k1", "v1", "k2", "v2"));
 
@@ -616,7 +622,7 @@ public class URLTest {
         assertEquals("v2", url.getParameter("k2"));
 
         url = URL.valueOf("dubbo://admin:hello1234@10.20.130.230:20880/context/path?application=morgan");
-        url = url.addParametersIfAbsent(CollectionUtils.toStringMap("k1", "v1", "k2", "v2", "application", "xxx"));
+        url = url.addParametersIfAbsent(CollectionUtils.toStringMap("k1", "v1", "k2", "v2", "application", "xxx")); //不会判断参数Map是否与URL中参数是否相等，直接产生新的URL
 
         assertURLStrDecoder(url);
         assertEquals("dubbo", url.getProtocol());
@@ -627,7 +633,7 @@ public class URLTest {
         assertEquals(20880, url.getPort());
         assertEquals("context/path", url.getPath());
         assertEquals(3, url.getParameters().size());
-        assertEquals("morgan", url.getParameter("application"));
+        assertEquals("morgan", url.getParameter("application")); //相同的key会，添加到参数Map中时，会进行值覆盖
         assertEquals("v1", url.getParameter("k1"));
         assertEquals("v2", url.getParameter("k2"));
 
@@ -662,7 +668,7 @@ public class URLTest {
     }
 
     @Test
-    public void test_addParameters_SameKv() throws Exception {
+    public void test_addParameters_SameKv() throws Exception { //已测（按参数Map添加时，判断是否已存在）
         {
             URL url = URL.valueOf("dubbo://admin:hello1234@10.20.130.230:20880/context/path?application=morgan&k1=v1");
             URL newUrl = url.addParameters(CollectionUtils.toStringMap("k1", "v1"));
@@ -680,9 +686,9 @@ public class URLTest {
     }
 
     @Test
-    public void test_addParameterIfAbsent() throws Exception {
+    public void test_addParameterIfAbsent() throws Exception { //已测（添加单个参数时，判断参数是否存在）
         URL url = URL.valueOf("dubbo://admin:hello1234@10.20.130.230:20880/context/path?application=morgan");
-        url = url.addParameterIfAbsent("application", "xxx");
+        url = url.addParameterIfAbsent("application", "xxx"); //会判断参数key是否存在
 
         assertURLStrDecoder(url);
         assertEquals("dubbo", url.getProtocol());
@@ -697,9 +703,9 @@ public class URLTest {
     }
 
     @Test
-    public void test_windowAbsolutePathBeginWithSlashIsValid() throws Exception {
+    public void test_windowAbsolutePathBeginWithSlashIsValid() throws Exception { //测试window的路径有效性
         final String osProperty = System.getProperties().getProperty("os.name");
-        if (!osProperty.toLowerCase().contains("windows")) return;
+        if (!osProperty.toLowerCase().contains("windows")) return; //非windows系统，返回结束（windows场景才可以测试）
 
         System.out.println("Test Windows valid path string.");
 
@@ -717,31 +723,31 @@ public class URLTest {
     }
 
     @Test
-    public void test_javaNetUrl() throws Exception {
+    public void test_javaNetUrl() throws Exception { //已测（java URL的组成信息，以及解析。dubbo的URL解析逻辑，是参照java的URL处理逻辑的）
         java.net.URL url = new java.net.URL("http://admin:hello1234@10.20.130.230:20880/context/path?version=1.0.0&application=morgan#anchor1");
 
         assertEquals("http", url.getProtocol());
-        assertEquals("admin:hello1234", url.getUserInfo());
+        assertEquals("admin:hello1234", url.getUserInfo()); //"@"前的字符串，表示用户信息，没有像Dubbo的URL细分出用户名、密码
         assertEquals("10.20.130.230", url.getHost());
         assertEquals(20880, url.getPort());
         assertEquals("/context/path", url.getPath());
-        assertEquals("version=1.0.0&application=morgan", url.getQuery());
-        assertEquals("anchor1", url.getRef());
+        assertEquals("version=1.0.0&application=morgan", url.getQuery()); //"?"后的字符串，表示查询信息
+        assertEquals("anchor1", url.getRef()); //"#"号后面是ref引用信息
 
-        assertEquals("admin:hello1234@10.20.130.230:20880", url.getAuthority());
-        assertEquals("/context/path?version=1.0.0&application=morgan", url.getFile());
+        assertEquals("admin:hello1234@10.20.130.230:20880", url.getAuthority()); //授权信息 = userInfo + host + port
+        assertEquals("/context/path?version=1.0.0&application=morgan", url.getFile()); // 文件信息 = path + query
     }
 
     @Test
-    public void test_Anyhost() throws Exception {
+    public void test_Anyhost() throws Exception { //已测（测试任意主机号 0.0.0.0）
         URL url = URL.valueOf("dubbo://0.0.0.0:20880");
         assertURLStrDecoder(url);
-        assertEquals("0.0.0.0", url.getHost());
+        assertEquals("0.0.0.0", url.getHost()); //IPV4中，0.0.0.0地址被用于表示一个无效的，未知的或者不可用的目标。
         assertTrue(url.isAnyHost());
     }
 
     @Test
-    public void test_Localhost() throws Exception {
+    public void test_Localhost() throws Exception { //已测（测试本地主机号，以127或localhost开头）
         URL url = URL.valueOf("dubbo://127.0.0.1:20880");
         assertURLStrDecoder(url);
         assertEquals("127.0.0.1", url.getHost());
@@ -762,7 +768,7 @@ public class URLTest {
     }
 
     @Test
-    public void test_Path() throws Exception {
+    public void test_Path() throws Exception { //已测（path的处理）
         URL url = new URL("dubbo", "localhost", 20880, "////path");
         assertURLStrDecoder(url);
         assertEquals("path", url.getPath());
