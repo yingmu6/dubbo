@@ -775,7 +775,7 @@ public class URLTest {
     }
 
     @Test
-    public void testAddParameters() throws Exception {
+    public void testAddParameters() throws Exception { //已测（添加URL参数）
         URL url = URL.valueOf("dubbo://127.0.0.1:20880");
         assertURLStrDecoder(url);
 
@@ -786,12 +786,12 @@ public class URLTest {
     }
 
     @Test
-    public void testUserNamePasswordContainsAt() {
+    public void testUserNamePasswordContainsAt() { // 已测（测试用户名、密码包含@符号的场景）
         // Test username or password contains "@"
         URL url = URL.valueOf("ad@min:hello@1234@10.20.130.230:20880/context/path?version=1.0.0&application=morgan");
         assertURLStrDecoder(url);
         assertNull(url.getProtocol());
-        assertEquals("ad@min", url.getUsername());
+        assertEquals("ad@min", url.getUsername()); //以最后一个@符号，从url中分隔出用户名、密码
         assertEquals("hello@1234", url.getPassword());
         assertEquals("10.20.130.230", url.getHost());
         assertEquals("10.20.130.230:20880", url.getAddress());
@@ -804,14 +804,14 @@ public class URLTest {
 
 
     @Test
-    public void testIpV6Address() {
+    public void testIpV6Address() { // 已测（url中ipv6地址的处理）
         // Test username or password contains "@"
         URL url = URL.valueOf("ad@min111:haha@1234@2001:0db8:85a3:08d3:1319:8a2e:0370:7344:20880/context/path?version=1.0.0&application=morgan");
         assertURLStrDecoder(url);
         assertNull(url.getProtocol());
         assertEquals("ad@min111", url.getUsername());
         assertEquals("haha@1234", url.getPassword());
-        assertEquals("2001:0db8:85a3:08d3:1319:8a2e:0370:7344", url.getHost());
+        assertEquals("2001:0db8:85a3:08d3:1319:8a2e:0370:7344", url.getHost()); //host、port是以最后一个":"分隔
         assertEquals("2001:0db8:85a3:08d3:1319:8a2e:0370:7344:20880", url.getAddress());
         assertEquals(20880, url.getPort());
         assertEquals("context/path", url.getPath());
@@ -821,11 +821,11 @@ public class URLTest {
     }
 
     @Test
-    public void testIpV6AddressWithScopeId() {
+    public void testIpV6AddressWithScopeId() { // 已测（测试ipv6带上范围id的场景）
         URL url = URL.valueOf("2001:0db8:85a3:08d3:1319:8a2e:0370:7344%5/context/path?version=1.0.0&application=morgan");
         assertURLStrDecoder(url);
         assertNull(url.getProtocol());
-        assertEquals("2001:0db8:85a3:08d3:1319:8a2e:0370:7344%5", url.getHost());
+        assertEquals("2001:0db8:85a3:08d3:1319:8a2e:0370:7344%5", url.getHost()); // "%"后是ipv6的范围id，若带上范围id，则不按":"做截取
         assertEquals("2001:0db8:85a3:08d3:1319:8a2e:0370:7344%5", url.getAddress());
         assertEquals(0, url.getPort());
         assertEquals("context/path", url.getPath());
@@ -835,16 +835,16 @@ public class URLTest {
     }
 
     @Test
-    public void testDefaultPort() {
-        Assertions.assertEquals("10.20.153.10:2181", URL.appendDefaultPort("10.20.153.10:0", 2181));
-        Assertions.assertEquals("10.20.153.10:2181", URL.appendDefaultPort("10.20.153.10", 2181));
+    public void testDefaultPort() { //已测（为address添加默认端口）
+        Assertions.assertEquals("10.20.153.10:2181", URL.appendDefaultPort("10.20.153.10:0", 2181)); //设置了port，但值为0
+        Assertions.assertEquals("10.20.153.10:2181", URL.appendDefaultPort("10.20.153.10", 2181)); //未设置port
     }
 
     @Test
-    public void testGetServiceKey() {
+    public void testGetServiceKey() { //已测（获取服务标识key，serviceKey=group/interface:version）
         URL url1 = URL.valueOf("10.20.130.230:20880/context/path?interface=org.apache.dubbo.test.interfaceName");
         assertURLStrDecoder(url1);
-        Assertions.assertEquals("org.apache.dubbo.test.interfaceName", url1.getServiceKey());
+        Assertions.assertEquals("org.apache.dubbo.test.interfaceName", url1.getServiceKey()); //serviceKey由interface组成
 
         URL url2 = URL.valueOf("10.20.130.230:20880/org.apache.dubbo.test.interfaceName?interface=org.apache.dubbo.test.interfaceName");
         assertURLStrDecoder(url2);
@@ -860,7 +860,7 @@ public class URLTest {
 
         URL url5 = URL.valueOf("10.20.130.230:20880/context/path?interface=org.apache.dubbo.test.interfaceName&group=group1&version=1.0.0");
         assertURLStrDecoder(url5);
-        Assertions.assertEquals("group1/context/path:1.0.0", url5.getPathKey());
+        Assertions.assertEquals("group1/context/path:1.0.0", url5.getPathKey()); //todo @pause
     }
 
     @Test

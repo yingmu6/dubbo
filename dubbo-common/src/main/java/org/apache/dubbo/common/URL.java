@@ -274,7 +274,7 @@ class URL implements Serializable {
             path = url.substring(i + 1); //接口路径，即接口路径，如com.foo.BarService，path中没有"?"后面带的参数
             url = url.substring(0, i);
         }
-        i = url.lastIndexOf('@'); //解析出用户名、密码（未设置用户名、密码，则为null）
+        i = url.lastIndexOf('@'); //解析出用户名、密码（未设置用户名、密码，则为null，以最后一个@来分隔，用户名和密码可包含@符号）
         if (i >= 0) {
             username = url.substring(0, i);
             int j = username.indexOf(':');
@@ -284,14 +284,14 @@ class URL implements Serializable {
             }
             url = url.substring(i + 1);
         }
-        i = url.lastIndexOf(':'); //解析出host与port，url如：127.0.0.1:2181
+        i = url.lastIndexOf(':'); //解析出host与port，url如：127.0.0.1:2181（以最后一个":"做分隔）
         if (i >= 0 && i < url.length() - 1) {  //解析host、ip
-            if (url.lastIndexOf('%') > i) { //ipv6 忽略不处理
-                // ipv6 address with scope id
-                // e.g. fe80:0:0:0:894:aeec:f37d:23e1%en0
+            if (url.lastIndexOf('%') > i) {
+                // ipv6 address with scope id （若ipv6地址带上范围id，则忽略不处理，即不做截取）
+                // e.g. fe80:0:0:0:894:aeec:f37d:23e1%en0 对应的host、address为 fe80:0:0:0:894:aeec:f37d:23e1%en0
                 // see https://howdoesinternetwork.com/2013/ipv6-zone-id
                 // ignore
-            } else { //ipv4 处理
+            } else { //host、port分隔处理
                 port = Integer.parseInt(url.substring(i + 1));
                 url = url.substring(0, i);
             }
@@ -402,12 +402,12 @@ class URL implements Serializable {
         }
     }
 
-    static String appendDefaultPort(String address, int defaultPort) {
+    static String appendDefaultPort(String address, int defaultPort) { //为url的address添加上默认端口
         if (address != null && address.length() > 0 && defaultPort > 0) {
             int i = address.indexOf(':');
-            if (i < 0) {
+            if (i < 0) { //未设置port
                 return address + ":" + defaultPort;
-            } else if (Integer.parseInt(address.substring(i + 1)) == 0) {
+            } else if (Integer.parseInt(address.substring(i + 1)) == 0) { //设置了port，但值为0
                 return address.substring(0, i + 1) + defaultPort;
             }
         }
@@ -1467,16 +1467,16 @@ class URL implements Serializable {
         }
     }
 
-    /**
+     /**
      * The format of return value is '{group}/{interfaceName}:{version}'
      *
      * @return
      */
-    public String getServiceKey() {
+    public String getServiceKey() { //获取服务的唯一标识key（若不存在，则按group、interfaceName、version构建）
         if (serviceKey != null) {
             return serviceKey;
         }
-        String inf = getServiceInterface();
+        String inf = getServiceInterface(); //获取服务的接口信息
         if (inf == null) {
             return null;
         }
@@ -1498,7 +1498,8 @@ class URL implements Serializable {
     }
 
     /**
-     * 构建服务的唯一标识key：由path、group、version组合
+     * 构建服务的唯一标识key：由path、group、version组合（serviceKey可以理解为某个分组下、某个版本的某个接口）
+     * （path为接口名，即url中key为"interface"的参数值）
      */
     public static String buildKey(String path, String group, String version) {
         return BaseServiceMetadata.buildServiceKey(path, group, version);
@@ -1517,7 +1518,7 @@ class URL implements Serializable {
         return getServiceInterface();
     }
 
-    public String getServiceInterface() { //从参数键值对中获取interface接口信息，若没有则使用path作为默认值
+    public String getServiceInterface() { //从参数Map中获取服务的接口信息，若没有则使用path值
         return getParameter(INTERFACE_KEY, path);
     }
 
