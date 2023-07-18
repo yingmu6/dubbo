@@ -422,7 +422,7 @@ public class ClassUtils {
 
 
     /**
-     * the semantics is same as {@link Class#isAssignableFrom(Class)}
+     * the semantics（语义） is same as {@link Class#isAssignableFrom(Class)}
      *
      * @param superType  the super type
      * @param targetType the target type
@@ -439,7 +439,7 @@ public class ClassUtils {
             return true;
         }
         // isAssignableFrom
-        return superType.isAssignableFrom(targetType);
+        return superType.isAssignableFrom(targetType); //等价于 superType.class = targetType.class（即targetType与superType相同，或是superType的子类或子接口）
     }
 
     /**

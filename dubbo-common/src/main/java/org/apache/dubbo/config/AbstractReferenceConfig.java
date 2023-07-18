@@ -64,14 +64,14 @@ public abstract class AbstractReferenceConfig extends AbstractInterfaceConfig {
      */
     protected Boolean injvm;
 
-    /**
+     /**
      * Lazy create connection
      */
-    protected Boolean lazy;
+    protected Boolean lazy; //是否延迟创建连接
 
-    protected String reconnect;
+    protected String reconnect; //重连事件
 
-    protected Boolean sticky = false;
+    protected Boolean sticky = false; //是否粘连
 
     /**
      * Whether to support event in stub.
@@ -94,7 +94,7 @@ public abstract class AbstractReferenceConfig extends AbstractInterfaceConfig {
      */
     protected String providedBy;
 
-    protected String router;
+    protected String router; //服务路由
 
     public Boolean isCheck() {
         return check;
@@ -184,7 +184,7 @@ public abstract class AbstractReferenceConfig extends AbstractInterfaceConfig {
     }
 
     @Override
-    public void setOnconnect(String onconnect) {
+    public void setOnconnect(String onconnect) { // 设置连接事件
         if (onconnect != null && onconnect.length() > 0) {
             this.stubevent = true;
         }
@@ -245,7 +245,7 @@ public abstract class AbstractReferenceConfig extends AbstractInterfaceConfig {
         this.providedBy = providedBy;
     }
 
-    @Parameter(key = "router", append = true)
+    @Parameter(key = "router", append = true) //添加参数时，将config中的router值与参数"router"值进行拼接
     public String getRouter() {
         return router;
     }

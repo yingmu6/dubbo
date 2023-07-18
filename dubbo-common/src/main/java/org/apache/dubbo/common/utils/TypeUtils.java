@@ -71,7 +71,7 @@ public interface TypeUtils {
         return (Class<T>) findActualTypeArguments(type, interfaceClass).get(index);
     }
 
-    static List<Class<?>> findActualTypeArguments(Type type, Class<?> interfaceClass) {
+    static List<Class<?>> findActualTypeArguments(Type type, Class<?> interfaceClass) { //获取实际的泛化参数列表
 
         List<Class<?>> actualTypeArguments = new LinkedList<>();
 
@@ -147,7 +147,7 @@ public interface TypeUtils {
      * @param typeFilters one or more {@link Predicate}s to filter the {@link ParameterizedType} instance
      * @return non-null read-only {@link List}
      */
-    static List<ParameterizedType> getAllGenericSuperClasses(Type type, Predicate<ParameterizedType>... typeFilters) {
+    static List<ParameterizedType> getAllGenericSuperClasses(Type type, Predicate<ParameterizedType>... typeFilters) { //获取所有父类的泛化接口
 
         Class<?> rawClass = getRawClass(type);
 
@@ -178,7 +178,7 @@ public interface TypeUtils {
      * @param typeFilters one or more {@link Predicate}s to filter the {@link ParameterizedType} instance
      * @return non-null read-only {@link List}
      */
-    static List<ParameterizedType> getAllGenericInterfaces(Type type, Predicate<ParameterizedType>... typeFilters) {
+    static List<ParameterizedType> getAllGenericInterfaces(Type type, Predicate<ParameterizedType>... typeFilters) { //获取所有父接口的泛化接口
 
         Class<?> rawClass = getRawClass(type);
 

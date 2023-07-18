@@ -32,16 +32,16 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 public class ConverterTest {
 
     @Test
-    public void testGetConverter() {
+    public void testGetConverter() { //已测（Converter的getConverter方法测试）
         getExtensionLoader(Converter.class)
                 .getSupportedExtensionInstances()
-                .forEach(converter -> {
+                .forEach(converter -> { //遍历扩展实例，判断是否与Converter#getConverter获取的实例相同
                     assertSame(converter, getConverter(converter.getSourceType(), converter.getTargetType()));
                 });
     }
 
     @Test
-    public void testConvertIfPossible() {
+    public void testConvertIfPossible() { //已测（通过泛化类型找到Converter，然后再执行具体转换）
         assertEquals(Integer.valueOf(2), convertIfPossible("2", Integer.class));
         assertEquals(Boolean.FALSE, convertIfPossible("false", Boolean.class));
         assertEquals(Double.valueOf(1), convertIfPossible("1", Double.class));

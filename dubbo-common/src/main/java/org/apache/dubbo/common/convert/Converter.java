@@ -33,7 +33,7 @@ import static org.apache.dubbo.common.utils.TypeUtils.findActualTypeArgument;
  */
 @SPI
 @FunctionalInterface
-public interface Converter<S, T> extends Prioritized {
+public interface Converter<S, T> extends Prioritized { // Converter：将值类型转换的接口
 
     /**
      * Accept the source type and target type or not
@@ -59,8 +59,8 @@ public interface Converter<S, T> extends Prioritized {
      *
      * @return non-null
      */
-    default Class<S> getSourceType() {
-        return findActualTypeArgument(getClass(), Converter.class, 0);
+    default Class<S> getSourceType() { // 获取源类型（即第一个泛型S）
+        return findActualTypeArgument(getClass(), Converter.class, 0); //查找泛型对应 对应的实际类型
     }
 
     /**
@@ -68,7 +68,7 @@ public interface Converter<S, T> extends Prioritized {
      *
      * @return non-null
      */
-    default Class<T> getTargetType() {
+    default Class<T> getTargetType() { // 获取目标类型（即第二个泛型T）
         return findActualTypeArgument(getClass(), Converter.class, 1);
     }
 
@@ -80,11 +80,11 @@ public interface Converter<S, T> extends Prioritized {
      * @return
      * @see ExtensionLoader#getSupportedExtensionInstances()
      */
-    static Converter<?, ?> getConverter(Class<?> sourceType, Class<?> targetType) {
+    static Converter<?, ?> getConverter(Class<?> sourceType, Class<?> targetType) { //获取转换器Converter（通过匹配泛化类型，来找到Converter实例）
         return getExtensionLoader(Converter.class)
                 .getSupportedExtensionInstances()
                 .stream()
-                .filter(converter -> converter.accept(sourceType, targetType))
+                .filter(converter -> converter.accept(sourceType, targetType)) //过滤出符合条件的Converter实例
                 .findFirst()
                 .orElse(null);
     }
@@ -98,10 +98,10 @@ public interface Converter<S, T> extends Prioritized {
      * @return <code>null</code> if can't be converted
      * @since 2.7.8
      */
-    static <T> T convertIfPossible(Object source, Class<T> targetType) {
-        Converter converter = getConverter(source.getClass(), targetType);
+    static <T> T convertIfPossible(Object source, Class<T> targetType) { //在合适的情况下，将原对象转换为目标类型的值
+        Converter converter = getConverter(source.getClass(), targetType); //根据类型找到转换器
         if (converter != null) {
-            return (T) converter.convert(source);
+            return (T) converter.convert(source); //使用具体转换器进行类型转换
         }
         return null;
     }

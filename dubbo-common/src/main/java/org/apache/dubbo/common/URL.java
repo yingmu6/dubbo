@@ -88,7 +88,7 @@ class URL implements Serializable {
     // by default, port to registry
     private final int port; //端口（默认值为0）
 
-    private final String path; //路径（通常为接口名称）
+    private final String path; //路径（是host后面， "/" 到 "?" 之间的字符串值，而interface接口信息是参数"interface"的值）
 
     private final Map<String, String> parameters; //参数键值对：存的是url中的参数键值，即?与&分隔的键值对
 
@@ -549,18 +549,18 @@ class URL implements Serializable {
         return parameters;
     }
 
-    /**
+     /**
      * Get the parameters to be selected(filtered)
      *
      * @param nameToSelect the {@link Predicate} to select the parameter name
      * @return non-null {@link Map}
      * @since 2.7.8
      */
-    public Map<String, String> getParameters(Predicate<String> nameToSelect) {
+    public Map<String, String> getParameters(Predicate<String> nameToSelect) { //按指定的谓词获取参数（谓词的处理逻辑，看调用的地方）
         Map<String, String> selectedParameters = new LinkedHashMap<>();
         for (Map.Entry<String, String> entry : getParameters().entrySet()) {
             String name = entry.getKey();
-            if (nameToSelect.test(name)) {
+            if (nameToSelect.test(name)) { //满足条件的参数key，设置到参数Map中
                 selectedParameters.put(name, entry.getValue());
             }
         }
@@ -625,7 +625,7 @@ class URL implements Serializable {
      * @return get the parameter if present, or <code>defaultValue</code> will be used.
      * @since 2.7.8
      */
-    public <T> T getParameter(String key, Class<T> valueType, T defaultValue) {
+    public <T> T getParameter(String key, Class<T> valueType, T defaultValue) { //获取指定类型的参数值（使用泛型表示）
         String value = getParameter(key);
         T result = null;
         if (!isBlank(value)) {
@@ -1441,13 +1441,13 @@ class URL implements Serializable {
         return new InetSocketAddress(host, port);
     }
 
-    /**
+     /**
      * The format is "{interface}:[version]:[group]"
      * （interface：在拼接的字符串中是必出现的，version、group是按值有无进行拼接的）
      *
      * @return
      */
-    public String getColonSeparatedKey() {
+    public String getColonSeparatedKey() { //获取按冒号":"分隔的服务key（colon：冒号）
         StringBuilder serviceNameBuilder = new StringBuilder();
         serviceNameBuilder.append(this.getServiceInterface());
         append(serviceNameBuilder, VERSION_KEY, false);
@@ -1489,8 +1489,8 @@ class URL implements Serializable {
      *
      * @return
      */
-    public String getPathKey() {
-        String inf = StringUtils.isNotEmpty(path) ? path : getServiceInterface();
+    public String getPathKey() { //获取路径唯一的key
+        String inf = StringUtils.isNotEmpty(path) ? path : getServiceInterface(); //path为空时，取接口名
         if (inf == null) {
             return null;
         }

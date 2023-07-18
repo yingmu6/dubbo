@@ -93,9 +93,9 @@ public class AbstractReferenceConfigTest {
     }
 
     @Test
-    public void testRouter() throws Exception { //todo @pause 07/06
+    public void testRouter() throws Exception { // 已测（服务路由的设置）
         ReferenceConfig referenceConfig = new ReferenceConfig();
-        referenceConfig.setRouter("condition");
+        referenceConfig.setRouter("condition"); //通过Config对象设置服务路由
         assertThat(referenceConfig.getRouter(), equalTo("condition"));
         Map<String, String> parameters = new HashMap<String, String>();
         parameters.put(ROUTER_KEY, "tag");
@@ -105,7 +105,7 @@ public class AbstractReferenceConfigTest {
         when(url.getParameter(ROUTER_KEY)).thenReturn("condition"); //在调用url.getParameter(ROUTER_KEY))方法时，返回mock值
         List<RouterFactory> routerFactories = ExtensionLoader.getExtensionLoader(RouterFactory.class).getActivateExtension(url, ROUTER_KEY);
         assertThat(routerFactories.stream().anyMatch(routerFactory -> routerFactory.getClass().equals(ConditionRouterFactory.class)), is(true));
-        when(url.getParameter(ROUTER_KEY)).thenReturn("-tag,-app");
+        when(url.getParameter(ROUTER_KEY)).thenReturn("-tag,-app"); // 去除指定的路由扩展实例
         routerFactories = ExtensionLoader.getExtensionLoader(RouterFactory.class).getActivateExtension(url, ROUTER_KEY);
         assertThat(routerFactories.stream()
                 .allMatch(routerFactory -> !routerFactory.getClass().equals(TagRouterFactory.class)
@@ -113,25 +113,25 @@ public class AbstractReferenceConfigTest {
     }
 
     @Test
-    public void testListener() throws Exception {
+    public void testListener() throws Exception { // 已测（监听器测试）
         ReferenceConfig referenceConfig = new ReferenceConfig();
         referenceConfig.setListener("mockinvokerlistener");
         assertThat(referenceConfig.getListener(), equalTo("mockinvokerlistener"));
         Map<String, String> parameters = new HashMap<String, String>();
         parameters.put(INVOKER_LISTENER_KEY, "prelistener");
         AbstractInterfaceConfig.appendParameters(parameters, referenceConfig);
-        assertThat(parameters, hasValue("prelistener,mockinvokerlistener"));
+        assertThat(parameters, hasValue("prelistener,mockinvokerlistener")); //支持多个监听器，通过","拼接
     }
 
     @Test
-    public void testLazy() throws Exception {
+    public void testLazy() throws Exception { // 已测（设置是否延迟创建连接）
         ReferenceConfig referenceConfig = new ReferenceConfig();
         referenceConfig.setLazy(true);
         assertThat(referenceConfig.getLazy(), is(true));
     }
 
     @Test
-    public void testOnconnect() throws Exception {
+    public void testOnconnect() throws Exception { //已测（设置连接事件）
         ReferenceConfig referenceConfig = new ReferenceConfig();
         referenceConfig.setOnconnect("onConnect");
         assertThat(referenceConfig.getOnconnect(), equalTo("onConnect"));
@@ -139,7 +139,7 @@ public class AbstractReferenceConfigTest {
     }
 
     @Test
-    public void testOndisconnect() throws Exception {
+    public void testOndisconnect() throws Exception { //已测（设置拒绝事件）
         ReferenceConfig referenceConfig = new ReferenceConfig();
         referenceConfig.setOndisconnect("onDisconnect");
         assertThat(referenceConfig.getOndisconnect(), equalTo("onDisconnect"));
@@ -147,16 +147,16 @@ public class AbstractReferenceConfigTest {
     }
 
     @Test
-    public void testStubevent() throws Exception {
+    public void testStubevent() throws Exception { //已测（获取存根事件）
         ReferenceConfig referenceConfig = new ReferenceConfig();
         referenceConfig.setOnconnect("onConnect");
         Map<String, String> parameters = new HashMap<String, String>();
-        AbstractInterfaceConfig.appendParameters(parameters, referenceConfig);
+        AbstractInterfaceConfig.appendParameters(parameters, referenceConfig); //因为setOnconnect时，会设置stubevent值，而getStubevent()方法上的@Parameter(key = STUB_EVENT_KEY)，所以参数包含STUB_EVENT_KEY
         assertThat(parameters, hasKey(STUB_EVENT_KEY));
     }
 
     @Test
-    public void testReconnect() throws Exception {
+    public void testReconnect() throws Exception { //已测（设置重连事件）
         ReferenceConfig referenceConfig = new ReferenceConfig();
         referenceConfig.setReconnect("reconnect");
         Map<String, String> parameters = new HashMap<String, String>();
@@ -166,7 +166,7 @@ public class AbstractReferenceConfigTest {
     }
 
     @Test
-    public void testSticky() throws Exception {
+    public void testSticky() throws Exception { //todo @pause
         ReferenceConfig referenceConfig = new ReferenceConfig();
         referenceConfig.setSticky(true);
         Map<String, String> parameters = new HashMap<String, String>();

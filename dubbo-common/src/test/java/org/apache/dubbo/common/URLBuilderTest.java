@@ -23,28 +23,34 @@ import java.util.Arrays;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class URLBuilderTest { //todo 待测
+public class URLBuilderTest {
     @Test
-    public void testNoArgConstructor() {
+    public void testNoArgConstructor() { // 已测（构建url时，未指定参数）
         URL url = new URLBuilder().build();
         assertThat(url.toString(), equalTo(""));
+
+        /**
+         * 调试问题点：
+         * 1）URL#string的值是哪里设置的？此处为啥是""
+         */
     }
 
     @Test
-    public void shouldAddParameter() {
+    public void shouldAddParameter() { //已测（构建URL时，指定参数）
         URL url1 = URL.valueOf("dubbo://admin:hello1234@10.20.130.230:20880/context/path?version=1.0.0&application=morgan");
         URL url2 = URLBuilder.from(url1)
                 .addParameter("newKey1", "newValue1") // string
                 .addParameter("newKey2", 2) // int
                 .addParameter("version", 1) // override
                 .build();
+        System.out.println("url字符串：" + url2.toString());
         assertThat(url2.getParameter("newKey1"), equalTo("newValue1"));
-        assertThat(url2.getParameter("newKey2"), equalTo("2"));
+        assertThat(url2.getParameter("newKey2"), equalTo("2")); //参数的值，都是按String存储的
         assertThat(url2.getParameter("version"), equalTo("1"));
     }
 
     @Test
-    public void shouldSet() {
+    public void shouldSet() { // 已测（设置地址address）
         URL url1 = URL.valueOf("dubbo://admin:hello1234@10.20.130.230:20880/context/path?version=1.0.0&application=morgan");
         URL url2 = URLBuilder.from(url1)
                 .setProtocol("rest")
@@ -69,7 +75,7 @@ public class URLBuilderTest { //todo 待测
     }
 
     @Test
-    public void shouldClearParameters() {
+    public void shouldClearParameters() { //已测（清空参数）
         URL url1 = URL.valueOf("dubbo://admin:hello1234@10.20.130.230:20880/context/path?version=1.0.0&application=morgan");
         URL url2 = URLBuilder.from(url1)
                 .clearParameters()
@@ -78,17 +84,17 @@ public class URLBuilderTest { //todo 待测
     }
 
     @Test
-    public void shouldRemoveParameters() {
+    public void shouldRemoveParameters() { // 已测（移除参数）
         URL url1 = URL.valueOf("dubbo://admin:hello1234@10.20.130.230:20880/context/path?version=1.0.0&application=morgan&key2=v2");
         URL url2 = URLBuilder.from(url1)
-                .removeParameters(Arrays.asList("key2", "application"))
+                .removeParameters(Arrays.asList("key2", "application")) //按列表移除
                 .build();
         assertThat(url2.getParameters().size(), equalTo(1));
         assertThat(url2.getParameter("version"), equalTo("1.0.0"));
     }
 
     @Test
-    public void shouldAddIfAbsent() {
+    public void shouldAddIfAbsent() { // 已测（addParameterIfAbsent添加参数时，若参数已经存在，则不设置）
         URL url1 = URL.valueOf("dubbo://admin:hello1234@10.20.130.230:20880/context/path?version=1.0.0&application=morgan&key2=v2");
         URL url2 = URLBuilder.from(url1)
                 .addParameterIfAbsent("absentKey", "absentValue")

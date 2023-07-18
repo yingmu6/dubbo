@@ -124,7 +124,7 @@ public final class URLBuilder { //URL的辅助构造类
                 methodParameters);
     }
 
-    public URL build() { //进行参数校验以及URL构建
+    public URL build() { //用URLBuilder维护的参数构建URL
         if (StringUtils.isEmpty(username) && StringUtils.isNotEmpty(password)) {
             throw new IllegalArgumentException("Invalid url, password without username!");
         }
@@ -174,7 +174,7 @@ public final class URLBuilder { //URL的辅助构造类
         return this;
     }
 
-    public URLBuilder setAddress(String address) {
+    public URLBuilder setAddress(String address) { //设置地址信息，分拆出host、port
         int i = address.lastIndexOf(':');
         String host;
         int port = this.port;
@@ -275,7 +275,7 @@ public final class URLBuilder { //URL的辅助构造类
         if (StringUtils.isEmpty(key) || StringUtils.isEmpty(value)) {
             return this;
         }
-        if (hasParameter(key)) {
+        if (hasParameter(key)) { //若参数已经存在，则不设置，避免覆盖
             return this;
         }
         parameters.put(key, value);
@@ -379,7 +379,7 @@ public final class URLBuilder { //URL的辅助构造类
         return this;
     }
 
-    public URLBuilder clearParameters() {
+    public URLBuilder clearParameters() { //清空参数
         parameters.clear();
         return this;
     }

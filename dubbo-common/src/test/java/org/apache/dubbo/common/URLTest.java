@@ -841,7 +841,7 @@ public class URLTest {
     }
 
     @Test
-    public void testGetServiceKey() { //已测（获取服务标识key，serviceKey=group/interface:version）
+    public void testGetServiceKey() { //已测（获取服务标识key，serviceKey=group/interface:version，路径标识key，pathKey = group/{path或interface}:version）
         URL url1 = URL.valueOf("10.20.130.230:20880/context/path?interface=org.apache.dubbo.test.interfaceName");
         assertURLStrDecoder(url1);
         Assertions.assertEquals("org.apache.dubbo.test.interfaceName", url1.getServiceKey()); //serviceKey由interface组成
@@ -860,38 +860,38 @@ public class URLTest {
 
         URL url5 = URL.valueOf("10.20.130.230:20880/context/path?interface=org.apache.dubbo.test.interfaceName&group=group1&version=1.0.0");
         assertURLStrDecoder(url5);
-        Assertions.assertEquals("group1/context/path:1.0.0", url5.getPathKey()); //todo @pause
+        Assertions.assertEquals("group1/context/path:1.0.0", url5.getPathKey());
     }
 
     @Test
-    public void testGetColonSeparatedKey() {
+    public void testGetColonSeparatedKey() { // 已测（获取用冒号分隔的服务key，colonKey = interface:{version}:{group}， version、group可以无）
         URL url1 = URL.valueOf("10.20.130.230:20880/context/path?interface=org.apache.dubbo.test.interfaceName&group=group&version=1.0.0");
         assertURLStrDecoder(url1);
-        Assertions.assertEquals("org.apache.dubbo.test.interfaceName:1.0.0:group", url1.getColonSeparatedKey());
+        Assertions.assertEquals("org.apache.dubbo.test.interfaceName:1.0.0:group", url1.getColonSeparatedKey()); //interface、version、group信息齐全
 
         URL url2 = URL.valueOf("10.20.130.230:20880/context/path?interface=org.apache.dubbo.test.interfaceName&version=1.0.0");
         assertURLStrDecoder(url2);
-        Assertions.assertEquals("org.apache.dubbo.test.interfaceName:1.0.0:", url2.getColonSeparatedKey());
+        Assertions.assertEquals("org.apache.dubbo.test.interfaceName:1.0.0:", url2.getColonSeparatedKey()); //缺少group场景
 
         URL url3 = URL.valueOf("10.20.130.230:20880/context/path?interface=org.apache.dubbo.test.interfaceName&group=group");
         assertURLStrDecoder(url3);
-        Assertions.assertEquals("org.apache.dubbo.test.interfaceName::group", url3.getColonSeparatedKey());
+        Assertions.assertEquals("org.apache.dubbo.test.interfaceName::group", url3.getColonSeparatedKey()); //缺少version场景
 
         URL url4 = URL.valueOf("10.20.130.230:20880/context/path?interface=org.apache.dubbo.test.interfaceName");
         assertURLStrDecoder(url4);
-        Assertions.assertEquals("org.apache.dubbo.test.interfaceName::", url4.getColonSeparatedKey());
+        Assertions.assertEquals("org.apache.dubbo.test.interfaceName::", url4.getColonSeparatedKey()); //缺少group、version场景
 
         URL url5 = URL.valueOf("10.20.130.230:20880/org.apache.dubbo.test.interfaceName");
         assertURLStrDecoder(url5);
-        Assertions.assertEquals("org.apache.dubbo.test.interfaceName::", url5.getColonSeparatedKey());
+        Assertions.assertEquals("org.apache.dubbo.test.interfaceName::", url5.getColonSeparatedKey()); //没有interface参数，path作为interface参数值
 
         URL url6 = URL.valueOf("10.20.130.230:20880/org.apache.dubbo.test.interfaceName?interface=org.apache.dubbo.test.interfaceName1");
         assertURLStrDecoder(url6);
-        Assertions.assertEquals("org.apache.dubbo.test.interfaceName1::", url6.getColonSeparatedKey());
+        Assertions.assertEquals("org.apache.dubbo.test.interfaceName1::", url6.getColonSeparatedKey()); //有interface参数，没有group、version情况
     }
 
     @Test
-    public void testValueOf() {
+    public void testValueOf() { // 已测（valueOf解析URL字符串）
         URL url = URL.valueOf("10.20.130.230");
         assertURLStrDecoder(url);
 
@@ -906,22 +906,24 @@ public class URLTest {
     }
 
 
-    /**
+     /**
      * Test {@link URL#getParameters(Predicate)} method
      *
      * @since 2.7.8
      */
     @Test
-    public void testGetParameters() {
+    public void testGetParameters() { //已测（按Predicate方式，查询参数）
         URL url = URL.valueOf("10.20.130.230:20880/context/path?interface=org.apache.dubbo.test.interfaceName&group=group&version=1.0.0");
-        Map<String, String> parameters = url.getParameters(i -> "version".equals(i));
+        Map<String, String> parameters = url.getParameters(i -> {
+            return "version".equals(i); //Predicate真正使用时，才调用
+        }); //找出满足条件的参数（参入Predicate）
         String version = parameters.get("version");
         assertEquals(1, parameters.size());
         assertEquals("1.0.0", version);
     }
 
     @Test
-    public void testGetParameter() {
+    public void testGetParameter() { //已测（获取各种类型的参数值，可指定参数值类型，通过类型转换器Converter进行处理）
         URL url = URL.valueOf("http://127.0.0.1:8080/path?i=1&b=false");
         assertEquals(Integer.valueOf(1), url.getParameter("i", Integer.class));
         assertEquals(Boolean.FALSE, url.getParameter("b", Boolean.class));

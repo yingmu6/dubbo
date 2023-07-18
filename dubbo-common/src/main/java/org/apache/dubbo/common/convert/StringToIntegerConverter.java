@@ -28,7 +28,7 @@ public class StringToIntegerConverter implements StringConverter<Integer> {
 
     @Override
     public Integer convert(String source) {
-        return isNotEmpty(source) ? valueOf(source) : null;
+        return isNotEmpty(source) ? valueOf(source) : null; //使用Integer.valueOf将String类型转换为Integer
     }
 
     @Override
