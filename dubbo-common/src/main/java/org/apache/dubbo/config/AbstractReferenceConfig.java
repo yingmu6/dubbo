@@ -82,12 +82,12 @@ public abstract class AbstractReferenceConfig extends AbstractInterfaceConfig {
     /**
      * The remote service version the customer side will reference
      */
-    protected String version;
+    protected String version; //服务的版本号
 
-    /**
+     /**
      * The remote service group the customer side will reference
      */
-    protected String group;
+    protected String group; //服务的分组
 
     /**
      * declares which app or service this interface belongs to

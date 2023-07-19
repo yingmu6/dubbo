@@ -38,7 +38,7 @@ import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 
 public class ApplicationConfigTest {
     @Test
-    public void testName() throws Exception {
+    public void testName() throws Exception { //已测（设置应用的名称）
         ApplicationConfig application = new ApplicationConfig();
         application.setName("app");
         assertThat(application.getName(), equalTo("app"));
@@ -46,11 +46,11 @@ public class ApplicationConfigTest {
         assertThat(application.getName(), equalTo("app2"));
         Map<String, String> parameters = new HashMap<String, String>();
         ApplicationConfig.appendParameters(parameters, application);
-        assertThat(parameters, hasEntry(APPLICATION_KEY, "app2"));
+        assertThat(parameters, hasEntry(APPLICATION_KEY, "app2")); //getName()方法上声明为@Parameter(key = APPLICATION_KEY, required = true, useKeyAsProperty = false)
     }
 
     @Test
-    public void testVersion() throws Exception {
+    public void testVersion() throws Exception { //已测（设置应用的版本号）
         ApplicationConfig application = new ApplicationConfig("app");
         application.setVersion("1.0.0");
         assertThat(application.getVersion(), equalTo("1.0.0"));
@@ -60,39 +60,39 @@ public class ApplicationConfigTest {
     }
 
     @Test
-    public void testOwner() throws Exception {
+    public void testOwner() throws Exception { //已测（设置应用负责人）
         ApplicationConfig application = new ApplicationConfig("app");
         application.setOwner("owner");
         assertThat(application.getOwner(), equalTo("owner"));
     }
 
     @Test
-    public void testOrganization() throws Exception {
+    public void testOrganization() throws Exception { //已测（设置应用所属组织）
         ApplicationConfig application = new ApplicationConfig("app");
         application.setOrganization("org");
         assertThat(application.getOrganization(), equalTo("org"));
     }
 
     @Test
-    public void testArchitecture() throws Exception {
+    public void testArchitecture() throws Exception { //已测（设置架构分层）
         ApplicationConfig application = new ApplicationConfig("app");
         application.setArchitecture("arch");
         assertThat(application.getArchitecture(), equalTo("arch"));
     }
 
     @Test
-    public void testEnvironment1() throws Exception {
+    public void testEnvironment1() throws Exception { //已测（设置应用环境，值只能是develop/test/product）
         ApplicationConfig application = new ApplicationConfig("app");
-        application.setEnvironment("develop");
+        application.setEnvironment("develop"); //开发环境
         assertThat(application.getEnvironment(), equalTo("develop"));
-        application.setEnvironment("test");
+        application.setEnvironment("test"); //测试环境
         assertThat(application.getEnvironment(), equalTo("test"));
-        application.setEnvironment("product");
+        application.setEnvironment("product"); //生产环境
         assertThat(application.getEnvironment(), equalTo("product"));
     }
 
     @Test
-    public void testEnvironment2() throws Exception {
+    public void testEnvironment2() throws Exception { //已测（设置应用环境时，不是对应的develop/test/product，即抛出异常）
         Assertions.assertThrows(IllegalStateException.class, () -> {
             ApplicationConfig application = new ApplicationConfig("app");
             application.setEnvironment("illegal-env");
@@ -100,7 +100,7 @@ public class ApplicationConfigTest {
     }
 
     @Test
-    public void testRegistry() throws Exception {
+    public void testRegistry() throws Exception { //todo @pause
         ApplicationConfig application = new ApplicationConfig("app");
         RegistryConfig registry = new RegistryConfig();
         application.setRegistry(registry);

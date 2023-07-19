@@ -166,34 +166,34 @@ public class AbstractReferenceConfigTest {
     }
 
     @Test
-    public void testSticky() throws Exception { //todo @pause
+    public void testSticky() throws Exception { //已测（设置是否粘黏属性值）
         ReferenceConfig referenceConfig = new ReferenceConfig();
         referenceConfig.setSticky(true);
         Map<String, String> parameters = new HashMap<String, String>();
         AbstractInterfaceConfig.appendParameters(parameters, referenceConfig);
         assertThat(referenceConfig.getSticky(), is(true));
-        assertThat(parameters, hasKey(CLUSTER_STICKY_KEY));
+        assertThat(parameters, hasKey(CLUSTER_STICKY_KEY)); //参数key通过@Parameter或get方法提取属性名，此处是通过get方法获取的属性名
     }
 
     @Test
-    public void testVersion() throws Exception {
+    public void testVersion() throws Exception { //已测（设置服务的版本号）
         ReferenceConfig referenceConfig = new ReferenceConfig();
         referenceConfig.setVersion("version");
         assertThat(referenceConfig.getVersion(), equalTo("version"));
     }
 
     @Test
-    public void testGroup() throws Exception {
+    public void testGroup() throws Exception { //已测（设置服务的分组）
         ReferenceConfig referenceConfig = new ReferenceConfig();
         referenceConfig.setGroup("group");
         assertThat(referenceConfig.getGroup(), equalTo("group"));
     }
 
     @Test
-    public void testGenericOverride() {
+    public void testGenericOverride() { //已测（设置泛化值 generic）
         ReferenceConfig referenceConfig = new ReferenceConfig();
         referenceConfig.setGeneric("false");
-        referenceConfig.refresh();
+        referenceConfig.refresh(); //refresh() 从各种配置中获取到值，然后设置到config中
         Assertions.assertFalse(referenceConfig.isGeneric());
         Assertions.assertEquals("false", referenceConfig.getGeneric());
 

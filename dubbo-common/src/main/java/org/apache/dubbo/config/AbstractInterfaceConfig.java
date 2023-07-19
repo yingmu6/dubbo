@@ -66,13 +66,13 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig { //A
      * The {@code Filter} when the provider side exposed a service or the customer side references a remote service used,
      * if there are more than one, you can use commas to separate them（超过多个，使用分隔符分隔）
      */
-    protected String filter; //过滤器
+    protected String filter; //过滤器名称（多个名称用逗号分隔）
 
-    /**
+     /**
      * The Listener when the provider side exposes a service or the customer side references a remote service used
      * if there are more than one, you can use commas to separate them
      */
-    protected String listener;
+    protected String listener; //监听器名称（多个名称用逗号分隔）
 
     /**
      * The owner of the service providers

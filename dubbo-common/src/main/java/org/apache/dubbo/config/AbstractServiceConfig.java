@@ -48,39 +48,39 @@ public abstract class AbstractServiceConfig extends AbstractInterfaceConfig {
     /**
      * whether the service is deprecated
      */
-    protected Boolean deprecated = false;
+    protected Boolean deprecated = false; //是否启用服务
 
     /**
      * The time delay register service (milliseconds)
      */
-    protected Integer delay;
+    protected Integer delay; //服务延迟暴露的时间（ServiceConfig#export服务暴露时，会判断是否需要延迟暴露服务）
 
     /**
      * Whether to export the service
      */
-    protected Boolean export;
+    protected Boolean export; //是否暴露服务（ServiceConfig#export服务暴露时，会判断是否需要暴露服务）
 
     /**
      * The service weight
      */
-    protected Integer weight;
+    protected Integer weight; //服务的权重
 
-    /**
+     /**
      * Document center
      */
-    protected String document;
+    protected String document; //文档中心链接
 
-    /**
+     /**
      * Whether to register as a dynamic service or not on register center, the value is true, the status will be enabled
      * after the service registered,and it needs to be disabled manually; if you want to disable the service, you also need
      * manual processing
      */
-    protected Boolean dynamic = true;
+    protected Boolean dynamic = true; //服务是否动态注册（若为false，即不是动态注册，则需要人工进行启停）
 
     /**
      * Whether to use token
      */
-    /**
+     /**
      * 令牌token是怎么使用的？以及具体原理是怎样的？消费端是怎么获取token值的
      * 解：令牌验证主要是避免消费者绕过注册中心去直连提供者（如<dubbo:reference url="dubbo://host:ip">）
      * 1）提供端，可在<dubbo:provider/>或<dubbo:service/> 配置token属性，token可以自定义，如token="123"，也可以系统按uuid生成：如token="true"
@@ -89,16 +89,16 @@ public abstract class AbstractServiceConfig extends AbstractInterfaceConfig {
      */
     protected String token;
 
-    /**
+     /**
      * Whether to export access logs to logs
      */
-    protected String accesslog;
+    protected String accesslog; //将向logger中输出访问日志，也可填写访问日志文件路径，直接把访问日志输出到指定文件
 
-    /**
+     /**
      * The protocol list the service will export with
      * Also see {@link #protocolIds}, only one of them will work.
      */
-    protected List<ProtocolConfig> protocols;
+    protected List<ProtocolConfig> protocols; //服务将暴露的协议列表
 
     /**
      * The id list of protocols the service will export with
@@ -107,12 +107,12 @@ public abstract class AbstractServiceConfig extends AbstractInterfaceConfig {
     protected String protocolIds;
 
     // max allowed execute times
-    private Integer executes;
+    private Integer executes; //最大请求并行数（服务提供者每服务每方法最大可并行执行请求数）
 
     /**
      * Whether to register
      */
-    private Boolean register;
+    private Boolean register; //是否向注册中心注册服务
 
     /**
      * Warm up period
@@ -122,7 +122,7 @@ public abstract class AbstractServiceConfig extends AbstractInterfaceConfig {
     /**
      * The serialization type
      */
-    private String serialization;
+    private String serialization; //序列化方式
 
     public String getVersion() {
         return version;
@@ -164,7 +164,7 @@ public abstract class AbstractServiceConfig extends AbstractInterfaceConfig {
         this.weight = weight;
     }
 
-    @Parameter(escaped = true)
+    @Parameter(escaped = true) //文档链接，需要进行URL编码
     public String getDocument() {
         return document;
     }

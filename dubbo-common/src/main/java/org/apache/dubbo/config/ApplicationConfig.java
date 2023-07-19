@@ -47,27 +47,27 @@ public class ApplicationConfig extends AbstractConfig {
     /**
      * Application name
      */
-    private String name;
+    private String name; //应用名称
 
     /**
      * The application version
      */
-    private String version;
+    private String version; //应用版本号
 
     /**
      * Application owner
      */
-    private String owner;
+    private String owner; //应用负责人
 
     /**
      * Application's organization (BU)
      */
-    private String organization;
+    private String organization; //组织名称
 
-    /**
+     /**
      * Architecture layer
      */
-    private String architecture;
+    private String architecture; //架构分层
 
     /**
      * Environment, e.g. dev, test or production
@@ -166,7 +166,7 @@ public class ApplicationConfig extends AbstractConfig {
         }
     }
 
-    @Parameter(key = "application.version")
+    @Parameter(key = "application.version") //设置了在参数Map中的key
     public String getVersion() {
         return version;
     }
@@ -203,7 +203,7 @@ public class ApplicationConfig extends AbstractConfig {
         return environment;
     }
 
-    public void setEnvironment(String environment) {
+    public void setEnvironment(String environment) { //设置应用环境（值只能是develop/test/product，否则抛出异常）
         if (environment != null) {
             if (!(DEVELOPMENT_ENVIRONMENT.equals(environment)
                     || TEST_ENVIRONMENT.equals(environment)
