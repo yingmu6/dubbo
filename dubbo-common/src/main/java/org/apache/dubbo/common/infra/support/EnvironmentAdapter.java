@@ -41,22 +41,22 @@ public class EnvironmentAdapter implements InfraAdapter {
     public Map<String, String> getExtraAttributes(Map<String, String> params) {
         Map<String, String> parameters = new HashMap<>();
 
-        String rawLabels = ConfigurationUtils.getProperty(DUBBO_LABELS); //获取操作系统环境相关的属性值
+        String rawLabels = ConfigurationUtils.getProperty(DUBBO_LABELS); //获取"dubbo.labels"对应的属性值
         if (StringUtils.isNotEmpty(rawLabels)) {
-            String[] labelPairs = SEMICOLON_SPLIT_PATTERN.split(rawLabels);
+            String[] labelPairs = SEMICOLON_SPLIT_PATTERN.split(rawLabels); //按分号分隔
             for (String pair : labelPairs) {
-                String[] label = EQUAL_SPLIT_PATTERN.split(pair);
+                String[] label = EQUAL_SPLIT_PATTERN.split(pair); //按等号分隔
                 if (label.length == 2) {
                     parameters.put(label[0], label[1]);
                 }
             }
         }
 
-        String rawKeys = ConfigurationUtils.getProperty(DUBBO_ENV_KEYS); //获取JVM参数相关的值
+        String rawKeys = ConfigurationUtils.getProperty(DUBBO_ENV_KEYS); //获取"dubbo.env.keys"对应的属性值
         if (StringUtils.isNotEmpty(rawKeys)) {
-            String[] keys = COMMA_SPLIT_PATTERN.split(rawKeys);
+            String[] keys = COMMA_SPLIT_PATTERN.split(rawKeys); //按逗号分隔，分隔出参数key列表
             for (String key : keys) {
-                String value = ConfigurationUtils.getProperty(key);
+                String value = ConfigurationUtils.getProperty(key);  //依次取参数key对应的值
                 if (value != null) {
                     parameters.put(key, value);
                 }

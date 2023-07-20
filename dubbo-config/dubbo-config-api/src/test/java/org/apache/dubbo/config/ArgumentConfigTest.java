@@ -29,31 +29,31 @@ import static org.hamcrest.Matchers.is;
 
 public class ArgumentConfigTest {
     @Test
-    public void testIndex() throws Exception {
+    public void testIndex() throws Exception { //已测（设置参数下标）
         ArgumentConfig argument = new ArgumentConfig();
         argument.setIndex(1);
         assertThat(argument.getIndex(), is(1));
     }
 
     @Test
-    public void testType() throws Exception {
+    public void testType() throws Exception { //已测（设置参数类型）
         ArgumentConfig argument = new ArgumentConfig();
         argument.setType("int");
         assertThat(argument.getType(), equalTo("int"));
     }
 
     @Test
-    public void testCallback() throws Exception {
+    public void testCallback() throws Exception { //已测（设置 是否为callback接口）
         ArgumentConfig argument = new ArgumentConfig();
         argument.setCallback(true);
         assertThat(argument.isCallback(), is(true));
     }
 
     @Test
-    public void testArguments() throws Exception {
+    public void testArguments() throws Exception { //已测（将配置添加到参数Map中）
         ArgumentConfig argument = new ArgumentConfig();
-        argument.setIndex(1);
-        argument.setType("int");
+        argument.setIndex(1); //对应get方法上的@Parameter(excluded=true)，所以不加入到参数Map中
+        argument.setType("int"); //同上
         argument.setCallback(true);
         Map<String, String> parameters = new HashMap<String, String>();
         AbstractServiceConfig.appendParameters(parameters, argument);

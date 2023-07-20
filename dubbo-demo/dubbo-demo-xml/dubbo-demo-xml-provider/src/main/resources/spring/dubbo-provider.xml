@@ -35,7 +35,7 @@
     </dubbo:config-center>
 
     <dubbo:registry address="zookeeper://127.0.0.1:2181/all?default.name=test" simplified="true"/>
-    <dubbo:protocol name="dubbo" port="20881" status="server"/>
+    <dubbo:protocol  port="20881" status="server"/>
 
 <!--    <bean id="demoService" class="org.apache.dubbo.demo.provider.DemoServiceImqqp"/>-->
 <!--    <dubbo:service interface="org.apache.dubbo.demo.DemoService" ref="demoService"/>-->

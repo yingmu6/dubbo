@@ -33,22 +33,22 @@ public class ArgumentConfig implements Serializable {
     /**
      * The argument index: index -1 represents not set
      */
-    private Integer index = -1;
+    private Integer index = -1; //参数下标
 
     /**
      * Argument type
      */
-    private String type;
+    private String type; //参数类型
 
     /**
      * Whether the argument is the callback interface
      */
-    private Boolean callback;
+    private Boolean callback; //是否为Callback接口
 
     public ArgumentConfig() {
     }
 
-    public ArgumentConfig(Argument argument) {
+    public ArgumentConfig(Argument argument) { //使用@Argument构建
         this.index = argument.index();
         this.type = argument.type();
         this.callback = argument.callback();

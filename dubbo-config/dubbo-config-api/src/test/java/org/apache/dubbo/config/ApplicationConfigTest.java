@@ -100,41 +100,41 @@ public class ApplicationConfigTest {
     }
 
     @Test
-    public void testRegistry() throws Exception { //todo @pause
+    public void testRegistry() throws Exception { //已测（设置注册中心配置，一个应用可对应多个注册中心）
         ApplicationConfig application = new ApplicationConfig("app");
         RegistryConfig registry = new RegistryConfig();
-        application.setRegistry(registry);
+        application.setRegistry(registry); //可按单个设置
         assertThat(application.getRegistry(), sameInstance(registry));
-        application.setRegistries(Collections.singletonList(registry));
+        application.setRegistries(Collections.singletonList(registry)); //可按列表设置
         assertThat(application.getRegistries(), contains(registry));
         assertThat(application.getRegistries(), hasSize(1));
     }
 
     @Test
-    public void testMonitor() throws Exception {
+    public void testMonitor() throws Exception { //已测（设置监控中心配置）
         ApplicationConfig application = new ApplicationConfig("app");
-        application.setMonitor(new MonitorConfig("monitor-addr"));
+        application.setMonitor(new MonitorConfig("monitor-addr")); //设置监控中心配置
         assertThat(application.getMonitor().getAddress(), equalTo("monitor-addr"));
-        application.setMonitor("monitor-addr");
+        application.setMonitor("monitor-addr"); //设置监控中心名称
         assertThat(application.getMonitor().getAddress(), equalTo("monitor-addr"));
     }
 
     @Test
-    public void testLogger() throws Exception {
+    public void testLogger() throws Exception { //已测（设置日志输出方式）
         ApplicationConfig application = new ApplicationConfig("app");
         application.setLogger("log4j");
         assertThat(application.getLogger(), equalTo("log4j"));
     }
 
     @Test
-    public void testDefault() throws Exception {
+    public void testDefault() throws Exception { //已测（设置默认应用）
         ApplicationConfig application = new ApplicationConfig("app");
         application.setDefault(true);
         assertThat(application.isDefault(), is(true));
     }
 
     @Test
-    public void testDumpDirectory() throws Exception {
+    public void testDumpDirectory() throws Exception { //已测（设置线程dump的文件路径）
         ApplicationConfig application = new ApplicationConfig("app");
         application.setDumpDirectory("/dump");
         assertThat(application.getDumpDirectory(), equalTo("/dump"));
@@ -144,7 +144,7 @@ public class ApplicationConfigTest {
     }
 
     @Test
-    public void testQosEnable() throws Exception {
+    public void testQosEnable() throws Exception { //已测（是否启用qos运维端口）
         ApplicationConfig application = new ApplicationConfig("app");
         application.setQosEnable(true);
         assertThat(application.getQosEnable(), is(true));
@@ -154,14 +154,14 @@ public class ApplicationConfigTest {
     }
 
     @Test
-    public void testQosPort() throws Exception {
+    public void testQosPort() throws Exception { //已测（设置监听的qos端口）
         ApplicationConfig application = new ApplicationConfig("app");
         application.setQosPort(8080);
         assertThat(application.getQosPort(), equalTo(8080));
     }
 
     @Test
-    public void testQosAcceptForeignIp() throws Exception {
+    public void testQosAcceptForeignIp() throws Exception { //已测（是否接受外部的ip）
         ApplicationConfig application = new ApplicationConfig("app");
         application.setQosAcceptForeignIp(true);
         assertThat(application.getQosAcceptForeignIp(), is(true));
@@ -171,7 +171,7 @@ public class ApplicationConfigTest {
     }
 
     @Test
-    public void testParameters() throws Exception {
+    public void testParameters() throws Exception { //已测（读取config属性，添加到参数Map中）
         ApplicationConfig application = new ApplicationConfig("app");
         application.setQosAcceptForeignIp(true);
         Map<String, String> parameters = new HashMap<String, String>();
@@ -182,20 +182,31 @@ public class ApplicationConfigTest {
     }
 
     @Test
-    public void testAppendEnvironmentProperties() {
+    public void testAppendEnvironmentProperties() { //已测（应用中添加环境变量值）
         try {
             ApplicationConfig application = new ApplicationConfig("app");
-            System.setProperty("dubbo.labels", "tag1=value1;tag2=value2 ; tag3 = value3");
+            System.setProperty("dubbo.labels", "tag1=value1;tag2=value2 ; tag3 = value3"); //解析参数值时，会按";"和"="进行分隔
             application.refresh();
             Map<String, String> parameters = application.getParameters();
             Assertions.assertEquals("value1", parameters.get("tag1"));
             Assertions.assertEquals("value2", parameters.get("tag2"));
             Assertions.assertEquals("value3", parameters.get("tag3"));
+            /**
+             * 调试问题点：
+             * 1）此处的application.getParameters()，值是设定的？
+             * 解答：application.refresh()会调用两处：
+             *      a）AbstractConfig#refresh()
+             *         会根据config的属性或get方法上声明的@Parameter中的key，去从各个配置中去取值。因为ApplicationConfig没有这个dubbo.labels属性，所以就不会去提取对应的值
+             *
+             *      b）ApplicationConfig#appendEnvironmentProperties()
+             *         会找到InfraAdapter对应的SPI扩展实例，然后去提取额外的配置值getExtraAttributes()，最终会调用ApplicationConfig#appendEnvironmentProperties()
+             *         里面会查找两个属性的值，如"dubbo.labels"、"dubbo.env.keys"
+             */
 
             ApplicationConfig application1 = new ApplicationConfig("app");
-            System.setProperty("dubbo.env.keys", "tag1, tag2,tag3");
+            System.setProperty("dubbo.env.keys", "tag1, tag2,tag3"); //按逗号分隔出参数key列表
             // mock environment variables
-            System.setProperty("tag1", "value1");
+            System.setProperty("tag1", "value1"); //依次设置参数的值
             System.setProperty("tag2", "value2");
             System.setProperty("tag3", "value3");
             application1.refresh();

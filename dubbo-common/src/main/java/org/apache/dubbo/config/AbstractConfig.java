@@ -49,7 +49,7 @@ public abstract class AbstractConfig implements Serializable {
     private static final long serialVersionUID = 4267533505537413570L;
 
     /**
-     * The legacy properties container
+     * The legacy properties（遗留属性） container
      */
     private static final Map<String, String> LEGACY_PROPERTIES = new HashMap<String, String>();
 
@@ -58,7 +58,7 @@ public abstract class AbstractConfig implements Serializable {
      */
     private static final String[] SUFFIXES = new String[]{"Config", "Bean", "ConfigBase"};
 
-    static { //预置的属性键值对
+    static { //遗留的属性
         LEGACY_PROPERTIES.put("dubbo.protocol.name", "dubbo.service.protocol");
         LEGACY_PROPERTIES.put("dubbo.protocol.host", "dubbo.service.server.host");
         LEGACY_PROPERTIES.put("dubbo.protocol.port", "dubbo.service.server.port");
@@ -73,7 +73,7 @@ public abstract class AbstractConfig implements Serializable {
      * The config id
      */
     protected String id; //配置id（所有config子类都有）
-    protected String prefix;
+    protected String prefix; //配置前缀
 
     protected final AtomicBoolean refreshed = new AtomicBoolean(false);
 
@@ -257,7 +257,7 @@ public abstract class AbstractConfig implements Serializable {
         } catch (NoSuchMethodException e) {
             getter = clazz.getMethod("is" + propertyName);
         }
-        Parameter parameter = getter.getAnnotation(Parameter.class);
+        Parameter parameter = getter.getAnnotation(Parameter.class); //获取get方法上声明的@Parameter
         if (parameter != null && StringUtils.isNotEmpty(parameter.key()) && parameter.useKeyAsProperty()) { //若方法上带有@Parameter注解，则使用注解上声明的名称作为属性名称
             propertyName = parameter.key();
         } else {

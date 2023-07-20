@@ -96,7 +96,7 @@ public class ConfigurationUtils {
         return getProperty(property, null);
     }
 
-    public static String getProperty(String property, String defaultValue) {
+    public static String getProperty(String property, String defaultValue) { //从各种配置中找到指定的属性值
         return StringUtils.trim(ApplicationModel.getEnvironment().getConfiguration().getString(property, defaultValue));
     }
 

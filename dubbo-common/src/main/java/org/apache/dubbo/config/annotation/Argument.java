@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.ANNOTATION_TYPE})
 @Inherited
-public @interface Argument {
+public @interface Argument { //<dubbo:argument> 对应的注解
     //argument: index -1 represents not set
     int index() default -1;
 

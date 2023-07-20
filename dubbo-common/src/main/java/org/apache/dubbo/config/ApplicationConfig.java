@@ -79,10 +79,10 @@ public class ApplicationConfig extends AbstractConfig {
      */
     private String compiler;
 
-    /**
+     /**
      * The type of the log access
      */
-    private String logger;
+    private String logger; //日志输出方式
 
     /**
      * Registry centers
@@ -98,32 +98,32 @@ public class ApplicationConfig extends AbstractConfig {
     /**
      * Is default or not
      */
-    private Boolean isDefault; //
+    private Boolean isDefault; //是否是默认应用
 
     /**
      * Directory for saving thread dump
      */
-    private String dumpDirectory;
+    private String dumpDirectory; //线程dump的文件路径（当进程出问题如线程池满时，框架自动dump文件到指定的存储路径）
 
     /**
      * Whether to enable qos or not
      */
-    private Boolean qosEnable;
+    private Boolean qosEnable; //是否启动qos运维端口
 
     /**
      * The qos host to listen
      */
-    private String qosHost;
+    private String qosHost; //监听的qos地址
 
     /**
      * The qos port to listen
      */
-    private Integer qosPort;
+    private Integer qosPort; //监听的qos端口
 
     /**
      * Should we accept foreign ip or not?
      */
-    private Boolean qosAcceptForeignIp;
+    private Boolean qosAcceptForeignIp; //是否接受外部ip（安全配置，是否接收除localhost本机访问之外的外部请求）
 
     /**
      * Customized parameters（自定义参数）
@@ -253,7 +253,7 @@ public class ApplicationConfig extends AbstractConfig {
     }
 
     public void setMonitor(String monitor) {
-        this.monitor = new MonitorConfig(monitor);
+        this.monitor = new MonitorConfig(monitor); //通过设置的监控中心名称，构建监控中心配置
     }
 
     public void setMonitor(MonitorConfig monitor) {
@@ -393,7 +393,7 @@ public class ApplicationConfig extends AbstractConfig {
     public String getHostname() {
         if (hostname == null) {
             try {
-                hostname = InetAddress.getLocalHost().getHostName();
+                hostname = InetAddress.getLocalHost().getHostName(); //若没设置主机号，获取本地机器的主机号
             } catch (UnknownHostException e) {
                 LOGGER.warn("Failed to get the hostname of current instance.", e);
                 hostname = "UNKNOWN";
@@ -439,7 +439,7 @@ public class ApplicationConfig extends AbstractConfig {
         appendEnvironmentProperties();
     }
 
-    private void appendEnvironmentProperties() { //设置自定义参数的值
+    private void appendEnvironmentProperties() { //设置环境变量属性值
         if (parameters == null) {
             parameters = new HashMap<>();
         }

@@ -23,13 +23,13 @@ import org.junit.jupiter.api.Test;
 
 public class ConfigCenterConfigTest {
     @Test
-    public void testPrefix() {
+    public void testPrefix() { //已测（获取Config的前缀名）
         ConfigCenterConfig config = new ConfigCenterConfig();
-        Assertions.assertEquals("dubbo.config-center", config.getPrefix());
+        Assertions.assertEquals("dubbo.config-center", config.getPrefix()); //为设置前缀名时，按 "dubbo." + 标签名组装
     }
 
     @Test
-    public void testToUrl() {
+    public void testToUrl() { //已测（转换为url字符串）
         ConfigCenterConfig config = new ConfigCenterConfig();
         config.setNamespace("namespace");
         config.setGroup("group");

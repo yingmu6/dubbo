@@ -89,7 +89,7 @@ public class ConfigCenterConfig extends AbstractConfig { //配置中心的配置
     public ConfigCenterConfig() {
     }
 
-    public URL toUrl() {
+    public URL toUrl() { //转换为url字符串
         Map<String, String> map = new HashMap<>();
         appendParameters(map, this);
         if (StringUtils.isEmpty(address)) {

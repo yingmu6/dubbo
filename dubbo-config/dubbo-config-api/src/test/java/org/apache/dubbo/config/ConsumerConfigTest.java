@@ -25,7 +25,7 @@ import static org.hamcrest.Matchers.is;
 
 public class ConsumerConfigTest {
     @Test
-    public void testTimeout() throws Exception {
+    public void testTimeout() throws Exception { //todo @pause
         try {
             System.clearProperty("sun.rmi.transport.tcp.responseTimeout");
             ConsumerConfig consumer = new ConsumerConfig();
