@@ -272,7 +272,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig { //A
             String[] ids = COMMA_SPLIT_PATTERN.split(registryIds); //使用分隔符","分隔registry id值
             List<RegistryConfig> tmpRegistries = new ArrayList<>();
             Consumer<String> stringConsumer = id -> { //用lambda表达式构建Consumer的实例（也是通过匿名类方式）
-                if (tmpRegistries.stream().noneMatch(reg -> reg.getId().equals(id))) { //noneMatch如果流中没有匹配的元素，返回true
+                if (tmpRegistries.stream().noneMatch(reg -> reg.getId().equals(id))) { //noneMatch如果流中没有匹配的元素，返回true，此处是避免有重复的注册实例
                     Optional<RegistryConfig> globalRegistry = ApplicationModel.getConfigManager().getRegistry(id);
                     if (globalRegistry.isPresent()) {
                         tmpRegistries.add(globalRegistry.get());

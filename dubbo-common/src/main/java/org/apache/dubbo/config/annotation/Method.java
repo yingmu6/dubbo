@@ -33,7 +33,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.ANNOTATION_TYPE})
 @Inherited
 public @interface Method {
-    String name();
+    String name(); //java.lang.reflect.Method#getName获取属性名（注解中的方法名即为属性名）
 
     int timeout() default -1;
 

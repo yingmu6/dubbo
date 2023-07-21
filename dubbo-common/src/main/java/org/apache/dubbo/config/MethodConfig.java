@@ -32,7 +32,7 @@ import static org.apache.dubbo.config.Constants.*;
  *
  * @export
  */
-public class MethodConfig extends AbstractMethodConfig { // <dubbo:method> 方法级别的配置
+public class MethodConfig extends AbstractMethodConfig { // 对应<dubbo:method>配置
 
     private static final long serialVersionUID = 884908855422675941L;
 
@@ -44,42 +44,42 @@ public class MethodConfig extends AbstractMethodConfig { // <dubbo:method> 方�
     /**
      * Stat
      */
-    private Integer stat;
+    private Integer stat; //状态
 
     /**
      * Whether to retry
      */
-    private Boolean retry;
+    private Boolean retry; //是否重试
 
     /**
      * If it's reliable
      */
-    private Boolean reliable;
+    private Boolean reliable; //是否可靠的
 
-    /**
+     /**
      * Thread limits for method invocations
      */
-    private Integer executes;
+    private Integer executes; //并发数（每服务每方法最大使用线程数限制）
 
     /**
      * If it's deprecated
      */
-    private Boolean deprecated;
+    private Boolean deprecated; //是否弃用
 
     /**
      * Whether to enable sticky
      */
-    private Boolean sticky;
+    private Boolean sticky; //是否启用粘黏（若值为true，则该接口的所有方法都使用同一个provider）
 
     /**
      * Whether need to return
      */
-    private Boolean isReturn;
+    private Boolean isReturn; //是否需要返回
 
     /**
      * Callback instance when async-call is invoked
      */
-    private Object oninvoke;
+    private Object oninvoke; //异步调用时的回调接口
 
     /**
      * Callback method when async-call is invoked
@@ -125,9 +125,13 @@ public class MethodConfig extends AbstractMethodConfig { // <dubbo:method> 方�
     public MethodConfig() {
     }
 
-    public MethodConfig(Method method) {
-        appendAnnotation(Method.class, method);
+    public MethodConfig(Method method) { //通过@Method构造MethodConfig
+        appendAnnotation(Method.class, method); //将注解对象中的属性值，设置到当前Config对象中
 
+        /**
+         * isReturn()、oninvoke()、onreturn、onthrow为啥要单独处理？
+         * 解答：因为appendAnnotation(...)最终设置到Config对象，是通过setXxx方法设置，当前Config中这几个方法不是set开头，所以要单独处理
+         */
         this.setReturn(method.isReturn());
 
         if(!"".equals(method.oninvoke())){
@@ -140,6 +144,10 @@ public class MethodConfig extends AbstractMethodConfig { // <dubbo:method> 方�
             this.setOnthrow(method.onthrow());
         }
 
+        /**
+         * arguments()为啥要单独处理？
+         * 解答：因为当前Config的setArguments(...)参数类型是ArgumentConfig，而@Method中arguments()返回类型是Argument，类型不一样，需要进行转换
+         */
         if (method.arguments() != null && method.arguments().length != 0) {
             List<ArgumentConfig> argumentConfigs = new ArrayList<ArgumentConfig>(method.arguments().length);
             this.setArguments(argumentConfigs);

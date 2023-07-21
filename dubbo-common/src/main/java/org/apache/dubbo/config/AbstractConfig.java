@@ -356,7 +356,7 @@ public abstract class AbstractConfig implements Serializable {
         }
     }
 
-    protected void appendAnnotation(Class<?> annotationClass, Object annotation) { //将注解的内容附加到对应的Config对象中（annotationClass为注解对应的Class，annotation为注解对应的对象实例）
+    protected void appendAnnotation(Class<?> annotationClass, Object annotation) { //将注解的内容附加到对应的Config对象中（该方法名有些歧义，正常理解：当前方法的主体是Config对象，appendAnnotation(...)理解为：将Config对象内容写入注解中，但此处刚好相反）
         Method[] methods = annotationClass.getMethods();
         for (Method method : methods) { //遍历注解Class中的所有方法
             if (method.getDeclaringClass() != Object.class
@@ -367,7 +367,7 @@ public abstract class AbstractConfig implements Serializable {
                 try {
                     String property = method.getName(); //获取方法名（即为注解的属性名）
                     if ("interfaceClass".equals(property) || "interfaceName".equals(property)) {
-                        property = "interface"; //归总表示接口的属性名
+                        property = "interface"; //归总属性名
                     }
                     String setter = "set" + property.substring(0, 1).toUpperCase() + property.substring(1); //将注解中的方法名，组装为config对象实例的set方法名，如setListener
                     Object value = method.invoke(annotation); //获取注解中方法对应的值

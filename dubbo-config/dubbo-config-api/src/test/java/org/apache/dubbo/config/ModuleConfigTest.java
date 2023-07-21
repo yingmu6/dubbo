@@ -34,7 +34,7 @@ import static org.hamcrest.Matchers.sameInstance;
 public class ModuleConfigTest {
 
     @Test
-    public void testName2() throws Exception {
+    public void testName2() throws Exception { //todo @pause
         ModuleConfig module = new ModuleConfig();
         module.setName("module-name");
         assertThat(module.getName(), equalTo("module-name"));

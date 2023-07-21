@@ -25,55 +25,55 @@ import static org.hamcrest.Matchers.is;
 
 public class ConsumerConfigTest {
     @Test
-    public void testTimeout() throws Exception { //todo @pause
+    public void testTimeout() throws Exception { //已测（设置超时时间）
         try {
             System.clearProperty("sun.rmi.transport.tcp.responseTimeout");
             ConsumerConfig consumer = new ConsumerConfig();
-            consumer.setTimeout(10);
+            consumer.setTimeout(10); //设置dubbo调用的超时时间
             assertThat(consumer.getTimeout(), is(10));
-            assertThat(System.getProperty("sun.rmi.transport.tcp.responseTimeout"), equalTo("10"));
+            assertThat(System.getProperty("sun.rmi.transport.tcp.responseTimeout"), equalTo("10")); //设置RMI超时时间
         } finally {
             System.clearProperty("sun.rmi.transport.tcp.responseTimeout");
         }
     }
 
     @Test
-    public void testDefault() throws Exception {
+    public void testDefault() throws Exception { //已测（是否使用默认协议）
         ConsumerConfig consumer = new ConsumerConfig();
         consumer.setDefault(true);
         assertThat(consumer.isDefault(), is(true));
     }
 
     @Test
-    public void testClient() throws Exception {
+    public void testClient() throws Exception { //已测（设置网络框架的客户端，如netty、mina等）
         ConsumerConfig consumer = new ConsumerConfig();
         consumer.setClient("client");
         assertThat(consumer.getClient(), equalTo("client"));
     }
 
     @Test
-    public void testThreadpool() throws Exception {
+    public void testThreadpool() throws Exception { //已测（设置消费端线程池类型）
         ConsumerConfig consumer = new ConsumerConfig();
         consumer.setThreadpool("fixed");
         assertThat(consumer.getThreadpool(), equalTo("fixed"));
     }
 
     @Test
-    public void testCorethreads() throws Exception {
+    public void testCorethreads() throws Exception { //已测（设置消费端线程池核心线程数）
         ConsumerConfig consumer = new ConsumerConfig();
         consumer.setCorethreads(10);
         assertThat(consumer.getCorethreads(), equalTo(10));
     }
 
     @Test
-    public void testThreads() throws Exception {
+    public void testThreads() throws Exception { //已测（设置消费端线程池线程数）
         ConsumerConfig consumer = new ConsumerConfig();
         consumer.setThreads(20);
         assertThat(consumer.getThreads(), equalTo(20));
     }
 
     @Test
-    public void testQueues() throws Exception {
+    public void testQueues() throws Exception { //已测（设置消费端线程池队列数）
         ConsumerConfig consumer = new ConsumerConfig();
         consumer.setQueues(5);
         assertThat(consumer.getQueues(), equalTo(5));

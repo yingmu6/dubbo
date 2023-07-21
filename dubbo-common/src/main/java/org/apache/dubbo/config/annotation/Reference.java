@@ -28,7 +28,8 @@ import java.lang.annotation.Target;
  *
  * @see DubboReference
  * @since 2.7.0
- * @deprecated Recommend {@link DubboReference} as the substitute
+ * @deprecated Recommend {@link DubboReference} as the substitute（替代）
+ * （已被弃用，使用的@DubboReference替代）
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

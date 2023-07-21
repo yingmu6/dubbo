@@ -27,35 +27,35 @@ public class ConsumerConfig extends AbstractReferenceConfig {
 
     private static final long serialVersionUID = 2827274711143680600L;
 
-    /**
+     /**
      * Whether to use the default protocol
      */
-    private Boolean isDefault;
+    private Boolean isDefault; //是否使用默认协议
 
-    /**
+     /**
      * Networking framework client uses: netty, mina, etc.
      */
-    private String client;
+    private String client; //网络框架的客户端
 
     /**
      * Consumer thread pool type: cached, fixed, limit, eager
      */
-    private String threadpool;
+    private String threadpool; //消费端线程池类型
 
     /**
      * Consumer threadpool core thread size
      */
-    private Integer corethreads;
+    private Integer corethreads; //消费端线程池核心线程数
 
     /**
      * Consumer threadpool thread size
      */
-    private Integer threads;
+    private Integer threads; //消费端线程池线程数
 
     /**
      * Consumer threadpool queue size
      */
-    private Integer queues;
+    private Integer queues; //消费端线程池队列数
 
     /**
      * By default, a TCP long-connection communication is shared between the consumer process and the provider process.
@@ -69,7 +69,7 @@ public class ConsumerConfig extends AbstractReferenceConfig {
         String rmiTimeout = System.getProperty("sun.rmi.transport.tcp.responseTimeout");
         if (timeout != null && timeout > 0
                 && (StringUtils.isEmpty(rmiTimeout))) {
-            System.setProperty("sun.rmi.transport.tcp.responseTimeout", String.valueOf(timeout));
+            System.setProperty("sun.rmi.transport.tcp.responseTimeout", String.valueOf(timeout)); //设置RMI的超时时间
         }
     }
 

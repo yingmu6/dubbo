@@ -68,9 +68,18 @@ public class MethodConfigTest {
     private String testField;
 
     @Test
-    public void testStaticConstructor() throws NoSuchFieldException {
+    public void testStaticConstructor() throws NoSuchFieldException { //已测（通过@Method构建MethodConfig）
+
+        /**
+         * 调试问题点：
+         * 1）Method[] methods中的@Method注解中的属性值从哪里设置的？ OK
+         *    解答：在当前testField字段上@Reference声明中指定的
+         *
+         * 2）MethodConfig.constructMethodConfig(methods)中是怎样将@Method转换为MethodConfig
+         *    解答：通过MethodConfig#MethodConfig方法转化的
+         */
         Method[] methods = this.getClass().getDeclaredField("testField").getAnnotation(Reference.class).methods();
-        List<MethodConfig> methodConfigs = MethodConfig.constructMethodConfig(methods);
+        List<MethodConfig> methodConfigs = MethodConfig.constructMethodConfig(methods); //用@Method构建MethodConfig
         MethodConfig methodConfig = methodConfigs.get(0);
 
         assertThat(METHOD_NAME, equalTo(methodConfig.getName()));
@@ -93,7 +102,7 @@ public class MethodConfigTest {
     }
 
     @Test
-    public void testName() throws Exception {
+    public void testName() throws Exception { //已测（设置方法名）
         MethodConfig method = new MethodConfig();
         method.setName("hello");
         assertThat(method.getName(), equalTo("hello"));
@@ -103,42 +112,42 @@ public class MethodConfigTest {
     }
 
     @Test
-    public void testStat() throws Exception {
+    public void testStat() throws Exception { //已测（设置状态值）
         MethodConfig method = new MethodConfig();
-        method.setStat(10);
+        method.setStat(10); //已弃用
         assertThat(method.getStat(), equalTo(10));
     }
 
     @Test
-    public void testRetry() throws Exception {
+    public void testRetry() throws Exception { //已测（是否重试）
         MethodConfig method = new MethodConfig();
         method.setRetry(true);
         assertThat(method.isRetry(), is(true));
     }
 
     @Test
-    public void testReliable() throws Exception {
+    public void testReliable() throws Exception { //已测（是否可靠）
         MethodConfig method = new MethodConfig();
         method.setReliable(true);
         assertThat(method.isReliable(), is(true));
     }
 
     @Test
-    public void testExecutes() throws Exception {
+    public void testExecutes() throws Exception { //已测（设置并发数）
         MethodConfig method = new MethodConfig();
-        method.setExecutes(10);
+        method.setExecutes(10); //设置每服务每方法的最大线程数
         assertThat(method.getExecutes(), equalTo(10));
     }
 
     @Test
-    public void testDeprecated() throws Exception {
+    public void testDeprecated() throws Exception { //已测（设置是否弃用的值）
         MethodConfig method = new MethodConfig();
         method.setDeprecated(true);
         assertThat(method.getDeprecated(), is(true));
     }
 
     @Test
-    public void testArguments() throws Exception {
+    public void testArguments() throws Exception { //已测（设置ArgumentConfig）
         MethodConfig method = new MethodConfig();
         ArgumentConfig argument = new ArgumentConfig();
         method.setArguments(Collections.singletonList(argument));
@@ -147,14 +156,14 @@ public class MethodConfigTest {
     }
 
     @Test
-    public void testSticky() throws Exception {
+    public void testSticky() throws Exception { //已测（是否启用粘黏）
         MethodConfig method = new MethodConfig();
         method.setSticky(true);
         assertThat(method.getSticky(), is(true));
     }
 
     @Test
-    public void testOnreturn() throws Exception {
+    public void testOnreturn() throws Exception { //已测（设置onreturn值）
         MethodConfig method = new MethodConfig();
         method.setOnreturn("on-return-object");
         assertThat(method.getOnreturn(), equalTo((Object) "on-return-object"));
@@ -167,7 +176,7 @@ public class MethodConfigTest {
     }
 
     @Test
-    public void testOnreturnMethod() throws Exception {
+    public void testOnreturnMethod() throws Exception { //已测（设置onreturnMethod值）
         MethodConfig method = new MethodConfig();
         method.setOnreturnMethod("on-return-method");
         assertThat(method.getOnreturnMethod(), equalTo("on-return-method"));
@@ -180,7 +189,7 @@ public class MethodConfigTest {
     }
 
     @Test
-    public void testOnthrow() throws Exception {
+    public void testOnthrow() throws Exception { //已测（设置onthrow值）
         MethodConfig method = new MethodConfig();
         method.setOnthrow("on-throw-object");
         assertThat(method.getOnthrow(), equalTo((Object) "on-throw-object"));
@@ -193,7 +202,7 @@ public class MethodConfigTest {
     }
 
     @Test
-    public void testOnthrowMethod() throws Exception {
+    public void testOnthrowMethod() throws Exception { //已测（设置onthrowMethod值）
         MethodConfig method = new MethodConfig();
         method.setOnthrowMethod("on-throw-method");
         assertThat(method.getOnthrowMethod(), equalTo("on-throw-method"));
@@ -206,7 +215,7 @@ public class MethodConfigTest {
     }
 
     @Test
-    public void testOninvoke() throws Exception {
+    public void testOninvoke() throws Exception { //已测（设置oninvoke值）
         MethodConfig method = new MethodConfig();
         method.setOninvoke("on-invoke-object");
         assertThat(method.getOninvoke(), equalTo((Object) "on-invoke-object"));
@@ -219,7 +228,7 @@ public class MethodConfigTest {
     }
 
     @Test
-    public void testOninvokeMethod() throws Exception {
+    public void testOninvokeMethod() throws Exception { //已测（设置oninvokedMethod值）
         MethodConfig method = new MethodConfig();
         method.setOninvokeMethod("on-invoke-method");
         assertThat(method.getOninvokeMethod(), equalTo("on-invoke-method"));
@@ -232,7 +241,7 @@ public class MethodConfigTest {
     }
 
     @Test
-    public void testReturn() throws Exception {
+    public void testReturn() throws Exception { //已测（设置isReturn值）
         MethodConfig method = new MethodConfig();
         method.setReturn(true);
         assertThat(method.isReturn(), is(true));

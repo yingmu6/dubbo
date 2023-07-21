@@ -26,7 +26,7 @@ import java.io.Serializable;
  *
  * @export
  */
-public class ArgumentConfig implements Serializable {
+public class ArgumentConfig implements Serializable { //对应<dubbo:argument/>配置
 
     private static final long serialVersionUID = -2165482463925213595L;
 
