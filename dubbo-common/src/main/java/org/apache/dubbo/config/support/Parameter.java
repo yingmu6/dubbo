@@ -53,6 +53,6 @@ public @interface Parameter { //作用在方法上（在处理方法时，可根
      *
      * </pre>
      */
-    boolean useKeyAsProperty() default true; //是否把key作为属性别名
+    boolean useKeyAsProperty() default true; //是否把设置key值作为参数Map的键
 
 }

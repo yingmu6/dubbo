@@ -31,14 +31,14 @@ import static org.hamcrest.Matchers.not;
 
 public class ProviderConfigTest {
     @Test
-    public void testProtocol() throws Exception {
+    public void testProtocol() throws Exception { //已测（设置暴露的协议）
         ProviderConfig provider = new ProviderConfig();
         provider.setProtocol("protocol");
         assertThat(provider.getProtocol().getName(), equalTo("protocol"));
     }
 
     @Test
-    public void testDefault() throws Exception {
+    public void testDefault() throws Exception { //已测（设置为默认配置）
         ProviderConfig provider = new ProviderConfig();
         provider.setDefault(true);
         Map<String, String> parameters = new HashMap<String, String>();
@@ -48,7 +48,7 @@ public class ProviderConfigTest {
     }
 
     @Test
-    public void testHost() throws Exception {
+    public void testHost() throws Exception { //已测（设置主机号）
         ProviderConfig provider = new ProviderConfig();
         provider.setHost("demo-host");
         Map<String, String> parameters = new HashMap<String, String>();
@@ -58,7 +58,7 @@ public class ProviderConfigTest {
     }
 
     @Test
-    public void testPort() throws Exception {
+    public void testPort() throws Exception { //已测（设置端口号）
         ProviderConfig provider = new ProviderConfig();
         provider.setPort(8080);
         Map<String, String> parameters = new HashMap<String, String>();
@@ -68,7 +68,7 @@ public class ProviderConfigTest {
     }
 
     @Test
-    public void testPath() throws Exception {
+    public void testPath() throws Exception { //已测（设置上下文路径）
         ProviderConfig provider = new ProviderConfig();
         provider.setPath("/path");
         Map<String, String> parameters = new HashMap<String, String>();
@@ -79,7 +79,7 @@ public class ProviderConfigTest {
     }
 
     @Test
-    public void testContextPath() throws Exception {
+    public void testContextPath() throws Exception { //已测（设置上下文路径）
         ProviderConfig provider = new ProviderConfig();
         provider.setContextpath("/context-path");
         Map<String, String> parameters = new HashMap<String, String>();
@@ -89,77 +89,77 @@ public class ProviderConfigTest {
     }
 
     @Test
-    public void testThreadpool() throws Exception {
+    public void testThreadpool() throws Exception { //已测（设置线程池类型）
         ProviderConfig provider = new ProviderConfig();
         provider.setThreadpool("mockthreadpool");
         assertThat(provider.getThreadpool(), equalTo("mockthreadpool"));
     }
 
     @Test
-    public void testThreads() throws Exception {
+    public void testThreads() throws Exception { //已测（设置线程池线程数）
         ProviderConfig provider = new ProviderConfig();
         provider.setThreads(10);
         assertThat(provider.getThreads(), is(10));
     }
 
     @Test
-    public void testIothreads() throws Exception {
+    public void testIothreads() throws Exception { //已测（设置io线程数）
         ProviderConfig provider = new ProviderConfig();
         provider.setIothreads(10);
         assertThat(provider.getIothreads(), is(10));
     }
 
     @Test
-    public void testQueues() throws Exception {
+    public void testQueues() throws Exception { //已测（设置线程池队列数）
         ProviderConfig provider = new ProviderConfig();
         provider.setQueues(10);
         assertThat(provider.getQueues(), is(10));
     }
 
     @Test
-    public void testAccepts() throws Exception {
+    public void testAccepts() throws Exception { //已测（设置最大可连接数）
         ProviderConfig provider = new ProviderConfig();
         provider.setAccepts(10);
         assertThat(provider.getAccepts(), is(10));
     }
 
     @Test
-    public void testCharset() throws Exception {
+    public void testCharset() throws Exception { //已测（设置序列化编码）
         ProviderConfig provider = new ProviderConfig();
         provider.setCharset("utf-8");
         assertThat(provider.getCharset(), equalTo("utf-8"));
     }
 
     @Test
-    public void testPayload() throws Exception {
+    public void testPayload() throws Exception { //已测（设置最大负载）
         ProviderConfig provider = new ProviderConfig();
         provider.setPayload(10);
         assertThat(provider.getPayload(), is(10));
     }
 
     @Test
-    public void testBuffer() throws Exception {
+    public void testBuffer() throws Exception { //已测（设置网络缓冲区大小）
         ProviderConfig provider = new ProviderConfig();
         provider.setBuffer(10);
         assertThat(provider.getBuffer(), is(10));
     }
 
     @Test
-    public void testServer() throws Exception {
+    public void testServer() throws Exception { //已测（设置协议服务端的实现类型）
         ProviderConfig provider = new ProviderConfig();
         provider.setServer("demo-server");
         assertThat(provider.getServer(), equalTo("demo-server"));
     }
 
     @Test
-    public void testClient() throws Exception {
+    public void testClient() throws Exception { //已测（设置协议客户端的实现类型）
         ProviderConfig provider = new ProviderConfig();
         provider.setClient("client");
         assertThat(provider.getClient(), equalTo("client"));
     }
 
     @Test
-    public void testTelnet() throws Exception {
+    public void testTelnet() throws Exception { //已测（设置telnet命令）
         ProviderConfig provider = new ProviderConfig();
         provider.setTelnet("mocktelnethandler");
         assertThat(provider.getTelnet(), equalTo("mocktelnethandler"));
@@ -173,6 +173,11 @@ public class ProviderConfigTest {
         ProviderConfig.appendParameters(parameters, provider);
         assertThat(provider.getPrompt(), equalTo("#"));
         assertThat(parameters, hasEntry("prompt", "%23"));
+
+        /**
+         * 调试问题点：
+         * 1）为什么parameters中会有"prompt", "%23"等参数
+         */
     }
 
     @Test

@@ -30,17 +30,17 @@ import static org.hamcrest.Matchers.is;
 
 public class MonitorConfigTest {
     @Test
-    public void testAddress() throws Exception {
+    public void testAddress() throws Exception { //已测（设置监控中心地址）
         MonitorConfig monitor = new MonitorConfig();
         monitor.setAddress("monitor-addr");
         assertThat(monitor.getAddress(), equalTo("monitor-addr"));
         Map<String, String> parameters = new HashMap<String, String>();
-        MonitorConfig.appendParameters(parameters, monitor);
+        MonitorConfig.appendParameters(parameters, monitor); //因为getAddress()，方法上的@Parameter(excluded=true)，所以参数不写到参数Map中
         assertThat(parameters.isEmpty(), is(true));
     }
 
     @Test
-    public void testProtocol() throws Exception {
+    public void testProtocol() throws Exception { //已测（设置监控中心协议）
         MonitorConfig monitor = new MonitorConfig();
         monitor.setProtocol("protocol");
         assertThat(monitor.getProtocol(), equalTo("protocol"));
@@ -50,7 +50,7 @@ public class MonitorConfigTest {
     }
 
     @Test
-    public void testUsername() throws Exception {
+    public void testUsername() throws Exception { //已测（设置监控中心用户名，不对外暴露）
         MonitorConfig monitor = new MonitorConfig();
         monitor.setUsername("user");
         assertThat(monitor.getUsername(), equalTo("user"));
@@ -60,7 +60,7 @@ public class MonitorConfigTest {
     }
 
     @Test
-    public void testPassword() throws Exception {
+    public void testPassword() throws Exception { //已测（设置监控中心密码，不对外暴露）
         MonitorConfig monitor = new MonitorConfig();
         monitor.setPassword("secret");
         assertThat(monitor.getPassword(), equalTo("secret"));
@@ -70,21 +70,21 @@ public class MonitorConfigTest {
     }
 
     @Test
-    public void testGroup() throws Exception {
+    public void testGroup() throws Exception { //已测（设置监控中心分组）
         MonitorConfig monitor = new MonitorConfig();
         monitor.setGroup("group");
         assertThat(monitor.getGroup(), equalTo("group"));
     }
 
     @Test
-    public void testVersion() throws Exception {
+    public void testVersion() throws Exception { //已测（设置监控中心版本号）
         MonitorConfig monitor = new MonitorConfig();
         monitor.setVersion("1.0.0");
         assertThat(monitor.getVersion(), equalTo("1.0.0"));
     }
 
     @Test
-    public void testParameters() throws Exception {
+    public void testParameters() throws Exception { //已测（设置自定义参数）
         MonitorConfig monitor = new MonitorConfig();
         Map<String, String> parameters = Collections.singletonMap("k1", "v1");
         monitor.setParameters(parameters);
@@ -92,14 +92,14 @@ public class MonitorConfigTest {
     }
 
     @Test
-    public void testDefault() throws Exception {
+    public void testDefault() throws Exception { //已测（设置是否为默认配置）
         MonitorConfig monitor = new MonitorConfig();
         monitor.setDefault(true);
         assertThat(monitor.isDefault(), is(true));
     }
 
     @Test
-    public void testInterval() throws Exception {
+    public void testInterval() throws Exception { //已测（设置时间间隔）
         MonitorConfig monitor = new MonitorConfig();
         monitor.setInterval("100");
         assertThat(monitor.getInterval(), equalTo("100"));

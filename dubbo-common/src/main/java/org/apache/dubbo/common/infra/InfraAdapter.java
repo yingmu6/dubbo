@@ -22,7 +22,7 @@ import java.util.Map;
 
 /**
  * Used to interact with other systems. Typical use cases are:
- * 1. get extra attributes from underlying infrastructures（基础设施） related to the instance on which Dubbo is currently deploying.
+ * 1. get extra attributes from underlying infrastructures related to the instance on which Dubbo is currently deploying.
  * 2. get configurations from third-party systems which maybe useful for a specific component.
  */
 

@@ -42,7 +42,7 @@ public class ProtocolConfig extends AbstractConfig {
     /**
      * Service ip address (when there are multiple network cards available)
      */
-    private String host;
+    private String host; //主机号（ip地址）
 
     /**
      * Service port
@@ -52,7 +52,7 @@ public class ProtocolConfig extends AbstractConfig {
     /**
      * Context path
      */
-    private String contextpath;
+    private String contextpath; //上下文路径
 
     /**
      * Thread pool
@@ -67,32 +67,32 @@ public class ProtocolConfig extends AbstractConfig {
     /**
      * Thread pool core thread size
      */
-    private Integer corethreads;
+    private Integer corethreads; //线程池核心线程数
 
     /**
      * Thread pool size (fixed size)
      */
-    private Integer threads;
+    private Integer threads; //线程池大小（固定大小）
 
     /**
      * IO thread pool size (fixed size)
      */
-    private Integer iothreads;
+    private Integer iothreads; //io线程池大小
 
     /**
      * Thread pool's queue length
      */
-    private Integer queues;
+    private Integer queues; //线程池队列大小
 
     /**
      * Max acceptable connections
      */
-    private Integer accepts;
+    private Integer accepts; //服务提供者最大可接受连接数
 
     /**
      * Protocol codec
      */
-    private String codec;
+    private String codec; //协议编码方式
 
     /**
      * Serialization
@@ -122,14 +122,14 @@ public class ProtocolConfig extends AbstractConfig {
     /**
      * Access log
      */
-    private String accesslog;
+    private String accesslog; //输出访问日志（boolean或日志文件地址）
 
-    /**
+     /**
      * Transporter
      */
-    private String transporter;
+    private String transporter; //传输协议，如netty、mina
 
-    /**
+     /**
      * How information is exchanged
      */
     private String exchanger;
@@ -137,12 +137,12 @@ public class ProtocolConfig extends AbstractConfig {
     /**
      * Thread dispatch mode
      */
-    private String dispatcher;
+    private String dispatcher; //线程的调度模式（即协议的消息派发方式）
 
     /**
      * Networker
      */
-    private String networker;
+    private String networker; //网络使用者
 
     /**
      * Sever impl
@@ -154,10 +154,10 @@ public class ProtocolConfig extends AbstractConfig {
      */
     private String client;
 
-    /**
-     * Supported telnet commands, separated with comma.
+     /**
+     * Supported telnet commands, separated with comma.（多个命令用逗号分隔）
      */
-    private String telnet;
+    private String telnet; //telnet命令
 
     /**
      * Command line prompt
@@ -172,13 +172,13 @@ public class ProtocolConfig extends AbstractConfig {
     /**
      * Whether to register
      */
-    private Boolean register;
+    private Boolean register; //是否注册（该协议的服务是否注册到注册中心）
 
-    /**
+     /**
      * whether it is a persistent connection
      */
     //TODO add this to provider config
-    private Boolean keepAlive;
+    private Boolean keepAlive; //是否保持连接
 
     // TODO add this to provider config
     private String optimizer;

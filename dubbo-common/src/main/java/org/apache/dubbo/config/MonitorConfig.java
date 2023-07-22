@@ -31,11 +31,11 @@ public class MonitorConfig extends AbstractConfig {
 
     private static final long serialVersionUID = -1184681514659198203L;
 
-    /**
+     /**
      * The protocol of the monitor, if the value is registry, it will search the monitor address from the registry center,
      * otherwise, it will directly connect to the monitor center
      */
-    private String protocol;
+    private String protocol; //监控中心协议
 
     /**
      * The monitor address
@@ -45,23 +45,23 @@ public class MonitorConfig extends AbstractConfig {
     /**
      * The monitor user name
      */
-    private String username;
+    private String username; //监控中心用户名
 
     /**
      * The password
      */
-    private String password;
+    private String password; //监控中心密码
 
     private String group;
 
     private String version;
 
-    private String interval;
+    private String interval; //时间间隔
 
     /**
      * customized parameters
      */
-    private Map<String, String> parameters;
+    private Map<String, String> parameters; //自定义参数
 
     /**
      * If it's default
@@ -75,7 +75,7 @@ public class MonitorConfig extends AbstractConfig {
         this.address = address;
     }
 
-    @Parameter(excluded = true)
+    @Parameter(excluded = true) //排除在外的参数
     public String getAddress() {
         return address;
     }
@@ -84,7 +84,7 @@ public class MonitorConfig extends AbstractConfig {
         this.address = address;
     }
 
-    @Parameter(excluded = true)
+    @Parameter(excluded = true) //protocol不对外暴露
     public String getProtocol() {
         return protocol;
     }

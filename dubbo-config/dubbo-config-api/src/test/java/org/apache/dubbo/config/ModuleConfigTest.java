@@ -34,7 +34,7 @@ import static org.hamcrest.Matchers.sameInstance;
 public class ModuleConfigTest {
 
     @Test
-    public void testName2() throws Exception { //todo @pause
+    public void testName2() throws Exception { //已测（设置模块名）
         ModuleConfig module = new ModuleConfig();
         module.setName("module-name");
         assertThat(module.getName(), equalTo("module-name"));
@@ -45,7 +45,7 @@ public class ModuleConfigTest {
     }
 
     @Test
-    public void testVersion() throws Exception {
+    public void testVersion() throws Exception { //已测（设置模块版本号）
         ModuleConfig module = new ModuleConfig();
         module.setName("module-name");
         module.setVersion("1.0.0");
@@ -56,21 +56,21 @@ public class ModuleConfigTest {
     }
 
     @Test
-    public void testOwner() throws Exception {
+    public void testOwner() throws Exception { //已测（设置模块拥有者）
         ModuleConfig module = new ModuleConfig();
         module.setOwner("owner");
         assertThat(module.getOwner(), equalTo("owner"));
     }
 
     @Test
-    public void testOrganization() throws Exception {
+    public void testOrganization() throws Exception { //已测（设置模块所属组织）
         ModuleConfig module = new ModuleConfig();
         module.setOrganization("org");
         assertThat(module.getOrganization(), equalTo("org"));
     }
 
     @Test
-    public void testRegistry() throws Exception {
+    public void testRegistry() throws Exception { //已测（设置注册中心列表，单个设置）
         ModuleConfig module = new ModuleConfig();
         RegistryConfig registry = new RegistryConfig();
         module.setRegistry(registry);
@@ -78,7 +78,7 @@ public class ModuleConfigTest {
     }
 
     @Test
-    public void testRegistries() throws Exception {
+    public void testRegistries() throws Exception { //已测（设置注册中心列表，多个设置）
         ModuleConfig module = new ModuleConfig();
         RegistryConfig registry = new RegistryConfig();
         module.setRegistries(Collections.singletonList(registry));
@@ -87,7 +87,7 @@ public class ModuleConfigTest {
     }
 
     @Test
-    public void testMonitor() throws Exception {
+    public void testMonitor() throws Exception { //已测（设置监控中心）
         ModuleConfig module = new ModuleConfig();
         module.setMonitor("monitor-addr1");
         assertThat(module.getMonitor().getAddress(), equalTo("monitor-addr1"));
@@ -96,7 +96,7 @@ public class ModuleConfigTest {
     }
 
     @Test
-    public void testDefault() throws Exception {
+    public void testDefault() throws Exception { //已测（设置为默认配置）
         ModuleConfig module = new ModuleConfig();
         module.setDefault(true);
         assertThat(module.isDefault(), is(true));

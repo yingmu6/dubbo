@@ -52,17 +52,17 @@ public class ProviderConfig extends AbstractServiceConfig {
     /**
      * Thread pool
      */
-    private String threadpool;
+    private String threadpool; //线程池类型，如fixed、cached等
 
     /**
      * Thread pool name
      */
-    private String threadname;
+    private String threadname; //线程池名称
 
     /**
      * Thread pool size (fixed size)
      */
-    private Integer threads;
+    private Integer threads; //线程池线程大小
 
     /**
      * IO thread pool size (fixed size)
@@ -87,17 +87,17 @@ public class ProviderConfig extends AbstractServiceConfig {
     /**
      * The serialization charset
      */
-    private String charset;
+    private String charset; //序列化的字符编码
 
-    /**
+     /**
      * Payload max length
      */
-    private Integer payload;
+    private Integer payload; //最大负载
 
     /**
      * The network io buffer size
      */
-    private Integer buffer;
+    private Integer buffer; //网络缓冲区大小
 
     /**
      * Transporter
@@ -119,25 +119,25 @@ public class ProviderConfig extends AbstractServiceConfig {
      */
     private String networker;
 
-    /**
+     /**
      * The server-side implementation model of the protocol
      */
-    private String server;
+    private String server; //协议的服务端实现类型，如netty、mina
 
     /**
      * The client-side implementation model of the protocol
      */
-    private String client;
+    private String client; //协议的客户端实现类型，如netty、mina
 
     /**
      * Supported telnet commands, separated with comma.
      */
     private String telnet;
 
-    /**
-     * Command line prompt
+     /**
+     * Command line prompt（提示）
      */
-    private String prompt;
+    private String prompt; //命令行提示
 
     /**
      * Status check

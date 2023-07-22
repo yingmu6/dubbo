@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The module info
+ * The module info 模块信息
  *
  * @export
  */
@@ -35,7 +35,7 @@ public class ModuleConfig extends AbstractConfig {
     /**
      * Module name
      */
-    private String name;
+    private String name; //模块名
 
     /**
      * Module version
@@ -55,17 +55,17 @@ public class ModuleConfig extends AbstractConfig {
     /**
      * Registry centers
      */
-    private List<RegistryConfig> registries;
+    private List<RegistryConfig> registries; //注册中心列表
 
     /**
      * Monitor center
      */
-    private MonitorConfig monitor;
+    private MonitorConfig monitor; //监控中心
 
     /**
      * If it's default
      */
-    private Boolean isDefault;
+    private Boolean isDefault; //是否是默认配置
 
     public ModuleConfig() {
     }

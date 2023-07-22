@@ -350,7 +350,7 @@ public abstract class AbstractConfig implements Serializable {
         this.id = id;
     }
 
-    public void updateIdIfAbsent(String value) {
+    public void updateIdIfAbsent(String value) { //id为空时，值与value一致
         if (StringUtils.isNotEmpty(value) && StringUtils.isEmpty(id)) {
             this.id = value;
         }
