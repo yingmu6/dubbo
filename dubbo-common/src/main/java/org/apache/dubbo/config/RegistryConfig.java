@@ -62,74 +62,75 @@ public class RegistryConfig extends AbstractConfig {
     /**
      * Protocol for register center
      */
-    private String protocol;
+    private String protocol; //注册中心协议
 
     /**
      * Network transmission type
      */
-    private String transporter;
+    private String transporter; //网络传输方式
 
     private String server;
 
-    private String client;
+    private String client; //客户端实现方式
 
-    /**
+     /**
      * Affects how traffic distributes among registries, useful when subscribing multiple registries, available options:
-     * 1. zone-aware, a certain type of traffic always goes to one Registry according to where the traffic is originated.
+     * 1. zone-aware（区域感知）, a certain type of traffic always goes to one Registry according to where the traffic is originated.
      */
-    private String cluster;
+    private String cluster; //注册中心归属的集群
 
     /**
      * The region where the registry belongs, usually used to isolate traffics
      */
     private String zone;
 
-    /**
+     /**
      * The group the services registry in
      */
     private String group;
 
     private String version;
 
-    /**
+     /**
      * Request timeout in milliseconds for register center
      */
-    private Integer timeout;
+    private Integer timeout; //请求超时时间
 
     /**
      * Session timeout in milliseconds for register center
      */
-    private Integer session;
+    private Integer session; //会话超时时间
 
-    /**
+     /**
      * File for saving register center dynamic list
+      * (应用场景：使用文件缓存注册中心地址列表及服务提供者列表，应用重启时将基于此文件恢复)
      */
-    private String file;
+    private String file; //文件路径
 
     /**
      * Wait time before stop
      */
     private Integer wait;
 
-    /**
+     /**
      * Whether to check if register center is available when boot up
      */
-    private Boolean check;
+    private Boolean check; //在启动时，检查注册中心是否可用
 
-    /**
+     /**
      * Whether to allow dynamic service to register on the register center
      */
-    private Boolean dynamic;
+    private Boolean dynamic; //服务是否动态注册（非动态注册，就需要人工进行启停）
 
-    /**
+     /**
      * Whether to export service on the register center
      */
-    private Boolean register;
+    private Boolean register; //是否向此注册中心注册服务，如果设为false，将只订阅，不注册
 
     /**
      * Whether allow to subscribe service on the register center
      */
-    private Boolean subscribe;
+    private Boolean subscribe; //是否向此注册中心订阅服务，如果设为false，将只注册，不订阅
 
     /**
      * The customized parameters
@@ -269,13 +270,13 @@ public class RegistryConfig extends AbstractConfig {
         return wait;
     }
 
-    /**
+     /**
      * @param wait
      * @see org.apache.dubbo.config.ProviderConfig#setWait(Integer)
      * @deprecated
      */
     @Deprecated
-    public void setWait(Integer wait) {
+    public void setWait(Integer wait) { //设置停服务等待时间
         this.wait = wait;
         if (wait != null && wait > 0) {
             System.setProperty(SHUTDOWN_WAIT_KEY, String.valueOf(wait));

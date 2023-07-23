@@ -166,7 +166,7 @@ public class ProviderConfigTest {
     }
 
     @Test
-    public void testPrompt() throws Exception {
+    public void testPrompt() throws Exception { //已测（设置提示符）
         ProviderConfig provider = new ProviderConfig();
         provider.setPrompt("#");
         Map<String, String> parameters = new HashMap<String, String>();
@@ -176,47 +176,49 @@ public class ProviderConfigTest {
 
         /**
          * 调试问题点：
-         * 1）为什么parameters中会有"prompt", "%23"等参数
+         * 1）为什么parameters中会有"prompt", "%23"等参数？
+         *    解答：hasEntry("prompt", "%23")并不是判断是否有这两个key，而是判断Map中是否有这个条目Entry
+         *         因为prompt提示符@Parameter(escaped=true)，即需要编码的，所以将"#"编码为"%23"
          */
     }
 
     @Test
-    public void testStatus() throws Exception {
+    public void testStatus() throws Exception { //已测（设置状态检查）
         ProviderConfig provider = new ProviderConfig();
         provider.setStatus("mockstatuschecker");
         assertThat(provider.getStatus(), equalTo("mockstatuschecker"));
     }
 
     @Test
-    public void testTransporter() throws Exception {
+    public void testTransporter() throws Exception { //已测（设置传输协议）
         ProviderConfig provider = new ProviderConfig();
         provider.setTransporter("mocktransporter");
         assertThat(provider.getTransporter(), equalTo("mocktransporter"));
     }
 
     @Test
-    public void testExchanger() throws Exception {
+    public void testExchanger() throws Exception { //已测（设置交换信息）
         ProviderConfig provider = new ProviderConfig();
         provider.setExchanger("mockexchanger");
         assertThat(provider.getExchanger(), equalTo("mockexchanger"));
     }
 
     @Test
-    public void testDispatcher() throws Exception {
+    public void testDispatcher() throws Exception { //已测（设置线程调度方式）
         ProviderConfig provider = new ProviderConfig();
         provider.setDispatcher("mockdispatcher");
         assertThat(provider.getDispatcher(), equalTo("mockdispatcher"));
     }
 
     @Test
-    public void testNetworker() throws Exception {
+    public void testNetworker() throws Exception { //已测（设置网络使用者）
         ProviderConfig provider = new ProviderConfig();
         provider.setNetworker("networker");
         assertThat(provider.getNetworker(), equalTo("networker"));
     }
 
     @Test
-    public void testWait() throws Exception {
+    public void testWait() throws Exception { //已测（停服务等待时间）
         ProviderConfig provider = new ProviderConfig();
         provider.setWait(10);
         assertThat(provider.getWait(), equalTo(10));

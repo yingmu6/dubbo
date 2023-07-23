@@ -39,9 +39,9 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 
-public class ApplicationConfigTest {
+public class ApplicationConfigTest { //兼容老版本的Config（compatible：兼容的）
     @Test
-    public void testName() throws Exception {
+    public void testName() throws Exception { //兼容老版本Config，参考org.apache.dubbo.config#ApplicationConfigTest
         ApplicationConfig application = new ApplicationConfig();
         application.setName("app");
         assertThat(application.getName(), equalTo("app"));

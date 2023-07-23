@@ -43,7 +43,7 @@ public class ReferenceConfigTest {
     }
 
     @Test
-    public void testInjvm() throws Exception {
+    public void testInjvm() throws Exception { //已测（在同一个jvm中暴露服务、引用服务）
         ApplicationConfig application = new ApplicationConfig();
         application.setName("test-protocol-random-port");
 
@@ -69,8 +69,8 @@ public class ReferenceConfigTest {
 
         try {
             System.setProperty("java.net.preferIPv4Stack", "true");
-            demoService.export();
-            rc.get();
+            demoService.export(); //暴露服务
+            rc.get(); //引用服务
             Assertions.assertTrue(!LOCAL_PROTOCOL.equalsIgnoreCase(
                     rc.getInvoker().getUrl().getProtocol()));
         } finally {
@@ -83,7 +83,7 @@ public class ReferenceConfigTest {
      * unit test for dubbo-1765
      */
     @Test
-    public void testReferenceRetry() {
+    public void testReferenceRetry() { //已测
         ApplicationConfig application = new ApplicationConfig();
         application.setName("test-reference-retry");
         RegistryConfig registry = new RegistryConfig();
@@ -130,7 +130,7 @@ public class ReferenceConfigTest {
     }
 
     @Test
-    public void testConstructWithReferenceAnnotation() throws NoSuchFieldException {
+    public void testConstructWithReferenceAnnotation() throws NoSuchFieldException { //已测（使用注解@Reference构造ReferenceConfig）
         Reference reference = getClass().getDeclaredField("innerTest").getAnnotation(Reference.class);
         ReferenceConfig referenceConfig = new ReferenceConfig(reference);
         Assertions.assertEquals(1, referenceConfig.getMethods().size());

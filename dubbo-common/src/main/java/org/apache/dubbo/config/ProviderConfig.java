@@ -102,7 +102,7 @@ public class ProviderConfig extends AbstractServiceConfig {
     /**
      * Transporter
      */
-    private String transporter;
+    private String transporter; //网络传输方式，比如netty、mina
 
     /**
      * How information gets exchanged
@@ -142,12 +142,12 @@ public class ProviderConfig extends AbstractServiceConfig {
     /**
      * Status check
      */
-    private String status;
+    private String status; //状态检查
 
     /**
      * Wait time when stop
      */
-    private Integer wait;
+    private Integer wait; //停服务等待时间
 
     /**
      * Whether to use the default protocol

@@ -46,7 +46,7 @@ public abstract class ServiceConfigBase<T> extends AbstractServiceConfig {
     /**
      * The interface name of the exported service
      */
-    protected String interfaceName;
+    protected String interfaceName; //暴露的服务对应的接口名
 
     /**
      * The interface class of the exported service

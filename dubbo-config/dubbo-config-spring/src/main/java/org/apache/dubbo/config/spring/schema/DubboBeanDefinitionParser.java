@@ -94,7 +94,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
     private static RootBeanDefinition parse(Element element, ParserContext parserContext, Class<?> beanClass, boolean required) { //ParserContext：通过bean定义解析过程传递的上下文，封装所有相关配置和状态，嵌套在XmlReaderContext内
         /**
          * ParserContext：注释翻译为：
-         * 通过bean定义解析过程传递的上下文，封装所有相关的配置和状态
+         * 在bean定义解析过程中传递的上下文，封装所有相关的配置和状态
          *
          * RootBeanDefinition：
          *   1）RootBeanDefinition可以作为一个重要的通用的bean definition视图。
@@ -107,7 +107,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
         RootBeanDefinition beanDefinition = new RootBeanDefinition();
         beanDefinition.setBeanClass(beanClass); //指定XML对应的bean的class，如MethodConfig.class
         beanDefinition.setLazyInit(false);
-        String id = resolveAttribute(element, "id", parserContext); //解析属性名对应的值
+        String id = resolveAttribute(element, "id", parserContext); //解析属性id的值
         /**
          * 处理属性id的值，若属性id为空且是必须的，则尝试获取name、interface属性对应的值，若还为空则获取bean的名称
          */
@@ -513,7 +513,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
      * <p>
      * 5）https://www.cnblogs.com/binarylei/p/10284826.html Spring PropertyResolver 占位符解析
      */
-    private static String resolveAttribute(Element element, String attributeName, ParserContext parserContext) {
+    private static String resolveAttribute(Element element, String attributeName, ParserContext parserContext) { //解析属性值（属性值若有占位符，则从环境中获取并设置）
         String attributeValue = element.getAttribute(attributeName); //获取元素中，指定属性名对应的属性值
         Environment environment = parserContext.getReaderContext().getEnvironment(); //Environment当前的实例对象是StandardEnvironment
         return environment.resolvePlaceholders(attributeValue); //替换占位符

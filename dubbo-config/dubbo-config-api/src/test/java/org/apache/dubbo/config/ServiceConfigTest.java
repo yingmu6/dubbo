@@ -133,7 +133,7 @@ public class ServiceConfigTest {
     }
 
     @Test
-    public void testExport() throws Exception {
+    public void testExport() throws Exception { //已测（测试服务暴露）
         service.export();
 
         assertThat(service.getExportedUrls(), hasSize(1));
@@ -155,7 +155,7 @@ public class ServiceConfigTest {
     }
 
     @Test
-    public void testProxy() throws Exception {
+    public void testProxy() throws Exception { //已测（测试代理）
         service2.export();
 
         assertThat(service2.getExportedUrls(), hasSize(1));
@@ -174,7 +174,7 @@ public class ServiceConfigTest {
 
     @Test
     @Disabled("cannot pass in travis")
-    public void testUnexport() throws Exception {
+    public void testUnexport() throws Exception { //已测（取消暴露）
         System.setProperty(SHUTDOWN_WAIT_KEY, "0");
         try {
             service.export();
@@ -187,7 +187,7 @@ public class ServiceConfigTest {
     }
 
     @Test
-    public void testInterfaceClass() throws Exception {
+    public void testInterfaceClass() throws Exception { //已测（测试暴露的接口）
         ServiceConfig<Greeting> service = new ServiceConfig<Greeting>();
         service.setInterface(Greeting.class.getName());
         service.setRef(Mockito.mock(Greeting.class));
@@ -198,7 +198,7 @@ public class ServiceConfigTest {
     }
 
     @Test
-    public void testInterface1() throws Exception {
+    public void testInterface1() throws Exception { //已测（暴露的服务需要是接口类型）
         Assertions.assertThrows(IllegalStateException.class, () -> {
             ServiceConfig<DemoService> service = new ServiceConfig<DemoService>();
             service.setInterface(DemoServiceImpl.class);
@@ -206,14 +206,14 @@ public class ServiceConfigTest {
     }
 
     @Test
-    public void testInterface2() throws Exception {
+    public void testInterface2() throws Exception { //已测（暴露服务的接口名）
         ServiceConfig<DemoService> service = new ServiceConfig<DemoService>();
         service.setInterface(DemoService.class);
         assertThat(service.getInterface(), equalTo(DemoService.class.getName()));
     }
 
     @Test
-    public void testProvider() throws Exception {
+    public void testProvider() throws Exception { //已测（设置提供者配置）
         ServiceConfig service = new ServiceConfig();
         ProviderConfig provider = new ProviderConfig();
         service.setProvider(provider);
@@ -221,7 +221,7 @@ public class ServiceConfigTest {
     }
 
     @Test
-    public void testGeneric1() throws Exception {
+    public void testGeneric1() throws Exception { //已测（设置泛化方式）
         ServiceConfig service = new ServiceConfig();
         service.setGeneric(GENERIC_SERIALIZATION_DEFAULT);
         assertThat(service.getGeneric(), equalTo(GENERIC_SERIALIZATION_DEFAULT));
@@ -232,7 +232,7 @@ public class ServiceConfigTest {
     }
 
     @Test
-    public void testGeneric2() throws Exception {
+    public void testGeneric2() throws Exception { //已测（设置非法的泛化方式）
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             ServiceConfig service = new ServiceConfig();
             service.setGeneric("illegal");
@@ -256,7 +256,7 @@ public class ServiceConfigTest {
 //    }
 
     @Test
-    public void testApplicationInUrl() {
+    public void testApplicationInUrl() { //已测（设置应用关联信息）
         service.export();
         Assertions.assertNotNull(service.toUrl().getParameter(APPLICATION_KEY));
         Assertions.assertEquals("app", service.toUrl().getParameter(APPLICATION_KEY));
