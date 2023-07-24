@@ -32,6 +32,7 @@
     <!-- <dubbo:config-center>可以不配置，dubbo会对应添加配置 -->
     <dubbo:config-center address="zookeeper://127.0.0.1:2181">
         <dubbo:parameter key="center-test" value="hh"/>
+        <dubbo:parameter key="center-test2" value="haha"/>
     </dubbo:config-center>
 
     <dubbo:registry address="zookeeper://127.0.0.1:2181/all?default.name=test" simplified="true"/>

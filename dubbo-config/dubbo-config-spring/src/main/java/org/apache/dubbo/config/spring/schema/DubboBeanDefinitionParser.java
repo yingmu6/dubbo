@@ -62,8 +62,8 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
     private static final String ONTHROW = "onthrow";
     private static final String ONINVOKE = "oninvoke";
     private static final String METHOD = "Method";
-    private final Class<?> beanClass; // bean的名称（dubbo自定义解析器特有的）
-    private final boolean required;   // 是否是必须的（dubbo自定义解析器特有的）
+    private final Class<?> beanClass; // Bean对应的Class类（即Config的Class类）
+    private final boolean required;   // 是否必须（即Config类的id是否必须）
 
     public DubboBeanDefinitionParser(Class<?> beanClass, boolean required) { // 在DubboNamespaceHandler的init方法写入成员变量的
         this.beanClass = beanClass;
@@ -87,7 +87,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
      */
 
     /**
-     * 解析元素，设置元素的属性值，返回构建的bean对象
+     * 解析XML元素，并将元素的属性值设置到Config类关联的Bean中
      */
     @SuppressWarnings("unchecked")
     //parse()方法是从哪里进入的？ 解：DubboNamespaceHandler#parse()中调用父类NamespaceHandlerSupport#parse()，然后在findParserForElement()之中，根据元素名称，从init()时映射的parsers键值对中找到对应的Bean解析器，就进入了该方法（策略模式）
@@ -96,7 +96,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
          * ParserContext：注释翻译为：
          * 在bean定义解析过程中传递的上下文，封装所有相关的配置和状态
          *
-         * RootBeanDefinition：
+         * RootBeanDefinition：（Spring容器中的Bean）
          *   1）RootBeanDefinition可以作为一个重要的通用的bean definition视图。
          *   2）RootBeanDefinition用来在配置阶段进行注册bean definition。然后，从spring 2.5后，编写注册bean definition有了更好的的方法：GenericBeanDefinition
          *   3）RootBeanDefinition可以作为其他BeanDefinition的父BeanDefinition，也可以单独作为BeanDefinition，但是不能作为其他BeanDefinition的子BeanDefinition
@@ -104,15 +104,15 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
          *  https://zhuanlan.zhihu.com/p/189896257
          *  https://www.jianshu.com/p/f2298bacc5d9 Spring的RootBeanDefinition、GenericBeanDefinition、ChildBeanDefinition
          */
-        RootBeanDefinition beanDefinition = new RootBeanDefinition();
-        beanDefinition.setBeanClass(beanClass); //指定XML对应的bean的class，如MethodConfig.class
-        beanDefinition.setLazyInit(false);
+        RootBeanDefinition beanDefinition = new RootBeanDefinition(); //创建spring的Bean实例
+        beanDefinition.setBeanClass(beanClass); //设置Bean对应的class类，如MethodConfig.class
+        beanDefinition.setLazyInit(false); //设置是否延迟初始化，false：在spring容器启动时，就会创建Bean实例
         String id = resolveAttribute(element, "id", parserContext); //解析属性id的值
         /**
          * 处理属性id的值，若属性id为空且是必须的，则尝试获取name、interface属性对应的值，若还为空则获取bean的名称
          */
-        if (StringUtils.isEmpty(id) && required) {
-            String generatedBeanName = resolveAttribute(element, "name", parserContext);
+        if (StringUtils.isEmpty(id) && required) { //未设置属性id时，使用其它属性产生id值
+            String generatedBeanName = resolveAttribute(element, "name", parserContext); //解析属性name的值
             if (StringUtils.isEmpty(generatedBeanName)) {
                 if (ProtocolConfig.class.equals(beanClass)) {
                     generatedBeanName = "dubbo";
@@ -125,15 +125,15 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
             }
             id = generatedBeanName;
             int counter = 2;
-            while (parserContext.getRegistry().containsBeanDefinition(id)) { //若bean已存在，则加上计数标识
-                id = generatedBeanName + (counter++);
+            while (parserContext.getRegistry().containsBeanDefinition(id)) { //若bean已存在，则加上计数标识，直到没有重复的id为止
+                id = generatedBeanName + (counter++); // count++的值从2开始递增，变量count在前，count++就是加之前的值
             }
         }
         if (StringUtils.isNotEmpty(id)) {
-            if (parserContext.getRegistry().containsBeanDefinition(id)) { //判断是否有重复的id（id的值可能来自于name、interface属性值，也可来自于bean的名称）
+            if (parserContext.getRegistry().containsBeanDefinition(id)) { //判断已经注册的Bean中是否有重复的id
                 throw new IllegalStateException("Duplicate spring bean id " + id);
             }
-            parserContext.getRegistry().registerBeanDefinition(id, beanDefinition); // 注册bean信息
+            parserContext.getRegistry().registerBeanDefinition(id, beanDefinition); // 向spring注册中心注册bean实例（将id作为Bean的名称）
             beanDefinition.getPropertyValues().addPropertyValue("id", id); // 设置bean的id属性
         }
         /**
@@ -166,12 +166,12 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
             parseNested(element, parserContext, ReferenceBean.class, false, "reference", "consumer", id, beanDefinition);
         }
         Set<String> props = new HashSet<>();
-        ManagedMap parameters = null;
-        for (Method setter : beanClass.getMethods()) { //遍历dubbo config bean中的方法，取出属性名，通过XML的Element解析出属性值，依次设置到Spring对应的RootBeanDefinition属性中
+        ManagedMap parameters = null; //托管的Map（Spring的标签集合类，用于保存被托管的Map）
+        for (Method setter : beanClass.getMethods()) { //遍历Config中的set方法提取出属性名，然后通过XML的Element解析出对应的属性值，最后依次设置到Config类关联的Bean的属性中
             String name = setter.getName();
             if (name.length() > 3 && name.startsWith("set")
                     && Modifier.isPublic(setter.getModifiers())
-                    && setter.getParameterTypes().length == 1) { //遍历bean中符合条件的set方法
+                    && setter.getParameterTypes().length == 1) {
                 Class<?> type = setter.getParameterTypes()[0];
                 String beanProperty = name.substring(3, 4).toLowerCase() + name.substring(4); //解析出属性名，如方法名为setName，属性名为name
                 String property = StringUtils.camelToSplitName(beanProperty, "-"); //按分隔符方式处理属性名称
@@ -183,7 +183,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
                 } catch (NoSuchMethodException e) {
                     try {
                         getter = beanClass.getMethod("is" + name.substring(3), new Class<?>[0]); //处理is开头的方法，比如ApplicationConfig中的isDefault()方法
-                    } catch (NoSuchMethodException e2) { //允许没有getter的方法，比如EnvironmentAware，只有setter方法，不能抛出异常，不然引起应用启动失败
+                    } catch (NoSuchMethodException e2) { //允许没有get方法，比如EnvironmentAware，只有set方法，不能抛出异常，不然引起应用启动失败（感觉有些多余，既然不处理异常，为啥还要检查是否有该方法 -- 从后面的处理来看，若get方法为空，会跳过后面处理，进入下一个循环，也就是有对应逻辑处理，所以不多余）
                         // ignore, there is no need any log here since some class implement the interface: EnvironmentAware,
                         // ApplicationAware, etc. They only have setter method, otherwise will cause the error log during application start up.
                     }
@@ -193,7 +193,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
                         || !type.equals(getter.getReturnType())) { //若没有找到符合条件的get方法，则本次不处理，跳到下次循环
                     continue;
                 }
-                if ("parameters".equals(property)) { //对特殊的属性做处理
+                if ("parameters".equals(property)) { //对自定义参数Map处理
                     parameters = parseParameters(element.getChildNodes(), beanDefinition, parserContext); //对子元素<dubbo:parameter/>进行处理（返回参数对应Map：ManagedMap，后续处理parameters属性值）
                 } else if ("methods".equals(property)) { //当dubbo config bean包含methods属性，且包含<dubbo:method/>子元素时，进行处理
                     parseMethods(id, element.getChildNodes(), beanDefinition, parserContext); //设置beanDefinition的methods属性值
@@ -201,8 +201,8 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
                     parseArguments(id, element.getChildNodes(), beanDefinition, parserContext);
                 } else { //对常规属性做处理
                     String value = resolveAttribute(element, property, parserContext); //解析XML中元素对应的属性值
-                    if (value != null) { //若值为null或者""，则不处理（即XML中没有设置对应的属性值）
-                        value = value.trim(); //过滤字符串的前后空格
+                    if (value != null) { //若属性值为不为空，则对应处理（即XML中设置了对应的属性值）
+                        value = value.trim(); //过滤字符串的前后空格（即过滤掉空字符串）
                         if (value.length() > 0) {
                             if ("registry".equals(property) && RegistryConfig.NO_AVAILABLE.equalsIgnoreCase(value)) {
                                 RegistryConfig registryConfig = new RegistryConfig();
@@ -219,8 +219,8 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
                                 beanDefinition.getPropertyValues().addPropertyValue(beanProperty + "Ids", value);
                             } else {
                                 Object reference;
-                                if (isPrimitive(type)) { //对基本类型的属性处理
-                                    if ("async".equals(property) && "false".equals(value) //若为指定的属性和属性值，则设置value为null
+                                if (isPrimitive(type)) { //对基本类型的属性处理（基本类型进行了扩展，包含String、Date等）
+                                    if ("async".equals(property) && "false".equals(value)
                                             || "timeout".equals(property) && "0".equals(value) //每个判断条件作为一行，清晰明了
                                             || "delay".equals(property) && "0".equals(value)
                                             || "version".equals(property) && "0.0.0".equals(value)
@@ -246,7 +246,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
                                     }
                                     reference = new RuntimeBeanReference(value); //创建指定名称的bean
                                 }
-                                beanDefinition.getPropertyValues().addPropertyValue(beanProperty, reference); //为bean添加属性名以及对应的属性值
+                                beanDefinition.getPropertyValues().addPropertyValue(beanProperty, reference); //为bean添加属性值
                             }
                         }
                     }
@@ -284,7 +284,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
         return beanDefinition;
     }
 
-    private static boolean isPrimitive(Class<?> cls) { //Class中isPrimitive()，判断是否是基本类型，Class中native方法，在Class的基础上做了封装，加上额外的类型
+    private static boolean isPrimitive(Class<?> cls) { //判断是否是基本类型（在Class的isPrimitive()基础上做了封装，加上额外的类型）
         return cls.isPrimitive() || cls == Boolean.class || cls == Byte.class
                 || cls == Character.class || cls == Short.class || cls == Integer.class
                 || cls == Long.class || cls == Float.class || cls == Double.class
@@ -366,14 +366,14 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
     }
 
     /**
-     * 解析参数标签，并写入自定义参数map中 <dubbo:parameter>
+     * 解析参数标签，并写入自定义参数map中。即对应解析<dubbo:parameter>元素
      */
     @SuppressWarnings("unchecked")
     private static ManagedMap parseParameters(NodeList nodeList, RootBeanDefinition beanDefinition, ParserContext parserContext) {
-        if (nodeList == null) {
+        if (nodeList == null) { //todo @pause 此处的NodeList待了解
             return null;
         }
-        ManagedMap parameters = null; //用来保存map的值
+        ManagedMap parameters = null; //托管的Map，用来保存map的值
         for (int i = 0; i < nodeList.getLength(); i++) { //可以有多个元素<dubbo:parameter>
             if (!(nodeList.item(i) instanceof Element)) { //若元素不是Element实例，则不处理
                 continue;
@@ -488,13 +488,13 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
      */
     @Override
     public BeanDefinition parse(Element element, ParserContext parserContext) { //解析XML的元素，生成Spring的Bean实例
-        return parse(element, parserContext, beanClass, required);
+        return parse(element, parserContext, beanClass, required); //element、parserContext是解析元素时，spring回传的参数，beanClass、required是dubbo自定义参数
     }
 
-    /**
+     /**
      * 解析元素中的属性值 如：<dubbo:application name="test"/> ，name的属性值为test
      * <p>
-     * Environment：相关信息
+     * Environment：相关信息（Interface representing the environment in which the current application is running.）
      * 1）Environment表示当前应用程序正在运行的环境。Environment接口继承自PropertyResolver，所以它既能处理属性值、也能处理配置Profile
      * 2）属性管理核心API信息
      * 核心API主要包括下面4个部分：

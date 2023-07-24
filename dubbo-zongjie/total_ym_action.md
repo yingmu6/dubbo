@@ -38,8 +38,10 @@
 | 014 | NetUtils的getLocalAddress0   | 熟悉本地地址查找      | P1   | 0%   | 2023-06-04 |            |
 | 015 | 线程池测试                       | 熟悉线程池         | P1   | 0%   | 2023-07-13 |            |
 | 016 | Converter测试                 | 熟悉类型转换        | Done | 100% | 2023-07-17 | 2023-07-18 |
-| 017 | DubboBeanDefinitionParser调试 | 熟悉Bean解析      | P0   | 0%   | 2023-07-18 |            |
+| 017 | DubboBeanDefinitionParser调试 | 熟悉Bean解析      | P0   | 60%  | 2023-07-18 |            |
 | 018 | 泛化调用测试                      | 熟悉泛化调用        | P1   | 0%   | 2023-07-19 |            |
+| 019 | 注解使用且原理调试                   | 熟悉注解配置        | P1   | 0%   | 2023-07-24 |            |
+| 020 | PojoUtils#realize0调试        | 熟悉POJO转换      | P2   | 0%   | 2023-07-24 |            |
 
 * 备注
   1. 007中能够在源码外替换SPI文件，如ExtensionFactory的配置文件
