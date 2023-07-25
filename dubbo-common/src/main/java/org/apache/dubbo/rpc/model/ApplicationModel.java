@@ -36,7 +36,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * <p>
  * Represent a application which is using Dubbo and store basic metadata info for using
  * during the processing of RPC invoking.
- * （代表一个正在使用 Dubbo 的应用程序，并存储基本的元数据信息以供在处理 RPC 调用期间使用）
+ * （代表一个正在使用Dubbo的应用程序，并存储基本的元数据信息以供在处理RPC调用期间使用）
  * <p>
  * ApplicationModel includes many ProviderModel which is about published services
  * and many Consumer Model which is about subscribed services.
@@ -64,7 +64,7 @@ public class ApplicationModel { //应用的数据模型
         return getServiceRepository().getReferredServices();
     }
 
-    public static Collection<ProviderModel> allProviderModels() {
+    public static Collection<ProviderModel> allProviderModels() { //获取暴露的服务模型列表
         return getServiceRepository().getExportedServices();
     }
 

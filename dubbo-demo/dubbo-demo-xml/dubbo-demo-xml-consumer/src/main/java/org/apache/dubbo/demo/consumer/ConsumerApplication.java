@@ -27,48 +27,10 @@ public class ConsumerApplication {
     public static void main(String[] args) throws Exception {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("spring/dubbo-consumer.xml");
         context.start();
-//        DemoService demoService = context.getBean("demoService", DemoService.class);
-////        CompletableFuture<String> hello = demoService.sayHelloAsync("world");
-//        String response = demoService.sayHello2("how are you?");
-//        System.out.println("demoService 结果: " + response);
 
         GreetingService greetingService = context.getBean("greetingService", GreetingService.class);
-        System.out.println(greetingService.hello("GreetingService: 你好！")); //tes
-
-        // practice 项目中的内容
-//        HelloService helloService = context.getBean("helloService", HelloService.class);
-//        System.out.println(helloService.sayHello("xxxxx"));
-
-        // 泛化调用
-//        GenericService genericService = (GenericService) context.getBean("demoService");
-//        String[] parameterTypes = new String[1];
-//        parameterTypes[0] = "java.lang.String";
-//        Object[] argValues = new Object[1];
-//        argValues[0] = "fff";
-//        Object obj = genericService.$invoke("sayHello", parameterTypes, argValues);
-//        System.out.println(JSON.toJSONString(obj));
-
-//        Class cls = demoService.getClass();
-//        System.out.println("是否有注解：" + cls.isAnnotationPresent(BasicInfo.class));
-//        if (cls.isAnnotationPresent(BasicInfo.class)) {
-//
-//        }
-//        BasicInfo basicInfo = (BasicInfo) cls.getAnnotation(BasicInfo.class);
-//        System.out.println(basicInfo.age() + ";;;" + basicInfo.username());
-
-
-//        GenericService genericService = (GenericService) context.getBean("demoService");
-//        Object result = genericService.$invoke("sayHello2", new String[] {"java.lang.String"}, new Object[] {"Worldsss"});
-//        System.out.println("generic result:" + result);
-
-
-//        for (int i = 0; i < 3; i++) {
-//            GreetingService greetingService = context.getBean("greetingService", GreetingService.class);
-//            System.out.println("greetingService result: " + greetingService.hello());
-//        }
-
+        System.out.println(greetingService.hello("GreetingService: 你好！"));
 
         System.in.read();
-
     }
 }

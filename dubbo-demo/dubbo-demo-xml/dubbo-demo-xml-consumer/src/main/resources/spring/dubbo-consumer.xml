@@ -38,12 +38,10 @@
 <!--        <dubbo:reference id= "greetingService" check="true" interface="org.apache.dubbo.demo.GreetingService"/>-->
 <!--    </dubbo:consumer>-->
 
-    <dubbo:consumer>
-       <dubbo:reference id= "greetingService" interface="org.apache.dubbo.demo.GreetingService" retries="4" timeout="2000"/>
-    </dubbo:consumer>
+<!--    <dubbo:consumer>-->
+<!--       <dubbo:reference id= "greetingService" interface="org.apache.dubbo.demo.GreetingService" retries="4" timeout="2000"/>-->
+<!--    </dubbo:consumer>-->
 
-<!--    <dubbo:reference interface="com.basic.use.HelloService" id="helloService"/>-->
-
-
+    <dubbo:reference interface="org.apache.dubbo.demo.GreetingService" id="greetingService"/>
 
 </beans>

@@ -41,6 +41,10 @@
 <!--    <bean id="demoService" class="org.apache.dubbo.demo.provider.DemoServiceImqqp"/>-->
 <!--    <dubbo:service interface="org.apache.dubbo.demo.DemoService" ref="demoService"/>-->
 
-    <bean id="greetingService" class="org.apache.dubbo.demo.provider.GreetingServiceImpl"/>
-    <dubbo:service interface="org.apache.dubbo.demo.GreetingService" ref="greetingService"/>
+    <bean id="greetingService" class="org.apache.dubbo.demo.provider.GreetingServiceImpl">
+<!--        <dubbo:method name="setMsg" timeout="3000"/>--> <!-- bean是spring的标签，在里面不能嵌套dubbo自定义的标签，此处就会报出不能加载bean -->
+    </bean>
+    <dubbo:service interface="org.apache.dubbo.demo.GreetingService" ref="greetingService">
+        <dubbo:method name="sayHello" timeout="3000"/>
+    </dubbo:service>
 </beans>
