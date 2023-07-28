@@ -43,8 +43,8 @@ public class CompatibleTypeUtils {
      * </ul>
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static Object compatibleTypeConvert(Object value, Class<?> type) { //value: 具体的值，type：期待的类型
-        if (value == null || type == null || type.isAssignableFrom(value.getClass())) { //若值或类型为空，或值的类型与期待的类型相同，则直接返回
+    public static Object compatibleTypeConvert(Object value, Class<?> type) { //将对象适配为指定的type。value: 具体的值，type：期待的类型
+        if (value == null || type == null || type.isAssignableFrom(value.getClass())) { //若对象或类型为空，或对象的类型与期待的类型相同，则直接返回
             return value;
         }
 

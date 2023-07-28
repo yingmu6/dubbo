@@ -172,7 +172,7 @@ public class ConfigUtils {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static String getProperty(String key, String defaultValue) {
+    public static String getProperty(String key, String defaultValue) { //获取指定属性值，不存在时使用默认值
         String value = System.getProperty(key);
         if (value != null && value.length() > 0) {
             return value;

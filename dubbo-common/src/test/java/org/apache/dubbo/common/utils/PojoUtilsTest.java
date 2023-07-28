@@ -92,7 +92,7 @@ public class PojoUtilsTest {
     }
 
     @Test
-    public void test_primitive() throws Exception {
+    public void test_primitive() throws Exception { //已测（基本类型直接处理，不用转换）
         assertObject(Boolean.TRUE);
         assertObject(Boolean.FALSE);
 

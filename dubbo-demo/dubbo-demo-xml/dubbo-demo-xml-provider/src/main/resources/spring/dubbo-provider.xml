@@ -38,23 +38,28 @@
     <dubbo:registry address="zookeeper://127.0.0.1:2181/all?default.name=test" simplified="true"/>
     <dubbo:protocol  port="20881" status="server"/>
 
-<!--    <bean id="demoService" class="org.apache.dubbo.demo.provider.DemoServiceImqqp"/>-->
-<!--    <dubbo:service interface="org.apache.dubbo.demo.DemoService" ref="demoService"/>-->
+    <bean id="demoService" class="org.apache.dubbo.demo.provider.DemoServiceImqqp"/>
+
 
     <bean id="greetingService" class="org.apache.dubbo.demo.provider.GreetingServiceImpl">
 <!--        <dubbo:method name="setMsg" timeout="3000"/>--> <!-- bean是spring的标签，在里面不能嵌套dubbo自定义的标签，此处就会报出不能加载bean -->
     </bean>
 
     <!-- 暴露服务，方式一：声明实现类的bean，并使用ref属性，指定暴露接口的实现类 -->
-    <dubbo:service interface="org.apache.dubbo.demo.GreetingService" ref="greetingService" protocol="dubbo">
-        <dubbo:method name="setMsg" timeout="3000">
-            <dubbo:argument index="0" callback="true"/>
-        </dubbo:method>
-    </dubbo:service>
+<!--    <dubbo:service interface="org.apache.dubbo.demo.GreetingService" ref="greetingService" protocol="dubbo">-->
+<!--        <dubbo:method name="setMsg" timeout="3000">-->
+<!--            <dubbo:argument index="0" callback="true"/>-->
+<!--        </dubbo:method>-->
+<!--    </dubbo:service>-->
 
     <!-- 暴露服务，方式二：使用class属性，指定暴露接口的实现类，不需要声明bean（不过bean实现类，系统会默认加上"Impl"后缀） -->
 <!--    <dubbo:service interface="org.apache.dubbo.demo.GreetingService" class="org.apache.dubbo.demo.provider.GreetingServiceImpl"/>-->
 
     <!-- 暴露服务，方式三：使用class属性 + ref属性，从DubboBeanDefinitionParser.parse来看，可暴露服务，ref值会被覆盖） -->
 <!--        <dubbo:service interface="org.apache.dubbo.demo.GreetingService"  ref="greetingService" class="org.apache.dubbo.demo.provider.GreetingServiceImpl"/>-->
+
+    <dubbo:provider id="test">
+        <dubbo:service interface="org.apache.dubbo.demo.GreetingService" ref="greetingService"/>
+        <dubbo:service interface="org.apache.dubbo.demo.DemoService" ref="demoService"/>
+    </dubbo:provider>
 </beans>

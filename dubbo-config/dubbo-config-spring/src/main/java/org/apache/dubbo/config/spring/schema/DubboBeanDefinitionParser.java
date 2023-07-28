@@ -177,8 +177,8 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
             }
         } else if (ProviderConfig.class.equals(beanClass)) { //对<dubbo:provider> 中的嵌套<dubbo:service> 元素进行解析
             parseNested(element, parserContext, ServiceBean.class, true, "service", "provider", id, beanDefinition);
-        } else if (ConsumerConfig.class.equals(beanClass)) {
-            parseNested(element, parserContext, ReferenceBean.class, false, "reference", "consumer", id, beanDefinition); //todo 待调试
+        } else if (ConsumerConfig.class.equals(beanClass)) { //对<dubbo:consumer> 中的嵌套<dubbo:reference> 元素进行解析
+            parseNested(element, parserContext, ReferenceBean.class, false, "reference", "consumer", id, beanDefinition);
         }
         Set<String> props = new HashSet<>();
         ManagedMap parameters = null; //托管的Map（Spring的标签集合类，用于保存被托管的Map）
@@ -341,7 +341,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
                  */
 
                 // 内部嵌套的元素，按单个元素解析的方式依次解析
-                BeanDefinition subDefinition = parse((Element) node, parserContext, beanClass, required); //解析嵌套元素，如<dubbo:provider>中<dubbo:service>，此处Node即为<dubbo:service>
+                BeanDefinition subDefinition = parse((Element) node, parserContext, beanClass, required); //获取嵌套元素对应的Bean，如<dubbo:provider>中<dubbo:service>
                 if (subDefinition != null && StringUtils.isNotEmpty(ref)) { //依赖的bean用RuntimeBeanReference表示
                     subDefinition.getPropertyValues().addPropertyValue(property, new RuntimeBeanReference(ref));
                 }

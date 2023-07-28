@@ -41,7 +41,7 @@ import java.util.function.Supplier;
  * Other type will be covert to a map which contains the attributes and value pair of object.
  */
 public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUtils 提供了将复杂对象转换为简单的对象，通过简单对象转换为复杂对象。有点像序列化和反序列
-    /**
+     /**
      * POJO（Plain Ordinary Java Object）简单的Java对象，实际就是普通JavaBeans，是为了避免和EJB混淆所创造的简称。
      * 使用POJO名称是为了避免和EJB混淆起来, 而且简称比较直接. 其中有一些属性及其getter setter方法的类,没有业务逻辑
      * <p>
@@ -85,20 +85,20 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
         return dests;
     }
 
-    public static Object generalize(Object pojo) {
-        return generalize(pojo, new IdentityHashMap<Object, Object>());
+    public static Object generalize(Object pojo) { //将复杂对象转换为简单对象（如：将pojo对象转换为Map，generalize：概括、归纳）
+        return generalize(pojo, new IdentityHashMap<Object, Object>()); //IdentityHashMap的key使用==来查找key的
     }
 
     @SuppressWarnings("unchecked")
-    private static Object generalize(Object pojo, Map<Object, Object> history) { //generalize：使一般化，就复杂对象转换为一般对象
+    private static Object generalize(Object pojo, Map<Object, Object> history) {
         if (pojo == null) {
             return null;
         }
 
         if (pojo instanceof Enum<?>) {
-            return ((Enum<?>) pojo).name();
+            return ((Enum<?>) pojo).name(); //枚举类型，输出枚举的名称
         }
-        if (pojo.getClass().isArray() && Enum.class.isAssignableFrom(pojo.getClass().getComponentType())) {
+        if (pojo.getClass().isArray() && Enum.class.isAssignableFrom(pojo.getClass().getComponentType())) { //处理Enum数组
             int len = Array.getLength(pojo);
             String[] values = new String[len];
             for (int i = 0; i < len; i++) {
@@ -111,7 +111,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
             return pojo;
         }
 
-        if (pojo instanceof Class) {
+        if (pojo instanceof Class) { //Class类的实例，返回类名称
             return ((Class) pojo).getName();
         }
 
@@ -121,7 +121,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
         }
         history.put(pojo, pojo);
 
-        if (pojo.getClass().isArray()) {
+        if (pojo.getClass().isArray()) { //pojo对象为数组类型
             int len = Array.getLength(pojo);
             Object[] dest = new Object[len];
             history.put(pojo, dest);
@@ -131,7 +131,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
             }
             return dest;
         }
-        if (pojo instanceof Collection<?>) {
+        if (pojo instanceof Collection<?>) { //pojo对象为集合类型
             Collection<Object> src = (Collection<Object>) pojo;
             int len = src.size();
             Collection<Object> dest = (pojo instanceof List<?>) ? new ArrayList<Object>(len) : new HashSet<Object>(len);
@@ -141,7 +141,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
             }
             return dest;
         }
-        if (pojo instanceof Map<?, ?>) {
+        if (pojo instanceof Map<?, ?>) { //pojo对象为Map类型
             Map<Object, Object> src = (Map<Object, Object>) pojo;
             Map<Object, Object> dest = createMap(src);
             history.put(pojo, dest);
@@ -153,12 +153,12 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
         Map<String, Object> map = new HashMap<String, Object>();
         history.put(pojo, map);
         if (GENERIC_WITH_CLZ) {
-            map.put("class", pojo.getClass().getName());
+            map.put("class", pojo.getClass().getName()); //设置pojo对象的Class类
         }
-        for (Method method : pojo.getClass().getMethods()) {
-            if (ReflectUtils.isBeanPropertyReadMethod(method)) {
+        for (Method method : pojo.getClass().getMethods()) { //todo @pause
+            if (ReflectUtils.isBeanPropertyReadMethod(method)) { //判断是否读取bean的方法（即get/is方法）
                 try {
-                    map.put(ReflectUtils.getPropertyNameFromBeanReadMethod(method), generalize(method.invoke(pojo), history));
+                    map.put(ReflectUtils.getPropertyNameFromBeanReadMethod(method), generalize(method.invoke(pojo), history)); //处理步骤：1）从方法名中获取到属性名，2）调用pojo对应的方法获取值，传入history是做临时缓存，若能从history取到则用之，3）将属性名和值设置到map中
                 } catch (Exception e) {
                     throw new RuntimeException(e.getMessage(), e);
                 }
@@ -191,7 +191,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
         return realize0(pojo, type, null, new IdentityHashMap<Object, Object>());
     }
 
-    public static Object realize(Object pojo, Class<?> type, Type genericType) {
+    public static Object realize(Object pojo, Class<?> type, Type genericType) { //将简单对象转换为指定类型的复杂对象（如：将Map转换为Pojo）
         return realize0(pojo, type, genericType, new IdentityHashMap<Object, Object>());
     }
 
@@ -288,7 +288,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
     /**
      * realize：实现
      */
-    private static Object realize0(Object pojo, Class<?> type, Type genericType, final Map<Object, Object> history) {
+    private static Object realize0(Object pojo, Class<?> type, Type genericType, final Map<Object, Object> history) { //将Pojo对象转换为指定类型Type的对象
         if (pojo == null) {
             return null;
         }
@@ -300,7 +300,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
         if (ReflectUtils.isPrimitives(pojo.getClass())
                 && !(type != null && type.isArray()
                 && type.getComponentType().isEnum()
-                && pojo.getClass() == String[].class)) {
+                && pojo.getClass() == String[].class)) { //处理基本类型pojo对象
             return CompatibleTypeUtils.compatibleTypeConvert(pojo, type);
         }
 

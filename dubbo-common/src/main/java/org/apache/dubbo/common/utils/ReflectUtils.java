@@ -1089,7 +1089,7 @@ public final class ReflectUtils { //JVM虚拟机中的类型描述符
         }
     }
 
-    public static boolean isBeanPropertyReadMethod(Method method) {
+    public static boolean isBeanPropertyReadMethod(Method method) { //判断是否是读取Bean属性的方法（即可访问的get/is方法）
         return method != null
                 && Modifier.isPublic(method.getModifiers())
                 && !Modifier.isStatic(method.getModifiers())
@@ -1100,7 +1100,7 @@ public final class ReflectUtils { //JVM虚拟机中的类型描述符
                 || (method.getName().startsWith("is") && method.getName().length() > 2));
     }
 
-    public static String getPropertyNameFromBeanReadMethod(Method method) {
+    public static String getPropertyNameFromBeanReadMethod(Method method) { //从获取Bean属性的方法名得到属性名
         if (isBeanPropertyReadMethod(method)) {
             if (method.getName().startsWith("get")) {
                 return method.getName().substring(3, 4).toLowerCase()
