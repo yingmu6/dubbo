@@ -79,9 +79,9 @@ public class PojoUtilsTest {
     }
 
     public void assertObject(Object data, Type type) {
-        Object generalize = PojoUtils.generalize(data);
-        Object realize = PojoUtils.realize(generalize, data.getClass(), type);
-        assertEquals(data, realize);
+        Object generalize = PojoUtils.generalize(data); //将复杂对象转换为简单对象（如：将pojo对象转换为Map类型）
+        Object realize = PojoUtils.realize(generalize, data.getClass(), type); //将简单对象转换为复杂对象（如：将Map类型转换为pojo对象）
+        assertEquals(data, realize); //经过转化后，与原始对象应该时相同的
     }
 
     public <T> void assertArrayObject(T[] data) {
@@ -112,14 +112,14 @@ public class PojoUtilsTest {
     }
 
     @Test
-    public void test_pojo() throws Exception {
+    public void test_pojo() throws Exception { //已测（pojo对象与Map对象互相转换）
         assertObject(new Person());
-        assertObject(new SerializablePerson());
+        assertObject(new SerializablePerson()); //SerializablePerson相比Person实现了Serializable，但generalize和realize两个方法不会对Serializable进行判断，所以和Person处理相似
     }
 
     @Test
-    public void test_has_no_nullary_constructor_pojo() {
-        assertObject(new User(1,"fibbery"));
+    public void test_has_no_nullary_constructor_pojo() { //已测（没有无参构造方式，PojoUtils#newInstance中会兜底处理，找到构造器，并设置默认值来创建对象）
+        assertObject(new User(1,"fibbery")); //User：没有无参的构造方法
     }
 
     @Test

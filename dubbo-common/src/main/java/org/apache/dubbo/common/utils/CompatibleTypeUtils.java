@@ -48,7 +48,7 @@ public class CompatibleTypeUtils {
             return value;
         }
 
-        if (value instanceof String) {
+        if (value instanceof String) { //字符串类型的值转换
             String string = (String) value;
             if (char.class.equals(type) || Character.class.equals(type)) {
                 if (string.length() != 1) {
@@ -135,7 +135,7 @@ public class CompatibleTypeUtils {
                 return chars;
             }
         }
-        if (value instanceof Number) {
+        if (value instanceof Number) { //数值类型的值转换
             Number number = (Number) value;
             if (type == byte.class || type == Byte.class) {
                 return number.byteValue();
@@ -168,9 +168,9 @@ public class CompatibleTypeUtils {
                 return 0 != number.intValue();
             }
         }
-        if (value instanceof Collection) {
+        if (value instanceof Collection) { //集合类型的值转换
             Collection collection = (Collection) value;
-            if (type.isArray()) {
+            if (type.isArray()) { //目标类型为数组
                 int length = collection.size();
                 Object array = Array.newInstance(type.getComponentType(), length);
                 int i = 0;
@@ -187,14 +187,14 @@ public class CompatibleTypeUtils {
                 } catch (Throwable ignored) {
                 }
             }
-            if (type == List.class) {
+            if (type == List.class) { //目标类型为列表
                 return new ArrayList<Object>(collection);
             }
             if (type == Set.class) {
                 return new HashSet<Object>(collection);
             }
         }
-        if (value.getClass().isArray() && Collection.class.isAssignableFrom(type)) {
+        if (value.getClass().isArray() && Collection.class.isAssignableFrom(type)) { //值为ArrayList类型的转换
             Collection collection;
             if (!type.isInterface()) {
                 try {

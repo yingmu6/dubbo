@@ -148,7 +148,7 @@ public final class ReflectUtils { //JVM虚拟机中的类型描述符
 
     public static boolean isPrimitives(Class<?> cls) { //判断是否是原始类型
         if (cls.isArray()) {
-            return isPrimitive(cls.getComponentType());
+            return isPrimitive(cls.getComponentType()); //判断数组元素是不是基本类型
         }
         return isPrimitive(cls);
     }
@@ -1132,7 +1132,7 @@ public final class ReflectUtils { //JVM虚拟机中的类型描述符
         return null;
     }
 
-    public static boolean isPublicInstanceField(Field field) {
+    public static boolean isPublicInstanceField(Field field) { //是否是公共的实例字段
         return Modifier.isPublic(field.getModifiers())
                 && !Modifier.isStatic(field.getModifiers())
                 && !Modifier.isFinal(field.getModifiers())

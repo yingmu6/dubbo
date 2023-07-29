@@ -49,8 +49,8 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
      */
 
     private static final Logger logger = LoggerFactory.getLogger(PojoUtils.class);
-    private static final ConcurrentMap<String, Method> NAME_METHODS_CACHE = new ConcurrentHashMap<String, Method>();
-    private static final ConcurrentMap<Class<?>, ConcurrentMap<String, Field>> CLASS_FIELD_CACHE = new ConcurrentHashMap<Class<?>, ConcurrentMap<String, Field>>();
+    private static final ConcurrentMap<String, Method> NAME_METHODS_CACHE = new ConcurrentHashMap<String, Method>(); //方法名与Method的缓存（为了减少反射获取Method调用），key的值用类名和参数类型拼接，如："org.apache.dubbo.common.model.Person.setName(java.lang.String)"
+    private static final ConcurrentMap<Class<?>, ConcurrentMap<String, Field>> CLASS_FIELD_CACHE = new ConcurrentHashMap<Class<?>, ConcurrentMap<String, Field>>(); //字段所在类Class、字段名、字段信息Filed的缓存
     private static final boolean GENERIC_WITH_CLZ = Boolean.parseBoolean(ConfigUtils.getProperty(CommonConstants.GENERIC_WITH_CLZ_KEY, "true"));
 
     public static Object[] generalize(Object[] objs) {
@@ -85,12 +85,12 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
         return dests;
     }
 
-    public static Object generalize(Object pojo) { //将复杂对象转换为简单对象（如：将pojo对象转换为Map，generalize：概括、归纳）
+    public static Object generalize(Object pojo) { //将复杂对象转换为简单对象（如：将对象转换为Map，generalize：概括、归纳）
         return generalize(pojo, new IdentityHashMap<Object, Object>()); //IdentityHashMap的key使用==来查找key的
     }
 
     @SuppressWarnings("unchecked")
-    private static Object generalize(Object pojo, Map<Object, Object> history) {
+    private static Object generalize(Object pojo, Map<Object, Object> history) { //pojo对象的成员属性，会递归转换，直到为dubbo定义的基本类型
         if (pojo == null) {
             return null;
         }
@@ -155,10 +155,16 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
         if (GENERIC_WITH_CLZ) {
             map.put("class", pojo.getClass().getName()); //设置pojo对象的Class类
         }
-        for (Method method : pojo.getClass().getMethods()) { //todo @pause
+        for (Method method : pojo.getClass().getMethods()) {
             if (ReflectUtils.isBeanPropertyReadMethod(method)) { //判断是否读取bean的方法（即get/is方法）
                 try {
-                    map.put(ReflectUtils.getPropertyNameFromBeanReadMethod(method), generalize(method.invoke(pojo), history)); //处理步骤：1）从方法名中获取到属性名，2）调用pojo对应的方法获取值，传入history是做临时缓存，若能从history取到则用之，3）将属性名和值设置到map中
+                    /**
+                     * 处理步骤：
+                     * 1）从方法名中获取到属性名
+                     * 2）调用pojo对应的方法获取值，并通过generalize转换（传入history是做临时缓存，若能从history取到则用之）
+                     * 3）将属性名和值设置到map中
+                     */
+                    map.put(ReflectUtils.getPropertyNameFromBeanReadMethod(method), generalize(method.invoke(pojo), history));
                 } catch (Exception e) {
                     throw new RuntimeException(e.getMessage(), e);
                 }
@@ -166,11 +172,11 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
         }
         // public field
         for (Field field : pojo.getClass().getFields()) {
-            if (ReflectUtils.isPublicInstanceField(field)) {
+            if (ReflectUtils.isPublicInstanceField(field)) { //判断是否是公共的实例字段
                 try {
                     Object fieldValue = field.get(pojo);
                     if (history.containsKey(pojo)) {
-                        Object pojoGeneralizedValue = history.get(pojo);
+                        Object pojoGeneralizedValue = history.get(pojo); //已经转换过的字段，就不再转换
                         if (pojoGeneralizedValue instanceof Map
                                 && ((Map) pojoGeneralizedValue).containsKey(field.getName())) {
                             continue;
@@ -191,7 +197,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
         return realize0(pojo, type, null, new IdentityHashMap<Object, Object>());
     }
 
-    public static Object realize(Object pojo, Class<?> type, Type genericType) { //将简单对象转换为指定类型的复杂对象（如：将Map转换为Pojo）
+    public static Object realize(Object pojo, Class<?> type, Type genericType) { //将简单对象转换为指定类型的复杂对象（如：将Map对象转换为pojo对象）
         return realize0(pojo, type, genericType, new IdentityHashMap<Object, Object>());
     }
 
@@ -286,9 +292,9 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     /**
-     * realize：实现
+     * realize：实现，获得
      */
-    private static Object realize0(Object pojo, Class<?> type, Type genericType, final Map<Object, Object> history) { //将Pojo对象转换为指定类型Type的对象
+    private static Object realize0(Object pojo, Class<?> type, Type genericType, final Map<Object, Object> history) { //将pojo对象转换为指定类型Type的对象（如：将Map对象转换为指定类型的目标对象，递归调用时pojo不一定是Map类型）
         if (pojo == null) {
             return null;
         }
@@ -304,7 +310,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
             return CompatibleTypeUtils.compatibleTypeConvert(pojo, type);
         }
 
-        Object o = history.get(pojo);
+        Object o = history.get(pojo); //history：当方法在递归调用时，会用到
 
         if (o != null) {
             return o;
@@ -312,7 +318,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
 
         history.put(pojo, pojo);
 
-        if (pojo.getClass().isArray()) {
+        if (pojo.getClass().isArray()) { //处理数组类型的pojo
             if (Collection.class.isAssignableFrom(type)) { //是集合类型
                 Class<?> ctype = pojo.getClass().getComponentType();
                 int len = Array.getLength(pojo); //获取数组对应长度
@@ -338,7 +344,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
             }
         }
 
-        if (pojo instanceof Collection<?>) {
+        if (pojo instanceof Collection<?>) { //处理集合类型的pojo
             if (type.isArray()) {
                 Class<?> ctype = type.getComponentType();
                 Collection<Object> src = (Collection<Object>) pojo;
@@ -370,11 +376,11 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
             }
         }
 
-        if (pojo instanceof Map<?, ?> && type != null) {
-            Object className = ((Map<Object, Object>) pojo).get("class");
+        if (pojo instanceof Map<?, ?> && type != null) { //处理Map类型的pojo
+            Object className = ((Map<Object, Object>) pojo).get("class"); //获取Map中的"class"键对应的值，是在generalize方法中设置的
             if (className instanceof String) {
                 try {
-                    type = ClassUtils.forName((String) className);
+                    type = ClassUtils.forName((String) className); //解析的目标类的Class类
                 } catch (ClassNotFoundException e) {
                     // ignore
                 }
@@ -382,14 +388,14 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
 
             // special logic for enum
             if (type.isEnum()) { //对枚举型做特殊处理
-                Object name = ((Map<Object, Object>) pojo).get("name");
+                Object name = ((Map<Object, Object>) pojo).get("name"); //处理枚举时，在generalize方法中设置的枚举名称
                 if (name != null) {
-                    return Enum.valueOf((Class<Enum>) type, name.toString());
+                    return Enum.valueOf((Class<Enum>) type, name.toString()); //使用枚举名，构建枚举对象
                 }
             }
             Map<Object, Object> map;
             // when return type is not the subclass of return type from the signature and not an interface
-            if (!type.isInterface() && !type.isAssignableFrom(pojo.getClass())) {
+            if (!type.isInterface() && !type.isAssignableFrom(pojo.getClass())) { //type非接口且pojo不是type的子类型
                 try {
                     map = (Map<Object, Object>) type.newInstance();
                     Map<Object, Object> mapPojo = (Map<Object, Object>) pojo;
@@ -399,13 +405,13 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
                     }
                 } catch (Exception e) {
                     //ignore error
-                    map = (Map<Object, Object>) pojo;
+                    map = (Map<Object, Object>) pojo; //type类型不为Map时，使用原始的pojo转换
                 }
             } else {
                 map = (Map<Object, Object>) pojo;
             }
 
-            if (Map.class.isAssignableFrom(type) || type == Object.class) {
+            if (Map.class.isAssignableFrom(type) || type == Object.class) { //解析的目标类为Map时
                 final Map<Object, Object> result;
                 // fix issue#5939
                 Type mapKeyType = getKeyTypeForMap(map.getClass());
@@ -445,29 +451,29 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
                     result.put(key, value);
                 }
                 return result;
-            } else if (type.isInterface()) {
+            } else if (type.isInterface()) { //解析的目标类为接口时，产生接口对应的代理类
                 Object dest = Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[] {type}, new PojoInvocationHandler(map));
                 history.put(pojo, dest);
                 return dest;
             } else {
-                Object dest = newInstance(type);
-                history.put(pojo, dest);
-                for (Map.Entry<Object, Object> entry : map.entrySet()) {
+                Object dest = newInstance(type); //构造解析的目标类的实例
+                history.put(pojo, dest); //设置到缓存Map中
+                for (Map.Entry<Object, Object> entry : map.entrySet()) { //遍历Map中的条目，找到对应目标对象的属性，使用反射机制调用Method，依次设置值
                     Object key = entry.getKey();
-                    if (key instanceof String) {
+                    if (key instanceof String) { //只处理key为String的条目
                         String name = (String) key;
                         Object value = entry.getValue();
                         if (value != null) {
-                            Method method = getSetterMethod(dest.getClass(), name, value.getClass());
-                            Field field = getField(dest.getClass(), name);
+                            Method method = getSetterMethod(dest.getClass(), name, value.getClass()); //通过属性获取set方法（从缓存中获取，若没有则通过反射获取Method，再设置到缓存中）
+                            Field field = getField(dest.getClass(), name); //获取属性对应的字段Filed信息
                             if (method != null) {
                                 if (!method.isAccessible()) {
                                     method.setAccessible(true);
                                 }
-                                Type ptype = method.getGenericParameterTypes()[0];
-                                value = realize0(value, method.getParameterTypes()[0], ptype, history);
+                                Type ptype = method.getGenericParameterTypes()[0]; //获取set方法的第一个参数类型
+                                value = realize0(value, method.getParameterTypes()[0], ptype, history); //将值转换为指定类型的对象
                                 try {
-                                    method.invoke(dest, value);
+                                    method.invoke(dest, value); //使用反射机制，设置目标对象的属性值
                                 } catch (Exception e) {
                                     String exceptionDescription = "Failed to set pojo " + dest.getClass().getSimpleName() + " property " + name
                                             + " value " + value + "(" + value.getClass() + "), cause: " + e.getMessage();
@@ -544,10 +550,10 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
         return clazz;
     }
 
-    private static Object newInstance(Class<?> cls) {
+    private static Object newInstance(Class<?> cls) { //创建指定类型的对象实例
         try {
             return cls.newInstance();
-        } catch (Throwable t) {
+        } catch (Throwable t) { //若指定类中没有无参的构造函数，就会抛出异常。做容错处理，找出构造器Constructor，设置默认参数时，进行实例构造
             try {
                 Constructor<?>[] constructors = cls.getDeclaredConstructors();
                 /**
@@ -560,7 +566,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
                 if (constructors.length == 0) {
                     throw new RuntimeException("Illegal constructor: " + cls.getName());
                 }
-                Constructor<?> constructor = constructors[0];
+                Constructor<?> constructor = constructors[0]; //取第一个构造器即可（此处主要是创造对象实例，至于用哪个构造器都可）
                 if (constructor.getParameterTypes().length > 0) {
                     for (Constructor<?> c : constructors) {
                         if (c.getParameterTypes().length < constructor.getParameterTypes().length) {
@@ -572,7 +578,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
                     }
                 }
                 constructor.setAccessible(true);
-                Object[] parameters = Arrays.stream(constructor.getParameterTypes()).map(PojoUtils::getDefaultValue).toArray();
+                Object[] parameters = Arrays.stream(constructor.getParameterTypes()).map(PojoUtils::getDefaultValue).toArray(); //使用默认值作为构造参数
                 return constructor.newInstance(parameters);
             } catch (InstantiationException e) {
                 throw new RuntimeException(e.getMessage(), e);
@@ -605,9 +611,9 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
     }
 
     private static Method getSetterMethod(Class<?> cls, String property, Class<?> valueCls) {
-        String name = "set" + property.substring(0, 1).toUpperCase() + property.substring(1);
-        Method method = NAME_METHODS_CACHE.get(cls.getName() + "." + name + "(" + valueCls.getName() + ")");
-        if (method == null) {
+        String name = "set" + property.substring(0, 1).toUpperCase() + property.substring(1); //构建方法名，如setAge
+        Method method = NAME_METHODS_CACHE.get(cls.getName() + "." + name + "(" + valueCls.getName() + ")"); //构建缓存key，尝试缓存中获取Method
+        if (method == null) { //缓存中没有，则通过反射，获取到Method（使用缓存，减少反射的调用）
             try {
                 method = cls.getMethod(name, valueCls);
             } catch (NoSuchMethodException e) {
@@ -627,7 +633,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
 
     private static Field getField(Class<?> cls, String fieldName) {
         Field result = null;
-        if (CLASS_FIELD_CACHE.containsKey(cls) && CLASS_FIELD_CACHE.get(cls).containsKey(fieldName)) {
+        if (CLASS_FIELD_CACHE.containsKey(cls) && CLASS_FIELD_CACHE.get(cls).containsKey(fieldName)) { //判断缓存中是否存在指定类对应的字段
             return CLASS_FIELD_CACHE.get(cls).get(fieldName);
         }
         try {
