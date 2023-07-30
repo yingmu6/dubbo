@@ -153,7 +153,7 @@ public final class ReflectUtils { //JVM虚拟机中的类型描述符
         return isPrimitive(cls);
     }
 
-    public static boolean isPrimitive(Class<?> cls) {
+    public static boolean isPrimitive(Class<?> cls) { //是否为基本类型（包含java的基本类型、String、Number、Date等）
         return cls.isPrimitive() || cls == String.class || cls == Boolean.class || cls == Character.class
                 || Number.class.isAssignableFrom(cls) || Date.class.isAssignableFrom(cls);
     }

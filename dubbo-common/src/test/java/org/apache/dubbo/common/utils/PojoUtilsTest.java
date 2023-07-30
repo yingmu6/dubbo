@@ -16,6 +16,7 @@
  */
 package org.apache.dubbo.common.utils;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.dubbo.common.model.Person;
 import org.apache.dubbo.common.model.SerializablePerson;
@@ -87,7 +88,7 @@ public class PojoUtilsTest {
     public <T> void assertArrayObject(T[] data) {
         Object generalize = PojoUtils.generalize(data);
         @SuppressWarnings("unchecked")
-        T[] realize = (T[]) PojoUtils.realize(generalize, data.getClass());
+        T[] realize = (T[]) PojoUtils.realize(generalize, data.getClass()); //将处理的值，转换为数组类型
         assertArrayEquals(data, realize);
     }
 
@@ -123,7 +124,7 @@ public class PojoUtilsTest {
     }
 
     @Test
-    public void test_Map_List_pojo() throws Exception {
+    public void test_Map_List_pojo() throws Exception { //已测（对Map<String, List<Object>>形式转换）
         Map<String, List<Object>> map = new HashMap<String, List<Object>>();
 
         List<Object> list = new ArrayList<Object>();
@@ -135,10 +136,41 @@ public class PojoUtilsTest {
         Object generalize = PojoUtils.generalize(map);
         Object realize = PojoUtils.realize(generalize, Map.class);
         assertEquals(map, realize);
+
+        System.out.println("generalize后数据结果：" + JSON.toJSONString(generalize));
+        /**
+         * 输出结果：
+         * generalize后数据结果：
+         *   {"k":
+         *     [
+         *      {"name":"name1","oneByte":123,"class":"org.apache.dubbo.common.model.Person","value":["value1","value2"],"age":11},
+         *      {"name":"name1","oneByte":123,"class":"org.apache.dubbo.common.model.SerializablePerson","value":["value1","value2"],"age":11}
+         *     ]
+         *   }
+         *
+         * 结果分析：
+         * 1）对于Map<String, List<Object>>结果的转换，对象List<Object>转换，List =》数组，Object =》Map
+         *
+         * 2）generalize：将pojo对象转换为Map步骤
+         *    a）遇到Map类型，遍历Map中的条目，依次将key、value递归调用generalize，将pojo对象转换为Map
+         *    b）Map的key的value为List<Object>，按Collection集合处理
+         *    c）第一个元素为Person对象
+         *       c.1）Map属性中设置class属性
+         *       c.2）找到get/is方法
+         *       c.3）获取到对象的属性值，按<字段名,字段值>写入Map
+         *    d）第二个元素为SerializablePerson对象（处理方式如上）
+         *
+         * 3）realize：将Map转换为pojo步骤
+         *    a）遇到"[]"，按集合ArrayList处理
+         *    b）遍历"[]"中的元素"{}"
+         *       b.1）获取"{}"class属性值，获取到对应的Class类，并通过newInstance创建实例
+         *       b.2）依次将"{}"中的key、value递归调用realize对值进行解析
+         *       b.3）将"{}"中的key，作为字段名，找到对应的Method，然后通过反射机制，执行方法调用，将值设置到对应的pojo对象中
+         */
     }
 
     @Test
-    public void test_PrimitiveArray() throws Exception {
+    public void test_PrimitiveArray() throws Exception { //已测（基本类型组成的数组，generalize/realize都是直接返回，不做处理）
         assertObject(new boolean[]{true, false});
         assertObject(new Boolean[]{true, false, true});
 
@@ -182,7 +214,7 @@ public class PojoUtilsTest {
     }
 
     @Test
-    public void test_PojoArray() throws Exception {
+    public void test_PojoArray() throws Exception { //已测（数组元素为pojo对象的转换，会变量数组元素，依次按pojo对象处理）
         Person[] array = new Person[2];
         array[0] = new Person();
         {
@@ -194,7 +226,7 @@ public class PojoUtilsTest {
     }
 
     @Test
-    public void testArrayToCollection() throws Exception {
+    public void testArrayToCollection() throws Exception { //todo @pause
         Person[] array = new Person[2];
         Person person1 = new Person();
         person1.setName("person1");
@@ -202,7 +234,7 @@ public class PojoUtilsTest {
         person2.setName("person2");
         array[0] = person1;
         array[1] = person2;
-        Object o = PojoUtils.realize(PojoUtils.generalize(array), LinkedList.class);
+        Object o = PojoUtils.realize(PojoUtils.generalize(array), LinkedList.class); //
         assertTrue(o instanceof LinkedList);
         assertEquals(((List) o).get(0), person1);
         assertEquals(((List) o).get(1), person2);

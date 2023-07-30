@@ -85,12 +85,12 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
         return dests;
     }
 
-    public static Object generalize(Object pojo) { //将复杂对象转换为简单对象（如：将对象转换为Map，generalize：概括、归纳）
+    public static Object generalize(Object pojo) { //将pojo对象转换为Map对象（如：通过pojo的get/is方法获取到值，依次写到Map中，generalize：概括、归纳）
         return generalize(pojo, new IdentityHashMap<Object, Object>()); //IdentityHashMap的key使用==来查找key的
     }
 
     @SuppressWarnings("unchecked")
-    private static Object generalize(Object pojo, Map<Object, Object> history) { //pojo对象的成员属性，会递归转换，直到为dubbo定义的基本类型
+    private static Object generalize(Object pojo, Map<Object, Object> history) { //pojo对象的成员属性（会递归转换，pojo=》Map，直到所有属性为dubbo定义的基本类型）
         if (pojo == null) {
             return null;
         }
@@ -134,19 +134,19 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
         if (pojo instanceof Collection<?>) { //pojo对象为集合类型
             Collection<Object> src = (Collection<Object>) pojo;
             int len = src.size();
-            Collection<Object> dest = (pojo instanceof List<?>) ? new ArrayList<Object>(len) : new HashSet<Object>(len);
+            Collection<Object> dest = (pojo instanceof List<?>) ? new ArrayList<Object>(len) : new HashSet<Object>(len); //区分出List或Set类型，并创建对应的集合实例
             history.put(pojo, dest);
-            for (Object obj : src) {
+            for (Object obj : src) { //遍历集合元素，依次将元素进行转换
                 dest.add(generalize(obj, history));
             }
             return dest;
         }
         if (pojo instanceof Map<?, ?>) { //pojo对象为Map类型
             Map<Object, Object> src = (Map<Object, Object>) pojo;
-            Map<Object, Object> dest = createMap(src);
+            Map<Object, Object> dest = createMap(src); //根据原Map类型，创建对应的Map对象
             history.put(pojo, dest);
             for (Map.Entry<Object, Object> obj : src.entrySet()) {
-                dest.put(generalize(obj.getKey(), history), generalize(obj.getValue(), history));
+                dest.put(generalize(obj.getKey(), history), generalize(obj.getValue(), history)); //key、value都可能是pojo对象，所以都需要进行转换
             }
             return dest;
         }
@@ -197,7 +197,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
         return realize0(pojo, type, null, new IdentityHashMap<Object, Object>());
     }
 
-    public static Object realize(Object pojo, Class<?> type, Type genericType) { //将简单对象转换为指定类型的复杂对象（如：将Map对象转换为pojo对象）
+    public static Object realize(Object pojo, Class<?> type, Type genericType) { //将简单对象转换为指定类型的复杂对象（如：将Map对象转换为pojo对象）todo 参数类型待了解
         return realize0(pojo, type, genericType, new IdentityHashMap<Object, Object>());
     }
 
@@ -246,7 +246,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
                 // ignore
             }
         }
-        return new ArrayList<Object>();
+        return new ArrayList<Object>(); //若上面都没有创建集合，则默认使用ArrayList创建集合
     }
 
     private static Map createMap(Map src) { //判断Map的实际类型，创建对应类型的实例
@@ -272,13 +272,13 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
             result = new ConcurrentSkipListMap();
         } else {
             try {
-                result = cl.newInstance();
+                result = cl.newInstance(); //不为上面的Map类型，可能为不常用的Map，或自定义的Map，利用反射创建实例
             } catch (Exception e) { /* ignore */ }
 
             if (result == null) {
                 try {
                     Constructor<?> constructor = cl.getConstructor(Map.class);
-                    result = (Map) constructor.newInstance(Collections.EMPTY_MAP);
+                    result = (Map) constructor.newInstance(Collections.EMPTY_MAP); //若上面方式没创建Map实例，则创建EmptyMap作为默认实例（可能上面创建的自定义Map，没有定义无参的构造方法）
                 } catch (Exception e) { /* ignore */ }
             }
         }
@@ -294,7 +294,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
     /**
      * realize：实现，获得
      */
-    private static Object realize0(Object pojo, Class<?> type, Type genericType, final Map<Object, Object> history) { //将pojo对象转换为指定类型Type的对象（如：将Map对象转换为指定类型的目标对象，递归调用时pojo不一定是Map类型）
+    private static Object realize0(Object pojo, Class<?> type, Type genericType, final Map<Object, Object> history) { //将对象转换为指定类型的pojo对象（如：将Map对象转换为指定类型的pojo对象，将Map的属性值，通过set方法设置到pojo对象中）
         if (pojo == null) {
             return null;
         }
@@ -363,7 +363,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
                 int len = src.size();
                 Collection<Object> dest = createCollection(type, len);
                 history.put(pojo, dest);
-                for (Object obj : src) {
+                for (Object obj : src) { //遍历集合元素，依次转化到目标类型的pojo对象
                     Type keyType = getGenericClassByIndex(genericType, 0);
                     Class<?> keyClazz = obj == null ? null : obj.getClass();
                     if (keyType instanceof Class) {
@@ -377,7 +377,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
         }
 
         if (pojo instanceof Map<?, ?> && type != null) { //处理Map类型的pojo
-            Object className = ((Map<Object, Object>) pojo).get("class"); //获取Map中的"class"键对应的值，是在generalize方法中设置的
+            Object className = ((Map<Object, Object>) pojo).get("class"); //获取Map中的"class"键对应的值，是在generalize方法中设置的（单个的pojo中设置的）
             if (className instanceof String) {
                 try {
                     type = ClassUtils.forName((String) className); //解析的目标类的Class类
@@ -414,12 +414,12 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
             if (Map.class.isAssignableFrom(type) || type == Object.class) { //解析的目标类为Map时
                 final Map<Object, Object> result;
                 // fix issue#5939
-                Type mapKeyType = getKeyTypeForMap(map.getClass());
-                Type typeKeyType = getGenericClassByIndex(genericType, 0);
-                boolean typeMismatch = mapKeyType instanceof Class
+                Type mapKeyType = getKeyTypeForMap(map.getClass()); //获取key的泛型参数对应的实际类型
+                Type typeKeyType = getGenericClassByIndex(genericType, 0); //获取目标类型的泛型参数的第一个实际参数
+                boolean typeMismatch = mapKeyType instanceof Class //Type为Class实例时，表明是基本类型或原始类型，如String、int等
                         && typeKeyType instanceof Class
-                        && !typeKeyType.getTypeName().equals(mapKeyType.getTypeName());
-                if (typeMismatch) {
+                        && !typeKeyType.getTypeName().equals(mapKeyType.getTypeName()); //判断key、value类型为基本类型或原始类型，且类型相同
+                if (typeMismatch) { //基本类型使用HashMap处理
                     result = createMap(new HashMap(0));
                 } else {
                     result = createMap(map);
@@ -430,11 +430,11 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
                     Type keyType = getGenericClassByIndex(genericType, 0);
                     Type valueType = getGenericClassByIndex(genericType, 1);
                     Class<?> keyClazz;
-                    if (keyType instanceof Class) {
+                    if (keyType instanceof Class) { //基本类型或原始类型
                         keyClazz = (Class<?>) keyType;
-                    } else if (keyType instanceof ParameterizedType) {
+                    } else if (keyType instanceof ParameterizedType) { //参数化类型
                         keyClazz = (Class<?>) ((ParameterizedType) keyType).getRawType();
-                    } else {
+                    } else { //keyType为Null时，取条目中key的类型
                         keyClazz = entry.getKey() == null ? null : entry.getKey().getClass();
                     }
                     Class<?> valueClazz;
@@ -446,8 +446,8 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
                         valueClazz = entry.getValue() == null ? null : entry.getValue().getClass();
                     }
 
-                    Object key = keyClazz == null ? entry.getKey() : realize0(entry.getKey(), keyClazz, keyType, history);
-                    Object value = valueClazz == null ? entry.getValue() : realize0(entry.getValue(), valueClazz, valueType, history);
+                    Object key = keyClazz == null ? entry.getKey() : realize0(entry.getKey(), keyClazz, keyType, history); //将key转换为目标类型
+                    Object value = valueClazz == null ? entry.getValue() : realize0(entry.getValue(), valueClazz, valueType, history); //将value转换为目标类型
                     result.put(key, value);
                 }
                 return result;
@@ -510,21 +510,21 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
         return pojo;
     }
 
-    /**
+     /**
      * Get key type for {@link Map} directly implemented by {@code clazz}.
      * If {@code clazz} does not implement {@link Map} directly, return {@code null}.
      *
      * @param clazz {@link Class}
      * @return Return String.class for {@link com.alibaba.fastjson.JSONObject}
      */
-    private static Type getKeyTypeForMap(Class<?> clazz) {
-        Type[] interfaces = clazz.getGenericInterfaces();
+    private static Type getKeyTypeForMap(Class<?> clazz) { //获取key的泛型参数对应的实际类型
+        Type[] interfaces = clazz.getGenericInterfaces(); //获取Class类直接实现的结果
         if (!ArrayUtils.isEmpty(interfaces)) {
             for (Type type : interfaces) {
-                if (type instanceof ParameterizedType) {
+                if (type instanceof ParameterizedType) { //处理泛型
                     ParameterizedType t = (ParameterizedType) type;
                     if ("java.util.Map".equals(t.getRawType().getTypeName())) {
-                        return t.getActualTypeArguments()[0];
+                        return t.getActualTypeArguments()[0]; //获取泛型的实际参数
                     }
                 }
             }
@@ -539,12 +539,12 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
      * @param index       index of the target parameterized type
      * @return Return Person.class for List<Person>, return Person.class for Map<String, Person> when index=0
      */
-    private static Type getGenericClassByIndex(Type genericType, int index) {
+    private static Type getGenericClassByIndex(Type genericType, int index) { //获取泛型参数指定位置index的实际参数类型
         Type clazz = null;
         // find parameterized type
         if (genericType instanceof ParameterizedType) {
             ParameterizedType t = (ParameterizedType) genericType;
-            Type[] types = t.getActualTypeArguments();
+            Type[] types = t.getActualTypeArguments(); //泛型参数的时间参数，可能有多个，如Map<K,V>，就有两个实际参数
             clazz = types[index];
         }
         return clazz;
