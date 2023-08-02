@@ -299,7 +299,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
             return null;
         }
 
-        if (type != null && type.isEnum() && pojo.getClass() == String.class) {
+        if (type != null && type.isEnum() && pojo.getClass() == String.class) { //转换为枚举类型
             return Enum.valueOf((Class<Enum>) type, (String) pojo);
         }
 
@@ -345,15 +345,15 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
         }
 
         if (pojo instanceof Collection<?>) { //处理集合类型的pojo
-            if (type.isArray()) {
+            if (type.isArray()) { //集合转换为数组
                 Class<?> ctype = type.getComponentType();
                 Collection<Object> src = (Collection<Object>) pojo;
                 int len = src.size();
-                Object dest = Array.newInstance(ctype, len);
+                Object dest = Array.newInstance(ctype, len); //创建指定类型和长度的数组
                 history.put(pojo, dest);
                 int i = 0;
                 for (Object obj : src) {
-                    Object value = realize0(obj, ctype, null, history);
+                    Object value = realize0(obj, ctype, null, history); //将数组中的元素依次转换为指定类型pojo对象
                     Array.set(dest, i, value);
                     i++;
                 }

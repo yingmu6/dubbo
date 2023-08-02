@@ -241,7 +241,7 @@ public class PojoUtilsTest {
     }
 
     @Test
-    public void testCollectionToArray() throws Exception { //todo @pause
+    public void testCollectionToArray() throws Exception { //已测（将pojo类型列表，先转换为Map类型对象，再转换为指定type的数组）
         Person person1 = new Person();
         person1.setName("person1");
         Person person2 = new Person();
@@ -256,7 +256,7 @@ public class PojoUtilsTest {
     }
 
     @Test
-    public void testMapToEnum() throws Exception {
+    public void testMapToEnum() throws Exception { //todo @pause
         Map map = new HashMap();
         map.put("name", "MONDAY");
         Object o = PojoUtils.realize(map, Day.class);
