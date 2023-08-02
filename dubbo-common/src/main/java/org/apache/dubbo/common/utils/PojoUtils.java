@@ -55,7 +55,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
 
     public static Object[] generalize(Object[] objs) {
         Object[] dests = new Object[objs.length];
-        for (int i = 0; i < objs.length; i++) {
+        for (int i = 0; i < objs.length; i++) { //遍历数组依次按pojo对象转换
             dests[i] = generalize(objs[i]);
         }
         return dests;
@@ -319,14 +319,14 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
         history.put(pojo, pojo);
 
         if (pojo.getClass().isArray()) { //处理数组类型的pojo
-            if (Collection.class.isAssignableFrom(type)) { //是集合类型
-                Class<?> ctype = pojo.getClass().getComponentType();
+            if (Collection.class.isAssignableFrom(type)) { //目标类型是集合类型
+                Class<?> ctype = pojo.getClass().getComponentType(); //获取数组元素的类型
                 int len = Array.getLength(pojo); //获取数组对应长度
                 Collection dest = createCollection(type, len);
                 history.put(pojo, dest);
                 for (int i = 0; i < len; i++) {
                     Object obj = Array.get(pojo, i); //返回数组中指定下标的值
-                    Object value = realize0(obj, ctype, null, history);
+                    Object value = realize0(obj, ctype, null, history); //依次将对象转换为目标类型，如Map转换为pojo类型
                     dest.add(value);
                 }
                 return dest;

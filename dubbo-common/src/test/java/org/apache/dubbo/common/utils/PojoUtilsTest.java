@@ -226,7 +226,7 @@ public class PojoUtilsTest {
     }
 
     @Test
-    public void testArrayToCollection() throws Exception { //todo @pause
+    public void testArrayToCollection() throws Exception { //已测（将pojo类型数组，先转换为Map类型数组，再转换为指定type的集合）
         Person[] array = new Person[2];
         Person person1 = new Person();
         person1.setName("person1");
@@ -234,14 +234,14 @@ public class PojoUtilsTest {
         person2.setName("person2");
         array[0] = person1;
         array[1] = person2;
-        Object o = PojoUtils.realize(PojoUtils.generalize(array), LinkedList.class); //
+        Object o = PojoUtils.realize(PojoUtils.generalize(array), LinkedList.class); //执行步骤：1）将pojo数组依次按对象类型转换，得到Map类型的数组，2）将Map类型的数组转换为链表
         assertTrue(o instanceof LinkedList);
         assertEquals(((List) o).get(0), person1);
         assertEquals(((List) o).get(1), person2);
     }
 
     @Test
-    public void testCollectionToArray() throws Exception {
+    public void testCollectionToArray() throws Exception { //todo @pause
         Person person1 = new Person();
         person1.setName("person1");
         Person person2 = new Person();
