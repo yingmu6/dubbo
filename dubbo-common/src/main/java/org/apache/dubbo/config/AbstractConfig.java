@@ -58,7 +58,7 @@ public abstract class AbstractConfig implements Serializable {
      */
     private static final String[] SUFFIXES = new String[]{"Config", "Bean", "ConfigBase"};
 
-    static { //遗留的属性
+    static { //遗留的属性（已过时的属性）
         LEGACY_PROPERTIES.put("dubbo.protocol.name", "dubbo.service.protocol");
         LEGACY_PROPERTIES.put("dubbo.protocol.host", "dubbo.service.server.host");
         LEGACY_PROPERTIES.put("dubbo.protocol.port", "dubbo.service.server.port");

@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class WrapperTest {
 
     @Test
-    public void testMain() throws Exception { //创建接口的Wrapper
+    public void testMain() throws Exception { //已测，创建接口的Wrapper
         Wrapper w = Wrapper.getWrapper(I1.class);
         String[] ns = w.getDeclaredMethodNames();//获取被封装的类中声明的方法
         assertEquals(ns.length, 5);
