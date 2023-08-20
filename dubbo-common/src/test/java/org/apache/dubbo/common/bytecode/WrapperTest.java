@@ -43,12 +43,12 @@ public class WrapperTest {
 
     // bug: DUBBO-132
     @Test
-    public void test_unwantedArgument() throws Exception { //测试 未找到对应参数的方法
+    public void test_unwantedArgument() throws Exception { //已测（未找到对应参数的方法）
         Wrapper w = Wrapper.getWrapper(I1.class);
         Object obj = new Impl1();
         try {
             w.invokeMethod(obj, "hello", new Class<?>[]{String.class, String.class},
-                    new Object[]{"qianlei", "badboy"});
+                    new Object[]{"qianlei", "badboy"}); //参数不匹配
             fail();
         } catch (NoSuchMethodException expected) {
             System.out.println("未找到方法");
