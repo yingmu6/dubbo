@@ -41,7 +41,7 @@ public abstract class Wrapper { //封装类
     private static final Map<Class<?>, Wrapper> WRAPPER_MAP = new ConcurrentHashMap<Class<?>, Wrapper>(); //class wrapper map：类与Wrapper的缓存，当需要执行调用时，根据Class即可找到Wrapper，然后通过Wrapper调用目标对象中方法，减少反射调用
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
     private static final String[] OBJECT_METHODS = new String[] {"getClass", "hashCode", "toString", "equals"};
-    private static final Wrapper OBJECT_WRAPPER = new Wrapper() { //Object对应的封装类
+    private static final Wrapper OBJECT_WRAPPER = new Wrapper() { //Object对应的封装类（匿名内部类，Wrapper是abstract类，需要实现所有抽象方法）
         @Override
         public String[] getMethodNames() { //匿名内部类，对应实现抽象方法
             return OBJECT_METHODS;
@@ -119,9 +119,9 @@ public abstract class Wrapper { //封装类
     }
 
     /**
-     * 创建封装类的问题点
-     * 1）创建的封装类，做了哪些功能增强，还是说只是为了减少反射调用，只实现了目标类的方法调用？
-     * 2）本地方法调用，底层原理是怎样的？是不是class的invoke方法
+     * 创建封装类
+     * 1）创建的封装类，做了功能增强，减少反射调用
+     * 2）内部根据待封装的Class，对Wrapper的抽象方法进行实现
      */
     private static Wrapper makeWrapper(Class<?> c) { //为指定class构建Wrapper封装类的实例，c的实例如：org.apache.dubbo.demo.provider.GreetingServiceImpl
         if (c.isPrimitive()) { //基本类型不能创建封装类
@@ -423,7 +423,7 @@ public abstract class Wrapper { //封装类
         }
     }
 
-    /**
+     /**
      * get method name array.（获取被封装的类中的方法（包含继承的方法））
      *
      * @return method name array.

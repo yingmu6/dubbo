@@ -256,15 +256,15 @@ public class PojoUtilsTest {
     }
 
     @Test
-    public void testMapToEnum() throws Exception { //todo @pause
+    public void testMapToEnum() throws Exception { //已测（将Map转换为枚举）
         Map map = new HashMap();
-        map.put("name", "MONDAY");
+        map.put("name", "MONDAY"); //PojoUtils#realize会以name值为枚举名称，构建枚举对象并返回
         Object o = PojoUtils.realize(map, Day.class);
         assertEquals(o, Day.MONDAY);
     }
 
     @Test
-    public void testGeneralizeEnumArray() throws Exception {
+    public void testGeneralizeEnumArray() throws Exception { //已测（将枚举数组概括为String数组，元素值为枚举名称）
         Object days = new Enum[]{Day.FRIDAY, Day.SATURDAY};
         Object o = PojoUtils.generalize(days);
         assertTrue(o instanceof String[]);
@@ -273,7 +273,7 @@ public class PojoUtilsTest {
     }
 
     @Test
-    public void testGeneralizePersons() throws Exception {
+    public void testGeneralizePersons() throws Exception { //已测（普通对象数组转换为Map数组）
         Object persons = new Person[]{new Person(), new Person()};
         Object o = PojoUtils.generalize(persons);
         assertTrue(o instanceof Object[]);

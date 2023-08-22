@@ -85,7 +85,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
         return dests;
     }
 
-    public static Object generalize(Object pojo) { //将pojo对象转换为Map对象（如：通过pojo的get/is方法获取到值，依次写到Map中，generalize：概括、归纳）
+    public static Object generalize(Object pojo) { //将pojo对象的内容进行概括（如：将pojo转换为Map，generalize：概括、归纳）
         return generalize(pojo, new IdentityHashMap<Object, Object>()); //IdentityHashMap的key使用==来查找key的
     }
 
@@ -101,7 +101,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
         if (pojo.getClass().isArray() && Enum.class.isAssignableFrom(pojo.getClass().getComponentType())) { //处理Enum数组
             int len = Array.getLength(pojo);
             String[] values = new String[len];
-            for (int i = 0; i < len; i++) {
+            for (int i = 0; i < len; i++) { //枚举数组会转换为String数组，数组元素的值为枚举名
                 values[i] = ((Enum<?>) Array.get(pojo, i)).name();
             }
             return values;
@@ -193,11 +193,11 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
         return map;
     }
 
-    public static Object realize(Object pojo, Class<?> type) {
+    public static Object realize(Object pojo, Class<?> type) { //实现将对象转换为指定类型的对象
         return realize0(pojo, type, null, new IdentityHashMap<Object, Object>());
     }
 
-    public static Object realize(Object pojo, Class<?> type, Type genericType) { //将简单对象转换为指定类型的复杂对象（如：将Map对象转换为pojo对象）todo 参数类型待了解
+    public static Object realize(Object pojo, Class<?> type, Type genericType) { //将简单对象转换为指定类型的复杂对象（如：将Map对象转换为pojo对象）
         return realize0(pojo, type, genericType, new IdentityHashMap<Object, Object>());
     }
 
@@ -294,23 +294,23 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
     /**
      * realize：实现，获得
      */
-    private static Object realize0(Object pojo, Class<?> type, Type genericType, final Map<Object, Object> history) { //将对象转换为指定类型的pojo对象（如：将Map对象转换为指定类型的pojo对象，将Map的属性值，通过set方法设置到pojo对象中）
+    private static Object realize0(Object pojo, Class<?> type, Type genericType, final Map<Object, Object> history) { //将对象转换为指定类型的pojo对象（如：将Map对象转换为指定类型的pojo对象，将Map的属性值，通过set方法设置到pojo对象中，type为目标类型）
         if (pojo == null) {
             return null;
         }
 
-        if (type != null && type.isEnum() && pojo.getClass() == String.class) { //转换为枚举类型
+        if (type != null && type.isEnum() && pojo.getClass() == String.class) { //将String转换为枚举类型
             return Enum.valueOf((Class<Enum>) type, (String) pojo);
         }
 
         if (ReflectUtils.isPrimitives(pojo.getClass())
                 && !(type != null && type.isArray()
                 && type.getComponentType().isEnum()
-                && pojo.getClass() == String[].class)) { //处理基本类型pojo对象
+                && pojo.getClass() == String[].class)) { //将String数组转换为枚举数组
             return CompatibleTypeUtils.compatibleTypeConvert(pojo, type);
         }
 
-        Object o = history.get(pojo); //history：当方法在递归调用时，会用到
+        Object o = history.get(pojo); //history：当方法在递归调用时，会用到（用缓存使用）
 
         if (o != null) {
             return o;
@@ -387,8 +387,8 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
             }
 
             // special logic for enum
-            if (type.isEnum()) { //对枚举型做特殊处理
-                Object name = ((Map<Object, Object>) pojo).get("name"); //处理枚举时，在generalize方法中设置的枚举名称
+            if (type.isEnum()) { //目标类型为枚举
+                Object name = ((Map<Object, Object>) pojo).get("name"); //取出枚举名称
                 if (name != null) {
                     return Enum.valueOf((Class<Enum>) type, name.toString()); //使用枚举名，构建枚举对象
                 }

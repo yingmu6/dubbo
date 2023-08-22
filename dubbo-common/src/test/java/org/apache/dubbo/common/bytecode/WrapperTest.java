@@ -57,13 +57,13 @@ public class WrapperTest {
 
     //bug: DUBBO-425
     @Test
-    public void test_makeEmptyClass() throws Exception { //创建类的Wrapper
+    public void test_makeEmptyClass() throws Exception { //已测（获取静态内部类的Wrapper）
         Wrapper wrapper = Wrapper.getWrapper(EmptyServiceImpl.class);
         Assert.notNull(wrapper, "获取信息异常");
     }
 
     @Test
-    public void testHasMethod() throws Exception { //测试是否存在方法
+    public void testHasMethod() throws Exception { //已测（测试是否存在方法）
         Wrapper w = Wrapper.getWrapper(I1.class);
         Assertions.assertTrue(w.hasMethod("setName"));
         Assertions.assertTrue(w.hasMethod("hello"));
@@ -74,7 +74,7 @@ public class WrapperTest {
     }
 
     @Test
-    public void testWrapperObject() throws Exception { //测试Object对应的Wrapper
+    public void testWrapperObject() throws Exception { //已测（测试Object对应的Wrapper）
         Wrapper w = Wrapper.getWrapper(Object.class); //对Object进行封装，返回特定的封装类
         Assertions.assertEquals(4, w.getMethodNames().length);
         Assertions.assertEquals(0, w.getPropertyNames().length);
@@ -82,7 +82,7 @@ public class WrapperTest {
     }
 
     @Test
-    public void testGetPropertyValue() throws Exception { //调用Object对应的Wrapper的getPropertyValue方法会抛出异常
+    public void testGetPropertyValue() throws Exception { //已测（调用Object对应的Wrapper的getPropertyValue方法会抛出异常）
         Assertions.assertThrows(NoSuchPropertyException.class, () -> {  //抛出预期的异常
             Wrapper w = Wrapper.getWrapper(Object.class);
             w.getPropertyValue(null, null);
@@ -90,7 +90,7 @@ public class WrapperTest {
     }
 
     @Test
-    public void testSetPropertyValue() throws Exception { //调用Object对应的Wrapper的setPropertyValue方法会抛出异常
+    public void testSetPropertyValue() throws Exception { //已测（调用Object对应的Wrapper的setPropertyValue方法会抛出异常）
         Assertions.assertThrows(NoSuchPropertyException.class, () -> {
             Wrapper w = Wrapper.getWrapper(Object.class);
             w.setPropertyValue(null, null, null);
@@ -98,7 +98,7 @@ public class WrapperTest {
     }
 
     @Test
-    public void testInvokeWrapperObject() throws Exception { //测试Object对应的封装类Wrapper
+    public void testInvokeWrapperObject() throws Exception { //已测（测试Object对应的封装类Wrapper）
         Wrapper w = Wrapper.getWrapper(Object.class); //Object对应的Wrapper，只对部分方法处理，如getClass()、hashCode()等，且未做额外业务处理
         Object instance = new Object();
         Assertions.assertEquals(instance.getClass(), (Class<?>) w.invokeMethod(instance, "getClass", null, null));
@@ -108,7 +108,7 @@ public class WrapperTest {
     }
 
     @Test
-    public void testNoSuchMethod() throws Exception { //测试未找到调用方法的场景
+    public void testNoSuchMethod() throws Exception { //已测（测试未找到调用方法的场景）
         Assertions.assertThrows(NoSuchMethodException.class, () -> {
             Wrapper w = Wrapper.getWrapper(Object.class);
             w.invokeMethod(new Object(), "__XX__", null, null);
@@ -116,14 +116,14 @@ public class WrapperTest {
     }
 
     @Test
-    public void test_getDeclaredMethodNames_ContainExtendsParentMethods() throws Exception { //测试封装类的声明方法以及继承方法
+    public void test_getDeclaredMethodNames_ContainExtendsParentMethods() throws Exception { //已测（测试封装类的声明方法以及继承方法）
         assertArrayEquals(new String[]{"hello",}, Wrapper.getWrapper(Parent1.class).getMethodNames()); //获取封装类的方法（包含继承的方法）
 
         assertArrayEquals(new String[]{}, Wrapper.getWrapper(Son.class).getDeclaredMethodNames()); //获取封装类中声明的方法（不包含继承的方法）
     }
 
     @Test
-    public void test_getMethodNames_ContainExtendsParentMethods() throws Exception {
+    public void test_getMethodNames_ContainExtendsParentMethods() throws Exception { //已测
         assertArrayEquals(new String[]{"hello", "world"}, Wrapper.getWrapper(Son.class).getMethodNames()); //Son继承了Parent1、Parent2，所以包含了父类的方法
     }
 
