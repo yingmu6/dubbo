@@ -281,28 +281,28 @@ public class PojoUtilsTest {
     }
 
     @Test
-    public void testMapToInterface() throws Exception {
+    public void testMapToInterface() throws Exception { //已测（将Map转换为接口类型）
         Map map = new HashMap();
         map.put("content", "greeting");
         map.put("from", "dubbo");
         map.put("urgent", true);
-        Object o = PojoUtils.realize(map, Message.class);
+        Object o = PojoUtils.realize(map, Message.class); //会使用jdk代理机制，为接口创建代理对象
         Message message = (Message) o;
-        assertThat(message.getContent(), equalTo("greeting"));
+        assertThat(message.getContent(), equalTo("greeting")); //调用接口方法时，会进入PojoUtils$PojoInvocationHandler#invoke，其中会截取方法名作为属性，从Map中获取对应的值
         assertThat(message.getFrom(), equalTo("dubbo"));
         assertTrue(message.isUrgent());
     }
 
     @Test
-    public void testJsonObjectToMap() throws Exception {
+    public void testJsonObjectToMap() throws Exception { //todo @pause
         Method method = PojoUtilsTest.class.getMethod("setMap", Map.class);
         assertNotNull(method);
-        JSONObject jsonObject = new JSONObject();
+        JSONObject jsonObject = new JSONObject(); //JSONObject实现了Map接口，所以是Map实例。内部数据结构也使用了Map
         jsonObject.put("1", "test");
         @SuppressWarnings("unchecked")
         Map<Integer, Object> value = (Map<Integer, Object>)PojoUtils.realize(jsonObject,
                 method.getParameterTypes()[0],
-                method.getGenericParameterTypes()[0]);
+                method.getGenericParameterTypes()[0]); //指定参数的类型
         method.invoke(new PojoUtilsTest(), value);
         assertEquals("test", value.get(1));
     }

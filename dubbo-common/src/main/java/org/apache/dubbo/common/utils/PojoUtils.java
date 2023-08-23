@@ -31,14 +31,14 @@ import java.util.function.Supplier;
 /**
  * PojoUtils. Travel object deeply, and convert complex type to simple type. (深度遍历对象，并将复杂类型转换为简单类型),同时也提供了反向转换。
  * <p/>
- * Simple type below will be remained:
+ * Simple type below will be remained:（如下类型为简单类型）
  * <ul>
  * <li> Primitive Type, also include <b>String</b>, <b>Number</b>(Integer, Long), <b>Date</b>
- * <li> Array of Primitive Type
- * <li> Collection, eg: List, Map, Set etc.
+ * <li> Array of Primitive Type（元素为基本类型的数组）
+ * <li> Collection, eg: List, Map, Set etc.（集合类型）
  * </ul>
  * <p/>
- * Other type will be covert to a map which contains the attributes and value pair of object.
+ * Other type will be covert to a map which contains the attributes and value pair of object.（其它的类型，将被转换为Map形式）
  */
 public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUtils 提供了将复杂对象转换为简单的对象，通过简单对象转换为复杂对象。有点像序列化和反序列
      /**
@@ -193,17 +193,17 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
         return map;
     }
 
-    public static Object realize(Object pojo, Class<?> type) { //实现将对象转换为指定类型的对象
+    public static Object realize(Object pojo, Class<?> type) { //将简单对象转换为指定类型的复杂对象
         return realize0(pojo, type, null, new IdentityHashMap<Object, Object>());
     }
 
-    public static Object realize(Object pojo, Class<?> type, Type genericType) { //将简单对象转换为指定类型的复杂对象（如：将Map对象转换为pojo对象）
+    public static Object realize(Object pojo, Class<?> type, Type genericType) { //将对象转换为指定类型的对象（如：将Map对象转换为pojo对象）
         return realize0(pojo, type, genericType, new IdentityHashMap<Object, Object>());
     }
 
     private static class PojoInvocationHandler implements InvocationHandler {
 
-        private Map<Object, Object> map;
+        private Map<Object, Object> map; //在创建代理对象时指定的
 
         public PojoInvocationHandler(Map<Object, Object> map) {
             this.map = map;
@@ -211,14 +211,14 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
 
         @Override
         @SuppressWarnings("unchecked")
-        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable { //为接口生成代理对象，在调用接口方法时，会回调该方法
             if (method.getDeclaringClass() == Object.class) {
                 return method.invoke(map, args);
             }
             String methodName = method.getName();
             Object value = null;
             if (methodName.length() > 3 && methodName.startsWith("get")) {
-                value = map.get(methodName.substring(3, 4).toLowerCase() + methodName.substring(4));
+                value = map.get(methodName.substring(3, 4).toLowerCase() + methodName.substring(4)); //截取方法名，获取属性名，从map中获取相应的值
             } else if (methodName.length() > 2 && methodName.startsWith("is")) {
                 value = map.get(methodName.substring(2, 3).toLowerCase() + methodName.substring(3));
             } else {
@@ -294,7 +294,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
     /**
      * realize：实现，获得
      */
-    private static Object realize0(Object pojo, Class<?> type, Type genericType, final Map<Object, Object> history) { //将对象转换为指定类型的pojo对象（如：将Map对象转换为指定类型的pojo对象，将Map的属性值，通过set方法设置到pojo对象中，type为目标类型）
+    private static Object realize0(Object pojo, Class<?> type, Type genericType, final Map<Object, Object> history) { //将简单类型转换为复杂类型（如：将Map对象转换为指定类型的pojo对象，将Map的属性值，通过set方法设置到pojo对象中，type为目标类型）
         if (pojo == null) {
             return null;
         }
@@ -376,7 +376,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
             }
         }
 
-        if (pojo instanceof Map<?, ?> && type != null) { //处理Map类型的pojo
+        if (pojo instanceof Map<?, ?> && type != null) { //处理Map类型的pojo（JSONObject：JSON对象，实现了Map接口，也属于Map的实例对象，所以会进入此处）
             Object className = ((Map<Object, Object>) pojo).get("class"); //获取Map中的"class"键对应的值，是在generalize方法中设置的（单个的pojo中设置的）
             if (className instanceof String) {
                 try {
@@ -408,7 +408,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
                     map = (Map<Object, Object>) pojo; //type类型不为Map时，使用原始的pojo转换
                 }
             } else {
-                map = (Map<Object, Object>) pojo;
+                map = (Map<Object, Object>) pojo; //直接强转为Map类型
             }
 
             if (Map.class.isAssignableFrom(type) || type == Object.class) { //解析的目标类为Map时
@@ -419,10 +419,10 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
                 boolean typeMismatch = mapKeyType instanceof Class //Type为Class实例时，表明是基本类型或原始类型，如String、int等
                         && typeKeyType instanceof Class
                         && !typeKeyType.getTypeName().equals(mapKeyType.getTypeName()); //判断key、value类型为基本类型或原始类型，且类型相同
-                if (typeMismatch) { //基本类型使用HashMap处理
+                if (typeMismatch) { //输入对象的key与目标Map的key类型不匹配是，创建新的Map
                     result = createMap(new HashMap(0));
                 } else {
-                    result = createMap(map);
+                    result = createMap(map); //类型匹配时，直接使用目标Map
                 }
 
                 history.put(pojo, result);
@@ -452,7 +452,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
                 }
                 return result;
             } else if (type.isInterface()) { //解析的目标类为接口时，产生接口对应的代理类
-                Object dest = Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[] {type}, new PojoInvocationHandler(map));
+                Object dest = Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[] {type}, new PojoInvocationHandler(map)); //使用jdk代理机制为接口创代理对象，并指定处理器PojoInvocationHandler，在接口方法被调用时，就会触发处理器中方法执行指定逻辑
                 history.put(pojo, dest);
                 return dest;
             } else {
@@ -524,7 +524,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
                 if (type instanceof ParameterizedType) { //处理泛型
                     ParameterizedType t = (ParameterizedType) type;
                     if ("java.util.Map".equals(t.getRawType().getTypeName())) {
-                        return t.getActualTypeArguments()[0]; //获取泛型的实际参数
+                        return t.getActualTypeArguments()[0]; //获取Map中key对应的实际类型
                     }
                 }
             }
