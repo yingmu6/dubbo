@@ -294,7 +294,7 @@ public class PojoUtilsTest {
     }
 
     @Test
-    public void testJsonObjectToMap() throws Exception { //todo @pause
+    public void testJsonObjectToMap() throws Exception { //已测（JSONObject类型转换为Map形式）
         Method method = PojoUtilsTest.class.getMethod("setMap", Map.class);
         assertNotNull(method);
         JSONObject jsonObject = new JSONObject(); //JSONObject实现了Map接口，所以是Map实例。内部数据结构也使用了Map
@@ -308,7 +308,7 @@ public class PojoUtilsTest {
     }
 
     @Test
-    public void testListJsonObjectToListMap() throws Exception {
+    public void testListJsonObjectToListMap() throws Exception { //已测（JSONObject列表转换为Map列表）
         Method method = PojoUtilsTest.class.getMethod("setListMap", List.class);
         assertNotNull(method);
         JSONObject jsonObject = new JSONObject();
@@ -319,7 +319,7 @@ public class PojoUtilsTest {
         List<Map<Integer, Object>> result = (List<Map<Integer, Object>>)PojoUtils.realize(
                 list,
                 method.getParameterTypes()[0],
-                method.getGenericParameterTypes()[0]);
+                method.getGenericParameterTypes()[0]); //realize中列表会按Collection接收处理，然后将集合中的每个元素依次转换处理（单个处理时，按JSONObject转Map形式，实现了深度遍历）
         method.invoke(new PojoUtilsTest(), result);
         assertEquals("test", result.get(0).get(1));
     }
@@ -329,7 +329,7 @@ public class PojoUtilsTest {
     public void setListMap(List<Map<Integer, Object>> list) {}
 
     @Test
-    public void testException() throws Exception {
+    public void testException() throws Exception { //已测（目标类型为异常对象时，获取Map中的"message"作为异常信息）
         Map map = new HashMap();
         map.put("message", "dubbo exception");
         Object o = PojoUtils.realize(map, RuntimeException.class);
@@ -337,7 +337,7 @@ public class PojoUtilsTest {
     }
 
     @Test
-    public void testIsPojo() throws Exception {
+    public void testIsPojo() throws Exception { //已测（判断是否是Pojo类型，非基本类型，且非集合类型，且非Map类型即为Pojo类型）
         assertFalse(PojoUtils.isPojo(boolean.class));
         assertFalse(PojoUtils.isPojo(Map.class));
         assertFalse(PojoUtils.isPojo(List.class));
@@ -359,13 +359,13 @@ public class PojoUtilsTest {
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
-        Type gtype = method.getGenericReturnType();
+        Type gtype = method.getGenericReturnType(); //获取方法返回值对应的类型
         return gtype;
     }
 
     @Test
-    public void test_simpleCollection() throws Exception {
-        Type gtype = getType("returnListPersonMethod");
+    public void test_simpleCollection() throws Exception { //已测（测试集合类型的转换）
+        Type gtype = getType("returnListPersonMethod"); //获取returnListPersonMethod方法的返回值类型
         List<Person> list = new ArrayList<Person>();
         list.add(new Person());
         {
@@ -377,7 +377,7 @@ public class PojoUtilsTest {
     }
 
     @Test
-    public void test_total() throws Exception {
+    public void test_total() throws Exception { //已测（转换自定义对象）
         Object generalize = PojoUtils.generalize(bigPerson);
         Type gtype = getType("returnBigPersonMethod");
         Object realize = PojoUtils.realize(generalize, BigPerson.class, gtype);
@@ -385,7 +385,7 @@ public class PojoUtilsTest {
     }
 
     @Test
-    public void test_total_Array() throws Exception {
+    public void test_total_Array() throws Exception { //已测（按数组转换）
         Object[] persons = new Object[]{bigPerson, bigPerson, bigPerson};
 
         Object generalize = PojoUtils.generalize(persons);
@@ -394,7 +394,7 @@ public class PojoUtilsTest {
     }
 
     @Test
-    public void test_Loop_pojo() throws Exception {
+    public void test_Loop_pojo() throws Exception { //已测（当成员变量为对象时，会递归调用进行深度转换）
         Parent p = new Parent();
         p.setAge(10);
         p.setName("jerry");
@@ -402,7 +402,7 @@ public class PojoUtilsTest {
         Child c = new Child();
         c.setToy("haha");
 
-        p.setChild(c);
+        p.setChild(c); //成员变量为对象类型，会进行深度转换，直到为简单类型
         c.setParent(p);
 
         Object generalize = PojoUtils.generalize(p);
@@ -411,22 +411,22 @@ public class PojoUtilsTest {
         assertEquals(10, parent.getAge());
         assertEquals("jerry", parent.getName());
 
-        assertEquals("haha", parent.getChild().getToy());
+        assertEquals("haha", parent.getChild().getToy()); //嵌套的对象，会进行深度遍历
         assertSame(parent, parent.getChild().getParent());
     }
 
     @Test
-    public void test_Loop_Map() throws Exception {
+    public void test_Loop_Map() throws Exception { //已测（递归解析Map元素）
         Map<String, Object> map = new HashMap<String, Object>();
 
         map.put("k", "v");
-        map.put("m", map);
+        map.put("m", map); //值为Map类型
         assertSame(map, map.get("m"));
         System.out.println(map);
         Object generalize = PojoUtils.generalize(map);
         System.out.println(generalize);
         @SuppressWarnings("unchecked")
-        Map<String, Object> ret = (Map<String, Object>) PojoUtils.realize(generalize, Map.class);
+        Map<String, Object> ret = (Map<String, Object>) PojoUtils.realize(generalize, Map.class); //Map中的key、value都会进行递归调用，直到为简单类型
         System.out.println(ret);
 
         assertEquals("v", ret.get("k"));
@@ -434,7 +434,7 @@ public class PojoUtilsTest {
     }
 
     @Test
-    public void test_LoopPojoInMap() throws Exception {
+    public void test_LoopPojoInMap() throws Exception { //已测（Map中value为Pojo类型场景）
         Parent p = new Parent();
         p.setAge(10);
         p.setName("jerry");
@@ -446,7 +446,7 @@ public class PojoUtilsTest {
         c.setParent(p);
 
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("k", p);
+        map.put("k", p); //Map中的value为Pojo类型
 
         Object generalize = PojoUtils.generalize(map);
         @SuppressWarnings("unchecked")
@@ -462,7 +462,7 @@ public class PojoUtilsTest {
     }
 
     @Test
-    public void test_LoopPojoInList() throws Exception {
+    public void test_LoopPojoInList() throws Exception { //todo @pause
         Parent p = new Parent();
         p.setAge(10);
         p.setName("jerry");
