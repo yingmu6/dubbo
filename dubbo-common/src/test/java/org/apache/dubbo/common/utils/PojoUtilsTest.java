@@ -462,7 +462,7 @@ public class PojoUtilsTest {
     }
 
     @Test
-    public void test_LoopPojoInList() throws Exception { //todo @pause
+    public void test_LoopPojoInList() throws Exception { //已测（测试pojo列表）
         Parent p = new Parent();
         p.setAge(10);
         p.setName("jerry");
@@ -493,7 +493,7 @@ public class PojoUtilsTest {
     }
 
     @Test
-    public void test_PojoInList() throws Exception {
+    public void test_PojoInList() throws Exception { //已测（测试pojo列表）
         Parent p = new Parent();
         p.setAge(10);
         p.setName("jerry");
@@ -527,7 +527,7 @@ public class PojoUtilsTest {
 
     // java.lang.IllegalArgumentException: argument type mismatch
     @Test
-    public void test_realize_LongPararmter_IllegalArgumentException() throws Exception {
+    public void test_realize_LongPararmter_IllegalArgumentException() throws Exception { //已测（将字符串转换为Long类型）
         Method method = PojoUtilsTest.class.getMethod("setLong", long.class);
         assertNotNull(method);
 
@@ -538,7 +538,7 @@ public class PojoUtilsTest {
 
     // java.lang.IllegalArgumentException: argument type mismatch
     @Test
-    public void test_realize_IntPararmter_IllegalArgumentException() throws Exception {
+    public void test_realize_IntPararmter_IllegalArgumentException() throws Exception { //已测（将字符串转换为int类型）
         Method method = PojoUtilsTest.class.getMethod("setInt", int.class);
         assertNotNull(method);
 
@@ -548,7 +548,7 @@ public class PojoUtilsTest {
     }
 
     @Test
-    public void testStackOverflow() throws Exception {
+    public void testStackOverflow() throws Exception { //已测（简单类型与复杂类型对象转换）
         Parent parent = Parent.getNewParent();
         parent.setAge(Integer.MAX_VALUE);
         String name = UUID.randomUUID().toString();
@@ -565,7 +565,7 @@ public class PojoUtilsTest {
     }
 
     @Test
-    public void testGenerializeAndRealizeClass() throws Exception {
+    public void testGenerializeAndRealizeClass() throws Exception { //已测（对Class类型进行转换）
         Object generalize = PojoUtils.generalize(Integer.class);
         assertEquals(Integer.class.getName(), generalize);
         Object real = PojoUtils.realize(generalize, Integer.class.getClass());
@@ -578,7 +578,7 @@ public class PojoUtilsTest {
     }
 
     @Test
-    public void testPublicField() throws Exception {
+    public void testPublicField() throws Exception { //已测（公共字段处理）
         Parent parent = new Parent();
         parent.gender = "female";
         parent.email = "email@host.com";
@@ -598,7 +598,7 @@ public class PojoUtilsTest {
     }
 
     @Test
-    public void testMapField() throws Exception {
+    public void testMapField() throws Exception { //已测（成员变量为Map时的转换，如TestData#children）
         TestData data = new TestData();
         Child child = newChild("first", 1);
         data.addChild(child);
@@ -631,7 +631,7 @@ public class PojoUtilsTest {
     }
 
     @Test
-    public void testRealize() throws Exception {
+    public void testRealize() throws Exception { //已测（Map类型进行转换时，会选择实际的类型进行转换，如此处Map的实际类型为LinkedHashMap）
         Map<String, String> map = new LinkedHashMap<String, String>();
         map.put("key", "value");
         Object obj = PojoUtils.generalize(map);
@@ -644,20 +644,20 @@ public class PojoUtilsTest {
     }
 
     @Test
-    public void testRealizeLinkedList() throws Exception {
+    public void testRealizeLinkedList() throws Exception { //已测（List类型的转换）
         LinkedList<Person> input = new LinkedList<Person>();
         Person person = new Person();
         person.setAge(37);
         input.add(person);
-        Object obj = PojoUtils.generalize(input);
+        Object obj = PojoUtils.generalize(input); //List类型会被转换为ArrayList
         assertTrue(obj instanceof List);
         assertTrue(input.get(0) instanceof Person);
-        Object output = PojoUtils.realize(obj, LinkedList.class);
+        Object output = PojoUtils.realize(obj, LinkedList.class); //realize时，若type不是ArrayList和Set时，就按type.newInstance()创建对象
         assertTrue(output instanceof LinkedList);
     }
 
     @Test
-    public void testPojoList() throws Exception {
+    public void testPojoList() throws Exception { //已测（Pojo列表转换）
         ListResult<Parent> result = new ListResult<Parent>();
         List<Parent> list = new ArrayList<Parent>();
         Parent parent = new Parent();
@@ -679,7 +679,7 @@ public class PojoUtilsTest {
     }
 
     @Test
-    public void testListPojoListPojo() throws Exception {
+    public void testListPojoListPojo() throws Exception { //已测（测试列表的元素为列表的场景）
         InnerPojo<Parent> parentList = new InnerPojo<Parent>();
         Parent parent = new Parent();
         parent.setName("zhangsan");
@@ -706,7 +706,7 @@ public class PojoUtilsTest {
     }
 
     @Test
-    public void testDateTimeTimestamp() throws Exception {
+    public void testDateTimeTimestamp() throws Exception { //已测（测试Date、Time类型的转换，按基本类型处理）
         String dateStr = "2018-09-12";
         String timeStr = "10:12:33";
         String dateTimeStr = "2018-09-12 10:12:33";
@@ -734,11 +734,11 @@ public class PojoUtilsTest {
     }
 
     @Test
-    public void testIntToBoolean() throws Exception {
+    public void testIntToBoolean() throws Exception { //已测（将int型转换为Boolean）
         Map<String, Object> map = new HashMap<>();
         map.put("name", "myname");
-        map.put("male", 1);
-        map.put("female", 0);
+        map.put("male", 1); //1对应true
+        map.put("female", 0); //0对应false
 
         PersonInfo personInfo = (PersonInfo) PojoUtils.realize(map, PersonInfo.class);
 
@@ -748,7 +748,7 @@ public class PojoUtilsTest {
     }
 
     @Test
-    public void testRealizeCollectionWithNullElement() {
+    public void testRealizeCollectionWithNullElement() { //已测（列表中包含null元素转换，null被保留）
         LinkedList<String> listStr = new LinkedList<>();
         listStr.add("arrayValue");
         listStr.add(null);

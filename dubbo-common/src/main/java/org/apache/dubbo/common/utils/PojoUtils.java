@@ -422,7 +422,7 @@ public class PojoUtils { //@csy-023-P1 该类的功能用途是什么？ PojoUti
                 if (typeMismatch) { //输入对象的key与目标Map的key类型不匹配是，创建新的Map
                     result = createMap(new HashMap(0));
                 } else {
-                    result = createMap(map); //类型匹配时，直接使用目标Map
+                    result = createMap(map); //类型匹配时，直接使用目标Map（会转换为具体的Map类型，如：转换为LinkedHashMap类型）
                 }
 
                 history.put(pojo, result);

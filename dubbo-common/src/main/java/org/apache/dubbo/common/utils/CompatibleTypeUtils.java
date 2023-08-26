@@ -118,7 +118,7 @@ public class CompatibleTypeUtils {
                 }
                 return localDateTime;
             }
-            if (type == Class.class) {
+            if (type == Class.class) { //Class类型处理
                 try {
                     return ReflectUtils.name2class(string);
                 } catch (ClassNotFoundException e) {
