@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
-/**
+ /**
  * EventFilterTest.java
  * TODO rely on callback integration test for now
  */
@@ -51,10 +51,10 @@ public class FutureFilterTest {
     }
 
     @Test
-    public void testSyncCallback() {
+    public void testSyncCallback() { //
         @SuppressWarnings("unchecked")
-        Invoker<DemoService> invoker = mock(Invoker.class);
-        given(invoker.isAvailable()).willReturn(true);
+        Invoker<DemoService> invoker = mock(Invoker.class); //创建mock对象（mock底层源码是通过反射newInstance创建对象的）
+        given(invoker.isAvailable()).willReturn(true); //调用mock对象指定方法时，返回对应的值
         given(invoker.getInterface()).willReturn(DemoService.class);
         AppResponse result = new AppResponse();
         result.setValue("High");

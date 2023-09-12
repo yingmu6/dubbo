@@ -151,7 +151,7 @@ public class TelnetCodec extends TransportCodec { //在终端执行telnet指定�
     }
 
     @Override
-    public void encode(Channel channel, ChannelBuffer buffer, Object message) throws IOException { //响应请求内容时编码
+    public void encode(Channel channel, ChannelBuffer buffer, Object message) throws IOException { //对响应的内容进行编码
         if (message instanceof String) { //字符串类型处理
             if (isClientSide(channel)) {
                 message = message + "\r\n"; //客户端输入的内容拼接上换行符

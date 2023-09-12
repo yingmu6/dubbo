@@ -35,7 +35,7 @@ import static org.apache.dubbo.rpc.protocol.dubbo.Constants.ASYNC_METHOD_INFO;
  * EventFilter
  */
 @Activate(group = CommonConstants.CONSUMER)
-public class FutureFilter implements Filter, Filter.Listener {
+public class FutureFilter implements Filter, Filter.Listener { //消费端使用的过滤器
 
     protected static final Logger logger = LoggerFactory.getLogger(FutureFilter.class);
 

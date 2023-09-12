@@ -25,7 +25,7 @@
 | 001 | Wrapper测试                   | 熟悉Wrapper     | Done | 100% | 2023-04-11 | 2023-08-22 |
 | 002 | ClassGenerator测试            | 熟悉动态字节码       | P1   | 0%   | 2023-04-12 | xx         |
 | 003 | JavassistCompiler测试         | 熟悉javassist编码 | P2   | 0%   | 2023-04-12 | xx         |
-| 004 | FutureFilter事件回调测试          | 熟悉事件回调        | P0   | 0%   | 2023-04-24 | xx         |
+| 004 | FutureFilter事件回调测试          | 熟悉事件回调        | P0   | 10%  | 2023-04-24 | xx         |
 | 005 | EventDispatcher事件派发测试       | 熟悉事件派发        | P1   | 60%  | 2023-04-24 | xx         |
 | 006 | LoggingEventListenerTest    | 熟悉日志事件        | P2   | 0%   | 2023-04-28 | xx         |
 | 007 | 自定义SPI接口，能加载/能替换            | 熟悉SPI         | P2   | 0%   | 2023-04-28 | xx         |
