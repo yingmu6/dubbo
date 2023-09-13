@@ -188,7 +188,7 @@ public class FutureFilter implements Filter, Filter.Listener { //消费端使用
             return asyncMethodInfo;
         }
 
-        ConsumerModel consumerModel = ApplicationModel.getConsumerModel(invoker.getUrl().getServiceKey());
+        ConsumerModel consumerModel = ApplicationModel.getConsumerModel(invoker.getUrl().getServiceKey()); //获取serviceKey对应的消费者模型对象
         if (consumerModel == null) {
             return null;
         }

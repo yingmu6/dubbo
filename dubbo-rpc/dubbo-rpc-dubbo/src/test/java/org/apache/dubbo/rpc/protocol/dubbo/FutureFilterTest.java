@@ -51,7 +51,7 @@ public class FutureFilterTest {
     }
 
     @Test
-    public void testSyncCallback() { //
+    public void testSyncCallback() { //已测（同步回调：FutureFilter#invoke方法中过滤拦截后，会调用目标方法invoker.invoke(invocation)）
         @SuppressWarnings("unchecked")
         Invoker<DemoService> invoker = mock(Invoker.class); //创建mock对象（mock底层源码是通过反射newInstance创建对象的）
         given(invoker.isAvailable()).willReturn(true); //调用mock对象指定方法时，返回对应的值
@@ -62,12 +62,12 @@ public class FutureFilterTest {
         URL url = URL.valueOf("test://test:11/test?group=dubbo&version=1.1");
         given(invoker.getUrl()).willReturn(url);
 
-        Result filterResult = eventFilter.invoke(invoker, invocation);
+        Result filterResult = eventFilter.invoke(invoker, invocation); //通过过滤器调用（过滤器调用中，会调用invoker.invoke方法，该方法调用已做了mock）
         assertEquals("High", filterResult.getValue());
     }
 
     @Test
-    public void testSyncCallbackHasException() throws RpcException, Throwable {
+    public void testSyncCallbackHasException() throws RpcException, Throwable { //已测（带有异常的同步回调）
         Assertions.assertThrows(RuntimeException.class, () -> {
             @SuppressWarnings("unchecked")
             Invoker<DemoService> invoker = mock(Invoker.class);

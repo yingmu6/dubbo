@@ -75,7 +75,7 @@ public class RpcInvocation implements Invocation, Serializable { //RpcInvocation
     /**
      * Only used on the caller side（调用端）, will not appear on the wire（导线）.
      */
-    private Map<Object, Object> attributes = new HashMap<Object, Object>(); //仅仅用在调用方，不会传递到远端（类似元数据处理方式：核心数据发送到远端，其它数据不传，而是传到元数据中心）
+    private Map<Object, Object> attributes = new HashMap<Object, Object>(); //调用的属性Map，仅仅用在调用方，不会传递到远端（类似元数据处理方式：核心数据发送到远端，其它数据不传，而是传到元数据中心）
 
     private transient Invoker<?> invoker; //调用的实体
 
