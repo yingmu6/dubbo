@@ -30,12 +30,13 @@ import java.util.concurrent.ThreadLocalRandom;
  * If the weights are different then it will use random.nextInt(w1 + w2 + ... + wn)
  * Note that if the performance of the machine is better than others, you can set a larger weight.
  * If the performance is not so good, you can set a smaller weight.
+ * （可根据机器的性能好、差，设置大的权重或小的权重）
  */
-public class RandomLoadBalance extends AbstractLoadBalance {
+public class RandomLoadBalance extends AbstractLoadBalance { //加权随机算法
 
     public static final String NAME = "random";
 
-    /**
+     /**
      * Select one invoker between a list using a random criteria
      * @param invokers List of possible invokers
      * @param url URL
@@ -50,25 +51,25 @@ public class RandomLoadBalance extends AbstractLoadBalance {
         // Every invoker has the same weight?
         boolean sameWeight = true;
         // the weight of every invokers
-        int[] weights = new int[length];
+        int[] weights = new int[length]; //每个invoker对应的权重
         // the first invoker's weight
         int firstWeight = getWeight(invokers.get(0), invocation);
         weights[0] = firstWeight;
         // The sum of weights
         int totalWeight = firstWeight;
-        for (int i = 1; i < length; i++) {
+        for (int i = 1; i < length; i++) { //遍历invoker列表
             int weight = getWeight(invokers.get(i), invocation);
             // save for later use
             weights[i] = weight;
             // Sum
-            totalWeight += weight;
-            if (sameWeight && weight != firstWeight) {
+            totalWeight += weight; //计算总权重
+            if (sameWeight && weight != firstWeight) { //将每个invoker的权重依次与第一个invoker的权重进行比较（只要有一个权重不相等，即为不相等）
                 sameWeight = false;
             }
         }
         if (totalWeight > 0 && !sameWeight) {
             // If (not every invoker has the same weight & at least one invoker's weight>0), select randomly based on totalWeight.
-            int offset = ThreadLocalRandom.current().nextInt(totalWeight);
+            int offset = ThreadLocalRandom.current().nextInt(totalWeight); //基于总的权重计算随机值
             // Return a invoker based on the random value.
             for (int i = 0; i < length; i++) {
                 offset -= weights[i];
@@ -78,7 +79,7 @@ public class RandomLoadBalance extends AbstractLoadBalance {
             }
         }
         // If all invokers have the same weight value or totalWeight=0, return evenly.
-        return invokers.get(ThreadLocalRandom.current().nextInt(length));
+        return invokers.get(ThreadLocalRandom.current().nextInt(length)); //若invoker的权重都相同，则不使用权重负载，直接根据invoker数量计算随机数
     }
 
 }

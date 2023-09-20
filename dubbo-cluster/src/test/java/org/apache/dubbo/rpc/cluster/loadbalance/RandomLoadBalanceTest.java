@@ -30,20 +30,20 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class RandomLoadBalanceTest extends LoadBalanceBaseTest {
     @Test
-    public void testRandomLoadBalanceSelect() {
+    public void testRandomLoadBalanceSelect() { //已测（测试随机算法）
         int runs = 1000;
-        Map<Invoker, AtomicLong> counter = getInvokeCounter(runs, RandomLoadBalance.NAME);
+        Map<Invoker, AtomicLong> counter = getInvokeCounter(runs, RandomLoadBalance.NAME); //使用加权随机算法（获取各个invoker在1000次负载均衡中选中的次数）
         for (Map.Entry<Invoker, AtomicLong> entry : counter.entrySet()) {
-            Long count = entry.getValue().get();
+            Long count = entry.getValue().get(); //总次数1000，invoker个数为5，平均值为200，应该选中数在200左右，绝对值不应该超过200，因为超过200了，相当于少了一个invoker
             Assertions.assertTrue(Math.abs(count - runs / (0f + invokers.size())) < runs / (0f + invokers.size()), "abs diff should < avg");
-        }
+        } //随机算法选中情况（每次不一样，只是大致范围）：218、183、204、205、190
 
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j <= i; j++) {
-                RpcStatus.beginCount(invokers.get(i).getUrl(), invocation.getMethodName());
+                RpcStatus.beginCount(invokers.get(i).getUrl(), invocation.getMethodName()); //todo @csy 此处的作用是？
             }
         }
-        counter = getInvokeCounter(runs, LeastActiveLoadBalance.NAME);
+        counter = getInvokeCounter(runs, LeastActiveLoadBalance.NAME); //使用最少活跃数算法（运算结果一样，invoker1的选中次数都为1000，其它invoker都没选中）
         for (Map.Entry<Invoker, AtomicLong> entry : counter.entrySet()) {
             Long count = entry.getValue().get();
         }

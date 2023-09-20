@@ -75,20 +75,20 @@ public abstract class AbstractLoadBalance implements LoadBalance {
     int getWeight(Invoker<?> invoker, Invocation invocation) {
         int weight;
         URL url = invoker.getUrl();
-        // Multiple registry scenario, load balance among multiple registries.
+        // Multiple registry scenario（多注册中心场景）, load balance among multiple registries.
         if (REGISTRY_SERVICE_REFERENCE_PATH.equals(url.getServiceInterface())) {
             weight = url.getParameter(REGISTRY_KEY + "." + WEIGHT_KEY, DEFAULT_WEIGHT);
         } else {
             weight = url.getMethodParameter(invocation.getMethodName(), WEIGHT_KEY, DEFAULT_WEIGHT);
             if (weight > 0) {
-                long timestamp = invoker.getUrl().getParameter(TIMESTAMP_KEY, 0L);
-                if (timestamp > 0L) {
-                    long uptime = System.currentTimeMillis() - timestamp;
-                    if (uptime < 0) {
+                long timestamp = invoker.getUrl().getParameter(TIMESTAMP_KEY, 0L); //服务提供者的启动时间戳
+                if (timestamp > 0L) { //设置了启动时间戳且启动时间小于预热时间的情况，才会计算预热权重
+                    long uptime = System.currentTimeMillis() - timestamp; //服务提供者的运行时间
+                    if (uptime < 0) { //已经启动完成
                         return 1;
                     }
-                    int warmup = invoker.getUrl().getParameter(WARMUP_KEY, DEFAULT_WARMUP);
-                    if (uptime > 0 && uptime < warmup) {
+                    int warmup = invoker.getUrl().getParameter(WARMUP_KEY, DEFAULT_WARMUP); //服务预热时间，默认10分钟
+                    if (uptime > 0 && uptime < warmup) { //如果服务运行时间小于预热时间，则重新计算服务权重，进行降权操作
                         weight = calculateWarmupWeight((int)uptime, warmup, weight);
                     }
                 }

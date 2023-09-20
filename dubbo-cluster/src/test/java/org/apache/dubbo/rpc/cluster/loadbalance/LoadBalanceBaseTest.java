@@ -72,11 +72,11 @@ public class LoadBalanceBaseTest {
     /**
      * @throws java.lang.Exception
      */
-    @BeforeEach
+    @BeforeEach  //一个单元测试类中，可以有多个@BeforeEach注解，在每次调用@Test标识的方法时，对应执行
     public void setUp() throws Exception {
 
         invocation = mock(Invocation.class);
-        given(invocation.getMethodName()).willReturn("method1");
+        given(invocation.getMethodName()).willReturn("method1"); //在调用invocation.getMethodName()方法时，返回"method1"
         given(invocation.getArguments()).willReturn(new Object[] {"arg1","arg2","arg3"});
 
         invoker1 = mock(Invoker.class);
@@ -115,7 +115,7 @@ public class LoadBalanceBaseTest {
         invokers.add(invoker2);
         invokers.add(invoker3);
         invokers.add(invoker4);
-        invokers.add(invoker5);
+        invokers.add(invoker5); //mock invoker对象，并加入到列表中
     }
 
     public Map<Invoker, AtomicLong> getInvokeCounter(int runs, String loadbalanceName) {
@@ -125,14 +125,14 @@ public class LoadBalanceBaseTest {
             counter.put(invoker, new AtomicLong(0));
         }
         URL url = invokers.get(0).getUrl();
-        for (int i = 0; i < runs; i++) {
+        for (int i = 0; i < runs; i++) { //循环遍历，统计各个invoker选中的次数，可大致看出选中的分布情况
             Invoker sinvoker = lb.select(invokers, url, invocation);
             counter.get(sinvoker).incrementAndGet();
         }
         return counter;
     }
 
-    protected AbstractLoadBalance getLoadBalance(String loadbalanceName) {
+    protected AbstractLoadBalance getLoadBalance(String loadbalanceName) { //获取指定的负载均衡对象实例
         return (AbstractLoadBalance) ExtensionLoader.getExtensionLoader(LoadBalance.class).getExtension(loadbalanceName);
     }
 
@@ -216,7 +216,7 @@ public class LoadBalanceBaseTest {
 
     @BeforeEach
     public void before() throws Exception {
-        weightInvoker1 = mock(Invoker.class, Mockito.withSettings().stubOnly());
+        weightInvoker1 = mock(Invoker.class, Mockito.withSettings().stubOnly()); //创建带有设置的Mock对象
         weightInvoker2 = mock(Invoker.class, Mockito.withSettings().stubOnly());
         weightInvoker3 = mock(Invoker.class, Mockito.withSettings().stubOnly());
         weightInvokerTmp = mock(Invoker.class, Mockito.withSettings().stubOnly());

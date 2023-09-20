@@ -32,8 +32,6 @@ import java.util.concurrent.atomic.AtomicLong;
 public class RpcStatus { //都记录了哪些状态值？后台管理页面有没有展示，解：激活数、总数等
 
     /**
-     * ConcurrentMap：https://www.jianshu.com/p/8f7b2cd34c47
-     * ConcurrentMap，它是一个接口，是一个能够支持并发访问的java.util.map集合
      * ConcurrentHashMap是一个线程安全，并且是一个高效的HashMap
      * <p>
      * HashTable与HashMap的结构一致，都是哈希表实现。HashTable线程安全的，HashMap不是线程安全的
@@ -43,10 +41,10 @@ public class RpcStatus { //都记录了哪些状态值？后台管理页面有�
 
     private static final ConcurrentMap<String, ConcurrentMap<String, RpcStatus>> METHOD_STATISTICS = new ConcurrentHashMap<String, ConcurrentMap<String, RpcStatus>>(); //方法的调用统计
     private final ConcurrentMap<String, Object> values = new ConcurrentHashMap<String, Object>();
-    private final AtomicInteger active = new AtomicInteger();
+    private final AtomicInteger active = new AtomicInteger(); //活跃数
     private final AtomicLong total = new AtomicLong();
     private final AtomicInteger failed = new AtomicInteger();
-    private final AtomicLong totalElapsed = new AtomicLong();
+    private final AtomicLong totalElapsed = new AtomicLong(); //总的耗费时间，elapsed：过去的、经过的
     private final AtomicLong failedElapsed = new AtomicLong();
     private final AtomicLong maxElapsed = new AtomicLong();
     private final AtomicLong failedMaxElapsed = new AtomicLong();
@@ -137,9 +135,9 @@ public class RpcStatus { //都记录了哪些状态值？后台管理页面有�
         endCount(getStatus(url, methodName), elapsed, succeeded);
     }
 
-    /**
+     /**
      * 结束统计是怎样的逻辑？
-     * 解：激活数active减一，总数加一
+     * 解：活跃数active减一，总数加一
      * totalElapsed与elapsed相加
      */
     private static void endCount(RpcStatus status, long elapsed, boolean succeeded) {
