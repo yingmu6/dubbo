@@ -67,7 +67,7 @@ public class RandomLoadBalance extends AbstractLoadBalance { //加权随机算�
                 sameWeight = false;
             }
         }
-        if (totalWeight > 0 && !sameWeight) {
+        if (totalWeight > 0 && !sameWeight) { //可画出一维坐标轴，画出各个invoker对应的权重值，根据落入的区间选择invoker在数组中的下标
             // If (not every invoker has the same weight & at least one invoker's weight>0), select randomly based on totalWeight.
             int offset = ThreadLocalRandom.current().nextInt(totalWeight); //基于总的权重计算随机值
             // Return a invoker based on the random value.

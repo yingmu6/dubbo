@@ -79,7 +79,7 @@ public abstract class AbstractLoadBalance implements LoadBalance {
         if (REGISTRY_SERVICE_REFERENCE_PATH.equals(url.getServiceInterface())) {
             weight = url.getParameter(REGISTRY_KEY + "." + WEIGHT_KEY, DEFAULT_WEIGHT);
         } else {
-            weight = url.getMethodParameter(invocation.getMethodName(), WEIGHT_KEY, DEFAULT_WEIGHT);
+            weight = url.getMethodParameter(invocation.getMethodName(), WEIGHT_KEY, DEFAULT_WEIGHT); //从方法参数中获取"weight"参数值
             if (weight > 0) {
                 long timestamp = invoker.getUrl().getParameter(TIMESTAMP_KEY, 0L); //服务提供者的启动时间戳
                 if (timestamp > 0L) { //设置了启动时间戳且启动时间小于预热时间的情况，才会计算预热权重

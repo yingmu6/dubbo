@@ -98,7 +98,7 @@ class URL implements Serializable {
 
     private volatile transient Map<String, Number> numbers;
 
-    private volatile transient Map<String, Map<String, Number>> methodNumbers; //key为方法名
+    private volatile transient Map<String, Map<String, Number>> methodNumbers; //key为方法名，格式如：Map<方法名, Map<参数key, 数值>>
 
     private volatile transient Map<String, URL> urls;
 
@@ -888,12 +888,12 @@ class URL implements Serializable {
         return l;
     }
 
-    public int getMethodParameter(String method, String key, int defaultValue) {
+    public int getMethodParameter(String method, String key, int defaultValue) { //从方法参数Map中取出指定key对应的int值
         Number n = getCachedNumber(method, key);
         if (n != null) {
             return n.intValue();
         }
-        String value = getMethodParameter(method, key);
+        String value = getMethodParameter(method, key); //从方法参数Map中获取，若没有则从参数Map中获取
         if (StringUtils.isEmpty(value)) { //值为空时，取默认值
             return defaultValue;
         }

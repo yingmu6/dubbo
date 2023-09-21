@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class RandomLoadBalanceTest extends LoadBalanceBaseTest {
     @Test
-    public void testRandomLoadBalanceSelect() { //已测（测试随机算法）
+    public void testRandomLoadBalanceSelect() { //已测（测试随机算法，未按权重，按invoker列表长度随机）
         int runs = 1000;
         Map<Invoker, AtomicLong> counter = getInvokeCounter(runs, RandomLoadBalance.NAME); //使用加权随机算法（获取各个invoker在1000次负载均衡中选中的次数）
         for (Map.Entry<Invoker, AtomicLong> entry : counter.entrySet()) {
@@ -55,7 +55,7 @@ public class RandomLoadBalanceTest extends LoadBalanceBaseTest {
     }
 
     @Test
-    public void testSelectByWeight() {
+    public void testSelectByWeight() { //已测（测试随机算法，按权重随机）
         int sumInvoker1 = 0;
         int sumInvoker2 = 0;
         int sumInvoker3 = 0;
@@ -82,7 +82,30 @@ public class RandomLoadBalanceTest extends LoadBalanceBaseTest {
         System.out.println(sumInvoker1);
         System.out.println(sumInvoker2);
         System.out.println(sumInvoker3);
-        Assertions.assertEquals(sumInvoker1 + sumInvoker2 + sumInvoker3, loop, "select failed!");
+        Assertions.assertEquals(sumInvoker1 + sumInvoker2 + sumInvoker3, loop, "select failed!"); //各个节点选择到的次数之和为总循环数
+
+        /**
+         * 输出结果：
+         *
+         * 结果1：
+         * 656
+         * 5654
+         * 3690
+         *
+         * 结果2：
+         * 632
+         * 5574
+         * 3794
+         *
+         * 结果3：
+         * 620
+         * 5644
+         * 3736
+         *
+         * 结果分析:
+         * 1）三个节点的权重依次为1、9、6，所以概率依次为 1/16，9/16，6/16，所以命中的次数大概为
+         *   (1/16)*1000=625，(9/16)*10000=5625，(6/16)*10000=3750
+         */
     }
 
 }

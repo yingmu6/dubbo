@@ -47,6 +47,13 @@ import static org.mockito.Mockito.mock;
  */
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class LoadBalanceBaseTest {
+
+    /**
+     * 负载均衡算法测试
+     *
+     * 参考链接：
+     * a）https://cn.dubbo.apache.org/zh-cn/docsv2.7/dev/source/loadbalance/#22-leastactiveloadbalance 官网负载均衡算法讲解
+     */
     Invocation invocation;
     List<Invoker<LoadBalanceBaseTest>> invokers = new ArrayList<Invoker<LoadBalanceBaseTest>>();
     Invoker<LoadBalanceBaseTest> invoker1;
