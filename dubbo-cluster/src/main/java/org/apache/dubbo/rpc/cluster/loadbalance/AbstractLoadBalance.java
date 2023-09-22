@@ -37,7 +37,7 @@ import static org.apache.dubbo.rpc.cluster.Constants.WEIGHT_KEY;
  */
 public abstract class AbstractLoadBalance implements LoadBalance {
     /**
-     * Calculate the weight according to the uptime proportion of warmup time
+     * Calculate the weight according to the uptime proportion（比列） of warmup time
      * the new weight will be within 1(inclusive) to weight(inclusive)
      *
      * @param uptime the uptime in milliseconds
@@ -45,9 +45,9 @@ public abstract class AbstractLoadBalance implements LoadBalance {
      * @param weight the weight of an invoker
      * @return weight which takes warmup into account
      */
-    static int calculateWarmupWeight(int uptime, int warmup, int weight) {
-        int ww = (int) ( uptime / ((float) warmup / weight));
-        return ww < 1 ? 1 : (Math.min(ww, weight));
+    static int calculateWarmupWeight(int uptime, int warmup, int weight) { //根据启动时间和预热时间的比例计算权重值（新的权重在1~weight之间）
+        int ww = (int) ( uptime / ((float) warmup / weight)); //计算等式等价于：(uptime / warmup) * weight，从等式可以看出，启动时间越久，权重越大，但最大只能为weight值
+        return ww < 1 ? 1 : (Math.min(ww, weight)); //权重小于1时，设置为最小权重值1，否则与计算的权重值与设置的权重值之间的最小值，可以保证计算出的最大权重值为设置的值
     }
 
     @Override
@@ -64,7 +64,7 @@ public abstract class AbstractLoadBalance implements LoadBalance {
     protected abstract <T> Invoker<T> doSelect(List<Invoker<T>> invokers, URL url, Invocation invocation);
 
 
-    /**
+     /**
      * Get the weight of the invoker's invocation which takes warmup time into account
      * if the uptime is within the warmup time, the weight will be reduce proportionally （预热期内，权重会按比例减少）
      *
@@ -83,8 +83,8 @@ public abstract class AbstractLoadBalance implements LoadBalance {
             if (weight > 0) {
                 long timestamp = invoker.getUrl().getParameter(TIMESTAMP_KEY, 0L); //服务提供者的启动时间戳
                 if (timestamp > 0L) { //设置了启动时间戳且启动时间小于预热时间的情况，才会计算预热权重
-                    long uptime = System.currentTimeMillis() - timestamp; //服务提供者的运行时间
-                    if (uptime < 0) { //已经启动完成
+                    long uptime = System.currentTimeMillis() - timestamp; //服务提供者的运行时间（当前的时间戳 - 启动时的时间戳）
+                    if (uptime < 0) { //服务还未启动，返回最小权重值（当前时间在启动时间之前）
                         return 1;
                     }
                     int warmup = invoker.getUrl().getParameter(WARMUP_KEY, DEFAULT_WARMUP); //服务预热时间，默认10分钟

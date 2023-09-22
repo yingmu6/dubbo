@@ -39,7 +39,7 @@ public class RpcStatus { //都记录了哪些状态值？后台管理页面有�
      */
     private static final ConcurrentMap<String, RpcStatus> SERVICE_STATISTICS = new ConcurrentHashMap<String, RpcStatus>(); //服务的调用统计
 
-    private static final ConcurrentMap<String, ConcurrentMap<String, RpcStatus>> METHOD_STATISTICS = new ConcurrentHashMap<String, ConcurrentMap<String, RpcStatus>>(); //方法的调用统计
+    private static final ConcurrentMap<String, ConcurrentMap<String, RpcStatus>> METHOD_STATISTICS = new ConcurrentHashMap<String, ConcurrentMap<String, RpcStatus>>(); //方法的调用统计，数据格式为：ConcurrentMap<uri, ConcurrentMap<methodName, RpcStatus>>
     private final ConcurrentMap<String, Object> values = new ConcurrentHashMap<String, Object>();
     private final AtomicInteger active = new AtomicInteger(); //活跃数
     private final AtomicLong total = new AtomicLong();
