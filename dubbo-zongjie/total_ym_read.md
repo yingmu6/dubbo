@@ -9,5 +9,5 @@
 | 003 | ClassGenerator    | 熟悉类产生过程     | Done | 100% | 2023-04-12 | 2023-04-23 |
 | 004 | ExtensionLoader   | 熟悉SPI机制     | P1   | 0%   | 2023-04-28 | xx         |
 | 005 | Compiler          | 熟悉编译过程      | P2   | 0%   | 2023-05-05 | xx         |
-| 006 | LoadBalance阅读     | 熟悉负载均衡算法原理  | P0   | 0%   | 2023-09-18 | xx         |
+| 006 | LoadBalance阅读     | 熟悉负载均衡算法原理  | P0   | 30%  | 2023-09-18 | xx         |
 | 007 | Zookeeper节点CRUD逻辑 | 熟悉Db中节点CRUD | P0   | 0%   | 2023-09-18 | xx         |

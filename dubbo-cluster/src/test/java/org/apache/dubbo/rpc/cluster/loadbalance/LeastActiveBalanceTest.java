@@ -26,6 +26,12 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class LeastActiveBalanceTest extends LoadBalanceBaseTest {
+
+    /**
+     * 调试问题点：
+     * 1）最小活跃数是什么时候加1、减1的？
+     */
+
     @Disabled
     @Test
     public void testLeastActiveLoadBalance_select() {

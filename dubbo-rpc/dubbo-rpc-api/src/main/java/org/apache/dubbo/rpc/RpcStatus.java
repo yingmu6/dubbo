@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @see org.apache.dubbo.rpc.filter.ActiveLimitFilter
  * @see org.apache.dubbo.rpc.filter.ExecuteLimitFilter
  */
-public class RpcStatus { //都记录了哪些状态值？后台管理页面有没有展示，解：激活数、总数等
+public class RpcStatus { //都记录了哪些状态值？后台管理页面有没有展示，解：活跃数、总数等
 
     /**
      * ConcurrentHashMap是一个线程安全，并且是一个高效的HashMap
@@ -75,9 +75,9 @@ public class RpcStatus { //都记录了哪些状态值？后台管理页面有�
      * @param methodName
      * @return status
      */
-    public static RpcStatus getStatus(URL url, String methodName) { //获取方法对应的信息
+    public static RpcStatus getStatus(URL url, String methodName) { //获取调用方法对应的Rpc状态信息
         String uri = url.toIdentityString();
-        ConcurrentMap<String, RpcStatus> map = METHOD_STATISTICS.computeIfAbsent(uri, k -> new ConcurrentHashMap<>()); //ConcurrentMap了解，computeIfAbsent方法了解
+        ConcurrentMap<String, RpcStatus> map = METHOD_STATISTICS.computeIfAbsent(uri, k -> new ConcurrentHashMap<>());
         return map.computeIfAbsent(methodName, k -> new RpcStatus()); //此处的含义是什么？函数式接口，设置方法名与RpcStatus的关系
     }
 
