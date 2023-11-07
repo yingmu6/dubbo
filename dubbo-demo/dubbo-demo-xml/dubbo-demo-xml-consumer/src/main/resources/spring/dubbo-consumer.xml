@@ -42,6 +42,6 @@
 <!--       <dubbo:reference id= "greetingService" interface="org.apache.dubbo.demo.GreetingService" retries="4" timeout="2000"/>-->
 <!--    </dubbo:consumer>-->
 
-    <dubbo:reference interface="org.apache.dubbo.demo.GreetingService" id="greetingService"/>
+    <dubbo:reference interface="org.apache.dubbo.demo.GreetingService" id="greetingService" actives="3"/>
 
 </beans>

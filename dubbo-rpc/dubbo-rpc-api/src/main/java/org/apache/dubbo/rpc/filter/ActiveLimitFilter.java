@@ -36,7 +36,7 @@ import static org.apache.dubbo.rpc.Constants.ACTIVES_KEY;
  *
  * @see Filter
  */
-@Activate(group = CONSUMER, value = ACTIVES_KEY)  //应用于消费端
+@Activate(group = CONSUMER, value = ACTIVES_KEY)  //应用于消费端（消费端的接口配置，要配置actives="xx"参数的值，该过滤器才生效）
 public class ActiveLimitFilter implements Filter, Filter.Listener { // 用途是怎样的？限制并发调用数？解：即从客户端方面限制了服务最多有并发个数
 
 
@@ -53,9 +53,9 @@ public class ActiveLimitFilter implements Filter, Filter.Listener { // 用途是
             long start = System.currentTimeMillis();
             long remain = timeout;
             synchronized (rpcStatus) {
-                while (!RpcStatus.beginCount(url, methodName, max)) {
+                while (!RpcStatus.beginCount(url, methodName, max)) { //调用目标方法前，活跃数加1
                     try {
-                        rpcStatus.wait(remain);
+                        rpcStatus.wait(remain); //等待指定的时间，当前线程会从阻塞中恢复
                     } catch (InterruptedException e) {
                         // ignore
                     }
@@ -83,7 +83,7 @@ public class ActiveLimitFilter implements Filter, Filter.Listener { // 用途是
         URL url = invoker.getUrl();
         int max = invoker.getUrl().getMethodParameter(methodName, ACTIVES_KEY, 0);
 
-        RpcStatus.endCount(url, methodName, getElapsed(invocation), true);
+        RpcStatus.endCount(url, methodName, getElapsed(invocation), true); //调用完后，将active减1
         notifyFinish(RpcStatus.getStatus(url, methodName), max);
     }
 

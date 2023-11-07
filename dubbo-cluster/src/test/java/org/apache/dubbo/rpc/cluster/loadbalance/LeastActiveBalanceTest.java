@@ -30,6 +30,7 @@ public class LeastActiveBalanceTest extends LoadBalanceBaseTest {
     /**
      * 调试问题点：
      * 1）最小活跃数是什么时候加1、减1的？
+     * 解答：消费者调用服务时，会经过ActiveLimitFilter过滤器，在调用前加1，服务调用完后减1
      */
 
     @Disabled

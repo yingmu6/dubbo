@@ -28,14 +28,14 @@ import java.util.concurrent.ThreadLocalRandom;
  * LeastActiveLoadBalance
  * <p>
  * Filter the number of invokers with the least number of active（活跃的） calls and count the weights and quantities（数量） of these invokers.
- * If there is only one invoker, use the invoker directly;
- * if there are multiple invokers and the weights are not the same, then random according to the total weight;
- * if there are multiple invokers and the same weight, then randomly called.
+ * If there is only one invoker, use the invoker directly;（场景1：只有一个invoker）
+ * if there are multiple invokers and the weights are not the same, then random according to the total weight;（场景2：有多个invoker且权重不同，基于总权重计算随机值，找到invoker）
+ * if there are multiple invokers and the same weight, then randomly called.（场景3：多个invoker，active相同且权重相同，则随机选一个）
  */
 public class LeastActiveLoadBalance extends AbstractLoadBalance {
 
     /**
-     * 最小活跃数负载均衡概要：
+     * 最小活跃数负载均衡概要：（活跃数active是在ActiveLimitFilter过滤器中处理的）
      * 1）活跃调用数越小，表明该服务提供者效率越高，单位时间内可处理更多的请求。每收到一个请求，活跃数加1，完成请求后则将活跃数减1。
      * 2）在服务运行一段时间后，性能好的服务提供者处理请求的速度更快，因此活跃数下降的也越快。
      * 3）LeastActiveLoadBalance还引入了权重值，基于活跃数和权重值做选择。活跃数相同，权重越大，获取到的请求概率就越大。
@@ -52,7 +52,7 @@ public class LeastActiveLoadBalance extends AbstractLoadBalance {
         // The number of invokers having the same least active value (leastActive)
         int leastCount = 0;  //具有相同的最小活跃数的invoker数量
         // The index of invokers having the same least active value (leastActive)
-        int[] leastIndexes = new int[length];
+        int[] leastIndexes = new int[length]; //具有相同活跃数的invoker下标
         // the weight of every invokers
         int[] weights = new int[length]; //每个invoker的权重值
         // The sum of the warmup weights of all the least active invokers
@@ -63,23 +63,23 @@ public class LeastActiveLoadBalance extends AbstractLoadBalance {
         boolean sameWeight = true;
 
 
-        // Filter out all the least active invokers
+        // Filter out all the least active invokers （过滤出含有最小活跃数的invoker）
         for (int i = 0; i < length; i++) {
             Invoker<T> invoker = invokers.get(i);
             // Get the active number of the invoker
-            int active = RpcStatus.getStatus(invoker.getUrl(), invocation.getMethodName()).getActive(); //获取invoker对应的活跃数
+            int active = RpcStatus.getStatus(invoker.getUrl(), invocation.getMethodName()).getActive(); //获取invoker对应的活跃数（从RpcStatus的缓存中获取）
             // Get the weight of the invoker's configuration. The default value is 100.
             int afterWarmup = getWeight(invoker, invocation); //获取invoker权重
             // save for later use
             weights[i] = afterWarmup;
             // If it is the first invoker or the active number of the invoker is less than the current least active number
-            if (leastActive == -1 || active < leastActive) {
+            if (leastActive == -1 || active < leastActive) { //找到新的拥有最小活跃的invoker
                 // Reset the active number of the current invoker to the least active number
-                leastActive = active; //当前invoker的活跃数小于最小活跃数时，置为最小活跃数
+                leastActive = active; //当前invoker的活跃数小于最小活跃数时，置为最小活跃数（设置新的最小活跃数）
                 // Reset the number of least active invokers
                 leastCount = 1;
                 // Put the first least active invoker first in leastIndexes
-                leastIndexes[0] = i;
+                leastIndexes[0] = i; //包含最小活跃数的invoker在invoker列表中的下标，放在数组的第一个
                 // Reset totalWeight
                 totalWeight = afterWarmup;
                 // Record the weight the first least active invoker
@@ -87,9 +87,9 @@ public class LeastActiveLoadBalance extends AbstractLoadBalance {
                 // Each invoke has the same weight (only one invoker here)
                 sameWeight = true;
                 // If current invoker's active value equals with leaseActive, then accumulating.
-            } else if (active == leastActive) {
+            } else if (active == leastActive) { //活跃数相同，比较权重
                 // Record the index of the least active invoker in leastIndexes order
-                leastIndexes[leastCount++] = i;
+                leastIndexes[leastCount++] = i; //当存在与最小活跃数相同的invoker，即将leastCount数量累加1
                 // Accumulate the total weight of the least active invoker
                 totalWeight += afterWarmup;
                 // If every invoker has the same weight?
@@ -99,16 +99,16 @@ public class LeastActiveLoadBalance extends AbstractLoadBalance {
             }
         }
         // Choose an invoker from all the least active invokers
-        if (leastCount == 1) {
+        if (leastCount == 1) { //存在最小活跃数时，即invoker列表中active值都不一样或只有一个invoker的场景，取数组中第一个元素值（因为在存值时，第一个元素值会存包含最小active值在invoker列表中的下标）
             // If we got exactly one invoker having the least active value, return this invoker directly.
             return invokers.get(leastIndexes[0]);
         }
-        if (!sameWeight && totalWeight > 0) { //在最小活跃数相同时，比较权重值
+        if (!sameWeight && totalWeight > 0) { //在invoker列表中invoker的最小活跃数都相同时，比较权重值
             // If (not every invoker has the same weight & at least one invoker's weight>0), select randomly based on 
             // totalWeight.
             int offsetWeight = ThreadLocalRandom.current().nextInt(totalWeight);
             // Return a invoker based on the random value.
-            for (int i = 0; i < leastCount; i++) { //基于总权重的随机值，找到invoker（此处与随机加权算法处理逻辑相同）
+            for (int i = 0; i < leastCount; i++) { //基于总权重的随机值，计算出invoker在列表中的下标，最终找到invoker（此处与随机加权算法处理逻辑相同）
                 int leastIndex = leastIndexes[i];
                 offsetWeight -= weights[leastIndex];
                 if (offsetWeight < 0) {
@@ -117,6 +117,6 @@ public class LeastActiveLoadBalance extends AbstractLoadBalance {
             }
         }
         // If all invokers have the same weight value or totalWeight=0, return evenly.
-        return invokers.get(leastIndexes[ThreadLocalRandom.current().nextInt(leastCount)]);
+        return invokers.get(leastIndexes[ThreadLocalRandom.current().nextInt(leastCount)]); //活跃数相同且权重相同时，随机返回一个即可
     }
 }
