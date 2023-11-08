@@ -111,7 +111,7 @@ public class RpcUtils {
         if ($INVOKE.equals(invocation.getMethodName())
                 && invocation.getArguments() != null
                 && invocation.getArguments().length > 0
-                && invocation.getArguments()[0] instanceof String) { //GenericService：方法调用的方法名，取$invoke方法的第一个参数
+                && invocation.getArguments()[0] instanceof String) { //GenericService：泛化调用的方法名，取$invoke方法的第一个参数
             return (String) invocation.getArguments()[0];
         }
         return invocation.getMethodName(); //从调用信息Invocation中获取方法名

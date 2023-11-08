@@ -35,7 +35,33 @@ import static org.apache.dubbo.common.constants.CommonConstants.COMMA_SPLIT_PATT
 /**
  * ConsistentHashLoadBalance
  */
-public class ConsistentHashLoadBalance extends AbstractLoadBalance {
+public class ConsistentHashLoadBalance extends AbstractLoadBalance { //一致性Hash算法
+
+    /**
+     * 背景介绍：
+     * 1）Hash：是把任意长度的输入通过散列算法变换成固定长度的输出，该输出就是散列值。
+     *   https://baike.baidu.com/item/Hash/390310  Hash百科
+     *
+     * 2）一致性Hash算法：是一种特殊的哈希算法，目的是解决分布式系统的数据分区问题，即分布式集群中存在的节点动态伸缩的问题。
+     *   a）通常取模算法hash(key) % N，会根据服务器数量进行取模找到服务器节点，但N可能增加或减少，一经变动导致大量缓存同一时间失效，造成缓存雪崩。
+     *   b）一致性哈希算法本质上也是一种取模算法，对固定值2^32取模，所以只要key值固定，所请求的服务器节点也是固定的。
+     *   c）实现原理：
+     *      c.1）哈希环：一致性哈希算法将整个哈希值空间映射成一个虚拟的圆环，取值范围在0~2^32-1。
+     *      c.2）将服务器映射到哈希环：可以基于IP或其它信息，计算服务器的hash值，映射到哈希环上。
+     *      c.3）请求时查找服务器节点：将请求的key计算哈希值，映射到哈希环上的具体位置，然后沿着哈希环顺时针查找，遇到的第一个节点即为要查找的节点
+     *   d）服务器扩容&缩容：
+     *      d.1）服务器扩容：计算新增节点的哈希值并加入到哈希环，只要讲上一个节点到新节点的数据映射到新的数据节点即可，其它节点数据不受影响。
+     *      d.2）服务器缩容：集群中的某个节点故障，原本映射到该节点的请求，会找到哈希环中的下一个节点，其它节点数据不受影响。
+     *   e）数据倾斜和虚拟节点：
+     *      e.1）由于哈希计算的随机性，大多数的访问请求会集中在少量几个节点。特别是节点太少情况下，容易因为节点分布不均匀造成数据访问的冷热不均，失去了集群和负载均衡的意义。
+     *      e.2）引入虚拟节点机制，对每一个物理服务节点映射多个虚拟节点，然后将虚拟节点映射到哈希环上，当找到某个虚拟节点后，对应找到具体的物理节点。
+     *   https://developer.aliyun.com/article/1082388 图解一致性哈希算法
+     *
+     * 3）MD5：信息摘要算法（英语：MD5 Message-Digest Algorithm），一种被广泛使用的密码散列函数，可以产生出一个128位（16字节）的散列值（hash value），用于确保信息传输完整一致。
+     *    https://baike.baidu.com/item/MD5/212708 MD5百科
+     *
+     */
+
     public static final String NAME = "consistenthash";
 
     /**
@@ -54,22 +80,22 @@ public class ConsistentHashLoadBalance extends AbstractLoadBalance {
     @Override
     protected <T> Invoker<T> doSelect(List<Invoker<T>> invokers, URL url, Invocation invocation) {
         String methodName = RpcUtils.getMethodName(invocation);
-        String key = invokers.get(0).getUrl().getServiceKey() + "." + methodName;
-        // using the hashcode of list to compute the hash only pay attention to the elements in the list
-        int invokersHashCode = invokers.hashCode();
+        String key = invokers.get(0).getUrl().getServiceKey() + "." + methodName; //获取调用方法对应的key
+        // using the hashcode of list to compute the hash only pay attention to（专注于） the elements in the list
+        int invokersHashCode = invokers.hashCode(); //获取invokers原始的hashCode
         ConsistentHashSelector<T> selector = (ConsistentHashSelector<T>) selectors.get(key);
-        if (selector == null || selector.identityHashCode != invokersHashCode) {
+        if (selector == null || selector.identityHashCode != invokersHashCode) { //服务者数量发生变化，即增加或减少时，创建新的ConsistentHashSelector
             selectors.put(key, new ConsistentHashSelector<T>(invokers, methodName, invokersHashCode));
             selector = (ConsistentHashSelector<T>) selectors.get(key);
         }
-        return selector.select(invocation);
+        return selector.select(invocation); //选择Invoker
     }
 
-    private static final class ConsistentHashSelector<T> {
+    private static final class ConsistentHashSelector<T> { //一致性Hash选择器
 
-        private final TreeMap<Long, Invoker<T>> virtualInvokers;
+        private final TreeMap<Long, Invoker<T>> virtualInvokers; //存储Invoker虚拟节点
 
-        private final int replicaNumber;
+        private final int replicaNumber; //虚拟节点数
 
         private final int identityHashCode;
 
