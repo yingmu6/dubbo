@@ -33,6 +33,17 @@ import java.util.concurrent.atomic.AtomicLong;
 public class RoundRobinLoadBalance extends AbstractLoadBalance {
     public static final String NAME = "roundrobin";
 
+    /**
+     * 背景介绍：
+     * 1）所谓轮询是指将请求轮流分配给每台服务器。比如：我们有三台服务器 A、B、C。我们将第一个请求分配给服务器 A，第二个请求分配给服务器 B，第三个请求分配给服务器 C，
+     *   第四个请求再次分配给服务器 A。这个过程就叫做轮询。轮询是一种无状态负载均衡算法，实现简单，适用于每台服务器性能相近的场景下。
+     *
+     * 2）现实情况下，我们并不能保证每台服务器性能均相近。如果我们将等量的请求分配给性能较差的服务器，这显然是不合理的。
+     *   因此，这个时候我们需要对轮询过程进行加权，以调控每台服务器的负载。经过加权后，每台服务器能够得到的请求数比例，接近或等于他们的权重比
+     *
+     * 3）平滑加权轮询算法：https://juejin.cn/post/7099424131216572423
+     */
+
     private static final int RECYCLE_PERIOD = 60000;
 
     protected static class WeightedRoundRobin {
