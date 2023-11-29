@@ -212,7 +212,7 @@ public class AdaptiveClassCodeGenerator { //自适应扩展类代码产生器
         } else {
             int urlTypeIndex = getUrlTypeIndex(method);
 
-            // found parameter in URL type
+            // found parameter in URL type（因为扩展名最终是从URL中获取的，所以要直接或间接地从参数列表中找到URL，若没找到则抛出异常）
             if (urlTypeIndex != -1) {
                 // Null Point check
                 code.append(generateUrlNullCheck(urlTypeIndex)); //产生URL非空检查的语句
@@ -222,7 +222,7 @@ public class AdaptiveClassCodeGenerator { //自适应扩展类代码产生器
                 code.append(generateUrlAssignmentIndirectly(method)); //间接地通过方法中的参数获取URL，并产生URL非空检查的语句
             }
 
-            String[] value = getMethodAdaptiveValue(adaptiveAnnotation); //获取方法上@Adaptive声明的值
+            String[] value = getMethodAdaptiveValue(adaptiveAnnotation); //获取方法上@Adaptive声明的值（若注解上没设置，则将SPI的Class类名来处理）
 
             boolean hasInvocation = hasInvocationArgument(method); //判断方法参数列表中是否存在Invocation类型参数
 
@@ -254,8 +254,8 @@ public class AdaptiveClassCodeGenerator { //自适应扩展类代码产生器
     private String generateExtNameAssignment(String[] value, boolean hasInvocation) { //获取扩展名对应的语句
         // TODO: refactor it
         String getNameCode = null;
-        for (int i = value.length - 1; i >= 0; --i) { //从右往左设置默认值，然后取值时从左到右取值（根据默认属性名、protocol自适应名称、是否有Invocation参数等因素来判断扩展名的获取方式）
-            if (i == value.length - 1) {
+        for (int i = value.length - 1; i >= 0; --i) {
+            if (i == value.length - 1) { //数组中最后一个元素
                 if (null != defaultExtName) { //存在默认扩展名
                     if (!"protocol".equals(value[i])) {
                         if (hasInvocation) {
@@ -264,7 +264,7 @@ public class AdaptiveClassCodeGenerator { //自适应扩展类代码产生器
                         } else {
                             getNameCode = String.format("url.getParameter(\"%s\", \"%s\")", value[i], defaultExtName); //value来源于@Adaptive注解声明的值
                         }
-                    } else {
+                    } else { //value值为"protocol"时，表明是取URL中的协议，因为URL已经单独为protocol提供字段和方法，所以需要通过getProtocol()方法获取
                         getNameCode = String.format("( url.getProtocol() == null ? \"%s\" : url.getProtocol() )", defaultExtName);
                     }
                 } else {                     //不存在默认扩展名
@@ -281,8 +281,10 @@ public class AdaptiveClassCodeGenerator { //自适应扩展类代码产生器
             } else {
                 if (!"protocol".equals(value[i])) {
                     if (hasInvocation) {
+                        // 场景1：方法参数列表中含有Invocation参数，从最后一个元素开始计算，最终的值是第一个元素对应的url方法参数值，元素之间没关联
                         getNameCode = String.format("url.getMethodParameter(methodName, \"%s\", \"%s\")", value[i], defaultExtName);
                     } else {
+                        // 场景2：方法参数列表中不含Invocation参数，从最后一个元素计算，计算的结果依次作为前一个元素取url参数值时对应的默认值，元素之间有关联
                         getNameCode = String.format("url.getParameter(\"%s\", %s)", value[i], getNameCode);
                     }
                 } else {
@@ -343,7 +345,7 @@ public class AdaptiveClassCodeGenerator { //自适应扩展类代码产生器
             String splitName = StringUtils.camelToSplitName(type.getSimpleName(), "."); //如interface org.apache.dubbo.common.extension.ext8_add.AddExt1转换后的value为add.ext1
             value = new String[]{splitName};
         }
-        return value; //不存在value为null的情况，及时@Adaptive上没有声明，也会默认取扩展接口名来处理的
+        return value; //不存在value为null的情况，及时@Adaptive上没有声明，也会取扩展接口的Class名称来处理的
     }
 
     /**
@@ -358,10 +360,10 @@ public class AdaptiveClassCodeGenerator { //自适应扩展类代码产生器
 
         Map<String, Integer> getterReturnUrl = new HashMap<>();
         // find URL getter method
-        for (int i = 0; i < pts.length; ++i) { //遍历方法的参数列表，再依次判断参数变量中是否存在返回值为URL的get方法
-            for (Method m : pts[i].getMethods()) {
+        for (int i = 0; i < pts.length; ++i) { //遍历Method的参数列表
+            for (Method m : pts[i].getMethods()) { //再遍历各个参数的所有方法列表
                 String name = m.getName();
-                if ((name.startsWith("get") || name.length() > 3)
+                if ((name.startsWith("get") || name.length() > 3) // 遍历参数的method列表，判断是否存在返回值为URL的get方法（比如Invoker中的getUrl方法就复合条件）
                         && Modifier.isPublic(m.getModifiers())
                         && !Modifier.isStatic(m.getModifiers())
                         && m.getParameterTypes().length == 0
@@ -380,13 +382,13 @@ public class AdaptiveClassCodeGenerator { //自适应扩展类代码产生器
         Integer index = getterReturnUrl.get("getUrl"); //index：参数列表中符合条件的参数位置
         if (index != null) { //getUrl方法
             return generateGetUrlNullCheck(index, pts[index], "getUrl");
-        } else {             //非getUrl方法
+        } else {             //非getUrl方法（传入参数位置、类型、方法名）
             Map.Entry<String, Integer> entry = getterReturnUrl.entrySet().iterator().next();
             return generateGetUrlNullCheck(entry.getValue(), pts[entry.getValue()], entry.getKey());
         }
     }
 
-    /**
+     /**
      * 1, test if argi is null
      * 2, test if argi.getXX() returns null
      * 3, assign url with argi.getXX()

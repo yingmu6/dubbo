@@ -848,7 +848,7 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
     }
 
     /**
-     * 从缓存中获取扩展类映射Map，若不存在则从文件中读取，并加载到缓存中
+     * 从缓存中获取扩展类，若不存在则从文件中读取，并加载到缓存中
      * （缓存中存在则中缓存中取，不存在则从配置文件中读取，并加载到缓存中）
      * （缓存中不存在，可能是还没加载过，也可能是机器重启，内存中的内容被清除）
      */
@@ -878,7 +878,7 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
      * synchronized in getExtensionClasses
      */
     private Map<String, Class<?>> loadExtensionClasses() {
-        cacheDefaultExtensionName();
+        cacheDefaultExtensionName(); //在加载扩展文件前，会先缓存默认扩展名
 
         Map<String, Class<?>> extensionClasses = new HashMap<>(); //扩展名name与扩展类Class的映射
 
@@ -893,7 +893,7 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
     /**
      * extract（提取） and cache default extension name if exists
      */
-    private void cacheDefaultExtensionName() { //默认扩展名，即为SPI注解上声明的value值
+    private void cacheDefaultExtensionName() { //缓存默认扩展名，即为SPI注解上声明的value值
         final SPI defaultAnnotation = type.getAnnotation(SPI.class);
         if (defaultAnnotation == null) {
             return;
@@ -1180,7 +1180,7 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
      * 2）找到适合的编译器对代码字符串进行编译，生成对应的Class
      */
     private Class<?> createAdaptiveExtensionClass() {
-        String code = new AdaptiveClassCodeGenerator(type, cachedDefaultName).generate(); //调试时，可以将产生的自适应代码打印出来
+        String code = new AdaptiveClassCodeGenerator(type, cachedDefaultName).generate(); //产生自适应代码对应的字符串（调试时，可以将产生的自适应代码打印出来）
         ClassLoader classLoader = findClassLoader();
         org.apache.dubbo.common.compiler.Compiler compiler = ExtensionLoader.getExtensionLoader(org.apache.dubbo.common.compiler.Compiler.class).getAdaptiveExtension();
         return compiler.compile(code, classLoader);

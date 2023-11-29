@@ -30,25 +30,12 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
 public @interface Adaptive {
-    /**
-     * Adaptive注解解析器了解？
-     * 解：1）在ExtensionLoader#cacheAdaptiveClass()中将@Adaptive对应的Class缓存起来
-     *     if (clazz.isAnnotationPresent(Adaptive.class)) {
-     *          cacheAdaptiveClass(clazz, overridden);
-     *     }
-     *    2）在ExtensionLoader#createAdaptiveExtensionClass()中产生自适应代码
-     *    3）在Compiler#compile()对产生的自适应代码进行编译，生成对应的Class对象
-     *    4）最后通过Class的newInstance()方法，创建自适应代码的实例对象
-     *
-     * ExtensionLoader 注入的依赖扩展点是一个 Adaptive 实例，直到扩展点方法执行时才决定调用是哪一个扩展点实现。
-     * https://dubbo.apache.org/zh/docs/v2.7/dev/spi/  Dubbo官网
-     */
 
     /**
-     * @csy-011 方法描述的含义是什么？
-     * 解：描述的是方法中使用@Adaptive时，获取扩展名的方式
-     * 1）从url取注解上声明的key对应的值作为扩展名
-     * 2）若都没取到值，去SPI上声明的默认值
+     * 自适应类扩展名的查找流程（根据value()方法的英文描述可知）
+     * 1）获取@Adaptive中指定的value[]数组值，若没有设置，则将SPI接口的Class类名，按照驼峰转分隔符方式进行拼接（如：YyyInvokerWrapper的扩展名为yyy.invoker.wrapper）
+     * 2）依次将value数组的元素值作为key，从URL中查找参数值，若找到，对应值作为扩展名。若value数组的元素都没找到扩展名，则使用@SPI注解的value作为默认扩展名
+     * （如：@Adaptive({"key1", "key2"})，获取扩展名代码为：String extName = url.getParameter("key1", url.getParameter("key2", defaultExtName)); ）
      */
 
     /**
@@ -56,7 +43,7 @@ public @interface Adaptive {
      * in the URL, and the parameter names are given by this method.
      * <p>
      * If the specified parameters are not found from {@link URL}, then the default extension will be used for
-     * dependency injection (specified in its interface's {@link SPI}). 若从url中没有找到指定参数列表，则使用默认的扩展名
+     * dependency injection (specified in its interface's {@link SPI}).
      * <p>
      * For example, given <code>String[] {"key1", "key2"}</code>:
      * <ol>
@@ -70,19 +57,7 @@ public @interface Adaptive {
      * dot '.', for example, for {@code org.apache.dubbo.xxx.YyyInvokerWrapper}, the generated name is
      * <code>String[] {"yyy.invoker.wrapper"}</code>.
      *
-     * @return parameter names in URL（url中的参数名列表）
+     * @return parameter names in URL
      */
-    String[] value() default {}; //生成自适应扩展类，然后在方法中选择具体的实例，执行具体实例的方法
-
-    /**
-     * @Adaptive中的value是不是指的是url的参数？
-     * 解：参考org.apache.dubbo.common.extension.ext1.SimpleExt$Adaptive 自适应代码的处理逻辑
-     * 1）去查找扩展名
-     *    a）从参数中获取URL，可以是URL参数，也可以是Invoker等对象，最终获取到URL对象
-     *    b）取@Adaptive注解中设置的参数值，如@Adaptive({"key1", "key2"})，从左到右，依次尝试获取url中对应的参数值
-     *       若没有从url获取到对应值，去@SPI上声明的扩展名，若还没找到扩展名，则抛出Failed to get extension
-     *       获取扩展名的方式，如：String extName = url.getParameter("key1", url.getParameter("key2", "impl1"));
-     * 2）根据扩展名获取扩展实例 ExtensionLoader.getExtensionLoader(xxx.SimpleExt.class).getExtension(extName)
-     * 3）执行扩展实例的对应方法 extension.xxx()
-     */
+    String[] value() default {};
 }

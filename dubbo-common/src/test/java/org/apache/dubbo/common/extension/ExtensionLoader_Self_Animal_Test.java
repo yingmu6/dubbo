@@ -10,7 +10,7 @@ import static org.apache.dubbo.common.extension.ExtensionLoader.getExtensionLoad
  * @author chensy
  * @date 2021/9/3
  */
-public class ExtendsionLoader_Self_Aninal_Test {
+public class ExtensionLoader_Self_Animal_Test {
     private static final String DOG = "dog";
     private static final String DUCK = "duck";
     private static final String PIG = "pig";
