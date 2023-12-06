@@ -42,6 +42,7 @@ import org.apache.dubbo.common.extension.ext3.UseProtocolKeyExt;
 import org.apache.dubbo.common.extension.ext6_wrap.WrappedExt;
 import org.apache.dubbo.common.extension.ext6_wrap.impl.Ext5Wrapper1;
 import org.apache.dubbo.common.extension.ext6_wrap.impl.Ext5Wrapper2;
+import org.apache.dubbo.common.extension.ext6_wrap.impl.Ext5Wrapper3;
 import org.apache.dubbo.common.extension.ext7.InitErrorExt;
 import org.apache.dubbo.common.extension.ext8_add.AddExt1;
 import org.apache.dubbo.common.extension.ext8_add.AddExt2;
@@ -177,6 +178,7 @@ public class ExtensionLoaderTest {
          * 解：先加载扩展类，然后通过反射机制创建实例对象，并且处理依赖注入、封装类的实例化
          */
         assertTrue(getExtensionLoader(SimpleExt.class).getExtension("impl1") instanceof SimpleExtImpl1);
+//        assertTrue(getExtensionLoader(SimpleExt.class).getExtension("simpleextimpl1") instanceof SimpleExtImpl1); //此处若没有配置扩展名，"org.xxx.SimpleExtImpl1"处理的扩展名为"simpleextimpl1"
         assertTrue(getExtensionLoader(SimpleExt.class).getExtension("impl2") instanceof SimpleExtImpl2);
     }
 
@@ -190,10 +192,10 @@ public class ExtensionLoaderTest {
          * b）impl1的依赖为：impl2 = Ext5Wrapper2@xxx -> 的instance属性为Ext5Wrapper1@xxx -> 的instance属性为Ext5Impl2@xx
          */
         WrappedExt impl1 = getExtensionLoader(WrappedExt.class).getExtension("impl1");
-        assertThat(impl1, anyOf(instanceOf(Ext5Wrapper1.class), instanceOf(Ext5Wrapper2.class)));
+        assertThat(impl1, anyOf(instanceOf(Ext5Wrapper1.class), instanceOf(Ext5Wrapper2.class), instanceOf(Ext5Wrapper3.class)));
 
         WrappedExt impl2 = getExtensionLoader(WrappedExt.class).getExtension("impl2");
-        assertThat(impl2, anyOf(instanceOf(Ext5Wrapper1.class), instanceOf(Ext5Wrapper2.class)));
+        assertThat(impl2, anyOf(instanceOf(Ext5Wrapper1.class), instanceOf(Ext5Wrapper2.class), instanceOf(Ext5Wrapper3.class)));
 
 
         URL url = new URL("p1", "1.2.3.4", 1010, "path1");

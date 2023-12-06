@@ -33,6 +33,7 @@ public class Ext5Wrapper2 implements WrappedExt {
 
     public String echo(URL url, String s) {
         echoCount.incrementAndGet();
+        System.out.println("进入：Ext5Wrapper2");
         return instance.echo(url, s); //封装类：在调用目标方法前后进行拦截处理
     }
 }

@@ -49,7 +49,7 @@ public class AdaptiveExtensionFactory implements ExtensionFactory { //自适应�
                 return extension;
             }
         }
-        return null;
+        return null; //若在扩展工厂中都没找到扩展实例，则返回null
     }
 
 }

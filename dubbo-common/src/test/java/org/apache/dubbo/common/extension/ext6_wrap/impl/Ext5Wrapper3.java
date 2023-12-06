@@ -14,23 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.dubbo.common.extension.ext1.impl;
+package org.apache.dubbo.common.extension.ext6_wrap.impl;
 
 import org.apache.dubbo.common.URL;
-import org.apache.dubbo.common.extension.Activate;
-import org.apache.dubbo.common.extension.ext1.SimpleExt;
+import org.apache.dubbo.common.extension.ext6_wrap.WrappedExt;
 
-@Activate
-public class SimpleExtImpl1 implements SimpleExt {
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class Ext5Wrapper3 implements WrappedExt { //新添加测试类
+    public static AtomicInteger echoCount = new AtomicInteger();
+    WrappedExt instance;
+
+    public Ext5Wrapper3(WrappedExt instance) {
+        this.instance = instance;
+    }
+
     public String echo(URL url, String s) {
-        return "Ext1Impl1-echo";
-    }
-
-    public String yell(URL url, String s) {
-        return "Ext1Impl1-yell";
-    }
-
-    public String bang(URL url, int i) {
-        return "bang1";
+        echoCount.incrementAndGet();
+        System.out.println("进入：Ext5Wrapper3");
+        return instance.echo(url, s);
     }
 }

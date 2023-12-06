@@ -48,7 +48,7 @@ public @interface Activate { //若带上自动激活类设置了group、value，
      *  a）@Adaptive(value={"key1","key2"}),最终是通过url.getParameter("key1",getParameter("key2",defaultExtName)) 从url中查找到指定参数对应的扩展名，
      *  b）@Activate有两种形式，一种是自定义激活，另一种是系统自动激活
      *     b.1）自定义激活：ExtensionLoader#getActivateExtension(URL url, String key)，直接将url中key对应的值作为扩展名，不需要带上@Activate注解
-     *     b.2）自动自动激活：对@Activate注解中的group、value进行比较，满足条件了，就使用@Activate注解对应的扩展名，有两种形式
+     *     b.2）系统自动激活：对@Activate注解中的group、value进行比较，满足条件了，就使用@Activate注解对应的扩展名，有两种形式
      *         b.2.1）如@Activate(value={key1,key2}, group="default_group")，则满足group匹配且，key1、key2出现在url参数的key中。
      *         b.2.2）如@Activate(value={key1:value1,key2:value2}, group="default_group")，则满足group匹配且，key1、value1或key2、value2任意一个键值对同时出现在url参数中，
      *                即该@Activate注解对应的实例被匹配，然后再到缓存中找到注解对应的扩展名

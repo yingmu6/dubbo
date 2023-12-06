@@ -18,15 +18,15 @@ package org.apache.dubbo.common.extension;
 
 import org.apache.dubbo.common.lang.Prioritized;
 
-public interface LoadingStrategy extends Prioritized { //加载策略：加载不同目录的文件，形成不同的策略
+public interface LoadingStrategy extends Prioritized { //加载策略：加载不同目录的文件，形成不同的策略（场景：在ExtensionLoader中使用java spi方式处理）
 
     String directory();
 
-    default boolean preferExtensionClassLoader() {
+    default boolean preferExtensionClassLoader() { //是否用ExtensionLoader的类加载器加载文件资源
         return false;
     }
 
-    default String[] excludedPackages() {
+    default String[] excludedPackages() { //指定排除在外，不用加载的包路径
         return null;
     }
 
