@@ -8,7 +8,7 @@ import org.apache.dubbo.common.extension.activate.ActivateSelfExt;
  * @Date 2023/05/11 22:33
  * @Description
  */
-@Activate(value = {"sysKeyExt:sysVal"}, group = "self_group")
+@Activate(value = {"age"}, group = "self_group")
 public class ActivateSelfExtImpl3 implements ActivateSelfExt {
 
     @Override

@@ -562,35 +562,63 @@ public class ExtensionLoaderTest {
     @Test
     public void testActivateExtensionBySelf_V2() { //已测（测试@Activate的value的两种形式比较，即value={key1,key2}和value={key1:value1,key2:value2}）
 
-        /**
-         * 场景1：@Activate注解中value的格式为普通字符串，如@Activate(value={"xxx"})
-         */
         ExtensionLoader<ActivateSelfExt> extensionLoader = ExtensionLoader.getExtensionLoader(ActivateSelfExt.class);
 
-        URL url = URL.valueOf("dubbo://localhost/org.apache.dubbo.common.extension.activate.ActivateExt1?selfExt=selfImpl1&sysExt=sysImpl");
-        List<ActivateSelfExt> list = extensionLoader.getActivateExtension(url, "selfExt", "self_group");
+        /**
+         * 场景1：只按group匹配（key设置是为了从url中再找对应的value值作为用户配置的扩展名列表）
+         *
+         * 结果分析：
+         * 1）因为key=""，从url中得到的value也为空，表明用户没配置扩展名列表
+         * 2）在进行系统激活扩展类匹配时，先匹配group、再将@Activate注解中的values值与url参数比较
+         * 3）此处最终的激活的实例是ActivateSelfExtImpl2、ActivateSelfExtImpl5
+         *    a）ActivateSelfExtImpl2：因为该扩展类上配置的value={"name"}，该key在url的参数集合中存在，所以被激活
+         *    b）ActivateSelfExtImpl5：因为该扩展类上配置的value={"name:zhang","age:13"}，value中的key解析后对应的key=name，value=zhang在url中，所以被激活
+         */
+        URL url1 = URL.valueOf("dubbo://localhost/org.apache.dubbo.common.extension.activate.ActivateExt1?name=zhang");
+        List<ActivateSelfExt> list1 = extensionLoader.getActivateExtension(url1, "", "self_group");
+        assertEquals(2, list1.size());
 
         /**
-         * 两个扩展实例来源：
-         * 1）入参指定的value列表，即key=selfExt指定值为自定义扩展名，直接加载对应的扩展实例（即使没有带上@Activate）
-         * 2）不在入参指定的value列表，即系统加载的自动激活实例，会根据@Activate中的group和value进行匹配，
-         *    此处的value为字符串形式，所以看做为url的参数key值，只要在url中的参数键值对的key中出现，就能被激活
+         * 场景2：@Activate注解中value的格式为普通字符串，如@Activate(value={"xxx"})
+         *
+         * 结果分析：
+         * 此处最终的激活的实例是ActivateSelfExtImpl3、ActivateSelfExtImpl4
+         *    a）ActivateSelfExtImpl3：因为该扩展类上配置的value={"age"}，在key在url的参数集合中存在，所以被激活
+         *    b）ActivateSelfExtImpl4：因为该扩展类上配置的value={"name:li","age:12"}，value中的key解析后对应的key=age，value=12在url中，所以被激活
          */
-        assertEquals(2, list.size());
-
-        /**
-         * 场景2：@Activate注解中value的格式为键值对格式，如@Activate(value={"key1:value1","key2:value2"})
-         */
-        URL ur2 = URL.valueOf("dubbo://localhost/org.apache.dubbo.common.extension.activate.ActivateExt1?selfExt=selfImpl1&sysKeyExt=sysVal");
-        List<ActivateSelfExt> list2 = extensionLoader.getActivateExtension(ur2, "selfExt", "self_group");
-
-        /**
-         * 两个扩展实例来源：
-         * 1）入参指定的value列表，即key=selfExt指定值为自定义扩展名，直接加载对应的扩展实例（即使没有带上@Activate）
-         * 2）不在入参指定的value列表，即系统加载的自动激活实例，会根据@Activate中的group和value进行匹配，
-         *    此处的value为key:value形式，所以key、value要同时匹配url中的某个参数键值对，才能被激活
-         */
+        URL url2 = URL.valueOf("dubbo://localhost/org.apache.dubbo.common.extension.activate.ActivateExt1?age=12");
+        List<ActivateSelfExt> list2 = extensionLoader.getActivateExtension(url2, "", "self_group");
         assertEquals(2, list2.size());
+
+        /**
+         * 场景3：url中没有参数集合
+         *
+         * 结果分析：
+         * 由于url中没有参数集合，匹配不成功。因为@Activate上配置了value，需要将配置的值与url参数集合进行比较
+         */
+        URL url3 = URL.valueOf("dubbo://localhost/org.apache.dubbo.common.extension.activate.ActivateExt1");
+        List<ActivateSelfExt> list3 = extensionLoader.getActivateExtension(url3, "", "self_group");
+        assertEquals(0, list3.size());
+
+        /**
+         * 场景4：配置多个default（正常情况下只配置一个），结论：扩展实例列表的顺序非预期，但实例个数是对的
+         *
+         * 结果分析：
+         * 1）自定义的扩展名列表为"selfImpl1,default,selfImpl6,default"，ActivateSelfExtImpl3满足系统激活条件，而selfImpl1、selfImpl6为自定义类
+         * 2）期望的激活扩展实例列表顺序为"selfImpl1 -> selfImpl3 -> selfImpl6"，但由于多配置了一个"default"，当遇到"default"时，会把default之前的扩展实例，插入到已处理的列表的第一个位置
+         *    所以最终的扩展实例列表顺序为"selfImpl6 -> selfImpl1 -> selfImpl3"，顺序非预期
+         *    2.1）结果分析：
+         *         a）进行系统激活，得到符合条件的扩展实例selfImpl3，放入自动激活列表中activateExtensions
+         *         b）遇到自定义的扩展名"selfImpl1"，创建其实例并放入临时列表loadedExtensions中
+         *         c）遇到default，把临时列表loadedExtensions插入到系统激活列表activateExtensions的第一个元素，并清空loadExtensions列表，得到selfImpl1 -> selfImpl3序列
+         *         d）遇到自定义的扩展名"selfImpl6"，创建期实例并放入临时列表loadedExtensions中
+         *         e）遇到default，把临时列表loadedExtensions插入到系统激活列表activateExtensions的第一个元素，并清空loadExtensions列表，得到selfImpl6 -> selfImpl1 -> selfImpl3序列
+         *
+         */
+        URL url4 = URL.valueOf("dubbo://localhost/org.apache.dubbo.common.extension.activate.ActivateExt1?testKey=selfImpl1,default,selfImpl6,default&age");
+        List<ActivateSelfExt> list4 = extensionLoader.getActivateExtension(url4, "testKey", "self_group");
+        assertEquals(3, list4.size());
+
     }
 
     @Test

@@ -1,6 +1,5 @@
 package org.apache.dubbo.common.extension.activate.impl;
 
-import org.apache.dubbo.common.extension.Activate;
 import org.apache.dubbo.common.extension.activate.ActivateSelfExt;
 
 /**
@@ -8,11 +7,10 @@ import org.apache.dubbo.common.extension.activate.ActivateSelfExt;
  * @Date 2023/05/11 22:33
  * @Description
  */
-@Activate(value = {"name"}, group = "self_group")
-public class ActivateSelfExtImpl2 implements ActivateSelfExt {
+public class ActivateSelfExtImpl6 implements ActivateSelfExt {
 
     @Override
     public String echo(String msg) {
-        return "ActivateSelfExtImpl2: " + msg;
+        return "ActivateSelfExtImpl6: " + msg;
     }
 }

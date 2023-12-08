@@ -262,16 +262,16 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
     }
 
     /**
-     * This is equivalent to {@code getActivateExtension(url, url.getParameter(key).split(","), null)}
+     * This is equivalent（等同的） to {@code getActivateExtension(url, url.getParameter(key).split(","), null)}
      *
      * @param url   url
-     * @param key   url parameter key which used to get extension point names
+     * @param key   url parameter key which used to get extension point names（用于获取扩展名列表的url参数key）
      * @param group group
      * @return extension list which are activated.
      * @see #getActivateExtension(org.apache.dubbo.common.URL, String[], String)
      */
     public List<T> getActivateExtension(URL url, String key, String group) { //如：获取filter列表时，key：service.filter，group：provider
-        String value = url.getParameter(key); //从url中获取参数key对应的值
+        String value = url.getParameter(key); //从url中获取参数key对应的值，作为用户定义的扩展名列表
         return getActivateExtension(url, StringUtils.isEmpty(value) ? null : COMMA_SPLIT_PATTERN.split(value), group); //按分隔符拆分参数值，如"order1,default,order4"，拆分映射为数组
     }
 
@@ -279,10 +279,9 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
      * Get activate extensions.（获取自动激活的扩展类列表）
      * 注明：自动激活的扩展分为两类
      * a）系统激活的扩展类：带有@Activate注解，匹配注解中的group、value获取实例
-     * b）自定义激活的扩展类：由用户指定的扩展类，可以不带@Activate注解，不用比较group、value值
+     * b）自定义激活的扩展类：由用户指定的扩展类，不带@Activate注解，不用比较group、value值
      *
-     * 在指定扩展名时，如"aa,default,bb"，其中aa、bb是自定义扩展名，而default代表系统扩展类，可以是多个
-     * 并且指定的位置即为实际位置，不指定default时，自定义扩展名在default后，如"aa,bb"，
+     * 在指定扩展名时，如"aa,default,bb"，其中aa、bb是自定义扩展名，而default代表系统扩展类，不指定default时，自定义扩展名在default后，如"aa,bb"，
      * 最终的扩展类为：default扩展类 -> aa扩展类 -> bb扩展类
      *
      * @param url    url
@@ -293,19 +292,14 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
      */
     public List<T> getActivateExtension(URL url, String[] values, String group) { //获取自动激活的扩展列表（将URL中配置的参数与@Activate配置的内容进行比较）
         List<T> activateExtensions = new ArrayList<>();
-        List<String> names = values == null ? new ArrayList<>(0) : asList(values); // 扩展名列表（values是从url中获取的指定key对应的参数值，并按分隔符分隔的值列表）
+        List<String> names = values == null ? new ArrayList<>(0) : asList(values); // 自定义激活的扩展名列表（names即为用户配置的扩展名列表，如"aa,default,bb"，若没配置，则处理@Activate类）
 
         /**
-         * 类型一：系统激活的扩展类
-         *
-         * 在扩展名列表不包含-default时进行处理
-         * @csy-007 此处-default是指什么？去除默认扩展吗？
-         * 是的，"-"表式剔除的含义
-         * 如果Filter中不带有"-default"字段，就会加载系统扩展Filter对象。（系统的Filter对象）
+         * 类型一：系统激活的扩展类（即类上带有@Activate）
          */
-        if (!names.contains(REMOVE_VALUE_PREFIX + DEFAULT_KEY)) { // 系统激活的扩展类处理，即扩展名列表不包含"-default"
-            getExtensionClasses(); //加载扩展类。此处没有用到方法的返回值，主要使用方法中的loadExtensionClasses()，值存入成员变量中了，若缓存中没有对应的值，则对应加载并设置到缓存中
-            for (Map.Entry<String, Object> entry : cachedActivates.entrySet()) { // 遍历从SPI配置文件中加载的@Activate标识的扩展类列表（需要扩展接口有包含@Active注解的实现类，在loadClass()中缓存的）
+        if (!names.contains(REMOVE_VALUE_PREFIX + DEFAULT_KEY)) { // 系统激活的扩展类处理（若包含"-default"，则不处理系统激活的扩展类）
+            getExtensionClasses(); //加载扩展类，并将带有@Activate的扩展类缓存到cachedActives中
+            for (Map.Entry<String, Object> entry : cachedActivates.entrySet()) { // 遍历从SPI配置文件中加载的@Activate标识的扩展类列表
                 String name = entry.getKey(); //扩展名
                 Object activate = entry.getValue(); // @Active对象
 
@@ -323,52 +317,48 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
 
                 /**
                  * 自动激活条件匹配逻辑（先比较group、再比较value）
-                 * 1）判断传入的group是否在注解中group的列表值中
-                 * 2）扩展名name不在自定义的列表中（当前处理的扩展类是系统激活的扩展类）
+                 * 1）判断用于匹配的group是否在注解声明的group的列表值中
+                 * 2）扩展名name不在用户自定义的扩展名列表中且没有被剔除
                  * 3）将注解中声明的value值与url中参数值进行比较
-                 * 若都满足条件，则获取扩展名对应的实例，并加载到自动激活扩展的列表中
+                 * 若都满足条件，则获取扩展名对应的实例，并加载到系统激活扩展的列表中
                  */
                 if (isMatchGroup(group, activateGroup)
-                        && !names.contains(name) //为啥要有这个判断？解答：当前处理的是系统激活的扩展类，而names是自定义的扩展名列表，两者分开处理，所以要进行排除
-                        && !names.contains(REMOVE_VALUE_PREFIX + name) //对应场景：在设置扩展条件时，把系统激活的类去除，如"-order",即不加到扩展类列表中
+                        && !names.contains(name) //为啥要有这个判断？解答：当前处理的是系统激活的扩展类，而names是自定义激活的扩展名列表，两者分开处理，所以要进行排除
+                        && !names.contains(REMOVE_VALUE_PREFIX + name) //对应场景：剔除某个系统激活的类，如"-order"，则去掉扩展名为"order"对应的@Activate类（names没配置时，可通过此处校验）
                         && isActive(activateValue, url)) {
                     activateExtensions.add(getExtension(name)); // 若匹配，则获取扩展名name对应的实例并加载到列表中
                 }
             }
             activateExtensions.sort(ActivateComparator.COMPARATOR); //将可激活扩展类列表进行排序
         }
-        List<T> loadedExtensions = new ArrayList<>();
+        List<T> loadedExtensions = new ArrayList<>(); //处理用户自定义扩展实例的临时列表
 
         /**
-         * 类型二：自定义激活的扩展类
-         *
-         * @csy-007 为啥提供者启动时，没有进入这个循环？消费端启动时，也没进入
-         * 解：这里的@Activate注解不要求group设置为provider、consumer，所以提供端、消费端启动时没进入也是正常的
-         * 加载用户自定义扩展Filter对象（自定义的Filter对象）-----因为这里是用户自定义的扩展类列表，用户指定才会进入
+         * 类型二：自定义激活的扩展类（没有带@Activate的扩展类）
          */
         for (int i = 0; i < names.size(); i++) {
             String name = names.get(i);
-            // 带有排除符号"-"的Filter不加载
+            // 带有剔除符号"-"的扩展名，不做处理
             if (!name.startsWith(REMOVE_VALUE_PREFIX)
-                    && !names.contains(REMOVE_VALUE_PREFIX + name)) { //@csy-007 此处逻辑会在什么场景下进入？解：处理不再cachedActivates缓存中的扩展，如ExtensionLoaderTest.testLoadDefaultActivateExtension
-                if (DEFAULT_KEY.equals(name)) { //若指定了"default"，则调整对应的顺序
-                    if (!loadedExtensions.isEmpty()) {
-                        activateExtensions.addAll(0, loadedExtensions); //@csy-0014 在指定位置加载列表，原来的值会被覆盖吗？不会覆盖，元素会向后移动
+                    && !names.contains(REMOVE_VALUE_PREFIX + name)) {
+                if (DEFAULT_KEY.equals(name)) { //若指定了"default"，表明是系统激活的扩展实例，需调整系统激活和自定义激活实例的位置
+                    if (!loadedExtensions.isEmpty()) { //loadedExtensions不为空，表明在"default"前，有自定义的扩展类
+                        activateExtensions.addAll(0, loadedExtensions); //把自定义的激活类放在系统激活的类的前面
                         loadedExtensions.clear();
                     }
                 } else {
-                    loadedExtensions.add(getExtension(name)); //从cachedClasses缓存中获取指定扩展名对应的扩展类，此处若没有查到指定的扩展，是会抛出没找到扩展的异常
+                    loadedExtensions.add(getExtension(name)); //将符合条件的自定义激活的扩展实例加载到列表
                 }
             }
         }
-        if (!loadedExtensions.isEmpty()) {
+        if (!loadedExtensions.isEmpty()) { //若没有配置"default"，则系统激活的扩展类，放在自定义激活的扩展类前面
             activateExtensions.addAll(loadedExtensions);
         }
         return activateExtensions;
     }
 
     /**
-     * 自动激活中的group比较
+     * 系统激活中的group匹配逻辑：
      * 1）若用于匹配的group为空，表明不按group匹配，则判定为匹配成功
      * 2）若用于匹配的group不为空，且@Activate注解上声明的group数组也不为空，则根据group是否在group数组中来判定是否匹配成功
      * 3）若用于匹配的group不为空，且@Activate注解上声明的group数组为空，则判定为匹配失败
@@ -387,11 +377,20 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
         return false;
     }
 
+    /**
+     * 系统激活中的value匹配逻辑：
+     * 1）若注解@Activate中没有配置value值，表明不按value匹配，则判定为匹配成功
+     * 2）遍历注解@Active中配置的value值，按key:value形式解析（也可以只有key）。遍历URL中的参数集合，与注解value解析出的键值匹配
+     *    2.1）若URL参数集合不为空，匹配参数的键值对
+     *         a）匹配参数键，url参数与注解中参数相等，或url参数以注解中参数结尾，则匹配成功
+     *         b）匹配参数值，若注解中配置了value，则需要与url中相同key对应的值比较，根据是否相等来判定；若注解中没配置value，只要url相同key的值不为空，即匹配成功
+     *    2.2）若URL参数集合为空，则判定为匹配不成功
+     */
     private boolean isActive(String[] keys, URL url) { // 比较值，keys是@Activate注解上的value值列表，将注解中value值列表与url的参数键值对进行比较
         if (keys.length == 0) { //若@Activate注解上没设置value，直接匹配成功
             return true;
         }
-        for (String key : keys) { //遍历注解上的所有key（只要有一个key匹配成功，即对应返回）
+        for (String key : keys) { //遍历注解上的所有key（只要有一个key匹配成功，即匹配成功）
             // @Active(value="key1:value1, key2:value2")    2.5.6版本时没有key1:value1这种形式，直接用key来比较的
             String keyValue = null;
             if (key.contains(":")) { //分隔key中设置的值
@@ -400,20 +399,14 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
                 keyValue = arr[1];
             }
 
-            for (Map.Entry<String, String> entry : url.getParameters().entrySet()) { //遍历url的参数集合
-                String k = entry.getKey(); //从url中取到的参数键key
-                String v = entry.getValue(); //从url中取到的参数值value
-                /**
-                 * @csy-007 此处比较逻辑待调试了解？
-                 * 将注解上的key与url的参数key进行比较 ( 既要比较key的值，也要比较value的值)
-                 *  1）若url中的键与注解上的key相等或以注解的可以结尾，且注解上key对应的value与url中设置的value相同，则匹配通过
-                 *  2）或者在注解上键对应值为空，但url设置的value不为空时，则匹配通过，即@Active(value="key1, key2") 这种格式
-                 */
+            for (Map.Entry<String, String> entry : url.getParameters().entrySet()) {  //遍历url的参数集合
+                String k = entry.getKey(); //url中参数键key
+                String v = entry.getValue(); //url中参数值value
                 if ((k.equals(key) || k.endsWith("." + key))
-                        && ((keyValue != null && keyValue.equals(v)) || (keyValue == null && ConfigUtils.isNotEmpty(v)))) { // keyValue==null， 兼容2.7.x之前的版本，之前的value为key1,key2形式，目前配置的形式为key1:value1,key2:value2
-                    return true; //只要有一个键值对满足匹配，即认为是匹配成功
-                } // &&的优先级高于|| ，如System.out.println(false && true || true);
-            }
+                        && ((keyValue != null && keyValue.equals(v)) || (keyValue == null && ConfigUtils.isNotEmpty(v)))) {
+                    return true;
+                }
+            } //url中不包含参数集合时，返回false
         }
         return false;
     }

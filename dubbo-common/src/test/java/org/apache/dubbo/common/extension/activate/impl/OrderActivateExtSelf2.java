@@ -4,7 +4,7 @@ import org.apache.dubbo.common.extension.Activate;
 import org.apache.dubbo.common.extension.activate.ActivateExt1;
 
 /**
- * 自定义自动激活类（带有@Activate注解）
+ * 系统激活类（带有@Activate注解）
  */
 @Activate(group = "default_group")
 public class OrderActivateExtSelf2 implements ActivateExt1 {
