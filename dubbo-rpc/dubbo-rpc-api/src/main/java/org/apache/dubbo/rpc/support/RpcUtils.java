@@ -107,7 +107,7 @@ public class RpcUtils {
         }
     }
 
-    public static String getMethodName(Invocation invocation) {
+    public static String getMethodName(Invocation invocation) { //从调用信息中获取方法名（分为泛化调用和普通调用两种方式的获取）
         if ($INVOKE.equals(invocation.getMethodName())
                 && invocation.getArguments() != null
                 && invocation.getArguments().length > 0

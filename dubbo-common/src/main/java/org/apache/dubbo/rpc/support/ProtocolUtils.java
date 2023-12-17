@@ -36,7 +36,7 @@ public class ProtocolUtils {
                 url.getParameter(GROUP_KEY));
     }
 
-    public static String serviceKey(int port, String serviceName, String serviceVersion, String serviceGroup) {
+    public static String serviceKey(int port, String serviceName, String serviceVersion, String serviceGroup) { //构建serviceKey（标识唯一的暴露服务）
         serviceGroup = serviceGroup == null ? "" : serviceGroup;
         GroupServiceKeyCache groupServiceKeyCache = groupServiceKeyCacheMap.get(serviceGroup);
         if (groupServiceKeyCache == null) { //对服务组进行缓存

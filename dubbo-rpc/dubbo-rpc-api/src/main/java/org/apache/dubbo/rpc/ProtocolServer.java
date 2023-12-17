@@ -20,7 +20,7 @@ import org.apache.dubbo.common.URL;
 import org.apache.dubbo.remoting.RemotingServer;
 
 /**
- * Distinct from {@link RemotingServer}, each protocol holds one or more ProtocolServers(the number usually decides by port numbers),
+ * Distinct（不同于） from {@link RemotingServer}, each protocol holds one or more ProtocolServers(the number usually decides by port numbers),
  * while each ProtocolServer holds zero or one RemotingServer.
  * （每个协议都包含一个或多个ProtocolServer（通常由端口号决定），而每个ProtocolServer则包含零个或一个RemotingServer）
  */

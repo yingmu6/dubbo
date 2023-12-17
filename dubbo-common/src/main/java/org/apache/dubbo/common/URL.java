@@ -106,7 +106,7 @@ class URL implements Serializable {
 
     private volatile transient String full; //带有完整信息的url字符串
 
-    private volatile transient String identity;
+    private volatile transient String identity; //带有用户信息的url字符串
 
     private volatile transient String parameter;
 

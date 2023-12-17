@@ -39,17 +39,18 @@ public class RoundRobinLoadBalance extends AbstractLoadBalance {
      *   第四个请求再次分配给服务器 A。即每次调度执行i = (i + 1) mod n，并选出第i台服务器。这个过程就叫做轮询。轮询是一种无状态负载均衡算法，实现简单，适用于每台服务器性能相近的场景下。
      *
      * 2）现实情况下，我们并不能保证每台服务器性能均相近。如果我们将等量的请求分配给性能较差的服务器，这显然是不合理的。
-     *   因此，这个时候我们需要对轮询过程进行加权，以调控每台服务器的负载。经过加权后，每台服务器能够得到的请求数比例，接近或等于他们的权重比。
+     *   因此，这个时候我们需要对轮询过程进行加权，以调控每台服务器的负载。
+     *   （经过加权后，每台服务器能够得到的请求数比例，接近或等于它们的权重比）
      *
      * 3）平滑加权轮询算法：https://juejin.cn/post/7099424131216572423
      */
 
-    private static final int RECYCLE_PERIOD = 60000;
+    private static final int RECYCLE_PERIOD = 60000; //过期缓存回收的时间
 
-    protected static class WeightedRoundRobin {
-        private int weight; //服务提供者权重
-        private AtomicLong current = new AtomicLong(0); //当前权重
-        private long lastUpdate; //最后一次更新时间
+    protected static class WeightedRoundRobin { //加权轮询处理器
+        private int weight; //用户设置的服务提供者的权重
+        private AtomicLong current = new AtomicLong(0); //用于计算的当前权重
+        private long lastUpdate; //最后一次更新时间（用于缓存清除）
 
         public int getWeight() {
             return weight;
@@ -60,8 +61,8 @@ public class RoundRobinLoadBalance extends AbstractLoadBalance {
             current.set(0);
         }
 
-        public long increaseCurrent() {
-            return current.addAndGet(weight); //计算当前权重值
+        public long increaseCurrent() { //增加当前权重
+            return current.addAndGet(weight); //用当前权重current加上设置的权重weight
         }
 
         public void sel(int total) {
@@ -77,7 +78,8 @@ public class RoundRobinLoadBalance extends AbstractLoadBalance {
         }
     }
 
-    private ConcurrentMap<String, ConcurrentMap<String, WeightedRoundRobin>> methodWeightMap = new ConcurrentHashMap<String, ConcurrentMap<String, WeightedRoundRobin>>();
+    //methodWeightMap的数据格式：ConcurrentMap<serviceKey+"."+methodName, ConcurrentMap<identifyString, WeightedRoundRobin>>
+    private ConcurrentMap<String, ConcurrentMap<String, WeightedRoundRobin>> methodWeightMap = new ConcurrentHashMap<String, ConcurrentMap<String, WeightedRoundRobin>>(); //服务调用方法与加权轮询处理器的缓存
 
     /**
      * get invoker addr list cached for specified invocation
@@ -100,7 +102,7 @@ public class RoundRobinLoadBalance extends AbstractLoadBalance {
     @Override
     protected <T> Invoker<T> doSelect(List<Invoker<T>> invokers, URL url, Invocation invocation) {
         String key = invokers.get(0).getUrl().getServiceKey() + "." + invocation.getMethodName(); //获取调用方法的key
-        ConcurrentMap<String, WeightedRoundRobin> map = methodWeightMap.computeIfAbsent(key, k -> new ConcurrentHashMap<>());
+        ConcurrentMap<String, WeightedRoundRobin> map = methodWeightMap.computeIfAbsent(key, k -> new ConcurrentHashMap<>()); //每个SPI接口会缓存对应的一个实例。所以若负载均衡选择了加权轮询，那么多次请求都得到同一个RoundRobinLoadBalance实例
         int totalWeight = 0;
         long maxCurrent = Long.MIN_VALUE;
         long now = System.currentTimeMillis();
@@ -109,26 +111,26 @@ public class RoundRobinLoadBalance extends AbstractLoadBalance {
         for (Invoker<T> invoker : invokers) {
             String identifyString = invoker.getUrl().toIdentityString();
             int weight = getWeight(invoker, invocation);
-            WeightedRoundRobin weightedRoundRobin = map.computeIfAbsent(identifyString, k -> { //第一次做负载均衡调用时，会做初始化操作
+            WeightedRoundRobin weightedRoundRobin = map.computeIfAbsent(identifyString, k -> { //第一次负载均衡时，会建立好缓存，后面的请求都是基于缓存中数据来计算
                 WeightedRoundRobin wrr = new WeightedRoundRobin();
                 wrr.setWeight(weight);
                 return wrr;
             });
 
             if (weight != weightedRoundRobin.getWeight()) {
-                //weight changed
+                //weight changed（invoker的权重发生改变，需要更新）
                 weightedRoundRobin.setWeight(weight);
             }
-            long cur = weightedRoundRobin.increaseCurrent(); //计算当前权重currentWeight的值（每次调用选择Invoker前，都会先计算）
+            long cur = weightedRoundRobin.increaseCurrent(); //计算新的当前权重current的值（每次调用选择Invoker前，都会先计算）
             weightedRoundRobin.setLastUpdate(now); //记录更新时间
-            if (cur > maxCurrent) { //找出t当前权重currentWeight最大的Invoker，即为当前负载均衡要选择的Invoker
+            if (cur > maxCurrent) { //若找到新的最大current值，则记录invoker以及加权轮询处理器
                 maxCurrent = cur;
                 selectedInvoker = invoker;
                 selectedWRR = weightedRoundRobin;
             }
-            totalWeight += weight; //累加总权重
+            totalWeight += weight; //累加invoker的权重，计算总权重
         }
-        if (invokers.size() != map.size()) {
+        if (invokers.size() != map.size()) { //若实际的invoker数与缓存数不等时，即存在过期无效的缓存，则根据回收时间计算并对应删除
             map.entrySet().removeIf(item -> now - item.getValue().getLastUpdate() > RECYCLE_PERIOD);
         }
         if (selectedInvoker != null) {

@@ -21,7 +21,7 @@ import java.util.Collection;
 /**
  * Interface defining serialization optimizer, there are nothing implementations for now.（目前没有实现类）
  */
-public interface SerializationOptimizer {
+public interface SerializationOptimizer { //序列化优化器
 
     /**
      * Get serializable classes

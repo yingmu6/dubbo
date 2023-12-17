@@ -84,7 +84,7 @@ public class ConsistentHashLoadBalance extends AbstractLoadBalance { //一致性
         // using the hashcode of list to compute the hash only pay attention to（专注于） the elements in the list
         int invokersHashCode = invokers.hashCode(); //获取invokers原始的hashCode（通过invoker列表的hash是否改变，来判断invoker列表是否改变）
         ConsistentHashSelector<T> selector = (ConsistentHashSelector<T>) selectors.get(key);
-        if (selector == null || selector.identityHashCode != invokersHashCode) { //服务者数量发生变化，即增加或减少时，创建新的ConsistentHashSelector
+        if (selector == null || selector.identityHashCode != invokersHashCode) { //缓存中selector为空或invoker数量发生变化时，创建新的ConsistentHashSelector
             selectors.put(key, new ConsistentHashSelector<T>(invokers, methodName, invokersHashCode));
             selector = (ConsistentHashSelector<T>) selectors.get(key);
         }
@@ -95,21 +95,21 @@ public class ConsistentHashLoadBalance extends AbstractLoadBalance { //一致性
 
         private final TreeMap<Long, Invoker<T>> virtualInvokers; //存储Invoker虚拟节点（虚拟节点的hash值与invoker的映射）
 
-        private final int replicaNumber; //每个Invoker对应的虚拟节点数
+        private final int replicaNumber; //每个Invoker对应的虚拟节点数（replica：副本）
 
-        private final int identityHashCode;
+        private final int identityHashCode; //invoker列表的hashCode（创建ConsistentHashSelector时传入）
 
         private final int[] argumentIndex; //参与hash计算的参数下标数组
 
         /**
          * 初始化流程：
-         * 1）获取参数hash计算的虚拟节点数、参数下标，并对成员变量的初始化。
+         * 1）获取参与hash计算的虚拟节点数、参数下标，并对成员变量的初始化。
          * 2）遍历invoker列表，计算虚拟节点hash值，并与invoker进行映射。
-         *    2.1）基于address+i，计算出16字节数组digest。
-         *    2.2）对digest进行4次位运算，得到long型正整数。
+         *    2.1）基于invoker的url地址address+i，通过MD5计算，得到16字节数组digest。
+         *    2.2）对digest进行4次位运算，依次取出4个字节进行位运算，得到0~2^32-1区间的long值。
          *    2.3）将最终计算的虚拟节点hash值与invoker的关系存入map中。
          */
-        ConsistentHashSelector(List<Invoker<T>> invokers, String methodName, int identityHashCode) { //进行初始化
+        ConsistentHashSelector(List<Invoker<T>> invokers, String methodName, int identityHashCode) { //进行成员变量的初始化，并计算虚拟节点的hash值，最终与invoker映射并缓存起来
             this.virtualInvokers = new TreeMap<Long, Invoker<T>>();
             this.identityHashCode = identityHashCode;
             URL url = invokers.get(0).getUrl();
@@ -127,26 +127,22 @@ public class ConsistentHashLoadBalance extends AbstractLoadBalance { //一致性
                     byte[] digest = md5(address + i); //对address+i进行md5运算，得到长度为16的字节数组
                     for (int h = 0; h < 4; h++) { //对digest字节数组进行4次hash运算，得到4个不同的long型正整数
                         // h = 0 时，取 digest 中下标为 0~3 的4个字节进行位运算，得到long型正整数（其它类推）
-                        long m = hash(digest, h);
+                        long m = hash(digest, h); //取digest中的4个字节进行运算，并得到0~2^32-1区间的long值（没有对2^32取模，而是通过位运算获取到值）
                         virtualInvokers.put(m, invoker); //将hash 到 invoker的映射关系存储virtualInvokers中
                     }
                 }
             }
         }
 
-        public static void main(String[] args) {
-            System.out.println(10/4);
-        }
-
         /**
          * 选择Invoker流程：
-         * 1）拼接参数下标对应的值生成参数key，对参数key进行md5以及hash运算，得到hash值。
-         * 2）然后根据计算的hash值，从TreeMap中找到第一个大于或等于该hash的元素，即可找到Invoker。
+         * 1）从调用信息的参数列表中找到参与hash计算的参数值，并拼接为key，对key进行md5以及hash运算，得到hash值。
+         * 2）然后根据计算的hash值，从TreeMap中找到第一个大于或等于该hash的元素（通过TreeMap的ceilingEntry方法），即为要选择的Invoker。
          */
         public Invoker<T> select(Invocation invocation) {
-            String key = toKey(invocation.getArguments()); //将进行hash计算的参数值，拼接成参数key
-            byte[] digest = md5(key); //对参数key进行md5运算
-            return selectForKey(hash(digest, 0)); // 对digest的前4个字节进行hash运算，然后再通过selectForKey寻找合适的invoker
+            String key = toKey(invocation.getArguments()); //从调用信息的参数列表中找到参与hash计算的参数值，并拼接为key
+            byte[] digest = md5(key); //对key进行md5运算
+            return selectForKey(hash(digest, 0)); // 对MD5计算的digest数组进行hash运算，将得到的hash值去寻找合适的invoker
         }
 
         private String toKey(Object[] args) {
@@ -159,7 +155,7 @@ public class ConsistentHashLoadBalance extends AbstractLoadBalance { //一致性
             return buf.toString();
         }
 
-        private Invoker<T> selectForKey(long hash) {
+        private Invoker<T> selectForKey(long hash) { //找到hash值对应的虚拟节点，再根据虚拟节点找到最终的invoker
             // 从TreeMap中查找第一个大于或等于hash值的invoker
             Map.Entry<Long, Invoker<T>> entry = virtualInvokers.ceilingEntry(hash); //ceilingEntry：找到大于或等于key对应的值
             if (entry == null) { //在hash大于invoker圆环上的最大位置时，此时entry=null，需要将头结点赋值给entry
@@ -174,9 +170,17 @@ public class ConsistentHashLoadBalance extends AbstractLoadBalance { //一致性
                     | ((long) (digest[1 + number * 4] & 0xFF) << 8)
                     | (digest[number * 4] & 0xFF))
                     & 0xFFFFFFFFL;
+
+            /**
+             * 注明点：
+             * 1）((long) (digest[3 + number * 4] & 0xFF) << 24) 与 ((long) (digest[3 + number * 4] & 0xFF)) << 24，
+             *    两者值相同，即先左移再强转为long，和强转为long再左移的值一样
+             * 2）& 0xFF的作用：将-128~127的byte值转换为0~255的值
+             * 3）& 0xFFFFFFFFL：取0 ~ 2^32-1区间的值
+             */
         }
 
-        private byte[] md5(String value) {
+        private byte[] md5(String value) { //获取指定字符串的MD5对应的字节数组（16个字节长度的）
             MessageDigest md5;
             try {
                 md5 = MessageDigest.getInstance("MD5");

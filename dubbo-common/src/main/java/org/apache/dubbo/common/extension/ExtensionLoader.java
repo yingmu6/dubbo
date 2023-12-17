@@ -83,7 +83,7 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
     private static final ConcurrentMap<Class<?>, ExtensionLoader<?>> EXTENSION_LOADERS = new ConcurrentHashMap<>(64);
 
     /**
-     * 扩展类Class与扩展实例的映射（类共享变量）
+     * 扩展类Class与扩展实例的映射（类共享变量，同一个扩展接口对应一个扩展实例，也就是单实例的）
      */
     private static final ConcurrentMap<Class<?>, Object> EXTENSION_INSTANCES = new ConcurrentHashMap<>(64);
 

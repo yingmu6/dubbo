@@ -240,14 +240,14 @@ public class DubboProtocol extends AbstractProtocol {
         URL url = invoker.getUrl();
 
         // export service.
-        String key = serviceKey(url);
-        DubboExporter<T> exporter = new DubboExporter<T>(invoker, key, exporterMap);
+        String key = serviceKey(url); //从缓存中获取serviceKey，若没有则根据url参数创建并放入缓存
+        DubboExporter<T> exporter = new DubboExporter<T>(invoker, key, exporterMap); //将key、invoker设置到DubboExporter，交由其管理（Exporter管理Invoker周期）
         exporterMap.put(key, exporter);
 
         //export an stub service for dispatching event
         Boolean isStubSupportEvent = url.getParameter(STUB_EVENT_KEY, DEFAULT_STUB_EVENT);
         Boolean isCallbackservice = url.getParameter(IS_CALLBACK_SERVICE, false);
-        if (isStubSupportEvent && !isCallbackservice) {
+        if (isStubSupportEvent && !isCallbackservice) { //本地存根且非回调服务时，检查是否设置了stub方法
             String stubServiceMethods = url.getParameter(STUB_EVENT_METHODS_KEY);
             if (stubServiceMethods == null || stubServiceMethods.length() == 0) {
                 if (logger.isWarnEnabled()) {
@@ -275,7 +275,7 @@ public class DubboProtocol extends AbstractProtocol {
                 synchronized (this) {
                     server = serverMap.get(key);
                     if (server == null) {
-                        serverMap.put(key, createServer(url)); //将地址信息与服务实例放到缓存Map中
+                        serverMap.put(key, createServer(url)); //若缓存中ProtocolServer为空，则创建服务并放入缓存中
                     }
                 }
             } else {
@@ -331,9 +331,9 @@ public class DubboProtocol extends AbstractProtocol {
                 throw new RpcException("The serialization optimizer " + className + " isn't an instance of " + SerializationOptimizer.class.getName());
             }
 
-            SerializationOptimizer optimizer = (SerializationOptimizer) clazz.newInstance();
+            SerializationOptimizer optimizer = (SerializationOptimizer) clazz.newInstance(); //构建序列化优化器
 
-            if (optimizer.getSerializableClasses() == null) { //目前SerializationOptimizer没有实现类，按道理都是null
+            if (optimizer.getSerializableClasses() == null) {
                 return;
             }
 

@@ -25,7 +25,7 @@ public class GroupServiceKeyCache { //服务路径的缓存
 
     private final String serviceGroup;
 
-    //ConcurrentMap<serviceName, ConcurrentMap<serviceVersion, ConcurrentMap<port, String>>>  缓存key的数据格式
+    //ConcurrentMap<serviceName, ConcurrentMap<serviceVersion, ConcurrentMap<port, String>>>  serviceKey的数据格式（按serviceName、serviceVersion、port逐级做缓存，最后的值为serviceKey）
     private final ConcurrentMap<String, ConcurrentMap<String, ConcurrentMap<Integer, String>>> serviceKeyMap;
 
     public GroupServiceKeyCache(String serviceGroup) {
@@ -49,7 +49,7 @@ public class GroupServiceKeyCache { //服务路径的缓存
 
         String serviceKey = portMap.get(port);
         if (serviceKey == null) {
-            serviceKey = createServiceKey(serviceName, serviceVersion, port);
+            serviceKey = createServiceKey(serviceName, serviceVersion, port); //构建serviceKey
             portMap.put(port, serviceKey);
         }
         return serviceKey;

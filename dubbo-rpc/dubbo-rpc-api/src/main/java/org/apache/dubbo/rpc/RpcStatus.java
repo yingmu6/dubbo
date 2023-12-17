@@ -41,8 +41,8 @@ public class RpcStatus { //都记录了哪些状态值？后台管理页面有�
 
     private static final ConcurrentMap<String, ConcurrentMap<String, RpcStatus>> METHOD_STATISTICS = new ConcurrentHashMap<String, ConcurrentMap<String, RpcStatus>>(); //方法的调用统计，数据格式为：ConcurrentMap<uri, ConcurrentMap<methodName, RpcStatus>>
     private final ConcurrentMap<String, Object> values = new ConcurrentHashMap<String, Object>();
-    private final AtomicInteger active = new AtomicInteger(); //活跃数
-    private final AtomicLong total = new AtomicLong(); //服务调用总次数
+    private final AtomicInteger active = new AtomicInteger(); //活跃数（初始值为0）
+    private final AtomicLong total = new AtomicLong(); //服务调用总次数（初始值为0）
     private final AtomicInteger failed = new AtomicInteger();
     private final AtomicLong totalElapsed = new AtomicLong(); //总的耗费时间，elapsed：过去的、经过的
     private final AtomicLong failedElapsed = new AtomicLong();
