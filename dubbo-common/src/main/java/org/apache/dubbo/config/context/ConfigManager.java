@@ -45,7 +45,7 @@ import static org.apache.dubbo.config.Constants.REGISTRIES_SUFFIX;
 public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //config对象的管理，继承适配器，有选择的实现方法
 
     /**
-     * ConfigManager存储了所有dubbo的配置对象
+     * ConfigManager存储了所有dubbo的Config对象
      * 类似于一个本地的配置中心，如果要查询配置信息，访问ConfigManager获取对应的配置对象即可，任何配置对象修改了，都要刷新ConfigManager
      * <p>
      * ConfigManager：将config对象按标签名、id映射缓存起来（这里的config管理不是指apollo配置中心的管理，而是指config对象的管理）

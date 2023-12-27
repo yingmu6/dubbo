@@ -39,7 +39,7 @@ import static org.apache.dubbo.common.utils.ReflectUtils.findParameterizedTypes;
  */
 @SPI
 @FunctionalInterface
-public interface EventListener<E extends Event> extends java.util.EventListener, Prioritized { //事件监听器（是SPI接口，也是函数式接口，通过事件监听器处理事件，类似Handle处理类）
+public interface EventListener<E extends Event> extends java.util.EventListener, Prioritized { //事件监听器（是SPI接口，也是函数式接口，通过事件监听器处理事件）
     /**
      * java中EventListener：所有事件监听器接口都必须扩展的标记接口
      *

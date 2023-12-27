@@ -123,7 +123,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private static volatile DubboBootstrap instance; //缓存者启动类的实例对象，以static形式存储，便于其它类调用
+    private static volatile DubboBootstrap instance; //缓存启动类的实例对象，以static形式存储，便于其它类调用
 
     private final AtomicBoolean awaited = new AtomicBoolean(false); //是否等待
 

@@ -105,14 +105,14 @@ public class DubboNamespaceHandler extends NamespaceHandlerSupport implements Co
     @Override
     public BeanDefinition parse(Element element, ParserContext parserContext) {
         BeanDefinitionRegistry registry = parserContext.getRegistry();
-        registerAnnotationConfigProcessors(registry);
+        registerAnnotationConfigProcessors(registry); //注册注解解析器
         /**
          * @since 2.7.8
          * issue : https://github.com/apache/dubbo/issues/6275
          */
-        registerCommonBeans(registry);
-        BeanDefinition beanDefinition = super.parse(element, parserContext);
-        setSource(beanDefinition);
+        registerCommonBeans(registry); //注册具有公共功能的bean
+        BeanDefinition beanDefinition = super.parse(element, parserContext); //调用父类的parse()方法解析，父类中会找到init()设置的解析器，再调用解析器的parse()解析元素
+        setSource(beanDefinition); //设置源对象，将beanDefinition设置到BeanMetadataAttributeAccessor
         return beanDefinition;
     }
 

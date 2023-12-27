@@ -47,6 +47,16 @@ public interface Prioritized extends Comparable<Prioritized> { //比较逻辑是
     };
 
     /**
+     * 说明：
+     * 此处为啥把最大值的初始值置为Integer的最小值，把最小值的初始值置为Integer的最大值？
+     * 因为一般使用最大值、最小值的判断逻辑为：（可画数轴来分析）
+     * a）大于已知的最大值，即为新的最大值。
+     * b）小于已知的最小值，即为新的最小值。
+     *
+     * 这使得初始判断时，普通的数值（非Integer最小或最大），都可以成为最小或最大值，后面的数值就可以基于第一次判断的值做处理。
+     */
+
+    /**
      * The maximum priority（最大优先级）
      */
     int MAX_PRIORITY = Integer.MIN_VALUE;

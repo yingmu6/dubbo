@@ -89,7 +89,7 @@ public class ApplicationModel { //应用的数据模型
         return (Environment) LOADER.getExtension(Environment.NAME); //从org.apache.dubbo.common.context.FrameworkExt配置文件中找到environment对应的扩展实例
     }
 
-    public static ConfigManager getConfigManager() { //通过SPI机制，获取到ConfigManager实例（提供不同的方法，获取不同的扩展实例）
+    public static ConfigManager getConfigManager() { //获取ConfigManager实例（ConfigManager是SPI接口FrameworkExt的实现类，可以通过类型强转）
         return (ConfigManager) LOADER.getExtension(ConfigManager.NAME); //此处由于已经明确ConfigManager.NAME扩展名对应的类是ConfigManager，所以可以类型强转
     }
 

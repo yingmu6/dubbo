@@ -43,7 +43,7 @@ public interface DubboBeanUtils {
      * @see DubboLifecycleComponentApplicationListener
      * @see DubboBootstrapApplicationListener
      */
-    static void registerCommonBeans(BeanDefinitionRegistry registry) { //注册含基本功能的bean
+    static void registerCommonBeans(BeanDefinitionRegistry registry) { //注册含基本功能的bean（即为指定的类创建对象）
 
         // Since 2.5.7 Register @Reference Annotation Bean Processor as an infrastructure Bean
         registerInfrastructureBean(registry, ReferenceAnnotationBeanPostProcessor.BEAN_NAME,
