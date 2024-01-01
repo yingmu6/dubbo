@@ -118,7 +118,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
                 if (property != null) {
                     Object value = property.getValue();
                     if (value instanceof ProtocolConfig && id.equals(((ProtocolConfig) value).getName())) {
-                        definition.getPropertyValues().addPropertyValue("protocol", new RuntimeBeanReference(id));
+                        definition.getPropertyValues().addPropertyValue("protocol", new RuntimeBeanReference(id)); //关联对应的bean
                     }
                 }
             }
@@ -243,7 +243,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
                 parameters.put(name, new TypedStringValue(value, String.class));
             }
         }
-        if (parameters != null) { //设置beanDefinition的parameters属性值
+        if (parameters != null) { //对<dubbo:parameters/>配置的参数单独处理，并设置到beanDefinition的parameters属性中
             beanDefinition.getPropertyValues().addPropertyValue("parameters", parameters);
         }
         return beanDefinition;

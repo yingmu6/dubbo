@@ -38,7 +38,7 @@ public class AnnotationBeanDefinitionParser extends AbstractSingleBeanDefinition
     /**
      * parse
      * <prev>
-     * &lt;dubbo:annotation package="" /&gt;
+     * &lt;dubbo:annotation package="" /&gt; （对<dubbo:annotation/>元素进行解析）
      * </prev>
      *
      * @param element
@@ -50,7 +50,7 @@ public class AnnotationBeanDefinitionParser extends AbstractSingleBeanDefinition
 
         String packageToScan = element.getAttribute("package");
 
-        String[] packagesToScan = trimArrayElements(commaDelimitedListToStringArray(packageToScan));
+        String[] packagesToScan = trimArrayElements(commaDelimitedListToStringArray(packageToScan)); //按逗号分隔字符串，然后再去除元素的前后空格
 
         builder.addConstructorArgValue(packagesToScan);
 
