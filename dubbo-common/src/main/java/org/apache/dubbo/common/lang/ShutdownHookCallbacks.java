@@ -30,13 +30,13 @@ import static org.apache.dubbo.common.function.ThrowableAction.execute;
  *
  * @since 2.7.5
  */
-public class ShutdownHookCallbacks {
+public class ShutdownHookCallbacks { //用于维护和操作一个或多个ShutdownHookCallback
 
-    public static final ShutdownHookCallbacks INSTANCE = new ShutdownHookCallbacks();
+    public static final ShutdownHookCallbacks INSTANCE = new ShutdownHookCallbacks(); //单实例
 
-    private final List<ShutdownHookCallback> callbacks = new LinkedList<>();
+    private final List<ShutdownHookCallback> callbacks = new LinkedList<>(); //维护着停机钩子回调接口的列表
 
-    ShutdownHookCallbacks() {
+    ShutdownHookCallbacks() { //默认访问权限：同一个包下可访问
         loadCallbacks();
     }
 
@@ -60,7 +60,7 @@ public class ShutdownHookCallbacks {
         }
     }
 
-    private void loadCallbacks() {
+    private void loadCallbacks() { //通过SPI方式获取回调接口的列表
         ExtensionLoader<ShutdownHookCallback> loader =
                 ExtensionLoader.getExtensionLoader(ShutdownHookCallback.class);
         loader.getSupportedExtensionInstances().forEach(this::addCallback);

@@ -36,11 +36,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Because {@link ApplicationShutdownHooks} use {@link java.util.IdentityHashMap}
  * to store the shutdown hooks.
  */
-public class DubboShutdownHook extends Thread { //dubbo停机的钩子线程
+public class DubboShutdownHook extends Thread { //dubbo停机的钩子线程（单例模式）
 
     private static final Logger logger = LoggerFactory.getLogger(DubboShutdownHook.class);
 
-    private static final DubboShutdownHook DUBBO_SHUTDOWN_HOOK = new DubboShutdownHook("DubboShutdownHook");
+    private static final DubboShutdownHook DUBBO_SHUTDOWN_HOOK = new DubboShutdownHook("DubboShutdownHook"); //创建单实例（饿汉模式）
 
     private final ShutdownHookCallbacks callbacks = ShutdownHookCallbacks.INSTANCE;
 
@@ -88,11 +88,11 @@ public class DubboShutdownHook extends Thread { //dubbo停机的钩子线程
     /**
      * Register the ShutdownHook
      */
-    public void register() {
+    public void register() { //注册停机钩子线程
         if (registered.compareAndSet(false, true)) {
             DubboShutdownHook dubboShutdownHook = getDubboShutdownHook();
             Runtime.getRuntime().addShutdownHook(dubboShutdownHook);
-            dispatch(new DubboShutdownHookRegisteredEvent(dubboShutdownHook)); //发布钩子函数注册的事件
+            dispatch(new DubboShutdownHookRegisteredEvent(dubboShutdownHook)); //发布停机钩子线程注册的事件
         }
     }
 
