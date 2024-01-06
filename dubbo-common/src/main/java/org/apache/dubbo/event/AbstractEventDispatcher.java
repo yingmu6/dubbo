@@ -60,7 +60,7 @@ public abstract class AbstractEventDispatcher implements EventDispatcher {
             throw new NullPointerException("executor must not be null");
         }
         this.executor = executor;
-        this.loadEventListenerInstances(); //注意点：会将SPI配置的监听器加载到当前缓存中
+        this.loadEventListenerInstances(); //注意点：会将SPI配置的监听器实例加载到当前缓存中
     }
 
     @Override

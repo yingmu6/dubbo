@@ -1202,18 +1202,18 @@ public final class ReflectUtils { //JVM虚拟机中的类型描述符
      * @return non-null read-only {@link Set}
      * @since 2.7.5
      */
-    public static Set<ParameterizedType> findParameterizedTypes(Class<?> sourceClass) { //获取参数化类型的集合（参数化类型如：Collection<String>）
+    public static Set<ParameterizedType> findParameterizedTypes(Class<?> sourceClass) { //获取含有泛化参数的class集合（参数化类型如：Collection<String>）
         // Add Generic Interfaces
-        List<Type> genericTypes = new LinkedList<>(asList(sourceClass.getGenericInterfaces())); //Type:是Java中所有类型的通用超接口，getGenericInterfaces()返回当前Class直接实现的接口
+        List<Type> genericTypes = new LinkedList<>(asList(sourceClass.getGenericInterfaces())); //getGenericInterfaces()返回当前类直接实现的接口
         // Add Generic Super Class
-        genericTypes.add(sourceClass.getGenericSuperclass()); //getGenericSuperclass()返回直接实现的类
+        genericTypes.add(sourceClass.getGenericSuperclass()); //getGenericSuperclass()返回当前类直接继承的类
 
-        Set<ParameterizedType> parameterizedTypes = genericTypes.stream() //泛型处理
+        Set<ParameterizedType> parameterizedTypes = genericTypes.stream() //泛型处理（找出包含泛型参数的类）
                 .filter(type -> type instanceof ParameterizedType)// filter ParameterizedType，过滤参数话类型, Type是Java编程语言【所有类型】的公共高级接口。它们包括原始类型、参数化类型(泛型)、数组类型、类型变量和基本类型。
                 .map(type -> ParameterizedType.class.cast(type))  // cast to ParameterizedType
                 .collect(Collectors.toSet());
 
-        if (parameterizedTypes.isEmpty()) { // If not found, try to search super types recursively（递归地）
+        if (parameterizedTypes.isEmpty()) { // If not found, try to search super types recursively（递归地查找父类）
             genericTypes.stream()
                     .filter(type -> type instanceof Class)
                     .map(type -> Class.class.cast(type))

@@ -73,7 +73,7 @@ public interface EventListener<E extends Event> extends java.util.EventListener,
      * @param listener the {@link Class class} of {@link EventListener Dubbo event listener}
      * @return <code>null</code> if not found
      */
-    static Class<? extends Event> findEventType(EventListener<?> listener) { //查找事件监听器对应的事件类型
+    static Class<? extends Event> findEventType(EventListener<?> listener) { //从指定的事件监听器中找到对应的事件类型
         return findEventType(listener.getClass());
     }
 
@@ -83,11 +83,11 @@ public interface EventListener<E extends Event> extends java.util.EventListener,
      * @param listenerClass the {@link Class class} of {@link EventListener Dubbo event listener}
      * @return <code>null</code> if not found
      */
-    static Class<? extends Event> findEventType(Class<?> listenerClass) { //根据监听器Class查找对应的事件Class（就是查找 EventListener<E extends Event> 中的泛化类型）
+    static Class<? extends Event> findEventType(Class<?> listenerClass) { //查找监听器中对应的事件类型（就是查找 EventListener<E extends Event> 中的泛化类型）
         Class<? extends Event> eventType = null;
 
-        if (listenerClass != null && EventListener.class.isAssignableFrom(listenerClass)) { //isAssignableFrom判断一个类或接口是否是另一个类超类或父接口
-            eventType = findParameterizedTypes(listenerClass)
+        if (listenerClass != null && EventListener.class.isAssignableFrom(listenerClass)) { //isAssignableFrom判断当前的类或接口是否与指定类和接口相同，或者是父类和父接口
+            eventType = findParameterizedTypes(listenerClass) //获取含有泛化参数的class集合
                     .stream()
                     .map(EventListener::findEventType)
                     .filter(Objects::nonNull)
@@ -105,16 +105,16 @@ public interface EventListener<E extends Event> extends java.util.EventListener,
      * @param parameterizedType the {@link ParameterizedType} presents a class of {@link EventListener Dubbo event listener}
      * @return <code>null</code> if not found
      */
-    static Class<? extends Event> findEventType(ParameterizedType parameterizedType) { //根据参数化的类型找到事件类型
+    static Class<? extends Event> findEventType(ParameterizedType parameterizedType) { //从泛化参数中找到事件类型（举例：如parameterizedType为AbstractEventListener<EchoEvent>）
         Class<? extends Event> eventType = null;
 
-        Type rawType = parameterizedType.getRawType();
-        if ((rawType instanceof Class) && EventListener.class.isAssignableFrom((Class) rawType)) {
-            Type[] typeArguments = parameterizedType.getActualTypeArguments();
+        Type rawType = parameterizedType.getRawType(); //返回声明泛化参数的类或接口的Class，rawType为AbstractEventListener.class
+        if ((rawType instanceof Class) && EventListener.class.isAssignableFrom((Class) rawType)) { //声明泛化参数的类，需要是EventListener类型
+            Type[] typeArguments = parameterizedType.getActualTypeArguments(); //获取泛型中的实际参数，typeArguments为EchoEvent.class
             for (Type typeArgument : typeArguments) {
                 if (typeArgument instanceof Class) {
                     Class argumentClass = (Class) typeArgument;
-                    if (Event.class.isAssignableFrom(argumentClass)) { //找到事件类型
+                    if (Event.class.isAssignableFrom(argumentClass)) { //事件类型，需要是Event类型
                         eventType = argumentClass;
                         break;
                     }
