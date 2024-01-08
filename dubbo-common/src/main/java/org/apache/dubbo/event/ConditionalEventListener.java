@@ -31,5 +31,5 @@ public interface ConditionalEventListener<E extends Event> extends EventListener
      * @param event {@link Event event}
      * @return if handled, return <code>true</code>, or <code>false</code>
      */
-    boolean accept(E event); //监听器是否能处理输入的事件
+    boolean accept(E event); //判断当前监听器是否能接受指定的事件
 }

@@ -64,10 +64,10 @@ public abstract class AbstractEventDispatcher implements EventDispatcher {
     }
 
     @Override
-    public void addEventListener(EventListener<?> listener) throws NullPointerException, IllegalArgumentException { //将事件与监听器列表添加到本地缓存listenersCache中
+    public void addEventListener(EventListener<?> listener) throws NullPointerException, IllegalArgumentException { //将监听器添加到本地缓存listenersCache中
         Listenable.assertListener(listener);
-        doInListener(listener, listeners -> { //将事件监听器添加到监听器列表中（第2个参数是按函数式接口传递的）
-            addIfAbsent(listeners, listener); //把listener加入到集合中（此处相当于Consumer中的accept方法，定义了函数式接口中的操作，其它变量的值如listener会先保存起来，函数式接口回调时能使用）
+        doInListener(listener, listeners -> { //将事件监听器添加到监听器列表中（会判断监听器是否存在集合中，不存在才添加）
+            addIfAbsent(listeners, listener);
         });
     }
 
@@ -78,7 +78,7 @@ public abstract class AbstractEventDispatcher implements EventDispatcher {
     }
 
     @Override
-    public List<EventListener<?>> getAllEventListeners() {
+    public List<EventListener<?>> getAllEventListeners() { //获取缓存中的所有事件监听器
         List<EventListener<?>> listeners = new LinkedList<>();
 
         sortedListeners().forEach(listener -> {
@@ -89,7 +89,7 @@ public abstract class AbstractEventDispatcher implements EventDispatcher {
     }
 
     protected Stream<EventListener> sortedListeners() {
-        return sortedListeners(e -> true);
+        return sortedListeners(e -> true); //过滤的Predicate始终为true，即保留所有列表中的元素
     }
 
     // 筛选出缓存中的事件监听器，并进行排序
@@ -110,17 +110,17 @@ public abstract class AbstractEventDispatcher implements EventDispatcher {
     }
 
     @Override
-    public void dispatch(Event event) { //进行事件派发（从本地缓存listenersCache中查找到事件与监听器列表，并依次调用监听器进行事件处理）
+    public void dispatch(Event event) { //进行事件派发（从本地缓存listenersCache中找到符合条件的监听器列表，并依次调用监听器进行事件派发）
 
         Executor executor = getExecutor();
 
         // execute in sequential or parallel execution model
-        executor.execute(() -> { //将事件处理使用线程执行
+        executor.execute(() -> { //使用线程池进行事件处理
             sortedListeners(entry -> entry.getKey().isAssignableFrom(event.getClass())) //过滤出符合条件的监听器列表，并进行排序（把缓存listenersCache进行过滤，只获取事件类型Event对应缓存值，最后将监听器列表排序）
-                    .forEach(listener -> { //todo @csy 此处不按具体事件派发吗？还是一个事件触发，其它事件的监听器也会被触发吗？
-                        if (listener instanceof ConditionalEventListener) { //ConditionalEventListener与普通EventListener的执行方法不一样，使用的是accept()方法，而不是onEvent()，所以特殊判断下
+                    .forEach(listener -> {
+                        if (listener instanceof ConditionalEventListener) { //ConditionalEventListener监听器，先判断监听器是否能接受指定的事件
                             ConditionalEventListener predicateEventListener = (ConditionalEventListener) listener;
-                            if (!predicateEventListener.accept(event)) { // No accept（判断事件是否能被当前监听器处理）
+                            if (!predicateEventListener.accept(event)) { // No accept（若监听器不能接受指定事件，则不进行后续事件派发）
                                 return;
                             }
                         }
@@ -138,13 +138,13 @@ public abstract class AbstractEventDispatcher implements EventDispatcher {
         return executor;
     }
 
-    protected void doInListener(EventListener<?> listener, Consumer<Collection<EventListener>> consumer) { //添加监听器（Consumer使用：函数接口传递，封装好业务逻辑传递，调用accept()方法时，回调逻辑）
+    protected void doInListener(EventListener<?> listener, Consumer<Collection<EventListener>> consumer) { //将监听器添加到缓存中（Consumer使用：函数接口传递，将封装好业务逻辑传递，具体逻辑要看方法调用的地方）
         Class<? extends Event> eventType = findEventType(listener); //找到监听器对应的事件类型
         if (eventType != null) {
-            synchronized (mutex) { //加锁处理
-                List<EventListener> listeners = listenersCache.computeIfAbsent(eventType, e -> new LinkedList<>()); //查找到指定事件类型对应的监听器列表
+            synchronized (mutex) { //加锁处理（加锁范围：为括号中的mutex对象）
+                List<EventListener> listeners = listenersCache.computeIfAbsent(eventType, e -> new LinkedList<>());
                 // consume
-                consumer.accept(listeners); //将监听器listener加入到listeners监听器列表中
+                consumer.accept(listeners); //处理监听器列表（此处调用时，会执行Consumer逻辑）
                 // sort
                 sort(listeners);
             }

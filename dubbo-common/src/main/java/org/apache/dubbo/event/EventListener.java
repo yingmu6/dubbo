@@ -87,7 +87,7 @@ public interface EventListener<E extends Event> extends java.util.EventListener,
         Class<? extends Event> eventType = null;
 
         if (listenerClass != null && EventListener.class.isAssignableFrom(listenerClass)) { //isAssignableFrom判断当前的类或接口是否与指定类和接口相同，或者是父类和父接口
-            eventType = findParameterizedTypes(listenerClass) //获取含有泛化参数的class集合
+            eventType = findParameterizedTypes(listenerClass) //获取监听器Class含有泛化参数的Class集合
                     .stream()
                     .map(EventListener::findEventType)
                     .filter(Objects::nonNull)

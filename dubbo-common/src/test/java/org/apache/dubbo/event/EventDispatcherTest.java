@@ -65,12 +65,7 @@ public class EventDispatcherTest {
             }
         });
 
-//        defaultInstance.addEventListener((event) -> { //@csy 此种使用lambda的写法有错吗，维护添加不了监听器？解答：写法是没有问题的，只是后续会查找EventListener的泛型参数作为缓存的Map，用lambda表示泛型类型会认为是Object，不是Event，所以添加不了监听器
-//                System.out.println("收到事件" + event.getSource());
-//        });
-
         assertTrue(!defaultInstance.getAllEventListeners().isEmpty());
-
         defaultInstance.dispatch(new EchoEvent("hhh")); //进行事件派发时，会调用事件关联监听器的onEvent()方法
     }
 

@@ -33,23 +33,23 @@ public class ConditionalEventListenerTest {
 
     @BeforeEach
     public void init() {
-        eventDispatcher.removeAllEventListeners();
+        eventDispatcher.removeAllEventListeners(); //测试前，先把缓存中事件监听器清除，避免有干扰
     }
 
     @Test
-    public void testOnEvent() { //事件测试
+    public void testOnEvent() { //条件事件监听器测试
 
         OnlyHelloWorldEventListener listener = new OnlyHelloWorldEventListener();
 
-        eventDispatcher.addEventListener(listener);
+        eventDispatcher.addEventListener(listener); //先将监听器添加到缓存中
 
-        eventDispatcher.dispatch(new EchoEvent("1"));
+        eventDispatcher.dispatch(new EchoEvent("1")); //由于监听器OnlyHelloWorldEventListener是ConditionalEventListener类型，所有会先执行accept()方法，满足条件才进行onEvent()事件处理
 
-        assertNull(listener.getSource());
+        assertNull(listener.getSource()); //事件对象值"1"，不满足accept()中的条件，所以不会进行事件处理
 
         eventDispatcher.dispatch(new EchoEvent("Hello,World"));
 
-        assertEquals("Hello,World", listener.getSource());
+        assertEquals("Hello,World", listener.getSource()); //事件对象值"Hello,World"满足条件，所以就会执行监听器的onEvent()方法
 
         // fix EventDispatcherTest.testDefaultMethods may contain OnlyHelloWorldEventListener
         // ( ConditionalEventListenerTest and EventDispatcherTest are running together in one suite case )
@@ -66,8 +66,8 @@ public class ConditionalEventListenerTest {
         }
 
         @Override
-        public void onEvent(EchoEvent event) {
-            source = (String) event.getSource();
+        public void onEvent(EchoEvent event) { //进行事件处理（处理逻辑根据具体业务场景而定）
+            source = (String) event.getSource(); //将事件对象值存储起来
         }
 
         public String getSource() {
