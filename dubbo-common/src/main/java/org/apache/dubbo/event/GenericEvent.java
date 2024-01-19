@@ -22,7 +22,7 @@ package org.apache.dubbo.event;
  * @param <S> the type of event source
  * @since 2.7.5
  */
-public class GenericEvent<S> extends Event {
+public class GenericEvent<S> extends Event { //泛型事件（即事件对象为泛型）
 
     public GenericEvent(S source) {
         super(source);

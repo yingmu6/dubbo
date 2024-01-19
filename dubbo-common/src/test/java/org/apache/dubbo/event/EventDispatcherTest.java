@@ -72,16 +72,7 @@ public class EventDispatcherTest {
     @Test
     public void testCustomEventListener() {
         assertEquals(DIRECT_EXECUTOR, defaultInstance.getExecutor());
-
-//        defaultInstance.addEventListener(new CustomEventListener<CustomEvent>() {
-//            @Override
-//            public void onEvent(CustomEvent event) {
-//                System.out.println("自定义事件监听器，收到事件" + event.getSource()); //todo @csy 此处会报cannot find symbol，找不到 event.getSource()
-//            }
-//        });
-
         assertTrue(!defaultInstance.getAllEventListeners().isEmpty());
-//        defaultInstance.dispatch(new CustomEvent("haha"));// todo @csy 此处为啥 会报实参和形参参数不匹配 “reason: actual and formal argument lists differ in length”
         defaultInstance.dispatch(new EchoEvent("haha"));
     }
 }
