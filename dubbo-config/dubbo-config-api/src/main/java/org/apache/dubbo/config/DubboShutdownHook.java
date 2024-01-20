@@ -65,13 +65,13 @@ public class DubboShutdownHook extends Thread { //dubbo停机的钩子线程（�
     }
 
     @Override
-    public void run() {
+    public void run() { //钩子线程的执行逻辑（做停机时的清除处理）
         if (logger.isInfoEnabled()) {
             logger.info("Run shutdown hook now.");
         }
 
-        callback();
-        doDestroy();
+        callback(); //执行所有回调接口的逻辑
+        doDestroy(); //派发销毁事件
     }
 
     /**
