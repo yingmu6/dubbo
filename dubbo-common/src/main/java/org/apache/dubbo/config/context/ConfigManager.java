@@ -443,7 +443,7 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
         });
     }
 
-    private <V> V read(Callable<V> callable) { //开启线程读取配置，并在处理时加锁
+    private <V> V read(Callable<V> callable) { //使用多线程读取配置，并在处理时加锁
         Lock readLock = lock.readLock();
         V value = null;
         try {

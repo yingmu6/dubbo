@@ -34,7 +34,7 @@ public class GenericEventListenerTest {
     private MyGenericEventListener listener;
 
     @BeforeEach
-    public void init() {
+    public void init() { //初始化
         this.listener = new MyGenericEventListener();
         this.eventDispatcher = EventDispatcher.getDefaultExtension();
         this.eventDispatcher.addEventListener(listener);

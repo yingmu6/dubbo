@@ -50,7 +50,7 @@ public abstract class GenericEventListener implements EventListener<Event> { //�
 
     private final Method onEventMethod; //onEvent(Event)方法对应的Method
 
-    private final Map<Class<?>, Set<Method>> handleEventMethods; //维护着事件与事件触发的方法的关系
+    private final Map<Class<?>, Set<Method>> handleEventMethods; //维护着事件与事件触发的方法的映射
 
     protected GenericEventListener() {
         this.onEventMethod = findOnEventMethod();
@@ -58,13 +58,13 @@ public abstract class GenericEventListener implements EventListener<Event> { //�
     }
 
     private Method findOnEventMethod() { //查找onEvent方法对应的Method
-        return execute(getClass(), listenerClass -> listenerClass.getMethod("onEvent", Event.class));
+        return execute(getClass(), listenerClass -> listenerClass.getMethod("onEvent", Event.class)); //获取当前对象中的onEvent的Method
     }
 
     private Map<Class<?>, Set<Method>> findHandleEventMethods() {
         // Event class for key, the eventMethods' Set as value
         Map<Class<?>, Set<Method>> eventMethods = new HashMap<>();
-        of(getClass().getMethods())
+        of(getClass().getMethods()) //遍历当前类中的所有方法（包含声明的和继承的所有方法）
                 .filter(this::isHandleEventMethod)
                 .forEach(method -> {
                     Class<?> paramType = method.getParameterTypes()[0];
@@ -83,7 +83,7 @@ public abstract class GenericEventListener implements EventListener<Event> { //�
         });
     }
 
-    /**
+     /**
      * The {@link Event event} handle methods must meet（遇见） following conditions:
      * （事件处理方法必须满足的条件）
      * <ul>
@@ -99,7 +99,7 @@ public abstract class GenericEventListener implements EventListener<Event> { //�
      */
     private boolean isHandleEventMethod(Method method) { //判断是否是处理事件的方法
 
-        if (onEventMethod.equals(method)) { // not {@link #onEvent(Event)} method
+        if (onEventMethod.equals(method)) { // not {@link #onEvent(Event)} method （不包含onEvent方法）
             return false;
         }
 

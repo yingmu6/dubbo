@@ -188,7 +188,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
         environment = ApplicationModel.getEnvironment();     //获取环境信息
 
         DubboShutdownHook.getDubboShutdownHook().register();
-        ShutdownHookCallbacks.INSTANCE.addCallback(new ShutdownHookCallback() { //注册钩子函数，当容器停止时，对DubboBootstrap进行销毁处理
+        ShutdownHookCallbacks.INSTANCE.addCallback(new ShutdownHookCallback() { //添加容器停止时的回调，用于清理
             @Override
             public void callback() throws Throwable {
                 DubboBootstrap.this.destroy();
@@ -502,7 +502,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
      */
     public void initialize() { //初始化
         if (!initialized.compareAndSet(false, true)) { //compareAndSet返回false，表明实际值与预期值不相等
-            return; //此处initialized为true时进入，表明是已经初始化过来，就不在初始化
+            return; //此处initialized为true时进入，表明是已经初始化过来，就不在初始化（由于DubboBootstrap是单实例，实例中的成员变量可被共享，要确保多线程时的线程安全）
         }
 
         ApplicationModel.initFrameworkExts(); //初始化框架配置
@@ -511,10 +511,10 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
 
         loadRemoteConfigs(); //加载远程配置（包含RegistryConfig、ProtocolConfig）、并写到ConfigManager对应的缓存中
 
-        checkGlobalConfigs();
+        checkGlobalConfigs(); //检查总体的Config配置的合法性
 
         // @since 2.7.8
-        startMetadataCenter();
+        startMetadataCenter(); //开启元数据中心
 
         initMetadataService(); //创建MetadataService实例（通过SPI接口WritableMetadataService的实例创建）
 
@@ -527,7 +527,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
         }
     }
 
-    private void checkGlobalConfigs() { //检查总体的配置
+    private void checkGlobalConfigs() { //检查总体的Config配置的合法性
         // check Application
         ConfigValidationUtils.validateApplicationConfig(getApplication());
 
@@ -1322,7 +1322,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
     public ApplicationConfig getApplication() {
         ApplicationConfig application = configManager
                 .getApplication()
-                .orElseGet(() -> { //若缓存中，没有application配置的值，则创建应用配置对象，并返回。此处没有使用 创建一个临时对象，再设置的方式
+                .orElseGet(() -> { //若缓存中，没有配置ApplicationConfig对象，则创建并设置到缓存中
                     ApplicationConfig applicationConfig = new ApplicationConfig();
                     configManager.setApplication(applicationConfig);
                     return applicationConfig; //Supplier函数式接口的方法为 T get(), 即为不接收参数，返回对应的值，对应lambda表达式为 ()->{return T;}
