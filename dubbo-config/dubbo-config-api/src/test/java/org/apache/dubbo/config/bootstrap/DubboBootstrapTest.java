@@ -56,7 +56,7 @@ public class DubboBootstrapTest {
     @BeforeAll
     public static void setUp(@TempDir Path folder) { //@TempDir junit提供的临时地址
         dubboProperties = folder.resolve(CommonConstants.DUBBO_PROPERTIES_KEY).toFile(); //获取dubbo属性文件对应的File
-        System.setProperty(CommonConstants.DUBBO_PROPERTIES_KEY, dubboProperties.getAbsolutePath());
+        System.setProperty(CommonConstants.DUBBO_PROPERTIES_KEY, dubboProperties.getAbsolutePath()); //将属性文件的绝对路径设置到系统属性中
     }
 
     @AfterEach
@@ -80,8 +80,8 @@ public class DubboBootstrapTest {
             System.clearProperty(SHUTDOWN_WAIT_KEY);
             System.clearProperty(SHUTDOWN_WAIT_SECONDS_KEY); //清理属性值
 
-            writeDubboProperties(SHUTDOWN_WAIT_KEY, "105"); //将属性写到属性文件中
-            ConfigValidationUtils.validateApplicationConfig(new ApplicationConfig("demo")); //在校验ApplicationConfig的属性值时，会兼容的把系统停机时间写到系统属性中
+            writeDubboProperties(SHUTDOWN_WAIT_KEY, "105"); //将属性写到属性文件中（setUp方法中把文件路径设置到系统属性中）
+            ConfigValidationUtils.validateApplicationConfig(new ApplicationConfig("demo")); //在校验ApplicationConfig的属性值时，会对停机时间进行兼容处理
             Assertions.assertEquals("105", System.getProperty(SHUTDOWN_WAIT_KEY));
 
             System.clearProperty(SHUTDOWN_WAIT_KEY);
@@ -110,7 +110,7 @@ public class DubboBootstrapTest {
         Assertions.assertEquals("registry", url.getProtocol());
         Assertions.assertEquals("addr1:9090", url.getAddress());
         Assertions.assertEquals(RegistryService.class.getName(), url.getPath());
-        Assertions.assertTrue(url.getParameters().containsKey("timestamp"));
+        Assertions.assertTrue(url.getParameters().containsKey("timestamp")); //运行时的参数，是在ConfigValidationUtils#loadRegistries方法中处理的
         Assertions.assertTrue(url.getParameters().containsKey("pid"));
         Assertions.assertTrue(url.getParameters().containsKey("registry"));
         Assertions.assertTrue(url.getParameters().containsKey("dubbo"));
@@ -135,7 +135,7 @@ public class DubboBootstrapTest {
     private void writeDubboProperties(String key, String value) {
         OutputStream os = null;
         try {
-            os = new BufferedOutputStream(new FileOutputStream(dubboProperties));
+            os = new BufferedOutputStream(new FileOutputStream(dubboProperties)); //构建指定文件对应的输出流
             Properties properties = new Properties();
             properties.put(key, value);
             properties.store(os, ""); //将属性值写到输出流对应的属性文件中

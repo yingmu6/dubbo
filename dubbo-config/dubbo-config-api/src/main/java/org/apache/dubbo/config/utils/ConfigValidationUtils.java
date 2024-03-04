@@ -117,33 +117,33 @@ public class ConfigValidationUtils {
     private static final Pattern PATTERN_KEY = Pattern.compile("[*,\\-._0-9a-zA-Z]+");
 
 
-    public static List<URL> loadRegistries(AbstractInterfaceConfig interfaceConfig, boolean provider) { //加载注册实例，并返回对应的URL列表
+    public static List<URL> loadRegistries(AbstractInterfaceConfig interfaceConfig, boolean provider) { //加载RegistryConfig列表，构建对应的注册中心URL列表
         // check && override if necessary
         List<URL> registryList = new ArrayList<URL>();
         ApplicationConfig application = interfaceConfig.getApplication(); //找到所属的应用信息
-        List<RegistryConfig> registries = interfaceConfig.getRegistries(); //获取注册实例列表
+        List<RegistryConfig> registries = interfaceConfig.getRegistries(); //获取RegistryConfig列表
         if (CollectionUtils.isNotEmpty(registries)) {
-            for (RegistryConfig config : registries) {
+            for (RegistryConfig config : registries) { //遍历RegistryConfig列表，依次构建对应的注册URL列表（URL如：registry://xxx）
                 String address = config.getAddress();
                 if (StringUtils.isEmpty(address)) {
                     address = ANYHOST_VALUE;
                 }
-                if (!RegistryConfig.NO_AVAILABLE.equalsIgnoreCase(address)) { //address值为"N/A"，表明不可使用
+                if (!RegistryConfig.NO_AVAILABLE.equalsIgnoreCase(address)) { //注册地址可用时的处理（address值为"N/A"，表明不可使用）
                     Map<String, String> map = new HashMap<String, String>();
                     AbstractConfig.appendParameters(map, application); //将ApplicationConfig中的属性值，设置到参数Map中
                     AbstractConfig.appendParameters(map, config); //将RegistryConfig中的属性值，设置到参数Map中
                     map.put(PATH_KEY, RegistryService.class.getName()); //path对应接口名，如：path -> org.apache.dubbo.registry.RegistryService
-                    AbstractInterfaceConfig.appendRuntimeParameters(map); //在指定的Map中添加运行相关参数
+                    AbstractInterfaceConfig.appendRuntimeParameters(map); //在指定的Map中添加运行时的相关参数
                     if (!map.containsKey(PROTOCOL_KEY)) { //未指定协议时，默认设置为dubbo协议
                         map.put(PROTOCOL_KEY, DUBBO_PROTOCOL);
                     }
-                    List<URL> urls = UrlUtils.parseURLs(address, map); //构建注册中心对应的URL实例
+                    List<URL> urls = UrlUtils.parseURLs(address, map); //构建注册中心对应的URL实例，URL内容如：dubbo://addr1:9090/org.apache.dubbo.registry.RegistryService?application=testLoadRegistries&dubbo=2.0.2&pid=13350&timestamp=1709539929135
 
                     for (URL url : urls) {
 
                         url = URLBuilder.from(url)
                                 .addParameter(REGISTRY_KEY, url.getProtocol())
-                                .setProtocol(extractRegistryType(url)) //提取注册类型："service-discovery-registry"或"registry" （设置注册协议名，如registry://xxx）
+                                .setProtocol(extractRegistryType(url)) //提取注册类型："service-discovery-registry"或"registry" （设置注册协议名，如registry://xxx，此处将dubbo://xxx协议更改为registry）
                                 .build();
                         if ((provider && url.getParameter(REGISTER_KEY, true))
                                 || (!provider && url.getParameter(SUBSCRIBE_KEY, true))) {
@@ -179,7 +179,7 @@ public class ConfigValidationUtils {
         if (sysaddress != null && sysaddress.length() > 0) {
             address = sysaddress;
         } else if (monitor != null) {
-            address = monitor.getAddress(); //取监控配置的地址
+            address = monitor.getAddress(); //取配置的地址
         }
         if (ConfigUtils.isNotEmpty(address)) {
             if (!map.containsKey(PROTOCOL_KEY)) {
@@ -316,7 +316,7 @@ public class ConfigValidationUtils {
         }
     }
 
-    public static void validateApplicationConfig(ApplicationConfig config) { //校验应用配置值（会做兼容，将停机等待时间写入系统属性中）
+    public static void validateApplicationConfig(ApplicationConfig config) { //校验ApplicationConfig（会做兼容，将停机等待时间写入系统属性中）
         if (config == null) {
             return;
         }
@@ -329,7 +329,7 @@ public class ConfigValidationUtils {
         // backward compatibility（向后兼容）
         String wait = ConfigUtils.getProperty(SHUTDOWN_WAIT_KEY);
         if (wait != null && wait.trim().length() > 0) {
-            System.setProperty(SHUTDOWN_WAIT_KEY, wait.trim()); //会将停机等待时间，设置到系统属性中
+            System.setProperty(SHUTDOWN_WAIT_KEY, wait.trim()); //将停机等待时间设置到系统属性中
         } else {
             wait = ConfigUtils.getProperty(SHUTDOWN_WAIT_SECONDS_KEY);
             if (wait != null && wait.trim().length() > 0) {

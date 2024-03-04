@@ -464,9 +464,9 @@ public abstract class AbstractConfig implements Serializable {
         try {
             CompositeConfiguration compositeConfiguration = env.getPrefixedConfiguration(this); //获取带有前缀的合成配置对象的实例（包含多种配置源对象的实例）
             // loop methods, get override value and set the new value back to method
-            Method[] methods = getClass().getMethods();
+            Method[] methods = getClass().getMethods(); //获取Config具体实例的所有Method
             for (Method method : methods) { //遍历当前配置对象的方法，从合成的配置实例中获取值，通过set()方法或setParameters()方法设置到XxxConfig对象中
-                if (MethodUtils.isSetter(method)) { //是否是setXXX()方法
+                if (MethodUtils.isSetter(method)) { //set方法处理
                     try {
                         String value = StringUtils.trim(compositeConfiguration.getString(extractPropertyName(getClass(), method))); //从配置源获取属性对应的值
                         // isTypeMatch() is called to avoid duplicate and incorrect update, for example, we have two 'setGeneric' methods in ReferenceConfig.
@@ -478,7 +478,7 @@ public abstract class AbstractConfig implements Serializable {
                                 this.getClass().getSimpleName() +
                                 ", please make sure every property has getter/setter method provided.");
                     }
-                } else if (isParametersSetter(method)) { //是否是setParameters()方法
+                } else if (isParametersSetter(method)) { //setParameters方法处理
                     String value = StringUtils.trim(compositeConfiguration.getString(extractPropertyName(getClass(), method))); //value的格式如："[{key1:value1},{key2:value2}...]"
                     if (StringUtils.isNotEmpty(value)) {
                         Map<String, String> map = invokeGetParameters(getClass(), this); //获取Config对象中getParameters()方法的返回值

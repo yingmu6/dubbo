@@ -119,7 +119,7 @@ public class ConfigUtils {
     }
 
     public static String replaceProperty(String expression, Map<String, String> params) {
-        if (expression == null || expression.length() == 0 || expression.indexOf('$') < 0) {
+        if (expression == null || expression.length() == 0 || expression.indexOf('$') < 0) { //要包含'$'，才做后续的替换操作
             return expression;
         }
         Matcher matcher = VARIABLE_PATTERN.matcher(expression);
@@ -150,7 +150,7 @@ public class ConfigUtils {
                             path = CommonConstants.DEFAULT_DUBBO_PROPERTIES; //3）若都没有找到，则从默认的属性文件dubbo.properties中去查找
                         }
                     }
-                    PROPERTIES = ConfigUtils.loadProperties(path, false, true);
+                    PROPERTIES = ConfigUtils.loadProperties(path, false, true); //加载指定路径的文件，生成Properties对象
                 }
             }
         }

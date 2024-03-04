@@ -163,7 +163,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig { //A
      * Check whether the registry config is exists, and then conversion（转换） it to {@link RegistryConfig}
      */
     public void checkRegistry() {
-        convertRegistryIdsToRegistries(); //将注册id转换为注册实例
+        convertRegistryIdsToRegistries(); //将注册id转换为RegistryConfig列表
 
         for (RegistryConfig registryConfig : registries) {
             if (!registryConfig.isValid()) {
@@ -255,12 +255,12 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig { //A
         }
     }
 
-    private void convertRegistryIdsToRegistries() { //通过注册id构建注册实例
+    private void convertRegistryIdsToRegistries() { //通过注册id列表构建RegistryConfig列表
         computeValidRegistryIds(); //计算并设置有效的registryId列表（编程风格，很多方法没有直接返回值，而是直接处理属性值）
         if (StringUtils.isEmpty(registryIds)) {
             if (CollectionUtils.isEmpty(registries)) { //若注册id列表和注册实例都为空，则取默认注册实例
                 List<RegistryConfig> registryConfigs = ApplicationModel.getConfigManager().getDefaultRegistries();
-                if (registryConfigs.isEmpty()) {
+                if (registryConfigs.isEmpty()) { //若没有默认的RegistryConfig，则new一个对象
                     registryConfigs = new ArrayList<>();
                     RegistryConfig registryConfig = new RegistryConfig();
                     registryConfig.refresh(); //刷新RegistryConfig的属性值（从各种配置源获取属性值）
@@ -530,9 +530,9 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig { //A
     @Deprecated
     public void setMonitor(MonitorConfig monitor) {
         this.monitor = monitor;
-        if (monitor != null) {
+        if (monitor != null) { //将MonitorConfig添加到ConfigManager中的缓存里面
             ConfigManager configManager = ApplicationModel.getConfigManager();
-            configManager.getMonitor().orElseGet(() -> { //从缓存中获取MonitorConfig，若缓存中没有则对应设置
+            configManager.getMonitor().orElseGet(() -> {
                 configManager.setMonitor(monitor);
                 return monitor;
             });

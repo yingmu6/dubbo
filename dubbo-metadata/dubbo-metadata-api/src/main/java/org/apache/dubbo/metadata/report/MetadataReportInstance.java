@@ -34,7 +34,7 @@ public class MetadataReportInstance { //该类的用途是？解：用来保存M
 
     private static MetadataReport metadataReport;
 
-    public static void init(URL metadataReportURL) {
+    public static void init(URL metadataReportURL) { //使用MetadataReportFactory初始化MetadataReport实例
         if (init.get()) { //若已经初始化，则不再初始化操作
             return;
         }

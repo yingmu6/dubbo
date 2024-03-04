@@ -263,7 +263,7 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
         return ofNullable(getConfig(getTagName(RegistryConfig.class), id));
     }
 
-    public List<RegistryConfig> getDefaultRegistries() { //先获取标签registry对应缓存map值，然后再获取配置config列表
+    public List<RegistryConfig> getDefaultRegistries() {
         return getDefaultConfigs(getConfigsMap(getTagName(RegistryConfig.class)));
     }
 
@@ -324,7 +324,7 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
         }).collect(Collectors.toSet());
     }
 
-    public void refreshAll() {
+    public void refreshAll() { //刷新所有的Config
         write(() -> { //构建线程体run()的执行内容
             // refresh all configs here,
             getApplication().ifPresent(ApplicationConfig::refresh);
@@ -399,13 +399,13 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
     }
 
     protected <C extends AbstractConfig> C getConfig(String configType, String id) {
-        return read(() -> {
+        return read(() -> { //传入线程的执行体（使用多线程从缓存中读取Config实例）
             Map<String, C> configsMap = (Map) configsCache.getOrDefault(configType, emptyMap());
             return configsMap.get(id);
         });
     }
 
-    protected <C extends AbstractConfig> C getConfig(String configType) throws IllegalStateException {
+    protected <C extends AbstractConfig> C getConfig(String configType) throws IllegalStateException { //通过标签名从缓存中找到Config实例
         return read(() -> {
             Map<String, C> configsMap = (Map) configsCache.getOrDefault(configType, emptyMap()); //获取指定配置标签对应的缓存值，如"application"对应的值
             int size = configsMap.size();
@@ -444,11 +444,11 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
     }
 
     private <V> V read(Callable<V> callable) { //使用多线程读取配置，并在处理时加锁
-        Lock readLock = lock.readLock();
+        Lock readLock = lock.readLock(); //使用读锁（读读不互斥）
         V value = null;
         try {
             readLock.lock(); //加锁
-            value = callable.call(); //对执行的过程进行加锁
+            value = callable.call(); //执行具体的逻辑
         } catch (Throwable e) {
             throw new RuntimeException(e);
         } finally {

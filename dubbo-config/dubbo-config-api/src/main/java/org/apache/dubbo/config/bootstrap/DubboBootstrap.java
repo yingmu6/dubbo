@@ -585,9 +585,9 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
         ConfigValidationUtils.validateSslConfig(getSsl());
     }
 
-    private void startConfigCenter() { //启动配置中心
+    private void startConfigCenter() { //启动配置中心（将配置源获取的值设置到Config中）
 
-        useRegistryAsConfigCenterIfNecessary();
+        useRegistryAsConfigCenterIfNecessary(); //使用注册中心作为配置中心（未指定配置中心时）
 
         Collection<ConfigCenterConfig> configCenters = configManager.getConfigCenters(); //获取缓存中的配置中心Config对象
 
@@ -613,7 +613,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
             }
             environment.setDynamicConfiguration(compositeDynamicConfiguration); //将合成的配置中心Config对象设置到Environment对象中
         }
-        configManager.refreshAll(); //刷新所有配置
+        configManager.refreshAll(); //刷新所有配置Config
     }
 
     private void startMetadataCenter() { //启动元数据中心
@@ -632,7 +632,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
             return;
         }
         MetadataReportConfig metadataReportConfig = metadataReportConfigs.iterator().next();
-        ConfigValidationUtils.validateMetadataConfig(metadataReportConfig); //取其中一个实例校验（元数据中心只使用一个，注册中心可以有多个）
+        ConfigValidationUtils.validateMetadataConfig(metadataReportConfig); //元数据中心的校验（目前校验逻辑为空，预留着的）
         if (!metadataReportConfig.isValid()) {
             return;
         }
@@ -695,7 +695,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
         return cc;
     }
 
-    private void useRegistryAsMetadataCenterIfNecessary() {
+    private void useRegistryAsMetadataCenterIfNecessary() { //检查是否配置了元数据中心，若没配置，则使用注册中心的配置作为元数据中心的配置
 
         Collection<MetadataReportConfig> metadataConfigs = configManager.getMetadataConfigs();
 
@@ -706,9 +706,9 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
         configManager
                 .getDefaultRegistries()
                 .stream()
-                .filter(this::isUsedRegistryAsMetadataCenter) //使用注册中心作为元数据中心
+                .filter(this::isUsedRegistryAsMetadataCenter) //使用注册中心作为元数据中心（未配置MetadataConfig时）
                 .map(this::registryAsMetadataCenter)
-                .forEach(configManager::addMetadataReport);
+                .forEach(configManager::addMetadataReport); //把MetadataConfig添加到ConfigManager的缓存中
 
     }
 
@@ -767,7 +767,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
         return false;
     }
 
-    private MetadataReportConfig registryAsMetadataCenter(RegistryConfig registryConfig) {
+    private MetadataReportConfig registryAsMetadataCenter(RegistryConfig registryConfig) { //把注册中心的配置作为元数据中心的配置
         String protocol = registryConfig.getProtocol();
         Integer port = registryConfig.getPort();
         String id = "metadata-center-" + protocol + "-" + port;
