@@ -31,7 +31,7 @@ import java.util.Arrays;
  *
  * @since 2.7.5
  */
-public class DubboServiceProviderBootstrap {
+public class DubboServiceProviderBootstrap { //DubboBootstrap功能测试
 
     public static void main(String[] args) {
         multipleRegistries();
@@ -70,13 +70,13 @@ public class DubboServiceProviderBootstrap {
 //                .registry("zookeeper", builder -> builder.address("zookeeper://127.0.0.1:2181?registry.type=service"))
                 // Nacos
 //                .registry("zookeeper", builder -> builder.address("nacos://127.0.0.1:8848?registry.type=service"))
-                .registries(Arrays.asList(interfaceRegistry, serviceRegistry))
+                .registries(Arrays.asList(interfaceRegistry, serviceRegistry)) //暴露的服务若不是injvm服务，则会检查是否有注册中心配置，也就是非本地服务时，注册中心时必须的
 //                .registry(RegistryBuilder.newBuilder().address("consul://127.0.0.1:8500?registry.type=service").build())
                 .protocol(builder -> builder.port(-1).name("dubbo"))
                 .metadataReport(new MetadataReportConfig("zookeeper://127.0.0.1:2181"))
-                .service(echoService)
+                .service(echoService) //设置暴露的服务
                 .service(userService)
-                .start()
+                .start() //DubboBootstrap启动时，会初始化配置以及暴露服务
                 .await();
     }
 

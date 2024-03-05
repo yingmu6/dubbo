@@ -139,11 +139,11 @@ public class ApplicationConfig extends AbstractConfig {
 
     /**
      * Metadata type, local or remote, if choose remote, you need to further specify metadata center.
-     * （选择remote的话，需要指定元数据中心）
+     * （如果metadataType = remote的话，需要指定元数据中心）
      */
     private String metadataType;
 
-    private Boolean registerConsumer;
+    private Boolean registerConsumer; //是否注册消费者信息
 
     private String repository;
 

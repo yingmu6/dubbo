@@ -35,7 +35,7 @@ import java.util.concurrent.ConcurrentMap;
  * {@link ReferenceConfigBase} is a heavy Object（比较重的对象）, it's necessary to cache these object
  * for the framework which create {@link ReferenceConfigBase} frequently.（ReferenceConfigBase比较重，有必要进行缓存）
  * <p>
- * You can implement and use your own {@link ReferenceConfigBase} cache if you need use complicate strategy.
+ * You can implement and use your own {@link ReferenceConfigBase} cache if you need use complicate（使复杂） strategy.
  */
 public class ReferenceConfigCache {
     public static final String DEFAULT_NAME = "_DEFAULT_";

@@ -26,7 +26,7 @@ import java.util.Map;
  *
  * @since 2.7.5
  */
-public interface ServiceInstance extends Serializable { //服务实例，对注册的内容按服务进行建模，以前是直接存url值
+public interface ServiceInstance extends Serializable { //服务实例，对注册的url按服务进行建模，以前是直接存url值
 
     /**
      * The id of the registered service instance.

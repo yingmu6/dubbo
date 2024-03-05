@@ -123,7 +123,7 @@ public class DubboShutdownHook extends Thread { //dubbo停机的钩子线程（�
         return registered.get();
     }
 
-    public static void destroyAll() { //销毁所有内容
+    public static void destroyAll() { //销毁所有内容（包含注册和协议信息）
         if (destroyed.compareAndSet(false, true)) {
             AbstractRegistryFactory.destroyAll();
             destroyProtocols();

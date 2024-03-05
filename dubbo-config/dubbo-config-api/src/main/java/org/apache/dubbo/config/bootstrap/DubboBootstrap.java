@@ -184,7 +184,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
     }
 
     private DubboBootstrap() { //私有的构造函数
-        configManager = ApplicationModel.getConfigManager(); //config对象的本地配置
+        configManager = ApplicationModel.getConfigManager(); //Config对象的管理者
         environment = ApplicationModel.getEnvironment();     //获取环境信息
 
         DubboShutdownHook.getDubboShutdownHook().register();
@@ -810,16 +810,16 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
         return metadataAddressBuilder.toString(); //返回的值如：zookeeper://127.0.0.1:2181/all?default.name=test
     }
 
-    private void loadRemoteConfigs() {
+    private void loadRemoteConfigs() { //加载最新的RegistryConfig和ProtocolConfig的配置，并刷新ConfigManager缓存
         // registry ids to registry configs
         List<RegistryConfig> tmpRegistries = new ArrayList<>();
         Set<String> registryIds = configManager.getRegistryIds(); //获取注册Config的id列表
         registryIds.forEach(id -> {
-            if (tmpRegistries.stream().noneMatch(reg -> reg.getId().equals(id))) {
+            if (tmpRegistries.stream().noneMatch(reg -> reg.getId().equals(id))) { //防重复处理
                 tmpRegistries.add(configManager.getRegistry(id).orElseGet(() -> { //根据registryId，循环构建RegistryConfig对象，并依次设置到注册RegistryConfig列表中
                     RegistryConfig registryConfig = new RegistryConfig();
                     registryConfig.setId(id);
-                    registryConfig.refresh();
+                    registryConfig.refresh(); //刷新最新的配置
                     return registryConfig;
                 }));
             }
@@ -877,28 +877,28 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
     }
 
     /**
-     * Start the bootstrap
+     * Start the bootstrap（引导程序）
      */
-    public DubboBootstrap start() {
-        if (started.compareAndSet(false, true)) {
-            ready.set(false); //设置标志值
+    public DubboBootstrap start() { //启动bootstrap
+        if (started.compareAndSet(false, true)) { //判断是否启动过，未启动则做启动处理，并更新启动标志
+            ready.set(false); //设置准备标志的值
             initialize();//初始化处理
             if (logger.isInfoEnabled()) {
                 logger.info(NAME + " is starting...");
             }
             // 1. export Dubbo Services
-            exportServices();
+            exportServices(); //暴露服务
 
             // Not only provider register
             if (!isOnlyRegisterProvider() || hasExportedServices()) {
                 // 2. export MetadataService
-                exportMetadataService();
+                exportMetadataService(); //暴露元数据服务
                 //3. Register the local ServiceInstance if required
-                registerServiceInstance();
+                registerServiceInstance(); //将ServiceInstance注册到注册中心
             }
 
             referServices(); //引用服务
-            if (asyncExportingFutures.size() > 0) { //服务异步暴露后，更新启动标志
+            if (asyncExportingFutures.size() > 0) { //异步暴露的服务未执行完时，需要等待其执行完成
                 new Thread(() -> {
                     try {
                         this.awaitFinish(); //阻塞着等待异步任务完成
@@ -910,7 +910,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
                         logger.info(NAME + " is ready.");
                     }
                 }).start();
-            } else { //服务同步暴露后，更新启动标志
+            } else { //服务同步暴露后，更新准备标志
                 ready.set(true);
                 if (logger.isInfoEnabled()) {
                     logger.info(NAME + " is ready.");
@@ -1121,7 +1121,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
             referenceConfig.setBootstrap(this);
 
             if (rc.shouldInit()) {
-                if (referAsync) { //异步引用服务（与暴露服务的同步、异步处理方式类似）
+                if (referAsync) { //异步引用服务
                     CompletableFuture<Object> future = ScheduledCompletableFuture.submit(
                             executorRepository.getServiceExporterExecutor(),
                             () -> cache.get(rc)
@@ -1140,7 +1140,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
         }
 
         asyncReferringFutures.forEach(future -> {
-            if (!future.isDone()) {
+            if (!future.isDone()) { //未执行完的任务，主动取消执行
                 future.cancel(true);
             }
         });
@@ -1148,8 +1148,8 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
         cache.destroyAll();
     }
 
-    private void registerServiceInstance() {
-        if (CollectionUtils.isEmpty(getServiceDiscoveries())) { //若缓存中的注册中心列表为空，则不进行后续处理
+    private void registerServiceInstance() { //注册服务实例
+        if (CollectionUtils.isEmpty(getServiceDiscoveries())) {
             return;
         }
 
@@ -1224,7 +1224,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
 
     private void unregisterServiceInstance() {
         if (serviceInstance != null) {
-            getServiceDiscoveries().forEach(serviceDiscovery -> { //将注册的所有服务取消注册
+            getServiceDiscoveries().forEach(serviceDiscovery -> { //将serviceInstance从所有注册中心中取消注册
                 serviceDiscovery.unregister(serviceInstance);
             });
         }
@@ -1239,23 +1239,23 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
     public void destroy() { //做销毁清理工作（包含关联的注册信息、元数据信息、暴露服务信息等）
         if (destroyLock.tryLock()) {
             try {
-                DubboShutdownHook.destroyAll(); //停机钩子线程做销毁工作
+                DubboShutdownHook.destroyAll(); //销毁所有注册和协议信息
 
                 if (started.compareAndSet(true, false)
                         && destroyed.compareAndSet(false, true)) {
 
-                    unregisterServiceInstance(); //会发起远程调用，取消注册的服务，比如若注册中心为zookeeper，则会通过curator，取消注册的服务
-                    unexportMetadataService();
-                    unexportServices(); //从ConfigMananer移除暴露的服务缓存
-                    unreferServices();
+                    unregisterServiceInstance(); //取消serviceInstance在注册中心的注册（会发起远程调用，比如若注册中心为zookeeper，则会通过curator，取消注册的服务）
+                    unexportMetadataService(); //取消元数据暴露
+                    unexportServices(); //从ConfigManager移除暴露的服务缓存
+                    unreferServices(); //取消服务引用
 
                     destroyRegistries();
                     DubboShutdownHook.destroyProtocols();
                     destroyServiceDiscoveries();
 
-                    clear();
-                    shutdown();
-                    release();
+                    clear(); //清除缓存中的配置
+                    shutdown(); //停止线程池
+                    release(); //将线程唤醒，执行未完成的任务
                 }
             } finally {
                 destroyLock.unlock();

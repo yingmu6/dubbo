@@ -42,7 +42,7 @@ import static org.apache.dubbo.config.AbstractConfig.getTagName;
 import static org.apache.dubbo.config.Constants.PROTOCOLS_SUFFIX;
 import static org.apache.dubbo.config.Constants.REGISTRIES_SUFFIX;
 
-public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //config对象的管理，继承适配器，有选择的实现方法
+public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //Config对象的管理者（管理所有的Config对象）
 
     /**
      * ConfigManager存储了所有dubbo的Config对象
@@ -271,7 +271,7 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
         return getConfigs(getTagName(RegistryConfig.class));
     }
 
-    public Set<String> getRegistryIds() {
+    public Set<String> getRegistryIds() { //从Environment维护的配置信息中获取RegistryId列表
         Set<String> registryIds = new HashSet<>();
         registryIds.addAll(getSubProperties(ApplicationModel.getEnvironment().getExternalConfigurationMap(),
                 REGISTRIES_SUFFIX));

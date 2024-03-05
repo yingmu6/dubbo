@@ -288,14 +288,14 @@ public abstract class AbstractRegistry implements Registry { //注册中心抽�
     }
 
     @Override
-    public void unregister(URL url) {
+    public void unregister(URL url) { //取消注册（从已经注册的url集合中，移除对应的url）
         if (url == null) {
             throw new IllegalArgumentException("unregister url == null");
         }
         if (logger.isInfoEnabled()) {
             logger.info("Unregister: " + url);
         }
-        registered.remove(url); //从已经注册的集合中，移除对应的url
+        registered.remove(url);
     }
 
     @Override
@@ -460,7 +460,7 @@ public abstract class AbstractRegistry implements Registry { //注册中心抽�
     }
 
     @Override
-    public void destroy() { //销毁处理
+    public void destroy() { //销毁注册和订阅
         if (logger.isInfoEnabled()) {
             logger.info("Destroy registry:" + getUrl());
         }
@@ -469,7 +469,7 @@ public abstract class AbstractRegistry implements Registry { //注册中心抽�
             for (URL url : new HashSet<>(getRegistered())) {
                 if (url.getParameter(DYNAMIC_KEY, true)) { //若节点设置为动态的，则做取消注册操作，从本地缓存Map中移除该节点
                     try {
-                        unregister(url); //取消注册
+                        unregister(url); //取消注册（即把url中注册集合中移除）
                         if (logger.isInfoEnabled()) {
                             logger.info("Destroy unregister url " + url);
                         }

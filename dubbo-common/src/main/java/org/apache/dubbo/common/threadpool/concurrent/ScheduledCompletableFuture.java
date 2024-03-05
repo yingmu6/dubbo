@@ -46,7 +46,7 @@ public class ScheduledCompletableFuture {
     }
 
     public static <T> CompletableFuture<T> submit(
-            ScheduledExecutorService executor,
+            ScheduledExecutorService executor, //可执行调度的线程池
             Supplier<T> task
     ) {
         CompletableFuture<T> completableFuture = new CompletableFuture<>();
