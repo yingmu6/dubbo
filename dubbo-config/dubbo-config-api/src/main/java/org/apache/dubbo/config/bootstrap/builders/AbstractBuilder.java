@@ -29,7 +29,7 @@ import java.util.Map;
  * @param <B> The type of {@link AbstractBuilder Builder}
  * @since 2.7
  */
-public abstract class AbstractBuilder<C extends AbstractConfig, B extends AbstractBuilder> {
+public abstract class AbstractBuilder<C extends AbstractConfig, B extends AbstractBuilder> { //Config对象的构造器
     /**
      * The config id
      */

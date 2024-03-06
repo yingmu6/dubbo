@@ -57,7 +57,7 @@ public class DubboShutdownHook extends Thread { //dubbo停机的钩子线程（�
     private final EventDispatcher eventDispatcher = EventDispatcher.getDefaultExtension();
 
     private DubboShutdownHook(String name) { //构造方法是私有的，提供的对象是单实例
-        super(name);
+        super(name); //创建线程对象，并指定线程名称
     }
 
     public static DubboShutdownHook getDubboShutdownHook() {
@@ -88,10 +88,10 @@ public class DubboShutdownHook extends Thread { //dubbo停机的钩子线程（�
     /**
      * Register the ShutdownHook
      */
-    public void register() { //注册停机钩子线程
+    public void register() { //注册停机钩子线程到JVM中
         if (registered.compareAndSet(false, true)) {
             DubboShutdownHook dubboShutdownHook = getDubboShutdownHook();
-            Runtime.getRuntime().addShutdownHook(dubboShutdownHook);
+            Runtime.getRuntime().addShutdownHook(dubboShutdownHook); //JVM停机前，会执行DubboShutdownHook线程
             dispatch(new DubboShutdownHookRegisteredEvent(dubboShutdownHook)); //发布停机钩子线程注册的事件
         }
     }

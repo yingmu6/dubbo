@@ -117,7 +117,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
 
     private final ServiceRepository repository;
 
-    private DubboBootstrap bootstrap;
+    private DubboBootstrap bootstrap; //启动引导类
 
     /**
      * The service names that the Dubbo interface subscribed.

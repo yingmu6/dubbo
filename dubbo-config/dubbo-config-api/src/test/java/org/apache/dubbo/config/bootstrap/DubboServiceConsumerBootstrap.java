@@ -24,7 +24,7 @@ import org.apache.dubbo.config.bootstrap.rest.UserService;
  *
  * @since 2.7.5
  */
-public class DubboServiceConsumerBootstrap {
+public class DubboServiceConsumerBootstrap { //使用DubboBootstrap引用服务
 
     public static void main(String[] args) throws Exception {
 
@@ -43,15 +43,15 @@ public class DubboServiceConsumerBootstrap {
 
                 // Consul
                 // .registry("consul", builder -> builder.address("consul://127.0.0.1:8500?registry.type=service&subscribed.services=dubbo-provider-demo").group("namespace1"))
-                .reference("echo", builder -> builder.interfaceClass(EchoService.class).protocol("dubbo"))
-                .reference("user", builder -> builder.interfaceClass(UserService.class).protocol("rest"))
+                .reference("echo", builder -> builder.interfaceClass(EchoService.class).protocol("dubbo")) //builder类型为：ReferenceBuilder<S>
+                .reference("user", builder -> builder.interfaceClass(UserService.class).protocol("rest")) //指定引用接口以及使用的协议
                 .start();
 
-        EchoService echoService = bootstrap.getCache().get(EchoService.class);
+        EchoService echoService = bootstrap.getCache().get(EchoService.class); //从缓存中获取引用接口的代理对象
 
         for (int i = 0; i < 500; i++) {
             Thread.sleep(2000L);
-            System.out.println(echoService.echo("Hello,World"));
+            System.out.println(echoService.echo("Hello,World")); //通过代理对象进行方法调用
         }
 
     }

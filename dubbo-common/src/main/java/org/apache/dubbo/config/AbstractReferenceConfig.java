@@ -52,7 +52,7 @@ public abstract class AbstractReferenceConfig extends AbstractInterfaceConfig {
     /**
      * Whether to eagle-init
      */
-    protected Boolean init; //是否为惰性初始化
+    protected Boolean init; //是否需要初始化（为false时，为惰性初始化）
 
      /**
      * Whether to use generic interface

@@ -60,7 +60,7 @@ public class ShutdownHookCallbacks { //用于维护和操作一个或多个Shutd
         }
     }
 
-    private void loadCallbacks() { //通过SPI方式获取回调接口的列表
+    private void loadCallbacks() { //加载所有的ShutdownHookCallback实例
         ExtensionLoader<ShutdownHookCallback> loader =
                 ExtensionLoader.getExtensionLoader(ShutdownHookCallback.class);
         loader.getSupportedExtensionInstances().forEach(this::addCallback);

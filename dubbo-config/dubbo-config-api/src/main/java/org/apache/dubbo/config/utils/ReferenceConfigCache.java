@@ -44,7 +44,7 @@ public class ReferenceConfigCache {
      * <p>
      * key example: <code>group1/org.apache.dubbo.foo.FooService:1.0.0</code>.
      */
-    public static final KeyGenerator DEFAULT_KEY_GENERATOR = referenceConfig -> {
+    public static final KeyGenerator DEFAULT_KEY_GENERATOR = referenceConfig -> { //默认的key产生器（此处等价KeyGenerator匿名类，括号中的实现相当于KeyGenerator#generateKey方法体逻辑）
         String iName = referenceConfig.getInterface();
         if (StringUtils.isBlank(iName)) {
             Class<?> clazz = referenceConfig.getInterfaceClass();
@@ -69,16 +69,16 @@ public class ReferenceConfigCache {
     private final String name;
     private final KeyGenerator generator;
 
-    private final ConcurrentMap<String, ReferenceConfigBase<?>> referredReferences = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, ReferenceConfigBase<?>> referredReferences = new ConcurrentHashMap<>(); //接口key与ReferenceConfig的映射
 
-    private final ConcurrentMap<Class<?>, ConcurrentMap<String, Object>> proxies = new ConcurrentHashMap<>();
+    private final ConcurrentMap<Class<?>, ConcurrentMap<String, Object>> proxies = new ConcurrentHashMap<>(); //接口Class与接口代理对象的映射，内容为：<Class,<key,proxy@xxx>>，该缓存表明一个引用的接口，可能对应不同group、version的代理对象，体现group或version隔离
 
     private ReferenceConfigCache(String name, KeyGenerator generator) {
         this.name = name;
         this.generator = generator;
     }
 
-    /**
+     /**
      * Get the cache use default name and {@link #DEFAULT_KEY_GENERATOR} to generate cache key.
      * Create cache if not existed yet.
      */
@@ -96,21 +96,21 @@ public class ReferenceConfigCache {
 
     /**
      * Get the cache use specified {@link KeyGenerator}.
-     * Create cache if not existed yet.
+     * Create cache if not existed yet.（缓存中不存在，则会创建）
      */
     public static ReferenceConfigCache getCache(String name, KeyGenerator keyGenerator) {
         return CACHE_HOLDER.computeIfAbsent(name, k -> new ReferenceConfigCache(k, keyGenerator));
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T get(ReferenceConfigBase<T> referenceConfig) {
+    public <T> T get(ReferenceConfigBase<T> referenceConfig) { //服务的代理对象（与ReferenceConfig#get效果一样）
         String key = generator.generateKey(referenceConfig);
         Class<?> type = referenceConfig.getInterfaceClass();
 
         proxies.computeIfAbsent(type, _t -> new ConcurrentHashMap<>());
 
         ConcurrentMap<String, Object> proxiesOfType = proxies.get(type);
-        proxiesOfType.computeIfAbsent(key, _k -> {
+        proxiesOfType.computeIfAbsent(key, _k -> { //设置缓存
             Object proxy = referenceConfig.get();
             referredReferences.put(key, referenceConfig);
             return proxy;
@@ -131,11 +131,11 @@ public class ReferenceConfigCache {
      */
     @SuppressWarnings("unchecked")
     public <T> T get(String key, Class<T> type) {
-        Map<String, Object> proxiesOfType = proxies.get(type);
+        Map<String, Object> proxiesOfType = proxies.get(type); //先按接口type获取
         if (CollectionUtils.isEmptyMap(proxiesOfType)) {
             return null;
         }
-        return (T) proxiesOfType.get(key);
+        return (T) proxiesOfType.get(key); //再按key获取到缓存
     }
 
     @SuppressWarnings("unchecked")
@@ -167,7 +167,7 @@ public class ReferenceConfigCache {
             return null;
         }
 
-        return (T) proxiesOfType.values().iterator().next();
+        return (T) proxiesOfType.values().iterator().next(); //取列表中的第一个（没有get(String key, Class<T> type)获取精准）
     }
 
     public void destroy(String key, Class<?> type) {
@@ -246,7 +246,7 @@ public class ReferenceConfigCache {
                 + ")";
     }
 
-    public interface KeyGenerator {
-        String generateKey(ReferenceConfigBase<?> referenceConfig); //产生配置的key
+    public interface KeyGenerator { //key产生器
+        String generateKey(ReferenceConfigBase<?> referenceConfig); //产生服务对应的key
     }
 }

@@ -139,7 +139,7 @@ public class ReferenceBuilder<T> extends AbstractReferenceBuilder<ReferenceConfi
         return getThis();
     }
 
-    public ReferenceConfig<T> build() {
+    public ReferenceConfig<T> build() { //构建ReferenceConfig对象
         ReferenceConfig<T> reference = new ReferenceConfig<>();
         super.build(reference);
 

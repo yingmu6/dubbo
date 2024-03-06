@@ -143,11 +143,11 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
 
     private final Environment environment;
 
-    private ReferenceConfigCache cache; //引用配置的缓存对象
+    private ReferenceConfigCache cache; //ReferenceConfig的缓存对象
 
     private volatile boolean exportAsync; //是否异步暴露
 
-    private volatile boolean referAsync; //是否异步引用
+    private volatile boolean referAsync; //是否异步引用（boolean类型的成员变量：默认值为false）
 
     private AtomicBoolean initialized = new AtomicBoolean(false); //初始化标识
 
@@ -187,7 +187,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
         configManager = ApplicationModel.getConfigManager(); //Config对象的管理者
         environment = ApplicationModel.getEnvironment();     //获取环境信息
 
-        DubboShutdownHook.getDubboShutdownHook().register();
+        DubboShutdownHook.getDubboShutdownHook().register(); //创建停机钩子线程并注册到JVM中
         ShutdownHookCallbacks.INSTANCE.addCallback(new ShutdownHookCallback() { //添加容器停止时的回调，用于清理
             @Override
             public void callback() throws Throwable {
@@ -250,7 +250,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
      */
     public DubboBootstrap application(String name, Consumer<ApplicationBuilder> consumerBuilder) {
         ApplicationBuilder builder = createApplicationBuilder(name);
-        consumerBuilder.accept(builder);
+        consumerBuilder.accept(builder); //会先执行传入的函数块逻辑
         return application(builder.build());
     }
 
@@ -274,7 +274,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
      * @param consumerBuilder the {@link Consumer} of {@link RegistryBuilder}
      * @return current {@link DubboBootstrap} instance
      */
-    public DubboBootstrap registry(Consumer<RegistryBuilder> consumerBuilder) {
+    public DubboBootstrap registry(Consumer<RegistryBuilder> consumerBuilder) { //传递函数式接口
         return registry(DEFAULT_REGISTRY_ID, consumerBuilder);
     }
 
@@ -317,7 +317,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
     }
 
 
-    // {@link ProtocolConfig} correlative methods
+    // {@link ProtocolConfig} correlative（关联的） methods
     public DubboBootstrap protocol(Consumer<ProtocolBuilder> consumerBuilder) {
         return protocol(DEFAULT_PROTOCOL_ID, consumerBuilder);
     }
@@ -376,7 +376,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
     }
 
     public DubboBootstrap reference(ReferenceConfig<?> referenceConfig) {
-        configManager.addReference(referenceConfig);
+        configManager.addReference(referenceConfig); //把引用的服务添加到ConfigManager缓存中
         return this;
     }
 
@@ -1112,23 +1112,23 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
 
     private void referServices() { //引用服务
         if (cache == null) {
-            cache = ReferenceConfigCache.getCache();
+            cache = ReferenceConfigCache.getCache(); //创建ReferenceConfig的缓存对象
         }
 
         configManager.getReferences().forEach(rc -> {
             // TODO, compatible with  ReferenceConfig.refer()
-            ReferenceConfig referenceConfig = (ReferenceConfig) rc;
+            ReferenceConfig referenceConfig = (ReferenceConfig) rc; //每一个引用的服务，对应一个ReferenceConfig对象
             referenceConfig.setBootstrap(this);
 
             if (rc.shouldInit()) {
-                if (referAsync) { //异步引用服务
+                if (referAsync) { //异步引用服务，referAsync默认值为false
                     CompletableFuture<Object> future = ScheduledCompletableFuture.submit(
                             executorRepository.getServiceExporterExecutor(),
                             () -> cache.get(rc)
                     );
                     asyncReferringFutures.add(future);
                 } else {
-                    cache.get(rc);
+                    cache.get(rc); //依次将ReferenceConfig对象放入缓存中
                 }
             }
         });
