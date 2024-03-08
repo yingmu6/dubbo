@@ -82,7 +82,7 @@ public class DubboShutdownHook extends Thread { //dubbo停机的钩子线程（�
     }
 
     private void callback() {
-        callbacks.callback();
+        callbacks.callback(); //ShutdownHookCallbacks是单实例，程序中各处使用都是同一个对象
     }
 
     /**

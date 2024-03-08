@@ -27,7 +27,7 @@ import java.util.Vector;
  */
 public class EchoEventListener2 extends Vector<EventListener<Event>> implements Serializable, EventListener<Event> {
 
-    private AbstractEventListener<Event> delegate = new AbstractEventListener<Event>() {
+    private AbstractEventListener<Event> delegate = new AbstractEventListener<Event>() { //委派AbstractEventListener执行抽象逻辑
         @Override
         protected void handleEvent(Event event) {
             println("EchoEventListener2 : " + event);

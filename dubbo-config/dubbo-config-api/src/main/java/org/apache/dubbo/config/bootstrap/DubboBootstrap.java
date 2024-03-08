@@ -187,8 +187,15 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
         configManager = ApplicationModel.getConfigManager(); //Config对象的管理者
         environment = ApplicationModel.getEnvironment();     //获取环境信息
 
+        /**
+         * 停机回调执行流程（通过debug，然后结束进程时，可看到回调）
+         * 1）先将钩子线程DubboShutdownHook注册到JVM
+         * 2）再将回调实例添加到（也叫注册）ShutdownHookCallbacks中维护的回调实例列表中
+         * 3）等JVM停机时，会调用DubboShutdownHook线程的run()方法，该方法中就会取出ShutdownHookCallbacks中维护的回调实例列表
+         *    依次进行调用ShutdownHookCallback#callback方法进行回调逻辑
+         */
         DubboShutdownHook.getDubboShutdownHook().register(); //创建停机钩子线程并注册到JVM中
-        ShutdownHookCallbacks.INSTANCE.addCallback(new ShutdownHookCallback() { //添加容器停止时的回调，用于清理
+        ShutdownHookCallbacks.INSTANCE.addCallback(new ShutdownHookCallback() { //将回调实例添加到ShutdownHookCallbacks中（传入参数为匿名类）
             @Override
             public void callback() throws Throwable {
                 DubboBootstrap.this.destroy();

@@ -62,13 +62,13 @@ public class DirectEventDispatcherTest {
     }
 
     @Test
-    public void testSingleListener() {
+    public void testSingleListener() { //添加单个事件监听器
         // add two listeners
         dispatcher.addEventListener(echoEventListener);
         dispatcher.addEventListener(echoEventListener2);
         assertEquals(asList(echoEventListener2, echoEventListener), dispatcher.getAllEventListeners());
 
-        // add a duplicated listener
+        // add a duplicated listener（添加事件监听器时，会判断是否重复）
         dispatcher.addEventListener(echoEventListener);
         assertEquals(asList(echoEventListener2, echoEventListener), dispatcher.getAllEventListeners());
 
@@ -81,7 +81,7 @@ public class DirectEventDispatcherTest {
     }
 
     @Test
-    public void testMultipleListeners() {
+    public void testMultipleListeners() { //添加多个事件监听器
 
         // add two listeners
         dispatcher.addEventListeners(echoEventListener, echoEventListener2);
@@ -112,11 +112,11 @@ public class DirectEventDispatcherTest {
         dispatcher.addEventListener(echoEventListener);
 
         // dispatch a Event
-        dispatcher.dispatch(new Event("Test") {
+        dispatcher.dispatch(new Event("Test") { //Event与EchoEventListener维护的事件类型EchoEvent不相同，也不是EchoEvent的子类，所以事件不匹配
         });
 
-        // no-op occurs
-        assertEquals(0, echoEventListener.getEventOccurs());
+        // no-op occurs 事件未发生
+        assertEquals(0, echoEventListener.getEventOccurs()); //派发的是Event事件，而监听器列表关联的事件是EchoEvent，事件不对应，所以事件未发生
 
         // dispatch a EchoEvent
         dispatcher.dispatch(new EchoEvent("Hello,World"));
@@ -126,7 +126,7 @@ public class DirectEventDispatcherTest {
 
         dispatcher.addEventListener(echoEventListener2);
 
-        // reset the listeners
+        // reset the listeners（重新赋值成员变量，即重置）
         init();
         dispatcher.addEventListeners(echoEventListener, echoEventListener2);
 
@@ -142,7 +142,7 @@ public class DirectEventDispatcherTest {
         // dispatch a EchoEvent
         // echoEventListener and echoEventListener2 are triggered both (+1)
         dispatcher.dispatch(new EchoEvent("Hello,World"));
-        assertEquals(1, echoEventListener.getEventOccurs());
+        assertEquals(1, echoEventListener.getEventOccurs()); //每派发一次事件，计数就累加1
         assertEquals(2, echoEventListener2.getEventOccurs());
 
         // both +1

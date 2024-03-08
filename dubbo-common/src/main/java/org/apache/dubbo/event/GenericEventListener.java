@@ -48,6 +48,10 @@ import static org.apache.dubbo.common.function.ThrowableFunction.execute;
  */
 public abstract class GenericEventListener implements EventListener<Event> { //通用的事件监听器，Generic：一般的；普通的；通用的
 
+    /**
+     * 只要定义满足条件的处理事件方法（即isHandleEventMethod中的逻辑），通过继承GenericEventListener的事件监听器，可以有
+     * 多个处理事件的方法被回调，例如：MyGenericEventListener中有两个满足方法onEvent(EchoEvent echoEvent)和event(EchoEvent echoEvent)
+     */
     private final Method onEventMethod; //onEvent(Event)方法对应的Method
 
     private final Map<Class<?>, Set<Method>> handleEventMethods; //维护着事件与事件触发的方法的映射

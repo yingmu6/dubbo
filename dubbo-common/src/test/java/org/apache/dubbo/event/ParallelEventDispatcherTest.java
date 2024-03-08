@@ -38,14 +38,14 @@ public class ParallelEventDispatcherTest {
 
     @BeforeEach
     public void init() {
-        eventDispatcher = new ParallelEventDispatcher();
+        eventDispatcher = new ParallelEventDispatcher(); //并行事件派发
         listener = new EchoEventListener();
         eventDispatcher.addEventListener(listener);
     }
 
     @Test
     public void testDispatchEvent() throws InterruptedException {
-        eventDispatcher.dispatch(new EchoEvent("Hello,World"));
+        eventDispatcher.dispatch(new EchoEvent("Hello,World")); //只是用于事件派发的线程池类型不同，事件派发使用方式相同
         ForkJoinPool.commonPool().awaitTermination(1, TimeUnit.SECONDS);
         // event has been handled
         assertEquals(1, listener.getEventOccurs());

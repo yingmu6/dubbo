@@ -32,10 +32,10 @@ public class GenericEventTest {
     public void test() {
 
         long timestamp = System.currentTimeMillis();
-        GenericEvent<String> event = new GenericEvent("Hello,World");
+        GenericEvent<String> event = new GenericEvent("Hello,World"); //通用事件，事件对象为String
 
         assertEquals("Hello,World", event.getSource());
-        assertTrue(event.getTimestamp() >= timestamp);
+        assertTrue(event.getTimestamp() >= timestamp); //event.getTimestamp() 构建GenericEvent时记录的时间
     }
 
 }

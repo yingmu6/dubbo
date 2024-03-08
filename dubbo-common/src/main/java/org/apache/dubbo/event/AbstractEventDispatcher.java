@@ -67,7 +67,7 @@ public abstract class AbstractEventDispatcher implements EventDispatcher {
     public void addEventListener(EventListener<?> listener) throws NullPointerException, IllegalArgumentException { //将监听器添加到本地缓存listenersCache中
         Listenable.assertListener(listener);
         doInListener(listener, listeners -> { //将事件监听器添加到监听器列表中（会判断监听器是否存在集合中，不存在才添加）
-            addIfAbsent(listeners, listener);
+            addIfAbsent(listeners, listener); //传递的函数块，要在执行Consumer#accept方法时才会回过来执行，并不会提前执行
         });
     }
 
@@ -97,7 +97,7 @@ public abstract class AbstractEventDispatcher implements EventDispatcher {
         return listenersCache
                 .entrySet()
                 .stream()
-                .filter(predicate) //将缓存的内容进行过滤，保留key为Event类型的值（predicate函数的具体行为，回看传入的地方）
+                .filter(predicate) //过滤Predicate#test为true的元素（predicate函数的具体行为，回看传入的地方）
                 .map(Map.Entry::getValue) //获取到事件监听器EventListener列表
                 .flatMap(Collection::stream)
                 .sorted();
@@ -110,13 +110,19 @@ public abstract class AbstractEventDispatcher implements EventDispatcher {
     }
 
     @Override
-    public void dispatch(Event event) { //进行事件派发（从本地缓存listenersCache中找到符合条件的监听器列表，并依次调用监听器进行事件派发）
+    public void dispatch(Event event) { //进行事件派发（从本地缓存listenersCache中找到事件关联的监听器列表，并依次回调监听器onEvent方法）
 
         Executor executor = getExecutor();
 
         // execute in sequential or parallel execution model
-        executor.execute(() -> { //使用线程池进行事件处理
-            sortedListeners(entry -> entry.getKey().isAssignableFrom(event.getClass())) //过滤出符合条件的监听器列表，并进行排序（把缓存listenersCache进行过滤，只获取事件类型Event对应缓存值，最后将监听器列表排序）
+        executor.execute(() -> { //使用线程池进行事件处理（提交任务到线程池中）
+            /**
+             * 派发时事件类型匹配的逻辑：
+             * 1）派发时传入的事件类型，要与缓存中事件监听器维护的事件类型相同或是其子类
+             * 2）例如：派发时传入的类型为Event，而添加的事件监听器为EchoEventListener<EchoEvent>，此处传入的Event既不与EchoEvent相同，
+             *   也不是EchoEvent的子类，所以就匹配不到事件监听器
+             */
+            sortedListeners(entry -> entry.getKey().isAssignableFrom(event.getClass())) //过滤出事件关联的监听器列表，并进行排序
                     .forEach(listener -> {
                         if (listener instanceof ConditionalEventListener) { //ConditionalEventListener监听器，先判断监听器是否能接受指定的事件
                             ConditionalEventListener predicateEventListener = (ConditionalEventListener) listener;
@@ -138,13 +144,13 @@ public abstract class AbstractEventDispatcher implements EventDispatcher {
         return executor;
     }
 
-    protected void doInListener(EventListener<?> listener, Consumer<Collection<EventListener>> consumer) { //将监听器添加到缓存中（Consumer使用：函数接口传递，将封装好业务逻辑传递，具体逻辑要看方法调用的地方）
+    protected void doInListener(EventListener<?> listener, Consumer<Collection<EventListener>> consumer) { //将事件监听器添加到缓存中（Consumer使用：函数接口传递，将封装好业务逻辑传递，要在执行Consumer#accept方法时才会执行传入的函数块逻辑）
         Class<? extends Event> eventType = findEventType(listener); //找到监听器对应的事件类型
         if (eventType != null) {
             synchronized (mutex) { //加锁处理（加锁范围：为括号中的mutex对象）
                 List<EventListener> listeners = listenersCache.computeIfAbsent(eventType, e -> new LinkedList<>());
                 // consume
-                consumer.accept(listeners); //处理监听器列表（此处调用时，会执行Consumer逻辑）
+                consumer.accept(listeners); //处理监听器列表（1：此处调用时，会返回执行传入的函数块逻辑，2：此处是引用传递，listeners处理好后，缓存listenersCache中的列表也对应处理了，是同一个引用）
                 // sort
                 sort(listeners);
             }

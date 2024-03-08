@@ -60,7 +60,7 @@ public class EventDispatcherTest {
 
         defaultInstance.addEventListener(new EventListener<Event>() { //添加事件监听器（添加到AbstractEventDispatcher的缓存Map中）
             @Override
-            public void onEvent(Event event) {
+            public void onEvent(Event event) { //在进行对应事件派发时，进行回调
                 System.out.println("收到事件" + event.getSource());
             }
         });
@@ -72,7 +72,7 @@ public class EventDispatcherTest {
     @Test
     public void testCustomEventListener() {
         assertEquals(DIRECT_EXECUTOR, defaultInstance.getExecutor());
-        assertTrue(!defaultInstance.getAllEventListeners().isEmpty());
+        assertTrue(defaultInstance.getAllEventListeners().isEmpty()); //此处没有添加事件监听器，所以获取到的列表为空
         defaultInstance.dispatch(new EchoEvent("haha"));
     }
 }

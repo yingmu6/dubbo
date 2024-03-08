@@ -58,11 +58,15 @@ public class GenericEventListenerTest {
 
         private EchoEvent echoEvent;
 
-        public void onEvent(EchoEvent echoEvent) {
+        /**
+         * 代码1和代码2，都属于处理事件Event的方法，进行事件派发时，都会被调用
+         */
+
+        public void onEvent(EchoEvent echoEvent) { // 代码1
             this.echoEvent = echoEvent;
         }
 
-        public void event(EchoEvent echoEvent) {
+        public void event(EchoEvent echoEvent) { // 代码2
             assertEquals("Hello,World", echoEvent.getSource());
         }
 
