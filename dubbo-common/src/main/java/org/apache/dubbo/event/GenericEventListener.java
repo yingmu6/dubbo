@@ -54,15 +54,15 @@ public abstract class GenericEventListener implements EventListener<Event> { //�
      */
     private final Method onEventMethod; //onEvent(Event)方法对应的Method
 
-    private final Map<Class<?>, Set<Method>> handleEventMethods; //维护着事件与事件触发的方法的映射
+    private final Map<Class<?>, Set<Method>> handleEventMethods; //维护着事件与事件处理的方法的映射（1:n的关系）
 
     protected GenericEventListener() {
-        this.onEventMethod = findOnEventMethod();
-        this.handleEventMethods = findHandleEventMethods();
+        this.onEventMethod = findOnEventMethod(); //获取onEvent(Event)方法对应的Method对象（即GenericEventListener声明的onEvent方法）
+        this.handleEventMethods = findHandleEventMethods(); //获取GenericEventListener实现类中处理事件对象的方法（不包含onEvent(Event)方法）
     }
 
-    private Method findOnEventMethod() { //查找onEvent方法对应的Method
-        return execute(getClass(), listenerClass -> listenerClass.getMethod("onEvent", Event.class)); //获取当前对象中的onEvent的Method
+    private Method findOnEventMethod() { //查找onEvent(Event)方法对应的Method对象
+        return execute(getClass(), listenerClass -> listenerClass.getMethod("onEvent", Event.class));
     }
 
     private Map<Class<?>, Set<Method>> findHandleEventMethods() {
@@ -78,7 +78,7 @@ public abstract class GenericEventListener implements EventListener<Event> { //�
         return eventMethods;
     }
 
-    public final void onEvent(Event event) { //依次执行缓存中的方法
+    public final void onEvent(Event event) { //依次执行处理事件的方法
         Class<?> eventClass = event.getClass();
         handleEventMethods.getOrDefault(eventClass, emptySet()).forEach(method -> {
             ThrowableConsumer.execute(method, m -> {
@@ -103,7 +103,7 @@ public abstract class GenericEventListener implements EventListener<Event> { //�
      */
     private boolean isHandleEventMethod(Method method) { //判断是否是处理事件的方法
 
-        if (onEventMethod.equals(method)) { // not {@link #onEvent(Event)} method （不包含onEvent方法）
+        if (onEventMethod.equals(method)) { // not {@link #onEvent(Event)} method （不是onEvent(Event)方法）
             return false;
         }
 
@@ -126,7 +126,7 @@ public abstract class GenericEventListener implements EventListener<Event> { //�
             return false;
         }
 
-        if (!Event.class.isAssignableFrom(paramTypes[0])) { // not Event type argument
+        if (!Event.class.isAssignableFrom(paramTypes[0])) { // not Event type argument（参数类型为Event或Event子类）
             return false;
         }
 

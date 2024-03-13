@@ -34,7 +34,7 @@ import static org.apache.dubbo.rpc.Constants.*;
 /**
  * InjvmProtocol
  */
-public class InjvmProtocol extends AbstractProtocol implements Protocol {
+public class InjvmProtocol extends AbstractProtocol implements Protocol { //InJvm协议
 
     public static final String NAME = LOCAL_PROTOCOL;
 
@@ -95,7 +95,7 @@ public class InjvmProtocol extends AbstractProtocol implements Protocol {
 
     public boolean isInjvmRefer(URL url) { //根据设置的范围scope，判断是否是injvm方式引用
         String scope = url.getParameter(SCOPE_KEY);
-        // Since injvm protocol is configured explicitly, we don't need to set any extra flag, use normal refer process.
+        // Since injvm protocol is configured explicitly（明确地）, we don't need to set any extra（额外的） flag, use normal refer process.
         if (SCOPE_LOCAL.equals(scope) || (url.getParameter(LOCAL_PROTOCOL, false))) {
             // if it's declared as local reference
             // 'scope=local' is equivalent to 'injvm=true', injvm will be deprecated in the future release

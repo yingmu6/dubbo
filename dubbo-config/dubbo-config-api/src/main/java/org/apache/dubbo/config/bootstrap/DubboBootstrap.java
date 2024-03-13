@@ -1083,7 +1083,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
     }
 
     private void exportServices() { //暴露服务
-        configManager.getServices().forEach(sc -> {
+        configManager.getServices().forEach(sc -> { //遍历ServiceConfig列表，进行服务暴露
             // TODO, compatible with ServiceConfig.export()
             ServiceConfig serviceConfig = (ServiceConfig) sc;
             serviceConfig.setBootstrap(this); //设置ServiceConfig与DubboBootstrap的关联关系
@@ -1128,7 +1128,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
             referenceConfig.setBootstrap(this);
 
             if (rc.shouldInit()) {
-                if (referAsync) { //异步引用服务，referAsync默认值为false
+                if (referAsync) { //异步引用服务
                     CompletableFuture<Object> future = ScheduledCompletableFuture.submit(
                             executorRepository.getServiceExporterExecutor(),
                             () -> cache.get(rc)

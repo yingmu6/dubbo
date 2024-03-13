@@ -61,7 +61,7 @@ public interface Constants {
     /**
      * When this attribute appears in invocation's attachment, mock invoker will be used
      */
-    String INVOCATION_NEED_MOCK = "invocation.need.mock"; //是否使用Mock的标识
+    String INVOCATION_NEED_MOCK = "invocation.need.mock";
 
     /**
      * when ROUTER_KEY's value is set to ROUTER_TYPE_CLEAR, RegistryDirectory will clean all current routers
@@ -91,10 +91,10 @@ public interface Constants {
      * key for router type, for e.g., "script"/"file",  corresponding to ScriptRouterFactory.NAME, FileRouterFactory.NAME
      */
     String ROUTER_KEY = "router";
-    /**
+     /**
      * The key name for reference URL in register center
      */
-    String REFER_KEY = "refer"; //在注册中心中引用服务url对应的key名称
+    String REFER_KEY = "refer";
     /**
      * The key name for export URL in register center
      */

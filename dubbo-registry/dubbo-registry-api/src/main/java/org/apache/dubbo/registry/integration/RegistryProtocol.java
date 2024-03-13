@@ -400,7 +400,7 @@ public class RegistryProtocol implements Protocol { //注册协议
         Map<String, String> qs = StringUtils.parseQueryString(url.getParameterAndDecoded(REFER_KEY));
         String group = qs.get(GROUP_KEY);
         if (group != null && group.length() > 0) {
-            if ((COMMA_SPLIT_PATTERN.split(group)).length > 1 || "*".equals(group)) {
+            if ((COMMA_SPLIT_PATTERN.split(group)).length > 1 || "*".equals(group)) { //设置group信息时，使用MergeableCluster合并结果
                 return doRefer(Cluster.getCluster(MergeableCluster.NAME), registry, type, url);
             }
         }

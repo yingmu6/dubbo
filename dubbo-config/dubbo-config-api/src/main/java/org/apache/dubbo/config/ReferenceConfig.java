@@ -97,7 +97,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
     /**
      * The interface proxy reference
      */
-    private transient volatile T ref;
+    private transient volatile T ref; //引用的代理对象
 
     /**
      * The invoker of the reference service
@@ -174,7 +174,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
         if (destroyed) {
             throw new IllegalStateException("The invoker of ReferenceConfig(" + url + ") has already destroyed!");
         }
-        if (ref == null) { //若引用的实例为空，则进行初始化
+        if (ref == null) { //若接口的代理对象为空，则进行初始化
             init();
         }
         return ref;
@@ -215,7 +215,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
         checkStubAndLocal(interfaceClass);
         ConfigValidationUtils.checkMock(interfaceClass, this); //检查mock信息
 
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<String, String>(); //构建代理对象所需的参数
         map.put(SIDE_KEY, CONSUMER_SIDE);
 
         ReferenceConfigBase.appendRuntimeParameters(map);
@@ -293,9 +293,9 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
 
     @SuppressWarnings({"unchecked", "rawtypes", "deprecation"})
     private T createProxy(Map<String, String> map) { //为需要调用的invoker创建代理
-        if (shouldJvmRefer(map)) { //本地JVM引用
+        if (shouldJvmRefer(map)) { //本地JVM引用（本地引用也会创建代理对象的）
             URL url = new URL(LOCAL_PROTOCOL, LOCALHOST_VALUE, 0, interfaceClass.getName()).addParameters(map);
-            invoker = REF_PROTOCOL.refer(interfaceClass, url); //
+            invoker = REF_PROTOCOL.refer(interfaceClass, url);
             if (logger.isInfoEnabled()) {
                 logger.info("Using injvm service " + interfaceClass.getName());
             }

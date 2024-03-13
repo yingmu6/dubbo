@@ -103,7 +103,7 @@ public class ReferenceConfigCache {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T get(ReferenceConfigBase<T> referenceConfig) { //服务的代理对象（与ReferenceConfig#get效果一样）
+    public <T> T get(ReferenceConfigBase<T> referenceConfig) { //获取服务的代理对象（与ReferenceConfig#get效果一样）
         String key = generator.generateKey(referenceConfig);
         Class<?> type = referenceConfig.getInterfaceClass();
 
