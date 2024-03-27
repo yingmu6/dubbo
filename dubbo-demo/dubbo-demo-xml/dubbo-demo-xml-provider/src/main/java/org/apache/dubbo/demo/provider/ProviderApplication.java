@@ -24,11 +24,4 @@ public class ProviderApplication {
         context.start();
         System.in.read();
     }
-
-    /**
-     * 1）启动日志是哪里打印的？
-     * 如：[23/07/21 12:47:32:707 CST] main  INFO bootstrap.DubboBootstrap:  [DUBBO] DubboBootstrap has started., dubbo version: , current host: 192.168.1.107
-     *
-     * 2）启动时都做了哪些功能？
-     */
 }

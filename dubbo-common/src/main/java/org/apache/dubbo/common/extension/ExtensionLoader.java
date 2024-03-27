@@ -154,6 +154,8 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
      * 1）若SPI接口是ExtensionFactory，则objectFactory设置为null，因为自身已经是ExtensionFactory类型了
      * 2）若SPI接口非ExtensionFactory，则需要objectFactory实例的值，因为ExtensionFactory本身是SPI接口，所以还需要SPI的方式
      *    先获取到ExtensionLoader，再获取自适应的扩展实例
+     *
+     * 注明：创建ExtensionLoader对象时，都会先递归创建ExtensionFactory扩展工厂的实例，IOC注入时会用到扩展工厂
      */
     private ExtensionLoader(Class<?> type) { //私有的构造方法，创建ExtensionLoader实例（指定扩展接口的类型和扩展工厂）
         this.type = type;
@@ -491,7 +493,7 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
         }
         final Holder<Object> holder = getOrCreateHolder(name); //获取扩展名对应实例持有类
         Object instance = holder.get();
-        if (instance == null) { //使用双重判断+synchronized来确保单实例
+        if (instance == null) { //使用双重判断+synchronized来确保单实例（一个扩展名就只有一个实例对象）
             synchronized (holder) {
                 instance = holder.get();
                 if (instance == null) { //若缓存中没有扩展实例，则创建对应实例对象
@@ -934,14 +936,14 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
 
             if (urls == null || !urls.hasMoreElements()) {
                 if (classLoader != null) {
-                    urls = classLoader.getResources(fileName);
+                    urls = classLoader.getResources(fileName); //获取指定路径下的所有资源，包含src、test目录下的资源
                 } else {
                     urls = ClassLoader.getSystemResources(fileName);
                 }
             }
 
             if (urls != null) {
-                while (urls.hasMoreElements()) {
+                while (urls.hasMoreElements()) { //配置的SPI文件可能在不同目录下，如src、test目录下存在，所以循环处理
                     java.net.URL resourceURL = urls.nextElement();
                     loadResource(extensionClasses, classLoader, resourceURL, overridden, excludedPackages);
                 }
@@ -1094,8 +1096,8 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
     /**
      * cache Adaptive class which is annotated with <code>Adaptive</code>
      */
-    private void cacheAdaptiveClass(Class<?> clazz, boolean overridden) {
-        if (cachedAdaptiveClass == null || overridden) { //若缓存中自适应扩展类为空，或自适应扩展类不为空且允许覆盖时，更新缓存中自适应扩展类
+    private void cacheAdaptiveClass(Class<?> clazz, boolean overridden) { //若多个SPI文件中都配置了自适应类，根据overridden判断是否可覆盖
+        if (cachedAdaptiveClass == null || overridden) {
             cachedAdaptiveClass = clazz;
         } else if (!cachedAdaptiveClass.equals(clazz)) { //若缓存中自适应扩展类不为空，且不允许覆盖时，则抛出异常，一个扩展类最多对应一个自适应扩展类
             throw new IllegalStateException("More than 1 adaptive class found: "
@@ -1179,6 +1181,10 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
     private Class<?> createAdaptiveExtensionClass() {
         String code = new AdaptiveClassCodeGenerator(type, cachedDefaultName).generate(); //产生自适应代码对应的字符串（调试时，可以将产生的自适应代码打印出来）
         ClassLoader classLoader = findClassLoader();
+        /**
+         * org.apache.dubbo.common.compiler.Compiler配置文件中配置了adaptive=org.apache.dubbo.common.compiler.support.AdaptiveCompiler
+         * 而AdaptiveCompiler类实现了Compiler接口，并且带有@Adaptive注解，即为Compiler的自适应类，所以通过getAdaptiveExtension()得到的即为AdaptiveCompiler实例
+         */
         org.apache.dubbo.common.compiler.Compiler compiler = ExtensionLoader.getExtensionLoader(org.apache.dubbo.common.compiler.Compiler.class).getAdaptiveExtension();
         return compiler.compile(code, classLoader);
     }

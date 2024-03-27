@@ -55,7 +55,7 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
 
     public static final String NAME = "config";
 
-    private final ReadWriteLock lock = new ReentrantReadWriteLock(); //读写Config时，使用的锁
+    private final ReadWriteLock lock = new ReentrantReadWriteLock(); //读写Config时，使用的读写锁
 
     // configsCache数据格式：Map<getTagName(config.getClass()), Map<getId(config), config>> 即数据为：Map<config标签名, Map<config的Id, config对象实例>>
     // 将config对象按标签名、id映射缓存起来
@@ -283,6 +283,9 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
 
     // ServiceConfig correlative methods
 
+    /**
+     * 添加ServiceConfig
+     */
     public void addService(ServiceConfigBase<?> serviceConfig) {
         addConfig(serviceConfig);
     }
@@ -425,7 +428,7 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
         Lock writeLock = lock.writeLock(); //加锁确保公共资源，线程安全
         try {
             writeLock.lock();
-            value = callable.call(); //执行线程体，并返回值
+            value = callable.call(); //拿到写锁后，才能执行对应逻辑
         } catch (RuntimeException e) {
             throw e;
         } catch (Throwable e) {

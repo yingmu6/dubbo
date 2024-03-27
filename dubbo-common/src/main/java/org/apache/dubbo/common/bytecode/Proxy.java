@@ -54,7 +54,7 @@ public abstract class Proxy { //代理抽象类
      */
     private static final Map<ClassLoader, Map<String, Object>> PROXY_CACHE_MAP = new WeakHashMap<ClassLoader, Map<String, Object>>();
 
-    private static final Object PENDING_GENERATION_MARKER = new Object(); //"等待生成标记"对象
+    private static final Object PENDING_GENERATION_MARKER = new Object(); //"等待生成标记"对象（用于控制并发访问）
 
     protected Proxy() {
     }
@@ -74,12 +74,13 @@ public abstract class Proxy { //代理抽象类
      * 1）通过拼接形式组装Class类的代码，包含构造方法、成员方法、成员变量等
      * 2）通过javassist对代码处理并转换为Class对象ccp.toClass()
      * 3）通过Class对象创建代理实例newInstance
+     * 注明：getProxy(...)方法中会产生两个Class，一个是接口的代理实例Class，一个是Proxy的Class，最后返回Proxy的实例
      *
      * @param cl  class loader.
      * @param ics interface class array.（只能生成接口的代理对象）
      * @return Proxy instance.
      */
-    public static Proxy getProxy(ClassLoader cl, Class<?>... ics) { //获取指定接口列表的代理对象
+    public static Proxy getProxy(ClassLoader cl, Class<?>... ics) { //获取接口列表的关联的Proxy对象实例
         if (ics.length > MAX_PROXY_COUNT) { //超过设置的最大代理数，即报出异常
             throw new IllegalArgumentException("interface limit exceeded");
         }
@@ -114,7 +115,7 @@ public abstract class Proxy { //代理抽象类
         }
 
         Proxy proxy = null;
-        synchronized (cache) { //加锁处理（对象加锁）
+        synchronized (cache) { //加锁处理（对象加锁，竞争同一个资源时会加锁）
             do {
                 Object value = cache.get(key);
                 if (value instanceof Reference<?>) { //若是Reference的实例，则强制转换为Proxy
@@ -147,7 +148,7 @@ public abstract class Proxy { //代理抽象类
             List<Method> methods = new ArrayList<>();
 
             for (int i = 0; i < ics.length; i++) { //构建被代理接口中方法对应的代码
-                if (!Modifier.isPublic(ics[i].getModifiers())) { //非Public的接口，判断所有接口是否都在同一个包下，不同包下的访问会抛出异常
+                if (!Modifier.isPublic(ics[i].getModifiers())) { //非Public的接口，判断被代理的所有接口是否都在同一个包下，不同包下的访问会抛出异常
                     String npkg = ics[i].getPackage().getName();
                     /**
                      * @csy-015-P2 什么情况下接口没有包名？待覆盖测试
@@ -164,7 +165,7 @@ public abstract class Proxy { //代理抽象类
                 }
                 ccp.addInterface(ics[i]); //添加满足条件的接口
 
-                for (Method method : ics[i].getMethods()) { //对接口中满足条件的方法进行构建（通过反射机制执行调用，如handler.invoke(this,methods[xx], args); ）
+                for (Method method : ics[i].getMethods()) { //构建被代理的接口的方法对应的方法体（通过对InvocationHandler实例的invoke方法执行调用，如handler.invoke(this,methods[xx], args); ）
                     String desc = ReflectUtils.getDesc(method); //获取方法的描述信息，如getName()Ljava/lang/String;
                     if (worked.contains(desc) || Modifier.isStatic(method.getModifiers())) { //若方法已经处理过或是静态方法则不处理
                         continue;
@@ -179,7 +180,7 @@ public abstract class Proxy { //代理抽象类
                     Class<?>[] pts = method.getParameterTypes();
 
                     StringBuilder code = new StringBuilder("Object[] args = new Object[").append(pts.length).append("];"); //声明参数，code值如：Object[] args = new Object[2];
-                    for (int j = 0; j < pts.length; j++) { //为参数列表中参数一一赋值
+                    for (int j = 0; j < pts.length; j++) { //依次取参数列表中的参数做赋值处理
                         code.append(" args[").append(j).append("] = ($w)$").append(j + 1).append(";"); //code值如：args[0] = ($w)$1; args[1] = ($w)$2;
                     }
                     code.append(" Object ret = handler.invoke(this, methods[").append(ix).append("], args);"); //最终会执行InvocationHandler对应实例的invoke方法
@@ -196,7 +197,7 @@ public abstract class Proxy { //代理抽象类
                 pkg = PACKAGE_NAME;
             }
 
-            // create ProxyInstance class.（接口代理实例对应的Class）
+            // create ProxyInstance class.（接口代理实例对应的Class，构造方法中的参数为InvocationHandler，调用处理逻辑都是放在InvocationHandler中）
             String pcn = pkg + ".proxy" + id; //如：ProxyTest在包org.apache.dubbo.common.bytecode，则生成org.apache.dubbo.common.bytecode.proxy0的代理类
             ccp.setClassName(pcn);
             ccp.addField("public static java.lang.reflect.Method[] methods;"); //添加字段对应的字符串
@@ -216,7 +217,7 @@ public abstract class Proxy { //代理抽象类
              * 解：创建Proxy实例对象，并在newInstance()方法中返回接口的代理实例，如目标对象org.apache.dubbo.common.bytecode.proxy0($1)
              * 如：public Object newInstance(java.lang.reflect.InvocationHandler h){ return new org.apache.dubbo.common.bytecode.proxy0($1); }
              */
-            ccm.addMethod("public Object newInstance(" + InvocationHandler.class.getName() + " h){ return new " + pcn + "($1); }"); //将InvocationHandler处理类编织到代码中
+            ccm.addMethod("public Object newInstance(" + InvocationHandler.class.getName() + " h){ return new " + pcn + "($1); }");
             Class<?> pc = ccm.toClass();
             proxy = (Proxy) pc.newInstance(); //返回Proxy的实例（然后再可以通过Proxy的newInstance(InvocationHandler)方法得到最终的接口代理实例）
         } catch (RuntimeException e) {
@@ -235,9 +236,9 @@ public abstract class Proxy { //代理抽象类
                 if (proxy == null) {
                     cache.remove(key);
                 } else {
-                    cache.put(key, new WeakReference<Proxy>(proxy));
+                    cache.put(key, new WeakReference<Proxy>(proxy)); //将接口名key对应的Proxy实例，存入缓存（WeakReference在垃圾回收时被清理）
                 }
-                cache.notifyAll();
+                cache.notifyAll(); //通知唤醒竞争cache资源的其它所有线程
             }
         }
         return proxy;

@@ -37,32 +37,34 @@ import static org.apache.dubbo.config.spring.util.DubboBeanUtils.registerCommonB
  * @export
  */
 public class DubboNamespaceHandler extends NamespaceHandlerSupport implements ConfigurableSourceBeanMetadataElement {
-    /**
-     * 数据结构
-     * 1）继承了spring的NamespaceHandlerSupport，可以解析自定义的元素
-     * 2）实现ConfigurableSourceBeanMetadataElement
-     * （ConfigurableSourceBeanMetadataElement用途：）
-     */
+     /**
+      * 知识点：Spring中的自定义标签
+      *
+      * 概要总结：
+      * 1）注册自定义的bean解析器，用来解析自定义元素（在调用自定义元素前初始化）
+      * （元素名是不带命名空间的，如<dubbo:application> 元素为application）
+      *
+      * 2）NamespaceHandler：命名空间处理器
+      *    a）Spring为了开放性提供了NamespaceHandler机制，这样我们就可以根据需求自己来处理我们设置的标签元素。
+      *    b）NamespaceHandler是一个处理器，该处理器负责，将该命名空间下的所有解析器进行都注册。然后根据Element找到合适的解析器进行解析元素。具体解析交由对应的解析器来处理
+      *
+      * 参考链接
+      *    https://juejin.cn/post/6844903665262657544 NamespaceHandler使用
+      */
 
     static { //static在类加载时，Version中有静态方法，会先执行Version.checkDuplicate(Version.class)，再执行Version.checkDuplicate(DubboNamespaceHandler.class);
         Version.checkDuplicate(DubboNamespaceHandler.class);
     }
 
-    /**
-     * 注册自定义的bean解析器，用来解析自定义元素（在调用自定义元素前初始化）
-     * （元素名是不带命名空间的，如<dubbo:application> 元素为application）
-     * <p>
-     * NamespaceHandler：命名空间处理器
-     * 1）Spring为了开放性提供了NamespaceHandler机制，这样我们就可以根据需求自己来处理我们设置的标签元素。
-     * 2）NamespaceHandler是一个处理器，该处理器负责，将该命名空间下的所有解析器进行都注册。然后根据ELement找到合适的解析器进行解析元素。具体解析交由对应的解析器来处理
-     * <p>
-     * 解析流程：
-     * 1）在init方法中，去注册解析器，然后在解析xml时，通过约定的key去map中拿到相应的解析器去解析
-     * 2）解析得到BeanDefinition，最后Spring 对相应的bean进行实例化
-     * <p>
-     * https://juejin.cn/post/6844903665262657544 NamespaceHandler使用
-     */
-    @Override
+
+     /**
+      * 流程分析：Spring容器找到DubboNamespaceHandler的流程
+      * 1）Spring容器读取XML文件，遍历节点Node，依次获取Node关联的命名空间的uri，如"http://dubbo.apache.org/schema/dubbo"
+      *   与Spring的uri比较，若不同则为自定义命名空间，即与"http://www.springframework.org/schema/beans"
+      * 2）读取Spring约定META-INF下的spring.handlers文件，取出以Node的uri为key的值，即为命名空间处理类的类名，如：org.apache.dubbo.config.spring.schema.DubboNamespaceHandler
+      * 3）然后通过反射机制，创建命名空间处理类的对象实例，先调用NamespaceHandler的init()方法，然后再调用parse()方法
+      */
+     @Override
     public void init() { //在解析自定义元素前，进行初始化操作（设置父类NamespaceHandlerSupport的Map<String, BeanDefinitionParser> parsers，即设置元素名与bean解析器的映射）
         registerBeanDefinitionParser("application", new DubboBeanDefinitionParser(ApplicationConfig.class, true));
         registerBeanDefinitionParser("module", new DubboBeanDefinitionParser(ModuleConfig.class, true));

@@ -147,6 +147,12 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
         dispatch(new ServiceConfigUnexportedEvent(this));
     }
 
+    /**
+     * 流程分析：进入ServiceConfig的export的流程
+     * 1）加载并解析Spring的xml文件，完成Config对象的初始化，并写入ConfigManager缓存中。
+     * 2）Spring容器初始化Bean以后，DubboBootstrapApplicationListener监听到容器事件，交由DubboBootstrap的start()进行服务启动。
+     * 3）在DubboBootstrap的start()启动中，会从ConfigManager的getServices()找出要暴露的服务，然后交由ServiceConfig的export()暴露具体服务。
+     */
     public synchronized void export() {
         if (!shouldExport()) { //根据暴露标志export，判断是否还需暴露服务
             return;

@@ -352,7 +352,7 @@ public final class ReflectUtils { //JVM虚拟机中的类型描述符
     }
 
     /**
-     * get class desc.（获取Class类的描述符）
+     * get class desc.
      * boolean[].class => "[Z"
      * Object.class => "Ljava/lang/Object;"
      *
@@ -360,7 +360,7 @@ public final class ReflectUtils { //JVM虚拟机中的类型描述符
      * @return desc.
      * @throws NotFoundException
      */
-    public static String getDesc(Class<?> c) {
+    public static String getDesc(Class<?> c) { //获取Class类的描述符
         StringBuilder ret = new StringBuilder();
 
         while (c.isArray()) { //数组类型

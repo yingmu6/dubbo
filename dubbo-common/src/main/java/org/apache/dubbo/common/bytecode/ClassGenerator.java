@@ -204,7 +204,7 @@ public final class ClassGenerator { //@csy-001 该类的用途是什么？解：
         }
         sb.append('{').append(body).append('}'); //方法拼接：方法声明 + {方法体}
         /**
-         * //如ProxyTest.ITest中方法
+         * //如ProxyTest.ITest中方法（this表示接口的代理实例，代理实例中方法的处理逻辑：实现接口中满足条件的方法，在方法体中组装接收的参数，然后传给InvocationHandler实例的invoke方法处理）
          * public java.lang.String getName(){Object[] args = new Object[0];
          * Object ret = handler.invoke(this, methods[0], args); return (java.lang.String)ret;}
          *

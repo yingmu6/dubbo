@@ -16,6 +16,8 @@
  */
 package org.apache.dubbo.common.compiler.support;
 
+import org.apache.dubbo.common.compiler.Compiler;
+import org.apache.dubbo.common.extension.ExtensionLoader;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -28,6 +30,18 @@ public class AdaptiveCompilerTest extends JavaCodeTest {
         Class<?> clazz = compiler.compile(getSimpleCode(), AdaptiveCompiler.class.getClassLoader());
         HelloService helloService = (HelloService) clazz.newInstance();
         Assertions.assertEquals("Hello world!", helloService.sayHello());
+    }
+
+    @Test
+    public void testAdaptiveCompiler() throws Exception { //Compiler的自适应类为AdaptiveCompiler
+        Compiler compiler = ExtensionLoader.getExtensionLoader(Compiler.class).getAdaptiveExtension();
+        Assertions.assertTrue(compiler instanceof AdaptiveCompiler);
+
+        /**
+         * SPI文件的加载路径：（用SPI文件放在不同目录、不同模块测试）
+         * 1）org.apache.dubbo.common.compiler.Compiler文件放在src、test的resources目录下，都可以被加载
+         * 2）org.apache.dubbo.common.compiler.Compiler文件放在其它模块，如dubbo-cluster就加载不了了
+         */
     }
 
 }

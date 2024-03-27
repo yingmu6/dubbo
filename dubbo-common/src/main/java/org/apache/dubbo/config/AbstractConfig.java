@@ -580,7 +580,14 @@ public abstract class AbstractConfig implements Serializable {
      * @see ConfigManager#addConfig(AbstractConfig)
      * @since 2.7.5
      */
-    @PostConstruct
+
+    /**
+     * 流程分析：Config对象添加到ConfigManager的流程
+     * 1）@PostConstruct修饰的方法，会在容器启动时自动调用
+     * 2）每个Config对象都对应Spring的Bean，并且继承了AbstractConfig，所以在执行具体Config对象的构造方法后，会执行该方法
+     * 3）因为配置文件中会有多个Config的配置，所以为了提升写的效率，ConfigManager使用多线程处理
+     */
+    @PostConstruct //post：在...之后，@PostConstruct会在构造函数之后执行。
     public void addIntoConfigManager() {
         ApplicationModel.getConfigManager().addConfig(this);
     }

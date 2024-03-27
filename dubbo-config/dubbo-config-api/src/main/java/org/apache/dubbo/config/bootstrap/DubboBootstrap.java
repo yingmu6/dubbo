@@ -489,7 +489,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
         return cache;
     }
 
-    public DubboBootstrap exportAsync() {
+    public DubboBootstrap exportAsync() { //异步暴露服务（默认是同步暴露服务）
         this.exportAsync = true;
         return this;
     }
