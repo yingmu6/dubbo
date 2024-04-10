@@ -594,6 +594,13 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
 
     private void startConfigCenter() { //启动配置中心（将配置源获取的值设置到Config中）
 
+        /**
+         * 流程分析：使用注册中心作为配置中心的流程
+         * 1）判断Environment中是否设置了配置中心(apollo、nacos等)，若设置了则不处理
+         * 2）判断是否配置了<dubbo:config-center/>元素，若设置了也不处理
+         * 3）若1）、2）都没配置，则取出满足条件的RegistryConfig列表，然后取出相关值，如protocol、port、address等值，
+         *    创建ConfigCenterConfig对象，并设置到ConfigManager的缓存中，作为配置中心供后续使用。
+         */
         useRegistryAsConfigCenterIfNecessary(); //使用注册中心作为配置中心（未指定配置中心时）
 
         Collection<ConfigCenterConfig> configCenters = configManager.getConfigCenters(); //获取缓存中的配置中心Config对象
@@ -654,7 +661,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
      */
     private void useRegistryAsConfigCenterIfNecessary() { //当没有指定配置中心时，默认使用注册中心做配置中心
         // we use the loading status of DynamicConfiguration to decide whether ConfigCenter has been initiated.
-        if (environment.getDynamicConfiguration().isPresent()) { //有对应的配置实例的，就不使用默认的注册中心
+        if (environment.getDynamicConfiguration().isPresent()) { //判断是否有配置中心，就没有则使用默认的注册中心
             return;
         }
 
@@ -662,10 +669,10 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
             return;
         }
 
-        configManager                                               //若xml中没有配置<dubbo:config-center/> ，则主动添加配置信息
-                .getDefaultRegistries()
+        configManager
+                .getDefaultRegistries() //获取默认的RegistryConfig对象实例列表（Config对象中的isDefault()返回null或true）
                 .stream()
-                .filter(this::isUsedRegistryAsConfigCenter) //filer：筛选满足条件的元素
+                .filter(this::isUsedRegistryAsConfigCenter)
                 .map(this::registryAsConfigCenter) //构建配置中心数据
                 .forEach(configManager::addConfigCenter); //将配置中心数据写到ConfigManager对应的本地缓存中
     }
@@ -1027,7 +1034,7 @@ public class DubboBootstrap extends GenericEventListener { //启动类：基于�
             if (!configCenter.checkOrUpdateInited()) { //若配置中心已经初始化过，则不进行后续的初始化逻辑。预期值为false，当inited=true时，checkOrUpdateInited()返回false，即已经初始化了，就不再初始化处理
                 return null;
             }
-            DynamicConfiguration dynamicConfiguration = getDynamicConfiguration(configCenter.toUrl()); //根据指定的URL获取配置中心实例
+            DynamicConfiguration dynamicConfiguration = getDynamicConfiguration(configCenter.toUrl()); //根据指定的URL获取配置中心实例（会去连接远程的配置中心，连接失败会报错）
             String configContent = dynamicConfiguration.getProperties(configCenter.getConfigFile(), configCenter.getGroup()); //从配置中心获取指定的配置内容
 
             String appGroup = getApplication().getName();

@@ -505,12 +505,12 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt { //
                 config.getClass().getSimpleName() + "#" + DEFAULT_KEY : null; //判断config的id是否为空，若为空再判断是否为默认config
     }
 
-    static <C extends AbstractConfig> boolean isDefaultConfig(C config) { //判断是否为默认的Config对象
-        Boolean isDefault = getProperty(config, "isDefault"); //获取config对象中isDefault()方法的对应的属性值
-        return isDefault == null || TRUE.equals(isDefault); //若不包含isDefault()方法或isDefault返回值值为true，则为默认的Config对象
+    static <C extends AbstractConfig> boolean isDefaultConfig(C config) { //判断是否为默认的Config对象（即isDefault()返回值为null或true的Config对象）
+        Boolean isDefault = getProperty(config, "isDefault");
+        return isDefault == null || TRUE.equals(isDefault);
     }
 
-    static <C extends AbstractConfig> List<C> getDefaultConfigs(Map<String, C> configsMap) { //获取默认Config列表（对map中的值列表进行过滤，configsMap值如<config对象Id：config对象实例>=<"org.apache.dubbo.config.spring.ConfigCenterBean", ConfigCenterBean@3154>）
+    static <C extends AbstractConfig> List<C> getDefaultConfigs(Map<String, C> configsMap) { //获取默认Config列表
         return configsMap.values()
                 .stream()
                 .filter(ConfigManager::isDefaultConfig) //Predicate: 谓语，filter：过滤出满足条件的元素

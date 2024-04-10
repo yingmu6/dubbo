@@ -42,7 +42,7 @@ import static org.apache.dubbo.common.extension.ExtensionLoader.getExtensionLoad
  *
  * @see AbstractDynamicConfiguration
  */
-public interface DynamicConfiguration extends Configuration, AutoCloseable { //动态配置，从配置中心获取配置值，如apollo等
+public interface DynamicConfiguration extends Configuration, AutoCloseable { //动态配置，从配置中心获取配置值，如apollo等（Zookeeper也可以作为配置中心）
     /**
      * Dubbo对比较好的配置管理组件进行高度抽象，可以让Dubbo使用者有选择的使用想要的组件
      */

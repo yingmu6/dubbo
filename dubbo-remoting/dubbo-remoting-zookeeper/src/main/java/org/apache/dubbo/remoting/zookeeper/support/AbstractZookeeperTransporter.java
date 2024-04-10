@@ -36,7 +36,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.TIMEOUT_KEY;
  */
 public abstract class AbstractZookeeperTransporter implements ZookeeperTransporter {
     private static final Logger logger = LoggerFactory.getLogger(ZookeeperTransporter.class);
-    private final Map<String, ZookeeperClient> zookeeperClientMap = new ConcurrentHashMap<>();
+    private final Map<String, ZookeeperClient> zookeeperClientMap = new ConcurrentHashMap<>(); //zk客户端连接的缓存
 
     /**
      * share connnect for registry, metadata, etc..
@@ -60,15 +60,15 @@ public abstract class AbstractZookeeperTransporter implements ZookeeperTransport
             return zookeeperClient; //从缓存中找到ZookeeperClient，直接返回
         }
         // avoid creating too many connections， so add lock（避免并发时创建太多连接，所以加锁处理）
-        synchronized (zookeeperClientMap) {
-            if ((zookeeperClient = fetchAndUpdateZookeeperClientCache(addressList)) != null && zookeeperClient.isConnected()) {
+        synchronized (zookeeperClientMap) { //zookeeperClientMap是共享资源：因为ZookeeperTransporter的实例是通过SPI创建的单实例，所以共享资源，需要加锁防并发
+            if ((zookeeperClient = fetchAndUpdateZookeeperClientCache(addressList)) != null && zookeeperClient.isConnected()) { //再次尝试从缓存中获取，可能在进入同步块之前，有其它线程已经处理好缓存了
                 logger.info("find valid zookeeper client from the cache for address: " + url);
                 return zookeeperClient;
             }
 
             zookeeperClient = createZookeeperClient(url);
             logger.info("No valid zookeeper client found from cache, therefore create a new client for url. " + url);
-            writeToClientMap(addressList, zookeeperClient); //在缓存中没有发现有效的zookeeper client，就重新创建
+            writeToClientMap(addressList, zookeeperClient); //在缓存中没有发现有效的zookeeper client，就重新创建，并写入缓存
         }
         return zookeeperClient;
     }
@@ -98,7 +98,7 @@ public abstract class AbstractZookeeperTransporter implements ZookeeperTransport
             }
         }
         if (zookeeperClient != null && zookeeperClient.isConnected()) {
-            writeToClientMap(addressList, zookeeperClient);
+            writeToClientMap(addressList, zookeeperClient); //将地址列表与Zk客户端连接写入缓存（todo @Ym 此处是多个列表对应一个客户端连接，能实现多注册中心吗）
         }
         return zookeeperClient;
     }

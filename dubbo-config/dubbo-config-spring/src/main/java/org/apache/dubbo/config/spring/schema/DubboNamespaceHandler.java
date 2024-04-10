@@ -60,8 +60,12 @@ public class DubboNamespaceHandler extends NamespaceHandlerSupport implements Co
      /**
       * 流程分析：Spring容器找到DubboNamespaceHandler的流程
       * 1）Spring容器读取XML文件，遍历节点Node，依次获取Node关联的命名空间的uri，如"http://dubbo.apache.org/schema/dubbo"
-      *   与Spring的uri比较，若不同则为自定义命名空间，即与"http://www.springframework.org/schema/beans"
+      *    与Spring的uri比较，若不同则为自定义命名空间，即与"http://www.springframework.org/schema/beans"
       * 2）读取Spring约定META-INF下的spring.handlers文件，取出以Node的uri为key的值，即为命名空间处理类的类名，如：org.apache.dubbo.config.spring.schema.DubboNamespaceHandler
+      *    流程分析：读取spring.handler文件的流程（按从dubbo-demo启动分析，可参考dubbo-common下自定义的文件）
+      *        a）dubbo-demo依赖了dubbo-bom，而dubbo-bom模块引入了所有dubbo模块。
+      *        b）Spring容器在读取xml文件时，会读取关联模块下的META-INF/spring.handlers和META-INF/spring.schemas
+      *        c）会按照classLoader.getResources(resourceName) 或ClassLoader.getSystemResources(resourceName)方式加载到引用得所有模块的所有文件(包含引入的jar，如Spring的文件)
       * 3）然后通过反射机制，创建命名空间处理类的对象实例，先调用NamespaceHandler的init()方法，然后再调用parse()方法
       */
      @Override
@@ -80,18 +84,6 @@ public class DubboNamespaceHandler extends NamespaceHandlerSupport implements Co
         registerBeanDefinitionParser("service", new DubboBeanDefinitionParser(ServiceBean.class, true)); //将元素名与对应的bean进行对应
         registerBeanDefinitionParser("reference", new DubboBeanDefinitionParser(ReferenceBean.class, false));
         registerBeanDefinitionParser("annotation", new AnnotationBeanDefinitionParser()); //对应注解解析器
-        /**
-         * @csy-11/23-P2（11/24解） registerBeanDefinitionParser 做了什么处理？
-         * 解：init()方法解析：
-         * 1）重写Spring NamespaceHandler的init()方法，
-         * 2）在解析XML中的命名空间url时，如xmlns:dubbo="http://dubbo.apache.org/schema/dubbo"，会调用init()方法，
-         * 3）调用的地方org.springframework.beans.factory.xml.DefaultNamespaceHandlerResolver#resolve
-         *
-         * registerBeanDefinitionParser()方法解析：
-         * 1）重写Spring NamespaceHandlerSupport#registerBeanDefinitionParser()方法
-         * 2）将元素名，如"application"与对应的解析器按键值对存储起来 Map<String, BeanDefinitionParser> parsers
-         * 3）注册以后当前对象DubboNamespaceHandler从NamespaceHandlerSupport继承的私有成员变量parsers就有相关值了
-         */
     }
 
     /**
@@ -105,31 +97,21 @@ public class DubboNamespaceHandler extends NamespaceHandlerSupport implements Co
      * @since 2.7.5
      */
     @Override
-    public BeanDefinition parse(Element element, ParserContext parserContext) {
-        BeanDefinitionRegistry registry = parserContext.getRegistry();
-        registerAnnotationConfigProcessors(registry); //注册注解解析器
+    public BeanDefinition parse(Element element, ParserContext parserContext) { //Spring解析自定义元素时回调的方法
+        BeanDefinitionRegistry registry = parserContext.getRegistry(); //BeanDefinitionRegistry：用来保存Bean的类，此处的实例为DefaultListableBeanFactory@xxx（通过debug，可看到注册的所有Bean）
+        registerAnnotationConfigProcessors(registry); //注册基础的注解处理器Bean
         /**
          * @since 2.7.8
          * issue : https://github.com/apache/dubbo/issues/6275
          */
-        registerCommonBeans(registry); //注册具有公共功能的bean
+        registerCommonBeans(registry); //注册基础设施的Bean（除Config对象外的Bean，不需要通过自定义解析器DubboBeanDefinitionParser解析）
         BeanDefinition beanDefinition = super.parse(element, parserContext); //调用父类的parse()方法解析，父类中会找到init()设置的解析器，再调用解析器的parse()解析元素
         setSource(beanDefinition); //设置源对象，将beanDefinition设置到BeanMetadataAttributeAccessor
         return beanDefinition;
     }
 
-    /**
-     * 解析加载Spring Xml的过程：
-     * https://blog.csdn.net/weixin_33747129/article/details/94609557
-     *
-     * Spring关于Xml的bean与Dubbo config的转化
-     *
-     * 进入Dubbo服务暴露的流程
-     */
-
-
-    /**
-     * 注册注解配置处理器
+     /**
+     * 注册基础设施的注解处理器Bean
      * Register the processors for the Spring Annotation-Driven features
      *
      * @param registry {@link BeanDefinitionRegistry}

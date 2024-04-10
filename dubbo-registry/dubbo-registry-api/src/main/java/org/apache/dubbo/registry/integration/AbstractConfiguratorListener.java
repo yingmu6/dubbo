@@ -54,6 +54,12 @@ public abstract class AbstractConfiguratorListener implements ConfigurationListe
         ruleRepository.removeListener(key, this);
     }
 
+    /**
+     * 流程分析：配置变更事件触发，
+     * 1）
+     * 2）
+     * 3）
+     */
     @Override
     public void process(ConfigChangedEvent event) { //配置发生变更时处理
         if (logger.isInfoEnabled()) {

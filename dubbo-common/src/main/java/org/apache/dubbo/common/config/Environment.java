@@ -57,7 +57,7 @@ public class Environment extends LifecycleAdapter implements FrameworkExt { //�
 
     private boolean configCenterFirst = true; //配置中心的配置是否优先
 
-    private DynamicConfiguration dynamicConfiguration; //动态配置实例
+    private DynamicConfiguration dynamicConfiguration; //动态配置（如从Apollo、Nacos等配置中心获取到的配置）
 
     public Environment() { //对象创建时，初始化成员变量
         this.propertiesConfiguration = new PropertiesConfiguration();
@@ -181,7 +181,7 @@ public class Environment extends LifecycleAdapter implements FrameworkExt { //�
         return Optional.ofNullable(dynamicConfiguration);
     }
 
-    @DisableInject
+    @DisableInject //表明SPI不会自动注入动态配置的扩展实例，需要手动调用setDynamicConfiguration(...)方法设置
     public void setDynamicConfiguration(DynamicConfiguration dynamicConfiguration) {
         this.dynamicConfiguration = dynamicConfiguration;
     }

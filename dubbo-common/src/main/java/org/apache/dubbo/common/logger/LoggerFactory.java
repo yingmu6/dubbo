@@ -76,6 +76,9 @@ public class LoggerFactory { //日志工厂
         }
     }
 
+    /**
+     * 流程分析：dubbo日志打印的流程
+     */
     private LoggerFactory() {
     }
 

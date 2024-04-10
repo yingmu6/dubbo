@@ -449,7 +449,12 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
     }
 
     /**
-     * 实现spring BeanDefinitionParser的方法，获取到解析的元素和解析的内容，就可以按照自定义的解析方式进行解析
+     * 流程分析：进入Dubbo自定义元素解析的流程
+     * 1）Spring容器启动，加载xml文件，读取到自定义的元素时，就会通过查找META-INF/spring.handles找到命名空间处理类的类名，并对应创建对象实例。
+     * 2）Spring会先回调DubboNamespaceHandler的init方法，方法中会将元素的本地名称与自定义元素解析器DubboBeanDefinitionParser注册到NamespaceHandlerSupport中的parsers缓存中
+     * 3）Spring再回调DubboNamespaceHandler的parse方法，该方法中会先注册基础设置的注解解析器Bean，以及通用功能的Bean，如DubboBootstrapApplicationListener
+     *    然后通过super.parse(...)调用NamespaceHandlerSupport的解析逻辑，该方法会从parses缓存中，根据当前解析的元素的本地名localName找到对应的解析器DubboBeanDefinitionParser
+     *    最终将元素信息Element、和解析的上下文信息ParseContext，回传给自定义解析器。自定义解析器按自定义逻辑解析，并生成BeanDefinition，交由给NamespaceHandlerSupport
      */
     @Override
     public BeanDefinition parse(Element element, ParserContext parserContext) { //解析XML的元素，生成Spring的Bean实例

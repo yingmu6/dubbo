@@ -96,7 +96,7 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
     private final Holder<Map<String, Class<?>>> cachedClasses = new Holder<>(); //当前扩展接口中的扩展名与扩展类Class的映射（普通扩展类的缓存，从loadClass()看出，也包含@Activate的扩展类）
 
     private final Map<String, Object> cachedActivates = new ConcurrentHashMap<>(); //扩展名与@Active注解对象的映射（自动激活扩展类的缓存）
-    private final ConcurrentMap<String, Holder<Object>> cachedInstances = new ConcurrentHashMap<>(); //扩展名与扩展实例的映射
+    private final ConcurrentMap<String, Holder<Object>> cachedInstances = new ConcurrentHashMap<>(); //扩展名与扩展实例的缓存
     private final Holder<Object> cachedAdaptiveInstance = new Holder<>(); //自适应扩展类的实例
     private volatile Class<?> cachedAdaptiveClass = null; //自适应扩展类（一个扩展接口最多只有一个自适应扩展类）
     private String cachedDefaultName; //缓存默认的扩展名，即为SPI上声明的扩展名

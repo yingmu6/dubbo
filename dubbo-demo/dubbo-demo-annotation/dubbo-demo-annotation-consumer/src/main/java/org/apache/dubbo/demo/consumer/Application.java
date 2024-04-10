@@ -17,6 +17,7 @@
 package org.apache.dubbo.demo.consumer;
 
 import org.apache.dubbo.config.spring.context.annotation.EnableDubbo;
+import org.apache.dubbo.demo.BasicInfo;
 import org.apache.dubbo.demo.DemoService;
 import org.apache.dubbo.demo.consumer.comp.DemoServiceComponent;
 
@@ -34,6 +35,17 @@ public class Application {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ConsumerConfiguration.class);
         context.start();
         DemoService service = context.getBean("demoServiceComponent", DemoServiceComponent.class);
+
+        if (service.getClass().isAnnotationPresent(BasicInfo.class)) {
+            BasicInfo basicInfo = service.getClass().getAnnotation(BasicInfo.class);
+            System.out.println("获取到注解：" + basicInfo.username() + "，" + basicInfo.age());
+        }
+
+        if (DemoService.class.isAnnotationPresent(BasicInfo.class)) {
+            BasicInfo basicInfo = DemoService.class.getAnnotation(BasicInfo.class);
+            System.out.println("获取到注解：" + basicInfo.username() + "，" + basicInfo.age());
+        }
+
         String hello = service.sayHello("world");
         System.out.println("result :" + hello);
     }

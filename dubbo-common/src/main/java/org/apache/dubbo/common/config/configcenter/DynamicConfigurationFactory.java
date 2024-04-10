@@ -41,6 +41,15 @@ public interface DynamicConfigurationFactory {
     static DynamicConfigurationFactory getDynamicConfigurationFactory(String name) { //通过SPI方式，获取当前接口DynamicConfigurationFactory的实例
         Class<DynamicConfigurationFactory> factoryClass = DynamicConfigurationFactory.class;
         ExtensionLoader<DynamicConfigurationFactory> loader = getExtensionLoader(factoryClass); //获取扩展加载器ExtensionLoader
+        /**
+         * 流程分析：SPI配置文件org.apache.dubbo.common.config.configcenter.DynamicConfigurationFactory的加载流程
+         * 1）此处获取ExtensionLoader<DynamicConfigurationFactory>实例时，缓存中已经有对应实例了，不需要再加载SPI文件了
+         * 2）
+         * 3）
+         *
+         * 问题点答疑：
+         * 1）为什么加载不了 dubbo-configcenter-apollo、dubbo-configcengter-nacos等目录下的配置文件，而dubbo-configcenter-zookeeper却能加载？
+         */
         return loader.getOrDefaultExtension(name);
     }
 }

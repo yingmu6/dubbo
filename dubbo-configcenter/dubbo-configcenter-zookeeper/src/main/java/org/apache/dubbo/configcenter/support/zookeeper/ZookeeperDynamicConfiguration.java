@@ -44,6 +44,12 @@ public class ZookeeperDynamicConfiguration extends TreePathDynamicConfiguration 
     private URL url;
 
 
+    /**
+     * 流程分析：Zookeeper作为配置中心的创建流程
+     * 1）
+     * 2）
+     * 3）
+     */
     ZookeeperDynamicConfiguration(URL url, ZookeeperTransporter zookeeperTransporter) {//zookeeper作为动态配置中心
         super(url);
         this.url = url;

@@ -33,7 +33,7 @@ public class Application {
 
     @Configuration
     @EnableDubbo(scanBasePackages = "org.apache.dubbo.demo.provider")
-    @PropertySource("classpath:/spring/dubbo-provider.properties")
+    @PropertySource("classpath:/spring/dubbo-provider.properties") //属性配置
     static class ProviderConfiguration {
         @Bean
         public RegistryConfig registryConfig() {

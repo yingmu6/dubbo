@@ -104,7 +104,7 @@ public class AdaptiveClassCodeGenerator { //自适应扩展类代码产生器
         }
         code.append("}");
 
-        if (logger.isDebugEnabled()) {
+        if (logger.isDebugEnabled()) { //***只要日志级别，调整为debug，就可以把产生的自适应类代码打印出来***
             logger.debug(code.toString());
         }
 

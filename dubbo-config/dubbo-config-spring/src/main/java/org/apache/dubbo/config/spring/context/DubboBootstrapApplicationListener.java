@@ -42,10 +42,22 @@ public class DubboBootstrapApplicationListener extends OneTimeExecutionApplicati
 
     private final DubboBootstrap dubboBootstrap;
 
+    /**
+     * 流程分析：服务启动时，DubboBootstrapApplicationListener是如何初始化的
+     * 1）在进入DubboNamespaceHandler的parse解析元素时，会调用DubboBeanUtils#registerCommonBeans方法，生成DubboBootstrapApplicationListener对应的bean
+     * 2）DubboLifecycleComponentApplicationListener也是通过registerCommonBeans创建的Bean实例
+     * 3）要操作对象的方法，就必须先创建对象，所以要先确定对象是在何时创建的
+     */
     public DubboBootstrapApplicationListener() {
         this.dubboBootstrap = DubboBootstrap.getInstance();
     }
 
+    /**
+     * 流程分析：服务启动时，监听到Spring容器事件经历的过程
+     * 1）Spring解析配置的XML，会进入DubboNamespaceHandler，实例化自定义的Config对象
+     * 2）然后调用当前DubboBootstrapApplicationListener的构造方法，创建DubboBootstrap的对象实例
+     * 3）Spring初始化之后，发出容器刷新的事件，就进入了当前onApplicationContextEvent方法
+     */
     @Override
     public void onApplicationContextEvent(ApplicationContextEvent event) { //spring容器事件发生时处理
         if (event instanceof ContextRefreshedEvent) { //当容器初始化完成或重新刷新时执行
