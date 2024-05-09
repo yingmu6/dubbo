@@ -53,13 +53,13 @@ public class ZookeeperDynamicConfiguration extends TreePathDynamicConfiguration 
     ZookeeperDynamicConfiguration(URL url, ZookeeperTransporter zookeeperTransporter) {//zookeeper作为动态配置中心
         super(url);
         this.url = url;
-        rootPath = getRootPath(url);
+        rootPath = getRootPath(url); //获取配置的根路径，如/dubbo/config
 
         initializedLatch = new CountDownLatch(1);
         this.cacheListener = new CacheListener(rootPath, initializedLatch);
         this.executor = Executors.newFixedThreadPool(1, new NamedThreadFactory(this.getClass().getSimpleName(), true));
 
-        zkClient = zookeeperTransporter.connect(url);
+        zkClient = zookeeperTransporter.connect(url); //连接zk服务端
         zkClient.addDataListener(rootPath, cacheListener, executor);
         try {
             // Wait for connection

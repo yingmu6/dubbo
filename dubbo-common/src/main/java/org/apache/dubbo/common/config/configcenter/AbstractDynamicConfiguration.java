@@ -204,7 +204,7 @@ public abstract class AbstractDynamicConfiguration implements DynamicConfigurati
         V value = null;
         try {
 
-            if (timeout < 1) { // less or equal 0
+            if (timeout < 1) { // less or equal 0（超时时间小于0，直接执行任务，并返回结果）
                 value = task.call();
             } else { //若给出了等待时间，则将执行的任务提交到线程池中，并等待指定的时间后获取结果
                 Future<V> future = workersThreadPool.submit(task);

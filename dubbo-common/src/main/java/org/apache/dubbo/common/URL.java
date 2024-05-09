@@ -1509,7 +1509,7 @@ class URL implements Serializable {
         return buildString(true, false, false, true);
     }
 
-    public String toServiceString() { //将url转换为指定的字符串（使用IP作为主机号）
+    public String toServiceString() { //将url转换带有服务信息字符串（不附加调用参数）
         return buildString(true, false, true, true);
     }
 

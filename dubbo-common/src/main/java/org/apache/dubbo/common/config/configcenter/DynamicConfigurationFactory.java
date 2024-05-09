@@ -43,12 +43,17 @@ public interface DynamicConfigurationFactory {
         ExtensionLoader<DynamicConfigurationFactory> loader = getExtensionLoader(factoryClass); //获取扩展加载器ExtensionLoader
         /**
          * 流程分析：SPI配置文件org.apache.dubbo.common.config.configcenter.DynamicConfigurationFactory的加载流程
-         * 1）此处获取ExtensionLoader<DynamicConfigurationFactory>实例时，缓存中已经有对应实例了，不需要再加载SPI文件了
-         * 2）
-         * 3）
+         * 1）DubboBootstrap#startConfigCenter()启动配置中心时，会校验是否做了配置中心的设置，若没有判断校验注册中心是否可以做配置中心
+         * 2）加载依赖模块下的所有xxx.DynamicConfigurationFactory的SPI配置文件，判断注册中心对应的协议名是否在配置中心的扩展名中，若在则根据注册中心信息构建配置中心
+         * 3）用构建好的配置中心信息，进行远程连接测试，在DubboBootstrap#prepareEnvironment中，可以获取到缓存中DynamicConfigurationFactory实例
          *
          * 问题点答疑：
-         * 1）为什么加载不了 dubbo-configcenter-apollo、dubbo-configcengter-nacos等目录下的配置文件，而dubbo-configcenter-zookeeper却能加载？
+         * 1）为什么在进入DubboBootstrap#prepareEnvironment方法前，ExtensionLoader<DynamicConfigurationFactory>实例已经在缓存中存在了？
+         *    解答：因为在此之前，由于没有设置配置中心，就会用注册中心作为配置中心，所以就会检测加载DynamicConfigurationFactory对应的SPI文件，
+         *         真实判断注册中心是否是对应的扩展实例，判断的过程中已经存入缓存了。
+         * 2）为什么加载不了dubbo-configcenter-apollo、dubbo-configcengter-nacos等目录下的配置文件，而dubbo-configcenter-zookeeper却能加载？
+         *    解答：需要看启动入口，在测试时使用的启动入口是dubbo-demo-xml模块下的ProviderApplication启动类，而该模块原先只依赖dubbo-configcenter-zookeeper、
+         *         dubbo-configcenter-nacos两个模块，所以只会引入这两个模块下的META-INF/dubbo等文件，要想引入其它模块，maven添加对应依赖即可。
          */
         return loader.getOrDefaultExtension(name);
     }

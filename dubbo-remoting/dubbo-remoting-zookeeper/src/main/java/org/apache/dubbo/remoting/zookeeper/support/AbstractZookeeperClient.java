@@ -33,7 +33,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.Executor;
 
 public abstract class AbstractZookeeperClient<TargetDataListener, TargetChildListener> implements ZookeeperClient { //Zookeeper客户端的抽象类
-    // 此处定义的泛型，用具体名称表示，比如TargetDataListener，而不是用T、R等符号，泛型的标识用啥都可以，符合语境即可
+    // 此处定义的泛型，用具体名称表示，比如TargetDataListener，而不是用T、R等符号，泛型的标识用啥都可以，符合语境即可（但没有指明泛型的上界、下界，即等价于Object）
 
     /**
      * zookeeper 临时节点、永久节点了解？以及客户端连接方式了解
@@ -198,7 +198,7 @@ public abstract class AbstractZookeeperClient<TargetDataListener, TargetChildLis
 
     @Override
     public String getContent(String path) {
-        if (!checkExists(path)) {
+        if (!checkExists(path)) { //先检查指定路径是否存在
             return null;
         }
         return doGetContent(path);

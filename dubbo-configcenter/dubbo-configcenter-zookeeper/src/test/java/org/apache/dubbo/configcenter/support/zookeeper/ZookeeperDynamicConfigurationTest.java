@@ -46,24 +46,24 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * TODO refactor using mockito
  */
-public class ZookeeperDynamicConfigurationTest {
+public class ZookeeperDynamicConfigurationTest { //@DbT doing
     private static CuratorFramework client;
 
     private static URL configUrl;
-    private static int zkServerPort = NetUtils.getAvailablePort();
+    private static int zkServerPort = NetUtils.getAvailablePort(); //随机产生的服务端有效端口
     private static TestingServer zkServer;
     private static DynamicConfiguration configuration;
 
     @BeforeAll
     public static void setUp() throws Exception {
-        zkServer = new TestingServer(zkServerPort, true);
+        zkServer = new TestingServer(zkServerPort, true); //使用API的方式启动zk服务端（也就是不需要在终端使用命令启动zk服务端）
 
         client = CuratorFrameworkFactory.newClient("127.0.0.1:" + zkServerPort, 60 * 1000, 60 * 1000,
                 new ExponentialBackoffRetry(1000, 3));
         client.start();
 
-        try {
-            setData("/dubbo/config/dubbo/dubbo.properties", "The content from dubbo.properties");
+        try { //若想连接到zk服务端看节点数据，则在单元测试用例加上System.in.read()，即用例一直处在读，而不终止状态，即可连接zk服务端看到数据
+            setData("/dubbo/config/dubbo/dubbo.properties", "The content from dubbo.properties"); //在zk上创建指定的节点，并设置对应的数据
             setData("/dubbo/config/dubbo/service:version:group.configurators", "The content from configurators");
             setData("/dubbo/config/appname", "The content from higer level node");
             setData("/dubbo/config/dubbo/appname.tag-router", "The content from appname tagrouters");
@@ -91,12 +91,18 @@ public class ZookeeperDynamicConfigurationTest {
     }
 
     @Test
-    public void testGetConfig() throws Exception {
+    public void testGetConfig() throws Exception { //done_获取远程配置中心，指定key的值（通过发起远程连接获取值）
         Assertions.assertEquals("The content from dubbo.properties", configuration.getConfig("dubbo.properties", "dubbo"));
+        //System.in.read(); //用于一直读，可不让方法结束，从而看到服务端节点数据。
+
+        /**
+         * 结果分析：
+         * 通过Zookeeper内嵌API方式启动zk服务端，并用zk客户端连接服务端，在zk节点上写入数据，然后通过configuration获取配置内容
+         */
     }
 
     @Test
-    public void testAddListener() throws Exception {
+    public void testAddListener() throws Exception { //doing
         CountDownLatch latch = new CountDownLatch(4);
         TestListener listener1 = new TestListener(latch);
         TestListener listener2 = new TestListener(latch);
@@ -125,6 +131,11 @@ public class ZookeeperDynamicConfigurationTest {
         Assertions.assertEquals("new value1", listener2.getValue());
         Assertions.assertEquals("new value2", listener3.getValue());
         Assertions.assertEquals("new value2", listener4.getValue());
+
+        /**
+         * 结果分析：
+         *
+         */
     }
 
     @Test

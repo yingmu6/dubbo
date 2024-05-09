@@ -31,7 +31,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.DEFAULT_KEY;
  */
 public abstract class AbstractDynamicConfigurationFactory implements DynamicConfigurationFactory {
 
-    private volatile Map<String, DynamicConfiguration> dynamicConfigurations = new ConcurrentHashMap<>();
+    private volatile Map<String, DynamicConfiguration> dynamicConfigurations = new ConcurrentHashMap<>(); //服务url与动态配置的缓存
 
     @Override
     public final DynamicConfiguration getDynamicConfiguration(URL url) {

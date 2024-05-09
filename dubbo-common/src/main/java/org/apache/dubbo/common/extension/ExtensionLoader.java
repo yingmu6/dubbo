@@ -934,7 +934,7 @@ public class ExtensionLoader<T> { //扩展加载器（将配置文件中的信�
                 }
             }
 
-            if (urls == null || !urls.hasMoreElements()) {
+            if (urls == null || !urls.hasMoreElements()) { //特别说明：加载SPI配置文件时，会从所有依赖的maven模块中去找指定dubbo路径的文件
                 if (classLoader != null) {
                     urls = classLoader.getResources(fileName); //获取指定路径下的所有资源，包含src、test目录下的资源
                 } else {

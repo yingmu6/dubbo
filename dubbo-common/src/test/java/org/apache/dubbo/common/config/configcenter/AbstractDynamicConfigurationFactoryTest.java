@@ -30,13 +30,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @see AbstractDynamicConfigurationFactory
  * @since 2.7.5
  */
-public class AbstractDynamicConfigurationFactoryTest {
+public class AbstractDynamicConfigurationFactoryTest { //@DbT done
 
     private AbstractDynamicConfigurationFactory factory;
 
-    @BeforeEach
+    @BeforeEach //每次测试用例调用前，都会执行
     public void init() {
-        factory = new AbstractDynamicConfigurationFactory() {
+        factory = new AbstractDynamicConfigurationFactory() { //匿名类
             @Override
             protected DynamicConfiguration createDynamicConfiguration(URL url) {
                 return new NopDynamicConfiguration(url);
@@ -45,8 +45,19 @@ public class AbstractDynamicConfigurationFactoryTest {
     }
 
     @Test
-    public void testGetDynamicConfiguration() {
+    public void testGetDynamicConfiguration() { //done
         URL url = URL.valueOf("nop://127.0.0.1");
         assertEquals(factory.getDynamicConfiguration(url), factory.getDynamicConfiguration(url));
+
+        /**
+         * 输出结果：
+         * assertEquals执行正确，无异常
+         *
+         * 结果分析：
+         * 1）执行getDynamicConfiguration(url)时，会判断缓存AbstractDynamicConfigurationFactory#dynamicConfigurations中是否存在服务url对应的
+         *    动态配置，若没有则会调用AbstractDynamicConfigurationFactory具体实现类的createDynamicConfiguration创建对应实例
+         *
+         * 2）同一个url对应的动态配置DynamicConfiguration实例是相同的
+         */
     }
 }
