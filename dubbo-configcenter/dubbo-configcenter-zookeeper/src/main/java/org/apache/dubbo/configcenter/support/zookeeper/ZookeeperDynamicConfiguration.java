@@ -46,9 +46,9 @@ public class ZookeeperDynamicConfiguration extends TreePathDynamicConfiguration 
 
     /**
      * 流程分析：Zookeeper作为配置中心的创建流程
-     * 1）
-     * 2）
-     * 3）
+     * 1）构建根路径rootPath、创建缓存监听器、线程池
+     * 2）通过zk客户端连接zk服务端（若连接不上，则会抛出异常）
+     * 3）为根目录rootPath添加节点数据变更监听器
      */
     ZookeeperDynamicConfiguration(URL url, ZookeeperTransporter zookeeperTransporter) {//zookeeper作为动态配置中心
         super(url);

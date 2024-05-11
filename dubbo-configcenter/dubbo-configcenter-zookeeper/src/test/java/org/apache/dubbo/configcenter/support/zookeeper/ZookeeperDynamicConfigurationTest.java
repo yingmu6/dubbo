@@ -84,10 +84,10 @@ public class ZookeeperDynamicConfigurationTest { //@DbT doing
     }
 
     private static void setData(String path, String data) throws Exception {
-        if (client.checkExists().forPath(path) == null) {
+        if (client.checkExists().forPath(path) == null) { //通过curator检查节点，若不存在则创建
             client.create().creatingParentsIfNeeded().forPath(path);
         }
-        client.setData().forPath(path, data.getBytes());
+        client.setData().forPath(path, data.getBytes()); //设置节点的数据
     }
 
     @Test
@@ -108,20 +108,20 @@ public class ZookeeperDynamicConfigurationTest { //@DbT doing
         TestListener listener2 = new TestListener(latch);
         TestListener listener3 = new TestListener(latch);
         TestListener listener4 = new TestListener(latch);
-        configuration.addListener("service:version:group.configurators", listener1);
+        configuration.addListener("service:version:group.configurators", listener1); //将监听器添加到CacheListener#keyListeners缓存中
         configuration.addListener("service:version:group.configurators", listener2);
         configuration.addListener("appname.tag-router", listener3);
         configuration.addListener("appname.tag-router", listener4);
 
-        setData("/dubbo/config/dubbo/service:version:group.configurators", "new value1");
+        setData("/dubbo/config/dubbo/service:version:group.configurators", "new value1"); //在setUp()中有创建路径，setData()方法中做了路径判断，所以直接更新值
         Thread.sleep(100);
         setData("/dubbo/config/dubbo/appname.tag-router", "new value2");
         Thread.sleep(100);
-        setData("/dubbo/config/appname", "new value3");
+        setData("/dubbo/config/appname", "new value3"); //更新节点的数据值
 
         Thread.sleep(5000);
 
-        latch.await();
+        latch.await(); //CountDownLatch：闭锁（等待计数线程都完成了，当前线程才继续执行，即让当前线程阻塞，直到闭锁的计数减为0）
         Assertions.assertEquals(1, listener1.getCount("service:version:group.configurators"));
         Assertions.assertEquals(1, listener2.getCount("service:version:group.configurators"));
         Assertions.assertEquals(1, listener3.getCount("appname.tag-router"));
@@ -135,6 +135,8 @@ public class ZookeeperDynamicConfigurationTest { //@DbT doing
         /**
          * 结果分析：
          *
+         * 问题点答疑：
+         * 1）TestListener#countMap的缓存值，是什么时候写入的？
          */
     }
 

@@ -40,7 +40,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.PATH_SEPARATOR;
 public class CacheListener implements DataListener { //缓存监听器
     private static final int MIN_PATH_DEPTH = 5;
 
-    private Map<String, Set<ConfigurationListener>> keyListeners = new ConcurrentHashMap<>();
+    private Map<String, Set<ConfigurationListener>> keyListeners = new ConcurrentHashMap<>(); //key与配置监听器集合的缓存（key可能是路径值或普通字符串）
     private CountDownLatch initializedLatch;
     private String rootPath;
 
