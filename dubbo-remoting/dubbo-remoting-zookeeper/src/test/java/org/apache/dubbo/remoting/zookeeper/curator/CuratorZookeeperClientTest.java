@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 
-public class CuratorZookeeperClientTest {
+public class CuratorZookeeperClientTest { //@DtY-Doing
     private TestingServer zkServer;
     private CuratorZookeeperClient curatorClient;
     CuratorFramework client = null;

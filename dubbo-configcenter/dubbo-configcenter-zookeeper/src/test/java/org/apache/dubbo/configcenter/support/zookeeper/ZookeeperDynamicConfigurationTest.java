@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * TODO refactor using mockito
  */
-public class ZookeeperDynamicConfigurationTest { //@DbT doing
+public class ZookeeperDynamicConfigurationTest { //@DtY doing
     private static CuratorFramework client;
 
     private static URL configUrl;
@@ -102,8 +102,8 @@ public class ZookeeperDynamicConfigurationTest { //@DbT doing
     }
 
     @Test
-    public void testAddListener() throws Exception { //doing
-        CountDownLatch latch = new CountDownLatch(4);
+    public void testAddListener() throws Exception { //Done（添加监听器，并监听事件回调）
+        CountDownLatch latch = new CountDownLatch(4); //线程计数
         TestListener listener1 = new TestListener(latch);
         TestListener listener2 = new TestListener(latch);
         TestListener listener3 = new TestListener(latch);
@@ -134,20 +134,31 @@ public class ZookeeperDynamicConfigurationTest { //@DbT doing
 
         /**
          * 结果分析：
+         * 1）configuration.addListener是将监听器添加到CacheListener#keyListeners缓存中
+         * 2）当配置有变更时，会回调ConfigurationListener实现类的process方法
          *
          * 问题点答疑：
          * 1）TestListener#countMap的缓存值，是什么时候写入的？
+         *    解答：在当配置发生变更时，回调process方法时接受回传的数据，进行写入的
+         *
+         * 2）TestLIstener#process方法，是怎么被回调处理的？
+         *    解答：CuratorZookeeperClient中内部类CuratorWatcherImpl实现了CuratorWatcher接口，会对zk指定的路径变化进行监听
          */
     }
 
     @Test
-    public void testPublishConfig() {
+    public void testPublishConfig() { //Doing
         String key = "user-service";
         String group = "org.apache.dubbo.service.UserService";
         String content = "test";
 
         assertTrue(configuration.publishConfig(key, group, content));
         assertEquals("test", configuration.getProperties(key, group));
+
+        /**
+         * 结果分析：
+         *
+         */
     }
 
     @Test
