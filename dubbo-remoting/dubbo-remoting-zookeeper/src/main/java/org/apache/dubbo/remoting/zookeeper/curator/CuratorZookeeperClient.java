@@ -120,8 +120,8 @@ public class CuratorZookeeperClient extends AbstractZookeeperClient<CuratorZooke
     protected void createPersistent(String path, String data) {
         byte[] dataBytes = data.getBytes(CHARSET);
         try {
-            client.create().forPath(path, dataBytes);
-        } catch (NodeExistsException e) {
+            client.create().forPath(path, dataBytes); //创建节点，并设置数据
+        } catch (NodeExistsException e) { //容错处理（在节点已经存在时，直接设置节点的数据）
             try {
                 client.setData().forPath(path, dataBytes); //此处是为路径写数据吗？怎么查看到数据？解：是为指定的路径写数据，有看到节点的数据，zk命令中使用get path就可以看到
             } catch (Exception e1) {

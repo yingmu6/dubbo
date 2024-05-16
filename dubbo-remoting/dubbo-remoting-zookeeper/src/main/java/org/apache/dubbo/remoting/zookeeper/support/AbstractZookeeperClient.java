@@ -83,7 +83,7 @@ public abstract class AbstractZookeeperClient<TargetDataListener, TargetChildLis
 
     @Override
     public void create(String path, boolean ephemeral) { //ephemeral：短暂的，临时的
-        if (!ephemeral) {
+        if (!ephemeral) { //非临时节点，即永久节点
             if (persistentExistNodePath.contains(path)) {
                 return;
             }
@@ -92,9 +92,9 @@ public abstract class AbstractZookeeperClient<TargetDataListener, TargetChildLis
                 return;
             }
         }
-        int i = path.lastIndexOf('/');
+        int i = path.lastIndexOf('/'); //获取"/"出现的最后位置
         if (i > 0) {
-            // 采用递归的方法，依次拆解路径，比如/A/B/C，会一次拆解为/A/B、A，创建的时候就会创建/A、A/B
+            // 采用递归的方法，依次拆解路径，比如"/A/B/C"，path值依次为："/A/B/C" -> "/A/B" -> "/A"，创建的节点依次为 "/A" -> "/A/B" -> "/A/B/C"
             // 前面的节点都是ephemeral=false，持久化节点，最后一个点是否是持久节点，根据入参ephemeral来判断
             create(path.substring(0, i), false);
         }
@@ -183,7 +183,7 @@ public abstract class AbstractZookeeperClient<TargetDataListener, TargetChildLis
     @Override
     public void create(String path, String content, boolean ephemeral) {
         if (checkExists(path)) { //path的值如：/dubbo/config/mapping/org.apache.dubbo.demo.GreetingService/zhangsan
-            delete(path); //如路径存在，则进行删除
+            delete(path); //如路径存在，则进行删除（添加、修改都是按添加处理）
         }
         int i = path.lastIndexOf('/'); //找到最后一个"/"
         if (i > 0) {

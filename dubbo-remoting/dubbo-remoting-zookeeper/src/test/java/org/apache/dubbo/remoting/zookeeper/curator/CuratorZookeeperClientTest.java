@@ -42,7 +42,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 
-public class CuratorZookeeperClientTest { //@DtY-Doing
+public class CuratorZookeeperClientTest { //@DtY-Doing（Zk客户端Curator测试）
+
     private TestingServer zkServer;
     private CuratorZookeeperClient curatorClient;
     CuratorFramework client = null;
@@ -50,7 +51,7 @@ public class CuratorZookeeperClientTest { //@DtY-Doing
     @BeforeEach
     public void setUp() throws Exception {
         int zkServerPort = NetUtils.getAvailablePort();
-        zkServer = new TestingServer(zkServerPort, true);
+        zkServer = new TestingServer(zkServerPort, true); //使用API的方式启动zk服务端
         curatorClient = new CuratorZookeeperClient(URL.valueOf("zookeeper://127.0.0.1:" +
                 zkServerPort + "/org.apache.dubbo.registry.RegistryService"));
         client = CuratorFrameworkFactory.newClient(zkServer.getConnectString(), new ExponentialBackoffRetry(1000, 3));
@@ -58,11 +59,20 @@ public class CuratorZookeeperClientTest { //@DtY-Doing
     }
 
     @Test
-    public void testCheckExists() {
+    public void testCheckExists() { //Done_创建节点以及检查节点
         String path = "/dubbo/org.apache.dubbo.demo.DemoService/providers";
         curatorClient.create(path, false);
         assertThat(curatorClient.checkExists(path), is(true));
         assertThat(curatorClient.checkExists(path + "/noneexits"), is(false));
+
+        /**
+         * 结果分析：
+         * 1）创建节点：AbstractZookeeperClient#create创建节点时，会将节点路径进行按"/"分隔，
+         *   然后递归创建节点，如"/A/B/C"，会被分为"/A/B/C" -> "/A/B" -> "/A"
+         *   最终创建的顺序是从根路径开始创建，如："/A" -> "/A/B" -> "/A/B/C"
+         *
+         * 2）检查节点：CuratorZookeeperClient#checkExists，最终会调用Zk客户端curator的checkExists进行节点检查
+         */
     }
 
     @Test

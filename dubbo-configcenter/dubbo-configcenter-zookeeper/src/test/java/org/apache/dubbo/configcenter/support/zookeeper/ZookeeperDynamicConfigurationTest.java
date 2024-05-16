@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * TODO refactor using mockito
  */
-public class ZookeeperDynamicConfigurationTest { //@DtY doing
+public class ZookeeperDynamicConfigurationTest { //@DtY-Done（Zookeeper实现的动态配置测试）
     private static CuratorFramework client;
 
     private static URL configUrl;
@@ -115,7 +115,7 @@ public class ZookeeperDynamicConfigurationTest { //@DtY doing
 
         setData("/dubbo/config/dubbo/service:version:group.configurators", "new value1"); //在setUp()中有创建路径，setData()方法中做了路径判断，所以直接更新值
         Thread.sleep(100);
-        setData("/dubbo/config/dubbo/appname.tag-router", "new value2");
+        setData("/dubbo/config/dubbo/appname.tag-router", "new value2"); //直接通过zk客户端curator设置节点数据
         Thread.sleep(100);
         setData("/dubbo/config/appname", "new value3"); //更新节点的数据值
 
@@ -147,22 +147,24 @@ public class ZookeeperDynamicConfigurationTest { //@DtY doing
     }
 
     @Test
-    public void testPublishConfig() { //Doing
+    public void testPublishConfig() { //Done_发布配置
         String key = "user-service";
         String group = "org.apache.dubbo.service.UserService";
         String content = "test";
 
-        assertTrue(configuration.publishConfig(key, group, content));
-        assertEquals("test", configuration.getProperties(key, group));
+        assertTrue(configuration.publishConfig(key, group, content)); //将配置发布到配置中心
+        assertEquals("test", configuration.getProperties(key, group)); //从配置中心获取配置值
 
         /**
          * 结果分析：
-         *
+         * 1）publishConfig是将配置发布到配置中心，此处的configuration的实例为ZookeeperDynamicConfiguration
+         *    即最终通过zk客户端，如curator创建key与group构建的路径的节点，再对应设值
+         * 2）configuration.getProperties是从配置中心获取key与group对应节点的值
          */
     }
 
     @Test
-    public void testGetConfigKeysAndContents() {
+    public void testGetConfigKeysAndContents() { //Done_按分组获取配置
 
         String group = "mapping";
         String key = "org.apache.dubbo.service.UserService";
@@ -171,11 +173,18 @@ public class ZookeeperDynamicConfigurationTest { //@DtY doing
         String key2 = "org.apache.dubbo.service.UserService2";
 
         assertTrue(configuration.publishConfig(key, group, content));
-        assertTrue(configuration.publishConfig(key2, group, content));
+        assertTrue(configuration.publishConfig(key2, group, content)); //设置相同分组group的不能节点值
 
-        Set<String> configKeys = configuration.getConfigKeys(group);
+        Set<String> configKeys = configuration.getConfigKeys(group); //获取分组下的所有配置值
 
         assertEquals(new TreeSet(asList(key, key2)), configKeys);
+
+        /**
+         * 结果分析：
+         * 1）配置的路径是由 group+key，进行构建的，group有分组的作用
+         *    当前configuration的实例为ZookeeperDynamicConfiguration，
+         *    会查找group对应的所有子节点的数据并返回
+         */
     }
 
     private class TestListener implements ConfigurationListener {
