@@ -76,7 +76,7 @@ public class CuratorZookeeperClientTest { //@DtY-Doing（Zk客户端Curator测�
     }
 
     @Test
-    public void testChildrenPath() {
+    public void testChildrenPath() { //Done_获取节点的子节点列表
         String path = "/dubbo/org.apache.dubbo.demo.DemoService/providers";
         curatorClient.create(path, false);
         curatorClient.create(path + "/provider1", false);
@@ -84,31 +84,48 @@ public class CuratorZookeeperClientTest { //@DtY-Doing（Zk客户端Curator测�
 
         List<String> children = curatorClient.getChildren(path);
         assertThat(children.size(), is(2));
+
+        /**
+         * 结果分析：
+         * 1）getChildren(path);获取指定节点的子节点列表，此处的children值为"provider1"、"provider2"
+         */
     }
 
     @Test
-    public void testChildrenListener() throws InterruptedException {
+    public void testChildrenListener() throws InterruptedException { //Done_添加子节点的事件监听
         String path = "/dubbo/org.apache.dubbo.demo.DemoService/providers";
         curatorClient.create(path, false);
         final CountDownLatch countDownLatch = new CountDownLatch(1);
-        curatorClient.addTargetChildListener(path, new CuratorZookeeperClient.CuratorWatcherImpl() {
+        curatorClient.addTargetChildListener(path, new CuratorZookeeperClient.CuratorWatcherImpl() { //添加path子节点的监听器
 
             @Override
             public void process(WatchedEvent watchedEvent) throws Exception {
-                countDownLatch.countDown();
+                countDownLatch.countDown(); //监听到子节点的变更，如：type:NodeChildrenChanged
             }
         });
-        curatorClient.createPersistent(path + "/provider1");
-        countDownLatch.await();
+        curatorClient.createPersistent(path + "/provider1"); //创建path的子节点
+        countDownLatch.await(); //让当前线程阻塞，直到latch计数减到0（可以代替System.in.read()，使任务完成）
+
+        /**
+         * 结果分析：
+         * 1）curatorClient.addTargetChildListener为指定路径的节点添加子节点监听器（当子节点有变更时，会回调process方法）
+         * 2）curatorClient.createPersistent创建子节点，即path节点的子节点有变更，所以会回调process方法
+         */
     }
 
 
     @Test
-    public void testWithInvalidServer() {
+    public void testWithInvalidServer() { //Done_用无效地址连接zk服务端时，会抛出异常
         Assertions.assertThrows(IllegalStateException.class, () -> {
             curatorClient = new CuratorZookeeperClient(URL.valueOf("zookeeper://127.0.0.1:1/service"));
             curatorClient.create("/testPath", true);
         });
+
+        /**
+         * 结果分析：
+         * 1）创建CuratorZookeeperClient时，会通过curator的客户端连接zk服务端，因为此处
+         *    zk服务端地址为127.0.0.1:1，并非有效，所以连接不上zk服务端，就会抛出异常
+         */
     }
 
     @Test
