@@ -212,7 +212,7 @@ public class CuratorZookeeperClient extends AbstractZookeeperClient<CuratorZooke
     @Override
     public List<String> addTargetChildListener(String path, CuratorWatcherImpl listener) {
         try {
-            return client.getChildren().usingWatcher(listener).forPath(path);
+            return client.getChildren().usingWatcher(listener).forPath(path); //为指定路径的子节点添加监听器
         } catch (NoNodeException e) {
             return null;
         } catch (Exception e) {
@@ -282,7 +282,7 @@ public class CuratorZookeeperClient extends AbstractZookeeperClient<CuratorZooke
         protected CuratorWatcherImpl() {
         }
 
-        public void unwatch() {
+        public void unwatch() { //不监听（即将监听器置为null）
             this.childListener = null;
         }
 
@@ -294,7 +294,7 @@ public class CuratorZookeeperClient extends AbstractZookeeperClient<CuratorZooke
                 return;
             }
 
-            if (childListener != null) {
+            if (childListener != null) { //childListener在unwatch()会置为null，所以需要进行非空判断
                 childListener.childChanged(path, client.getChildren().usingWatcher(this).forPath(path));
             }
         }

@@ -62,7 +62,7 @@ public abstract class AbstractZookeeperClient<TargetDataListener, TargetChildLis
 
     private volatile boolean closed = false;
 
-    private final Set<String> persistentExistNodePath = new ConcurrentHashSet<>(); //持久化节点路径的集合
+    private final Set<String> persistentExistNodePath = new ConcurrentHashSet<>(); //持久节点路径的集合
 
     public AbstractZookeeperClient(URL url) {
         this.url = url;
@@ -93,14 +93,14 @@ public abstract class AbstractZookeeperClient<TargetDataListener, TargetChildLis
             }
         }
         int i = path.lastIndexOf('/'); //获取"/"出现的最后位置
-        if (i > 0) {
+        if (i > 0) { //若路径有多层级，则递归拆解路径，再依次创建节点
             // 采用递归的方法，依次拆解路径，比如"/A/B/C"，path值依次为："/A/B/C" -> "/A/B" -> "/A"，创建的节点依次为 "/A" -> "/A/B" -> "/A/B/C"
             // 前面的节点都是ephemeral=false，持久化节点，最后一个点是否是持久节点，根据入参ephemeral来判断
             create(path.substring(0, i), false);
         }
-        if (ephemeral) {
+        if (ephemeral) { //临时节点
             createEphemeral(path);
-        } else {
+        } else {         //持久节点
             createPersistent(path);
             persistentExistNodePath.add(path);
         }
@@ -121,7 +121,7 @@ public abstract class AbstractZookeeperClient<TargetDataListener, TargetChildLis
     }
 
     @Override
-    public List<String> addChildListener(String path, final ChildListener listener) {
+    public List<String> addChildListener(String path, final ChildListener listener) { //为子节点添加监听器（1：将监听器添加到缓存childListeners中，2：通过zk客户端API，如curator为子节点添加监听器）
         ConcurrentMap<ChildListener, TargetChildListener> listeners = childListeners.computeIfAbsent(path, k -> new ConcurrentHashMap<>());
         TargetChildListener targetListener = listeners.computeIfAbsent(listener, k -> createTargetChildListener(path, k));
         return addTargetChildListener(path, targetListener);

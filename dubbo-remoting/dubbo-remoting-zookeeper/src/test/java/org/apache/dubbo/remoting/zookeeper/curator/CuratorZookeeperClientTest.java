@@ -129,25 +129,50 @@ public class CuratorZookeeperClientTest { //@DtY-Doing（Zk客户端Curator测�
     }
 
     @Test
-    public void testWithStoppedServer() throws IOException {
+    public void testWithStoppedServer() throws IOException { //Done
         Assertions.assertThrows(IllegalStateException.class, () -> {
             curatorClient.create("/testPath", true);
-            zkServer.stop();
+            zkServer.stop(); //停止zk服务
             curatorClient.delete("/testPath");
         });
+
+        /**
+         * 结果分析：
+         * 1）在进行zkServer.stop()后，就停止了zk服务，如果还进行节点操作，
+         *    本质会抛出org.apache.zookeeper.KeeperException$ConnectionLossException连接不上的异常
+         *    最终对外抛出IllegalStateException异常
+         */
     }
 
     @Test
-    public void testRemoveChildrenListener() {
-        ChildListener childListener = mock(ChildListener.class);
+    public void testRemoveChildrenListener() { //Done_移除子节点监听器
+        ChildListener childListener = mock(ChildListener.class); //使用Mock为ChildListener接口创建实例
         curatorClient.addChildListener("/children", childListener);
         curatorClient.removeChildListener("/children", childListener);
+
+        /**
+         * 结果分析：
+         * 1）addChildListener：为子节点添加监听器
+         *   1.1）将监听器添加到缓存AbstractZookeeperClient的childListeners中
+         *   1.2）通过zk客户端API，如curator为子节点添加监听器
+         *
+         * 2）removeChildListener：移除子节点监听器
+         *   2.1）将监听器从缓存AbstractZookeeperClient的childListeners移除
+         *   2.2）执行CuratorWatcherImpl的unwatch()方法，即this.childListener = null;
+         *        因为当子节点有变化时，会回调process()方法，会判断childListener是否非空，若为空则不执行。
+         */
     }
 
     @Test
-    public void testCreateExistingPath() {
+    public void testCreateExistingPath() { //Done_节点创建时判断是否已存在
         curatorClient.create("/pathOne", false);
         curatorClient.create("/pathOne", false);
+
+        /**
+         * 结果分析：
+         * 1）在AbstractZookeeperClient#create创建节点时，若是永久节点会判断节点路径是否在集合
+         *    若在集合中，则不会进行创建的操作。
+         */
     }
 
     @Test
