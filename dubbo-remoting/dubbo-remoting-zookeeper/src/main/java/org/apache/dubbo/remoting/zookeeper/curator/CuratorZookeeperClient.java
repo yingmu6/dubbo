@@ -187,7 +187,7 @@ public class CuratorZookeeperClient extends AbstractZookeeperClient<CuratorZooke
     }
 
     @Override
-    public String doGetContent(String path) { //获取指定路径的内容
+    public String doGetContent(String path) { //获取指定路径的节点的数据内容
         try {
             byte[] dataBytes = client.getData().forPath(path); //通过zk客户端curator获取指定路径对应的内容
             return (dataBytes == null || dataBytes.length == 0) ? null : new String(dataBytes, CHARSET);

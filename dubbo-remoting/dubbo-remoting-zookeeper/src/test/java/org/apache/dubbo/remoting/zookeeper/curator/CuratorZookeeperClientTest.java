@@ -176,23 +176,32 @@ public class CuratorZookeeperClientTest { //@DtY-Doing（Zk客户端Curator测�
     }
 
     @Test
-    public void testConnectedStatus() {
+    public void testConnectedStatus() { //Done_测试连接状态
         curatorClient.createEphemeral("/testPath");
         boolean connected = curatorClient.isConnected();
         assertThat(connected, is(true));
+
+        /**
+         * 1）调用zk客户端API直接判断是否处于连接
+         */
     }
 
     @Test
-    public void testCreateContent4Persistent() {
+    public void testCreateContent4Persistent() { //Done_获取节点内容
         String path = "/curatorTest4CrContent/content.data";
         String content = "createContentTest";
-        curatorClient.delete(path);
+        curatorClient.delete(path); //先做删除，后添加（清理测试数据）
         assertThat(curatorClient.checkExists(path), is(false));
         assertNull(curatorClient.getContent(path));
 
         curatorClient.create(path, content, false);
         assertThat(curatorClient.checkExists(path), is(true));
         assertEquals(curatorClient.getContent(path), content);
+
+        /**
+         * 结果分析：
+         * 1）创建节点时，指定节点数据内容，并可以通过getContent(path)，获取节点内容
+         */
     }
 
     @Test
