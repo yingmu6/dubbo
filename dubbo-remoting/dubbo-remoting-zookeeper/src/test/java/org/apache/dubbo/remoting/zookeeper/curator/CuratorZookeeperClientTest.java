@@ -129,7 +129,7 @@ public class CuratorZookeeperClientTest { //@DtY-Doing（Zk客户端Curator测�
     }
 
     @Test
-    public void testWithStoppedServer() throws IOException { //Done
+    public void testWithStoppedServer() throws IOException { //Done_停止zk服务
         Assertions.assertThrows(IllegalStateException.class, () -> {
             curatorClient.create("/testPath", true);
             zkServer.stop(); //停止zk服务
@@ -205,7 +205,7 @@ public class CuratorZookeeperClientTest { //@DtY-Doing（Zk客户端Curator测�
     }
 
     @Test
-    public void testCreateContent4Temp() {
+    public void testCreateContent4Temp() { //Done_创建临时节点
         String path = "/curatorTest4CrContent/content.data";
         String content = "createContentTest";
         curatorClient.delete(path);
@@ -215,6 +215,12 @@ public class CuratorZookeeperClientTest { //@DtY-Doing（Zk客户端Curator测�
         curatorClient.create(path, content, true);
         assertThat(curatorClient.checkExists(path), is(true));
         assertEquals(curatorClient.getContent(path), content);
+
+        /**
+         * 结果分析：
+         * 1）curator创建节点时，默认是持久节点类型CreateMode.PERSISTENT，创建临时节点时，
+         *    需要指明临时节点类型CreateMode.EPHEMERAL
+         */
     }
 
     @AfterEach
@@ -224,7 +230,7 @@ public class CuratorZookeeperClientTest { //@DtY-Doing（Zk客户端Curator测�
     }
 
     @Test
-    public void testAddTargetDataListener() throws Exception {
+    public void testAddTargetDataListener() throws Exception { //Doing
         String listenerPath = "/dubbo/service.name/configuration";
         String path = listenerPath + "/dat/data";
         String value = "vav";
@@ -252,5 +258,24 @@ public class CuratorZookeeperClientTest { //@DtY-Doing（Zk客户端Curator测�
         Thread.sleep(2000L);
         Assertions.assertTrue(9L >= atomicInteger.get());
         Assertions.assertTrue(2L <= atomicInteger.get());
+
+        /**
+         * 输出结果：
+         * ===TreeCacheEvent{type=NODE_ADDED, data=ChildData{path='/dubbo/service.name/configuration', stat=5,5,1716163999671,1716163999671,0,1,0,0,13,1,6
+         * , data=[49, 57, 50, 46, 49, 54, 56, 46, 49, 46, 49, 48, 56]}}
+         * ===TreeCacheEvent{type=NODE_ADDED, data=ChildData{path='/dubbo/service.name/configuration/dat', stat=6,6,1716163999673,1716163999673,0,1,0,0,13,1,7
+         * , data=[49, 57, 50, 46, 49, 54, 56, 46, 49, 46, 49, 48, 56]}}
+         * ===TreeCacheEvent{type=NODE_ADDED, data=ChildData{path='/dubbo/service.name/configuration/dat/data', stat=7,7,1716163999674,1716163999674,0,1,0,0,13,1,8
+         * , data=[49, 57, 50, 46, 49, 54, 56, 46, 49, 46, 49, 48, 56]}}
+         * ===TreeCacheEvent{type=NODE_ADDED, data=ChildData{path='/dubbo/service.name/configuration/dat/data/d.json', stat=8,10,1716163999675,1716163999699,2,0,0,72058087353548800,6,0,8
+         * , data=[100, 102, 115, 97, 115, 102]}}
+         * ===TreeCacheEvent{type=INITIALIZED, data=null}
+         * ===TreeCacheEvent{type=NODE_REMOVED, data=ChildData{path='/dubbo/service.name/configuration/dat/data/d.json', stat=8,10,1716163999675,1716163999699,2,0,0,72058087353548800,6,0,8
+         * , data=null}}
+         * ===TreeCacheEvent{type=NODE_REMOVED, data=ChildData{path='/dubbo/service.name/configuration/dat/data', stat=7,7,1716163999674,1716163999674,0,2,0,0,13,0,11
+         * , data=null}}
+         *
+         * 结果分析：
+         */
     }
 }
