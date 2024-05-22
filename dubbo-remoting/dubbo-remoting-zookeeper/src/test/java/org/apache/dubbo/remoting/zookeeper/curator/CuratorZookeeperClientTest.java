@@ -236,7 +236,7 @@ public class CuratorZookeeperClientTest { //@DtY-Doing（Zk客户端Curator测�
         String value = "vav";
 
         curatorClient.create(path + "/d.json", value, true);
-        String valueFromCache = curatorClient.getContent(path + "/d.json");
+        String valueFromCache = curatorClient.getContent(path + "/d.json"); //获取节点内容
         Assertions.assertEquals(value, valueFromCache);
         final AtomicInteger atomicInteger = new AtomicInteger(0);
         curatorClient.addTargetDataListener(listenerPath, new CuratorZookeeperClient.CuratorWatcherImpl() {
@@ -247,17 +247,18 @@ public class CuratorZookeeperClientTest { //@DtY-Doing（Zk客户端Curator测�
             }
         });
 
-        valueFromCache = curatorClient.getContent(path + "/d.json");
+        valueFromCache = curatorClient.getContent(path + "/d.json"); //读取节点内容，不会触发节点变更事件
         Assertions.assertNotNull(valueFromCache);
         curatorClient.getClient().setData().forPath(path + "/d.json", "sdsdf".getBytes());
         curatorClient.getClient().setData().forPath(path + "/d.json", "dfsasf".getBytes());
-        curatorClient.delete(path + "/d.json");
+        curatorClient.delete(path + "/d.json"); //删除节点
         curatorClient.delete(path);
         valueFromCache = curatorClient.getContent(path + "/d.json");
         Assertions.assertNull(valueFromCache);
         Thread.sleep(2000L);
         Assertions.assertTrue(9L >= atomicInteger.get());
         Assertions.assertTrue(2L <= atomicInteger.get());
+        System.out.println("atomicInteger = " + atomicInteger.get());
 
         /**
          * 输出结果：
@@ -274,8 +275,10 @@ public class CuratorZookeeperClientTest { //@DtY-Doing（Zk客户端Curator测�
          * , data=null}}
          * ===TreeCacheEvent{type=NODE_REMOVED, data=ChildData{path='/dubbo/service.name/configuration/dat/data', stat=7,7,1716163999674,1716163999674,0,2,0,0,13,0,11
          * , data=null}}
+         * atomicInteger = 7
          *
          * 结果分析：
+         *
          */
     }
 }
