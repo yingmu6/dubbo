@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 
-public class CuratorZookeeperClientTest { //@DtY-Doing（Zk客户端Curator测试）
+public class CuratorZookeeperClientTest { //@DtY-Done（Zk客户端Curator测试）
 
     private TestingServer zkServer;
     private CuratorZookeeperClient curatorClient;
@@ -230,7 +230,7 @@ public class CuratorZookeeperClientTest { //@DtY-Doing（Zk客户端Curator测�
     }
 
     @Test
-    public void testAddTargetDataListener() throws Exception { //Doing
+    public void testAddTargetDataListener() throws Exception { //Done_为指定节点添加监听器
         String listenerPath = "/dubbo/service.name/configuration";
         String path = listenerPath + "/dat/data";
         String value = "vav";
@@ -242,7 +242,7 @@ public class CuratorZookeeperClientTest { //@DtY-Doing（Zk客户端Curator测�
         curatorClient.addTargetDataListener(listenerPath, new CuratorZookeeperClient.CuratorWatcherImpl() {
             @Override
             public void childEvent(CuratorFramework client, TreeCacheEvent event) throws Exception {
-                System.out.println("===" + event);
+                System.out.println("监听到数据变更：" + event + "，数据：" + new String(event.getData().getData(), "UTF-8"));
                 atomicInteger.incrementAndGet();
             }
         });
@@ -258,27 +258,24 @@ public class CuratorZookeeperClientTest { //@DtY-Doing（Zk客户端Curator测�
         Thread.sleep(2000L);
         Assertions.assertTrue(9L >= atomicInteger.get());
         Assertions.assertTrue(2L <= atomicInteger.get());
-        System.out.println("atomicInteger = " + atomicInteger.get());
+        System.out.println("atomicInteger = " + atomicInteger.get()); //atomicInteger在区间[2,9]
 
         /**
          * 输出结果：
-         * ===TreeCacheEvent{type=NODE_ADDED, data=ChildData{path='/dubbo/service.name/configuration', stat=5,5,1716163999671,1716163999671,0,1,0,0,13,1,6
-         * , data=[49, 57, 50, 46, 49, 54, 56, 46, 49, 46, 49, 48, 56]}}
-         * ===TreeCacheEvent{type=NODE_ADDED, data=ChildData{path='/dubbo/service.name/configuration/dat', stat=6,6,1716163999673,1716163999673,0,1,0,0,13,1,7
-         * , data=[49, 57, 50, 46, 49, 54, 56, 46, 49, 46, 49, 48, 56]}}
-         * ===TreeCacheEvent{type=NODE_ADDED, data=ChildData{path='/dubbo/service.name/configuration/dat/data', stat=7,7,1716163999674,1716163999674,0,1,0,0,13,1,8
-         * , data=[49, 57, 50, 46, 49, 54, 56, 46, 49, 46, 49, 48, 56]}}
-         * ===TreeCacheEvent{type=NODE_ADDED, data=ChildData{path='/dubbo/service.name/configuration/dat/data/d.json', stat=8,10,1716163999675,1716163999699,2,0,0,72058087353548800,6,0,8
-         * , data=[100, 102, 115, 97, 115, 102]}}
-         * ===TreeCacheEvent{type=INITIALIZED, data=null}
-         * ===TreeCacheEvent{type=NODE_REMOVED, data=ChildData{path='/dubbo/service.name/configuration/dat/data/d.json', stat=8,10,1716163999675,1716163999699,2,0,0,72058087353548800,6,0,8
-         * , data=null}}
-         * ===TreeCacheEvent{type=NODE_REMOVED, data=ChildData{path='/dubbo/service.name/configuration/dat/data', stat=7,7,1716163999674,1716163999674,0,2,0,0,13,0,11
-         * , data=null}}
-         * atomicInteger = 7
+         * 监听到数据变更：TreeCacheEvent{type=NODE_ADDED, data=ChildData{path='/dubbo/service.name/configuration', stat=5,5,1716598734166,1716598734166,0,1,0,0,13,1,6
+         * , data=[49, 57, 50, 46, 49, 54, 56, 46, 49, 46, 49, 49, 49]}}，数据：192.168.1.111
+         * 监听到数据变更：TreeCacheEvent{type=NODE_ADDED, data=ChildData{path='/dubbo/service.name/configuration/dat', stat=6,6,1716598734167,1716598734167,0,1,0,0,13,1,7
+         * , data=[49, 57, 50, 46, 49, 54, 56, 46, 49, 46, 49, 49, 49]}}，数据：192.168.1.111
+         * 监听到数据变更：TreeCacheEvent{type=NODE_ADDED, data=ChildData{path='/dubbo/service.name/configuration/dat/data', stat=7,7,1716598734168,1716598734168,0,1,0,0,13,1,8
+         * , data=[49, 57, 50, 46, 49, 54, 56, 46, 49, 46, 49, 49, 49]}}，数据：192.168.1.111
+         * 监听到数据变更：TreeCacheEvent{type=NODE_ADDED, data=ChildData{path='/dubbo/service.name/configuration/dat/data/d.json', stat=8,9,1716598734170,1716598734199,1,0,0,72057988744347648,5,0,8
+         * , data=[115, 100, 115, 100, 102]}}，数据：sdsdf
+         * 监听到数据变更：TreeCacheEvent{type=NODE_UPDATED, data=ChildData{path='/dubbo/service.name/configuration/dat/data/d.json', stat=8,10,1716598734170,1716598734202,2,0,0,72057988744347648,6,0,8
+         * , data=[100, 102, 115, 97, 115, 102]}}，数据：dfsasf
+         * atomicInteger = 5
          *
          * 结果分析：
-         *
+         * 1）为指定节点监听器后，当节点有变更时，会进行回调通知。
          */
     }
 }

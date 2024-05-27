@@ -31,7 +31,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class URLTest {
+public class URLTest { //@DtY-Doing
 
     @Test
     public void test_valueOf_noProtocolAndHost() throws Exception { //已测（测试url没有protocol、host的场景）

@@ -29,7 +29,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.nullValue;
 
-public class CuratorZookeeperTransporterTest {
+public class CuratorZookeeperTransporterTest { //@DtY-Done
     private TestingServer zkServer;
     private ZookeeperClient zookeeperClient;
     private CuratorZookeeperTransporter curatorZookeeperTransporter;
@@ -45,9 +45,14 @@ public class CuratorZookeeperTransporterTest {
     }
 
     @Test
-    public void testZookeeperClient() {
+    public void testZookeeperClient() { //Done
         assertThat(zookeeperClient, not(nullValue()));
         zookeeperClient.close();
+
+        /**
+         * 结果分析：
+         * 1）zookeeperClient.close();会进行zk客户端关闭
+         */
     }
 
     @AfterEach

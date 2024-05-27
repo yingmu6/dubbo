@@ -40,12 +40,11 @@ public abstract class AbstractZookeeperClient<TargetDataListener, TargetChildLis
      * 解答：
      * 1）临时节点：生命周期和客户端会话绑定，会话失效，相关的临时节点被移除
      * 2）Zookeeper四种节点：
-     * a）Persistent是永久节点
-     * b）Persistent_sequential是永久有序节点。如00000、000001.....
-     * c）Ephemeral是临时节点、
-     * d）Ephemeral_sequential是临时有序节点。
-     * <p>
-     * 2）Zookeeper客户端Curator使用详解 https://www.jianshu.com/p/70151fc0ef5d
+     *    a）Persistent是永久节点
+     *    b）Persistent_sequential是永久有序节点。如00000、000001.....
+     *    c）Ephemeral是临时节点、
+     *    d）Ephemeral_sequential是临时有序节点。
+     * 3）Zookeeper客户端Curator使用详解 https://www.jianshu.com/p/70151fc0ef5d
      */
     protected static final Logger logger = LoggerFactory.getLogger(AbstractZookeeperClient.class);
 
@@ -181,7 +180,7 @@ public abstract class AbstractZookeeperClient<TargetDataListener, TargetChildLis
     }
 
     @Override
-    public void create(String path, String content, boolean ephemeral) {
+    public void create(String path, String content, boolean ephemeral) { //递归创建指定路径的节点
         if (checkExists(path)) { //path的值如：/dubbo/config/mapping/org.apache.dubbo.demo.GreetingService/zhangsan
             delete(path); //如路径存在，则进行删除（添加、修改都是按添加处理）
         }

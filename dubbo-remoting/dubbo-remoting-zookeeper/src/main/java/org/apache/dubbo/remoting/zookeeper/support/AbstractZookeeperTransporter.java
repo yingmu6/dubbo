@@ -36,7 +36,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.TIMEOUT_KEY;
  */
 public abstract class AbstractZookeeperTransporter implements ZookeeperTransporter {
     private static final Logger logger = LoggerFactory.getLogger(ZookeeperTransporter.class);
-    private final Map<String, ZookeeperClient> zookeeperClientMap = new ConcurrentHashMap<>(); //zk客户端连接的缓存
+    private final Map<String, ZookeeperClient> zookeeperClientMap = new ConcurrentHashMap<>(); //连接地址url与zk客户端的缓存
 
     /**
      * share connnect for registry, metadata, etc..
@@ -54,7 +54,7 @@ public abstract class AbstractZookeeperTransporter implements ZookeeperTransport
         List<String> addressList = getURLBackupAddress(url);
         // The field define the zookeeper server , including protocol, host, port, username, password
 
-        // 会从缓存中根据地址查找zookeeperClient，如找到则不创建客户端，则实现同一个连接地址对应的zookeeperClient相同，实现共享
+        // 会从缓存中根据地址url查找zookeeperClient，如找到则不创建客户端，则实现同一个连接地址对应的zookeeperClient相同，实现共享
         if ((zookeeperClient = fetchAndUpdateZookeeperClientCache(addressList)) != null && zookeeperClient.isConnected()) {
             logger.info("find valid zookeeper client from the cache for address: " + url);
             return zookeeperClient; //从缓存中找到ZookeeperClient，直接返回
@@ -68,7 +68,7 @@ public abstract class AbstractZookeeperTransporter implements ZookeeperTransport
 
             zookeeperClient = createZookeeperClient(url);
             logger.info("No valid zookeeper client found from cache, therefore create a new client for url. " + url);
-            writeToClientMap(addressList, zookeeperClient); //在缓存中没有发现有效的zookeeper client，就重新创建，并写入缓存
+            writeToClientMap(addressList, zookeeperClient); //在缓存中没有发现有效的ZookeeperClient，就重新创建，并写入缓存
         }
         return zookeeperClient;
     }
@@ -98,7 +98,7 @@ public abstract class AbstractZookeeperTransporter implements ZookeeperTransport
             }
         }
         if (zookeeperClient != null && zookeeperClient.isConnected()) {
-            writeToClientMap(addressList, zookeeperClient); //将地址列表与Zk客户端连接写入缓存（todo @Ym 此处是多个列表对应一个客户端连接，能实现多注册中心吗）
+            writeToClientMap(addressList, zookeeperClient); //将地址url与Zk客户端写入缓存Map中
         }
         return zookeeperClient;
     }
@@ -112,10 +112,10 @@ public abstract class AbstractZookeeperTransporter implements ZookeeperTransport
     List<String> getURLBackupAddress(URL url) { //获取url中连接地址列表
         List<String> addressList = new ArrayList<String>();
         addressList.add(url.getAddress());
-        addressList.addAll(url.getParameter(RemotingConstants.BACKUP_KEY, Collections.EMPTY_LIST));
+        addressList.addAll(url.getParameter(RemotingConstants.BACKUP_KEY, Collections.EMPTY_LIST)); //处理url中的备份地址backup
 
         String authPrefix = null;
-        if (StringUtils.isNotEmpty(url.getUsername())) {
+        if (StringUtils.isNotEmpty(url.getUsername())) { //若url中存在用户信息，则构建授权前缀，再与url进行拼接
             StringBuilder buf = new StringBuilder();
             buf.append(url.getUsername());
             if (StringUtils.isNotEmpty(url.getPassword())) {
@@ -140,7 +140,7 @@ public abstract class AbstractZookeeperTransporter implements ZookeeperTransport
 
     /**
      * write address-ZookeeperClient relationship to Map
-     * （把地址与ZookeeperClient关系写到Map中）
+     * （把地址url与ZookeeperClient关系写到Map中）
      *
      * @param addressList
      * @param zookeeperClient

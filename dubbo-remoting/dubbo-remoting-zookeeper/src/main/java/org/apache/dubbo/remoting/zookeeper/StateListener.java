@@ -18,7 +18,7 @@ package org.apache.dubbo.remoting.zookeeper;
 
 public interface StateListener { //连接状态监听器
 
-    int SESSION_LOST = 0;
+    int SESSION_LOST = 0; //接口中的成员变量都是静态常量 public static final
 
     int CONNECTED = 1;
 

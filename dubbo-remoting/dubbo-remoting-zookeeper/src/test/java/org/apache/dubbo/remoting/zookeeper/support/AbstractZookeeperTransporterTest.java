@@ -36,7 +36,19 @@ import static org.hamcrest.core.IsNull.nullValue;
 /**
  * AbstractZookeeperTransporterTest
  */
-public class AbstractZookeeperTransporterTest {
+public class AbstractZookeeperTransporterTest { //DtY-Doing
+
+    /**
+     * 知识点：AbstractZookeeperTransporter
+     *
+     * 知识点概括：
+     *
+     * 关联点实践：
+     * 1）使用curator客户端API连接zk（Doing）
+     *
+     * 问题点答疑：
+     */
+
     private TestingServer zkServer;
     private ZookeeperClient zookeeperClient;
     private AbstractZookeeperTransporter abstractZookeeperTransporter;
@@ -58,7 +70,7 @@ public class AbstractZookeeperTransporterTest {
     }
 
     @Test
-    public void testZookeeperClient() {
+    public void testZookeeperClient() { //Doing
         assertThat(zookeeperClient, not(nullValue()));
         zookeeperClient.close();
     }

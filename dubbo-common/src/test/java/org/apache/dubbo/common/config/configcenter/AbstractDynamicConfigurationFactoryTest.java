@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @see AbstractDynamicConfigurationFactory
  * @since 2.7.5
  */
-public class AbstractDynamicConfigurationFactoryTest { //@DbT done
+public class AbstractDynamicConfigurationFactoryTest { //@DtY done
 
     private AbstractDynamicConfigurationFactory factory;
 
