@@ -66,7 +66,7 @@ public abstract class AbstractZookeeperTransporter implements ZookeeperTransport
                 return zookeeperClient;
             }
 
-            zookeeperClient = createZookeeperClient(url);
+            zookeeperClient = createZookeeperClient(url); //通过具体实现类，创建ZookeeperClient
             logger.info("No valid zookeeper client found from cache, therefore create a new client for url. " + url);
             writeToClientMap(addressList, zookeeperClient); //在缓存中没有发现有效的ZookeeperClient，就重新创建，并写入缓存
         }

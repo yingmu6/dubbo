@@ -24,10 +24,22 @@ import static org.hamcrest.MatcherAssert.assertThat;
 /**
  * Created by LinShunkang on 2020/03/12
  */
-public class URLStrParserTest {
+public class URLStrParserTest { //@DtY-Doing
+
+    /**
+     * 知识点：
+     *
+     * 知识点概括：
+     * 1）URL中部分特殊字符对照
+     *   %3A -> ':'
+     *   %2F -> '/'
+     *   %24 -> '$'
+     *   %3F -> '?'
+     *   %3D -> '&'
+     */
 
     @Test
-    public void test() { // 已测（测试Dubbo实现的URL解码功能
+    public void test() { // Doing_测试Dubbo实现的URL解码功能
         String str = "dubbo%3A%2F%2Fadmin%3Aadmin123%40192.168.1.41%3A28113%2Forg.test.api.DemoService%24Iface%3Fanyhost%3Dtrue%26application%3Ddemo-service%26dubbo%3D2.6.1%26generic%3Dfalse%26interface%3Dorg.test.api.DemoService%24Iface%26methods%3DorbCompare%2CcheckText%2CcheckPicture%26pid%3D65557%26revision%3D1.4.17%26service.filter%3DbootMetrics%26side%3Dprovider%26status%3Dserver%26threads%3D200%26timestamp%3D1583136298859%26version%3D1.0.0";
         System.out.println(URLStrParser.parseEncodedStr(str)); //按dubbo方式解码
 
@@ -45,20 +57,15 @@ public class URLStrParserTest {
         assertThat(URLStrParser.parseDecodedStr(decodeStr), equalTo(originalUrl));
 
         /**
+         * 输出结果：
+         * dubbo://192.168.1.41:28113/org.test.api.DemoService$Iface?anyhost=true&application=demo-service&dubbo=2.6.1&generic=false&interface=org.test.api.DemoService$Iface&methods=orbCompare,checkText,checkPicture&pid=65557&revision=1.4.17&service.filter=bootMetrics&side=provider&status=server&threads=200&timestamp=1583136298859&version=1.0.0
+         * dubbo://192.168.1.41:28113/org.test.api.DemoService$Iface?anyhost=true&application=测试&dubbo=2.6.1&generic=false&interface=org.test.api.DemoService$Iface&methods=orbCompare,checkText,checkPicture&pid=65557&revision=1.4.17&service.filter=bootMetrics&side=provider&status=server&threads=200&timestamp=1583136298859&version=1.0.0
+         * java解码1：dubbo://admin:admin123@192.168.1.41:28113/org.test.api.DemoService$Iface?anyhost=true&application=demo-service&dubbo=2.6.1&generic=false&interface=org.test.api.DemoService$Iface&methods=orbCompare,checkText,checkPicture&pid=65557&revision=1.4.17&service.filter=bootMetrics&side=provider&status=server&threads=200&timestamp=1583136298859&version=1.0.0
+         * java解码2：dubbo://192.168.1.41:28113/org.test.api.DemoService$Iface?anyhost=true&application=测试&dubbo=2.6.1&generic=false&interface=org.test.api.DemoService$Iface&methods=orbCompare,checkText,checkPicture&pid=65557&revision=1.4.17&service.filter=bootMetrics&side=provider&status=server&threads=200&timestamp=1583136298859&version=1.0.0
+         *
          * 结果分析：
          *
-         * 1）原有编码的URL：
-         * dubbo%3A%2F%2Fadmin%3Aadmin123%40192.168.1.41%3A28113%2Forg.test.api.DemoService%24Iface%3Fanyhost%3Dtrue%26application%3Ddemo-service%26dubbo%3D2.6.1%26generic%3Dfalse%26interface%3Dorg.test.api.DemoService%24Iface%26methods%3DorbCompare%2CcheckText%2CcheckPicture%26pid%3D65557%26revision%3D1.4.17%26service.filter%3DbootMetrics%26side%3Dprovider%26status%3Dserver%26threads%3D200%26timestamp%3D1583136298859%26version%3D1.0.0
-         *
-         * 2）解码后的URL
-         * dubbo://192.168.1.41:28113/org.test.api.DemoService$Iface?anyhost=true&application=demo-service&dubbo=2.6.1&generic=false&interface=org.test.api.DemoService$Iface&methods=orbCompare,checkText,checkPicture&pid=65557&revision=1.4.17&service.filter=bootMetrics&side=provider&status=server&threads=200&timestamp=1583136298859&version=1.0.0
-         *
-         * URL中部分特殊字符对照
-         * %3A -> ':'
-         * %2F -> '/'
-         * %24 -> '$'
-         * %3F -> '?'
-         * %3D -> '&'
+
          */
     }
 

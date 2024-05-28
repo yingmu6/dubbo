@@ -59,7 +59,7 @@ public abstract class AbstractZookeeperClient<TargetDataListener, TargetChildLis
 
     private final ConcurrentMap<String, ConcurrentMap<DataListener, TargetDataListener>> listeners = new ConcurrentHashMap<String, ConcurrentMap<DataListener, TargetDataListener>>();
 
-    private volatile boolean closed = false;
+    private volatile boolean closed = false; //关闭的标志
 
     private final Set<String> persistentExistNodePath = new ConcurrentHashSet<>(); //持久节点路径的集合
 
@@ -171,7 +171,7 @@ public abstract class AbstractZookeeperClient<TargetDataListener, TargetChildLis
         if (closed) {
             return;
         }
-        closed = true;
+        closed = true; //更改标志值
         try {
             doClose();
         } catch (Throwable t) {

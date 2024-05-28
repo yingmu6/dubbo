@@ -114,7 +114,7 @@ class URL implements Serializable {
 
     private transient String serviceKey; //相对2.5.6新增的字段，服务对应的键：group/path:version
 
-    private transient String address;
+    private transient String address; //url地址，由host、port组成
 
     protected URL() {
         this.protocol = null;
@@ -1330,8 +1330,8 @@ class URL implements Serializable {
         return buildString(true, false, parameters); // only return identity message, see the method "equals" and "hashCode"
     }
 
-    public String toFullString() { //获取带有URL完成信息的字符串 (包含用户名、密码)
-        if (full != null) { //若当前成员变量中有值，则直接返回
+    public String toFullString() { //获取完整URL的字符串
+        if (full != null) {
             return full;
         }
         return full = buildString(true, true);

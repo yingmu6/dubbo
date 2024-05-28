@@ -70,18 +70,28 @@ public class AbstractZookeeperTransporterTest { //DtY-Doing
     }
 
     @Test
-    public void testZookeeperClient() { //Doing
+    public void testZookeeperClient() { //Done
         assertThat(zookeeperClient, not(nullValue()));
         zookeeperClient.close();
+
+        /**
+         * 结果分析：
+         * 1）关闭zk客户端时，先更改AbstractZookeeperClient中的变量close值为true，在调用zk客户端的API进行关闭
+         */
     }
 
     @Test
-    public void testGetURLBackupAddress() {
+    public void testGetURLBackupAddress() { //Done
         URL url = URL.valueOf("zookeeper://127.0.0.1:" + zkServerPort + "/org.apache.dubbo.registry.RegistryService?backup=127.0.0.1:" + 9099 + "&application=metadatareport-local-xml-provider2&dubbo=2.0.2&interface=org.apache.dubbo.registry.RegistryService&pid=47418&specVersion=2.7.0-SNAPSHOT&timestamp=1547102428828");
         List<String> stringList = abstractZookeeperTransporter.getURLBackupAddress(url);
         Assertions.assertEquals(stringList.size(), 2);
         Assertions.assertEquals(stringList.get(0), "127.0.0.1:" + zkServerPort);
         Assertions.assertEquals(stringList.get(1), "127.0.0.1:9099");
+
+        /**
+         * 结果分析：
+         * 1）getURLBackupAddress(url)中的url，由address和url中的backup参数值组成的集合
+         */
     }
 
     @Test

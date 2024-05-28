@@ -58,12 +58,12 @@ public class CuratorZookeeperClient extends AbstractZookeeperClient<CuratorZooke
     private Map<String, TreeCache> treeCacheMap = new ConcurrentHashMap<>();
 
     /**
-     * 流程分析：服务提供者或消费者启动时， Zookeeper客户端创建的流程
+     * 流程分析：创建Zookeeper客户端的流程
      * 1）读取url中注册中心的地址、连接超时等信息
      * 2）添加连接状态变更的监听器CuratorConnectionStateListener
      * 3）通过zk客户端CuratorFramework进行阻塞连接，若连接超时，则抛出异常
      */
-    public CuratorZookeeperClient(URL url) { //做初始化操作，不管消费者还是提供者启动时都会去连接Zookeeper，如果连接不上会抛出异常
+    public CuratorZookeeperClient(URL url) { //创建Zookeeper客户端（不管消费者还是提供者启动时都会去连接Zookeeper，如果连接不上会抛出异常）
         super(url);
         try {
             int timeout = url.getParameter(TIMEOUT_KEY, DEFAULT_CONNECTION_TIMEOUT_MS);

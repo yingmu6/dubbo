@@ -33,6 +33,17 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class URLTest { //@DtY-Doing
 
+    /**
+     * 知识点：
+     *
+     * 知识点概括：
+     *
+     * 参考链接：
+     * a）https://blog.csdn.net/Danalee_Py/article/details/108083038  URL特殊字符编码对照表
+     * b）https://tool.oschina.net/commons?type=4 ASCII对照表
+     * c）https://www.liaoxuefeng.com/wiki/1252599548343744/1304227703947297 URL编码算法
+     */
+
     @Test
     public void test_valueOf_noProtocolAndHost() throws Exception { //已测（测试url没有protocol、host的场景）
         URL url = URL.valueOf("/context/path?version=1.0.0&application=morgan"); //没有protocol、host
@@ -67,10 +78,6 @@ public class URLTest { //@DtY-Doing
          * 2）端口号，系统默认设置为0
          * 3）编解码，可以使用Java提供的URL编解码能力，Dubbo做了封装，也可以使用Dubbo自行实现的URLStrParser.parseDecodedStr(...)处理
          *
-         * 参考链接：
-         * a）https://blog.csdn.net/Danalee_Py/article/details/108083038  URL特殊字符编码对照表
-         * b）https://tool.oschina.net/commons?type=4 ASCII对照表
-         * c）https://www.liaoxuefeng.com/wiki/1252599548343744/1304227703947297 URL编码算法
          */
     }
 
