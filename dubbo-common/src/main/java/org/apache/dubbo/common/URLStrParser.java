@@ -160,18 +160,31 @@ public final class URLStrParser {
     public static URL parseEncodedStr(String encodedURLStr) { //解析编码后的URL字符串，产生对应的URL对象
         Map<String, String> parameters = null; //编码前的字符串/context/path?version=1.0.0&application=morgan，编码后的字符串：%2Fcontext%2Fpath%3Fapplication%3Dmorgan%26version%3D1.0.0
         int pathEndIdx = encodedURLStr.indexOf("%3F");// '?'  查找参数分隔符（%3F对应的ASCII值为'?'）
-        if (pathEndIdx >= 0) { //url中包含参数
+        if (pathEndIdx >= 0) { //解析url中的参数
             parameters = parseEncodedParams(encodedURLStr, pathEndIdx + 3); //取%3F后面的字符串处理
         } else { //url中不包含参数
             pathEndIdx = encodedURLStr.length();
         }
 
         //decodedBody format: [protocol://][username:password@][host:port]/[path]
-        String decodedBody = decodeComponent(encodedURLStr, 0, pathEndIdx, false, DECODE_TEMP_BUF.get());
+        String decodedBody = decodeComponent(encodedURLStr, 0, pathEndIdx, false, DECODE_TEMP_BUF.get()); //解析url中的主体
         return parseURLBody(encodedURLStr, decodedBody, parameters);
     }
 
-    private static Map<String, String> parseEncodedParams(String str, int from) { //解析出编码url中的参数键值对
+    /**
+     * 流程分析：解析出URL中参数集合
+     * 1）
+     * 2）
+     * 3）
+     * 4）
+     * 5）
+     * 6）
+     *
+     * 备注：
+     * 1）用例url：dubbo://192.168.1.41:28113/org.test.api.DemoService$Iface?anyhost=true&application=demo-service&dubbo=2.6.1&generic=false&interface=org.test.api.DemoService$Iface&methods=orbCompare,checkText,checkPicture&pid=65557...
+     * 2）"%3F" => '?'，"%3D" => '='
+     */
+    private static Map<String, String> parseEncodedParams(String str, int from) { //解析url中的参数键值对
         int len = str.length(); //取出字符串长度
         if (from >= len) { //起始位置不能超过字符串长度
             return Collections.emptyMap();
@@ -179,8 +192,8 @@ public final class URLStrParser {
 
         TempBuf tempBuf = DECODE_TEMP_BUF.get(); //从本地线程中获取缓存的TempBuf
         Map<String, String> params = new HashMap<>();
-        int nameStart = from;
-        int valueStart = -1;
+        int nameStart = from; //参数key的下标
+        int valueStart = -1;  //参数value的下标
         int i;
         for (i = from; i < len; i++) { //遍历url字符串的字符（from为参数起始位置）
             char ch = str.charAt(i);
@@ -192,9 +205,9 @@ public final class URLStrParser {
                 i += 2;
             }
 
-            switch (ch) { //找到指定的分隔符，做对应的处理
+            switch (ch) {
                 case '=': //按键值对处理
-                    if (nameStart == i) { //url未经过编码时，进入此处
+                    if (nameStart == i) { //只有参数key的场景
                         nameStart = i + 1;
                     } else if (valueStart < nameStart) {
                         valueStart = i + 1; //记录值的下标
@@ -235,7 +248,7 @@ public final class URLStrParser {
         return true;
     }
 
-    private static String decodeComponent(String s, int from, int toExcluded, boolean isPath, TempBuf tempBuf) {
+    private static String decodeComponent(String s, int from, int toExcluded, boolean isPath, TempBuf tempBuf) { //解码
         int len = toExcluded - from;
         if (len <= 0) {
             return EMPTY_STRING;
@@ -249,15 +262,15 @@ public final class URLStrParser {
                 break;
             }
         }
-        if (firstEscaped == -1) {
+        if (firstEscaped == -1) { //若没有'%'、'+'等特殊字符，则直接取字串
             return s.substring(from, toExcluded);
         }
 
         // Each encoded byte takes 3 characters (e.g. "%20")
-        int decodedCapacity = (toExcluded - firstEscaped) / 3;
+        int decodedCapacity = (toExcluded - firstEscaped) / 3; //存在特殊字符，要先去掉特殊字符（如字符串：interface%3Dorg.test.api.DemoService%24Iface（解码后：interface=org.test.api.DemoService$Iface））
         byte[] buf = tempBuf.byteBuf(decodedCapacity);
         char[] charBuf = tempBuf.charBuf(len);
-        s.getChars(from, firstEscaped, charBuf, 0);
+        s.getChars(from, firstEscaped, charBuf, 0); //从字符串中拷贝字符到目标数组中
 
         int charBufIdx = firstEscaped - from;
         return decodeUtf8Component(s, firstEscaped, toExcluded, isPath, buf, charBuf, charBufIdx);
@@ -278,7 +291,7 @@ public final class URLStrParser {
                 if (i + 3 > toExcluded) {
                     throw new IllegalArgumentException("unterminated escape sequence at index " + i + " of: " + str);
                 }
-                buf[bufIdx++] = decodeHexByte(str, i + 1);
+                buf[bufIdx++] = decodeHexByte(str, i + 1); //如ASCII值为36，对应字符为'$'
                 i += 3;
             } while (i < toExcluded && str.charAt(i) == '%');
             i--;
@@ -318,7 +331,7 @@ public final class URLStrParser {
         return -1;
     }
 
-    private static final class TempBuf { //内部类，可以构建字符数组、字节数组
+    private static final class TempBuf { //字符数组和字节数组的临时缓存
 
         private final char[] chars;
 

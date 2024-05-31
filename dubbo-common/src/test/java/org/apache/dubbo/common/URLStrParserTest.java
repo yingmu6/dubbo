@@ -35,7 +35,11 @@ public class URLStrParserTest { //@DtY-Doing
      *   %2F -> '/'
      *   %24 -> '$'
      *   %3F -> '?'
-     *   %3D -> '&'
+     *   %3D -> '='
+     *
+     * 关联点学习：
+     * 1）ThreadLocal功能了解以及源码阅读（Doing）
+     * 2）
      */
 
     @Test
@@ -64,8 +68,17 @@ public class URLStrParserTest { //@DtY-Doing
          * java解码2：dubbo://192.168.1.41:28113/org.test.api.DemoService$Iface?anyhost=true&application=测试&dubbo=2.6.1&generic=false&interface=org.test.api.DemoService$Iface&methods=orbCompare,checkText,checkPicture&pid=65557&revision=1.4.17&service.filter=bootMetrics&side=provider&status=server&threads=200&timestamp=1583136298859&version=1.0.0
          *
          * 结果分析：
+         * 1）根据"%3F"（对应"?"字符）分隔参数，解析出的参数放入URL中的参数Map中。其中在解码时，会通过TempBuf先分开存含有
+         *    特殊字符的字节数组、字符数组，解码后再合并一起，组合成解码后的字符串
          *
-
+         * 2）解析URL的主体内容时，会根据[protocol://][username:password@][host:port]/[path]格式依次解析URL内容
+         *
+         * 3）举例说明：得到解码URL的步骤 dubbo://192.168.1.41:28113/org.test.api.DemoService$Iface?anyhost=true&application=demo-service&dubbo=2.6.1&generic=false&interface=org.test.api.DemoService$Iface&methods=orbCompare,checkText,checkPicture&pid=65557...
+         *    3.1）得到"%3F"的下标为88，从当前线程局部变量ThreadLocal中得到TempBuf
+         *    3.2）从88+3，即跳过"%3F"的字符开始遍历
+         *         a）找到'%'符号，对解析出对应字符，如"%3D"对应"="
+         *         b）找出键值对关联的字符"="、"&"
+         *
          */
     }
 
