@@ -172,7 +172,7 @@ public final class URLStrParser {
     }
 
     /**
-     * 流程分析：解析出URL中参数集合
+     * 流程分析：解析出URL中参数集合（Doing）
      * 1）
      * 2）
      * 3）
@@ -180,17 +180,17 @@ public final class URLStrParser {
      * 5）
      * 6）
      *
-     * 备注：
-     * 1）用例url：dubbo://192.168.1.41:28113/org.test.api.DemoService$Iface?anyhost=true&application=demo-service&dubbo=2.6.1&generic=false&interface=org.test.api.DemoService$Iface&methods=orbCompare,checkText,checkPicture&pid=65557...
-     * 2）"%3F" => '?'，"%3D" => '='
+     * 备注：用例分析
+     * 1）解码前的URL：dubbo%3A%2F%2Fadmin%3Aadmin123%40192.168.1.41%3A28113%2Forg.test.api.DemoService%24Iface%3Fanyhost%3Dtrue%26application%3Ddemo-service%26dubbo%3D2.6.1%26generic%3Dfalse%26interface%3Dorg.test.api.DemoService%24Iface%26methods%3DorbCompare%2CcheckText%2CcheckPicture...
+     * 2）解码后的URL：dubbo://192.168.1.41:28113/org.test.api.DemoService$Iface?anyhost=true&application=demo-service&dubbo=2.6.1&generic=false&interface=org.test.api.DemoService$Iface&methods=orbCompare,checkText,checkPicture...
      */
     private static Map<String, String> parseEncodedParams(String str, int from) { //解析url中的参数键值对
-        int len = str.length(); //取出字符串长度
-        if (from >= len) { //起始位置不能超过字符串长度
+        int len = str.length();
+        if (from >= len) { //对应"?"后面没有键值对的场景，如dubbo://xxx?
             return Collections.emptyMap();
         }
 
-        TempBuf tempBuf = DECODE_TEMP_BUF.get(); //从本地线程中获取缓存的TempBuf
+        TempBuf tempBuf = DECODE_TEMP_BUF.get();
         Map<String, String> params = new HashMap<>();
         int nameStart = from; //参数key的下标
         int valueStart = -1;  //参数value的下标
@@ -201,13 +201,13 @@ public final class URLStrParser {
                 if (i + 3 > len) { //分隔符不是完整的情况，抛出异常，比如%3、%等，应该是%3D，百分号后面带两个十六进制数
                     throw new IllegalArgumentException("unterminated escape sequence at index " + i + " of: " + str);
                 }
-                ch = (char) decodeHexByte(str, i + 1); //解码16进制字符，得到原有字符，如"3D"处理后，得到字符'='
-                i += 2;
+                ch = (char) decodeHexByte(str, i + 1); //将'%'后面的2个16进制字符转换为字符，如"3D"处理后，得到字符'='
+                i += 2; //跳过已处理的2个字符
             }
 
             switch (ch) {
                 case '=': //按键值对处理
-                    if (nameStart == i) { //只有参数key的场景
+                    if (nameStart == i) { //对应那种场景？
                         nameStart = i + 1;
                     } else if (valueStart < nameStart) {
                         valueStart = i + 1; //记录值的下标
@@ -228,7 +228,7 @@ public final class URLStrParser {
 
     private static boolean addParam(String str, boolean isEncoded, int nameStart, int valueStart, int valueEnd, Map<String, String> params,
                                     TempBuf tempBuf) {
-        if (nameStart >= valueEnd) { //键与值的下标不正确，返回false
+        if (nameStart >= valueEnd) {
             return false;
         }
 
@@ -236,12 +236,12 @@ public final class URLStrParser {
             valueStart = valueEnd + 1;
         }
 
-        if (isEncoded) { //键值对被编码过，需要解码（从方法入口判定的，如URLStrParser#parseDecodedStr方法时，isEncoded=false）
-            String name = decodeComponent(str, nameStart, valueStart - 3, false, tempBuf);
+        if (isEncoded) { //对编码过的URL中的键值对进行解码，并设置到参数Map中
+            String name = decodeComponent(str, nameStart, valueStart - 3, false, tempBuf); //字符串区间：[nameStart, valueStart-3)得到的字串即为key，减3是把'='对应的'%3D'的字符去掉
             String value = decodeComponent(str, valueStart, valueEnd, false, tempBuf);
             params.put(name, value);
-        } else { //键值对未被编码，直接截取url字符串中的值，设置到参数Map中
-            String name = str.substring(nameStart, valueStart -1);
+        } else { //URL未被编码时，直接取url字符串中的值，设置到参数Map中
+            String name = str.substring(nameStart, valueStart -1); //字符串区间：[nameStart, valueStart-3)得到的字串即为key，减1是因为此时url没有编码，'='就只占用一个字符
             String value = str.substring(valueStart, valueEnd);
             params.put(name, value);
         }
@@ -262,7 +262,7 @@ public final class URLStrParser {
                 break;
             }
         }
-        if (firstEscaped == -1) { //若没有'%'、'+'等特殊字符，则直接取字串
+        if (firstEscaped == -1) { //若字符串中没有'%'、'+'等特殊字符，则直接取字串
             return s.substring(from, toExcluded);
         }
 

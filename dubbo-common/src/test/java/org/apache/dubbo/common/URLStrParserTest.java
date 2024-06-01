@@ -39,7 +39,7 @@ public class URLStrParserTest { //@DtY-Doing
      *
      * 关联点学习：
      * 1）ThreadLocal功能了解以及源码阅读（Doing）
-     * 2）
+     * 2）Java中的URL编解码以及中文编解码原理了解（Doing）
      */
 
     @Test
@@ -80,6 +80,15 @@ public class URLStrParserTest { //@DtY-Doing
          *         b）找出键值对关联的字符"="、"&"
          *
          */
+    }
+
+    /**
+     * 新增场景：URL只有一个参数
+     */
+    @Test
+    public void test_only_param() {
+        String str = "dubbo%3A%2F%2Fadmin%3Aadmin123%40192.168.1.41%3A28113%2Forg.test.api.DemoService%24Iface%3Fanyhost%3Dtrue";
+        System.out.println(URLStrParser.parseEncodedStr(str));
     }
 
 }
