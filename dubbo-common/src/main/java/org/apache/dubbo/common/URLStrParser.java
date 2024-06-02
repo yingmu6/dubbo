@@ -172,13 +172,10 @@ public final class URLStrParser {
     }
 
     /**
-     * 流程分析：解析出URL中参数集合（Doing）
-     * 1）
-     * 2）
-     * 3）
-     * 4）
-     * 5）
-     * 6）
+     * 流程分析：解析出URL中参数集合（Done）
+     * 1）查找字符串中'%'，解析出后面的字符，与'='、'&' 进行比对，来判断是否是参数
+     * 2）用下标nameStart、valueStart记录参数key、value的开始下标，对应也计算key、value的结束下标
+     * 3）在addParam()中，对获取到的参数key、value进行URL解码，最后存入URL的参数Map中
      *
      * 备注：用例分析
      * 1）解码前的URL：dubbo%3A%2F%2Fadmin%3Aadmin123%40192.168.1.41%3A28113%2Forg.test.api.DemoService%24Iface%3Fanyhost%3Dtrue%26application%3Ddemo-service%26dubbo%3D2.6.1%26generic%3Dfalse%26interface%3Dorg.test.api.DemoService%24Iface%26methods%3DorbCompare%2CcheckText%2CcheckPicture...
@@ -192,8 +189,8 @@ public final class URLStrParser {
 
         TempBuf tempBuf = DECODE_TEMP_BUF.get();
         Map<String, String> params = new HashMap<>();
-        int nameStart = from; //参数key的下标
-        int valueStart = -1;  //参数value的下标
+        int nameStart = from; //参数key的开始下标（key结束下标可由valueStart计算，即valueStart减1或减3）
+        int valueStart = -1;  //参数value的开始下标（value的结束下标可由变量i进行计算）
         int i;
         for (i = from; i < len; i++) { //遍历url字符串的字符（from为参数起始位置）
             char ch = str.charAt(i);
@@ -209,7 +206,7 @@ public final class URLStrParser {
                 case '=': //按键值对处理
                     if (nameStart == i) { //对应那种场景？
                         nameStart = i + 1;
-                    } else if (valueStart < nameStart) {
+                    } else if (valueStart < nameStart) { //因为参数的key、value都是url的字串，所以要计算出字符串的开始位置、结束位置
                         valueStart = i + 1; //记录值的下标
                     }
                     break;
@@ -248,6 +245,13 @@ public final class URLStrParser {
         return true;
     }
 
+    /**
+     * 流程分析：解码URL组件（Doing）
+     * 1）
+     * 2）
+     * 3）
+     *
+     */
     private static String decodeComponent(String s, int from, int toExcluded, boolean isPath, TempBuf tempBuf) { //解码
         int len = toExcluded - from;
         if (len <= 0) {
@@ -281,7 +285,7 @@ public final class URLStrParser {
         int bufIdx;
         for (int i = firstEscaped; i < toExcluded; i++) {
             char c = str.charAt(i);
-            if (c != '%') {
+            if (c != '%') { //没遇到特殊字符，则将字符放入数组中
                 charBuf[charBufIdx++] = c != '+' || isPath ? c : SPACE;
                 continue;
             }
@@ -291,12 +295,12 @@ public final class URLStrParser {
                 if (i + 3 > toExcluded) {
                     throw new IllegalArgumentException("unterminated escape sequence at index " + i + " of: " + str);
                 }
-                buf[bufIdx++] = decodeHexByte(str, i + 1); //如ASCII值为36，对应字符为'$'
+                buf[bufIdx++] = decodeHexByte(str, i + 1); //解析特殊字符'%'后面的数，得到字节值，并放入字节数组
                 i += 3;
             } while (i < toExcluded && str.charAt(i) == '%');
             i--;
 
-            charBufIdx += decodeUtf8(buf, 0, bufIdx, charBuf, charBufIdx);
+            charBufIdx += decodeUtf8(buf, 0, bufIdx, charBuf, charBufIdx); //字节数组buf的用途：存储了特殊字符的字节值，如'/'对应的47，经过decodeUtf8解码后存入字符数组中
         }
         return new String(charBuf, 0, charBufIdx);
     }

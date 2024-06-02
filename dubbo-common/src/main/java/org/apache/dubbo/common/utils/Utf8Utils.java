@@ -42,8 +42,13 @@ public final class Utf8Utils {
         //empty
     }
 
-    // 按UTF-8解码
-    public static int decodeUtf8(byte[] srcBytes, int srcIdx, int srcSize, char[] destChars, int destIdx) { //从原字节数组中取出字节，存入到目标字符数组中
+    /**
+     * 流程分析：URL中按UTF-8解码流程（Doing）
+     * 1）
+     * 2）
+     * 3）
+     */
+    public static int decodeUtf8(byte[] srcBytes, int srcIdx, int srcSize, char[] destChars, int destIdx) { //从字节数组中取出字节转换为字符，再存入到目标字符数组中
         // Bitwise OR combines the sign bits so any negative value fails the check.
         if ((srcIdx | srcSize | srcBytes.length - srcIdx - srcSize) < 0
                 || (destIdx | destChars.length - destIdx - srcSize) < 0) { //按位组合运算，只要有一个数为负数，都会失败抛出异常
@@ -59,9 +64,9 @@ public final class Utf8Utils {
 
         // Optimize for 100% ASCII (Hotspot loves small simple top-level loops like this).
         // This simple loop stops when we encounter a byte >= 0x80 (i.e. non-ASCII).
-        while (offset < limit) { //ASCII相关的字符值处理
+        while (offset < limit) {
             byte b = srcBytes[offset];
-            if (!DecodeUtil.isOneByte(b)) { //过滤掉非ASCII的字符
+            if (!DecodeUtil.isOneByte(b)) { //按一个字节处理
                 break;
             }
             offset++;
