@@ -43,6 +43,8 @@ public class URLStrParserTest { //@DtY-Doing
      *
      * 问题点答疑：
      * 1）StringUtils#decodeHexByte中是怎样把2个16进制数转化为byte的？
+     *
+     * 2）什么是URL编码、解码，是否可以理解为超过ACSII表范围的字符，与一个统一的字符集进行转换？
      */
 
     @Test
@@ -92,6 +94,16 @@ public class URLStrParserTest { //@DtY-Doing
     public void test_only_param() { //Doing
         String str = "dubbo%3A%2F%2Fadmin%3Aadmin123%40192.168.1.41%3A28113%2Forg.test.api.DemoService%24Iface%3Fanyhost%3Dtrue";
         System.out.println(URLStrParser.parseEncodedStr(str));
+
+        /**
+         * 输出结果：
+         *
+         * 结果分析：
+         *
+         * 问题点答疑：
+         * 1）URLStrParser#parseEncodedStr中解码参数parseEncodedParams和解码URL主体decodedBody有何不同？
+         *
+         */
     }
 
 }

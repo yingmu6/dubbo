@@ -152,14 +152,19 @@ public final class URLStrParser {
         return new URL(protocol, username, password, host, port, path, parameters);
     }
 
-    /**
-     * @param encodedURLStr : after {@link URL#encode(String)} string
-     *                      encodedURLStr after decode format: protocol://username:password@host:port/path?k1=v1&k2=v2
-     *                      [protocol://][username:password@][host:port]/[path][?k1=v1&k2=v2] （解码后的数据格式）
-     */
-    public static URL parseEncodedStr(String encodedURLStr) { //解析编码后的URL字符串，产生对应的URL对象
+     /**
+      * 流程分析：解析被编码的URL，生成已解码的URL
+      * 1）根据"%3F"，即'?'符号，来拆分URL字符的主体和参数
+      * 2）
+      * 3）
+      *
+      * @param encodedURLStr : after {@link URL#encode(String)} string
+      *                      encodedURLStr after decode format: protocol://username:password@host:port/path?k1=v1&k2=v2
+      *                      [protocol://][username:password@][host:port]/[path][?k1=v1&k2=v2] （解码后的数据格式）
+      */
+    public static URL parseEncodedStr(String encodedURLStr) { // 解析被编码的URL，生成已解码的URL
         Map<String, String> parameters = null; //编码前的字符串/context/path?version=1.0.0&application=morgan，编码后的字符串：%2Fcontext%2Fpath%3Fapplication%3Dmorgan%26version%3D1.0.0
-        int pathEndIdx = encodedURLStr.indexOf("%3F");// '?'  查找参数分隔符（%3F对应的ASCII值为'?'）
+        int pathEndIdx = encodedURLStr.indexOf("%3F");// '?'用来连接URL主体和参数（%3F对应的ASCII值为'?'）
         if (pathEndIdx >= 0) { //解析url中的参数
             parameters = parseEncodedParams(encodedURLStr, pathEndIdx + 3); //取%3F后面的字符串处理
         } else { //url中不包含参数
@@ -171,7 +176,7 @@ public final class URLStrParser {
         return parseURLBody(encodedURLStr, decodedBody, parameters);
     }
 
-    /**
+     /**
      * 流程分析：解析出URL中参数集合（Done）
      * 1）查找字符串中'%'，解析出后面的字符，与'='、'&' 进行比对，来判断是否是参数
      * 2）用下标nameStart、valueStart记录参数key、value的开始下标，对应也计算key、value的结束下标
@@ -246,11 +251,16 @@ public final class URLStrParser {
     }
 
     /**
-     * 流程分析：解码URL组件（Doing）
-     * 1）
-     * 2）
-     * 3）
+     * 流程分析：解码URL组件，组件可理解为URL字符串中指定区间的子字符串（Doing）
+     * 1）遍历组件对应区间的所有字符，判断是否有'%'或'+'等特殊字符
+     * 2）若没有特殊字符，则直接返回组件在指定字符区间对应的字符串
+     * 3）若包含特殊字符，则分区间处理特殊字符：
+     *    a）
+     *    b）
+     *    c）
      *
+     * 备注：
+     * 含有特殊字符的组件，最终是将字符分区间处理，将特殊字符解码后，再组合到字符数组中
      */
     private static String decodeComponent(String s, int from, int toExcluded, boolean isPath, TempBuf tempBuf) { //解码
         int len = toExcluded - from;
@@ -258,8 +268,8 @@ public final class URLStrParser {
             return EMPTY_STRING;
         }
 
-        int firstEscaped = -1;
-        for (int i = from; i < toExcluded; i++) {
+        int firstEscaped = -1; //第一个特殊字符出现的位置
+        for (int i = from; i < toExcluded; i++) { //判断组件对应区间的所有字符是否包含特殊字符，如组件值为name，是没有特殊字符的；组件值为org.test.api.DemoService%24Iface，是有特殊字符'%'
             char c = s.charAt(i);
             if (c == '%' || c == '+' && !isPath) { //判断指定区间 from ~ toExcluded，是否包含 '%'、'+'等字符
                 firstEscaped = i;
@@ -274,7 +284,7 @@ public final class URLStrParser {
         int decodedCapacity = (toExcluded - firstEscaped) / 3; //存在特殊字符，要先去掉特殊字符（如字符串：interface%3Dorg.test.api.DemoService%24Iface（解码后：interface=org.test.api.DemoService$Iface））
         byte[] buf = tempBuf.byteBuf(decodedCapacity);
         char[] charBuf = tempBuf.charBuf(len);
-        s.getChars(from, firstEscaped, charBuf, 0); //从字符串中拷贝字符到目标数组中
+        s.getChars(from, firstEscaped, charBuf, 0); //先把from~firstEscaped
 
         int charBufIdx = firstEscaped - from;
         return decodeUtf8Component(s, firstEscaped, toExcluded, isPath, buf, charBuf, charBufIdx);
