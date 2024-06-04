@@ -45,6 +45,8 @@ public class URLStrParserTest { //@DtY-Doing
      * 1）StringUtils#decodeHexByte中是怎样把2个16进制数转化为byte的？
      *
      * 2）什么是URL编码、解码，是否可以理解为超过ACSII表范围的字符，与一个统一的字符集进行转换？
+     *
+     * 3）为什么被编码后的url字符串，在解码时要分为参数部分、主体部分分开解码，不能一次性解码吗？
      */
 
     @Test
@@ -88,7 +90,7 @@ public class URLStrParserTest { //@DtY-Doing
     }
 
     /**
-     * 新增场景：URL只有一个参数
+     * 新增场景1：URL只有一个参数
      */
     @Test
     public void test_only_param() { //Doing
@@ -97,13 +99,26 @@ public class URLStrParserTest { //@DtY-Doing
 
         /**
          * 输出结果：
+         * dubbo://192.168.1.41:28113/org.test.api.DemoService$Iface?anyhost=true
          *
          * 结果分析：
          *
          * 问题点答疑：
          * 1）URLStrParser#parseEncodedStr中解码参数parseEncodedParams和解码URL主体decodedBody有何不同？
+         * 2）if (c == '%' || c == '+' && !isPath) 中的||、&&优先级是怎样的？
+         *
+         *
+         *
          *
          */
     }
+
+    /**
+     * 新增场景2：URL中有多个参数
+     */
+
+    /**
+     * 新增场景3：URL中的参数包含中文字符
+     */
 
 }
