@@ -87,8 +87,8 @@ public class ApolloDynamicConfiguration implements DynamicConfiguration {
         String configAddr = getAddressWithProtocolPrefix(url);
         String configCluster = url.getParameter(CLUSTER_KEY);
         String configAppId = url.getParameter(APOLLO_APPID_KEY);
-        if (StringUtils.isEmpty(System.getProperty(APOLLO_ENV_KEY)) && configEnv != null) {
-            System.setProperty(APOLLO_ENV_KEY, configEnv); //将从url提取的值，写入到系统属性中
+        if (StringUtils.isEmpty(System.getProperty(APOLLO_ENV_KEY)) && configEnv != null) { //系统属性为空的值，尝试从url中获取并填充到系统属性中
+            System.setProperty(APOLLO_ENV_KEY, configEnv);
         }
         if (StringUtils.isEmpty(System.getProperty(APOLLO_ADDR_KEY)) && !ANYHOST_VALUE.equals(url.getHost())) {
             System.setProperty(APOLLO_ADDR_KEY, configAddr);
@@ -100,10 +100,10 @@ public class ApolloDynamicConfiguration implements DynamicConfiguration {
             System.setProperty(APOLLO_APPID_KEY, configAppId);
         }
 
-        String namespace = url.getParameter(CONFIG_NAMESPACE_KEY, DEFAULT_GROUP);
+        String namespace = url.getParameter(CONFIG_NAMESPACE_KEY, DEFAULT_GROUP); //url中设置的namespace即为apollo中的namespace
         String apolloNamespace = StringUtils.isEmpty(namespace) ? url.getParameter(GROUP_KEY, DEFAULT_GROUP) : namespace;
-        dubboConfig = ConfigService.getConfig(apolloNamespace);
-        dubboConfigFile = ConfigService.getConfigFile(apolloNamespace, ConfigFileFormat.Properties);
+        dubboConfig = ConfigService.getConfig(apolloNamespace); //根据namespace获取到apollo的Config实例（例如：此处实例为DefaultConfig@2638）
+        dubboConfigFile = ConfigService.getConfigFile(apolloNamespace, ConfigFileFormat.Properties); //ConfigFileFormat为apollo支持的配置文件类型
 
         // Decide to fail or to continue when failed to connect to remote server.
         boolean check = url.getParameter(CHECK_KEY, true);
@@ -121,7 +121,7 @@ public class ApolloDynamicConfiguration implements DynamicConfiguration {
 
     private String getAddressWithProtocolPrefix(URL url) {
         String address = url.getBackupAddress();
-        if (StringUtils.isNotEmpty(address)) {
+        if (StringUtils.isNotEmpty(address)) { //将url的备用地址，依次带上前缀http://形成可访问的url，然后再用','连接起来
             address = Arrays.stream(COMMA_SPLIT_PATTERN.split(address))
                     .map(addr -> {
                         if (addr.startsWith(APOLLO_PROTOCOL_PREFIX)) {

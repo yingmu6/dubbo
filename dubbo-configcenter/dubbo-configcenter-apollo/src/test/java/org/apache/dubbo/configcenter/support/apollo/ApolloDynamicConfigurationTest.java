@@ -42,7 +42,28 @@ import static org.junit.jupiter.api.Assertions.fail;
  * Notice: EmbeddedApollo(apollo mock server) only support < junit5, please not upgrade the junit version in this UT,
  * the junit version in this UT is junit4, and the dependency comes from apollo-mockserver.
  */
-public class ApolloDynamicConfigurationTest {
+public class ApolloDynamicConfigurationTest { //DtY-Doing
+
+    /**
+     * 知识点：Apollo配置中心
+     *
+     * 知识点概括：
+     * 1）
+     *
+     * 关联点学习：
+     * 1）ServiceLoader学习&实践：apollo客户端内部有使用到ServiceLoader加载配置文件（Doing）
+     * 2）ConcurrentHashMap学习&实践：apollo客户端内部多次多用ConcurrentHashMap
+     *
+     *
+     *
+     *
+     * 问题点答疑：
+     * 1）apollo客户端，是在什么时候发起与apollo服务端的连接的？
+     * 2）apollo中的application和namespace有什么区别？在<config-center/>中配置的group、namespace是怎么与apollo对应的？
+     *
+     *
+     */
+
     private static final String SESSION_TIMEOUT_KEY = "session";
     private static final String DEFAULT_NAMESPACE = "dubbo";
     private static ApolloDynamicConfiguration apolloDynamicConfiguration;
@@ -52,7 +73,7 @@ public class ApolloDynamicConfigurationTest {
      * The constant embeddedApollo.
      */
     @ClassRule
-    public static EmbeddedApollo embeddedApollo = new EmbeddedApollo();
+    public static EmbeddedApollo embeddedApollo = new EmbeddedApollo(); //内嵌的apollo服务端
 
     /**
      * Sets up.
@@ -69,7 +90,7 @@ public class ApolloDynamicConfigurationTest {
 //     */
 //    @Test
 //    public void testProperties() {
-//        URL url = this.url.addParameter(GROUP_KEY, "dubbo")
+//        URL url = this.url.addParameter("GROUP_KEY", "dubbo")
 //                .addParameter("namespace", "governance");
 //
 //        apolloDynamicConfiguration = new ApolloDynamicConfiguration(url);
@@ -85,7 +106,7 @@ public class ApolloDynamicConfigurationTest {
      * Test get rule.
      */
     @Test
-    public void testGetRule() {
+    public void testGetRule() { //Doing_@Pause-06/17
         String mockKey = "mockKey1";
         String mockValue = String.valueOf(new Random().nextInt());
         putMockRuleData(mockKey, mockValue, DEFAULT_NAMESPACE);
@@ -94,6 +115,12 @@ public class ApolloDynamicConfigurationTest {
 
         mockKey = "notExistKey";
         assertNull(apolloDynamicConfiguration.getConfig(mockKey, DEFAULT_NAMESPACE, 3000L));
+
+        /**
+         * 结果分析：
+         * 1）此用例没有发起与apollo服务端的远程连接，而是先把key、value写到target/test-classed/mockdata-dubbo.properties文件中
+         *    然后再从该文件中读取到值，也就是实现mock测试
+         */
     }
 
     /**
@@ -105,7 +132,7 @@ public class ApolloDynamicConfigurationTest {
     public void testGetInternalProperty() throws InterruptedException {
         String mockKey = "mockKey2";
         String mockValue = String.valueOf(new Random().nextInt());
-        putMockRuleData(mockKey, mockValue, DEFAULT_NAMESPACE);
+        putMockRuleData(mockKey, mockValue, DEFAULT_NAMESPACE); //将key、value存储到本地properties文件中
         TimeUnit.MILLISECONDS.sleep(1000);
         apolloDynamicConfiguration = new ApolloDynamicConfiguration(url);
         assertEquals(mockValue, apolloDynamicConfiguration.getInternalProperty(mockKey));
@@ -165,7 +192,7 @@ public class ApolloDynamicConfigurationTest {
         try {
             oFile = new FileOutputStream(fileName);
             pro.setProperty(key, value);
-            pro.store(oFile, "put mock data");
+            pro.store(oFile, "put mock data"); //将键值对存储到properties文件中
         } catch (IOException exx) {
             fail(exx.getMessage());
 

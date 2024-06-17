@@ -42,12 +42,6 @@ public final class Utf8Utils {
         //empty
     }
 
-    /**
-     * 流程分析：URL中按UTF-8解码流程（Doing）
-     * 1）
-     * 2）
-     * 3）
-     */
     public static int decodeUtf8(byte[] srcBytes, int srcIdx, int srcSize, char[] destChars, int destIdx) { //从字节数组中取出字节转换为字符，再存入到目标字符数组中
         // Bitwise OR combines the sign bits so any negative value fails the check.
         if ((srcIdx | srcSize | srcBytes.length - srcIdx - srcSize) < 0

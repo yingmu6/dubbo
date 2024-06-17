@@ -45,13 +45,24 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class AbstractReferenceConfigTest {
+public class AbstractReferenceConfigTest { //@DtY-Doing
+
+    /**
+     * 知识点：
+     *
+     * 知识点概括：
+     * 1）
+     */
 
     @Test
-    public void testCheck() throws Exception { //已测（检查提供的服务是否存在）
+    public void testCheck() throws Exception { //Doing_检查提供的服务是否存在
         ReferenceConfig referenceConfig = new ReferenceConfig();
         referenceConfig.setCheck(true);
         assertThat(referenceConfig.isCheck(), is(true));
+
+        /**
+         * 结果分析：
+         */
     }
 
     @Test

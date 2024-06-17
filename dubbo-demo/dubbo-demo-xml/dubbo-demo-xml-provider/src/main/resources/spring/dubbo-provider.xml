@@ -35,6 +35,8 @@
 <!--        <dubbo:parameter key="center-test2" value="haha"/>-->
 <!--    </dubbo:config-center>-->
 
+    <dubbo:config-center address="apollo://127.0.0.1:8080" group="dubbo-appid" namespace="dubbo"/>
+
     <dubbo:registry address="zookeeper://127.0.0.1:2181/all?default.name=test" simplified="true"/>
     <dubbo:protocol  port="20881" status="server"/>
 

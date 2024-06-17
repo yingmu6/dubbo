@@ -47,6 +47,11 @@ public class URLStrParserTest { //@DtY-Doing
      * 2）什么是URL编码、解码，是否可以理解为超过ACSII表范围的字符，与一个统一的字符集进行转换？
      *
      * 3）为什么被编码后的url字符串，在解码时要分为参数部分、主体部分分开解码，不能一次性解码吗？
+     *
+     * 4）为什么编码的url字符串，遇到特殊字符时，要用TempBuf中的字节数组、字符数组来做临时处理，而不是直接按"%xx"
+     *    的形式，一个一个将字节转换为字符处理？
+     *    解答：用到字节数组做临时处理，是因为特殊字符可能对应多个字节，比如中文"测"，就会对应3个字节，即编码后为"%E6%B5%8B"，对应的字节值为[-26,75,-117]
+     *         所以必须要借用字节数组先把特殊字符的字节值存起来，然后再判断按几个字节处理。
      */
 
     @Test
@@ -93,7 +98,7 @@ public class URLStrParserTest { //@DtY-Doing
      * 新增场景1：URL只有一个参数
      */
     @Test
-    public void test_only_param() { //Doing
+    public void test_only_param() { //Done
         String str = "dubbo%3A%2F%2Fadmin%3Aadmin123%40192.168.1.41%3A28113%2Forg.test.api.DemoService%24Iface%3Fanyhost%3Dtrue";
         System.out.println(URLStrParser.parseEncodedStr(str));
 
@@ -105,20 +110,28 @@ public class URLStrParserTest { //@DtY-Doing
          *
          * 问题点答疑：
          * 1）URLStrParser#parseEncodedStr中解码参数parseEncodedParams和解码URL主体decodedBody有何不同？
+         *
          * 2）if (c == '%' || c == '+' && !isPath) 中的||、&&优先级是怎样的？
-         *
-         *
-         *
          *
          */
     }
 
     /**
-     * 新增场景2：URL中有多个参数
+     * 新增场景2：URL中的参数包含中文字符
      */
+    @Test
+    public void test_include_chinese() { //Done
+        String str = "dubbo%3A%2F%2Fadmin%3Aadmin123%40192.168.1.41%3A28113%2Forg.test.api.DemoService%24Iface%3Fapplication%3D%E6%B5%8B";
+        System.out.println(URLStrParser.parseEncodedStr(str));
 
-    /**
-     * 新增场景3：URL中的参数包含中文字符
-     */
+        /**
+         * 输出结果：
+         * dubbo://192.168.1.41:28113/org.test.api.DemoService$Iface?application=测
+         *
+         * 结果分析：
+         * 1）中文字符 "测"，编码后为"%E6%B5%8B"，会使用TempBuf的字节数组，临时存储对应的值 [58,47,47]
+         *    最后按3个字节，解析出值，并放到最终的字符数组中。
+         */
+    }
 
 }

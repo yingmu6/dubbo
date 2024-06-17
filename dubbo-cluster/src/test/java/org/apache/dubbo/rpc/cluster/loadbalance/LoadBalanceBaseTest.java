@@ -46,14 +46,18 @@ import static org.mockito.Mockito.mock;
  * RoundRobinLoadBalanceTest
  */
 @SuppressWarnings({"unchecked", "rawtypes"})
-public class LoadBalanceBaseTest {
+public class LoadBalanceBaseTest { //@DtY-Doing
 
     /**
-     * 负载均衡算法测试
+     * 知识点：
+     *
+     * 知识点概括：
+     * 1）
      *
      * 参考链接：
-     * a）https://cn.dubbo.apache.org/zh-cn/docsv2.7/dev/source/loadbalance/#22-leastactiveloadbalance 官网负载均衡算法讲解
+     * 1）官网负载均衡算法讲解 https://cn.dubbo.apache.org/zh-cn/docsv2.7/dev/source/loadbalance/#22-leastactiveloadbalance
      */
+
     Invocation invocation;
     List<Invoker<LoadBalanceBaseTest>> invokers = new ArrayList<Invoker<LoadBalanceBaseTest>>();
     Invoker<LoadBalanceBaseTest> invoker1;

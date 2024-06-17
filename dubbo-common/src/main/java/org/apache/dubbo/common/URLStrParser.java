@@ -156,7 +156,7 @@ public final class URLStrParser {
       * 流程分析：解析被编码的URL，生成已解码的URL
       * 1）根据"%3F"，即'?'符号，来拆分URL字符的主体和参数
       * 2）若存在"%3F"，则截取后面的字符串，做参数解析
-      * 3）
+      * 3）按url主体格式，解析对应的主体内容
       *
       * @param encodedURLStr : after {@link URL#encode(String)} string
       *                      encodedURLStr after decode format: protocol://username:password@host:port/path?k1=v1&k2=v2
@@ -254,13 +254,11 @@ public final class URLStrParser {
      * 流程分析：解码URL组件，组件可理解为URL字符串中主体部分、参数的键或值等（Doing）
      * 1）遍历组件对应区间的所有字符，判断是否有'%'或'+'等特殊字符
      * 2）若没有特殊字符，则直接返回组件在指定字符区间对应的字符串
-     * 3）若包含特殊字符，则分区间处理特殊字符：
-     *    a）
-     *    b）
-     *    c）
-     *
-     * 备注：
-     * 含有特殊字符的组件，最终是将字符分区间处理，将特殊字符解码后，再组合到字符数组中
+     * 3）若包含特殊字符，则将字符串分为 普通字符和特殊字符两部分处理
+     *    a）使用TempBuf对象做临时处理，包含字节数组和字符数组
+     *    b）按"%xx"形式解析特殊字符，并存入字节数组中
+     *    c）根据字节数组的值，判断按一个、两个或三个、四个方式解码字节，
+      *      得到对应的字符值，并存入字符数组中的指定位置
      */
     private static String decodeComponent(String s, int from, int toExcluded, boolean isPath, TempBuf tempBuf) {
         int len = toExcluded - from; //excluded：排除的，也就是子字符串的结束位置不包含toExcluded，即结束位置为toExcluded-1
@@ -286,7 +284,7 @@ public final class URLStrParser {
         char[] charBuf = tempBuf.charBuf(len);
         s.getChars(from, firstEscaped, charBuf, 0); //先把组件中的字符，都拷贝到字符数组charBuf中
 
-        int charBufIdx = firstEscaped - from; //todo @pause
+        int charBufIdx = firstEscaped - from;
         return decodeUtf8Component(s, firstEscaped, toExcluded, isPath, buf, charBuf, charBufIdx);
     }
 
