@@ -27,7 +27,7 @@ import static org.apache.dubbo.metadata.MetadataConstants.KEY_SEPARATOR;
  */
 public enum KeyTypeEnum { //enum除了没有public构造函数外，可以按照普通类来处理
 
-    PATH(PATH_SEPARATOR) {
+    PATH(PATH_SEPARATOR) { //枚举常量需要实现类中定义的抽象方法
         public String build(String one, String... others) { //实现枚举类中的抽象方法
             return buildPath(one, others); //按路径方式进行拼接
         }

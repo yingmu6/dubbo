@@ -26,7 +26,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.PROVIDER_SIDE;
 /**
  * 2019/1/7
  */
-public class MetadataIdentifierTest {
+public class MetadataIdentifierTest { //@DtY-Doing
 
     @Test
     public void testGetUniqueKey() { //已测，获取唯一标识符

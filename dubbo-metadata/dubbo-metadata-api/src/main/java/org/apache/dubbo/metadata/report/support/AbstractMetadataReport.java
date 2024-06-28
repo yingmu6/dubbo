@@ -100,7 +100,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
         }
     }
 
-    private File initializeLocalCacheFile(URL reportServerURL) { //初始化本地元数据缓存文件：只是创建了文件所在的目录，并没有创建.cache文件
+    private File initializeLocalCacheFile(URL reportServerURL) { //初始化本地缓存文件对象（可以在~/.dubbo目录下看到缓存文件）
         // Start file save timer
         String defaultFilename = System.getProperty("user.home") +
                 "/.dubbo/dubbo-metadata-" +
@@ -109,10 +109,10 @@ public abstract class AbstractMetadataReport implements MetadataReport {
                 ".cache"; //defaultFilename的值如：/Users/chenshengyong/.dubbo/dubbo-metadata-vic-192.168.3.16-4444.cache，其中via是应用名，192.168.3.16-4444是host和port
         String filename = reportServerURL.getParameter(FILE_KEY, defaultFilename); //从url获取设置的文件路径，若没有则取默认文件路径
         File file = null;
-        if (ConfigUtils.isNotEmpty(filename)) {
+        if (ConfigUtils.isNotEmpty(filename)) { //在reportServerURL中设置了"file"参数，并设置为null时，就不会设置缓存文件
             file = new File(filename);
             if (!file.exists() && file.getParentFile() != null && !file.getParentFile().exists()) {
-                if (!file.getParentFile().mkdirs()) { //若文件目录不存在，则进行创建
+                if (!file.getParentFile().mkdirs()) { //若文件所在的目录不存在，则进行创建
                     throw new IllegalArgumentException("Invalid service store file " + file + ", cause: Failed to create directory " + file.getParentFile() + "!");
                 }
             }
@@ -136,7 +136,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
     }
 
     private void doSaveProperties(long version) { //此处都是怎样保存的？保存在属性文件中吗？ 解答：此处的功能是将属性对象Properties，保存到文件中
-        if (version < lastCacheChanged.get()) { //使用版本号，进行乐观锁处理并发问题（当前的版本号若小于最近变更的版本号，表明版本落后了，则不做处理）--递归结束条件
+        if (version < lastCacheChanged.get()) { //使用版本号，进行乐观锁处理并发问题（在new SaveProperties(version).run()获取版本号，即在保存文件前获取版本号，在保存时判断版本号是否有变更）
             return;
         }
         if (localCacheFile == null) { //若缓存文件对象为空，则不处理
@@ -148,9 +148,9 @@ public abstract class AbstractMetadataReport implements MetadataReport {
             if (!lockfile.exists()) { //文件不存在，则创建文件
                 lockfile.createNewFile();
             }
-            try (RandomAccessFile raf = new RandomAccessFile(lockfile, "rw");
+            try (RandomAccessFile raf = new RandomAccessFile(lockfile, "rw"); //RandomAccessFile：可读写文件
                  FileChannel channel = raf.getChannel()) { //把资源处理，放在try里面，就可以不用手动关闭资源
-                FileLock lock = channel.tryLock();
+                FileLock lock = channel.tryLock(); //用lockfile执行文件加锁处理
                 if (lock == null) { //加锁失败，可能是多个java进程在使用文件
                     throw new IOException("Can not lock the metadataReport cache file " + localCacheFile.getAbsolutePath() + ", ignore and retry later, maybe multi java process use the file, please config: dubbo.metadata.file=xxx.properties");
                 }
@@ -177,7 +177,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
         }
     }
 
-    void loadProperties() {
+    void loadProperties() { //从本地缓存文件中，读取属性值
         if (localCacheFile != null && localCacheFile.exists()) {
             try (InputStream in = new FileInputStream(localCacheFile)) {
                 properties.load(in); //在存在属性文件时，从文件中读取属性值加载到Properties中 （文件中存储的内容是key-value对）
@@ -254,7 +254,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
              * 本地缓存存储：此处服务的元数据不管成功的、失败的都会存储
              */
             allMetadataReports.put(providerMetadataIdentifier, serviceDefinition);
-            failedReports.remove(providerMetadataIdentifier); //存储成功后，从失败Mao中移除对应的元素
+            failedReports.remove(providerMetadataIdentifier); //存储成功后，从失败Map中移除对应的元素
             Gson gson = new Gson();
             String data = gson.toJson(serviceDefinition); //JSON字符串，data数据如：{"parameters":{"application":"test-service","side":"provider"},"canonicalName":"org.apache.dubbo.rpc.service.EchoService","codeSource":"file:/Users/chenshengyong/self-db/dubbo/dubbo-common/target/classes/","methods":[{"name":"$echo","parameterTypes":["java.lang.Object"],"returnType":"java.lang.Object"}],"types":[{"type":"java.lang.Object","typeBuilderName":"org.apache.dubbo.metadata.definition.builder.DefaultTypeBuilder"}]}
             /**
@@ -263,10 +263,10 @@ public abstract class AbstractMetadataReport implements MetadataReport {
              * 存储元数据的组件有：Zookeeper、Nacos、Etcd等
              * 远程存储服务元数据，会出现异常，当出现异常时，会将服务元数据存储失败的集合，并启动重试任务进行重试
              */
-            doStoreProviderMetadata(providerMetadataIdentifier, data); //将服务定义的数据，转换为json字符串，存储到远程，如将Zookeeper作为元数据中心的话，会在Zookeeper创建对应的节点
+            doStoreProviderMetadata(providerMetadataIdentifier, data); //将提供者的元数据存到远程，如将Zookeeper作为元数据中心的话，会在Zookeeper创建对应的节点
 
             /**
-             * 将服务接口对应的元数据存入到本地缓存文件中
+             * 将提供者的元数据存入到本地缓存文件中
              */
             saveProperties(providerMetadataIdentifier, data, true, !syncReport); //元数据上报到元数据中心后，也会存储一份到本地文件中
         } catch (Exception e) { //若存储元数据异常，则将异常的暂存起来，然后启动重试任务进行重试
@@ -415,7 +415,7 @@ public abstract class AbstractMetadataReport implements MetadataReport {
     class MetadataReportRetry { //内部类：元数据重试上报
         protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-        final ScheduledExecutorService retryExecutor = newScheduledThreadPool(0, new NamedThreadFactory("DubboMetadataReportRetryTimer", true));
+        final ScheduledExecutorService retryExecutor = newScheduledThreadPool(0, new NamedThreadFactory("DubboMetadataReportRetryTimer", true)); //使用Executors工具类的方法，比直接使用ThreadFactory更简单、方便
 
         // 周期性任务ScheduledFuture：指定好执行的初次时间以及执行的周期，任务便会周期性的执行下去
         volatile ScheduledFuture retryScheduledFuture; //volatile的两个作用：1）确保内存可见性，2）防止指令重排（成员变量为引用类型时，若没有赋值，则为null）

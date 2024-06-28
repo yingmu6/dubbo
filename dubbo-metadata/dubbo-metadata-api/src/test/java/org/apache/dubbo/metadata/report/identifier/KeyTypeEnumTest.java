@@ -25,14 +25,26 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  *
  * @since 2.7.8
  */
-public class KeyTypeEnumTest {
+public class KeyTypeEnumTest { //@DtY-Done
+
+    /**
+     * 知识点：KeyTypeEnum使用
+     */
 
     /**
      * {@link KeyTypeEnum#build(String, String...)}
      */
     @Test
-    public void testBuild() { //已测
+    public void testBuild() { //Done
         assertEquals("/A/B/C", KeyTypeEnum.PATH.build("/A", "/B", "C"));
         assertEquals("A:B:C", KeyTypeEnum.UNIQUE_KEY.build("A", "B", "C"));
+
+        KeyTypeEnum path = KeyTypeEnum.PATH; //换了种写法，可以先获取到枚举的实例，再操作其方法
+        assertEquals("C/D/E", path.build("C", "D", "E"));
+        /**
+         * 结果分析：
+         * 1）KeyTypeEnum枚举类中定义了抽象方法build，所以声明的枚举常量PATH、UNIQUE_KEY
+         *   都要实现这个抽象方法
+         */
     }
 }

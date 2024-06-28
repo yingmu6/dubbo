@@ -48,17 +48,42 @@ import static org.apache.dubbo.metadata.report.support.Constants.SYNC_REPORT_KEY
 /**
  * 2018/10/9
  */
-public class RedisMetadataReportTest {
+public class RedisMetadataReportTest { //DtY-Doing
+
+    /**
+     * 知识点：Redis做元数据中心
+     *
+     * 知识点概括：
+     * 1）
+     *
+     *
+     * 关联点学习：
+     * 1）ScheduledFuture 周期执行任务：功能了解（Doing）
+     * 2）SecurityManager功能用途了解（Doing）
+     * 3）redis客户端API连接服务端的功能实践（Doing）
+     * 4）RandomAccessFile和FileLock了解
+     *
+     *
+     *
+     *
+     * 问题点答疑：
+     * 1）MetadataIdentifier与ServiceDefinition有什么关联？
+     * 2）TypeBuilder的SPI接口的功能用途是什么？
+     * 3）FileLock与Lock有何不同？
+     *
+     *
+     */
+
     RedisMetadataReport redisMetadataReport;
     RedisMetadataReport syncRedisMetadataReport;
-    RedisServer redisServer;
+    RedisServer redisServer; //嵌入的Redis服务端
     URL registryUrl;
 
     @BeforeEach
-    public void constructor(TestInfo testInfo) throws IOException {
+    public void constructor(TestInfo testInfo) throws IOException { //TestInfo可以获取到测试方法的信息
         int redisPort = NetUtils.getAvailablePort();
         String methodName = testInfo.getTestMethod().get().getName();
-        if ("testAuthRedisMetadata".equals(methodName) || ("testWrongAuthRedisMetadata".equals(methodName))) {
+        if ("testAuthRedisMetadata".equals(methodName) || ("testWrongAuthRedisMetadata".equals(methodName))) { //对指定的测试方法处理
             String password = "チェリー";
             RedisServerBuilder builder = RedisServer.builder().port(redisPort).setting("requirepass " + password);
             if (SystemUtils.IS_OS_WINDOWS) {
@@ -68,7 +93,7 @@ public class RedisMetadataReportTest {
             redisServer = builder.build();
             registryUrl = URL.valueOf("redis://username:" + password + "@localhost:" + redisPort);
         } else {
-            RedisServerBuilder builder = RedisServer.builder().port(redisPort);
+            RedisServerBuilder builder = RedisServer.builder().port(redisPort); //构建内嵌的redis服务
             if (SystemUtils.IS_OS_WINDOWS) {
                 // set maxheap to fix Windows error 0x70 while starting redis
                 builder.setting("maxheap 128mb");
@@ -77,9 +102,9 @@ public class RedisMetadataReportTest {
             registryUrl = URL.valueOf("redis://localhost:" + redisPort);
         }
 
-        this.redisServer.start();
+        this.redisServer.start(); //启动redis服务，可以通过lsof -i:xxx 查看到有对应的端口启动了服务
         redisMetadataReport = (RedisMetadataReport) new RedisMetadataReportFactory().createMetadataReport(registryUrl);
-        URL asyncRegistryUrl = URL.valueOf("redis://localhost:" + redisPort + "?" + SYNC_REPORT_KEY + "=true");
+        URL asyncRegistryUrl = URL.valueOf("redis://localhost:" + redisPort + "?" + SYNC_REPORT_KEY + "=true"); //SYNC_REPORT_KEY=true表示同步上报，否则为异步上报（此处声明的asyncRegistryUrl没用上，看来并非本意）
         syncRedisMetadataReport = (RedisMetadataReport) new RedisMetadataReportFactory().createMetadataReport(registryUrl);
     }
 
@@ -89,13 +114,39 @@ public class RedisMetadataReportTest {
     }
 
     @Test
-    public void testAsyncStoreProvider() throws ClassNotFoundException {
+    public void testAsyncStoreProvider() throws ClassNotFoundException { //Doing
         testStoreProvider(redisMetadataReport, "1.0.0.redis.md.p1", 3000);
+
+        /**
+         * 结果分析：
+         *
+         *
+         *
+         *
+         * 问题点答疑：
+         * 1）与testStoreProvider同步存储元数据有何不同？
+         *
+         * 2）本地缓存文件dubbo-metadata-null-xxx.cache中都存了什么内容？
+         *
+         * 3）dubbo-metadata-null-xxx.cache.lock文件的作用是什么？为什么里面没有内容？
+         *    解答：用.lock文件来创建文件锁FileLock，然后在写入本地属性文件时，进行加锁处理，不需要文件中有内容
+         *         （类似使用synchronized(obj) ，锁住一个对象的操作）
+         *
+         * 4）ScheduledExecutorService cycleReportExecutor和ExecutorService reportCacheExecutor上报任务有何区别？
+         *    解答：同步上报和异步上报元数据的区别（同步上报：就是在当前线程上执行，异步上报：就是在另外的线程执行）
+         *
+         */
     }
 
     @Test
-    public void testSyncStoreProvider() throws ClassNotFoundException {
+    public void testSyncStoreProvider() throws ClassNotFoundException { //Doing
         testStoreProvider(syncRedisMetadataReport, "1.0.0.redis.md.p2", 3);
+
+        /**
+         * 结果分析：
+         *
+         * 问题点答疑：
+         */
     }
 
     private void testStoreProvider(RedisMetadataReport redisMetadataReport, String version, long moreTime) throws ClassNotFoundException {

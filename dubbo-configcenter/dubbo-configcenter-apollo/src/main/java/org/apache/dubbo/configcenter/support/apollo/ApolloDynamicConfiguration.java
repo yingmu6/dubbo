@@ -158,7 +158,7 @@ public class ApolloDynamicConfiguration implements DynamicConfiguration {
 
     @Override
     public String getConfig(String key, String group, long timeout) throws IllegalStateException {
-        if (StringUtils.isNotEmpty(group)) { //group对应apollo的namespace
+        if (StringUtils.isNotEmpty(group)) {
             if (group.equals(url.getParameter(APPLICATION_KEY))) {
                 return ConfigService.getAppConfig().getProperty(key, null);
             } else {
@@ -203,7 +203,7 @@ public class ApolloDynamicConfiguration implements DynamicConfiguration {
      */
     @Override
     public String getInternalProperty(String key) {
-        return dubboConfig.getProperty(key, null); //调用apollo接口获取属性值
+        return dubboConfig.getProperty(key, null);
     }
 
     /**

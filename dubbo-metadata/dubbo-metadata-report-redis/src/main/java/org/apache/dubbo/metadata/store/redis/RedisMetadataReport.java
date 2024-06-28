@@ -64,13 +64,13 @@ public class RedisMetadataReport extends AbstractMetadataReport { //redis 作为
     public RedisMetadataReport(URL url) {
         super(url);
         timeout = url.getParameter(TIMEOUT_KEY, DEFAULT_TIMEOUT);
-        if (url.getParameter(CLUSTER_KEY, false)) {
+        if (url.getParameter(CLUSTER_KEY, false)) { //处理redis集群节点
             jedisClusterNodes = new HashSet<HostAndPort>();
             List<URL> urls = url.getBackupUrls();
             for (URL tmpUrl : urls) {
                 jedisClusterNodes.add(new HostAndPort(tmpUrl.getHost(), tmpUrl.getPort()));
             }
-        } else {
+        } else { //按单节点处理
             int database = url.getParameter(REDIS_DATABASE_KEY, 0);
             pool = new JedisPool(new JedisPoolConfig(), url.getHost(), url.getPort(), timeout, url.getPassword(), database);
         }
@@ -139,7 +139,7 @@ public class RedisMetadataReport extends AbstractMetadataReport { //redis 作为
 
     private void storeMetadataStandalone(BaseMetadataIdentifier metadataIdentifier, String v) {
         try (Jedis jedis = pool.getResource()) {
-            jedis.set(metadataIdentifier.getUniqueKey(KeyTypeEnum.UNIQUE_KEY), v);
+            jedis.set(metadataIdentifier.getUniqueKey(KeyTypeEnum.UNIQUE_KEY), v); //设置key、value
         } catch (Throwable e) {
             logger.error("Failed to put " + metadataIdentifier + " to redis " + v + ", cause: " + e.getMessage(), e);
             throw new RpcException("Failed to put " + metadataIdentifier + " to redis " + v + ", cause: " + e.getMessage(), e);

@@ -52,14 +52,16 @@ public class ApolloDynamicConfigurationTest { //DtY-Doing
      *
      * 关联点学习：
      * 1）ServiceLoader学习&实践：apollo客户端内部有使用到ServiceLoader加载配置文件（Doing）
-     * 2）ConcurrentHashMap学习&实践：apollo客户端内部多次多用ConcurrentHashMap
-     *
-     *
+     * 2）ConcurrentHashMap学习&实践：apollo客户端内部多次多用ConcurrentHashMap（Doing）
+     * 3）apollo客户端连接服务端，添加监听器以及获取配置值的学习&实践（Doing）
+     * 4）Java中EventObject：事件对象与事件监听器的使用（Doing）
+     * 5）apollo服务端对监听器的管理以及事件通知（Doing）
      *
      *
      * 问题点答疑：
      * 1）apollo客户端，是在什么时候发起与apollo服务端的连接的？
      * 2）apollo中的application和namespace有什么区别？在<config-center/>中配置的group、namespace是怎么与apollo对应的？
+     *
      *
      *
      */
@@ -106,7 +108,7 @@ public class ApolloDynamicConfigurationTest { //DtY-Doing
      * Test get rule.
      */
     @Test
-    public void testGetRule() { //Doing_@Pause-06/17
+    public void testGetRule() { //Doing
         String mockKey = "mockKey1";
         String mockValue = String.valueOf(new Random().nextInt());
         putMockRuleData(mockKey, mockValue, DEFAULT_NAMESPACE);
@@ -118,8 +120,15 @@ public class ApolloDynamicConfigurationTest { //DtY-Doing
 
         /**
          * 结果分析：
-         * 1）此用例没有发起与apollo服务端的远程连接，而是先把key、value写到target/test-classed/mockdata-dubbo.properties文件中
-         *    然后再从该文件中读取到值，也就是实现mock测试
+         * 1）此用例没有发起与apollo服务端的远程连接，而是先把key、value写到target/test-classed/mockdata-dubbo.properties
+         *    文件中然后再从该文件中读取到值，也就是实现mock测试
+         *
+         * 2）从Apollo的客户端API，即DefaultConfig来看，获取的配置值是来自于属性文件、系统属性、缓存等内容，而不是直接发起
+         *    与apollo服务端连接，实时获取配置值。也就是apollo客户端会提前将服务端的配置值同步到属性文件或缓存中，客户端从中获取即可
+         *
+         * 问题点答疑：
+         * 1）调试apollo客户端API连接服务端的用例，看下通常情况apollo客户端是从哪里获取到配置值的（因为本用例中写入属性文件是用mock）
+         *
          */
     }
 
@@ -129,7 +138,7 @@ public class ApolloDynamicConfigurationTest { //DtY-Doing
      * @throws InterruptedException the interrupted exception
      */
     @Test
-    public void testGetInternalProperty() throws InterruptedException {
+    public void testGetInternalProperty() throws InterruptedException { //Done
         String mockKey = "mockKey2";
         String mockValue = String.valueOf(new Random().nextInt());
         putMockRuleData(mockKey, mockValue, DEFAULT_NAMESPACE); //将key、value存储到本地properties文件中
@@ -143,6 +152,18 @@ public class ApolloDynamicConfigurationTest { //DtY-Doing
 
         mockKey = "notExistKey";
         assertNull(apolloDynamicConfiguration.getInternalProperty(mockKey));
+
+        /**
+         * 结果分析：
+         * 1）getInternalProperty() 内部还是调用DefaultConfig的getProperties()方法，也就是还是从属性文件或缓存中获取
+         * 2）在System.setProperty(mockKey, mockValue);设置系统属性值以后，虽然此时mockdata-dubbo.properties的值
+         *    为mockKey2=521141596，但根据DefaultConfig的getProperties()获取逻辑，是有优先级区分的，具体如下：
+         *    a）先从系统属性中获取，即System.get(key)
+         *    b）若a）没取到，则本地缓存的属性文件中获取，即m_configProperties.get().getProperty(key);
+         *    c）若b）没取到，则从环境变量中获取，即System.getenv(key);
+         *    d）若c）没取到，则从类路径下的属性文件中获取，即(String) m_resourceProperties.get(key);
+         *    e）若都没取到，则取默认值value == null ? defaultValue : value;
+         */
     }
 
     /**
@@ -151,7 +172,7 @@ public class ApolloDynamicConfigurationTest { //DtY-Doing
      * @throws Exception the exception
      */
     @Test
-    public void testAddListener() throws Exception {
+    public void testAddListener() throws Exception { //Doing
         String mockKey = "mockKey3";
         String mockValue = String.valueOf(new Random().nextInt());
 
@@ -171,6 +192,20 @@ public class ApolloDynamicConfigurationTest { //DtY-Doing
         assertEquals(mockValue, result.getContent());
         assertEquals(mockKey, result.getKey());
         assertEquals(ConfigChangeType.MODIFIED, result.getChangeType());
+
+        /**
+         * 结果分析：
+         * 1）
+         *
+         *
+         *
+         * 问题点答疑：
+         * 1）为啥要自定义监听器ConfigurationListener，且ApolloListener中维护了ConfigurationListener集合，
+         *    也就是为啥一个apollo监听器，对应dubbo内部的多个ConfigurationListener？
+         *
+         * 2）为什么此处addListener中的process方法没有回调？
+         *
+         */
     }
 
     private static void putData(String namespace, String key, String value) {
