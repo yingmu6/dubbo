@@ -51,7 +51,7 @@ public class AnnotationProcessingTestProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        if (!roundEnv.processingOver()) {
+        if (!roundEnv.processingOver()) { //注解处理器逻辑
             prepare();
             abstractAnnotationProcessingTest.beforeEach();
             try {

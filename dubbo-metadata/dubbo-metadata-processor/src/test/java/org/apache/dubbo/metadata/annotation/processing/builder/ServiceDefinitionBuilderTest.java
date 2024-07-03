@@ -32,8 +32,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  *
  * @since 2.7.6
  */
-public class ServiceDefinitionBuilderTest extends AbstractAnnotationProcessingTest {
+public class ServiceDefinitionBuilderTest extends AbstractAnnotationProcessingTest { //@DtY_Doing
 
+    /**
+     * 知识点：
+     *
+     * 知识点概括：
+     * 1）
+     *
+     * 关联点学习：
+     * 1）Junit的@ExtendWith功能用途了解（Doing）
+     * 2）@Repeatable功能用途了解（Doing）
+     * 3）AbstractProcessor与Processor了解及使用（Doing）
+     * 4）JavaCompiler功能了解及使用（Doing）
+     * 5）TypeMirror功能用途了解（Doing）
+     */
 
     @Override
     protected void addCompiledClasses(Set<Class<?>> classesToBeCompiled) {
@@ -45,7 +58,7 @@ public class ServiceDefinitionBuilderTest extends AbstractAnnotationProcessingTe
     }
 
     @Test
-    public void testBuild() {
+    public void testBuild() { //Doing
         ServiceDefinition serviceDefinition = build(processingEnv, getType(TestServiceImpl.class));
         assertEquals(TestServiceImpl.class.getTypeName(), serviceDefinition.getCanonicalName());
         assertEquals("org/apache/dubbo/metadata/tools/TestServiceImpl.class", serviceDefinition.getCodeSource());
@@ -60,5 +73,15 @@ public class ServiceDefinitionBuilderTest extends AbstractAnnotationProcessingTe
         assertEquals("java.util.EventListener", serviceDefinition.getTypes().get(i++).getType());
         // methods
         assertEquals(14, serviceDefinition.getMethods().size());
+
+        /**
+         * 结果分析：
+         * 1）
+         * 2）
+         *
+         * 问题点答疑：
+         * 1）ServiceDefinitionBuilder中build的的处理逻辑是怎样的？getHierarchicalTypes()和getPublicNonStaticMethods()
+         *    功能用途是怎样的，里面逻辑有些模糊？
+         */
     }
 }

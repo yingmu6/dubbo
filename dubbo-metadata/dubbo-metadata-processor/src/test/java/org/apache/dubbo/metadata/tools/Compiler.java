@@ -42,7 +42,7 @@ public class Compiler {
 
     private final StandardJavaFileManager javaFileManager;
 
-    private final Set<Processor> processors = new LinkedHashSet<>();
+    private final Set<Processor> processors = new LinkedHashSet<>(); //注解处理器集合
 
     public Compiler() throws IOException {
         this(defaultTargetDirectory());

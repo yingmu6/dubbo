@@ -44,7 +44,14 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  *
  */
-public class AbstractMetadataReportTest {
+public class AbstractMetadataReportTest { //@DtY-Doing
+
+    /**
+     * 知识点：
+     *
+     * 知识点概括：
+     *
+     */
 
     private NewMetadataReport abstractMetadataReport;
 
@@ -64,7 +71,7 @@ public class AbstractMetadataReportTest {
     }
 
     @Test
-    public void testGetProtocol() { //已测，获取MetadataReport的协议
+    public void testGetProtocol() { //Done_获取MetadataReport的协议
         URL url = URL.valueOf("dubbo://" + NetUtils.getLocalAddress().getHostName() + ":4444/org.apache.dubbo.TestService?version=1.0.0&application=vic&side=provider");
         String protocol = abstractMetadataReport.getProtocol(url); //protocol的值会取url中side或protocol的值
         assertEquals(protocol, "provider"); //此处side有值，且为provider
@@ -72,10 +79,15 @@ public class AbstractMetadataReportTest {
         URL url2 = URL.valueOf("consumer://" + NetUtils.getLocalAddress().getHostName() + ":4444/org.apache.dubbo.TestService?version=1.0.0&application=vic");
         String protocol2 = abstractMetadataReport.getProtocol(url2);
         assertEquals(protocol2, "consumer"); //此处side无值，取url.getProtocol()的值
+
+        /**
+         * 结果分析：
+         * 1）元数据上报的协议为url中side参数或protocol的值（表明是来自提供方还是消费方的元数据）
+         */
     }
 
     @Test
-    public void testStoreProviderUsual() throws ClassNotFoundException, InterruptedException { //已测，测试存储提供者元数据
+    public void testStoreProviderUsual() throws ClassNotFoundException, InterruptedException { //Doing_测试存储提供者元数据
         String interfaceName = "org.apache.dubbo.metadata.store.InterfaceNameTestService";
         String version = "1.0.0";
         String group = null;
@@ -84,7 +96,12 @@ public class AbstractMetadataReportTest {
         MetadataIdentifier providerMetadataIdentifier = storePrivider(abstractMetadataReport, interfaceName, version, group, application);
         Thread.sleep(1500);
         // 由于提供者元数据已存入abstractMetadataReport.store，所以按MetadataIdentifier的唯一键能够取出值
-        Assertions.assertNotNull(abstractMetadataReport.store.get(providerMetadataIdentifier.getUniqueKey(KeyTypeEnum.UNIQUE_KEY))); //
+        Assertions.assertNotNull(abstractMetadataReport.store.get(providerMetadataIdentifier.getUniqueKey(KeyTypeEnum.UNIQUE_KEY)));
+
+        /**
+         * 结果分析：
+         * 1）
+         */
     }
 
     @Test

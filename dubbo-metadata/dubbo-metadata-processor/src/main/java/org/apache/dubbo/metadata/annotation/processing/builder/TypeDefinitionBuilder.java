@@ -32,7 +32,7 @@ import static org.apache.dubbo.common.extension.ExtensionLoader.getExtensionLoad
  * @since 2.7.6
  */
 @SPI
-public interface TypeDefinitionBuilder<T extends TypeMirror> extends Prioritized {
+public interface TypeDefinitionBuilder<T extends TypeMirror> extends Prioritized { //TypeDefinition实例的建造器
 
     /**
      * Test the specified {@link TypeMirror type} is accepted or not

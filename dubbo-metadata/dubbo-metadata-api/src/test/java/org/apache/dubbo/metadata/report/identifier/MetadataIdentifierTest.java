@@ -26,10 +26,18 @@ import static org.apache.dubbo.common.constants.CommonConstants.PROVIDER_SIDE;
 /**
  * 2019/1/7
  */
-public class MetadataIdentifierTest { //@DtY-Doing
+public class MetadataIdentifierTest { //@DtY-Done
+
+    /**
+     * 知识点：MetadataIdentifier元数据标识符
+     *
+     * 知识点概括：
+     * 1）可以通过MetadataIdentifier中的信息，唯一标识元数据服务
+     * 2）构建的标识符key，可以按"/"或":"进行分隔
+     */
 
     @Test
-    public void testGetUniqueKey() { //已测，获取唯一标识符
+    public void testGetUniqueKey() { //Done_获取唯一标识符
         String interfaceName = "org.apache.dubbo.metadata.integration.InterfaceNameTestService";
         String version = "1.0.0.zk.md";
         String group = null;
@@ -45,5 +53,10 @@ public class MetadataIdentifierTest { //@DtY-Doing
                         (version == null ? "" : version) + MetadataConstants.KEY_SEPARATOR
                         + (group == null ? "" : group) + MetadataConstants.KEY_SEPARATOR
                         + PROVIDER_SIDE + MetadataConstants.KEY_SEPARATOR + application);
+
+        /**
+         * 结果分析：
+         * 1）MetadataIdentifier用来标识元数据，KeyTypeEnum.PATH是按"/"分隔，KeyTypeEnum.UNIQUE_KEY是按":"分隔
+         */
     }
 }

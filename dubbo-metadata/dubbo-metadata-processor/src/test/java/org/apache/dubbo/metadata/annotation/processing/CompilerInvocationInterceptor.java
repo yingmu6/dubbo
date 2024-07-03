@@ -33,11 +33,11 @@ public class CompilerInvocationInterceptor implements InvocationInterceptor {
     @Override
     public void interceptTestMethod(Invocation<Void> invocation,
                                     ReflectiveInvocationContext<Method> invocationContext,
-                                    ExtensionContext extensionContext) throws Throwable {
+                                    ExtensionContext extensionContext) throws Throwable { //拦截测试方法
         Set<Class<?>> classesToBeCompiled = new LinkedHashSet<>();
         AbstractAnnotationProcessingTest abstractAnnotationProcessingTest = testInstanceHolder.get();
         classesToBeCompiled.add(getClass());
-        abstractAnnotationProcessingTest.addCompiledClasses(classesToBeCompiled);
+        abstractAnnotationProcessingTest.addCompiledClasses(classesToBeCompiled); //从具体实现类中添加需要编译的类
         Compiler compiler = new Compiler();
         compiler.processors(new AnnotationProcessingTestProcessor(abstractAnnotationProcessingTest, invocation, invocationContext, extensionContext));
         compiler.compile(classesToBeCompiled.toArray(new Class[0]));

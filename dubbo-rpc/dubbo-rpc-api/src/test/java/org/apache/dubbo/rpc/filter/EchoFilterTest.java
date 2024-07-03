@@ -30,13 +30,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
-public class EchoFilterTest {
+public class EchoFilterTest { //@DtY-Doing
 
     Filter echoFilter = new EchoFilter();
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testEcho() {
+    public void testEcho() { //Doing_@pause-07/03
         Invocation invocation = mock(Invocation.class);
         given(invocation.getMethodName()).willReturn("$echo");
         given(invocation.getParameterTypes()).willReturn(new Class<?>[]{Enum.class});

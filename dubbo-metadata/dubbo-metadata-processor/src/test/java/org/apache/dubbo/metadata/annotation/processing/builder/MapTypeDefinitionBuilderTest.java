@@ -38,8 +38,25 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * @since 2.7.6
  */
-public class MapTypeDefinitionBuilderTest extends AbstractAnnotationProcessingTest {
+public class MapTypeDefinitionBuilderTest extends AbstractAnnotationProcessingTest { //@DtY-Doing
 
+    /**
+     * 知识点：
+     *
+     * 知识点概括：
+     * 1）
+     *
+     *
+     * 关联点学习：
+     * 1）VariableElement和Element功能了解（Doing）
+     * 2）DeclaredType与ReferenceType功能了解（Doing）
+     *
+     *
+     * 问题点答疑：
+     * 1）为什么元数据要区分MapTypeDefinitionBuilder、CollectionTypeDefinitionBuilder等类似，也是类似泛化调用
+     *   中把字符串与具体类型转换的逻辑吗？
+     * 2）没看到ProcessingEnvironment接口的实现类，该实现类是在哪里创建的？
+     */
     private MapTypeDefinitionBuilder builder;
 
     private VariableElement stringsField;
@@ -75,12 +92,18 @@ public class MapTypeDefinitionBuilderTest extends AbstractAnnotationProcessingTe
     }
 
     @Test
-    public void testAccept() {
+    public void testAccept() { //Doing
         assertTrue(builder.accept(processingEnv, stringsField.asType()));
         assertTrue(builder.accept(processingEnv, colorsField.asType()));
         assertTrue(builder.accept(processingEnv, primitiveTypeModelsField.asType()));
         assertTrue(builder.accept(processingEnv, modelsField.asType()));
         assertTrue(builder.accept(processingEnv, modelArraysField.asType()));
+
+        /**
+         * 结果分析：
+         * 1）
+         * 2）
+         */
     }
 
     @Test
