@@ -99,7 +99,7 @@ public class AccessLogFilter implements Filter {
      * 所有非守护线程都执行完毕后，虚拟机退出；
      * 守护线程不能持有需要关闭的资源（如打开文件等）
      */
-    public AccessLogFilter() {
+    public AccessLogFilter() { //开启周期任务，将本地缓存中的任务写到文件中
         LOG_SCHEDULED.scheduleWithFixedDelay(this::writeLogToFile, LOG_OUTPUT_INTERVAL, LOG_OUTPUT_INTERVAL, TimeUnit.MILLISECONDS);
     }
 
@@ -160,7 +160,7 @@ public class AccessLogFilter implements Filter {
     }
 
     private void writeLogToFile() {
-        if (!LOG_ENTRIES.isEmpty()) {
+        if (!LOG_ENTRIES.isEmpty()) { //若缓存中存在日志，则写到文件中
             for (Map.Entry<String, Set<AccessLogData>> entry : LOG_ENTRIES.entrySet()) {
                 String accessLog = entry.getKey();
                 Set<AccessLogData> logSet = entry.getValue();

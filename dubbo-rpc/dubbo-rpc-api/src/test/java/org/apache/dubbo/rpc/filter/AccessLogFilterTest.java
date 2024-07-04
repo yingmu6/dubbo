@@ -38,13 +38,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * AccessLogFilterTest.java
  */
-public class AccessLogFilterTest {
+public class AccessLogFilterTest { //@DtY-Doing
 
     Filter accessLogFilter = new AccessLogFilter();
 
     // Test filter won't throw an exception
     @Test
-    public void testInvokeException() {
+    public void testInvokeException() { // @pause_06/04
         Invoker<AccessLogFilterTest> invoker = new MyInvoker<AccessLogFilterTest>(null);
         Invocation invocation = new MockInvocation();
         LogUtil.start();

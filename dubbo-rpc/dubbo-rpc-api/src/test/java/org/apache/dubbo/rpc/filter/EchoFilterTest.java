@@ -32,12 +32,23 @@ import static org.mockito.Mockito.mock;
 
 public class EchoFilterTest { //@DtY-Doing
 
+    /**
+     * 知识点：
+     *
+     * 知识点概括：
+     *
+     * 关联点学习：
+     * 1）MockMethodInterceptor对象的创建和使用流程（Doing）
+     *
+     *
+     *
+     */
     Filter echoFilter = new EchoFilter();
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testEcho() { //Doing_@pause-07/03
-        Invocation invocation = mock(Invocation.class);
+    public void testEcho() { //Doing
+        Invocation invocation = mock(Invocation.class); //创建mock对象，即可指定mock对象的行为（创建Mock对象时，创建了MockMethodInterceptor方法拦截器）
         given(invocation.getMethodName()).willReturn("$echo");
         given(invocation.getParameterTypes()).willReturn(new Class<?>[]{Enum.class});
         given(invocation.getArguments()).willReturn(new Object[]{"hello"});
@@ -54,11 +65,18 @@ public class EchoFilterTest { //@DtY-Doing
 
         Result filterResult = echoFilter.invoke(invoker, invocation);
         assertEquals("hello", filterResult.getValue());
+
+        /**
+         * 结果分析：
+         *
+         *
+         *
+         */
     }
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testNonEcho() {
+    public void testNonEcho() { //Done
         Invocation invocation = mock(Invocation.class);
         given(invocation.getMethodName()).willReturn("echo");
         given(invocation.getParameterTypes()).willReturn(new Class<?>[]{Enum.class});
@@ -76,5 +94,11 @@ public class EchoFilterTest { //@DtY-Doing
 
         Result filterResult = echoFilter.invoke(invoker, invocation);
         assertEquals("High", filterResult.getValue());
+
+        /**
+         * 结果分析：
+         * 1）由于方法名为"echo"，所以在EchoFilter，是按同步调用返回结果的。
+         *    所以执行invoker.invoke(invocation)时，返回mock的result结果值
+         */
     }
 }
