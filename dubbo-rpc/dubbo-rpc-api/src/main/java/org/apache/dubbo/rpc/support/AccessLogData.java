@@ -74,7 +74,7 @@ public final class AccessLogData {
      *
      * @return instance of AccessLogData
      */
-    public static AccessLogData newLogData() { //静态方法是为了单例模式？ 解：不是，每调用一次都会生成新的对象
+    public static AccessLogData newLogData() { //静态方法是为了单例模式？ 解：不是，每调用一次都会生成新的对象（单例的话，要做判断实例是否已存在，且对应创建对象）
         return new AccessLogData();
     }
 

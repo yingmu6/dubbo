@@ -33,7 +33,7 @@ public class DubboAppender extends FileAppender {
 
     public static boolean available = false;
 
-    public static List<Log> logList = new ArrayList<>();
+    public static List<Log> logList = new ArrayList<>(); //日志缓存列表（大小超过阈值时，写到日志文件中）
 
     public static void doStart() {
         available = true;

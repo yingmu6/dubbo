@@ -33,7 +33,7 @@ import static org.apache.dubbo.rpc.Constants.TOKEN_KEY;
 /**
  * MockInvocation.java
  */
-public class MockInvocation implements Invocation {
+public class MockInvocation implements Invocation { //Mock的Invocation
 
     private Map<String, Object> attachments;
 

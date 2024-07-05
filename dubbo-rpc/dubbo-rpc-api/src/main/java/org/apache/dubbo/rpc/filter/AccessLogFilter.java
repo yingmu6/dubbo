@@ -72,7 +72,7 @@ public class AccessLogFilter implements Filter {
     // It's safe to declare it as singleton since it runs on single thread only
     private static final DateFormat FILE_NAME_FORMATTER = new SimpleDateFormat(FILE_DATE_FORMAT);
 
-    private static final Map<String, Set<AccessLogData>> LOG_ENTRIES = new ConcurrentHashMap<>();
+    private static final Map<String, Set<AccessLogData>> LOG_ENTRIES = new ConcurrentHashMap<>(); //日志缓存Map（可按日志key进行分组缓存）
 
     /**
      * ScheduledExecutorService使用以及了解？（定时调度机制）
@@ -114,7 +114,7 @@ public class AccessLogFilter implements Filter {
      */
     @Override
     public Result invoke(Invoker<?> invoker, Invocation inv) throws RpcException {
-        try {
+        try { //进行访问日志处理
             String accessLogKey = invoker.getUrl().getParameter(ACCESS_LOG_KEY);
             if (ConfigUtils.isNotEmpty(accessLogKey)) {
                 AccessLogData logData = buildAccessLogData(invoker, inv); //构建日志数据
@@ -123,7 +123,7 @@ public class AccessLogFilter implements Filter {
         } catch (Throwable t) {
             logger.warn("Exception in AccessLogFilter of service(" + invoker + " -> " + inv + ")", t);
         }
-        return invoker.invoke(inv);
+        return invoker.invoke(inv); //进行过滤链的调用传递
     }
 
     private void log(String accessLog, AccessLogData accessLogData) {
@@ -173,7 +173,7 @@ public class AccessLogFilter implements Filter {
         try (FileWriter writer = new FileWriter(file, true)) {
             for (Iterator<AccessLogData> iterator = logSet.iterator();
                  iterator.hasNext();
-                 iterator.remove()) {
+                 iterator.remove()) { //写到文件中的日志，会从缓存中对应删除
                 writer.write(iterator.next().getLogMessage());
                 writer.write(System.getProperty("line.separator"));
             }
