@@ -36,7 +36,18 @@ import java.util.stream.Stream;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class LoggerAdapterTest {
+public class LoggerAdapterTest { //@DtY-Doing
+
+    /**
+     * 知识点：
+     *
+     * 知识点概括：
+     *
+     * 关联点学习：
+     * 1）junit的@ParameterizedTest传入参数_学习及实践（Doing）
+     *
+     */
+
     static Stream<Arguments> data() {
         return Stream.of(
                 Arguments.of(JclLoggerAdapter.class, JclLogger.class),
@@ -48,7 +59,7 @@ public class LoggerAdapterTest {
     }
 
     @ParameterizedTest
-    @MethodSource("data")
+    @MethodSource("data") //Doing_@pause-07/06
     public void testGetLogger(Class<? extends LoggerAdapter> loggerAdapterClass, Class<? extends Logger> loggerClass) throws IllegalAccessException, InstantiationException {
         LoggerAdapter loggerAdapter = loggerAdapterClass.newInstance();
         Logger logger = loggerAdapter.getLogger(this.getClass());
@@ -57,6 +68,11 @@ public class LoggerAdapterTest {
         logger = loggerAdapter.getLogger(this.getClass().getSimpleName());
         assertThat(logger.getClass().isAssignableFrom(loggerClass), is(true));
 
+        /**
+         * 结果分析：
+         * 1）此处采用junit的参数化的传递，会把data方法中构建的参数依次传入当前测试方法
+         *
+         */
     }
 
     @ParameterizedTest

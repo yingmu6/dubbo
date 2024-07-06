@@ -126,7 +126,7 @@ public class AccessLogFilter implements Filter {
         return invoker.invoke(inv); //进行过滤链的调用传递
     }
 
-    private void log(String accessLog, AccessLogData accessLogData) {
+    private void log(String accessLog, AccessLogData accessLogData) { //把日志信息写到本地缓存中
         Set<AccessLogData> logSet = LOG_ENTRIES.computeIfAbsent(accessLog, k -> new ConcurrentHashSet<>());
 
         if (logSet.size() < LOG_MAX_BUFFER) {
@@ -143,10 +143,10 @@ public class AccessLogFilter implements Filter {
     // 把日志到文件中
     private void writeLogSetToFile(String accessLog, Set<AccessLogData> logSet) {
         try {
-            if (ConfigUtils.isDefault(accessLog)) { //设置了默认值
+            if (ConfigUtils.isDefault(accessLog)) { //若accesslog参数值设置为true或default，表明使用默认的文件名
                 processWithServiceLogger(logSet);
             } else {
-                File file = new File(accessLog);
+                File file = new File(accessLog); //使用自定义的文件名
                 createIfLogDirAbsent(file);
                 if (logger.isDebugEnabled()) {
                     logger.debug("Append log to " + accessLog);
@@ -181,7 +181,7 @@ public class AccessLogFilter implements Filter {
         }
     }
 
-    private AccessLogData buildAccessLogData(Invoker<?> invoker, Invocation inv) {
+    private AccessLogData buildAccessLogData(Invoker<?> invoker, Invocation inv) { //构建访问日志数据
         AccessLogData logData = AccessLogData.newLogData();
         logData.setServiceName(invoker.getInterface().getName());
         logData.setMethodName(inv.getMethodName());
@@ -210,7 +210,7 @@ public class AccessLogFilter implements Filter {
         }
     }
 
-    private void renameFile(File file) {
+    private void renameFile(File file) { //重命名文件（加上时间信息）
         if (file.exists()) {
             String now = FILE_NAME_FORMATTER.format(new Date());
             String last = FILE_NAME_FORMATTER.format(new Date(file.lastModified()));

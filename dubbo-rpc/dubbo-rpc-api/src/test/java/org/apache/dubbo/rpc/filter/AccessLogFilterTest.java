@@ -49,11 +49,11 @@ public class AccessLogFilterTest { //@DtY-Doing
      * 关联点学习：
      * 1）FileWriter将内容输出到文件功能了解及实践（Doing）
      * 2）过滤链的设计模式学习及实践（Doing）
+     * 3）Dubbo自定义日志Logger学习以及调试（Doing）
      *
      *
      * 问题点答疑：
      * 1）当Result的实例为异步结果AsyncRpcResult时，是怎么获取到结果的？
-     *
      *
      */
 
@@ -100,19 +100,24 @@ public class AccessLogFilterTest { //@DtY-Doing
         /**
          * 结果分析：
          * 1）因为URL中设置了ACCESS_LOG_KEY参数，所以会把日志记录写到缓存LOG_ENTRIES中
-         *
+         *    当缓存中的日志条目大于最大值，如5000条，就会把缓存中的日志写到文件中
          */
     }
 
     @Test
-    public void testCustom() { //Doing_@pause-07/05
+    public void testCustom() { //Done
         URL url = URL.valueOf("test://test:11/test?accesslog=custom-access.log");
         Invoker<AccessLogFilterTest> invoker = new MyInvoker<AccessLogFilterTest>(url);
         Invocation invocation = new MockInvocation();
         accessLogFilter.invoke(invoker, invocation);
 
+        Invocation invocation2 = new MockInvocation();
+        accessLogFilter.invoke(invoker, invocation2); //模拟写入日志文件场景（临时改下AccessLogFilter.LOG_MAX_BUFFER值测试）
+
         /**
          * 结果分析：
+         * 1）URL中设置了ACCESS_LOG_KEY参数，所以会进行写日志。而参数对应的值，将作为缓存日志的key
+         *   以及日志文件的文件名
          */
     }
 
