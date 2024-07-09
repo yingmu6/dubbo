@@ -33,7 +33,12 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 
-public class LoggerTest {
+public class LoggerTest { //@DtY-Doing
+
+    /**
+     * 知识点：Logger
+     *
+     */
 
     static Stream<Arguments> data() {
         return Stream.of(
@@ -46,7 +51,7 @@ public class LoggerTest {
     }
 
     @ParameterizedTest
-    @MethodSource("data")
+    @MethodSource("data") //Doing
     public void testAllLogMethod(Class<? extends LoggerAdapter> loggerAdapter) throws Exception {
         LoggerAdapter adapter = loggerAdapter.newInstance();
         adapter.setLevel(Level.ALL);
@@ -68,6 +73,11 @@ public class LoggerTest {
         logger.info("info", new Exception("info"));
         logger.debug("debug", new Exception("debug"));
         logger.trace("trace", new Exception("trace"));
+
+        /**
+         * 结果分析：
+         * 1）
+         */
     }
 
     @ParameterizedTest

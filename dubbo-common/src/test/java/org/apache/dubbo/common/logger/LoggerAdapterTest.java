@@ -42,10 +42,18 @@ public class LoggerAdapterTest { //@DtY-Doing
      * 知识点：
      *
      * 知识点概括：
+     * 1）LoggerAdapter是SPI接口，在具体的实现类中，如Log4jLoggerAdapter，适配
+     *   了具体的日志实例Logger。
+     *
+     * 2）Logger对各种日志功能进行了抽象，如jdk、slf4j等，然后在具体实例中JdkLogger、Slf4jLogger
+     *    与真正使用的日志进行API接口调用的适配
      *
      * 关联点学习：
      * 1）junit的@ParameterizedTest传入参数_学习及实践（Doing）
+     * 2）jcl、jdk、log4j、slf4j、log4j2等日志的异同学习（Doing）
      *
+     * 问题点答疑：
+     * 1）SPI接口LoggerAdapter是在代码哪里进行使用的？
      */
 
     static Stream<Arguments> data() {
@@ -59,7 +67,7 @@ public class LoggerAdapterTest { //@DtY-Doing
     }
 
     @ParameterizedTest
-    @MethodSource("data") //Doing_@pause-07/06
+    @MethodSource("data") //Done
     public void testGetLogger(Class<? extends LoggerAdapter> loggerAdapterClass, Class<? extends Logger> loggerClass) throws IllegalAccessException, InstantiationException {
         LoggerAdapter loggerAdapter = loggerAdapterClass.newInstance();
         Logger logger = loggerAdapter.getLogger(this.getClass());
@@ -72,16 +80,23 @@ public class LoggerAdapterTest { //@DtY-Doing
          * 结果分析：
          * 1）此处采用junit的参数化的传递，会把data方法中构建的参数依次传入当前测试方法
          *
+         * 2）会通过日志适配器LoggerAdapter的getLogger(...)获取对应的日志实例Logger
          */
     }
 
     @ParameterizedTest
-    @MethodSource("data")
+    @MethodSource("data") //Done
     public void testLevel(Class<? extends LoggerAdapter> loggerAdapterClass) throws IllegalAccessException, InstantiationException {
         LoggerAdapter loggerAdapter = loggerAdapterClass.newInstance();
         for (Level targetLevel : Level.values()) {
             loggerAdapter.setLevel(targetLevel);
             assertThat(loggerAdapter.getLevel(), is(targetLevel));
         }
+
+        /**
+         * 结果分析：
+         * 1）日志适配器LoggerAdapter可以设置和获取日志级别Level
+         *
+         */
     }
 }

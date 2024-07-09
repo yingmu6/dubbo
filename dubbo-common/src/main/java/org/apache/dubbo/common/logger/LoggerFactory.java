@@ -37,12 +37,12 @@ import java.util.concurrent.ConcurrentMap;
 public class LoggerFactory { //日志工厂
 
     private static final ConcurrentMap<String, FailsafeLogger> LOGGERS = new ConcurrentHashMap<>(); //使用日志的类名与日志处理器的映射
-    private static volatile LoggerAdapter LOGGER_ADAPTER; //日志适配器
+    private static volatile LoggerAdapter LOGGER_ADAPTER;
 
     // search common-used logging frameworks
-    static { // 静态方法
+    static { // 静态方法（类加载时，进行初始化）
         String logger = System.getProperty("dubbo.application.logger", ""); // 获取系统属性中日志相关的值
-        switch (logger) { //根据系统属性设置的值，选择日志处理适配器
+        switch (logger) {
             case "slf4j":
                 setLoggerAdapter(new Slf4jLoggerAdapter());
                 break;
@@ -60,7 +60,7 @@ public class LoggerFactory { //日志工厂
                 break;
             default:
                 List<Class<? extends LoggerAdapter>> candidates = Arrays.asList( //将日志适配器都放在候选列表中
-                        Log4jLoggerAdapter.class,
+                        Log4jLoggerAdapter.class, //把log4j放在候选列表的第一个，所以未设置日志适配器时，默认为log4j
                         Slf4jLoggerAdapter.class,
                         Log4j2LoggerAdapter.class,
                         JclLoggerAdapter.class,
@@ -68,9 +68,9 @@ public class LoggerFactory { //日志工厂
                 );
                 for (Class<? extends LoggerAdapter> clazz : candidates) { //从候选的日志适配器中，依次尝试设置日志处理器
                     try {
-                        setLoggerAdapter(clazz.newInstance()); // 只要有一个设置成功，即跳出循环
+                        setLoggerAdapter(clazz.newInstance());
                         break;
-                    } catch (Throwable ignored) { //若出现异常，捕获异常不处理，进入下一次循环
+                    } catch (Throwable ignored) {
                     }
                 }
         }

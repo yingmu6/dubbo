@@ -19,7 +19,7 @@ package org.apache.dubbo.common.logger;
 /**
  * Level
  */
-public enum Level {
+public enum Level { //日志级别
 
     /**
      * ALL

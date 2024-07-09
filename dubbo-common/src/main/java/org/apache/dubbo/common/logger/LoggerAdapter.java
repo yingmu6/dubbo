@@ -32,7 +32,7 @@ public interface LoggerAdapter { //日志适配器
      * @param key the returned logger will be named after clazz
      * @return logger
      */
-    Logger getLogger(Class<?> key); //获取日志处理器
+    Logger getLogger(Class<?> key); //获取日志实例
 
     /**
      * Get a logger
