@@ -60,7 +60,7 @@ public class JdkLoggerAdapter implements LoggerAdapter {
         }
     }
 
-    private static java.util.logging.Level toJdkLevel(Level level) {
+    private static java.util.logging.Level toJdkLevel(Level level) { //将Dubbo的日志级别转换为Jdk日志级别
         if (level == Level.ALL) {
             return java.util.logging.Level.ALL;
         }

@@ -36,7 +36,7 @@ public class JclLoggerAdapter implements LoggerAdapter {
 
     @Override
     public Logger getLogger(Class<?> key) {
-        return new JclLogger(LogFactory.getLog(key));
+        return new JclLogger(LogFactory.getLog(key)); //JclLogger：Dubbo用来封装Jcl日志定义的类。LogFactory.getLog(key)：使用Jcl工厂获取Jcl日志实例
     }
 
     @Override

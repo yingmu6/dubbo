@@ -131,7 +131,7 @@ public interface Logger { //抽象出日志接口
      * @param msg log this message
      * @param e   log this cause
      */
-    void error(String msg, Throwable e);
+    void error(String msg, Throwable e); //输出异常信息，并带有异常轨迹
 
     /**
      * Is trace logging currently enabled?

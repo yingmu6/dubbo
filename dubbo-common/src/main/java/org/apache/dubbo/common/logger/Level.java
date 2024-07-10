@@ -24,7 +24,7 @@ public enum Level { //日志级别
     /**
      * ALL
      */
-    ALL,
+    ALL, //所有级别日志都打印
 
     /**
      * TRACE
@@ -54,6 +54,6 @@ public enum Level { //日志级别
     /**
      * OFF
      */
-    OFF
+    OFF //关闭日志
 
 }
