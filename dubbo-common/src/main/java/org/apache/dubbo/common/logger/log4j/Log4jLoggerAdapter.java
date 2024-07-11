@@ -28,7 +28,7 @@ import java.util.Enumeration;
 
 public class Log4jLoggerAdapter implements LoggerAdapter { //log4j实现的日志适配器
 
-    private File file;
+    private File file; //日志存放的文件
 
     @SuppressWarnings("unchecked")
     public Log4jLoggerAdapter() {
@@ -42,7 +42,7 @@ public class Log4jLoggerAdapter implements LoggerAdapter { //log4j实现的日�
                         if (appender instanceof FileAppender) {
                             FileAppender fileAppender = (FileAppender) appender;
                             String filename = fileAppender.getFile();
-                            file = new File(filename);
+                            file = new File(filename); //设置日志存放的文件，如~/self_remote/dubbo/dubbo-common/dubbo.log
                             break;
                         }
                     }

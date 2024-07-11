@@ -33,7 +33,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
 
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class LoggerAdapterTest { //@DtY-Doing
@@ -50,10 +50,11 @@ public class LoggerAdapterTest { //@DtY-Doing
      *
      * 关联点学习：
      * 1）junit的@ParameterizedTest传入参数_学习及实践（Doing）
-     * 2）jcl、jdk、log4j、slf4j、log4j2等日志的异同学习（Doing）
+     * 2）jcl、jdk、log4j、slf4j、log4j2等日志组件的使用及对比（Doing）
      *
      * 问题点答疑：
      * 1）SPI接口LoggerAdapter是在代码哪里进行使用的？
+     * 2）JclLoggerAdapter、JdkLoggerAdapter等成员属性file的用途是什么？
      */
 
     static Stream<Arguments> data() {
@@ -97,6 +98,22 @@ public class LoggerAdapterTest { //@DtY-Doing
          * 结果分析：
          * 1）日志适配器LoggerAdapter可以设置和获取日志级别Level
          *
+         */
+    }
+
+    /**
+     * 新增场景：测试LoggerAdapter创建逻辑
+     */
+    @ParameterizedTest
+    @MethodSource("data") //Done
+    public void testLoggerAdapterCreate(Class<? extends LoggerAdapter> loggerAdapterClass) throws InstantiationException, IllegalAccessException {
+        LoggerAdapter loggerAdapter = loggerAdapterClass.newInstance();
+        assertThat(loggerAdapter, not(nullValue()));
+
+        /**
+         * 结果分析：
+         * 1）newInstance()创建日志适配器实例是，会进行相关的初始化。对于jdk、log4j等会将日志写到文件中的
+         *   日志组件，还会查找并设置相关的日志文件
          */
     }
 }

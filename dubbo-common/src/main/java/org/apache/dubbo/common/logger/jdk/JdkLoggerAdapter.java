@@ -33,10 +33,10 @@ public class JdkLoggerAdapter implements LoggerAdapter {
 
     private File file;
 
-    public JdkLoggerAdapter() {
+    public JdkLoggerAdapter() { //Jdk日志的初始化
         try {
             InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("logging.properties");
-            if (in != null) {
+            if (in != null) { //存在日志文件logging.properties时，读取配置内容
                 LogManager.getLogManager().readConfiguration(in);
             } else {
                 System.err.println("No such logging.properties in classpath for jdk logging config!");
@@ -52,7 +52,7 @@ public class JdkLoggerAdapter implements LoggerAdapter {
                     Field field = fileHandler.getClass().getField("files");
                     File[] files = (File[]) field.get(fileHandler);
                     if (files != null && files.length > 0) {
-                        file = files[0];
+                        file = files[0]; //初始化日志文件file
                     }
                 }
             }

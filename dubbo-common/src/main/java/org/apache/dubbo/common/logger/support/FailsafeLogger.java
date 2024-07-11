@@ -20,7 +20,7 @@ import org.apache.dubbo.common.Version;
 import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.utils.NetUtils;
 
-public class FailsafeLogger implements Logger { //失败时安全处理的日志处理器（日志打印报异常时，主动通过try/catch捕获，不向上抛出异常）
+public class FailsafeLogger implements Logger { //失败时安全处理的日志处理器（调用的日志组件出现异常时，主动通过try/catch捕获，不向上抛出异常）
 
     private Logger logger;
 

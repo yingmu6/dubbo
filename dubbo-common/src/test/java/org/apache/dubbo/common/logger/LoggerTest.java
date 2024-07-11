@@ -38,6 +38,9 @@ public class LoggerTest { //@DtY-Doing
     /**
      * 知识点：Logger
      *
+     * 知识点概括：
+     * 1）
+     *
      * 问题点答疑：
      * 1）LoggerAdapter中的日志级别是怎么使用上的？
      *   解答：LoggerAdapter的具体实例中，有做Dubbo日志级别与具体日志级别的转换适配，
@@ -95,7 +98,7 @@ public class LoggerTest { //@DtY-Doing
     }
 
     @ParameterizedTest
-    @MethodSource("data") //Doing_@pause-07/10
+    @MethodSource("data") //Done
     public void testLevelEnable(Class<? extends LoggerAdapter> loggerAdapter) throws IllegalAccessException, InstantiationException {
         LoggerAdapter adapter = loggerAdapter.newInstance();
         adapter.setLevel(Level.ALL);
