@@ -36,29 +36,51 @@ public class LoggerFactoryTest { //@DtY-Doing
      */
 
     @Test
-    public void testLoggerLevel() {
+    public void testLoggerLevel() { //Done
         LoggerFactory.setLevel(Level.INFO);
         Level level = LoggerFactory.getLevel();
 
         assertThat(level, is(Level.INFO));
+
+        /**
+         * 结果分析：
+         * 1）Level是Dubbo定义的日志级别，会与具体日志组件级别进行适配转换，
+         *    如Log4jLoggerAdapter中toLog4jLevel(...)和fromLog4jLevel(...)
+         *    就是将Dubbo定义的日志级别与log4j日志级别进行适配转换
+         */
     }
 
     @Test
-    public void testGetLogFile() {
+    public void testGetLogFile() { //Done
         LoggerFactory.setLoggerAdapter("slf4j");
         File file = LoggerFactory.getFile();
 
         assertThat(file, is(nullValue()));
+
+        /**
+         * 结果分析：
+         * 1）setLoggerAdapter("slf4j")中根据扩展名找到日志适配器，因为LoggerAdapter是SPI接口
+         *    所以可以根据SPI机制来找到对应的实例
+         *
+         * 2）本例中的日志适配器是Slf4jLoggerAdapter，其初始化时没有处理成员属性file，所以值为null
+         */
     }
 
     @Test
-    public void testAllLogLevel() {
+    public void testAllLogLevel() { //Done
         for (Level targetLevel : Level.values()) {
             LoggerFactory.setLevel(targetLevel);
             Level level = LoggerFactory.getLevel();
 
             assertThat(level, is(targetLevel));
         }
+
+        /**
+         * 结果分析：
+         * 1）遍历dubbo所设置的日志级别，依次与具体日志组件转换
+         *
+         * 2）日志组件的日志级别是支持多次更新的，保留上一次设置的日志级别
+         */
     }
 
     @Test

@@ -39,7 +39,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class LoggerAdapterTest { //@DtY-Doing
 
     /**
-     * 知识点：
+     * 知识点：日志适配器
      *
      * 知识点概括：
      * 1）LoggerAdapter是SPI接口，在具体的实现类中，如Log4jLoggerAdapter，适配

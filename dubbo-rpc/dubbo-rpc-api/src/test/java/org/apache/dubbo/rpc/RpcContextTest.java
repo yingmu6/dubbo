@@ -26,20 +26,21 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-public class RpcContextTest {
+public class RpcContextTest { //@DtY-Doing
+
+    /**
+     * 知识点：RpcContext
+     *
+     * 知识点概括：
+     * 1）
+     *
+     * 关联点学习：
+     * 1）Dubbo自定义的InnerThreadLocal关联学习（Doing）
+     */
 
     @Test
-    public void testGetContext() { //获取RpcContext
+    public void testGetContext() { //Doing_@pause
 
-        /**
-         * 1）RpcContext.getContext()从InternalThreadLocal获取上下文实例，若值为UNSET，会回调initialValue()进行初始化
-         * 2）RpcContext.removeContext()或RpcContext.getServerContext()移除上下文，会将InternalThreadLocalMap中维护的对应index的值设置为UNSET
-         * 3）因为移除上下文后，InternalThreadLocalMap中维护的元素为UNSET元素，所以会回调initialValue()进行初始化，所以产生的RpcContext实例就不一样
-         *
-         * 特别说明：
-         * 如果在debug时，选择"Add to Watchers"查看方法的执行结果时，相当于会把方法执行一遍，所以debug时若对方法观察，需要对这一点进行注意
-         * （应该是启动了另外线程执行了，因为dubug时看不到对应的执行）
-         */
         RpcContext rpcContext = RpcContext.getContext();
         Assertions.assertNotNull(rpcContext); //若当前线程没有设置上下文信息，会进行初始化处理，所以不为null
 
@@ -57,6 +58,16 @@ public class RpcContextTest {
         RpcContext.removeServerContext(); //移除服务端对应的上下文
         Assertions.assertNotEquals(serverRpcContext, RpcContext.getServerContext());
 
+        /**
+         * 结果分析：
+         * 1）RpcContext.getContext()从InternalThreadLocal获取上下文实例，若值为UNSET，会回调initialValue()进行初始化
+         * 2）RpcContext.removeContext()或RpcContext.getServerContext()移除上下文，会将InternalThreadLocalMap中维护的对应index的值设置为UNSET
+         * 3）因为移除上下文后，InternalThreadLocalMap中维护的元素为UNSET元素，所以会回调initialValue()进行初始化，所以产生的RpcContext实例就不一样
+         *
+         * 特别说明：
+         * 如果在debug时，选择"Add to Watchers"查看方法的执行结果时，相当于会把方法执行一遍，所以debug时若对方法观察，需要对这一点进行注意
+         * （应该是启动了另外线程执行了，因为dubug时看不到对应的执行）
+         */
     }
 
     @Test

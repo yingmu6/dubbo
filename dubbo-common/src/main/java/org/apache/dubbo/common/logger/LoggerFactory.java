@@ -77,13 +77,13 @@ public class LoggerFactory { //日志工厂
     }
 
     /**
-     * 流程分析：dubbo日志打印的流程 @pause 07/11
+     * 流程分析：dubbo日志打印的流程
      */
     private LoggerFactory() {
     }
 
     public static void setLoggerAdapter(String loggerAdapter) {
-        if (loggerAdapter != null && loggerAdapter.length() > 0) {
+        if (loggerAdapter != null && loggerAdapter.length() > 0) { //根据扩展名找到日志适配器
             setLoggerAdapter(ExtensionLoader.getExtensionLoader(LoggerAdapter.class).getExtension(loggerAdapter));
         }
     }
