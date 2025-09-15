@@ -632,7 +632,7 @@ public class ExtensionLoaderTest {
     }
 
     @Test
-    void testMultiNames() { //已测（SPI配置文件中，可以多个扩展名对应一个扩展类）
+    void testMultiNames() { //已测（SPI配置文件中，可以多个扩展名对应一个扩展类） test
         Ext10MultiNames ext10MultiNames = getExtensionLoader(Ext10MultiNames.class).getExtension("impl");
         Assertions.assertNotNull(ext10MultiNames);
         ext10MultiNames = getExtensionLoader(Ext10MultiNames.class).getExtension("implMultiName");
